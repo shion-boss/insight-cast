@@ -20,14 +20,14 @@ export async function POST(
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, interviews_project:projects(user_id)')
+    .select('id, interviewer_type, project_id, interviews_project:projects(user_id, name, hp_url)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .single()
 
   if (!interview) return new Response('Not found', { status: 404 })
 
-  const projectData = interview.interviews_project as unknown as { user_id: string } | null
+  const projectData = interview.interviews_project as unknown as { user_id: string; name: string | null; hp_url: string } | null
   if (projectData?.user_id !== user.id) return new Response('Forbidden', { status: 403 })
 
   // ユーザーメッセージ保存
@@ -55,19 +55,28 @@ export async function POST(
         content: m.content,
       }))
 
-  // プロフィール + アカウントレベルの調査結果をコンテキストに注入
+  // 取材先情報と調査結果をコンテキストに注入
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, industry_memo, location, hp_audit_result')
+    .select('name')
     .eq('id', user.id)
     .single()
 
-  const auditResult = profile?.hp_audit_result as { gaps?: string[]; suggested_themes?: string[] } | null
+  const { data: auditRow } = await supabase
+    .from('hp_audits')
+    .select('gaps, suggested_themes')
+    .eq('project_id', projectId)
+    .single()
+
+  const auditResult = auditRow as { gaps?: string[]; suggested_themes?: string[] } | null
   const audit = auditResult ?? null
 
   const contextParts: string[] = []
-  if (profile) {
-    contextParts.push(`【取材先】\n店舗・企業名: ${profile.name ?? '未設定'}\n業種: ${profile.industry_memo ?? '未設定'}\n地域: ${profile.location ?? '未設定'}`)
+  if (projectData) {
+    contextParts.push(`【取材先】\n取材先名: ${projectData.name ?? '未設定'}\nHP URL: ${projectData.hp_url ?? '未設定'}`)
+  }
+  if (profile?.name) {
+    contextParts.push(`【話し相手】\nお名前: ${profile.name}`)
   }
   if (audit) {
     if (audit.gaps?.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${(audit.gaps as string[]).map((g: string) => `・${g}`).join('\n')}`)

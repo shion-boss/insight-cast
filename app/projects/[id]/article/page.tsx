@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { PageHeader, PrimaryButton, SecondaryButton, StateCard, TextInput } from '@/components/ui'
+import { createClient } from '@/lib/supabase/client'
+import { PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
@@ -32,12 +33,15 @@ export default function ArticlePage() {
   const searchParams = useSearchParams()
   const interviewId = searchParams.get('interviewId') ?? ''
   const initialTheme = searchParams.get('theme') ?? ''
+  const supabase = createClient()
 
   const [tab, setTab] = useState<ArticleType>('client')
   const [contents, setContents] = useState<Partial<Record<ArticleType, string>>>({})
   const [generating, setGenerating] = useState<ArticleType | null>(null)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [availableThemes, setAvailableThemes] = useState<string[]>([])
+  const [loadingThemes, setLoadingThemes] = useState(true)
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
@@ -45,6 +49,40 @@ export default function ArticlePage() {
 
   const currentContent = contents[tab] ?? ''
   const isGenerated = !!currentContent
+
+  useEffect(() => {
+    if (!interviewId) {
+      setAvailableThemes([])
+      setLoadingThemes(false)
+      return
+    }
+
+    async function loadThemes() {
+      setLoadingThemes(true)
+      const { data: interview } = await supabase
+        .from('interviews')
+        .select('themes')
+        .eq('id', interviewId)
+        .single()
+
+      const nextThemes = Array.isArray(interview?.themes) ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0) : []
+      setAvailableThemes(nextThemes)
+
+      if (nextThemes.length > 0) {
+        if (initialTheme && nextThemes.includes(initialTheme)) {
+          setTheme(initialTheme)
+        } else if (!initialTheme) {
+          setTheme(nextThemes[0])
+        }
+      } else {
+        setTheme('')
+      }
+
+      setLoadingThemes(false)
+    }
+
+    loadThemes()
+  }, [initialTheme, interviewId, supabase])
 
   async function generate() {
     setError(null)
@@ -133,16 +171,36 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {/* テーマ（共通オプション） */}
-            <div className="mb-4">
-              <label className="block text-xs text-stone-500 mb-1">テーマ指定（任意）</label>
-              <TextInput
-                type="text"
-                value={theme}
-                onChange={(e) => setTheme(e.target.value)}
-                placeholder="例: 丁寧な対応と信頼感について"
-                className="px-3"
-              />
+            <div className="mb-4 rounded-xl border border-stone-100 bg-white p-4">
+              <p className="text-xs text-stone-500">記事テーマ</p>
+              <p className="mt-1 text-xs leading-relaxed text-stone-400">
+                インタビュー後に整理したテーマから選べます。
+              </p>
+
+              {loadingThemes ? (
+                <p className="mt-3 text-sm text-stone-400">テーマを確認しています...</p>
+              ) : availableThemes.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {availableThemes.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => setTheme(item)}
+                      className={`rounded-full px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
+                        theme === item
+                          ? 'bg-stone-800 text-white'
+                          : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
+                      }`}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-stone-400">
+                  まだ選べるテーマがありません。取材メモを開くと、提案テーマを先に整理できます。
+                </p>
+              )}
             </div>
 
             {/* クライアント視点のみ追加オプション */}

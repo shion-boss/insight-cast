@@ -28,6 +28,12 @@ export async function POST(
 
   if (!interview) return new Response('Not found', { status: 404 })
 
+  const { data: project } = await supabase
+    .from('projects')
+    .select('name, hp_url')
+    .eq('id', projectId)
+    .single()
+
   const { data: messages } = await supabase
     .from('interview_messages')
     .select('role, content')
@@ -36,22 +42,23 @@ export async function POST(
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, industry_memo, location')
+    .select('name')
     .eq('id', user.id)
     .single()
 
   const char = getCharacter(interview.interviewer_type)
   const charName = char?.name ?? 'インタビュアー'
-  const bizName = profile?.name ?? '事業者'
+  const bizName = project?.name ?? project?.hp_url ?? '取材先'
+  const clientName = profile?.name ?? '事業者'
 
   const conversation = (messages ?? [])
-    .map(m => `${m.role === 'user' ? bizName : charName}: ${m.content}`)
+    .map(m => `${m.role === 'user' ? clientName : charName}: ${m.content}`)
     .join('\n\n')
 
   const bizContext = [
-    profile?.name         ? `店舗・企業名: ${profile.name}` : null,
-    profile?.industry_memo ? `業種: ${profile.industry_memo}` : null,
-    profile?.location      ? `地域: ${profile.location}` : null,
+    project?.name ? `取材先名: ${project.name}` : null,
+    project?.hp_url ? `HP URL: ${project.hp_url}` : null,
+    profile?.name ? `話し手: ${profile.name}` : null,
   ].filter(Boolean).join('\n')
 
   const themeInstruction = theme ? `\n\n## テーマ\n特に「${theme}」という観点で書いてください。` : ''

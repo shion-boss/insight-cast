@@ -17,7 +17,14 @@ export async function createProject(formData: FormData) {
 
   const hp_url = normalizeUrl(formData.get('url') as string)
   const name   = (formData.get('name') as string)?.trim() || null
+  const competitorUrls = formData
+    .getAll('competitor_urls')
+    .map((value) => normalizeUrl(String(value)))
+    .filter(Boolean)
+    .filter((value, index, array) => array.indexOf(value) === index)
+    .slice(0, 3)
 
+  if (!name) redirect('/projects/new?error=name')
   if (!hp_url) redirect('/projects/new?error=url')
 
   const { data, error } = await supabase
@@ -27,7 +34,14 @@ export async function createProject(formData: FormData) {
     .single()
 
   if (error || !data) redirect('/projects/new?error=1')
-  redirect(`/projects/${data.id}/interviewer`)
+
+  if (competitorUrls.length > 0) {
+    await supabase
+      .from('competitors')
+      .insert(competitorUrls.map((url) => ({ project_id: data.id, url })))
+  }
+
+  redirect(`/projects/${data.id}`)
 }
 
 export async function saveCompetitors(
