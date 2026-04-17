@@ -1,5 +1,5 @@
 import { createProject } from '@/lib/actions/projects'
-import { FieldLabel, PageHeader, PrimaryButton, TextInput } from '@/components/ui'
+import { FieldLabel, PageHeader, PrimaryButton, StateCard, TextInput } from '@/components/ui'
 
 export default function NewProjectPage() {
   return (
@@ -7,15 +7,14 @@ export default function NewProjectPage() {
       <PageHeader title="Insight Cast" backHref="/dashboard" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="flex items-start gap-3 mb-8">
-          <span className="text-3xl">🦉</span>
-          <div>
-            <p className="text-stone-700 font-medium">調査したいホームページのURLを教えてください。</p>
-            <p className="text-sm text-stone-400 mt-1">
-              URLを登録すると、クラウスがホームページの調査を始めます。<br />
-              競合サイトは次のステップで登録できます。
-            </p>
-          </div>
+        <div className="mb-8">
+          <StateCard
+            icon="🦉"
+            title="まずは、調べたいホームページを教えてください。"
+            description="URLを受け取ると、クラウスが今の見え方を確認します。競合サイトはこの次に登録できます。"
+            align="left"
+            tone="soft"
+          />
         </div>
 
         <form action={createProject} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
@@ -42,7 +41,7 @@ export default function NewProjectPage() {
             type="submit"
             className="w-full py-3 text-sm"
           >
-            次へ進む
+            クラウスにお願いする
           </PrimaryButton>
         </form>
       </div>

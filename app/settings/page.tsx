@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { PageHeader, PrimaryButton } from '@/components/ui'
+import { PageHeader, PrimaryButton, StateCard } from '@/components/ui'
 
 type AuditResult = {
   current_content?: string[]
@@ -209,10 +208,11 @@ export default function SettingsPage() {
         <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
         <div className="max-w-lg mx-auto px-6 py-10">
-          <div className="bg-white rounded-2xl border border-stone-100 p-6 text-center">
-            <div className="text-3xl mb-3">🐱</div>
-            <p className="text-sm text-stone-600">いまの設定を確認しています。</p>
-          </div>
+          <StateCard
+            icon="🐱"
+            title="いまのお願いごとを確認しています。"
+            description="開き終わると、このまま内容を見直せます。"
+          />
         </div>
       </div>
     )
@@ -221,25 +221,24 @@ export default function SettingsPage() {
   if (loadError) {
     return (
       <div className="min-h-screen bg-stone-50">
-        <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-          <h1 className="font-semibold text-stone-800">設定</h1>
-          <Link href="/dashboard" className="text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors">
-            ← ダッシュボード
-          </Link>
-        </header>
+        <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
         <div className="max-w-lg mx-auto px-6 py-10">
-          <div className="bg-white rounded-2xl border border-red-100 p-6 text-center space-y-3">
-            <div className="text-3xl">🐱</div>
-            <p className="text-sm text-stone-700">{loadError}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-stone-800 text-white text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer"
-            >
-              もう一度開く
-            </button>
-          </div>
+          <StateCard
+            icon="🐱"
+            title="設定をまだ開けません。"
+            description={loadError}
+            tone="warning"
+            action={(
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-stone-800 text-white text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer"
+              >
+                もう一度開く
+              </button>
+            )}
+          />
         </div>
       </div>
     )
@@ -250,16 +249,24 @@ export default function SettingsPage() {
       <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="max-w-lg mx-auto px-6 py-8 space-y-8">
+        <StateCard
+          icon="🐱"
+          title="あとからでも直せるので、いま分かる範囲で大丈夫です。"
+          description="ここで整えた内容をもとに、取材班や調査班が動きやすくなります。"
+          align="left"
+          tone="soft"
+        />
+
         <section className="bg-white rounded-xl border border-stone-100 p-4 space-y-2">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-stone-700">アカウント情報</p>
               <p className="text-xs text-stone-400 mt-1">
                 {hasUnsavedChanges
-                  ? 'いまの変更はまだ保存されていません。'
+                  ? 'いまの変更は、まだ取材班に共有されていません。'
                   : savedProfile
-                    ? '保存した内容を反映しました。'
-                    : '現在の内容が表示されています。'}
+                    ? '保存した内容を、これからの取材に反映します。'
+                    : 'いま共有されている内容を表示しています。'}
               </p>
             </div>
             <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
@@ -309,6 +316,9 @@ export default function SettingsPage() {
               {suggesting ? '検索中...' : '✨ おすすめを取得'}
             </button>
           </div>
+          <p className="text-xs text-stone-400">
+            分かる相手だけで大丈夫です。空欄があっても、そのまま進められます。
+          </p>
 
           <div className="space-y-2">
             {form.competitorUrls.map((u, i) => (
@@ -385,10 +395,12 @@ export default function SettingsPage() {
           {analyzeError && <p className="text-sm text-red-500">{analyzeError}</p>}
 
           {analyzing && (
-            <div className="text-center py-6">
-              <div className="text-3xl mb-2 animate-pulse">🦉</div>
-              <p className="text-sm text-stone-400">クラウスが調査しています...</p>
-            </div>
+            <StateCard
+              icon={<span className="animate-pulse">🦉</span>}
+              title="クラウスがホームページを確認しています。"
+              description="伝わっていることと、まだ出し切れていないことを整理しています。"
+              tone="soft"
+            />
           )}
 
           {!analyzing && audit && (
@@ -437,7 +449,7 @@ export default function SettingsPage() {
               {hasUnsavedChanges
                 ? '先に保存すると、その内容で調査を始められます。'
                 : form.url
-                ? '「調査を開始する」を押すと、自社HPと競合HPを分析します。'
+                ? '準備ができたら「調査を開始する」を押してください。'
                 : '先に自社HP URLを入力して保存してください。'}
             </p>
           )}

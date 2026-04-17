@@ -37,7 +37,7 @@ export default function LoginPage() {
           <Link href="/" className="text-xl font-semibold text-stone-800 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
             Insight Cast
           </Link>
-          <p className="text-sm text-stone-400 mt-2">おかえりなさい</p>
+          <p className="text-sm text-stone-400 mt-2">取材班の続きから、すぐ再開できます。</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">

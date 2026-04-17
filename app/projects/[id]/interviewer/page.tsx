@@ -2,7 +2,7 @@ import { CHARACTERS } from '@/lib/characters'
 import { createInterview } from '@/lib/actions/interviews'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { PageHeader } from '@/components/ui'
+import { PageHeader, StateCard } from '@/components/ui'
 
 export default async function InterviewerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -25,8 +25,13 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-lg font-semibold text-stone-800">今日はどのインタビュアーに来てもらいますか？</h1>
-          <p className="text-sm text-stone-400 mt-1">取材の観点が変わります。気になるインタビュアーを選んでください。</p>
+          <StateCard
+            icon="🎙️"
+            title="今日は、どの取材班に来てもらいましょうか？"
+            description="得意な聞き方がそれぞれ違います。気になる相手を選ぶだけで大丈夫です。"
+            align="left"
+            tone="soft"
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-8">
@@ -54,14 +59,14 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
         {/* coming soon */}
         <div>
-          <p className="text-xs text-stone-300 mb-3">近日公開予定</p>
+          <p className="text-xs text-stone-300 mb-3">これから来てもらえる取材班</p>
           <div className="grid grid-cols-3 gap-3">
             {CHARACTERS.filter(c => !c.available).map((char) => (
               <div key={char.id} className="p-4 bg-white rounded-xl border border-stone-100 opacity-40">
                 <div className="text-2xl mb-2 grayscale">{char.emoji}</div>
                 <div className="text-xs font-medium text-stone-600">{char.name}</div>
                 {char.label && <div className="text-xs text-stone-400 mt-0.5">{char.label}</div>}
-                <div className="text-xs text-stone-300 mt-2">準備中</div>
+                <div className="text-xs text-stone-300 mt-2">準備を進めています</div>
               </div>
             ))}
           </div>

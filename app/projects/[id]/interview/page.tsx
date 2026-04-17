@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
+import { StateCard } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
 
@@ -174,8 +175,14 @@ export default function InterviewPage() {
 
   if (initializing) {
     return (
-      <div className="h-screen flex items-center justify-center bg-stone-50">
-        <p className="text-stone-400 text-sm">{char?.emoji ?? '🐱'} 取材班を呼んでいます...</p>
+      <div className="h-screen flex items-center justify-center bg-stone-50 px-6">
+        <div className="w-full max-w-md">
+          <StateCard
+            icon={char?.emoji ?? '🐱'}
+            title="取材班を呼んでいます。"
+            description="席につけたら、そのまま聞き取りを始めます。"
+          />
+        </div>
       </div>
     )
   }
@@ -255,8 +262,14 @@ export default function InterviewPage() {
       {/* 入力欄 */}
       <div className="bg-white border-t border-stone-100 px-4 py-4 flex-shrink-0">
         {submitError && (
-          <div className="max-w-2xl mx-auto mb-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {submitError}
+          <div className="max-w-2xl mx-auto mb-3">
+            <StateCard
+              icon={char?.emoji ?? '🐱'}
+              title="返事が少し途切れてしまいました。"
+              description={submitError}
+              tone="warning"
+              align="left"
+            />
           </div>
         )}
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex gap-2 items-end">
