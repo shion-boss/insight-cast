@@ -5,7 +5,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
-import { PageHeader } from '@/components/ui'
+import { PageHeader, StateCard } from '@/components/ui'
 
 type SummaryData = {
   values: string[]
@@ -24,37 +24,48 @@ export default function SummaryPage() {
   const [data, setData] = useState<SummaryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [showMessages, setShowMessages] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
 
     async function load() {
-      const res = await fetch(`/api/projects/${projectId}/interview/summarize`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ interviewId }),
-      })
-      const json = await res.json()
+      try {
+        setLoadError(null)
 
-      const { data: interview } = await supabase
-        .from('interviews')
-        .select('interviewer_type')
-        .eq('id', interviewId)
-        .single()
+        const res = await fetch(`/api/projects/${projectId}/interview/summarize`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ interviewId }),
+        })
+        if (!res.ok) {
+          throw new Error('summary failed')
+        }
+        const json = await res.json()
 
-      const { data: messages } = await supabase
-        .from('interview_messages')
-        .select('role, content')
-        .eq('interview_id', interviewId)
-        .order('created_at', { ascending: true })
+        const { data: interview } = await supabase
+          .from('interviews')
+          .select('interviewer_type')
+          .eq('id', interviewId)
+          .single()
 
-      setData({
-        values: Array.isArray(json.summary) ? json.summary : [],
-        themes: Array.isArray(json.themes) ? json.themes : [],
-        messages: messages ?? [],
-        interviewerType: interview?.interviewer_type ?? 'mint',
-      })
-      setLoading(false)
+        const { data: messages } = await supabase
+          .from('interview_messages')
+          .select('role, content')
+          .eq('interview_id', interviewId)
+          .order('created_at', { ascending: true })
+
+        setData({
+          values: Array.isArray(json.summary) ? json.summary : [],
+          themes: Array.isArray(json.themes) ? json.themes : [],
+          messages: messages ?? [],
+          interviewerType: interview?.interviewer_type ?? 'mint',
+        })
+      } catch {
+        setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [interviewId, projectId, router, supabase])
@@ -64,9 +75,12 @@ export default function SummaryPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <div className="text-center">
-          <div className="text-4xl mb-4 animate-pulse">📝</div>
-          <p className="text-stone-500 text-sm">取材メモを整理しています...</p>
+        <div className="w-full max-w-md px-6">
+          <StateCard
+            icon={<span className="animate-pulse">📝</span>}
+            title="取材メモを整理しています"
+            description="まとまり次第、このまま続きを確認できます。"
+          />
         </div>
       </div>
     )
@@ -77,6 +91,24 @@ export default function SummaryPage() {
       <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
+        {loadError && (
+          <StateCard
+            icon="📝"
+            title="取材メモをまだ開けません。"
+            description={loadError}
+            tone="warning"
+            action={(
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              >
+                もう一度開く
+              </button>
+            )}
+          />
+        )}
+
         <div className="flex items-center gap-3">
           <span className="text-3xl">{char?.emoji ?? '📝'}</span>
           <div>
@@ -100,7 +132,7 @@ export default function SummaryPage() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-stone-400">内容を取得できませんでした</p>
+            <p className="text-sm text-stone-400">もう少し話を重ねると、ここに整理した内容が並びます。</p>
           )}
         </section>
 

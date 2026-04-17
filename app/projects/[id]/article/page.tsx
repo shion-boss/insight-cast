@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { PageHeader, PrimaryButton, SecondaryButton, TextInput } from '@/components/ui'
+import { PageHeader, PrimaryButton, SecondaryButton, StateCard, TextInput } from '@/components/ui'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
@@ -37,6 +37,7 @@ export default function ArticlePage() {
   const [contents, setContents] = useState<Partial<Record<ArticleType, string>>>({})
   const [generating, setGenerating] = useState<ArticleType | null>(null)
   const [copied, setCopied] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
@@ -46,6 +47,7 @@ export default function ArticlePage() {
   const isGenerated = !!currentContent
 
   async function generate() {
+    setError(null)
     setGenerating(tab)
     setContents(prev => ({ ...prev, [tab]: '' }))
 
@@ -61,7 +63,11 @@ export default function ArticlePage() {
       }),
     })
 
-    if (!res.ok || !res.body) { setGenerating(null); return }
+    if (!res.ok || !res.body) {
+      setGenerating(null)
+      setError('記事をまだ用意できませんでした。少し待ってから、もう一度お試しください。')
+      return
+    }
 
     const reader = res.body.getReader()
     const decoder = new TextDecoder()
@@ -115,6 +121,18 @@ export default function ArticlePage() {
         {/* 未生成状態 */}
         {!isGenerated && generating !== tab && (
           <>
+            {error && (
+              <div className="mb-4">
+                <StateCard
+                  icon="✍️"
+                  title="いまは記事を用意できません。"
+                  description={error}
+                  tone="warning"
+                  align="left"
+                />
+              </div>
+            )}
+
             {/* テーマ（共通オプション） */}
             <div className="mb-4">
               <label className="block text-xs text-stone-500 mb-1">テーマ指定（任意）</label>
@@ -185,15 +203,17 @@ export default function ArticlePage() {
 
         {/* 生成中 */}
         {generating === tab && (
-          <div className="bg-white rounded-xl border border-stone-100 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl animate-bounce">{currentTab.emoji}</span>
-              <p className="text-sm text-stone-500">書いています...</p>
-            </div>
-            <pre className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed font-sans">
-              {currentContent || ' '}
-            </pre>
-          </div>
+          <StateCard
+            icon={<span className="animate-bounce inline-block">{currentTab.emoji}</span>}
+            title="記事のたたき台をまとめています"
+            description="いま見えている文章から、そのまま続きを確認できます。"
+            align="left"
+            action={(
+              <pre className="mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed text-stone-700">
+                {currentContent || ' '}
+              </pre>
+            )}
+          />
         )}
 
         {/* 生成済み */}

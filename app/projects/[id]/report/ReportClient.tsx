@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { StateCard } from '@/components/ui'
 
 type Audit = {
   current_content:  string[] | null
@@ -32,6 +33,7 @@ export default function ReportClient({
   const router = useRouter()
   const [status] = useState(initialStatus)
   const [started, setStarted] = useState(false)
+  const [analysisError, setAnalysisError] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   useEffect(() => {
@@ -40,7 +42,10 @@ export default function ReportClient({
     async function startAnalysis() {
       if (started) return
       setStarted(true)
-      await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
+      const res = await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
+      if (!res.ok) {
+        setAnalysisError(true)
+      }
     }
 
     startAnalysis()
@@ -53,6 +58,8 @@ export default function ReportClient({
           clearInterval(pollRef.current!)
           router.refresh()
         }
+      } else {
+        setAnalysisError(true)
       }
     }, 5000)
 
@@ -64,17 +71,30 @@ export default function ReportClient({
   if (status === 'analyzing' || !audit) {
     return (
       <div className="max-w-lg mx-auto px-6 py-16 text-center">
-        <div className="text-4xl mb-6 animate-pulse">🦉</div>
-        <h2 className="text-lg font-semibold text-stone-800 mb-2">クラウスが調査しています</h2>
-        <p className="text-sm text-stone-500 mb-8">
-          完了したらこのページが自動的に更新されます。
-        </p>
-        <div className="bg-white rounded-xl border border-stone-100 p-4 text-left space-y-3 text-sm text-stone-400">
-          <p className="flex items-center gap-2">
-            <span className="animate-spin inline-block">⏳</span>
-            自社HPを読み込んでいます...
-          </p>
-        </div>
+        <StateCard
+          icon={<span className={analysisError ? '' : 'animate-pulse'}>🦉</span>}
+          title={analysisError ? 'いまは調査を続けられていません。' : 'クラウスが調査しています'}
+          description={analysisError
+            ? '少し待ってからページを開き直すと、続きから確認できることがあります。'
+            : '完了したらこのページが自動的に切り替わります。'}
+          tone={analysisError ? 'warning' : 'default'}
+          action={analysisError ? (
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+            >
+              もう一度確認する
+            </button>
+          ) : (
+            <div className="rounded-xl border border-stone-100 bg-white p-4 text-left text-sm text-stone-400">
+              <p className="flex items-center gap-2">
+                <span className="animate-spin inline-block">⏳</span>
+                自社HPを読み込んでいます...
+              </p>
+            </div>
+          )}
+        />
       </div>
     )
   }

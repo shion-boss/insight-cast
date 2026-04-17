@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
-import { PageHeader } from '@/components/ui'
+import { PageHeader, StateCard } from '@/components/ui'
 
 type Output = { id: string; type: string; title: string; content: string }
 
@@ -20,6 +20,7 @@ export default function OutputPage() {
   const [selectedType, setSelectedType] = useState('raw')
   const [generating, setGenerating] = useState<string | null>(null)
   const [characterId, setCharacterId] = useState('mint')
+  const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -42,12 +43,18 @@ export default function OutputPage() {
   }, [sessionId, supabase])
 
   async function generate(type: string) {
+    setError(null)
     setGenerating(type)
     const res = await fetch('/api/interview/output', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId, type }),
     })
+    if (!res.ok) {
+      setGenerating(null)
+      setError('出力をまだ用意できませんでした。少し待ってから、もう一度お試しください。')
+      return
+    }
     const data = await res.json()
     setOutputs((prev) => {
       const exists = prev.find((o) => o.type === type)
@@ -75,6 +82,18 @@ export default function OutputPage() {
       />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
+        {error && (
+          <div className="mb-6">
+            <StateCard
+              icon="📝"
+              title="出力を開けません。"
+              description={error}
+              tone="warning"
+              align="left"
+            />
+          </div>
+        )}
+
         {/* 出力タイプ選択 */}
         <div className="flex gap-2 mb-6">
           {OUTPUT_TYPES.map(({ type, label }) => {
@@ -113,9 +132,11 @@ export default function OutputPage() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-16 text-stone-400">
-            <p className="text-sm">上のボタンで出力を生成できます</p>
-          </div>
+          <StateCard
+            icon="📄"
+            title="まだ出力はありません。"
+            description="上の種類を選ぶと、このインタビューを読みやすい形に整えられます。"
+          />
         )}
       </div>
     </div>

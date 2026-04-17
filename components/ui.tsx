@@ -89,3 +89,40 @@ export function SecondaryButton(props: ComponentPropsWithoutRef<'button'>) {
     />
   )
 }
+
+export function StateCard({
+  icon,
+  title,
+  description,
+  tone = 'default',
+  align = 'center',
+  action,
+}: {
+  icon: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  tone?: 'default' | 'soft' | 'warning'
+  align?: 'center' | 'left'
+  action?: ReactNode
+}) {
+  const toneClass = {
+    default: 'border-stone-100 bg-white',
+    soft: 'border-stone-100 bg-stone-50/80',
+    warning: 'border-amber-100 bg-amber-50/70',
+  }[tone]
+
+  return (
+    <div className={cx(
+      'rounded-2xl border p-6',
+      toneClass,
+      align === 'center' ? 'text-center' : 'text-left',
+    )}>
+      <div className={cx('text-4xl mb-3', align === 'center' ? '' : 'w-fit')}>{icon}</div>
+      <p className="text-base font-medium text-stone-800">{title}</p>
+      {description && (
+        <p className="text-sm text-stone-500 mt-2 leading-relaxed">{description}</p>
+      )}
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  )
+}

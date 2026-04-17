@@ -3,7 +3,7 @@ import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from './logout-button'
-import { PageHeader } from '@/components/ui'
+import { PageHeader, StateCard } from '@/components/ui'
 
 type Project = {
   id: string
@@ -105,11 +105,19 @@ export default async function DashboardPage() {
         </div>
 
         {!projects || projects.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-4xl mb-4">🐱</div>
-            <p className="text-stone-500 text-sm">まだプロジェクトがありません。</p>
-            <p className="text-stone-400 text-sm mt-1">最初の取材を始めてみましょう。</p>
-          </div>
+          <StateCard
+            icon="🐱"
+            title="まだプロジェクトがありません。"
+            description="最初の取材を始めると、ここに進み具合が並びます。"
+            action={(
+              <Link
+                href="/projects/new"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              >
+                最初のプロジェクトを始める
+              </Link>
+            )}
+          />
         ) : (
           <ul className="space-y-3">
             {(projects as Project[]).map((p) => (
