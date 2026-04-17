@@ -75,15 +75,24 @@ function getInterviewState(interview: Interview, hasArticle: boolean) {
 }
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  let supabase
+  let user
+
+  try {
+    supabase = await createClient()
+    const authResult = await supabase.auth.getUser()
+    user = authResult.data.user
+  } catch {
+    redirect('/')
+  }
+
   if (!user) redirect('/')
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('name, onboarded')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!profile?.onboarded) redirect('/onboarding')
 
