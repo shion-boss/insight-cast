@@ -10,7 +10,6 @@ type Profile = {
   url: string | null
   industry_memo: string | null
   location: string | null
-  bio: string | null
   avatar_url: string | null
   competitor_urls: string[]
 }
@@ -21,7 +20,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [profile, setProfile] = useState<Profile>({
-    name: '', url: '', industry_memo: '', location: '', bio: '',
+    name: '', url: '', industry_memo: '', location: '',
     avatar_url: null, competitor_urls: [],
   })
   const [userId, setUserId] = useState<string>('')
@@ -113,7 +112,6 @@ export default function ProfilePage() {
         url:              profile.url,
         industry_memo:    profile.industry_memo,
         location:         profile.location,
-        bio:              profile.bio,
         avatar_url,
         competitor_urls:  profile.competitor_urls,
       })
@@ -172,16 +170,6 @@ export default function ProfilePage() {
             </div>
           ))}
 
-          <div>
-            <label className="block text-xs text-stone-500 mb-1">事業のPR（一言）</label>
-            <textarea
-              value={profile.bio ?? ''}
-              onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
-              placeholder="例: 地元密着30年、家族みんなで楽しめるカフェ"
-              rows={2}
-              className="w-full px-3 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 resize-none"
-            />
-          </div>
         </section>
 
         {/* 競合HP */}
