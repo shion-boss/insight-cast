@@ -88,7 +88,7 @@ export default function SummaryPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
+      <PageHeader title="Insight Cast" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
         {loadError && (
@@ -213,7 +213,7 @@ export default function SummaryPage() {
             もう少し話す
           </Link>
           <Link
-            href="/dashboard"
+            href={`/projects/${projectId}`}
             className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
             いったんここまでにする

@@ -103,7 +103,7 @@ export default function ReportClient({
     <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
         <span className="text-3xl">🦉</span>
-        <p className="text-stone-700 font-medium">調査が完了しました。結果をご覧ください。</p>
+        <p className="text-stone-700 font-medium">調査が完了しました。インタビュー前の準備として結果をご覧ください。</p>
       </div>
 
       {/* 自社HP現状 */}
@@ -206,7 +206,7 @@ export default function ReportClient({
         href={interviewerPath}
         className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
       >
-        インタビューを始める →
+        この内容をもとにインタビューを始める →
       </Link>
     </div>
   )

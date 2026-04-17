@@ -10,8 +10,8 @@ export default function NewProjectPage() {
         <div className="mb-8">
           <StateCard
             icon="🦉"
-            title="まずは、調べたいホームページを教えてください。"
-            description="URLを受け取ると、クラウスが今の見え方を確認します。競合サイトはこの次に登録できます。"
+            title="まずは、取材先のホームページを教えてください。"
+            description="ここでは取材先を登録します。自社HPの確認や競合サイトの比較は、このあと別で見直せます。"
             align="left"
             tone="soft"
           />
@@ -19,7 +19,7 @@ export default function NewProjectPage() {
 
         <form action={createProject} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
           <div>
-            <FieldLabel>プロジェクト名（任意）</FieldLabel>
+            <FieldLabel>取材先名（任意）</FieldLabel>
             <TextInput
               type="text"
               name="name"
@@ -41,7 +41,7 @@ export default function NewProjectPage() {
             type="submit"
             className="w-full py-3 text-sm"
           >
-            クラウスにお願いする
+            取材先を登録する
           </PrimaryButton>
         </form>
       </div>

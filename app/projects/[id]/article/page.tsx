@@ -100,7 +100,7 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
+      <PageHeader title="Insight Cast" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
         {/* タブ */}
@@ -255,6 +255,12 @@ export default function ArticlePage() {
             className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
           >
             取材に戻って話を足す
+          </Link>
+          <Link
+            href={`/projects/${projectId}`}
+            className="mt-3 block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
+          >
+            取材先の管理に戻る
           </Link>
         </div>
       </div>

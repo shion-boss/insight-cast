@@ -43,7 +43,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボードに戻る" />
+      <PageHeader title="Insight Cast" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <ReportClient
         projectId={id}

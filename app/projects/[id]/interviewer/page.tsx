@@ -21,7 +21,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref="/dashboard" />
+      <PageHeader title="Insight Cast" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
