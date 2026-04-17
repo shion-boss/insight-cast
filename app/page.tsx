@@ -7,12 +7,19 @@ import Image from 'next/image'
 import mintPortrait from '@/assets/characters/mint/portraits/portrait-half.png'
 import clausPortrait from '@/assets/characters/claus/portraits/portrait-half.png'
 import rainPortrait from '@/assets/characters/rain/portraits/portrait-half.png'
+import halPortrait from '@/assets/characters/hal/portraits/portrait-half.png'
+import mogroPortrait from '@/assets/characters/mogro/portraits/portrait-half.png'
+import coccoPortrait from '@/assets/characters/cocco/portraits/portrait-half.png'
 
 const featuredCharacters = CHARACTERS.filter((char) => ['mint', 'claus', 'rain'].includes(char.id))
+const allCastCharacters = CHARACTERS.filter((char) => ['mint', 'claus', 'rain', 'hal', 'mogro', 'cocco'].includes(char.id))
 const portraitMap = {
   mint: mintPortrait,
   claus: clausPortrait,
   rain: rainPortrait,
+  hal: halPortrait,
+  mogro: mogroPortrait,
+  cocco: coccoPortrait,
 } as const
 
 const valuePoints = [
@@ -120,6 +127,72 @@ const outputMock = [
   '比較されたときに伝わる「安心の理由」',
 ]
 
+const dashboardSnapshot = [
+  { label: '取材先', value: '12件' },
+  { label: '進行中', value: '3件' },
+  { label: '記事候補', value: '8本' },
+]
+
+const dashboardTimeline = [
+  {
+    title: '○○工務店',
+    status: 'インタビュー完了',
+    detail: 'クラウスが専門性の違いを整理',
+  },
+  {
+    title: '△△サロン',
+    status: '記事ドラフトへ',
+    detail: 'ミントが接客の安心感を抽出',
+  },
+  {
+    title: '□□事務所',
+    status: '比較軸を更新',
+    detail: 'レインが訴求ポイントを再構成',
+  },
+]
+
+const articleSections = [
+  '相談しやすさが伝わる導入文',
+  '選ばれる理由を支える3つの具体例',
+  'お客様の不安を下げる説明パート',
+]
+
+const castFitGuide = [
+  {
+    title: '安心感や接客の魅力を言葉にしたい',
+    members: 'ミント / ハル',
+    description: 'お客様がホッとする理由や、人柄・空気感まで含めて伝えたいときに向いています。',
+  },
+  {
+    title: '専門性や判断基準の違いを見せたい',
+    members: 'クラウス / モグロ',
+    description: '技術・判断・こだわりを深く掘って、比較されたときの理由を強くしたい場面向けです。',
+  },
+  {
+    title: '訴求や告知の切り口を増やしたい',
+    members: 'レイン / コッコ',
+    description: '選ばれる見せ方や、キャンペーン・告知に転換しやすい切り口を整理できます。',
+  },
+]
+
+const interviewerRecommendations = [
+  {
+    concern: 'ホームページが無難で、やさしさや安心感が伝わっていない',
+    characterIds: ['mint', 'hal'],
+    summary: '接客の温度や人柄、来店前の不安を下げる言葉を引き出したいときに向いています。',
+  },
+  {
+    concern: '専門性はあるのに、違いが伝わらず比較で埋もれてしまう',
+    characterIds: ['claus', 'mogro'],
+    summary: '技術・判断・こだわりの背景まで掘って、他社と比べた理由を強くしたい場面向けです。',
+  },
+  {
+    concern: '訴求の切り口やキャンペーンの見せ方をもっと増やしたい',
+    characterIds: ['rain', 'cocco'],
+    summary: '選ばれる見せ方と告知の素材を同時に整理して、更新ネタまで作りたいときに合います。',
+  },
+]
+
 const faqs = [
   {
     question: 'どんな業種でも使えますか？',
@@ -145,8 +218,12 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.16),_transparent_32%),linear-gradient(180deg,_#fffcf5_0%,_#f5f5f4_52%,_#fefefe_100%)] text-stone-900">
-      <header className="sticky top-0 z-20 border-b border-stone-200/80 bg-white/75 backdrop-blur-xl">
+    <div className="relative min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.18),_transparent_28%),radial-gradient(circle_at_80%_12%,_rgba(251,191,36,0.1),_transparent_24%),linear-gradient(180deg,_#fffcf5_0%,_#f5f5f4_50%,_#fffdf8_100%)] text-stone-900">
+      <div className="pointer-events-none absolute left-[-7rem] top-28 h-72 w-72 rounded-full bg-amber-200/20 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute right-[-6rem] top-[34rem] h-80 w-80 rounded-full bg-stone-200/40 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-[56rem] h-px bg-gradient-to-r from-transparent via-stone-200/70 to-transparent" aria-hidden="true" />
+
+      <header className="sticky top-0 z-20 border-b border-stone-200/70 bg-white/72 shadow-[0_8px_30px_rgba(28,25,23,0.04)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2">
@@ -184,26 +261,27 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      <main>
-        <section className="relative overflow-hidden px-6 pb-16 pt-10 sm:pb-20 sm:pt-14">
+      <main className="relative z-10">
+        <section className="relative overflow-hidden px-6 pb-18 pt-10 sm:pb-24 sm:pt-16">
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[28rem] max-w-6xl rounded-[3rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.78),rgba(255,255,255,0.2))]"
+            className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[30rem] max-w-6xl rounded-[3rem] bg-[linear-gradient(135deg,rgba(255,255,255,0.86),rgba(255,255,255,0.24))]"
             aria-hidden="true"
           />
-          <div className="relative mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.1fr)_420px] lg:items-center">
+          <div className="pointer-events-none absolute left-1/2 top-8 h-56 w-56 -translate-x-[160%] rounded-full bg-amber-100/80 blur-3xl" aria-hidden="true" />
+          <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1.08fr)_450px] lg:items-center">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50/80 px-4 py-2 text-xs font-medium tracking-[0.18em] text-amber-800 uppercase">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white/85 px-4 py-2 text-xs font-medium tracking-[0.18em] text-amber-800 uppercase shadow-sm ring-1 ring-amber-100/70">
                 <span className="h-2 w-2 rounded-full bg-amber-500" />
                 Interview-driven Website Messaging
               </div>
-              <h1 className="mt-6 text-4xl font-semibold leading-[1.1] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl">
+              <h1 className="mt-7 text-4xl font-semibold leading-[1.03] tracking-[-0.03em] text-stone-950 sm:text-5xl lg:text-[4.25rem]">
                 当たり前すぎて
                 <br />
                 自分では書けない価値を、
                 <br />
                 AI取材で言葉にする。
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 sm:text-lg">
+              <p className="mt-7 max-w-2xl text-base leading-8 text-stone-600 sm:text-[1.05rem]">
                 Insight Cast は、ホームページと競合をふまえて質問するAI取材班です。
                 事業者さんの中にある判断基準、接客の工夫、選ばれる理由を引き出して、
                 そのまま記事や訴求の素材に変えていきます。
@@ -212,43 +290,44 @@ export default async function LandingPage() {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-2xl bg-stone-900 px-6 py-4 text-sm font-medium text-white transition-transform transition-colors hover:-translate-y-0.5 hover:bg-stone-700"
+                  className="inline-flex items-center justify-center rounded-2xl bg-stone-950 px-6 py-4 text-sm font-medium text-white shadow-[0_14px_34px_rgba(28,25,23,0.18)] transition-transform transition-colors hover:-translate-y-0.5 hover:bg-stone-800"
                 >
                   まずは無料で試す
                 </Link>
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white/90 px-6 py-4 text-sm font-medium text-stone-700 transition-colors hover:bg-white hover:text-stone-900"
+                  className="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white/92 px-6 py-4 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:bg-white hover:text-stone-900"
                 >
                   ログインして続きから
                 </Link>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-2">
                 {proofPoints.map((point) => (
-                  <span key={point} className="rounded-full bg-white/85 px-3 py-1.5 text-xs text-stone-500 ring-1 ring-stone-200">
+                  <span key={point} className="rounded-full bg-white/88 px-3 py-1.5 text-xs text-stone-500 ring-1 ring-stone-200 shadow-[0_6px_18px_rgba(28,25,23,0.03)]">
                     {point}
                   </span>
                 ))}
               </div>
 
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="mt-9 grid gap-3 sm:grid-cols-3">
                 {[
                   ['調査から開始', 'HPと競合候補を見たうえで質問'],
                   ['会話で深掘り', '構えず答えられる短い問いかけ'],
                   ['記事素材化', '見出しと訴求の素までつながる'],
                 ].map(([title, desc]) => (
-                  <div key={title} className="rounded-2xl border border-stone-200 bg-white/72 px-4 py-4 backdrop-blur-sm">
+                  <div key={title} className="rounded-[1.6rem] border border-stone-200/90 bg-white/78 px-4 py-4 shadow-[0_12px_30px_rgba(28,25,23,0.04)] backdrop-blur-sm">
                     <p className="text-sm font-medium text-stone-800">{title}</p>
-                    <p className="mt-1 text-xs leading-5 text-stone-500">{desc}</p>
+                    <p className="mt-1.5 text-xs leading-5 text-stone-500">{desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             <div className="relative">
-              <div className="rounded-[2rem] border border-stone-200 bg-white/90 p-5 shadow-[0_24px_80px_rgba(28,25,23,0.08)] backdrop-blur">
-                <div className="rounded-[1.6rem] bg-stone-900 p-5 text-white">
+              <div className="absolute inset-0 translate-x-4 translate-y-5 rounded-[2rem] bg-amber-100/45 blur-2xl" aria-hidden="true" />
+              <div className="relative rounded-[2.1rem] border border-stone-200/80 bg-white/92 p-5 shadow-[0_28px_80px_rgba(28,25,23,0.1)] backdrop-blur">
+                <div className="rounded-[1.7rem] bg-[linear-gradient(160deg,_#1c1917_0%,_#292524_100%)] p-5 text-white shadow-inner">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs tracking-[0.2em] text-stone-400 uppercase">Live Interview</p>
@@ -293,7 +372,7 @@ export default async function LandingPage() {
                     ['競合比較つき', '違いをそのまま言語化'],
                     ['記事素材まで', '更新の手前まで進める'],
                   ].map(([title, desc]) => (
-                    <div key={title} className="rounded-2xl border border-stone-200 bg-stone-50 px-4 py-4">
+                          <div key={title} className="rounded-2xl border border-stone-200 bg-[linear-gradient(180deg,_#ffffff_0%,_#fafaf9_100%)] px-4 py-4 shadow-sm">
                       <p className="text-sm font-medium text-stone-800">{title}</p>
                       <p className="mt-1 text-xs leading-5 text-stone-500">{desc}</p>
                     </div>
@@ -304,13 +383,16 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section className="px-6 py-8 sm:py-12">
+        <section className="px-6 py-10 sm:py-14">
           <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
-            {valuePoints.map((item) => (
+            {valuePoints.map((item, index) => (
               <div
                 key={item.title}
-                className="rounded-[2rem] border border-stone-200 bg-white/85 p-6 shadow-[0_16px_40px_rgba(28,25,23,0.04)]"
+                className="rounded-[2rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.94),_rgba(250,250,249,0.9))] p-6 shadow-[0_18px_45px_rgba(28,25,23,0.05)]"
               >
+                <div className="inline-flex rounded-full bg-stone-100 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-stone-500 uppercase">
+                  0{index + 1}
+                </div>
                 <p className="text-sm font-semibold text-stone-900">{item.title}</p>
                 <p className="mt-3 text-sm leading-7 text-stone-500">{item.description}</p>
               </div>
@@ -373,7 +455,7 @@ export default async function LandingPage() {
 
             <div className="mt-8 grid gap-4 lg:grid-cols-3">
               {industryExamples.map((item) => (
-                <div key={item.name} className="rounded-[2rem] border border-stone-200 bg-white/88 p-6 shadow-[0_16px_40px_rgba(28,25,23,0.04)]">
+                <div key={item.name} className="rounded-[2rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(248,250,252,0.85))] p-6 shadow-[0_16px_40px_rgba(28,25,23,0.04)]">
                   <p className="text-sm font-semibold text-stone-900">{item.name}</p>
                   <p className="mt-4 text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">よくある状態</p>
                   <p className="mt-2 text-sm leading-7 text-stone-500">{item.issue}</p>
@@ -405,10 +487,7 @@ export default async function LandingPage() {
                 const char = CHARACTERS.find((item) => item.id === step.characterId)
 
                 return (
-                  <div
-                    key={step.number}
-                    className="flex gap-4 rounded-[2rem] border border-stone-200 bg-white/88 p-5 shadow-[0_12px_30px_rgba(28,25,23,0.04)]"
-                  >
+                  <div key={step.number} className="flex gap-4 rounded-[2rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.97),_rgba(250,250,249,0.9))] p-5 shadow-[0_16px_36px_rgba(28,25,23,0.05)]">
                     <div className="flex flex-col items-center gap-3">
                       <span className="rounded-full bg-stone-900 px-3 py-1 text-xs font-medium tracking-[0.16em] text-white">
                         {step.number}
@@ -449,7 +528,7 @@ export default async function LandingPage() {
                 {interviewMock.map((item) => (
                   <div
                     key={`${item.role}-${item.content}`}
-                    className={`max-w-xl rounded-[1.75rem] px-5 py-4 text-sm leading-7 shadow-sm ${
+                    className={`max-w-xl rounded-[1.75rem] px-5 py-4 text-sm leading-7 shadow-[0_10px_28px_rgba(28,25,23,0.05)] ${
                       item.role === 'interviewer'
                         ? 'border border-stone-200 bg-white text-stone-700'
                         : 'ml-auto bg-stone-900 text-white'
@@ -464,7 +543,7 @@ export default async function LandingPage() {
               </div>
             </div>
 
-            <div className="rounded-[2rem] border border-amber-200 bg-[linear-gradient(160deg,_#fff8e6_0%,_#fffdf8_100%)] p-6 shadow-[0_18px_50px_rgba(245,158,11,0.08)]">
+            <div className="rounded-[2rem] border border-amber-200 bg-[linear-gradient(160deg,_#fff8e6_0%,_#fffdf8_100%)] p-6 shadow-[0_22px_55px_rgba(245,158,11,0.1)]">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-medium tracking-[0.2em] text-amber-700 uppercase">Output Snapshot</p>
@@ -513,18 +592,62 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section className="px-6 py-16">
-          <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-stone-200 bg-stone-900 px-6 py-8 text-white sm:px-8 sm:py-10">
+        <section className="px-6 py-10 sm:py-14">
+          <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(245,245,244,0.9))] p-6 shadow-[0_22px_60px_rgba(28,25,23,0.06)] sm:p-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Who To Start With</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
+                いまの悩みから、
+                <br />
+                最初の取材班を選べます。
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-stone-500 sm:text-base">
+                6人いると迷いやすいので、「今どこを強くしたいか」から選べる形にしています。最初の1回は、いちばん困っている課題に近い取材班から始めるのがおすすめです。
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+              {interviewerRecommendations.map((item) => (
+                <div key={item.concern} className="rounded-[1.75rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(245,245,244,0.92))] p-5 shadow-sm">
+                  <p className="text-sm font-medium leading-7 text-stone-900">{item.concern}</p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {item.characterIds.map((id) => {
+                      const char = CHARACTERS.find((entry) => entry.id === id)
+                      if (!char) return null
+
+                      return (
+                        <div key={char.id} className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-white px-3 py-2">
+                          <CharacterAvatar
+                            src={char.icon48}
+                            alt={`${char.name}のアイコン`}
+                            emoji={char.emoji}
+                            size={28}
+                            className="border-stone-100"
+                          />
+                          <span className="text-xs font-medium text-stone-700">{char.name}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <p className="mt-4 text-sm leading-7 text-stone-500">{item.summary}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 py-18">
+          <div className="mx-auto max-w-6xl rounded-[2.7rem] border border-stone-200 bg-[linear-gradient(180deg,_#1c1917_0%,_#292524_100%)] px-6 py-8 text-white shadow-[0_32px_90px_rgba(28,25,23,0.16)] sm:px-8 sm:py-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
                 <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">Cast</p>
                 <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                  取材の角度が違う3人で、
+                  6人の取材班から、
                   <br />
-                  ひとつの魅力を立体的に拾います。
+                  今ほしい視点を選べます。
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-stone-300 sm:text-base">
-                  やさしく聞く、深く見る、伝わり方を整える。
+                  やさしく聞く、深く見る、伝わり方を整える、写真から人柄をひらく、言い切れない核を掘る、告知の材料へ変える。
                   同じ質問を繰り返すのではなく、役割の違うインタビュアーが別の面を引き出します。
                 </p>
               </div>
@@ -536,9 +659,9 @@ export default async function LandingPage() {
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {featuredCharacters.map((char) => (
-                <div key={char.id} className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/6">
+            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {allCastCharacters.map((char) => (
+                <div key={char.id} className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/6 shadow-[0_14px_34px_rgba(0,0,0,0.12)]">
                   <div className="relative h-56 overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.22),_transparent_60%)]">
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-stone-950/70" />
                     <Image
@@ -574,6 +697,16 @@ export default async function LandingPage() {
                 </div>
               ))}
             </div>
+
+            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+              {castFitGuide.map((item) => (
+                <div key={item.title} className="rounded-[1.75rem] border border-white/10 bg-white/6 p-5 shadow-sm">
+                  <p className="text-sm font-medium text-white">{item.title}</p>
+                  <p className="mt-3 text-xs font-medium tracking-[0.16em] text-amber-300 uppercase">{item.members}</p>
+                  <p className="mt-2 text-sm leading-7 text-stone-300">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -591,7 +724,7 @@ export default async function LandingPage() {
 
             <div className="space-y-3">
               {faqs.map((faq) => (
-                <div key={faq.question} className="rounded-[1.75rem] border border-stone-200 bg-white/88 p-5">
+                <div key={faq.question} className="rounded-[1.75rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.96),_rgba(250,250,249,0.92))] p-5 shadow-sm">
                   <p className="text-sm font-medium text-stone-900 sm:text-base">{faq.question}</p>
                   <p className="mt-2 text-sm leading-7 text-stone-500">{faq.answer}</p>
                 </div>
@@ -600,8 +733,124 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <section className="px-6 pb-16 pt-4 sm:pb-20">
-          <div className="mx-auto max-w-5xl rounded-[2.5rem] border border-amber-200 bg-[linear-gradient(135deg,_#fff7db_0%,_#fffaf0_45%,_#ffffff_100%)] px-6 py-10 text-center shadow-[0_24px_80px_rgba(245,158,11,0.12)] sm:px-10">
+        <section className="px-6 py-10 sm:py-14">
+          <div className="mx-auto max-w-6xl rounded-[2.75rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,255,255,0.95),_rgba(245,245,244,0.92))] p-6 shadow-[0_30px_95px_rgba(28,25,23,0.08)] sm:p-8">
+            <div className="max-w-2xl">
+              <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Product Preview</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
+                取材のあと、
+                <br />
+                管理画面ではこう見えてきます。
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-stone-500 sm:text-base">
+                どの取材先が進んでいて、何が記事の素として残っているかを、そのまま追いかけられる構成です。
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+              <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-[linear-gradient(180deg,_#111827_0%,_#0f172a_100%)] text-white shadow-[0_22px_60px_rgba(15,23,42,0.18)]">
+                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                  <div>
+                    <p className="text-xs tracking-[0.18em] text-stone-500 uppercase">Dashboard Preview</p>
+                    <p className="mt-1 text-lg font-medium">Insight Cast</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {featuredCharacters.map((char) => (
+                      <CharacterAvatar
+                        key={char.id}
+                        src={char.icon48}
+                        alt={`${char.name}のアイコン`}
+                        emoji={char.emoji}
+                        size={32}
+                        className="border-white/10 bg-white/10"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 p-5 lg:grid-cols-[220px_minmax(0,1fr)]">
+                  <div className="space-y-3">
+                    {dashboardSnapshot.map((item) => (
+                      <div key={item.label} className="rounded-2xl border border-white/10 bg-white/6 px-4 py-4">
+                        <p className="text-xs text-stone-400">{item.label}</p>
+                        <p className="mt-2 text-2xl font-semibold text-white">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="rounded-[1.75rem] border border-white/10 bg-white/6 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-white">最近の進行状況</p>
+                        <p className="mt-1 text-xs text-stone-400">インタビューから記事候補までを一覧で確認</p>
+                      </div>
+                      <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs text-emerald-300">
+                        live
+                      </span>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      {dashboardTimeline.map((item) => (
+                        <div key={item.title} className="flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-stone-900/40 px-4 py-4">
+                          <div>
+                            <p className="text-sm font-medium text-white">{item.title}</p>
+                            <p className="mt-1 text-xs leading-5 text-stone-400">{item.detail}</p>
+                          </div>
+                          <span className="rounded-full bg-white/8 px-3 py-1 text-xs text-stone-300">
+                            {item.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] border border-amber-200 bg-[linear-gradient(180deg,_#fff9ea_0%,_#ffffff_100%)] p-5 shadow-[0_18px_40px_rgba(245,158,11,0.08)]">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs tracking-[0.18em] text-amber-700 uppercase">Article Draft Preview</p>
+                    <p className="mt-1 text-xl font-semibold text-stone-900">公開前のドラフト画面</p>
+                  </div>
+                  <div className="rounded-full bg-stone-900 px-3 py-1 text-xs text-white">
+                    Draft
+                  </div>
+                </div>
+
+                <div className="mt-5 rounded-[1.75rem] border border-amber-100 bg-white p-5 shadow-sm">
+                  <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">Headline</p>
+                  <h3 className="mt-2 text-2xl font-semibold leading-9 text-stone-900">
+                    「急かさず話を聞く」から始まる、
+                    <br />
+                    相談しやすい会社のつくり方
+                  </h3>
+                  <p className="mt-4 text-sm leading-7 text-stone-500">
+                    インタビューから出てきた表現をもとに、読み手に伝わる順序へ並び替えたドラフトです。
+                  </p>
+                </div>
+
+                <div className="mt-4 space-y-3">
+                  {articleSections.map((item, index) => (
+                    <div key={item} className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-white/90 px-4 py-4">
+                      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-medium text-amber-700">
+                        {index + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-stone-800">{item}</p>
+                        <p className="mt-1 text-xs leading-5 text-stone-400">
+                          取材メモから見出し候補と本文の芯を自動で整理
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 pb-18 pt-6 sm:pb-24">
+          <div className="mx-auto max-w-5xl rounded-[2.8rem] border border-amber-200 bg-[linear-gradient(135deg,_#fff7db_0%,_#fffaf0_42%,_#ffffff_100%)] px-6 py-12 text-center shadow-[0_30px_95px_rgba(245,158,11,0.16)] sm:px-10">
             <div className="flex justify-center gap-3">
               {featuredCharacters.map((char) => (
                 <CharacterAvatar
@@ -614,7 +863,7 @@ export default async function LandingPage() {
                 />
               ))}
             </div>
-            <h2 className="mt-6 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
+            <h2 className="mt-6 text-3xl font-semibold tracking-[-0.02em] text-stone-950 sm:text-[2.6rem]">
               まずは1回、AI取材を受けてみてください。
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base">
@@ -624,13 +873,13 @@ export default async function LandingPage() {
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 href="/auth/signup"
-                className="inline-flex items-center justify-center rounded-2xl bg-stone-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-stone-700"
+                className="inline-flex items-center justify-center rounded-2xl bg-stone-950 px-6 py-4 text-sm font-medium text-white shadow-[0_14px_34px_rgba(28,25,23,0.18)] transition-colors hover:bg-stone-800"
               >
                 無料で始める
               </Link>
               <Link
                 href="/auth/login"
-                className="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white px-6 py-4 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                className="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white px-6 py-4 text-sm font-medium text-stone-700 shadow-sm transition-colors hover:bg-stone-50"
               >
                 ログイン
               </Link>
