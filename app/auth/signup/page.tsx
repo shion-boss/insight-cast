@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -35,14 +36,14 @@ export default function SignupPage() {
   if (sent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-        <div className="w-full max-w-sm text-center">
-          <div className="text-4xl mb-4">📬</div>
-          <h2 className="text-lg font-semibold text-stone-800 mb-2">確認メールを送りました</h2>
-          <p className="text-sm text-stone-500">
-            <strong>{email}</strong> に確認メールを送りました。<br />
-            メール内のリンクをクリックしてログインしてください。
-          </p>
-          <Link href="/auth/login" className="inline-block mt-6 text-sm text-stone-500 underline">
+      <div className="w-full max-w-sm text-center">
+        <div className="text-4xl mb-4">📬</div>
+        <h2 className="text-lg font-semibold text-stone-800 mb-2">確認メールを送りました</h2>
+        <p className="text-sm text-stone-500">
+          <strong>{email}</strong> に確認メールを送りました。<br />
+          メール内のリンクをクリックしてログインしてください。
+        </p>
+          <Link href="/auth/login" className="inline-block mt-6 text-sm text-stone-500 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
             ログインページへ
           </Link>
         </div>
@@ -54,57 +55,58 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-xl font-semibold text-stone-800">Insight Cast</Link>
+          <Link href="/" className="text-xl font-semibold text-stone-800 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
+            Insight Cast
+          </Link>
           <p className="text-sm text-stone-400 mt-2">アカウントを作成してはじめましょう</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
           <div>
-            <label className="block text-sm text-stone-600 mb-1">メールアドレス</label>
-            <input
+            <FieldLabel>メールアドレス</FieldLabel>
+            <TextInput
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
             />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">パスワード（8文字以上）</label>
-            <input
+            <FieldLabel>パスワード（8文字以上）</FieldLabel>
+            <TextInput
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={8}
               required
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
             />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">パスワード（確認）</label>
-            <input
+            <FieldLabel>パスワード（確認）</FieldLabel>
+            <TextInput
               type="password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
             />
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button
+          <PrimaryButton
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors text-sm"
+            className="w-full py-3 text-sm"
           >
-            {loading ? '処理中...' : '登録する'}
-          </button>
+            {loading ? '登録中...' : '登録する'}
+          </PrimaryButton>
         </form>
 
         <p className="text-center text-sm text-stone-400 mt-4">
           すでにアカウントをお持ちの方は
-          <Link href="/auth/login" className="text-stone-600 underline ml-1">ログイン</Link>
+          <Link href="/auth/login" className="text-stone-600 underline ml-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
+            ログイン
+          </Link>
         </p>
       </div>
     </div>

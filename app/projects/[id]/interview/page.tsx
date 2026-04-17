@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -31,8 +31,69 @@ export default function InterviewPage() {
   const [userTurns, setUserTurns] = useState(0)
   const [showComplete, setShowComplete] = useState(false)
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
+  const [streamingMessage, setStreamingMessage] = useState('')
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, loading])
+
+  const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean }) => {
+    setSubmitError(null)
+    setLoading(true)
+    setStreamingMessage('')
+
+    const shouldAppendUser = Boolean(userText && !opts?.alreadyDisplayed)
+
+    if (shouldAppendUser && userText) {
+      setMessages((prev) => [...prev, { role: 'user', content: userText }])
+      setUserTurns((t) => t + 1)
+    }
+
+    try {
+      const res = await fetch(`/api/projects/${projectId}/interview/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ interviewId, userMessage: userText ?? '__GREETING__' }),
+      })
+
+      if (!res.ok || !res.body) {
+        throw new Error('request failed')
+      }
+
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder()
+      let text = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        text += decoder.decode(value)
+        setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim())
+      }
+
+      const finalText = text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
+      if (finalText) {
+        setMessages((prev) => [...prev, { role: 'interviewer', content: finalText }])
+      }
+      setStreamingMessage('')
+      setTimeout(() => textareaRef.current?.focus(), 50)
+    } catch {
+      if (shouldAppendUser) {
+        setMessages((prev) => prev.slice(0, -1))
+        setUserTurns((t) => Math.max(0, t - 1))
+      }
+      if (userText && !opts?.alreadyDisplayed) {
+        setInput(userText)
+      }
+      setStreamingMessage('')
+      setSubmitError('返事を受け取れませんでした。少し待ってから、もう一度送信してください。')
+    } finally {
+      setLoading(false)
+    }
+  }, [interviewId, projectId])
 
   useEffect(() => {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
@@ -59,50 +120,10 @@ export default function InterviewPage() {
         await sendMessageToAI(null)
       }
       setInitializing(false)
+      setTimeout(() => textareaRef.current?.focus(), 50)
     }
     init()
-  }, [interviewId])
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
-
-  async function sendMessageToAI(userText: string | null, opts?: { alreadyDisplayed?: boolean }) {
-    setLoading(true)
-
-    if (userText && !opts?.alreadyDisplayed) {
-      setMessages(prev => [...prev, { role: 'user', content: userText }])
-      setUserTurns(t => t + 1)
-    }
-
-    const res = await fetch(`/api/projects/${projectId}/interview/chat`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ interviewId, userMessage: userText ?? '__GREETING__' }),
-    })
-
-    if (!res.ok || !res.body) { setLoading(false); return }
-
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-    let text = ''
-    setMessages(prev => [...prev, { role: 'interviewer', content: '' }])
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      text += decoder.decode(value)
-      const displayText = text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
-      setMessages(prev => {
-        const updated = [...prev]
-        updated[updated.length - 1] = { role: 'interviewer', content: displayText }
-        return updated
-      })
-    }
-
-    setLoading(false)
-    setTimeout(() => textareaRef.current?.focus(), 50)
-  }
+  }, [interviewId, projectId, router, sendMessageToAI, supabase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -172,7 +193,7 @@ export default function InterviewPage() {
         </div>
         <button
           onClick={handleManualFinish}
-          className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-500 hover:bg-stone-50 cursor-pointer transition-colors"
+          className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-500 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors"
         >
           インタビューを終わらせる
         </button>
@@ -216,13 +237,15 @@ export default function InterviewPage() {
             </div>
           </div>
         ))}
-        {loading && (
+        {(loading || streamingMessage) && (
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center text-sm flex-shrink-0">
               {char?.emoji}
             </div>
             <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
-              <span className="text-stone-400 text-sm">...</span>
+              <span className="text-stone-500 text-sm whitespace-pre-wrap leading-relaxed">
+                {streamingMessage || '考えをまとめています...'}
+              </span>
             </div>
           </div>
         )}
@@ -231,6 +254,11 @@ export default function InterviewPage() {
 
       {/* 入力欄 */}
       <div className="bg-white border-t border-stone-100 px-4 py-4 flex-shrink-0">
+        {submitError && (
+          <div className="max-w-2xl mx-auto mb-3 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+            {submitError}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex gap-2 items-end">
           <textarea
             ref={textareaRef}
@@ -248,9 +276,9 @@ export default function InterviewPage() {
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors flex-shrink-0"
+            className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors flex-shrink-0"
           >
-            送信 ✨
+            {loading ? '送信中...' : '送信 ✨'}
           </button>
         </form>
       </div>
@@ -269,13 +297,13 @@ export default function InterviewPage() {
             <div className="space-y-2">
               <button
                 onClick={handleFinish}
-                className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 cursor-pointer transition-colors"
+                className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors"
               >
                 はい、まとめてください
               </button>
               <button
                 onClick={handleContinue}
-                className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 cursor-pointer transition-colors"
+                className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-xl cursor-pointer transition-colors"
               >
                 もう少し話す
               </button>

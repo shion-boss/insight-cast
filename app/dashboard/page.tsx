@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import LogoutButton from './logout-button'
+import { PageHeader } from '@/components/ui'
 
 type Project = {
   id: string
@@ -77,25 +79,25 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-stone-800">Insight Cast</span>
-        <div className="flex items-center gap-4">
-          <Link href="/settings" className="text-sm text-stone-400 hover:text-stone-600">
-            {profile?.name ?? user.email}
-          </Link>
-          <form action={signOut}>
-            <button type="submit" className="text-sm text-stone-400 hover:text-stone-600 cursor-pointer">
-              ログアウト
-            </button>
-          </form>
-        </div>
-      </header>
+      <PageHeader
+        title="Insight Cast"
+        right={(
+          <div className="flex items-center gap-4">
+            <Link href="/settings" className="rounded-md text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors">
+              {profile?.name ?? user.email}
+            </Link>
+            <form action={signOut}>
+              <LogoutButton />
+            </form>
+          </div>
+        )}
+      />
 
       <main className="max-w-2xl mx-auto px-6 py-8">
         <div className="mb-6">
           <Link
             href="/projects/new"
-            className="w-full flex items-center justify-center gap-2 py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm"
+            className="w-full flex items-center justify-center gap-2 py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm"
           >
             <span className="text-lg">+</span>
             新しいプロジェクトを始める
@@ -114,7 +116,7 @@ export default async function DashboardPage() {
               <li key={p.id}>
                 <Link
                   href={nextHref(p, interviewMap[p.id] ?? null)}
-                  className="flex items-center justify-between p-4 bg-white rounded-xl border border-stone-100 hover:border-stone-300 transition-colors"
+                  className="flex items-center justify-between p-4 bg-white rounded-xl border border-stone-100 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
                 >
                   <div>
                     <p className="text-sm font-medium text-stone-800">{p.name || p.hp_url}</p>

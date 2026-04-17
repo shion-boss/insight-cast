@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import { completeSession } from '@/lib/actions/interview'
@@ -10,7 +10,6 @@ type Message = { role: 'user' | 'assistant'; content: string }
 
 export default function InterviewPage() {
   const { sessionId } = useParams<{ sessionId: string }>()
-  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -18,6 +17,47 @@ export default function InterviewPage() {
   const [initializing, setInitializing] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+
+  const sendMessage = useCallback(async (userText: string | null) => {
+    setLoading(true)
+
+    if (userText) {
+      setMessages((prev) => [...prev, { role: 'user', content: userText }])
+    }
+
+    const res = await fetch('/api/interview/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        userMessage: userText ?? '__GREETING__',
+      }),
+    })
+
+    if (!res.ok || !res.body) {
+      setLoading(false)
+      return
+    }
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    let text = ''
+
+    setMessages((prev) => [...prev, { role: 'assistant', content: '' }])
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      text += decoder.decode(value)
+      setMessages((prev) => {
+        const updated = [...prev]
+        updated[updated.length - 1] = { role: 'assistant', content: text }
+        return updated
+      })
+    }
+
+    setLoading(false)
+  }, [sessionId])
 
   useEffect(() => {
     async function init() {
@@ -39,56 +79,16 @@ export default function InterviewPage() {
       if (history && history.length > 0) {
         setMessages(history as Message[])
       } else {
-        // 初回: ミントの挨拶
-        await sendMessage(null, session?.character_id ?? 'mint')
+        await sendMessage(null)
       }
       setInitializing(false)
     }
     init()
-  }, [sessionId])
+  }, [sendMessage, sessionId, supabase])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
-
-  async function sendMessage(userText: string | null, charId?: string) {
-    setLoading(true)
-
-    if (userText) {
-      setMessages((prev) => [...prev, { role: 'user', content: userText }])
-    }
-
-    const res = await fetch('/api/interview/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId,
-        userMessage: userText ?? '__GREETING__',
-      }),
-    })
-
-    if (!res.ok || !res.body) { setLoading(false); return }
-
-    // ストリーミング表示
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-    let text = ''
-
-    setMessages((prev) => [...prev, { role: 'assistant', content: '' }])
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      text += decoder.decode(value)
-      setMessages((prev) => {
-        const updated = [...prev]
-        updated[updated.length - 1] = { role: 'assistant', content: text }
-        return updated
-      })
-    }
-
-    setLoading(false)
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()

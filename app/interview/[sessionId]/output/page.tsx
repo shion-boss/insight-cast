@@ -39,7 +39,7 @@ export default function OutputPage() {
       if (data) setOutputs(data)
     }
     load()
-  }, [sessionId])
+  }, [sessionId, supabase])
 
   async function generate(type: string) {
     setGenerating(type)

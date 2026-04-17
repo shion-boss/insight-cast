@@ -2,7 +2,7 @@ import { CHARACTERS } from '@/lib/characters'
 import { createInterview } from '@/lib/actions/interviews'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import { PageHeader } from '@/components/ui'
 
 export default async function InterviewerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -21,10 +21,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-stone-800">Insight Cast</span>
-        <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-600">← 戻る</Link>
-      </header>
+      <PageHeader title="Insight Cast" backHref="/dashboard" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
@@ -37,7 +34,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
             <form key={char.id} action={createInterview.bind(null, id, char.id)}>
               <button
                 type="submit"
-                className="w-full text-left p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-400 hover:shadow-sm cursor-pointer transition-all"
+                className="w-full text-left p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-all"
               >
                 <div className="text-4xl mb-3">{char.emoji}</div>
                 <div className="font-medium text-stone-800 text-sm">{char.name}</div>

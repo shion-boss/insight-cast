@@ -56,7 +56,7 @@ export default function SummaryPage() {
       setLoading(false)
     }
     load()
-  }, [interviewId, projectId])
+  }, [interviewId, projectId, router, supabase])
 
   const char = data ? getCharacter(data.interviewerType) : null
 

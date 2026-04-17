@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -33,46 +34,48 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-xl font-semibold text-stone-800">Insight Cast</Link>
+          <Link href="/" className="text-xl font-semibold text-stone-800 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
+            Insight Cast
+          </Link>
           <p className="text-sm text-stone-400 mt-2">おかえりなさい</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
           <div>
-            <label className="block text-sm text-stone-600 mb-1">メールアドレス</label>
-            <input
+            <FieldLabel>メールアドレス</FieldLabel>
+            <TextInput
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
             />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">パスワード</label>
-            <input
+            <FieldLabel>パスワード</FieldLabel>
+            <TextInput
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
             />
           </div>
 
           {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button
+          <PrimaryButton
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors text-sm"
+            className="w-full py-3 text-sm"
           >
-            {loading ? '処理中...' : 'ログインする'}
-          </button>
+            {loading ? 'ログイン中...' : 'ログインする'}
+          </PrimaryButton>
         </form>
 
         <p className="text-center text-sm text-stone-400 mt-4">
           アカウントをお持ちでない方は
-          <Link href="/auth/signup" className="text-stone-600 underline ml-1">新規登録</Link>
+          <Link href="/auth/signup" className="text-stone-600 underline ml-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
+            新規登録
+          </Link>
         </p>
       </div>
     </div>

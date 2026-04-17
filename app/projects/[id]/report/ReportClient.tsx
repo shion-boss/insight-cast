@@ -30,7 +30,7 @@ export default function ReportClient({
   projectId, initialStatus, audit, competitorAnalyses, interviewerPath,
 }: Props) {
   const router = useRouter()
-  const [status, setStatus] = useState(initialStatus)
+  const [status] = useState(initialStatus)
   const [started, setStarted] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 

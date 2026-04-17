@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { completeOnboarding } from '@/lib/actions/onboarding'
+import { FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
@@ -26,29 +27,24 @@ export default async function OnboardingPage() {
 
         <form action={completeOnboarding} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
           <div>
-            <label className="block text-sm text-stone-600 mb-1">店舗・企業名 <span className="text-red-400">*</span></label>
-            <input type="text" name="name" required placeholder="例: 山田工務店"
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" />
+            <FieldLabel required>店舗・企業名</FieldLabel>
+            <TextInput type="text" name="name" required placeholder="例: 山田工務店" />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">自社HP URL <span className="text-red-400">*</span></label>
-            <input type="url" name="url" required placeholder="https://example.com"
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" />
+            <FieldLabel required>自社HP URL</FieldLabel>
+            <TextInput type="url" name="url" required placeholder="https://example.com" />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">業種</label>
-            <input type="text" name="industry_memo" placeholder="例: 地域の工務店、カフェ、整骨院"
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" />
+            <FieldLabel>業種</FieldLabel>
+            <TextInput type="text" name="industry_memo" placeholder="例: 地域の工務店、カフェ、整骨院" />
           </div>
           <div>
-            <label className="block text-sm text-stone-600 mb-1">地域</label>
-            <input type="text" name="location" placeholder="例: 大阪府吹田市"
-              className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" />
+            <FieldLabel>地域</FieldLabel>
+            <TextInput type="text" name="location" placeholder="例: 大阪府吹田市" />
           </div>
-          <button type="submit"
-            className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 cursor-pointer transition-colors text-sm mt-2">
+          <PrimaryButton type="submit" className="w-full py-3 text-sm mt-2">
             はじめる
-          </button>
+          </PrimaryButton>
         </form>
       </div>
     </div>
