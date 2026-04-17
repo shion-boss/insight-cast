@@ -1,3 +1,4 @@
+import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
@@ -123,6 +124,80 @@ export function StateCard({
         <p className="text-sm text-stone-500 mt-2 leading-relaxed">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
+    </div>
+  )
+}
+
+export function CharacterAvatar({
+  src,
+  alt,
+  emoji,
+  size = 40,
+  className,
+}: {
+  src?: StaticImageData
+  alt: string
+  emoji?: string
+  size?: number
+  className?: string
+}) {
+  return (
+    <div
+      className={cx(
+        'overflow-hidden rounded-full border border-stone-200 bg-white flex items-center justify-center flex-shrink-0',
+        className,
+      )}
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      {src ? (
+        <Image src={src} alt={alt} width={size} height={size} className="h-full w-full object-cover" />
+      ) : (
+        <span className="text-lg">{emoji ?? '🙂'}</span>
+      )}
+    </div>
+  )
+}
+
+export function InterviewerSpeech({
+  icon,
+  name,
+  title,
+  description,
+  tone = 'default',
+}: {
+  icon: ReactNode
+  name?: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  tone?: 'default' | 'soft'
+}) {
+  const bubbleClass = tone === 'soft'
+    ? 'border-amber-100 bg-amber-50/70'
+    : 'border-stone-100 bg-white'
+  const pointerClass = tone === 'soft'
+    ? 'border-l-amber-100 border-b-amber-100 bg-amber-50/70'
+    : 'border-l-stone-100 border-b-stone-100 bg-white'
+
+  return (
+    <div className="flex items-start gap-3">
+      {icon}
+      <div className="relative min-w-0 flex-1">
+        <div
+          className={cx(
+            'absolute left-0 top-4 h-3 w-3 -translate-x-[7px] rotate-45 border-l border-b',
+            pointerClass,
+          )}
+          aria-hidden="true"
+        />
+        <div className={cx('rounded-[24px] border px-5 py-4 shadow-sm', bubbleClass)}>
+          {name && <p className="text-xs font-medium text-stone-400 mb-1">{name}</p>}
+          <p className="text-sm font-medium text-stone-800 leading-relaxed">{title}</p>
+          {description && (
+            <p className="text-sm text-stone-500 mt-1.5 leading-relaxed">{description}</p>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

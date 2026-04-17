@@ -1,3 +1,18 @@
+import type { StaticImageData } from 'next/image'
+
+import mintIcon48 from '@/assets/characters/mint/icons/icon-48.png'
+import mintIcon96 from '@/assets/characters/mint/icons/icon-96.png'
+import clausIcon48 from '@/assets/characters/claus/icons/icon-48.png'
+import clausIcon96 from '@/assets/characters/claus/icons/icon-96.png'
+import rainIcon48 from '@/assets/characters/rain/icons/icon-48.png'
+import rainIcon96 from '@/assets/characters/rain/icons/icon-96.png'
+import halIcon48 from '@/assets/characters/hal/icons/icon-48.png'
+import halIcon96 from '@/assets/characters/hal/icons/icon-96.png'
+import mogroIcon48 from '@/assets/characters/mogro/icons/icon-48.png'
+import mogroIcon96 from '@/assets/characters/mogro/icons/icon-96.png'
+import coccoIcon48 from '@/assets/characters/cocco/icons/icon-48.png'
+import coccoIcon96 from '@/assets/characters/cocco/icons/icon-96.png'
+
 export type Character = {
   id: string
   name: string
@@ -7,6 +22,8 @@ export type Character = {
   description: string
   specialty: string
   available: boolean
+  icon48: StaticImageData
+  icon96: StaticImageData
 }
 
 export const CHARACTERS: Character[] = [
@@ -19,6 +36,8 @@ export const CHARACTERS: Character[] = [
     description: '親しみやすい雰囲気で、お客様目線の話を引き出します',
     specialty: '安心感・気づかい・サービスの温かさ',
     available: true,
+    icon48: mintIcon48,
+    icon96: mintIcon96,
   },
   {
     id: 'claus',
@@ -29,6 +48,8 @@ export const CHARACTERS: Character[] = [
     description: '業種の知識をもとに、技術的な違いを掘り起こします',
     specialty: '専門性・判断基準・他社との違い',
     available: true,
+    icon48: clausIcon48,
+    icon96: clausIcon96,
   },
   {
     id: 'rain',
@@ -39,6 +60,8 @@ export const CHARACTERS: Character[] = [
     description: 'マーケティング視点で、差別化ポイントを引き出します',
     specialty: '訴求ポイント・強みの言語化・差別化',
     available: true,
+    icon48: rainIcon48,
+    icon96: rainIcon96,
   },
   {
     id: 'hal',
@@ -49,6 +72,8 @@ export const CHARACTERS: Character[] = [
     description: '人柄・雰囲気・魅力',
     specialty: '人柄・ストーリー・雰囲気',
     available: false,
+    icon48: halIcon48,
+    icon96: halIcon96,
   },
   {
     id: 'mogro',
@@ -59,6 +84,8 @@ export const CHARACTERS: Character[] = [
     description: '言い切れていない核の深掘り',
     specialty: '本質の深掘り・言語化',
     available: false,
+    icon48: mogroIcon48,
+    icon96: mogroIcon96,
   },
   {
     id: 'cocco',
@@ -69,6 +96,8 @@ export const CHARACTERS: Character[] = [
     description: '宣伝・セール・イベント告知',
     specialty: 'プロモーション・キャンペーン',
     available: false,
+    icon48: coccoIcon48,
+    icon96: coccoIcon96,
   },
 ]
 

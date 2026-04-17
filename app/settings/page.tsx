@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { getCharacter } from '@/lib/characters'
 import { useRouter } from 'next/navigation'
-import { PageHeader, PrimaryButton, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, PrimaryButton } from '@/components/ui'
 
 type AuditResult = {
   current_content?: string[]
@@ -47,6 +48,8 @@ function normalizeForm(form: SettingsForm) {
 export default function SettingsPage() {
   const router = useRouter()
   const supabase = createClient()
+  const mint = getCharacter('mint')
+  const claus = getCharacter('claus')
 
   const [userId, setUserId] = useState('')
   const [form, setForm] = useState<SettingsForm>(EMPTY_FORM)
@@ -208,10 +211,19 @@ export default function SettingsPage() {
         <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
         <div className="max-w-lg mx-auto px-6 py-10">
-          <StateCard
-            icon="🐱"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={mint?.icon48}
+                alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={mint?.emoji}
+                size={48}
+              />
+            )}
+            name={mint?.name ?? 'インタビュアー'}
             title="いまのお願いごとを確認しています。"
             description="開き終わると、このまま内容を見直せます。"
+            tone="soft"
           />
         </div>
       </div>
@@ -224,21 +236,29 @@ export default function SettingsPage() {
         <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
         <div className="max-w-lg mx-auto px-6 py-10">
-          <StateCard
-            icon="🐱"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={mint?.icon48}
+                alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={mint?.emoji}
+                size={48}
+              />
+            )}
+            name={mint?.name ?? 'インタビュアー'}
             title="設定をまだ開けません。"
             description={loadError}
-            tone="warning"
-            action={(
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-stone-800 text-white text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer"
-              >
-                もう一度開く
-              </button>
-            )}
+            tone="soft"
           />
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-stone-800 text-white text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer"
+            >
+              もう一度開く
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -249,11 +269,18 @@ export default function SettingsPage() {
       <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="max-w-lg mx-auto px-6 py-8 space-y-8">
-        <StateCard
-          icon="🐱"
+        <InterviewerSpeech
+          icon={(
+            <CharacterAvatar
+              src={mint?.icon48}
+              alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={mint?.emoji}
+              size={48}
+            />
+          )}
+          name={mint?.name ?? 'インタビュアー'}
           title="あとからでも直せるので、いま分かる範囲で大丈夫です。"
           description="ここで整えた内容をもとに、取材班や調査班が動きやすくなります。"
-          align="left"
           tone="soft"
         />
 
@@ -395,8 +422,17 @@ export default function SettingsPage() {
           {analyzeError && <p className="text-sm text-red-500">{analyzeError}</p>}
 
           {analyzing && (
-            <StateCard
-              icon={<span className="animate-pulse">🦉</span>}
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={claus?.icon48}
+                  alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+                  emoji={claus?.emoji}
+                  size={48}
+                  className="animate-pulse"
+                />
+              )}
+              name={claus?.name ?? 'インタビュアー'}
               title="クラウスがホームページを確認しています。"
               description="伝わっていることと、まだ出し切れていないことを整理しています。"
               tone="soft"

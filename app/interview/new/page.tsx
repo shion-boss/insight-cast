@@ -1,6 +1,7 @@
 import { CHARACTERS } from '@/lib/characters'
 import { createSession } from '@/lib/actions/interview'
 import Link from 'next/link'
+import { CharacterAvatar } from '@/components/ui'
 
 export default function NewInterviewPage() {
   return (
@@ -23,7 +24,13 @@ export default function NewInterviewPage() {
                     type="submit"
                     className="w-full text-left p-4 bg-white rounded-xl border border-stone-200 hover:border-stone-400 transition-colors"
                   >
-                    <div className="text-3xl mb-2">{char.emoji}</div>
+                    <CharacterAvatar
+                      src={char.icon96}
+                      alt={`${char.name}のアイコン`}
+                      emoji={char.emoji}
+                      size={56}
+                      className="mb-2 border-stone-100"
+                    />
                     <div className="font-medium text-stone-800 text-sm">{char.name}</div>
                     <div className="text-xs text-stone-400 mt-0.5">{char.species}</div>
                     {char.label && (
@@ -35,7 +42,13 @@ export default function NewInterviewPage() {
                 </form>
               ) : (
                 <div className="w-full p-4 bg-white rounded-xl border border-stone-100 opacity-50 cursor-not-allowed">
-                  <div className="text-3xl mb-2 grayscale">{char.emoji}</div>
+                  <CharacterAvatar
+                    src={char.icon48}
+                    alt={`${char.name}のアイコン`}
+                    emoji={char.emoji}
+                    size={44}
+                    className="mb-2 grayscale"
+                  />
                   <div className="font-medium text-stone-600 text-sm">{char.name}</div>
                   <div className="text-xs text-stone-400 mt-0.5">{char.species}</div>
                   {char.label && (

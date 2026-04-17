@@ -3,12 +3,14 @@
 import { useState, useTransition } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { saveCompetitors } from '@/lib/actions/projects'
+import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
-import { PageHeader, PrimaryButton, StateCard, TextInput } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, PrimaryButton, TextInput } from '@/components/ui'
 
 export default function CompetitorsPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
+  const interviewer = getCharacter('claus')
   const [urls, setUrls] = useState([''])
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -47,11 +49,18 @@ export default function CompetitorsPage() {
 
       <div className="max-w-lg mx-auto px-6 py-12">
         <div className="mb-8">
-          <StateCard
-            icon="🦉"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={interviewer?.icon48}
+                alt={`${interviewer?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={interviewer?.emoji}
+                size={48}
+              />
+            )}
+            name={interviewer?.name ?? 'インタビュアー'}
             title="比べたいホームページがあれば教えてください。"
             description="分かる相手だけで大丈夫です。見比べることで、まだ伝え切れていない部分が見えやすくなります。"
-            align="left"
             tone="soft"
           />
         </div>

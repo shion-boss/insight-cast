@@ -2,7 +2,7 @@ import { CHARACTERS } from '@/lib/characters'
 import { createInterview } from '@/lib/actions/interviews'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 
 export default async function InterviewerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -25,11 +25,18 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
-          <StateCard
-            icon="🎙️"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={CHARACTERS[0]?.icon48}
+                alt="取材班のアイコン"
+                emoji={CHARACTERS[0]?.emoji}
+                size={48}
+              />
+            )}
+            name="Insight Cast"
             title="今日は、どの取材班に来てもらいましょうか？"
             description="得意な聞き方がそれぞれ違います。気になる相手を選ぶだけで大丈夫です。"
-            align="left"
             tone="soft"
           />
         </div>
@@ -41,7 +48,13 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
                 type="submit"
                 className="w-full text-left p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-all"
               >
-                <div className="text-4xl mb-3">{char.emoji}</div>
+                <CharacterAvatar
+                  src={char.icon96}
+                  alt={`${char.name}のアイコン`}
+                  emoji={char.emoji}
+                  size={64}
+                  className="mb-3 border-stone-100"
+                />
                 <div className="font-medium text-stone-800 text-sm">{char.name}</div>
                 <div className="text-xs text-stone-400 mt-0.5">{char.species}</div>
                 {char.label && (
@@ -63,7 +76,13 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
           <div className="grid grid-cols-3 gap-3">
             {CHARACTERS.filter(c => !c.available).map((char) => (
               <div key={char.id} className="p-4 bg-white rounded-xl border border-stone-100 opacity-40">
-                <div className="text-2xl mb-2 grayscale">{char.emoji}</div>
+                <CharacterAvatar
+                  src={char.icon48}
+                  alt={`${char.name}のアイコン`}
+                  emoji={char.emoji}
+                  size={44}
+                  className="mb-2 grayscale"
+                />
                 <div className="text-xs font-medium text-stone-600">{char.name}</div>
                 {char.label && <div className="text-xs text-stone-400 mt-0.5">{char.label}</div>}
                 <div className="text-xs text-stone-300 mt-2">準備を進めています</div>

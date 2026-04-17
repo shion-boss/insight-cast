@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { CHARACTERS } from '@/lib/characters'
+import { CharacterAvatar } from '@/components/ui'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -19,8 +21,17 @@ export default async function LandingPage() {
 
       {/* ヒーロー */}
       <section className="max-w-2xl mx-auto px-6 py-20 text-center">
-        <div className="flex justify-center gap-2 mb-8 text-4xl">
-          <span>🐱</span><span>🦉</span><span>🦊</span>
+        <div className="flex justify-center gap-3 mb-8">
+          {CHARACTERS.filter((char) => ['mint', 'claus', 'rain'].includes(char.id)).map((char) => (
+            <CharacterAvatar
+              key={char.id}
+              src={char.icon96}
+              alt={`${char.name}のアイコン`}
+              emoji={char.emoji}
+              size={56}
+              className="border-stone-100 shadow-sm"
+            />
+          ))}
         </div>
         <h1 className="text-3xl font-semibold text-stone-800 leading-snug mb-5">
           あなたにとっての当たり前は、<br />
@@ -63,18 +74,24 @@ export default async function LandingPage() {
                 title: '記事になる素材を整理します',
                 desc: '取材内容をもとに、HPに掲載できる記事や素材を作ります。',
               },
-            ].map(({ emoji, step, title, desc }) => (
+            ].map(({ emoji, step, title, desc }) => {
+              const char = CHARACTERS.find((item) => item.emoji === emoji)
+              return (
               <div key={step} className="flex gap-4">
-                <div className="w-12 h-12 rounded-full bg-stone-50 border border-stone-100 flex items-center justify-center text-2xl flex-shrink-0">
-                  {emoji}
-                </div>
+                <CharacterAvatar
+                  src={char?.icon48}
+                  alt={`${char?.name ?? title}のアイコン`}
+                  emoji={emoji}
+                  size={48}
+                  className="border-stone-100 bg-stone-50"
+                />
                 <div>
                   <p className="text-xs text-stone-400 font-medium mb-0.5">{step}</p>
                   <p className="text-stone-800 font-medium mb-1">{title}</p>
                   <p className="text-sm text-stone-500">{desc}</p>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       </section>
@@ -83,17 +100,21 @@ export default async function LandingPage() {
       <section className="max-w-2xl mx-auto px-6 py-16">
         <h2 className="text-lg font-semibold text-stone-700 text-center mb-8">取材班を紹介します</h2>
         <div className="grid grid-cols-3 gap-4">
-          {[
-            { emoji: '🐱', name: 'ミント', species: '猫', desc: '親しみやすい雰囲気で、お客様目線の話を引き出します', specialty: '安心感・気づかい' },
-            { emoji: '🦉', name: 'クラウス', species: 'フクロウ', label: 'Industry Insight', desc: '業種の知識をもとに、技術的な違いを掘り起こします', specialty: '専門性・判断基準' },
-            { emoji: '🦊', name: 'レイン', species: 'キツネ', label: 'Marketing Strategy', desc: 'マーケティング視点で、差別化ポイントを引き出します', specialty: '訴求・差別化' },
-          ].map((c) => (
-            <div key={c.name} className="bg-white rounded-xl border border-stone-100 p-4 text-center">
-              <div className="text-3xl mb-2">{c.emoji}</div>
-              <div className="text-sm font-medium text-stone-800">{c.name}</div>
-              <div className="text-xs text-stone-400">{c.species}</div>
-              {c.label && <div className="text-xs text-amber-600 mt-1 font-medium">{c.label}</div>}
-              <div className="text-xs text-stone-500 mt-2 leading-relaxed">{c.specialty}</div>
+          {CHARACTERS.filter((char) => ['mint', 'claus', 'rain'].includes(char.id)).map((char) => (
+            <div key={char.id} className="bg-white rounded-xl border border-stone-100 p-4 text-center">
+              <div className="flex justify-center mb-2">
+                <CharacterAvatar
+                  src={char.icon96}
+                  alt={`${char.name}のアイコン`}
+                  emoji={char.emoji}
+                  size={60}
+                  className="border-stone-100"
+                />
+              </div>
+              <div className="text-sm font-medium text-stone-800">{char.name}</div>
+              <div className="text-xs text-stone-400">{char.species}</div>
+              {char.label && <div className="text-xs text-amber-600 mt-1 font-medium">{char.label}</div>}
+              <div className="text-xs text-stone-500 mt-2 leading-relaxed">{char.specialty}</div>
             </div>
           ))}
         </div>

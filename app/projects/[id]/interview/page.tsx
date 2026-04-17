@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
-import { StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
 
@@ -177,10 +177,19 @@ export default function InterviewPage() {
     return (
       <div className="h-screen flex items-center justify-center bg-stone-50 px-6">
         <div className="w-full max-w-md">
-          <StateCard
-            icon={char?.emoji ?? '🐱'}
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={char?.icon48}
+                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={char?.emoji}
+                size={48}
+              />
+            )}
+            name={char?.name ?? 'インタビュアー'}
             title="取材班を呼んでいます。"
             description="席につけたら、そのまま聞き取りを始めます。"
+            tone="soft"
           />
         </div>
       </div>
@@ -192,7 +201,12 @@ export default function InterviewPage() {
       {/* ヘッダー */}
       <header className="bg-white border-b border-stone-100 px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{char?.emoji}</span>
+          <CharacterAvatar
+            src={char?.icon48}
+            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+            emoji={char?.emoji}
+            size={40}
+          />
           <div>
             <p className="text-sm font-medium text-stone-800">{char?.name}</p>
             <p className="text-xs text-stone-400">{char?.specialty}</p>
@@ -231,9 +245,13 @@ export default function InterviewPage() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
-              <div className="w-8 h-8 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center text-sm flex-shrink-0 mt-1">
-                {char?.emoji}
-              </div>
+              <CharacterAvatar
+                src={char?.icon48}
+                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={char?.emoji}
+                size={32}
+                className="mt-1 border-amber-100 bg-amber-50"
+              />
             )}
             <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap leading-relaxed ${
               msg.role === 'interviewer'
@@ -246,9 +264,13 @@ export default function InterviewPage() {
         ))}
         {(loading || streamingMessage) && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center text-sm flex-shrink-0">
-              {char?.emoji}
-            </div>
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji}
+              size={32}
+              className="border-amber-100 bg-amber-50"
+            />
             <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
               <span className="text-stone-500 text-sm whitespace-pre-wrap leading-relaxed">
                 {streamingMessage || '考えをまとめています...'}
@@ -263,12 +285,19 @@ export default function InterviewPage() {
       <div className="bg-white border-t border-stone-100 px-4 py-4 flex-shrink-0">
         {submitError && (
           <div className="max-w-2xl mx-auto mb-3">
-            <StateCard
-              icon={char?.emoji ?? '🐱'}
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={char?.icon48}
+                  alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                  emoji={char?.emoji}
+                  size={44}
+                />
+              )}
+              name={char?.name ?? 'インタビュアー'}
               title="返事が少し途切れてしまいました。"
               description={submitError}
-              tone="warning"
-              align="left"
+              tone="soft"
             />
           </div>
         )}
@@ -300,7 +329,14 @@ export default function InterviewPage() {
       {showComplete && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
-            <div className="text-3xl mb-3 text-center">{char?.emoji}</div>
+            <div className="flex justify-center mb-3">
+              <CharacterAvatar
+                src={char?.icon96}
+                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={char?.emoji}
+                size={72}
+              />
+            </div>
             <p className="text-stone-800 font-medium text-center mb-2">
               いいお話がたくさん聞けました。
             </p>

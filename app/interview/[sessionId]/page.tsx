@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import { completeSession } from '@/lib/actions/interview'
-import { PrimaryButton, SecondaryButton, TextInput } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PrimaryButton, SecondaryButton, TextInput } from '@/components/ui'
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
@@ -104,7 +104,22 @@ export default function InterviewPage() {
   if (initializing) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
-        <p className="text-stone-400 text-sm">取材班を呼んでいます...</p>
+        <div className="w-full max-w-md px-6">
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={char?.icon48}
+                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={char?.emoji}
+                size={48}
+              />
+            )}
+            name={char?.name ?? 'インタビュアー'}
+            title="取材班を呼んでいます。"
+            description="準備ができたら、そのまま聞き取りが始まります。"
+            tone="soft"
+          />
+        </div>
       </div>
     )
   }
@@ -114,7 +129,12 @@ export default function InterviewPage() {
       {/* ヘッダー */}
       <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{char?.emoji}</span>
+          <CharacterAvatar
+            src={char?.icon48}
+            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+            emoji={char?.emoji}
+            size={40}
+          />
           <div>
             <p className="text-sm font-medium text-stone-800">{char?.name}</p>
             <p className="text-xs text-stone-400">{char?.description}</p>
@@ -135,9 +155,13 @@ export default function InterviewPage() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm flex-shrink-0 mt-1">
-                {char?.emoji}
-              </div>
+              <CharacterAvatar
+                src={char?.icon48}
+                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={char?.emoji}
+                size={32}
+                className="mt-1 border-amber-100 bg-amber-50"
+              />
             )}
             <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
               msg.role === 'assistant'
@@ -150,9 +174,13 @@ export default function InterviewPage() {
         ))}
         {loading && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm flex-shrink-0">
-              {char?.emoji}
-            </div>
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji}
+              size={32}
+              className="border-amber-100 bg-amber-50"
+            />
             <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
               <span className="text-stone-400 text-sm">...</span>
             </div>

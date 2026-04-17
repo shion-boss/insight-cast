@@ -5,7 +5,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
-import { PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 
 type SummaryData = {
   values: string[]
@@ -109,15 +109,19 @@ export default function SummaryPage() {
           />
         )}
 
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">{char?.emoji ?? '📝'}</span>
-          <div>
-            <p className="text-stone-800 font-medium">
-              {char?.name ? `${char.name}からメモが届きました` : '取材メモが届きました'}
-            </p>
-            <p className="text-xs text-stone-400 mt-0.5">インタビューで引き出せた内容です</p>
-          </div>
-        </div>
+        <InterviewerSpeech
+          icon={(
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji ?? '📝'}
+              size={48}
+            />
+          )}
+          name={char?.name ?? 'インタビュアー'}
+          title={char?.name ? `${char.name}からメモが届きました` : '取材メモが届きました'}
+          description="インタビューで引き出せた内容を、このまま記事づくりに使えます。"
+        />
 
         {/* 引き出せた価値 */}
         <section className="bg-white rounded-xl border border-stone-100 p-5">
@@ -171,9 +175,23 @@ export default function SummaryPage() {
           {showMessages && (
             <div className="mt-4 space-y-3 max-h-80 overflow-y-auto">
               {data?.messages.map((m, i) => (
-                <div key={i} className={`text-xs leading-relaxed ${m.role === 'user' ? 'text-stone-500' : 'text-stone-700'}`}>
-                  <span className="font-medium">{m.role === 'user' ? '事業者' : char?.name ?? 'インタビュアー'}: </span>
-                  {m.content}
+                <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  {m.role !== 'user' && (
+                    <CharacterAvatar
+                      src={char?.icon48}
+                      alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                      emoji={char?.emoji}
+                      size={36}
+                      className="mt-1"
+                    />
+                  )}
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap ${
+                    m.role === 'user'
+                      ? 'bg-stone-100 text-stone-600'
+                      : 'bg-amber-50 text-stone-700 border border-amber-100 rounded-tl-sm'
+                  }`}>
+                    {m.content}
+                  </div>
                 </div>
               ))}
             </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
-import { PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, PageHeader, StateCard } from '@/components/ui'
 
 type Output = { id: string; type: string; title: string; content: string }
 
@@ -73,7 +73,12 @@ export default function OutputPage() {
       <PageHeader
         title={(
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{char?.emoji}</span>
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji}
+              size={40}
+            />
             <p className="text-sm font-medium text-stone-800">インタビュー結果</p>
           </div>
         )}
