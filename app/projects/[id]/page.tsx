@@ -154,24 +154,38 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 const primaryHref = getInterviewHref(id, interview, interviewArticles.length > 0)
 
                 return (
-                  <section key={interview.id} className="rounded-2xl border border-stone-100 bg-white p-5 space-y-4">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex items-start gap-3 min-w-0">
-                        <CharacterAvatar
-                          src={char?.icon48}
-                          alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                          emoji={char?.emoji}
-                          size={44}
-                        />
-                        <div className="min-w-0">
-                          <p className="text-sm font-medium text-stone-800">{formatDateTime(interview.created_at)}</p>
-                          <p className="mt-1 text-xs text-stone-500">{char?.name ?? 'インタビュアー'} が担当</p>
-                          <p className="mt-1 text-xs text-stone-400">
-                            {interviewArticles.length > 0 ? `作成した記事 ${interviewArticles.length} 本` : 'まだ記事は作っていません'}
-                          </p>
+                  <details key={interview.id} className="group rounded-2xl border border-stone-100 bg-white" open={false}>
+                    <summary className="list-none p-5">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <CharacterAvatar
+                            src={char?.icon48}
+                            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                            emoji={char?.emoji}
+                            size={44}
+                          />
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-stone-800">{formatDateTime(interview.created_at)}</p>
+                            <p className="mt-1 text-xs text-stone-500">{char?.name ?? 'インタビュアー'} が担当</p>
+                            <p className="mt-1 text-xs text-stone-400">
+                              {interviewArticles.length > 0 ? `作成した記事 ${interviewArticles.length} 本` : 'まだ記事は作っていません'}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between gap-3 sm:justify-end">
+                          <span className="text-xs text-stone-400">
+                            {interview.summary ? '取材メモあり' : '進行中のインタビュー'}
+                          </span>
+                          <span className="rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-500 transition group-open:bg-stone-800 group-open:text-white group-open:border-stone-800">
+                            <span className="group-open:hidden">開く</span>
+                            <span className="hidden group-open:inline">閉じる</span>
+                          </span>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-2 sm:min-w-44">
+                    </summary>
+
+                    <div className="border-t border-stone-100 p-5 space-y-4">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
                         <Link
                           href={primaryHref}
                           className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
@@ -185,48 +199,48 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                           この取材から記事を作る
                         </Link>
                       </div>
-                    </div>
 
-                    {interview.summary && (
-                      <div className="rounded-xl bg-stone-50 p-4">
-                        <p className="text-xs text-stone-400">取材メモ</p>
-                        <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-600">
-                          {interview.summary}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="text-sm font-medium text-stone-700">このインタビューから作った記事</h3>
-                      </div>
-
-                      {interviewArticles.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-sm text-stone-400">
-                          まだ記事はありません。この取材から必要な記事を作れます。
+                      {interview.summary && (
+                        <div className="rounded-xl bg-stone-50 p-4">
+                          <p className="text-xs text-stone-400">取材メモ</p>
+                          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-600">
+                            {interview.summary}
+                          </p>
                         </div>
-                      ) : (
-                        <ul className="space-y-3">
-                          {interviewArticles.map((article) => (
-                            <li key={article.id}>
-                              <Link
-                                href={`/projects/${id}/articles/${article.id}`}
-                                className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
-                              >
-                                <div className="min-w-0">
-                                  <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>
-                                  <p className="mt-1 text-xs text-stone-400">
-                                    {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
-                                  </p>
-                                </div>
-                                <span className="text-sm text-stone-300">→</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
                       )}
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <h3 className="text-sm font-medium text-stone-700">このインタビューから作った記事</h3>
+                        </div>
+
+                        {interviewArticles.length === 0 ? (
+                          <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-sm text-stone-400">
+                            まだ記事はありません。この取材から必要な記事を作れます。
+                          </div>
+                        ) : (
+                          <ul className="space-y-3">
+                            {interviewArticles.map((article) => (
+                              <li key={article.id}>
+                                <Link
+                                  href={`/projects/${id}/articles/${article.id}`}
+                                  className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                                >
+                                  <div className="min-w-0">
+                                    <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>
+                                    <p className="mt-1 text-xs text-stone-400">
+                                      {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
+                                    </p>
+                                  </div>
+                                  <span className="text-sm text-stone-300">→</span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </div>
-                  </section>
+                  </details>
                 )
               })}
             </div>

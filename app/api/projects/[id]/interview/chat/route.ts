@@ -46,6 +46,12 @@ export async function POST(
     .eq('interview_id', interviewId)
     .order('created_at', { ascending: true })
 
+  if (isGreeting && history && history.length > 0) {
+    return new Response('', {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
+  }
+
   const userTurnCount = (history ?? []).filter(m => m.role === 'user').length
 
   const messages = isGreeting
@@ -105,15 +111,18 @@ export async function POST(
           controller.enqueue(new TextEncoder().encode(chunk.delta.text))
         }
       }
-      controller.close()
 
       // AIメッセージ保存（[INTERVIEW_COMPLETE]マーカーは除いて保存）
       const cleanText = fullText.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
-      await supabase.from('interview_messages').insert({
-        interview_id: interviewId,
-        role: 'interviewer',
-        content: cleanText,
-      })
+      if (cleanText) {
+        await supabase.from('interview_messages').insert({
+          interview_id: interviewId,
+          role: 'interviewer',
+          content: cleanText,
+        })
+      }
+
+      controller.close()
     },
   })
 

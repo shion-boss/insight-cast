@@ -31,11 +31,11 @@ export default function InterviewPage() {
   const [initializing, setInitializing] = useState(true)
   const [userTurns, setUserTurns] = useState(0)
   const [showComplete, setShowComplete] = useState(false)
-  const [pendingMessage, setPendingMessage] = useState<string | null>(null)
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const initializedRef = useRef(false)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -75,12 +75,14 @@ export default function InterviewPage() {
         setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim())
       }
 
+      const interviewComplete = /\[INTERVIEW_COMPLETE\]\s*$/m.test(text)
       const finalText = text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
       if (finalText) {
         setMessages((prev) => [...prev, { role: 'interviewer', content: finalText }])
       }
       setStreamingMessage('')
       setTimeout(() => textareaRef.current?.focus(), 50)
+      return { ok: true as const, interviewComplete }
     } catch {
       if (shouldAppendUser) {
         setMessages((prev) => prev.slice(0, -1))
@@ -91,12 +93,15 @@ export default function InterviewPage() {
       }
       setStreamingMessage('')
       setSubmitError('返事を受け取れませんでした。少し待ってから、もう一度送信してください。')
+      return { ok: false as const, interviewComplete: false }
     } finally {
       setLoading(false)
     }
   }, [interviewId, projectId])
 
   useEffect(() => {
+    if (initializedRef.current) return
+    initializedRef.current = true
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
 
     async function init() {
@@ -134,40 +139,24 @@ export default function InterviewPage() {
 
     const newTurns = userTurns + 1
 
-    if (newTurns >= MAX_TURNS) {
-      // Show user message in UI immediately, but hold AI request until user decides
-      setMessages(prev => [...prev, { role: 'user', content: text }])
-      setUserTurns(newTurns)
-      setPendingMessage(text)
-      setShowComplete(true)
-      return
-    }
+    const result = await sendMessageToAI(text)
+    if (!result.ok) return
 
-    await sendMessageToAI(text)
+    if (newTurns === MAX_TURNS || result.interviewComplete) {
+      setShowComplete(true)
+    }
   }
 
   async function handleFinish() {
-    if (pendingMessage) {
-      await fetch(`/api/projects/${projectId}/interview/message`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ interviewId, content: pendingMessage }),
-      })
-    }
     router.push(`/projects/${projectId}/summary?interviewId=${interviewId}`)
   }
 
-  async function handleContinue() {
+  function handleContinue() {
     setShowComplete(false)
-    const msg = pendingMessage
-    setPendingMessage(null)
-    if (msg) {
-      await sendMessageToAI(msg, { alreadyDisplayed: true })
-    }
+    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function handleManualFinish() {
-    setPendingMessage(null)
     setShowComplete(true)
   }
 
@@ -307,9 +296,12 @@ export default function InterviewPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(e as unknown as React.FormEvent) }
+              if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault()
+                handleSubmit(e as unknown as React.FormEvent)
+              }
             }}
-            placeholder="メッセージを入力... (Enterで送信、Shift+Enterで改行)"
+            placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
             disabled={loading}
             rows={3}
             autoFocus
