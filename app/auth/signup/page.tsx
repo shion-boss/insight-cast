@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { FieldLabel, PrimaryButton, StateCard, TextInput } from '@/components/ui'
+import { FieldLabel, PrimaryButton, SecondaryButton, StateCard, TextInput } from '@/components/ui'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -11,6 +11,7 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const supabase = createClient()
 
@@ -31,6 +32,24 @@ export default function SignupPage() {
     }
 
     setSent(true)
+  }
+
+  async function handleGoogleSignup() {
+    setGoogleLoading(true)
+    setError(null)
+
+    const origin = window.location.origin
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${origin}/auth/callback?next=/dashboard`,
+      },
+    })
+
+    if (error) {
+      setError('Google登録を開始できませんでした。設定をご確認ください')
+      setGoogleLoading(false)
+    }
   }
 
   if (sent) {
@@ -66,6 +85,21 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
+          <SecondaryButton
+            type="button"
+            onClick={handleGoogleSignup}
+            disabled={loading || googleLoading}
+            className="w-full py-3 text-sm font-medium"
+          >
+            {googleLoading ? 'Googleに移動中...' : 'Googleで新規登録'}
+          </SecondaryButton>
+
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-stone-200" />
+            <span className="text-xs text-stone-400">またはメールで登録</span>
+            <div className="h-px flex-1 bg-stone-200" />
+          </div>
+
           <div>
             <FieldLabel>メールアドレス</FieldLabel>
             <TextInput
