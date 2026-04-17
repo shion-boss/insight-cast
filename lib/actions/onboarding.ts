@@ -10,7 +10,8 @@ export async function completeOnboarding(formData: FormData) {
 
   await supabase
     .from('profiles')
-    .update({
+    .upsert({
+      id:            user.id,
       name:          formData.get('name') as string,
       url:           formData.get('url') as string,
       industry_memo: formData.get('industry_memo') as string,
@@ -18,7 +19,6 @@ export async function completeOnboarding(formData: FormData) {
       bio:           formData.get('bio') as string,
       onboarded:     true,
     })
-    .eq('id', user.id)
 
   redirect('/home')
 }
