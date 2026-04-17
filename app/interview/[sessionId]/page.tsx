@@ -176,7 +176,7 @@ export default function InterviewPage() {
             disabled={loading || !input.trim()}
             className="px-4 py-2 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 transition-colors"
           >
-            送信
+            ✨ 送信
           </button>
         </form>
       </div>

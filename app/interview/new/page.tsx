@@ -30,6 +30,7 @@ export default function NewInterviewPage() {
                       <div className="text-xs text-amber-600 mt-1">{char.label}</div>
                     )}
                     <div className="text-xs text-stone-500 mt-2">{char.description}</div>
+                    <div className="text-xs text-stone-300 mt-2">✨ AI使用</div>
                   </button>
                 </form>
               ) : (
