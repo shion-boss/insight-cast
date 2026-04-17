@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { saveCompetitors } from '@/lib/actions/projects'
 import Link from 'next/link'
-import { PageHeader, PrimaryButton, TextInput } from '@/components/ui'
+import { PageHeader, PrimaryButton, StateCard, TextInput } from '@/components/ui'
 
 export default function CompetitorsPage() {
   const { id } = useParams<{ id: string }>()
@@ -46,16 +46,14 @@ export default function CompetitorsPage() {
       <PageHeader title="Insight Cast" backHref="/dashboard" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="flex items-start gap-3 mb-8">
-          <span className="text-3xl">🦉</span>
-          <div>
-            <p className="text-stone-700 font-medium">
-              同業他社のホームページがあれば教えてください。
-            </p>
-            <p className="text-sm text-stone-400 mt-1">
-              比較することで、あなたのHPに何が足りないかが見えてきます。
-            </p>
-          </div>
+        <div className="mb-8">
+          <StateCard
+            icon="🦉"
+            title="比べたいホームページがあれば教えてください。"
+            description="分かる相手だけで大丈夫です。見比べることで、まだ伝え切れていない部分が見えやすくなります。"
+            align="left"
+            tone="soft"
+          />
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
@@ -109,7 +107,7 @@ export default function CompetitorsPage() {
             disabled={isPending}
             className="w-full py-3 text-sm"
           >
-            {isPending ? '登録中...' : '調査を始める'}
+            {isPending ? '登録中...' : 'この内容で調査を進める'}
           </PrimaryButton>
         </form>
 

@@ -195,7 +195,7 @@ export default function ArticlePage() {
                 onClick={generate}
                 className="px-6 py-3 text-sm"
               >
-                記事を書いてもらう ✨
+                この形で記事をまとめる ✨
               </PrimaryButton>
             </div>
           </>
@@ -244,7 +244,7 @@ export default function ArticlePage() {
               onClick={generate}
               className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors border border-stone-100 rounded-xl"
             >
-              再生成する
+              もう一度まとめる
             </button>
           </>
         )}
@@ -254,7 +254,7 @@ export default function ArticlePage() {
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
             className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
           >
-            インタビューからやり直す
+            取材に戻って話を足す
           </Link>
         </div>
       </div>

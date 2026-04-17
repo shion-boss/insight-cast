@@ -186,7 +186,7 @@ export default function SummaryPage() {
             href={`/projects/${projectId}/article?interviewId=${interviewId}`}
             className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
           >
-            記事を作る →
+            この内容で記事を作る →
           </Link>
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
@@ -198,7 +198,7 @@ export default function SummaryPage() {
             href="/dashboard"
             className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
-            あとで記事にする
+            いったんここまでにする
           </Link>
         </div>
       </div>

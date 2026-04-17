@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
+import { FieldLabel, PrimaryButton, StateCard, TextInput } from '@/components/ui'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -36,13 +36,17 @@ export default function SignupPage() {
   if (sent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-      <div className="w-full max-w-sm text-center">
-        <div className="text-4xl mb-4">📬</div>
-        <h2 className="text-lg font-semibold text-stone-800 mb-2">確認メールを送りました</h2>
-        <p className="text-sm text-stone-500">
-          <strong>{email}</strong> に確認メールを送りました。<br />
-          メール内のリンクをクリックしてログインしてください。
-        </p>
+        <div className="w-full max-w-sm">
+          <StateCard
+            icon="📬"
+            title="確認メールを送りました。"
+            description={(
+              <>
+                <strong>{email}</strong> に確認メールを送りました。<br />
+                メールのリンクを開くと、そのままログインできます。
+              </>
+            )}
+          />
           <Link href="/auth/login" className="inline-block mt-6 text-sm text-stone-500 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
             ログインページへ
           </Link>
@@ -58,7 +62,7 @@ export default function SignupPage() {
           <Link href="/" className="text-xl font-semibold text-stone-800 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
             Insight Cast
           </Link>
-          <p className="text-sm text-stone-400 mt-2">アカウントを作成してはじめましょう</p>
+          <p className="text-sm text-stone-400 mt-2">取材班を呼べるように、まずは登録を済ませましょう。</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
@@ -98,7 +102,7 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-3 text-sm"
           >
-            {loading ? '登録中...' : '登録する'}
+            {loading ? '登録中...' : '無料で始める'}
           </PrimaryButton>
         </form>
 
