@@ -6,9 +6,9 @@ import { redirect } from 'next/navigation'
 export async function completeOnboarding(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/')
 
-  await supabase
+  const { error } = await supabase
     .from('profiles')
     .upsert({
       id:            user.id,
@@ -16,9 +16,10 @@ export async function completeOnboarding(formData: FormData) {
       url:           formData.get('url') as string,
       industry_memo: formData.get('industry_memo') as string,
       location:      formData.get('location') as string,
-      bio:           formData.get('bio') as string,
       onboarded:     true,
     })
 
-  redirect('/home')
+  if (error) redirect('/onboarding?error=1')
+
+  redirect('/dashboard')
 }

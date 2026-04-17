@@ -1,0 +1,114 @@
+import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@/lib/supabase/server'
+import { SYSTEM_PROMPTS } from '@/lib/characters'
+import { NextRequest } from 'next/server'
+
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id: projectId } = await params
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return new Response('Unauthorized', { status: 401 })
+
+  const { interviewId, userMessage } = await req.json()
+  const isGreeting = userMessage === '__GREETING__'
+
+  // インタビュー確認（project所有確認も兼ねる）
+  const { data: interview } = await supabase
+    .from('interviews')
+    .select('id, interviewer_type, project_id, interviews_project:projects(user_id)')
+    .eq('id', interviewId)
+    .eq('project_id', projectId)
+    .single()
+
+  if (!interview) return new Response('Not found', { status: 404 })
+
+  const projectData = interview.interviews_project as unknown as { user_id: string } | null
+  if (projectData?.user_id !== user.id) return new Response('Forbidden', { status: 403 })
+
+  // ユーザーメッセージ保存
+  if (!isGreeting) {
+    await supabase.from('interview_messages').insert({
+      interview_id: interviewId,
+      role: 'user',
+      content: userMessage,
+    })
+  }
+
+  // 会話履歴取得
+  const { data: history } = await supabase
+    .from('interview_messages')
+    .select('role, content')
+    .eq('interview_id', interviewId)
+    .order('created_at', { ascending: true })
+
+  const userTurnCount = (history ?? []).filter(m => m.role === 'user').length
+
+  const messages = isGreeting
+    ? [{ role: 'user' as const, content: 'はじめまして。よろしくお願いします。' }]
+    : (history ?? []).map((m) => ({
+        role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        content: m.content,
+      }))
+
+  // プロフィール + アカウントレベルの調査結果をコンテキストに注入
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('name, industry_memo, location, hp_audit_result')
+    .eq('id', user.id)
+    .single()
+
+  const auditResult = profile?.hp_audit_result as { gaps?: string[]; suggested_themes?: string[] } | null
+  const audit = auditResult ?? null
+
+  const contextParts: string[] = []
+  if (profile) {
+    contextParts.push(`【取材先】\n店舗・企業名: ${profile.name ?? '未設定'}\n業種: ${profile.industry_memo ?? '未設定'}\n地域: ${profile.location ?? '未設定'}`)
+  }
+  if (audit) {
+    if (audit.gaps?.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${(audit.gaps as string[]).map((g: string) => `・${g}`).join('\n')}`)
+    if (audit.suggested_themes?.length) contextParts.push(`【インタビューで深めたいテーマ（調査結果）】\n${(audit.suggested_themes as string[]).map((t: string) => `・${t}`).join('\n')}`)
+  }
+  if (userTurnCount >= 7) {
+    contextParts.push(`【現在の状況】ユーザーは${userTurnCount}回返答しました。`)
+  }
+
+  const systemPrompt = (SYSTEM_PROMPTS[interview.interviewer_type] ?? SYSTEM_PROMPTS['mint'])
+    + (contextParts.length ? '\n\n' + contextParts.join('\n\n') : '')
+
+  const stream = await anthropic.messages.stream({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 512,
+    system: systemPrompt,
+    messages,
+  })
+
+  let fullText = ''
+  const readable = new ReadableStream({
+    async start(controller) {
+      for await (const chunk of stream) {
+        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+          fullText += chunk.delta.text
+          controller.enqueue(new TextEncoder().encode(chunk.delta.text))
+        }
+      }
+      controller.close()
+
+      // AIメッセージ保存（[INTERVIEW_COMPLETE]マーカーは除いて保存）
+      const cleanText = fullText.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
+      await supabase.from('interview_messages').insert({
+        interview_id: interviewId,
+        role: 'interviewer',
+        content: cleanText,
+      })
+    },
+  })
+
+  return new Response(readable, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  })
+}

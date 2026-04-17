@@ -1,6 +1,20 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import { completeOnboarding } from '@/lib/actions/onboarding'
 
-export default function OnboardingPage() {
+export default async function OnboardingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/')
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('onboarded')
+    .eq('id', user.id)
+    .single()
+
+  if (profile?.onboarded) redirect('/dashboard')
+
   return (
     <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -32,7 +46,7 @@ export default function OnboardingPage() {
               className="w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300" />
           </div>
           <button type="submit"
-            className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm mt-2">
+            className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 cursor-pointer transition-colors text-sm mt-2">
             はじめる
           </button>
         </form>

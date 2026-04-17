@@ -1,0 +1,245 @@
+'use client'
+
+import { useState } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+
+type ArticleType = 'client' | 'interviewer' | 'conversation'
+type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
+type ArticleVolume = 'short' | 'medium' | 'long'
+
+const TABS: { type: ArticleType; label: string; emoji: string; desc: string }[] = [
+  { type: 'client',       label: 'クライアント視点', emoji: '🏪', desc: '事業者の言葉で語る読み物記事' },
+  { type: 'interviewer',  label: 'インタビュアー視点', emoji: '🎙️', desc: 'インタビュアーが伝える紹介記事' },
+  { type: 'conversation', label: '会話込み',          emoji: '💬', desc: 'Q&A形式のインタビュー記事' },
+]
+
+const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
+  { value: 'desu',   label: 'ですます体' },
+  { value: 'de-aru', label: 'である体' },
+  { value: 'da-na',  label: 'だ・な体' },
+]
+
+const VOLUME_OPTIONS: { value: ArticleVolume; label: string }[] = [
+  { value: 'short',  label: '短め（600字）' },
+  { value: 'medium', label: '普通（1200字）' },
+  { value: 'long',   label: '長め（2000字）' },
+]
+
+export default function ArticlePage() {
+  const { id: projectId } = useParams<{ id: string }>()
+  const searchParams = useSearchParams()
+  const interviewId = searchParams.get('interviewId') ?? ''
+  const initialTheme = searchParams.get('theme') ?? ''
+
+  const [tab, setTab] = useState<ArticleType>('client')
+  const [contents, setContents] = useState<Partial<Record<ArticleType, string>>>({})
+  const [generating, setGenerating] = useState<ArticleType | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  const [style, setStyle] = useState<ArticleStyle>('desu')
+  const [volume, setVolume] = useState<ArticleVolume>('medium')
+  const [theme, setTheme] = useState(initialTheme)
+
+  const currentContent = contents[tab] ?? ''
+  const isGenerated = !!currentContent
+
+  async function generate() {
+    setGenerating(tab)
+    setContents(prev => ({ ...prev, [tab]: '' }))
+
+    const res = await fetch(`/api/projects/${projectId}/article`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        interviewId,
+        articleType: tab,
+        style:  tab === 'client' ? style  : undefined,
+        volume: tab === 'client' ? volume : undefined,
+        theme:  theme.trim() || undefined,
+      }),
+    })
+
+    if (!res.ok || !res.body) { setGenerating(null); return }
+
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      setContents(prev => ({ ...prev, [tab]: (prev[tab] ?? '') + decoder.decode(value) }))
+    }
+    setGenerating(null)
+  }
+
+  async function handleCopy() {
+    await navigator.clipboard.writeText(currentContent)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  function handleDownload() {
+    const blob = new Blob([currentContent], { type: 'text/markdown' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `article-${tab}-${Date.now()}.md`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const currentTab = TABS.find(t => t.type === tab)!
+
+  return (
+    <div className="min-h-screen bg-stone-50">
+      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
+        <span className="font-semibold text-stone-800">Insight Cast</span>
+        <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-600">← ダッシュボード</Link>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-6 py-8">
+        {/* タブ */}
+        <div className="flex gap-1 bg-stone-100 p-1 rounded-xl mb-6">
+          {TABS.map((t) => (
+            <button
+              key={t.type}
+              onClick={() => setTab(t.type)}
+              className={`flex-1 py-2 rounded-lg text-xs font-medium cursor-pointer transition-colors ${
+                tab === t.type ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 未生成状態 */}
+        {!isGenerated && generating !== tab && (
+          <>
+            {/* テーマ（共通オプション） */}
+            <div className="mb-4">
+              <label className="block text-xs text-stone-500 mb-1">テーマ指定（任意）</label>
+              <input
+                type="text"
+                value={theme}
+                onChange={(e) => setTheme(e.target.value)}
+                placeholder="例: 丁寧な対応と信頼感について"
+                className="w-full px-3 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
+              />
+            </div>
+
+            {/* クライアント視点のみ追加オプション */}
+            {tab === 'client' && (
+              <div className="bg-white rounded-xl border border-stone-100 p-4 mb-4 space-y-4">
+                <div>
+                  <label className="block text-xs text-stone-500 mb-2">語尾スタイル</label>
+                  <div className="flex gap-2">
+                    {STYLE_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setStyle(opt.value)}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs cursor-pointer transition-colors ${
+                          style === opt.value
+                            ? 'bg-stone-800 text-white'
+                            : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-stone-500 mb-2">ボリューム</label>
+                  <div className="flex gap-2">
+                    {VOLUME_OPTIONS.map(opt => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setVolume(opt.value)}
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs cursor-pointer transition-colors ${
+                          volume === opt.value
+                            ? 'bg-stone-800 text-white'
+                            : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-white rounded-xl border border-stone-100 p-8 text-center">
+              <div className="text-4xl mb-3">{currentTab.emoji}</div>
+              <p className="text-stone-700 font-medium mb-1">{currentTab.desc}</p>
+              <p className="text-sm text-stone-400 mb-6">インタビューの内容をもとに記事を作ります</p>
+              <button
+                onClick={generate}
+                className="px-6 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 cursor-pointer transition-colors"
+              >
+                記事を書いてもらう ✨
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* 生成中 */}
+        {generating === tab && (
+          <div className="bg-white rounded-xl border border-stone-100 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl animate-bounce">{currentTab.emoji}</span>
+              <p className="text-sm text-stone-500">書いています...</p>
+            </div>
+            <pre className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed font-sans">
+              {currentContent || ' '}
+            </pre>
+          </div>
+        )}
+
+        {/* 生成済み */}
+        {isGenerated && generating !== tab && (
+          <>
+            <div className="bg-white rounded-xl border border-stone-100 p-6 mb-4">
+              <pre className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed font-sans max-h-[60vh] overflow-y-auto">
+                {currentContent}
+              </pre>
+            </div>
+
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={handleCopy}
+                className="flex-1 py-2 border border-stone-200 rounded-xl text-sm text-stone-600 hover:bg-stone-50 cursor-pointer transition-colors"
+              >
+                {copied ? 'コピーしました ✓' : 'コピーする'}
+              </button>
+              <button
+                onClick={handleDownload}
+                className="flex-1 py-2 border border-stone-200 rounded-xl text-sm text-stone-600 hover:bg-stone-50 cursor-pointer transition-colors"
+              >
+                Markdownでダウンロード
+              </button>
+            </div>
+
+            <button
+              onClick={generate}
+              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 cursor-pointer transition-colors border border-stone-100 rounded-xl"
+            >
+              再生成する
+            </button>
+          </>
+        )}
+
+        <div className="mt-6">
+          <Link
+            href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
+            className="block text-center text-sm text-stone-300 hover:text-stone-500 transition-colors"
+          >
+            インタビューからやり直す
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
