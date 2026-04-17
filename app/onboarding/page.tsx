@@ -3,66 +3,84 @@
 import { useState } from 'react'
 import { completeOnboarding } from '@/lib/actions/onboarding'
 
-type Step = 'greeting' | 'name' | 'url' | 'industry' | 'confirm'
+type Step = 'greeting' | 'name' | 'url' | 'industry' | 'location' | 'bio' | 'confirm'
 
-type Message = {
-  role: 'mint' | 'user'
-  text: string
+type Message = { role: 'mint' | 'user'; text: string }
+
+const MINT_MESSAGES: Record<Step, string> = {
+  greeting:  'はじめまして！わたし、ミントといいます。取材のお手伝いをする猫です。\nまず、お店や会社のことを少し教えてもらえますか？',
+  name:      'こちらこそ！\nまず、お店や会社の名前を教えてもらえますか？',
+  url:       'ありがとうございます。\nホームページのURLを教えてもらえますか？',
+  industry:  'ありがとうございます。\nどんなお仕事をされているか、一言で教えてもらえますか？（例: 地域の工務店、カフェ、整骨院など）',
+  location:  'なるほど！\n活動されている地域はどのあたりですか？（例: 大阪府吹田市、東京都新宿区など）',
+  bio:       'わかりました。\n最後に、お店や会社のことを一言でPRするとしたら、どんな言葉が浮かびますか？\n（例: 地元密着30年、家族みんなで楽しめるカフェなど）',
+  confirm:   'ありがとうございます！これで準備ができました。さっそく始めましょう。',
 }
+
+const STEPS: Step[] = ['greeting', 'name', 'url', 'industry', 'location', 'bio', 'confirm']
 
 export default function OnboardingPage() {
   const [step, setStep] = useState<Step>('greeting')
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'mint',
-      text: 'はじめまして！わたし、ミントといいます。取材のお手伝いをする猫です。\nまず、お店や会社のことを少し教えてもらえますか？',
-    },
+    { role: 'mint', text: MINT_MESSAGES.greeting },
   ])
-  const [name, setName] = useState('')
-  const [url, setUrl] = useState('')
-  const [industryMemo, setIndustryMemo] = useState('')
+  const [values, setValues] = useState({ name: '', url: '', industry_memo: '', location: '', bio: '' })
   const [input, setInput] = useState('')
 
   function addMessage(role: 'mint' | 'user', text: string) {
     setMessages((prev) => [...prev, { role, text }])
   }
 
-  function handleNameSubmit() {
-    if (!input.trim()) return
-    setName(input.trim())
-    addMessage('user', input.trim())
-    addMessage('mint', `「${input.trim()}」さんですね。よろしくお願いします！\n次に、ホームページのURLを教えてもらえますか？`)
+  function next(userText: string, nextStep: Step) {
+    addMessage('user', userText)
+    addMessage('mint', MINT_MESSAGES[nextStep])
     setInput('')
-    setStep('url')
-  }
-
-  function handleUrlSubmit() {
-    if (!input.trim()) return
-    setUrl(input.trim())
-    addMessage('user', input.trim())
-    addMessage('mint', `ありがとうございます。\n最後に、どんなお仕事をされているか、一言で教えてもらえますか？（例: 地域の工務店、カフェ、整骨院など）`)
-    setInput('')
-    setStep('industry')
-  }
-
-  function handleIndustrySubmit() {
-    if (!input.trim()) return
-    setIndustryMemo(input.trim())
-    addMessage('user', input.trim())
-    addMessage('mint', `ありがとうございます！\nこれで準備ができました。さっそく始めましょう。`)
-    setInput('')
-    setStep('confirm')
+    setStep(nextStep)
   }
 
   function handleGreeting() {
     addMessage('user', 'よろしくお願いします')
-    addMessage('mint', 'こちらこそ！\nまず、お店や会社の名前を教えてもらえますか？')
+    addMessage('mint', MINT_MESSAGES.name)
     setStep('name')
   }
 
+  function handleSubmit() {
+    if (!input.trim()) return
+    const v = input.trim()
+    if (step === 'name') {
+      setValues((p) => ({ ...p, name: v }))
+      next(`${v}`, 'url')
+    } else if (step === 'url') {
+      setValues((p) => ({ ...p, url: v }))
+      next(v, 'industry')
+    } else if (step === 'industry') {
+      setValues((p) => ({ ...p, industry_memo: v }))
+      next(v, 'location')
+    } else if (step === 'location') {
+      setValues((p) => ({ ...p, location: v }))
+      next(v, 'bio')
+    } else if (step === 'bio') {
+      setValues((p) => ({ ...p, bio: v }))
+      next(v, 'confirm')
+    }
+  }
+
+  const progress = Math.round((STEPS.indexOf(step) / (STEPS.length - 1)) * 100)
+
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md flex flex-col" style={{ height: '80vh' }}>
+      <div className="w-full max-w-md flex flex-col" style={{ height: '85vh' }}>
+
+        {/* プログレスバー */}
+        <div className="mb-4">
+          <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-amber-400 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
         {/* 会話ログ */}
         <div className="flex-1 overflow-y-auto space-y-4 pb-4">
           {messages.map((msg, i) => (
@@ -94,33 +112,25 @@ export default function OnboardingPage() {
             </button>
           )}
 
-          {(step === 'name' || step === 'url' || step === 'industry') && (
+          {['name', 'url', 'industry', 'location', 'bio'].includes(step) && (
             <div className="flex gap-2">
               <input
                 type={step === 'url' ? 'url' : 'text'}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    if (step === 'name') handleNameSubmit()
-                    else if (step === 'url') handleUrlSubmit()
-                    else handleIndustrySubmit()
-                  }
-                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 placeholder={
                   step === 'name' ? '例: 山田工務店' :
                   step === 'url' ? 'https://example.com' :
-                  '例: 地域の工務店'
+                  step === 'industry' ? '例: 地域の工務店' :
+                  step === 'location' ? '例: 大阪府吹田市' :
+                  '例: 地元密着30年の工務店'
                 }
                 autoFocus
                 className="flex-1 px-4 py-2 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
               />
               <button
-                onClick={
-                  step === 'name' ? handleNameSubmit :
-                  step === 'url' ? handleUrlSubmit :
-                  handleIndustrySubmit
-                }
+                onClick={handleSubmit}
                 className="px-4 py-2 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm"
               >
                 送信
@@ -130,9 +140,11 @@ export default function OnboardingPage() {
 
           {step === 'confirm' && (
             <form action={completeOnboarding}>
-              <input type="hidden" name="name" value={name} />
-              <input type="hidden" name="url" value={url} />
-              <input type="hidden" name="industry_memo" value={industryMemo} />
+              <input type="hidden" name="name"          value={values.name} />
+              <input type="hidden" name="url"           value={values.url} />
+              <input type="hidden" name="industry_memo" value={values.industry_memo} />
+              <input type="hidden" name="location"      value={values.location} />
+              <input type="hidden" name="bio"           value={values.bio} />
               <button
                 type="submit"
                 className="w-full py-3 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm"

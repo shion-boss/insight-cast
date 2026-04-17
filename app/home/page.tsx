@@ -22,7 +22,9 @@ export default async function HomePage() {
       <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
         <h1 className="font-semibold text-stone-800">Insight Cast</h1>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-stone-400">{profile?.name ?? user?.email}</span>
+          <Link href="/profile" className="text-sm text-stone-400 hover:text-stone-600">
+            {profile?.name ?? user?.email}
+          </Link>
           <form action={signOut}>
             <button type="submit" className="text-sm text-stone-400 hover:text-stone-600">
               ログアウト

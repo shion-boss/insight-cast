@@ -8,13 +8,16 @@ export async function completeOnboarding(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const name = formData.get('name') as string
-  const url = formData.get('url') as string
-  const industry_memo = formData.get('industry_memo') as string
-
   await supabase
     .from('profiles')
-    .update({ name, url, industry_memo, onboarded: true })
+    .update({
+      name:          formData.get('name') as string,
+      url:           formData.get('url') as string,
+      industry_memo: formData.get('industry_memo') as string,
+      location:      formData.get('location') as string,
+      bio:           formData.get('bio') as string,
+      onboarded:     true,
+    })
     .eq('id', user.id)
 
   redirect('/home')
