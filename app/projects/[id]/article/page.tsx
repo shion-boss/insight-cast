@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
+import { DevAiLabel, PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
@@ -253,7 +253,7 @@ export default function ArticlePage() {
                 onClick={generate}
                 className="px-6 py-3 text-sm"
               >
-                この形で記事をまとめる ✨
+                <DevAiLabel>この形で記事をまとめる</DevAiLabel>
               </PrimaryButton>
             </div>
           </>
@@ -302,7 +302,7 @@ export default function ArticlePage() {
               onClick={generate}
               className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors border border-stone-100 rounded-xl"
             >
-              もう一度まとめる
+              <DevAiLabel>もう一度まとめる</DevAiLabel>
             </button>
           </>
         )}

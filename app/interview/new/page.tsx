@@ -1,7 +1,7 @@
 import { CHARACTERS } from '@/lib/characters'
 import { createSession } from '@/lib/actions/interview'
 import Link from 'next/link'
-import { CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel } from '@/components/ui'
 
 export default function NewInterviewPage() {
   return (
@@ -37,7 +37,9 @@ export default function NewInterviewPage() {
                       <div className="text-xs text-amber-600 mt-1">{char.label}</div>
                     )}
                     <div className="text-xs text-stone-500 mt-2">{char.description}</div>
-                    <div className="text-xs text-stone-300 mt-2">✨ AI使用</div>
+                    <div className="text-xs text-stone-300 mt-2">
+                      <DevAiLabel>AI使用</DevAiLabel>
+                    </div>
                   </button>
                 </form>
               ) : (

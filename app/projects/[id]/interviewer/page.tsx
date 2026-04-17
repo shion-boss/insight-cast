@@ -2,7 +2,7 @@ import { CHARACTERS } from '@/lib/characters'
 import { createInterview } from '@/lib/actions/interviews'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader } from '@/components/ui'
 
 export default async function InterviewerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -63,7 +63,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
                 <div className="text-xs text-stone-500 mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-stone-400 mt-3 font-medium">得意: {char.specialty}</div>
                 <div className="mt-4 text-xs text-center py-2 bg-stone-800 text-white rounded-lg">
-                  来てもらう
+                  <DevAiLabel>来てもらう</DevAiLabel>
                 </div>
               </button>
             </form>

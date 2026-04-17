@@ -3,7 +3,7 @@ import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from './logout-button'
-import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 type Project = {
@@ -350,7 +350,7 @@ export default async function DashboardPage() {
                           href={`/projects/${project.id}/report`}
                           className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
                         >
-                          調査を見る
+                          <DevAiLabel>調査を見る</DevAiLabel>
                         </Link>
                         <Link
                           href={`/projects/${project.id}/interviewer`}

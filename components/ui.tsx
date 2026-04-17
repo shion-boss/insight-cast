@@ -2,8 +2,25 @@ import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
+}
+
+export function DevAiLabel({
+  children,
+  className,
+}: {
+  children: ReactNode
+  className?: string
+}) {
+  return (
+    <span className={cx('inline-flex items-center gap-1', className)}>
+      {isDevelopment && <span aria-hidden="true">✨</span>}
+      <span>{children}</span>
+    </span>
+  )
 }
 
 export function PageHeader({

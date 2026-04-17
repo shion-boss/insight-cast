@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { saveCompetitors } from '@/lib/actions/projects'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
-import { CharacterAvatar, InterviewerSpeech, PageHeader, PrimaryButton, TextInput } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, PrimaryButton, TextInput } from '@/components/ui'
 
 export default function CompetitorsPage() {
   const { id } = useParams<{ id: string }>()
@@ -116,7 +116,7 @@ export default function CompetitorsPage() {
             disabled={isPending}
             className="w-full py-3 text-sm"
           >
-            {isPending ? '登録中...' : 'この内容で調査を進める'}
+            {isPending ? <DevAiLabel>登録中...</DevAiLabel> : <DevAiLabel>この内容で調査を進める</DevAiLabel>}
           </PrimaryButton>
         </form>
 
@@ -125,7 +125,7 @@ export default function CompetitorsPage() {
             href={`/projects/${id}/report`}
             className="text-sm text-stone-500 hover:text-stone-700 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
           >
-            競合が分からないのでスキップする
+            <DevAiLabel>競合が分からないのでスキップする</DevAiLabel>
           </Link>
         </div>
       </div>

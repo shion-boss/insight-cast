@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
 
@@ -312,7 +312,7 @@ export default function InterviewPage() {
             disabled={loading || !input.trim()}
             className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors flex-shrink-0"
           >
-            {loading ? '送信中...' : '送信 ✨'}
+            {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
           </button>
         </form>
       </div>
@@ -340,7 +340,7 @@ export default function InterviewPage() {
                 onClick={handleFinish}
                 className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors"
               >
-                はい、まとめてください
+                <DevAiLabel>はい、まとめてください</DevAiLabel>
               </button>
               <button
                 onClick={handleContinue}
