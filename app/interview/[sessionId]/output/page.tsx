@@ -89,7 +89,7 @@ export default function OutputPage() {
                     : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
                 } disabled:opacity-50`}
               >
-                {generating === type ? '生成中...' : exists ? label : `+ ${label}`}
+                {generating === type ? '✨ 生成中...' : exists ? label : `✨ ${label}`}
               </button>
             )
           })}
