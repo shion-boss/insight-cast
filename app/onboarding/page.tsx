@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { completeOnboarding } from '@/lib/actions/onboarding'
-import { FieldLabel, PrimaryButton, StateCard, TextInput } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
+import { CharacterAvatar, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
@@ -15,15 +16,25 @@ export default async function OnboardingPage() {
     .single()
 
   if (profile?.onboarded) redirect('/dashboard')
+  const mint = getCharacter('mint')
 
   return (
     <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8">
-          <StateCard
-            icon="🐱"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={mint?.icon48}
+                alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={mint?.emoji}
+                size={48}
+              />
+            )}
+            name={mint?.name ?? 'インタビュアー'}
             title="最初に、分かる範囲だけ教えてください。"
             description="まずはお呼びするお名前だけで大丈夫です。取材先のホームページは、あとで登録できます。"
+            tone="soft"
           />
         </div>
 

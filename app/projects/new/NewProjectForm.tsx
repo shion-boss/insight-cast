@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
-import { FieldLabel, PrimaryButton, StateCard, TextInput } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
+import { CharacterAvatar, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
 
 type CompetitorSuggestion = {
   name: string
@@ -21,6 +22,7 @@ function normalizeUrl(raw: string) {
 }
 
 export default function NewProjectForm() {
+  const claus = getCharacter('claus')
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [industryMemo, setIndustryMemo] = useState('')
@@ -160,21 +162,35 @@ export default function NewProjectForm() {
         )}
 
         {suggestError && (
-          <StateCard
-            icon="🦉"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={claus?.icon48}
+                alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={claus?.emoji}
+                size={44}
+              />
+            )}
+            name={claus?.name ?? 'インタビュアー'}
             title="おすすめ候補をまだ出せません。"
             description={suggestError}
-            tone="warning"
-            align="left"
+            tone="soft"
           />
         )}
 
         {didSuggest && suggestions.length === 0 && !suggestError && (
-          <StateCard
-            icon="🦉"
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={claus?.icon48}
+                alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={claus?.emoji}
+                size={44}
+              />
+            )}
+            name={claus?.name ?? 'インタビュアー'}
             title="似た競合候補をまだ見つけられませんでした。"
             description="業界情報をもう少し具体的にすると、候補が出やすくなります。手入力で進めても大丈夫です。"
-            align="left"
             tone="soft"
           />
         )}

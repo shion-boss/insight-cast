@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 
 type InterviewRow = {
   id: string
@@ -83,6 +83,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     current.push(article)
     articlesByInterview.set(article.interview_id, current)
   }
+  const mint = getCharacter('mint')
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -115,20 +116,30 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         </section>
 
         {interviews.length === 0 ? (
-          <StateCard
-            icon="🎙️"
-            title="まだこの取材先のインタビューはありません。"
-            description="必要なタイミングで取材班を呼べば、ここに実施履歴と記事がまとまっていきます。"
-            align="left"
-            action={(
+          <>
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={mint?.icon48}
+                  alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                  emoji={mint?.emoji}
+                  size={48}
+                />
+              )}
+              name={mint?.name ?? 'インタビュアー'}
+              title="まだこの取材先のインタビューはありません。"
+              description="必要なタイミングで取材班を呼べば、ここに実施履歴と記事がまとまっていきます。"
+              tone="soft"
+            />
+            <div className="mt-4">
               <Link
                 href={`/projects/${id}/interviewer`}
                 className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
               >
                 最初のインタビューを始める
               </Link>
-            )}
-          />
+            </div>
+          </>
         ) : (
           <section className="space-y-4">
             <div>

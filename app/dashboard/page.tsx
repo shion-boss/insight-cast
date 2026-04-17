@@ -3,7 +3,7 @@ import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from './logout-button'
-import { PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 type Project = {
@@ -134,6 +134,7 @@ export default async function DashboardPage() {
   const projectCountLabel = `${projectList.length}件の取材先`
   const interviewCountLabel = `${interviews.length}件のインタビュー`
   const articleCountLabel = `${totalArticles}件の記事`
+  const mint = getCharacter('mint')
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -212,19 +213,28 @@ export default async function DashboardPage() {
 
         {projectList.length === 0 ? (
           <div className="mt-8">
-            <StateCard
-              icon="🐱"
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={mint?.icon48}
+                  alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                  emoji={mint?.emoji}
+                  size={48}
+                />
+              )}
+              name={mint?.name ?? 'インタビュアー'}
               title="まだ取材先がありません。"
               description="最初の取材先を登録すると、ここにインタビュー履歴と取材先の管理が並びます。"
-              action={(
-                <Link
-                  href="/projects/new"
-                  className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
-                >
-                  最初の取材先を登録する
-                </Link>
-              )}
+              tone="soft"
             />
+            <div className="mt-4">
+              <Link
+                href="/projects/new"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              >
+                最初の取材先を登録する
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
@@ -274,9 +284,13 @@ export default async function DashboardPage() {
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex min-w-0 items-start gap-3">
-                              <div className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 ring-1 ring-amber-100">
-                                <span className="text-base">{char?.emoji ?? '🎙️'}</span>
-                              </div>
+                              <CharacterAvatar
+                                src={char?.icon48}
+                                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                                emoji={char?.emoji ?? '🎙️'}
+                                size={44}
+                                className="mt-0.5 border-amber-100 bg-amber-50"
+                              />
                               <div className="min-w-0">
                                 <p className="text-sm font-medium text-stone-800">
                                   {project.name || project.hp_url}
