@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ReportClient from './ReportClient'
 import { PageHeader } from '@/components/ui'
+import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -20,19 +21,46 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   const { data: audit } = await supabase
     .from('hp_audits')
-    .select('current_content, strengths, gaps, suggested_themes')
+    .select('current_content, strengths, gaps, suggested_themes, raw_data')
     .eq('project_id', id)
-    .single()
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const { data: competitors } = await supabase
+    .from('competitors')
+    .select('id, url')
+    .eq('project_id', id)
 
   const { data: rawCompetitorAnalyses } = await supabase
     .from('competitor_analyses')
-    .select('gaps, advantages, competitor_id, competitors(url)')
+    .select('gaps, advantages, competitor_id, raw_data, competitors(url)')
     .eq('project_id', id)
+
+  const readiness = isProjectAnalysisReady({
+    project,
+    competitors: competitors ?? [],
+    audit,
+    competitorAnalyses: rawCompetitorAnalyses ?? [],
+  })
+
+  const resolvedStatus = resolveProjectAnalysisStatus(project.status, readiness.isReady)
+
+  if (project.status !== resolvedStatus) {
+    await supabase
+      .from('projects')
+      .update({ status: resolvedStatus })
+      .eq('id', id)
+      .eq('user_id', user.id)
+
+    redirect(resolvedStatus === 'report_ready' ? `/projects/${id}/report` : `/projects/${id}`)
+  }
 
   type CompetitorAnalysisRow = {
     gaps: string[] | null
     advantages: string[] | null
     competitor_id: string
+    raw_data: Record<string, unknown> | null
     competitors: { url: string } | { url: string }[] | null
   }
 
@@ -43,7 +71,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title="取材先の調査結果" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <ReportClient
         projectId={id}

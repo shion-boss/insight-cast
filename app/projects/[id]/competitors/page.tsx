@@ -3,8 +3,9 @@
 import { useState, useTransition } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { saveCompetitors } from '@/lib/actions/projects'
+import { showToast } from '@/lib/client/toast'
 import { getCharacter } from '@/lib/characters'
-import Link from 'next/link'
+import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, PrimaryButton, TextInput } from '@/components/ui'
 
 export default function CompetitorsPage() {
@@ -39,7 +40,21 @@ export default function CompetitorsPage() {
         setError('うまく保存できませんでした。もう一度お試しください')
         return
       }
-      router.push(`/projects/${id}/report`)
+      trackPendingProjectAnalysis(id, 'この取材先')
+      showToast({
+        id: `analysis-started-${id}`,
+        title: '調査を開始しました',
+        description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+      })
+      fetch(`/api/projects/${id}/analyze`, { method: 'POST' }).catch(() => {
+        showToast({
+          id: `analysis-error-${id}`,
+          title: '調査を開始できませんでした',
+          description: '少し待ってから、もう一度お試しください。',
+          tone: 'warning',
+        })
+      })
+      router.push(`/projects/${id}`)
     })
   }
 
@@ -121,12 +136,29 @@ export default function CompetitorsPage() {
         </form>
 
         <div className="text-center mt-4">
-          <Link
-            href={`/projects/${id}/report`}
+          <button
+            type="button"
+            onClick={() => {
+              trackPendingProjectAnalysis(id, 'この取材先')
+              showToast({
+                id: `analysis-started-${id}`,
+                title: '調査を開始しました',
+                description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+              })
+              fetch(`/api/projects/${id}/analyze`, { method: 'POST' }).catch(() => {
+                showToast({
+                  id: `analysis-error-${id}`,
+                  title: '調査を開始できませんでした',
+                  description: '少し待ってから、もう一度お試しください。',
+                  tone: 'warning',
+                })
+              })
+              router.push(`/projects/${id}`)
+            }}
             className="text-sm text-stone-500 hover:text-stone-700 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
           >
             <DevAiLabel>競合が分からないのでスキップする</DevAiLabel>
-          </Link>
+          </button>
         </div>
       </div>
     </div>

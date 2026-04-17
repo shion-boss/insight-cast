@@ -3,8 +3,10 @@ import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from './logout-button'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import StartAnalysisButton from '@/components/start-analysis-button'
+import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 
 type Project = {
   id: string
@@ -104,6 +106,38 @@ export default async function DashboardPage() {
 
   const projectList = (projects ?? []) as Project[]
   const projectMap = Object.fromEntries(projectList.map((project) => [project.id, project]))
+
+  const { data: auditRows } = projectList.length > 0
+    ? await supabase
+      .from('hp_audits')
+      .select('id, project_id, raw_data, created_at')
+      .in('project_id', projectList.map((project) => project.id))
+    : { data: [] }
+
+  const { data: competitorRows } = projectList.length > 0
+    ? await supabase
+      .from('competitors')
+      .select('id, project_id, url')
+      .in('project_id', projectList.map((project) => project.id))
+    : { data: [] }
+
+  const { data: competitorAnalysisRows } = projectList.length > 0
+    ? await supabase
+      .from('competitor_analyses')
+      .select('project_id, competitor_id, raw_data')
+      .in('project_id', projectList.map((project) => project.id))
+    : { data: [] }
+
+  const analysisReadyProjectIds = new Set(
+    projectList
+      .filter((project) => isProjectAnalysisReady({
+        project,
+        competitors: (competitorRows ?? []).filter((competitor) => competitor.project_id === project.id),
+        audit: (auditRows ?? []).find((audit) => audit.project_id === project.id),
+        competitorAnalyses: (competitorAnalysisRows ?? []).filter((row) => row.project_id === project.id),
+      }).isReady)
+      .map((project) => project.id),
+  )
 
   let interviews: Interview[] = []
   const latestInterviewMap: Record<string, string> = {}
@@ -355,12 +389,35 @@ export default async function DashboardPage() {
                         >
                           管理を見る
                         </Link>
-                        <Link
-                          href={`/projects/${project.id}/report`}
-                          className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
-                        >
-                          <DevAiLabel>調査を見る</DevAiLabel>
-                        </Link>
+                        {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
+                          <StartAnalysisButton
+                            projectId={project.id}
+                            projectName={project.name || project.hp_url}
+                            compact
+                            className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                          />
+                        ) : project.status === 'analyzing' ? (
+                          <div className="inline-flex items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-700">
+                            調査中
+                          </div>
+                        ) : (
+                          <>
+                            <Link
+                              href={`/projects/${project.id}/report`}
+                              prefetch={false}
+                              className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                            >
+                              調査結果を見る
+                            </Link>
+                            <StartAnalysisButton
+                              projectId={project.id}
+                              projectName={project.name || project.hp_url}
+                              compact
+                              force
+                              className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                            />
+                          </>
+                        )}
                         <Link
                           href={`/projects/${project.id}/interviewer`}
                           className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-2 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"

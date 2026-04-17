@@ -1,8 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { buildProjectAnalysisSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
+import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+function throwIfError(error: PostgrestError | null, context: string) {
+  if (error) {
+    throw new Error(`${context}: ${error.message}`)
+  }
+}
 
 async function fetchMarkdown(url: string): Promise<string> {
   const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
@@ -92,12 +101,50 @@ export async function GET(
 
   const { data: project } = await supabase
     .from('projects')
-    .select('status')
+    .select('status, hp_url')
     .eq('id', id)
     .eq('user_id', user.id)
     .single()
 
-  return NextResponse.json({ status: project?.status ?? 'analyzing' })
+  const { data: audit } = await supabase
+    .from('hp_audits')
+    .select('id, raw_data')
+    .eq('project_id', id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const { data: competitors } = await supabase
+    .from('competitors')
+    .select('id, url')
+    .eq('project_id', id)
+
+  const { data: competitorAnalyses } = await supabase
+    .from('competitor_analyses')
+    .select('competitor_id, raw_data')
+    .eq('project_id', id)
+
+  let resolvedStatus = project?.status ?? 'analysis_pending'
+  const readiness = project
+    ? isProjectAnalysisReady({
+      project,
+      competitors: competitors ?? [],
+      audit,
+      competitorAnalyses: competitorAnalyses ?? [],
+    })
+    : { isReady: false }
+
+  resolvedStatus = resolveProjectAnalysisStatus(resolvedStatus, readiness.isReady)
+
+  if (project?.status !== resolvedStatus) {
+    await supabase
+      .from('projects')
+      .update({ status: resolvedStatus })
+      .eq('id', id)
+      .eq('user_id', user.id)
+  }
+
+  return NextResponse.json({ status: resolvedStatus })
 }
 
 export async function POST(
@@ -117,57 +164,145 @@ export async function POST(
     .single()
 
   if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })
-  if (project.status !== 'analyzing') return NextResponse.json({ status: project.status })
 
-  const { data: existing } = await supabase
+  const { data: existingAudit } = await supabase
     .from('hp_audits')
-    .select('id')
+    .select('id, raw_data, created_at')
     .eq('project_id', id)
-    .single()
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
-  if (existing) return NextResponse.json({ status: 'already_started' })
+  const { data: competitors } = await supabase
+    .from('competitors')
+    .select('id, url')
+    .eq('project_id', id)
+
+  const competitorUrls = (competitors ?? []).map((competitor) => competitor.url)
+  const inputSignature = buildProjectAnalysisSignature({
+    hpUrl: project.hp_url,
+    competitorUrls,
+  })
+
+  const { data: existingCompetitorAnalyses } = await supabase
+    .from('competitor_analyses')
+    .select('id, competitor_id, raw_data')
+    .eq('project_id', id)
+
+  const { hasFreshAudit, hasFreshCompetitorAnalyses } = isProjectAnalysisReady({
+    project,
+    competitors: competitors ?? [],
+    audit: existingAudit,
+    competitorAnalyses: existingCompetitorAnalyses ?? [],
+  })
+
+  if (hasFreshAudit && hasFreshCompetitorAnalyses) {
+    const { error: projectUpdateError } = await supabase
+      .from('projects')
+      .update({ status: 'report_ready' })
+      .eq('id', id)
+    throwIfError(projectUpdateError, 'failed to mark cached report ready')
+
+    return NextResponse.json({ status: 'cached' })
+  }
+
+  if (!['analysis_pending', 'analyzing'].includes(project.status) && existingAudit?.id) {
+    return NextResponse.json({ status: project.status })
+  }
+
+  const { error: markAnalyzingError } = await supabase
+    .from('projects')
+    .update({ status: 'analyzing' })
+    .eq('id', id)
+  throwIfError(markAnalyzingError, 'failed to mark project analyzing')
 
   try {
     const mainMarkdown = await fetchMarkdown(project.hp_url)
+    const normalizedHpUrl = normalizeAnalysisUrl(project.hp_url)
 
     const audit = await analyzeHp(mainMarkdown)
-    await supabase.from('hp_audits').insert({
+    const auditPayload = {
       project_id: id,
-      current_content:  audit.current_content,
-      strengths:        audit.strengths,
-      gaps:             audit.gaps,
+      current_content: audit.current_content,
+      strengths: audit.strengths,
+      gaps: audit.gaps,
       suggested_themes: audit.suggested_themes,
-      raw_data: { markdown_length: mainMarkdown.length },
-    })
+      raw_data: {
+        input_signature: inputSignature,
+        source_url: normalizedHpUrl,
+        markdown_length: mainMarkdown.length,
+        analyzed_at: new Date().toISOString(),
+      },
+    }
 
-    const { data: competitors } = await supabase
-      .from('competitors')
-      .select('id, url')
+    if (existingAudit?.id) {
+      const { error: auditUpdateError } = await supabase
+        .from('hp_audits')
+        .update(auditPayload)
+        .eq('id', existingAudit.id)
+      throwIfError(auditUpdateError, 'failed to update hp_audit')
+    } else {
+      const { error: auditInsertError } = await supabase.from('hp_audits').insert(auditPayload)
+      throwIfError(auditInsertError, 'failed to insert hp_audit')
+    }
+
+    const { error: deleteCompetitorsError } = await supabase
+      .from('competitor_analyses')
+      .delete()
       .eq('project_id', id)
+    throwIfError(deleteCompetitorsError, 'failed to clear competitor analyses')
 
     if (competitors && competitors.length > 0) {
+      const competitorRows: Array<{
+        project_id: string
+        competitor_id: string
+        gaps: string[]
+        advantages: string[]
+        raw_data: {
+          input_signature: string
+          source_url: string
+          markdown_length: number
+          analyzed_at: string
+        }
+      }> = []
+
       for (const comp of competitors) {
         const compMarkdown = await fetchMarkdown(comp.url)
         if (!compMarkdown) continue
         const result = await compareCompetitor(mainMarkdown, compMarkdown)
-        await supabase.from('competitor_analyses').insert({
-          project_id:    id,
+        competitorRows.push({
+          project_id: id,
           competitor_id: comp.id,
-          gaps:          result.gaps,
-          advantages:    result.advantages,
-          raw_data: { markdown_length: compMarkdown.length },
+          gaps: result.gaps,
+          advantages: result.advantages,
+          raw_data: {
+            input_signature: inputSignature,
+            source_url: normalizeAnalysisUrl(comp.url),
+            markdown_length: compMarkdown.length,
+            analyzed_at: new Date().toISOString(),
+          },
         })
+      }
+
+      if (competitorRows.length > 0) {
+        const { error: competitorInsertError } = await supabase.from('competitor_analyses').insert(competitorRows)
+        throwIfError(competitorInsertError, 'failed to insert competitor analyses')
       }
     }
 
-    await supabase
+    const { error: reportReadyError } = await supabase
       .from('projects')
       .update({ status: 'report_ready' })
       .eq('id', id)
+    throwIfError(reportReadyError, 'failed to mark project report_ready')
 
     return NextResponse.json({ status: 'done' })
   } catch (err) {
     console.error('[analyze]', err)
+    await supabase
+      .from('projects')
+      .update({ status: 'analysis_pending' })
+      .eq('id', id)
     return NextResponse.json({ error: 'analysis failed' }, { status: 500 })
   }
 }

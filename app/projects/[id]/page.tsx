@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import StartAnalysisButton from '@/components/start-analysis-button'
+import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 
 type InterviewRow = {
   id: string
@@ -50,7 +52,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, name, hp_url, updated_at')
+    .select('id, name, hp_url, status, updated_at')
     .eq('id', id)
     .eq('user_id', user.id)
     .single()
@@ -63,7 +65,31 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     .eq('project_id', id)
     .order('created_at', { ascending: false })
 
+  const { data: auditRow } = await supabase
+    .from('hp_audits')
+    .select('id, raw_data')
+    .eq('project_id', id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  const { data: competitors } = await supabase
+    .from('competitors')
+    .select('id, url')
+    .eq('project_id', id)
+
+  const { data: competitorAnalyses } = await supabase
+    .from('competitor_analyses')
+    .select('competitor_id, raw_data')
+    .eq('project_id', id)
+
   const interviews = (interviewRows ?? []) as InterviewRow[]
+  const analysisReady = isProjectAnalysisReady({
+    project,
+    competitors: competitors ?? [],
+    audit: auditRow,
+    competitorAnalyses: competitorAnalyses ?? [],
+  }).isReady
 
   let articles: ArticleRow[] = []
   if (interviews.length > 0) {
@@ -105,12 +131,33 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               >
                 新しいインタビュー
               </Link>
-              <Link
-                href={`/projects/${id}/report`}
-                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
-              >
-                <DevAiLabel>調査を見る</DevAiLabel>
-              </Link>
+              {!analysisReady || project.status === 'analysis_pending' ? (
+                <StartAnalysisButton
+                  projectId={id}
+                  projectName={project.name || project.hp_url}
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                />
+              ) : project.status === 'analyzing' ? (
+                <div className="inline-flex items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+                  調査中
+                </div>
+              ) : (
+                <>
+                  <Link
+                    href={`/projects/${id}/report`}
+                    prefetch={false}
+                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  >
+                    この取材先の調査結果を見る
+                  </Link>
+                  <StartAnalysisButton
+                    projectId={id}
+                    projectName={project.name || project.hp_url}
+                    force
+                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  />
+                </>
+              )}
             </div>
           </div>
         </section>

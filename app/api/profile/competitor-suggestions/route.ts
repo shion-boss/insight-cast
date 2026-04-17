@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest } from 'next/server'
+import { buildCompetitorSuggestionSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
 
 const anthropic = new Anthropic()
 
@@ -16,8 +17,33 @@ export async function POST(req: NextRequest) {
   if (!user) return new Response('Unauthorized', { status: 401 })
 
   const { industry, location, url } = await req.json()
-  if (!url?.trim() || !industry?.trim()) {
+  const normalizedUrl = normalizeAnalysisUrl(typeof url === 'string' ? url : '')
+  const normalizedIndustry = typeof industry === 'string' ? industry.trim() : ''
+  const normalizedLocation = typeof location === 'string' ? location.trim() : ''
+
+  if (!normalizedUrl || !normalizedIndustry) {
     return Response.json({ suggestions: [] }, { status: 400 })
+  }
+
+  const inputSignature = buildCompetitorSuggestionSignature({
+    url: normalizedUrl,
+    industry: normalizedIndustry,
+    location: normalizedLocation,
+  })
+
+  const { data: cached } = await supabase
+    .from('competitor_suggestion_caches')
+    .select('suggestions, updated_at')
+    .eq('user_id', user.id)
+    .eq('input_signature', inputSignature)
+    .maybeSingle()
+
+  if (cached?.suggestions && Array.isArray(cached.suggestions)) {
+    return Response.json({
+      suggestions: cached.suggestions,
+      cached: true,
+      savedAt: cached.updated_at,
+    })
   }
 
   const response = await anthropic.messages.create({
@@ -27,9 +53,9 @@ export async function POST(req: NextRequest) {
       role: 'user',
       content: `以下の事業者の競合となりそうなウェブサイトを5件提案してください。
 
-業種: ${industry ?? '不明'}
-地域: ${location ?? '不明'}
-自社HP: ${url ?? '不明'}
+業種: ${normalizedIndustry || '不明'}
+地域: ${normalizedLocation || '不明'}
+自社HP: ${normalizedUrl || '不明'}
 
 条件:
 - 実在する可能性が高い具体的なURLを提案する
@@ -57,7 +83,7 @@ export async function POST(req: NextRequest) {
     const suggestions = (Array.isArray(raw) ? raw : [])
       .map((item): Suggestion | null => {
         if (!item || typeof item !== 'object') return null
-        const urlValue = typeof item.url === 'string' ? item.url.trim() : ''
+        const urlValue = normalizeAnalysisUrl(typeof item.url === 'string' ? item.url : '')
         if (!urlValue) return null
         return {
           name: typeof item.name === 'string' && item.name.trim() ? item.name.trim() : urlValue.replace(/^https?:\/\//, ''),
@@ -68,7 +94,20 @@ export async function POST(req: NextRequest) {
       .filter((item): item is Suggestion => item !== null)
       .slice(0, 5)
 
-    return Response.json({ suggestions })
+    await supabase
+      .from('competitor_suggestion_caches')
+      .upsert({
+        user_id: user.id,
+        source_url: normalizedUrl,
+        industry: normalizedIndustry,
+        location: normalizedLocation || null,
+        input_signature: inputSignature,
+        suggestions,
+      }, {
+        onConflict: 'user_id,input_signature',
+      })
+
+    return Response.json({ suggestions, cached: false })
   } catch {
     return Response.json({ suggestions: [] })
   }

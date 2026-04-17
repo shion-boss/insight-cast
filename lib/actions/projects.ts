@@ -29,7 +29,7 @@ export async function createProject(formData: FormData) {
 
   const { data, error } = await supabase
     .from('projects')
-    .insert({ user_id: user.id, name, hp_url, status: 'interview_ready' })
+    .insert({ user_id: user.id, name, hp_url, status: 'analysis_pending' })
     .select('id')
     .single()
 
@@ -52,6 +52,15 @@ export async function saveCompetitors(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'auth' }
 
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('id', projectId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (!project) return { error: 'auth' }
+
   const valid = urls
     .map(normalizeUrl)
     .filter(Boolean)
@@ -63,6 +72,14 @@ export async function saveCompetitors(
       .insert(valid.map(url => ({ project_id: projectId, url })))
     if (error) return { error: 'db' }
   }
+
+  const { error: projectError } = await supabase
+    .from('projects')
+    .update({ status: 'analysis_pending' })
+    .eq('id', projectId)
+    .eq('user_id', user.id)
+
+  if (projectError) return { error: 'db' }
 
   return {}
 }

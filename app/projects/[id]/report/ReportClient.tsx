@@ -30,30 +30,21 @@ type Props = {
 export default function ReportClient({
   projectId, initialStatus, audit, competitorAnalyses, interviewerPath,
 }: Props) {
-  const router = useRouter()
-  const [status] = useState(initialStatus)
-  const [started, setStarted] = useState(false)
   const [analysisError, setAnalysisError] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const router = useRouter()
+  const [status, setStatus] = useState(initialStatus)
 
   useEffect(() => {
     if (status !== 'analyzing') return
-
-    async function startAnalysis() {
-      if (started) return
-      setStarted(true)
-      const res = await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
-      if (!res.ok) {
-        setAnalysisError(true)
-      }
-    }
-
-    startAnalysis()
 
     pollRef.current = setInterval(async () => {
       const res = await fetch(`/api/projects/${projectId}/analyze`)
       if (res.ok) {
         const json = await res.json()
+        if (typeof json.status === 'string') {
+          setStatus(json.status)
+        }
         if (json.status === 'report_ready') {
           clearInterval(pollRef.current!)
           router.refresh()
@@ -66,33 +57,98 @@ export default function ReportClient({
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
     }
-  }, [projectId, status, started, router])
+  }, [projectId, router, status])
 
-  if (status === 'analyzing' || !audit) {
+  if (status === 'analysis_pending') {
+    return (
+      <div className="max-w-lg mx-auto px-6 py-16 text-center">
+        <StateCard
+          icon={<span>📝</span>}
+          title="まだ調査は始まっていません。"
+          description="取材先の管理画面に戻って「調査を開始する」を押すと、バックグラウンドで進みます。"
+          tone="soft"
+          action={(
+            <Link
+              href={`/projects/${projectId}`}
+              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+            >
+              取材先の管理へ戻る
+            </Link>
+          )}
+        />
+      </div>
+    )
+  }
+
+  if (status === 'analyzing') {
     return (
       <div className="max-w-lg mx-auto px-6 py-16 text-center">
         <StateCard
           icon={<span className={analysisError ? '' : 'animate-pulse'}>🦉</span>}
-          title={analysisError ? 'いまは調査を続けられていません。' : 'クラウスが調査しています'}
+          title={analysisError ? 'いまは調査を続けられていません。' : 'クラウスが調査を進めています'}
           description={analysisError
             ? '少し待ってからページを開き直すと、続きから確認できることがあります。'
-            : '完了したらこのページが自動的に切り替わります。'}
+            : 'このページで待たなくて大丈夫です。完了したらトーストでお知らせします。'}
           tone={analysisError ? 'warning' : 'default'}
           action={analysisError ? (
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
-            >
-              もう一度確認する
-            </button>
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              >
+                もう一度確認する
+              </button>
+              <Link
+                href={`/projects/${projectId}`}
+                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              >
+                取材先の管理へ戻る
+              </Link>
+            </div>
           ) : (
-            <div className="rounded-xl border border-stone-100 bg-white p-4 text-left text-sm text-stone-400">
+            <div className="rounded-xl border border-stone-100 bg-white p-4 text-left text-sm text-stone-400 space-y-3">
               <p className="flex items-center gap-2">
                 <span className="animate-spin inline-block">⏳</span>
-                自社HPを読み込んでいます...
+                自社HPや競合の情報を整理しています...
               </p>
+              <p>このページで待たなくて大丈夫です。完了したらトーストでお知らせします。</p>
+              <div className="flex flex-col gap-2 pt-2 sm:flex-row">
+                <Link
+                  href={`/projects/${projectId}`}
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                >
+                  取材先の管理へ戻る
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                >
+                  ダッシュボードへ戻る
+                </Link>
+              </div>
             </div>
+          )}
+        />
+      </div>
+    )
+  }
+
+  if (!audit) {
+    return (
+      <div className="max-w-lg mx-auto px-6 py-16 text-center">
+        <StateCard
+          icon={<span>📄</span>}
+          title="まだ表示できる調査結果がありません。"
+          description="この取材先では、まだ確認できる調査データがありません。取材先の管理画面から必要に応じて調査を開始してください。"
+          tone="soft"
+          action={(
+            <Link
+              href={`/projects/${projectId}`}
+              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+            >
+              取材先の管理へ戻る
+            </Link>
           )}
         />
       </div>

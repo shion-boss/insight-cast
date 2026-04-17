@@ -72,7 +72,9 @@ export async function POST(
     .from('hp_audits')
     .select('gaps, suggested_themes')
     .eq('project_id', projectId)
-    .single()
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
   const auditResult = auditRow as { gaps?: string[]; suggested_themes?: string[] } | null
   const audit = auditResult ?? null
