@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { PageHeader, PrimaryButton, SecondaryButton, TextInput } from '@/components/ui'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
@@ -93,10 +94,7 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-stone-800">Insight Cast</span>
-        <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-600">← ダッシュボード</Link>
-      </header>
+      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
         {/* タブ */}
@@ -105,7 +103,7 @@ export default function ArticlePage() {
             <button
               key={t.type}
               onClick={() => setTab(t.type)}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium cursor-pointer transition-colors ${
+              className={`flex-1 py-2 rounded-lg text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
                 tab === t.type ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400 hover:text-stone-600'
               }`}
             >
@@ -120,12 +118,12 @@ export default function ArticlePage() {
             {/* テーマ（共通オプション） */}
             <div className="mb-4">
               <label className="block text-xs text-stone-500 mb-1">テーマ指定（任意）</label>
-              <input
+              <TextInput
                 type="text"
                 value={theme}
                 onChange={(e) => setTheme(e.target.value)}
                 placeholder="例: 丁寧な対応と信頼感について"
-                className="w-full px-3 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300"
+                className="px-3"
               />
             </div>
 
@@ -139,7 +137,7 @@ export default function ArticlePage() {
                       <button
                         key={opt.value}
                         onClick={() => setStyle(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs cursor-pointer transition-colors ${
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
                           style === opt.value
                             ? 'bg-stone-800 text-white'
                             : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
@@ -157,7 +155,7 @@ export default function ArticlePage() {
                       <button
                         key={opt.value}
                         onClick={() => setVolume(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs cursor-pointer transition-colors ${
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
                           volume === opt.value
                             ? 'bg-stone-800 text-white'
                             : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
@@ -175,12 +173,12 @@ export default function ArticlePage() {
               <div className="text-4xl mb-3">{currentTab.emoji}</div>
               <p className="text-stone-700 font-medium mb-1">{currentTab.desc}</p>
               <p className="text-sm text-stone-400 mb-6">インタビューの内容をもとに記事を作ります</p>
-              <button
+              <PrimaryButton
                 onClick={generate}
-                className="px-6 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 cursor-pointer transition-colors"
+                className="px-6 py-3 text-sm"
               >
                 記事を書いてもらう ✨
-              </button>
+              </PrimaryButton>
             </div>
           </>
         )}
@@ -208,23 +206,23 @@ export default function ArticlePage() {
             </div>
 
             <div className="flex gap-2 mb-4">
-              <button
+              <SecondaryButton
                 onClick={handleCopy}
-                className="flex-1 py-2 border border-stone-200 rounded-xl text-sm text-stone-600 hover:bg-stone-50 cursor-pointer transition-colors"
+                className="flex-1 py-2 text-sm"
               >
                 {copied ? 'コピーしました ✓' : 'コピーする'}
-              </button>
-              <button
+              </SecondaryButton>
+              <SecondaryButton
                 onClick={handleDownload}
-                className="flex-1 py-2 border border-stone-200 rounded-xl text-sm text-stone-600 hover:bg-stone-50 cursor-pointer transition-colors"
+                className="flex-1 py-2 text-sm"
               >
                 Markdownでダウンロード
-              </button>
+              </SecondaryButton>
             </div>
 
             <button
               onClick={generate}
-              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 cursor-pointer transition-colors border border-stone-100 rounded-xl"
+              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors border border-stone-100 rounded-xl"
             >
               再生成する
             </button>
@@ -234,7 +232,7 @@ export default function ArticlePage() {
         <div className="mt-6">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="block text-center text-sm text-stone-300 hover:text-stone-500 transition-colors"
+            className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
           >
             インタビューからやり直す
           </Link>

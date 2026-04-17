@@ -184,7 +184,7 @@ export default function ReportClient({
 
       <Link
         href={interviewerPath}
-        className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm text-center"
+        className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
       >
         インタビューを始める →
       </Link>

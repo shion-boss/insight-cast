@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import ReportClient from './ReportClient'
+import { PageHeader } from '@/components/ui'
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -43,10 +43,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-stone-800">Insight Cast</span>
-        <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-600">← ダッシュボードに戻る</Link>
-      </header>
+      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボードに戻る" />
 
       <ReportClient
         projectId={id}

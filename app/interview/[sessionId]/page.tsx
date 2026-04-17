@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import { completeSession } from '@/lib/actions/interview'
+import { PrimaryButton, SecondaryButton, TextInput } from '@/components/ui'
 
 type Message = { role: 'user' | 'assistant'; content: string }
 
@@ -120,12 +121,12 @@ export default function InterviewPage() {
           </div>
         </div>
         <form action={completeSession.bind(null, sessionId)}>
-          <button
+          <SecondaryButton
             type="submit"
-            className="text-sm px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-lg"
           >
             インタビューを終わる
-          </button>
+          </SecondaryButton>
         </form>
       </header>
 
@@ -163,21 +164,21 @@ export default function InterviewPage() {
       {/* 入力欄 */}
       <div className="bg-white border-t border-stone-100 px-4 py-4">
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex gap-2">
-          <input
+          <TextInput
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="メッセージを入力..."
             disabled={loading}
-            className="flex-1 px-4 py-2 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 disabled:opacity-50"
+            className="flex-1 rounded-xl disabled:opacity-50"
           />
-          <button
+          <PrimaryButton
             type="submit"
             disabled={loading || !input.trim()}
-            className="px-4 py-2 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm"
           >
             ✨ 送信
-          </button>
+          </PrimaryButton>
         </form>
       </div>
     </div>

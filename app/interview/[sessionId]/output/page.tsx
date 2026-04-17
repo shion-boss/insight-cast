@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
-import Link from 'next/link'
+import { PageHeader } from '@/components/ui'
 
 type Output = { id: string; type: string; title: string; content: string }
 
@@ -63,15 +63,16 @@ export default function OutputPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{char?.emoji}</span>
-          <p className="text-sm font-medium text-stone-800">インタビュー結果</p>
-        </div>
-        <Link href="/home" className="text-sm text-stone-400 hover:text-stone-600">
-          ホームへ戻る
-        </Link>
-      </header>
+      <PageHeader
+        title={(
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{char?.emoji}</span>
+            <p className="text-sm font-medium text-stone-800">インタビュー結果</p>
+          </div>
+        )}
+        backHref="/home"
+        backLabel="ホームへ戻る"
+      />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
         {/* 出力タイプ選択 */}
@@ -83,7 +84,7 @@ export default function OutputPage() {
                 key={type}
                 onClick={() => exists ? setSelectedType(type) : generate(type)}
                 disabled={generating === type}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors ${
                   selectedType === type && exists
                     ? 'bg-stone-800 text-white'
                     : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
@@ -102,7 +103,7 @@ export default function OutputPage() {
               <h2 className="font-medium text-stone-800">{currentOutput.title}</h2>
               <button
                 onClick={() => navigator.clipboard.writeText(currentOutput.content)}
-                className="text-xs text-stone-400 hover:text-stone-600 border border-stone-200 px-2 py-1 rounded"
+                className="text-xs text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 border border-stone-200 px-2 py-1 rounded"
               >
                 コピー
               </button>

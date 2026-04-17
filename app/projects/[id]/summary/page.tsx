@@ -5,6 +5,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
+import { PageHeader } from '@/components/ui'
 
 type SummaryData = {
   values: string[]
@@ -73,10 +74,7 @@ export default function SummaryPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-stone-800">Insight Cast</span>
-        <Link href="/dashboard" className="text-sm text-stone-400 hover:text-stone-600">← ダッシュボード</Link>
-      </header>
+      <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
         <div className="flex items-center gap-3">
@@ -119,7 +117,7 @@ export default function SummaryPage() {
                   </div>
                   <Link
                     href={`/projects/${projectId}/article?interviewId=${interviewId}&theme=${encodeURIComponent(t)}`}
-                    className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 flex-shrink-0 transition-colors"
+                    className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 flex-shrink-0 transition-colors"
                   >
                     記事を作る
                   </Link>
@@ -133,7 +131,7 @@ export default function SummaryPage() {
         <section className="bg-white rounded-xl border border-stone-100 p-5">
           <button
             onClick={() => setShowMessages(!showMessages)}
-            className="flex items-center justify-between w-full text-sm font-medium text-stone-600 cursor-pointer"
+            className="flex items-center justify-between w-full text-sm font-medium text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md cursor-pointer"
           >
             やり取りを見る
             <span className="text-stone-300">{showMessages ? '▲' : '▼'}</span>
@@ -154,19 +152,19 @@ export default function SummaryPage() {
         <div className="space-y-3">
           <Link
             href={`/projects/${projectId}/article?interviewId=${interviewId}`}
-            className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 transition-colors text-sm text-center"
+            className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
           >
             記事を作る →
           </Link>
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="block w-full py-2 text-sm text-stone-400 hover:text-stone-600 text-center transition-colors"
+            className="block w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
             もう少し話す
           </Link>
           <Link
             href="/dashboard"
-            className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 text-center transition-colors"
+            className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
             あとで記事にする
           </Link>
