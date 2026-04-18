@@ -163,7 +163,7 @@ export default async function LandingPage() {
                     ['AI取材', '会話から価値を発見する'],
                     ['記事素材化', '更新の芯まで残す'],
                   ].map(([title, body]) => (
-                    <div key={title} className="rounded-2xl border border-stone-300 bg-white px-4 py-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-sm">
+                    <div key={title} className="rounded-2xl border border-stone-300 bg-white px-4 py-4">
                       <p className="text-sm font-semibold text-stone-950">{title}</p>
                       <p className="mt-1 text-xs leading-5 text-stone-600">{body}</p>
                     </div>
@@ -199,7 +199,7 @@ export default async function LandingPage() {
                 <p className="text-xs font-medium tracking-[0.22em] text-amber-700 uppercase">What Changes</p>
                 <div className="mt-5 grid gap-4">
                   {outcomes.map((item) => (
-                    <div key={item.title} className="rounded-[1.7rem] border border-white/90 bg-white/94 px-5 py-5 shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+                    <div key={item.title} className="rounded-[1.7rem] border border-white/90 bg-white/94 px-5 py-5 backdrop-blur-sm">
                       <p className="text-lg font-semibold tracking-tight text-stone-950">{item.title}</p>
                       <p className="mt-2 text-sm leading-7 text-stone-600">{item.body}</p>
                     </div>
@@ -306,7 +306,7 @@ export default async function LandingPage() {
 
               <div className="mt-7 space-y-3">
                 {outputExamples.map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-[1.7rem] border border-stone-200 bg-white/92 px-5 py-4 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-stone-300">
+                  <div key={item} className="flex items-start gap-3 rounded-[1.7rem] border border-stone-200 bg-white/92 px-5 py-4">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
                     <p className="text-sm leading-7 text-stone-600">{item}</p>
                   </div>
@@ -336,7 +336,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="mt-6 grid gap-4 md:grid-cols-3">
                   {faqs.map((item) => (
-                    <div key={item.q} className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5 transition-all duration-200 hover:bg-white/10 hover:border-white/20">
+                    <div key={item.q} className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5">
                       <p className="text-base font-semibold text-white">{item.q}</p>
                       <p className="mt-3 text-sm leading-7 text-stone-300">{item.a}</p>
                     </div>

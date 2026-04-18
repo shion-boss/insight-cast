@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { CharacterAvatar, EyebrowBadge, HeaderSurface, SiteBrand, getButtonClass } from '@/components/ui'
+import { CharacterAvatar, EyebrowBadge, HeaderSurface, SiteBrand, getButtonClass, getPanelClass } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 
 const NAV_LINKS = [
@@ -100,7 +100,7 @@ export function PublicHero({
         </div>
 
         {aside && (
-          <div className={cx('rounded-[2rem] border border-stone-300/80 bg-[rgba(255,253,249,0.94)] p-5 shadow-sm backdrop-blur-md', asideClassName)}>
+          <div className={cx(getPanelClass('rounded-[2rem] p-5'), asideClassName)}>
             {aside}
           </div>
         )}
@@ -218,7 +218,7 @@ export function PublicFooter() {
     <footer className="relative border-t border-stone-300/60 bg-[rgba(244,236,223,0.64)] backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-          <div className="rounded-[2rem] border border-stone-300/70 bg-[rgba(255,253,249,0.94)] p-7 shadow-sm backdrop-blur-md">
+          <div className={getPanelClass('rounded-[2rem] p-7')}>
             <div className="flex items-start gap-4">
               <div className="flex -space-x-2 pt-0.5">
                 {featuredCharacters.map((char) => (

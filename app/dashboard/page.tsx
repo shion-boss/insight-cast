@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ButtonLink, CharacterAvatar, InterviewerSpeech, PageHeader, SectionIntro, StateCard, StatusPill, SurfaceCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, InterviewerSpeech, PageHeader, SectionIntro, StateCard, StatusPill, SurfaceCard, getButtonClass, getInteractivePanelClass, getPanelClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import StartAnalysisButton from '@/components/start-analysis-button'
@@ -209,7 +209,7 @@ export default async function DashboardPage() {
               {latestInterview && latestInterviewProject && latestInterviewHref && (
                 <Link
                   href={latestInterviewHref}
-                  className="rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-4 backdrop-blur-sm transition-all duration-150 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className={getInteractivePanelClass('p-4')}
                 >
                   <p className="text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">直近のつづき</p>
                   <p className="mt-2 text-sm font-semibold text-stone-950">
@@ -299,7 +299,7 @@ export default async function DashboardPage() {
                       <li key={interview.id}>
                         <Link
                           href={interviewHref}
-                          className="block rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm transition-all duration-150 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                          className={getInteractivePanelClass('block p-5')}
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex min-w-0 items-start gap-3">
@@ -344,7 +344,7 @@ export default async function DashboardPage() {
 
               <ul className="space-y-3">
                 {projectList.map((project) => (
-                  <li key={project.id} className="rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-4 backdrop-blur-sm">
+                  <li key={project.id} className={getPanelClass('p-4')}>
                     <div className="flex flex-col gap-4">
                       <Link
                         href={`/projects/${project.id}`}
@@ -369,7 +369,7 @@ export default async function DashboardPage() {
                             projectId={project.id}
                             projectName={project.name || project.hp_url}
                             compact
-                            className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
+                            className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
                           />
                         ) : project.status === 'analyzing' ? (
                           <div className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 sm:whitespace-nowrap">
@@ -380,7 +380,7 @@ export default async function DashboardPage() {
                             <Link
                               href={`/projects/${project.id}/report`}
                               prefetch={false}
-                              className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
+                              className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
                             >
                               調査結果を見る
                             </Link>
@@ -389,13 +389,13 @@ export default async function DashboardPage() {
                               projectName={project.name || project.hp_url}
                               compact
                               force
-                              className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
+                              className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
                             />
                           </>
                         )}
                         <Link
                           href={`/projects/${project.id}/interviewer`}
-                          className="inline-flex min-h-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#111827,#1f2937)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#243041] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:col-span-2 sm:whitespace-nowrap"
+                          className={getButtonClass('primary', 'sm:col-span-2 sm:whitespace-nowrap')}
                         >
                           インタビューを始める
                         </Link>

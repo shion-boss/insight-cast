@@ -143,7 +143,7 @@ export default function PricingPage() {
               {plans.map((plan) => (
                 <article
                   key={plan.id}
-                  className={`card-interactive relative flex flex-col overflow-hidden rounded-[2rem] border ${plan.border} ${plan.color} ${plan.highlight ? 'shadow-xl ring-2 ring-stone-900/10' : 'shadow-sm'}`}
+                  className={`card-interactive relative flex flex-col overflow-hidden rounded-[2rem] border ${plan.color} ${plan.highlight ? 'border-stone-900 ring-1 ring-stone-900/10' : plan.border}`}
                 >
                   <div className={`absolute left-5 top-5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${plan.highlight ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-400'}`}>
                     予定価格
@@ -281,7 +281,7 @@ export default function PricingPage() {
               {options.map((opt) => (
                 <article
                   key={opt.name}
-                  className="card-interactive rounded-[2rem] border border-stone-200 bg-white/90 p-6 shadow-sm"
+                  className="card-interactive rounded-[2rem] border border-stone-200 bg-white/90 p-6"
                 >
                   <p className="text-base font-semibold text-stone-900">{opt.name}</p>
                   <p className="mt-1 text-lg font-bold text-stone-800">{opt.price}</p>

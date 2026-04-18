@@ -60,17 +60,17 @@ const principles = [
 const workflow = [
   {
     step: '01',
-    title: 'Read the current site',
+    title: '今のサイトを読む',
     description: '今のホームページと競合候補を見て、すでに伝わっていることと、まだ眠っている価値を整理します。',
   },
   {
     step: '02',
-    title: 'Interview as a cast',
+    title: '取材班として聞く',
     description: '複数の視点を持つAI取材班が、答えやすい質問を重ねながら価値の輪郭をはっきりさせます。',
   },
   {
     step: '03',
-    title: 'Shape it for the page',
+    title: 'ページに載せる形へ整える',
     description: '見出し、記事テーマ、差別化ポイントまで落とし込み、更新の次の一手をつくります。',
   },
 ] as const
@@ -287,7 +287,7 @@ export default function AboutPage() {
         <section className="px-6 py-14 sm:py-18">
           <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[420px_minmax(0,1fr)]">
             <div className="rounded-[2rem] border border-stone-200 bg-[linear-gradient(180deg,_rgba(255,251,235,0.98),_rgba(255,255,255,0.94))] p-7">
-              <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">How We Work</p>
+              <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">進め方</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900">
                 見つけるだけでなく、
                 <br />

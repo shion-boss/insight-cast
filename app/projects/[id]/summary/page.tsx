@@ -5,7 +5,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
-import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard, getButtonClass } from '@/components/ui'
 
 type SummaryData = {
   values: string[]
@@ -122,7 +122,7 @@ export default function SummaryPage() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="Insight Cast" backHref={backHref} backLabel={backLabel} />
+      <PageHeader title="取材メモ" backHref={backHref} backLabel={backLabel} />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
         {loadError && (
@@ -135,7 +135,7 @@ export default function SummaryPage() {
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                className={getButtonClass('primary')}
               >
                 もう一度開く
               </button>

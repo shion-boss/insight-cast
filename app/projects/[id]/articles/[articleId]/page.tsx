@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { PageHeader, StateCard } from '@/components/ui'
+import { PageHeader, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'クライアント視点',
@@ -48,10 +48,10 @@ export default async function ArticleDetailPage({
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="Insight Cast" backHref={`/projects/${id}`} backLabel="← 取材先の管理に戻る" />
+      <PageHeader title="記事詳細" backHref={`/projects/${id}`} backLabel="← 取材先の管理に戻る" />
 
       <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
-        <section className="rounded-2xl border border-stone-100 bg-white p-6">
+        <section className={getPanelClass('rounded-[2rem] p-6')}>
           <p className="text-xs text-stone-400">{project.name || project.hp_url}</p>
           <h1 className="mt-2 text-xl font-semibold text-stone-800">{article.title || '記事'}</h1>
           <p className="mt-2 text-sm text-stone-400">
@@ -61,13 +61,13 @@ export default async function ArticleDetailPage({
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <Link
                 href={`/projects/${id}/summary?interviewId=${article.interview_id}`}
-                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                className={getButtonClass('secondary')}
               >
                 元の取材メモを見る
               </Link>
               <Link
                 href={`/projects/${id}/article?interviewId=${article.interview_id}`}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-2 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                className={getButtonClass('primary')}
               >
                 この取材から記事を作り直す
               </Link>

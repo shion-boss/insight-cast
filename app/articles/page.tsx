@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { PageHeader, StateCard } from '@/components/ui'
+import { ButtonLink, PageHeader, StateCard, getInteractivePanelClass, getPanelClass } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
 import AppHeaderActions from '@/components/app-header-actions'
 
@@ -94,7 +94,7 @@ export default async function ArticlesPage() {
       />
 
       <main className="mx-auto max-w-5xl px-6 py-8 space-y-6">
-        <section className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-6 backdrop-blur-sm">
+        <section className={getPanelClass('rounded-[2rem] p-6')}>
           <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">Articles</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">作成した記事一覧</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-500">
@@ -109,12 +109,7 @@ export default async function ArticlesPage() {
             description="インタビューの取材メモから記事を作ると、ここに一覧で並びます。"
             align="left"
             action={(
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
-              >
-                ダッシュボードへ戻る
-              </Link>
+              <ButtonLink href="/dashboard">ダッシュボードへ戻る</ButtonLink>
             )}
           />
         ) : (
@@ -127,7 +122,7 @@ export default async function ArticlesPage() {
                 <li key={article.id}>
                   <Link
                     href={`/projects/${article.project_id}/articles/${article.id}`}
-                    className="block rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                    className={getInteractivePanelClass('block p-5')}
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0">

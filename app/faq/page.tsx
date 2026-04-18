@@ -167,7 +167,7 @@ export default function FaqPage() {
                 <a
                   key={g.label}
                   href={`#${g.label}`}
-                  className="rounded-full border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-4 py-2 text-sm text-stone-600 transition-all duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="rounded-full border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-4 py-2 text-sm text-stone-600 transition-colors duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   {g.label}
                 </a>

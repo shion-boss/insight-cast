@@ -11,7 +11,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 }
 
 const buttonBaseClass =
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl border px-5 py-3.5 text-sm font-semibold leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40'
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-2xl border px-5 py-3 text-sm font-semibold leading-tight transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40'
 
 const buttonToneClass = {
   primary: 'border-stone-950 bg-stone-950 text-white hover:border-stone-800 hover:bg-stone-800',
@@ -21,6 +21,20 @@ const buttonToneClass = {
 
 export function getButtonClass(tone: keyof typeof buttonToneClass = 'primary', className?: string) {
   return cx(buttonBaseClass, buttonToneClass[tone], className)
+}
+
+const panelBaseClass = 'rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.96)] backdrop-blur-sm'
+
+export function getPanelClass(className?: string) {
+  return cx(panelBaseClass, className)
+}
+
+export function getInteractivePanelClass(className?: string) {
+  return cx(
+    panelBaseClass,
+    'transition-colors duration-150 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40',
+    className,
+  )
 }
 
 export function DevAiLabel({
@@ -154,7 +168,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 transition-all duration-150 placeholder:text-stone-400 hover:border-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-600/40',
+        'min-h-11 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 transition-colors duration-150 placeholder:text-stone-400 hover:border-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-600/40',
         className,
       )}
     />
@@ -245,7 +259,7 @@ export function EyebrowBadge({
 }) {
   return (
     <div className={cx(
-      'inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-white/95 px-4 py-2 text-xs font-semibold tracking-[0.2em] text-amber-900 uppercase shadow-sm ring-1 ring-amber-100/80',
+      'inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-amber-50/85 px-4 py-2 text-xs font-semibold tracking-[0.2em] text-amber-900 uppercase',
       className,
     )}>
       {children}

@@ -21,7 +21,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="Insight Cast" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title="取材班を選ぶ" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
@@ -46,7 +46,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
             <form key={char.id} action={createInterview.bind(null, id, char.id)}>
               <button
                 type="submit"
-                className="w-full cursor-pointer rounded-xl border border-stone-200 bg-white p-5 text-left transition-all hover:border-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                className="w-full cursor-pointer rounded-xl border border-stone-200 bg-white p-5 text-left transition-colors hover:border-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
               >
                 <CharacterAvatar
                   src={char.icon96}

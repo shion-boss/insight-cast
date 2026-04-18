@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { StateCard } from '@/components/ui'
+import { StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 
 type Audit = {
   current_content:  string[] | null
@@ -70,7 +70,7 @@ export default function ReportClient({
           action={(
             <Link
               href={`/projects/${projectId}`}
-              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+              className={getButtonClass('primary')}
             >
               取材先の管理へ戻る
             </Link>
@@ -95,19 +95,19 @@ export default function ReportClient({
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                className={getButtonClass('primary')}
               >
                 もう一度確認する
               </button>
               <Link
                 href={`/projects/${projectId}`}
-                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                className={getButtonClass('secondary')}
               >
                 取材先の管理へ戻る
               </Link>
             </div>
           ) : (
-            <div className="rounded-xl border border-stone-100 bg-white p-4 text-left text-sm text-stone-400 space-y-3">
+            <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-stone-400')}>
               <p className="flex items-center gap-2">
                 <span className="animate-spin inline-block">⏳</span>
                 自社HPや競合の情報を整理しています...
@@ -116,13 +116,13 @@ export default function ReportClient({
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Link
                   href={`/projects/${projectId}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                  className={getButtonClass('secondary')}
                 >
                   取材先の管理へ戻る
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+                  className={getButtonClass('secondary')}
                 >
                   ダッシュボードへ戻る
                 </Link>
@@ -145,7 +145,7 @@ export default function ReportClient({
           action={(
             <Link
               href={`/projects/${projectId}`}
-              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
+              className={getButtonClass('primary')}
             >
               取材先の管理へ戻る
             </Link>

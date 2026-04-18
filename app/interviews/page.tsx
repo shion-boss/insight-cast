@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import AppHeaderActions from '@/components/app-header-actions'
-import { ButtonLink, CharacterAvatar, PageHeader, StateCard, StatusPill, SurfaceCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, PageHeader, StateCard, StatusPill, SurfaceCard, getInteractivePanelClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { createClient } from '@/lib/supabase/server'
@@ -130,7 +130,7 @@ export default async function InterviewsPage() {
                 <li key={interview.id}>
                   <Link
                     href={href}
-                    className="block rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm transition-colors hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                    className={getInteractivePanelClass('block p-5')}
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex min-w-0 items-start gap-3">

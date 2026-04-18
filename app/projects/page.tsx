@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 
 import AppHeaderActions from '@/components/app-header-actions'
 import StartAnalysisButton from '@/components/start-analysis-button'
-import { ButtonLink, PageHeader, StateCard, SurfaceCard } from '@/components/ui'
+import { ButtonLink, PageHeader, StateCard, SurfaceCard, getButtonClass, getInteractivePanelClass, getPanelClass } from '@/components/ui'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { createClient } from '@/lib/supabase/server'
 
@@ -157,11 +157,11 @@ export default async function ProjectsPage() {
               const latestInterview = latestInterviewMap.get(project.id)
 
               return (
-                <li key={project.id} className="rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm">
+                <li key={project.id} className={getPanelClass('p-5')}>
                   <div className="flex flex-col gap-4">
                     <Link
                       href={`/projects/${project.id}`}
-                      className="block rounded-[1.2rem] px-1 py-1 transition-colors hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                      className={getInteractivePanelClass('block rounded-[1.2rem] px-3 py-3')}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -183,7 +183,7 @@ export default async function ProjectsPage() {
                           projectId={project.id}
                           projectName={project.name || project.hp_url}
                           compact
-                          className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
+                          className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
                         />
                       ) : project.status === 'analyzing' ? (
                         <div className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 sm:whitespace-nowrap">
@@ -194,26 +194,26 @@ export default async function ProjectsPage() {
                           <Link
                             href={`/projects/${project.id}/report`}
                             prefetch={false}
-                            className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
+                            className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
                           >
                             調査結果を見る
                           </Link>
                           <StartAnalysisButton
-                            projectId={project.id}
-                            projectName={project.name || project.hp_url}
-                            compact
-                            force
-                            className="inline-flex min-h-10 items-center justify-center rounded-xl border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/20 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:whitespace-nowrap"
-                          />
-                        </>
-                      )}
+                          projectId={project.id}
+                          projectName={project.name || project.hp_url}
+                          compact
+                          force
+                          className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
+                        />
+                      </>
+                    )}
 
-                      <Link
-                        href={`/projects/${project.id}/interviewer`}
-                        className="inline-flex min-h-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#111827,#1f2937)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#243041] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:col-span-2 sm:whitespace-nowrap"
-                      >
-                        インタビューを始める
-                      </Link>
+                    <Link
+                      href={`/projects/${project.id}/interviewer`}
+                      className={getButtonClass('primary', 'sm:col-span-2 sm:whitespace-nowrap')}
+                    >
+                      インタビューを始める
+                    </Link>
                     </div>
                   </div>
                 </li>

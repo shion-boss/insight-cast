@@ -285,7 +285,7 @@ export default function ServicePage() {
                 />
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {articleFormats.map((format) => (
-                    <div key={format.title} className="card-interactive rounded-[1.6rem] border border-stone-200 bg-white/92 p-5 shadow-sm">
+                    <div key={format.title} className="card-interactive rounded-[1.6rem] border border-stone-200 bg-white/92 p-5">
                       <p className="text-sm font-semibold text-stone-900">{format.title}</p>
                       <span className="mt-2 inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[11px] text-stone-500">
                         {format.tag}
