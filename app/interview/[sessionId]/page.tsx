@@ -165,7 +165,7 @@ export default function InterviewPage() {
             )}
             <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
               msg.role === 'assistant'
-                ? 'bg-white text-stone-700 rounded-tl-sm shadow-sm'
+                ? 'bg-white text-stone-700 rounded-tl-sm'
                 : 'bg-stone-800 text-white rounded-tr-sm'
             }`}>
               {msg.content}
@@ -181,7 +181,7 @@ export default function InterviewPage() {
               size={32}
               className="border-amber-100 bg-amber-50"
             />
-            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm">
               <span className="text-stone-400 text-sm">...</span>
             </div>
           </div>

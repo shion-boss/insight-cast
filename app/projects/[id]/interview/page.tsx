@@ -21,8 +21,11 @@ export default function InterviewPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
   const interviewId = searchParams.get('interviewId') ?? ''
+  const from = searchParams.get('from')
   const router = useRouter()
   const supabase = createClient()
+  const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
+  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -148,7 +151,7 @@ export default function InterviewPage() {
   }
 
   async function handleFinish() {
-    router.push(`/projects/${projectId}/summary?interviewId=${interviewId}`)
+    router.push(`/projects/${projectId}/summary?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`)
   }
 
   function handleContinue() {
@@ -189,16 +192,25 @@ export default function InterviewPage() {
     <div className="h-screen bg-stone-50 flex flex-col overflow-hidden">
       {/* ヘッダー */}
       <header className="bg-white border-b border-stone-100 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3">
-          <CharacterAvatar
-            src={char?.icon48}
-            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-            emoji={char?.emoji}
-            size={40}
-          />
-          <div>
-            <p className="text-sm font-medium text-stone-800">{char?.name}</p>
-            <p className="text-xs text-stone-400">{char?.specialty}</p>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => router.push(backHref)}
+            className="rounded-md text-xs text-stone-500 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+          >
+            {backLabel}
+          </button>
+          <div className="flex items-center gap-3">
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji}
+              size={40}
+            />
+            <div>
+              <p className="text-sm font-medium text-stone-800">{char?.name}</p>
+              <p className="text-xs text-stone-400">{char?.specialty}</p>
+            </div>
           </div>
         </div>
         <button
@@ -244,7 +256,7 @@ export default function InterviewPage() {
             )}
             <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap leading-relaxed ${
               msg.role === 'interviewer'
-                ? 'bg-white text-stone-700 rounded-tl-sm shadow-sm'
+                ? 'bg-white text-stone-700 rounded-tl-sm'
                 : 'bg-stone-800 text-white rounded-tr-sm'
             }`}>
               {msg.content || <span className="text-stone-300">...</span>}
@@ -260,7 +272,7 @@ export default function InterviewPage() {
               size={32}
               className="border-amber-100 bg-amber-50"
             />
-            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm">
+            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm">
               <span className="text-stone-500 text-sm whitespace-pre-wrap leading-relaxed">
                 {streamingMessage || '考えをまとめています...'}
               </span>
@@ -320,7 +332,7 @@ export default function InterviewPage() {
       {/* 完了確認モーダル */}
       {showComplete && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
             <div className="flex justify-center mb-3">
               <CharacterAvatar
                 src={char?.icon96}

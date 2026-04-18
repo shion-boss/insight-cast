@@ -148,7 +148,7 @@ export default function ArticlePage() {
               key={t.type}
               onClick={() => setTab(t.type)}
               className={`flex-1 py-2 rounded-lg text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
-                tab === t.type ? 'bg-white text-stone-800 shadow-sm' : 'text-stone-400 hover:text-stone-600'
+                tab === t.type ? 'bg-white text-stone-800' : 'text-stone-400 hover:text-stone-600'
               }`}
             >
               {t.label}

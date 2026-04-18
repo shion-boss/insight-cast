@@ -1,8 +1,10 @@
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { CHARACTERS } from '@/lib/characters'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
+const featuredCharacters = CHARACTERS.slice(0, 3)
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
@@ -23,29 +25,95 @@ export function DevAiLabel({
   )
 }
 
+export function SiteBrand({
+  href = '/',
+  subtitle = 'AI取材で、ホームページの伝わり方を育てる',
+}: {
+  href?: string
+  subtitle?: ReactNode
+}) {
+  return (
+    <Link href={href} className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
+      <div className="flex items-center gap-3">
+        <div className="flex -space-x-2">
+          {featuredCharacters.map((char) => (
+            <CharacterAvatar
+              key={char.id}
+              src={char.icon48}
+              alt={`${char.name}のアイコン`}
+              emoji={char.emoji}
+              size={34}
+              className="border-[#fcfaf6]"
+            />
+          ))}
+        </div>
+        <div>
+          <p className="text-sm font-semibold tracking-[0.16em] text-stone-900 uppercase">Insight Cast</p>
+          <p className="hidden text-xs text-stone-600 sm:block">{subtitle}</p>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+export function HeaderSurface({
+  children,
+  bottom,
+}: {
+  children: ReactNode
+  bottom?: ReactNode
+}) {
+  return (
+    <header className="sticky top-0 z-30 border-b border-stone-900/10 bg-[rgba(255,250,242,0.86)] backdrop-blur-xl">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="flex items-center justify-between gap-4 py-4">
+          {children}
+        </div>
+        {bottom}
+      </div>
+    </header>
+  )
+}
+
 export function PageHeader({
   title,
+  description,
   backHref,
   backLabel = '← 戻る',
   right,
+  homeHref = '/dashboard',
 }: {
   title: ReactNode
+  description?: ReactNode
   backHref?: string
   backLabel?: ReactNode
   right?: ReactNode
+  homeHref?: string
 }) {
   return (
-    <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
-      <div className="font-semibold text-stone-800">{title}</div>
-      {right ?? (backHref ? (
-        <Link
-          href={backHref}
-          className="text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
-        >
-          {backLabel}
-        </Link>
-      ) : <div />)}
-    </header>
+    <HeaderSurface
+      bottom={(
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
+          <div className="min-w-0">
+            <div className="font-semibold text-stone-950">{title}</div>
+            {description && <p className="mt-1 text-sm text-stone-700">{description}</p>}
+          </div>
+          {backHref ? (
+            <Link
+              href={backHref}
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/30 hover:bg-stone-50 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+            >
+              {backLabel}
+            </Link>
+          ) : (
+            <div />
+          )}
+        </div>
+      )}
+    >
+      <SiteBrand href={homeHref} />
+      {right ?? <div />}
+    </HeaderSurface>
   )
 }
 
@@ -57,7 +125,7 @@ export function FieldLabel({
   required?: boolean
 }) {
   return (
-    <label className="block text-sm text-stone-600 mb-1">
+    <label className="mb-1 block text-sm font-medium text-stone-700">
       {children}
       {required && <span className="text-red-400"> *</span>}
     </label>
@@ -71,7 +139,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'w-full px-4 py-2 border border-stone-200 rounded-lg text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300',
+        'w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 transition-colors placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600/35',
         className,
       )}
     />
@@ -86,7 +154,7 @@ export function PrimaryButton(props: ComponentPropsWithoutRef<'button'>) {
       type={type}
       {...rest}
       className={cx(
-        'bg-stone-800 text-white rounded-xl hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer',
+        'cursor-pointer rounded-2xl bg-[linear-gradient(135deg,#111827,#1f2937)] px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#243041] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/35',
         className,
       )}
     />
@@ -101,10 +169,109 @@ export function SecondaryButton(props: ComponentPropsWithoutRef<'button'>) {
       type={type}
       {...rest}
       className={cx(
-        'border border-stone-200 rounded-xl text-stone-600 hover:bg-stone-50 hover:text-stone-800 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer',
+        'cursor-pointer rounded-2xl border border-stone-300 bg-white px-5 py-3.5 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/25 hover:bg-stone-50 hover:text-stone-950 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/35',
         className,
       )}
     />
+  )
+}
+
+export function ButtonLink({
+  href,
+  children,
+  className,
+  tone = 'primary',
+}: {
+  href: string
+  children: ReactNode
+  className?: string
+  tone?: 'primary' | 'secondary' | 'ghost'
+}) {
+  const toneClass = {
+    primary: 'bg-[linear-gradient(135deg,#111827,#1f2937)] text-white hover:bg-[#243041]',
+    secondary: 'border border-stone-300 bg-white text-stone-800 hover:border-stone-900/25 hover:bg-stone-50 hover:text-stone-950',
+    ghost: 'border border-stone-300/90 bg-white/80 text-stone-700 hover:bg-white hover:text-stone-950',
+  }[tone]
+
+  return (
+    <Link
+      href={href}
+      className={cx(
+        'inline-flex items-center justify-center rounded-2xl px-5 py-3.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/35',
+        toneClass,
+        className,
+      )}
+    >
+      {children}
+    </Link>
+  )
+}
+
+export function SurfaceCard({
+  children,
+  className,
+  tone = 'default',
+}: {
+  children: ReactNode
+  className?: string
+  tone?: 'default' | 'warm' | 'dark' | 'soft'
+}) {
+  const toneClass = {
+    default: 'border-stone-300/90 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,252,247,0.94))]',
+    warm: 'border-amber-300/80 bg-[linear-gradient(145deg,rgba(255,247,230,0.98),rgba(255,253,249,0.95))]',
+    dark: 'border-stone-950 bg-[linear-gradient(145deg,rgba(28,25,23,0.98),rgba(17,24,39,0.98))] text-white',
+    soft: 'border-stone-300/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(245,245,244,0.94))]',
+  }[tone]
+
+  return (
+    <div className={cx('rounded-[2rem] border p-6', toneClass, className)}>
+      {children}
+    </div>
+  )
+}
+
+export function SectionIntro({
+  eyebrow,
+  title,
+  description,
+  align = 'left',
+  className,
+}: {
+  eyebrow: ReactNode
+  title: ReactNode
+  description?: ReactNode
+  align?: 'left' | 'center'
+  className?: string
+}) {
+  return (
+    <div className={cx(align === 'center' ? 'mx-auto text-center' : '', className)}>
+      <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">{eyebrow}</p>
+      <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-stone-950 sm:text-4xl">{title}</h2>
+      {description && <p className="mt-4 text-sm leading-7 text-stone-700 sm:text-base">{description}</p>}
+    </div>
+  )
+}
+
+export function StatusPill({
+  children,
+  tone = 'neutral',
+  className,
+}: {
+  children: ReactNode
+  tone?: 'neutral' | 'success' | 'warning' | 'info'
+  className?: string
+}) {
+  const toneClass = {
+    neutral: 'bg-stone-200/80 text-stone-700 ring-1 ring-stone-300/80',
+    success: 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200',
+    warning: 'bg-amber-100 text-amber-800 ring-1 ring-amber-200',
+    info: 'bg-sky-100 text-sky-800 ring-1 ring-sky-200',
+  }[tone]
+
+  return (
+    <span className={cx('inline-flex items-center rounded-full px-3 py-1 text-xs font-medium', toneClass, className)}>
+      {children}
+    </span>
   )
 }
 
@@ -124,9 +291,9 @@ export function StateCard({
   action?: ReactNode
 }) {
   const toneClass = {
-    default: 'border-stone-100 bg-white',
-    soft: 'border-stone-100 bg-stone-50/80',
-    warning: 'border-amber-100 bg-amber-50/70',
+    default: 'border-stone-300/80 bg-white',
+    soft: 'border-stone-300/80 bg-stone-50/90',
+    warning: 'border-amber-200 bg-amber-50/90',
   }[tone]
 
   return (
@@ -136,9 +303,9 @@ export function StateCard({
       align === 'center' ? 'text-center' : 'text-left',
     )}>
       <div className={cx('text-4xl mb-3', align === 'center' ? '' : 'w-fit')}>{icon}</div>
-      <p className="text-base font-medium text-stone-800">{title}</p>
+      <p className="text-base font-semibold text-stone-900">{title}</p>
       {description && (
-        <p className="text-sm text-stone-500 mt-2 leading-relaxed">{description}</p>
+        <p className="mt-2 text-sm leading-relaxed text-stone-700">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>
@@ -207,7 +374,7 @@ export function InterviewerSpeech({
           )}
           aria-hidden="true"
         />
-        <div className={cx('rounded-[24px] border px-5 py-4 shadow-sm', bubbleClass)}>
+        <div className={cx('rounded-[24px] border px-5 py-4', bubbleClass)}>
           {name && <p className="text-xs font-medium text-stone-400 mb-1">{name}</p>}
           <p className="text-sm font-medium text-stone-800 leading-relaxed">{title}</p>
           {description && (

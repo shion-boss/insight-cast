@@ -14,17 +14,44 @@ type SummaryData = {
   interviewerType: string
 }
 
+type ArticleRow = {
+  id: string
+  title: string | null
+  article_type: string | null
+  created_at: string
+}
+
+const ARTICLE_TYPE_LABEL: Record<string, string> = {
+  client: 'クライアント視点',
+  interviewer: 'インタビュアー視点',
+  conversation: '会話込み',
+}
+
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value))
+}
+
 export default function SummaryPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
   const interviewId = searchParams.get('interviewId') ?? ''
+  const from = searchParams.get('from')
   const router = useRouter()
   const supabase = createClient()
+  const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
+  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
 
   const [data, setData] = useState<SummaryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [showMessages, setShowMessages] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [articles, setArticles] = useState<ArticleRow[]>([])
 
   useEffect(() => {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
@@ -55,12 +82,19 @@ export default function SummaryPage() {
           .eq('interview_id', interviewId)
           .order('created_at', { ascending: true })
 
+        const { data: articleRows } = await supabase
+          .from('articles')
+          .select('id, title, article_type, created_at')
+          .eq('interview_id', interviewId)
+          .order('created_at', { ascending: false })
+
         setData({
           values: Array.isArray(json.summary) ? json.summary : [],
           themes: Array.isArray(json.themes) ? json.themes : [],
           messages: messages ?? [],
           interviewerType: interview?.interviewer_type ?? 'mint',
         })
+        setArticles((articleRows ?? []) as ArticleRow[])
       } catch {
         setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
       } finally {
@@ -88,7 +122,7 @@ export default function SummaryPage() {
 
   return (
     <div className="min-h-screen bg-stone-50">
-      <PageHeader title="Insight Cast" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
+      <PageHeader title="Insight Cast" backHref={backHref} backLabel={backLabel} />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
         {loadError && (
@@ -152,7 +186,7 @@ export default function SummaryPage() {
                     <span className="truncate">{t}</span>
                   </div>
                   <Link
-                    href={`/projects/${projectId}/article?interviewId=${interviewId}&theme=${encodeURIComponent(t)}`}
+                    href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
                     className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 flex-shrink-0 transition-colors"
                   >
                     記事を作る
@@ -198,22 +232,62 @@ export default function SummaryPage() {
           )}
         </section>
 
+        <section className="bg-white rounded-xl border border-stone-100 p-5">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-medium text-stone-600">このインタビューから作った記事</h2>
+              <p className="mt-1 text-xs text-stone-400">過去に作成した記事もここから開けます。</p>
+            </div>
+            <Link
+              href="/articles"
+              className="text-xs text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
+            >
+              記事一覧へ
+            </Link>
+          </div>
+
+          {articles.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-dashed border-stone-200 px-4 py-5 text-sm text-stone-400">
+              まだ記事はありません。この取材内容から最初の記事を作れます。
+            </div>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {articles.map((article) => (
+                <li key={article.id}>
+                  <Link
+                    href={`/projects/${projectId}/articles/${article.id}`}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>
+                      <p className="mt-1 text-xs text-stone-400">
+                        {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
+                      </p>
+                    </div>
+                    <span className="text-sm text-stone-300">→</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
         {/* アクション */}
         <div className="space-y-3">
           <Link
-            href={`/projects/${projectId}/article?interviewId=${interviewId}`}
+            href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
             className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
           >
             この内容で記事を作る →
           </Link>
           <Link
-            href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
+            href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
             className="block w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
             もう少し話す
           </Link>
           <Link
-            href={`/projects/${projectId}`}
+            href={backHref}
             className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
           >
             いったんここまでにする

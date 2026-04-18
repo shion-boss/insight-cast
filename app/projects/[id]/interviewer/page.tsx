@@ -46,7 +46,7 @@ export default async function InterviewerPage({ params }: { params: Promise<{ id
             <form key={char.id} action={createInterview.bind(null, id, char.id)}>
               <button
                 type="submit"
-                className="w-full text-left p-5 bg-white rounded-xl border border-stone-200 hover:border-stone-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-all"
+                className="w-full cursor-pointer rounded-xl border border-stone-200 bg-white p-5 text-left transition-all hover:border-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
               >
                 <CharacterAvatar
                   src={char.icon96}
