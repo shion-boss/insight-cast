@@ -150,7 +150,7 @@ export default function PricingPage() {
                       {plan.name}
                     </span>
 
-                    <div className="mt-5 flex items-end gap-1">
+                    <div className="mt-5 flex items-baseline gap-1">
                       <span className={`text-4xl font-bold tracking-tight ${plan.highlight ? 'text-white' : 'text-stone-900'}`}>
                         ¥{plan.price}
                       </span>
@@ -192,7 +192,7 @@ export default function PricingPage() {
                   <div className="p-7 pt-0">
                     <Link
                       href="/auth/signup"
-                      className={`flex w-full items-center justify-center rounded-2xl py-4 text-sm font-medium transition-colors ${
+                      className={`relative isolate flex w-full items-center justify-center overflow-hidden rounded-2xl py-4 text-sm font-medium transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.08)_20%,rgba(255,255,255,0.32)_48%,rgba(255,255,255,0.08)_76%,transparent_100%)] before:opacity-0 hover:before:animate-[button-flash_900ms_ease] ${
                         plan.highlight
                           ? 'bg-white text-stone-900 hover:bg-stone-100'
                           : 'bg-stone-900 text-white hover:bg-stone-700'
@@ -365,7 +365,7 @@ export default function PricingPage() {
         <section className="px-6 pb-20">
           <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.4rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_55%,_#6b4f2c_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
             <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Start Free</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-xl">
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                   まず無料で体験してから、
@@ -386,7 +386,7 @@ export default function PricingPage() {
                 </Link>
                 <Link
                   href="/faq"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/8 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-white/14"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
                 >
                   よくある質問を見る
                 </Link>

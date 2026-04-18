@@ -340,7 +340,7 @@ export default function ServicePage() {
                 className="absolute inset-y-0 right-0 h-full w-[44%] object-cover opacity-12"
               />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(28,25,23,0.96)_0%,rgba(28,25,23,0.92)_55%,rgba(28,25,23,0.78)_100%)]" />
-              <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
+              <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
                 <div className="max-w-2xl">
                   <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">Continuous Update</p>
                   <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -373,7 +373,7 @@ export default function ServicePage() {
         <section className="px-6 pb-20 pt-4">
           <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.6rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_58%,_#7c5a31_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
             <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Try The Service</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-xl">
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                   まず1回、取材の流れを体験してください。
@@ -386,7 +386,7 @@ export default function ServicePage() {
                 <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
                   無料で始める
                 </ButtonLink>
-                <ButtonLink href="/pricing" tone="ghost" className="border-white/20 bg-white/8 text-white hover:bg-white/14 hover:text-white">
+                <ButtonLink href="/pricing" tone="ghost" className="border-white/85 bg-white text-stone-950 hover:border-white/45 hover:bg-white/12 hover:text-white">
                   料金を見る
                 </ButtonLink>
               </div>

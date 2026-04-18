@@ -85,7 +85,7 @@ export function PublicHero({
       <div
         className={cx(
           'mx-auto grid max-w-6xl gap-10',
-          aside && 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end',
+          aside && 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start',
           containerClassName,
         )}
       >
@@ -207,7 +207,7 @@ export function PublicHeader() {
         </Link>
         <Link
           href="/auth/signup"
-          className="inline-flex items-center justify-center rounded-full bg-[linear-gradient(135deg,#111827,#1f2937)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#243041] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+          className="relative isolate inline-flex items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,#111827,#1f2937)] px-5 py-2.5 text-sm font-semibold text-white transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.08)_20%,rgba(255,255,255,0.32)_48%,rgba(255,255,255,0.08)_76%,transparent_100%)] before:opacity-0 hover:bg-[#243041] hover:before:animate-[button-flash_900ms_ease] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
         >
           無料ではじめる
         </Link>

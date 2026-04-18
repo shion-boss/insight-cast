@@ -10,6 +10,8 @@ function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
 }
 
+const richButtonClass = 'relative isolate overflow-hidden before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[\'\'] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.08)_20%,rgba(255,255,255,0.32)_48%,rgba(255,255,255,0.08)_76%,transparent_100%)] before:opacity-0 hover:before:animate-[button-flash_900ms_ease]'
+
 export function DevAiLabel({
   children,
   className,
@@ -154,6 +156,7 @@ export function PrimaryButton(props: ComponentPropsWithoutRef<'button'>) {
       type={type}
       {...rest}
       className={cx(
+        richButtonClass,
         'cursor-pointer rounded-2xl bg-[linear-gradient(135deg,#111827,#1f2937)] px-5 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#243041] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/35',
         className,
       )}
@@ -188,7 +191,7 @@ export function ButtonLink({
   tone?: 'primary' | 'secondary' | 'ghost'
 }) {
   const toneClass = {
-    primary: 'bg-[linear-gradient(135deg,#111827,#1f2937)] text-white hover:bg-[#243041]',
+    primary: `${richButtonClass} bg-[linear-gradient(135deg,#111827,#1f2937)] text-white hover:bg-[#243041]`,
     secondary: 'border border-stone-300 bg-white text-stone-800 hover:border-stone-900/25 hover:bg-stone-50 hover:text-stone-950',
     ghost: 'border border-stone-300/90 bg-white/80 text-stone-700 hover:bg-white hover:text-stone-950',
   }[tone]

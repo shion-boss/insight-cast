@@ -218,7 +218,7 @@ export default function PhilosophyPage() {
         <section className="px-6 pb-20 pt-4">
           <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.4rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_55%,_#6b4f2c_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
             <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Try It</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-xl">
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                   まず一度、取材班に話しかけてみてください。
@@ -231,13 +231,13 @@ export default function PhilosophyPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors hover:bg-stone-100"
+                  className="relative isolate inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_20%,rgba(255,255,255,0.52)_48%,rgba(255,255,255,0.2)_76%,transparent_100%)] before:opacity-0 hover:bg-stone-100 hover:before:animate-[button-flash_900ms_ease]"
                 >
                   無料で始める
                 </Link>
                 <Link
                   href="/cast"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/8 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-white/14"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
                 >
                   キャストを見る
                 </Link>

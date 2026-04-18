@@ -202,7 +202,7 @@ export default function AboutPage() {
                 className="absolute -left-10 bottom-0 h-[72%] w-[36%] object-cover opacity-10"
               />
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,252,246,0.96)_0%,rgba(255,252,246,0.9)_46%,rgba(255,252,246,0.72)_100%)]" />
-              <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+              <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
                 <div className="max-w-2xl">
                   <p className="text-xs font-medium tracking-[0.2em] text-amber-700 uppercase">Behind The Scenes</p>
                   <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
@@ -430,7 +430,7 @@ export default function AboutPage() {
         <section className="px-6 pb-18 pt-10 sm:pb-24">
           <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.4rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_55%,_#6b4f2c_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
             <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Join Us</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
                 <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
                   あなたのホームページに、
@@ -451,7 +451,7 @@ export default function AboutPage() {
                 </Link>
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/8 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-white/14"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
                 >
                   ログイン
                 </Link>

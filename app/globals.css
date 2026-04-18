@@ -73,6 +73,23 @@ body::before {
   text-wrap: balance;
 }
 
+@keyframes button-flash {
+  0% {
+    transform: translateX(-160%) skewX(-18deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.18;
+  }
+  55% {
+    opacity: 0.36;
+  }
+  100% {
+    transform: translateX(360%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
 .legal-doc h2 {
   margin-top: 2.5rem;
   margin-bottom: 0.9rem;
