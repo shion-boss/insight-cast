@@ -137,7 +137,7 @@ export default function ArticlePage() {
   const currentTab = TABS.find(t => t.type === tab)!
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="Insight Cast" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
@@ -147,7 +147,7 @@ export default function ArticlePage() {
             <button
               key={t.type}
               onClick={() => setTab(t.type)}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
+              className={`flex-1 py-2 rounded-lg text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
                 tab === t.type ? 'bg-white text-stone-800' : 'text-stone-400 hover:text-stone-600'
               }`}
             >
@@ -186,7 +186,7 @@ export default function ArticlePage() {
                       key={item}
                       type="button"
                       onClick={() => setTheme(item)}
-                      className={`rounded-full px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
+                      className={`rounded-full px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
                         theme === item
                           ? 'bg-stone-800 text-white'
                           : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
@@ -213,7 +213,7 @@ export default function ArticlePage() {
                       <button
                         key={opt.value}
                         onClick={() => setStyle(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
                           style === opt.value
                             ? 'bg-stone-800 text-white'
                             : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
@@ -231,7 +231,7 @@ export default function ArticlePage() {
                       <button
                         key={opt.value}
                         onClick={() => setVolume(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors ${
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
                           volume === opt.value
                             ? 'bg-stone-800 text-white'
                             : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
@@ -300,7 +300,7 @@ export default function ArticlePage() {
 
             <button
               onClick={generate}
-              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors border border-stone-100 rounded-xl"
+              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors border border-stone-100 rounded-xl"
             >
               <DevAiLabel>もう一度まとめる</DevAiLabel>
             </button>
@@ -310,13 +310,13 @@ export default function ArticlePage() {
         <div className="mt-6">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
+            className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md transition-colors"
           >
             取材に戻って話を足す
           </Link>
           <Link
             href={`/projects/${projectId}`}
-            className="mt-3 block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
+            className="mt-3 block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md transition-colors"
           >
             取材先の管理に戻る
           </Link>

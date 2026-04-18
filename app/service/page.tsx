@@ -178,7 +178,7 @@ export default function ServicePage() {
 
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {deliverables.map((item) => (
-                <SurfaceCard key={item} className="rounded-[1.9rem] p-5">
+                <SurfaceCard key={item} className="rounded-[1.9rem] p-5" interactive>
                   <p className="text-sm leading-7 text-stone-600">{item}</p>
                 </SurfaceCard>
               ))}
@@ -285,7 +285,7 @@ export default function ServicePage() {
                 />
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {articleFormats.map((format) => (
-                    <div key={format.title} className="rounded-[1.6rem] border border-stone-200 bg-white/90 p-5">
+                    <div key={format.title} className="card-interactive rounded-[1.6rem] border border-stone-200 bg-white/92 p-5 shadow-sm">
                       <p className="text-sm font-semibold text-stone-900">{format.title}</p>
                       <span className="mt-2 inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[11px] text-stone-500">
                         {format.tag}

@@ -108,7 +108,7 @@ export default function SummaryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <div className="w-full max-w-md px-6">
           <StateCard
             icon={<span className="animate-pulse">📝</span>}
@@ -121,7 +121,7 @@ export default function SummaryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="Insight Cast" backHref={backHref} backLabel={backLabel} />
 
       <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
@@ -135,7 +135,7 @@ export default function SummaryPage() {
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 もう一度開く
               </button>
@@ -187,7 +187,7 @@ export default function SummaryPage() {
                   </div>
                   <Link
                     href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                    className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 flex-shrink-0 transition-colors"
+                    className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-600 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 flex-shrink-0 transition-colors"
                   >
                     記事を作る
                   </Link>
@@ -201,7 +201,7 @@ export default function SummaryPage() {
         <section className="bg-white rounded-xl border border-stone-100 p-5">
           <button
             onClick={() => setShowMessages(!showMessages)}
-            className="flex items-center justify-between w-full text-sm font-medium text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md cursor-pointer"
+            className="flex items-center justify-between w-full text-sm font-medium text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md cursor-pointer"
           >
             やり取りを見る
             <span className="text-stone-300">{showMessages ? '▲' : '▼'}</span>
@@ -240,7 +240,7 @@ export default function SummaryPage() {
             </div>
             <Link
               href="/articles"
-              className="text-xs text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md transition-colors"
+              className="text-xs text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md transition-colors"
             >
               記事一覧へ
             </Link>
@@ -256,7 +256,7 @@ export default function SummaryPage() {
                 <li key={article.id}>
                   <Link
                     href={`/projects/${projectId}/articles/${article.id}`}
-                    className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>
@@ -276,19 +276,19 @@ export default function SummaryPage() {
         <div className="space-y-3">
           <Link
             href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-            className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
+            className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors text-sm text-center"
           >
             この内容で記事を作る →
           </Link>
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-            className="block w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
+            className="block w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md text-center transition-colors"
           >
             もう少し話す
           </Link>
           <Link
             href={backHref}
-            className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md text-center transition-colors"
+            className="block w-full py-2 text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md text-center transition-colors"
           >
             いったんここまでにする
           </Link>

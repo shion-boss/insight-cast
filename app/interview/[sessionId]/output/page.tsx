@@ -69,7 +69,7 @@ export default function OutputPage() {
   const currentOutput = outputs.find((o) => o.type === selectedType)
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader
         title={(
           <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export default function OutputPage() {
                 key={type}
                 onClick={() => exists ? setSelectedType(type) : generate(type)}
                 disabled={generating === type}
-                className={`px-3 py-1.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors ${
                   selectedType === type && exists
                     ? 'bg-stone-800 text-white'
                     : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
@@ -127,7 +127,7 @@ export default function OutputPage() {
               <h2 className="font-medium text-stone-800">{currentOutput.title}</h2>
               <button
                 onClick={() => navigator.clipboard.writeText(currentOutput.content)}
-                className="text-xs text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 border border-stone-200 px-2 py-1 rounded"
+                className="text-xs text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 border border-stone-200 px-2 py-1 rounded"
               >
                 コピー
               </button>

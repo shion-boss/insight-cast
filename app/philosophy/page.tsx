@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { getButtonClass } from '@/components/ui'
 
 export const metadata: Metadata = {
   title: 'AI時代の発信について | Insight Cast',
@@ -120,7 +121,7 @@ export default function PhilosophyPage() {
                 <a
                   key={a.id}
                   href={`#${a.id}`}
-                  className="flex items-center gap-3 rounded-2xl border border-stone-200 bg-white/80 px-5 py-3 text-sm text-stone-600 transition-colors hover:bg-white hover:text-stone-900"
+                  className="flex items-center gap-3 rounded-2xl border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-5 py-3 text-sm text-stone-600 transition-all duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-500">{a.tag}</span>
                   {a.title}
@@ -163,7 +164,7 @@ export default function PhilosophyPage() {
                   {article.sections.map((section, i) => (
                     <article
                       key={i}
-                      className="rounded-[2rem] border border-stone-200 bg-white/90 p-7"
+                      className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-7"
                     >
                       <div className="flex items-start gap-4">
                         <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-stone-900 text-xs font-semibold text-white">
@@ -231,13 +232,13 @@ export default function PhilosophyPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="relative isolate inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_20%,rgba(255,255,255,0.52)_48%,rgba(255,255,255,0.2)_76%,transparent_100%)] before:opacity-0 hover:bg-stone-100 hover:before:animate-[button-flash_900ms_ease]"
+                  className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
                 >
                   無料で始める
                 </Link>
                 <Link
                   href="/cast"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   キャストを見る
                 </Link>

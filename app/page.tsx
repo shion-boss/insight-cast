@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 
-import { ButtonLink, CharacterAvatar, SectionIntro, StatusPill, SurfaceCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, EyebrowBadge, SectionIntro, StatusPill, SurfaceCard } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 import { CHARACTERS } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
@@ -100,9 +100,7 @@ export default async function LandingPage() {
         <section className="px-6 pb-16 pt-10 sm:pb-24 sm:pt-16">
           <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:items-center">
             <div className="max-w-3xl">
-              <p className="inline-flex items-center rounded-full border border-amber-300 bg-white/95 px-4 py-2 text-xs font-semibold tracking-[0.2em] text-amber-900 uppercase ring-1 ring-amber-100">
-                Insight Cast
-              </p>
+              <EyebrowBadge>Insight Cast</EyebrowBadge>
               <h1 className="mt-6 text-balance text-4xl font-semibold leading-[1.01] tracking-[-0.05em] text-stone-950 sm:text-5xl lg:text-[4.8rem]">
                 ホームページに
                 <br />
@@ -110,15 +108,15 @@ export default async function LandingPage() {
                 <br />
                 AI取材で見つける。
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-stone-700 sm:text-[1.08rem]">
+              <p className="mt-6 max-w-2xl text-base leading-8 text-stone-600 sm:text-[1.08rem]">
                 Insight Cast は、AIキャストがホームページと競合を先に読み、
-                取材を通して選ばれる理由を引き出すサービスです。文章をいきなり生成するのではなく、
+                取材を通して選ばれる理由を引き出すサービスです。いきなり文章を出すツールではなく、
                 まず会話で価値を見つけるところから始めます。
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup">無料で試してみる</ButtonLink>
-                <ButtonLink href="/service" tone="secondary">
+                <ButtonLink href="/auth/signup" className="py-4 px-7 text-base">無料で試してみる</ButtonLink>
+                <ButtonLink href="/service" tone="secondary" className="py-4 px-7 text-base">
                   サービスの流れを見る
                 </ButtonLink>
               </div>
@@ -128,7 +126,6 @@ export default async function LandingPage() {
                   <StatusPill
                     key={pill}
                     tone="neutral"
-                    className="bg-white/95"
                   >
                     {pill}
                   </StatusPill>
@@ -148,7 +145,7 @@ export default async function LandingPage() {
                   />
                   <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0.02)_0%,rgba(15,23,42,0.38)_52%,rgba(15,23,42,0.92)_100%)]" />
                   <div className="absolute inset-x-0 bottom-0 px-6 pb-6 pt-24 sm:px-8 sm:pb-8">
-                    <p className="text-xs tracking-[0.2em] text-amber-200 uppercase">AI Cast Team</p>
+                    <p className="text-xs tracking-[0.2em] text-amber-200 uppercase">取材班 / AI Cast Team</p>
                     <p className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-[2rem]">
                       調べて、聞いて、整えて、
                       <br />
@@ -166,9 +163,9 @@ export default async function LandingPage() {
                     ['AI取材', '会話から価値を発見する'],
                     ['記事素材化', '更新の芯まで残す'],
                   ].map(([title, body]) => (
-                    <div key={title} className="rounded-2xl border border-stone-300 bg-white px-4 py-4">
+                    <div key={title} className="rounded-2xl border border-stone-300 bg-white px-4 py-4 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-sm">
                       <p className="text-sm font-semibold text-stone-950">{title}</p>
-                      <p className="mt-1 text-xs leading-5 text-stone-700">{body}</p>
+                      <p className="mt-1 text-xs leading-5 text-stone-600">{body}</p>
                     </div>
                   ))}
                 </div>
@@ -202,9 +199,9 @@ export default async function LandingPage() {
                 <p className="text-xs font-medium tracking-[0.22em] text-amber-700 uppercase">What Changes</p>
                 <div className="mt-5 grid gap-4">
                   {outcomes.map((item) => (
-                    <div key={item.title} className="rounded-[1.7rem] border border-white bg-white/92 px-5 py-5 backdrop-blur-sm">
+                    <div key={item.title} className="rounded-[1.7rem] border border-white/90 bg-white/94 px-5 py-5 shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
                       <p className="text-lg font-semibold tracking-tight text-stone-950">{item.title}</p>
-                      <p className="mt-2 text-sm leading-7 text-stone-700">{item.body}</p>
+                      <p className="mt-2 text-sm leading-7 text-stone-600">{item.body}</p>
                     </div>
                   ))}
                 </div>
@@ -237,7 +234,7 @@ export default async function LandingPage() {
 
                 <div className="grid gap-4 md:grid-cols-3">
                   {workflow.map((item) => (
-                    <SurfaceCard key={item.step} className="rounded-[1.9rem] p-5">
+                    <SurfaceCard key={item.step} className="rounded-[1.9rem] p-5" interactive>
                       <p className="text-xs font-semibold tracking-[0.2em] text-stone-400 uppercase">{item.step}</p>
                       <p className="mt-4 text-lg font-semibold text-stone-900">{item.title}</p>
                       <p className="mt-3 text-sm leading-7 text-stone-500">{item.body}</p>
@@ -260,7 +257,7 @@ export default async function LandingPage() {
 
             <div className="mt-8 grid gap-6 lg:grid-cols-3">
               {freeCast.map((char) => (
-                <SurfaceCard key={char.id} className="rounded-[2rem] p-6">
+                <SurfaceCard key={char.id} className="rounded-[2rem] p-6" interactive>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">
@@ -309,7 +306,7 @@ export default async function LandingPage() {
 
               <div className="mt-7 space-y-3">
                 {outputExamples.map((item) => (
-                  <div key={item} className="flex items-start gap-3 rounded-[1.7rem] border border-stone-200 bg-white/90 px-5 py-4">
+                  <div key={item} className="flex items-start gap-3 rounded-[1.7rem] border border-stone-200 bg-white/92 px-5 py-4 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md hover:border-stone-300">
                     <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
                     <p className="text-sm leading-7 text-stone-600">{item}</p>
                   </div>
@@ -327,17 +324,27 @@ export default async function LandingPage() {
         </section>
 
         <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl rounded-[2.3rem] border border-stone-200 bg-stone-900 p-8 text-white sm:p-10">
-            <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">FAQ</p>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {faqs.map((item) => (
-                <div key={item.q} className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5">
-                  <p className="text-base font-semibold text-white">{item.q}</p>
-                  <p className="mt-3 text-sm leading-7 text-stone-300">{item.a}</p>
+          {(() => {
+            const mint = CHARACTERS.find((c) => c.id === 'mint')
+            return (
+              <div className="mx-auto max-w-6xl rounded-[2.3rem] border border-stone-200 bg-stone-900 p-8 text-white sm:p-10">
+                <div className="flex items-center gap-3">
+                  {mint && (
+                    <CharacterAvatar src={mint.icon48} alt={`${mint.name}のアイコン`} emoji={mint.emoji} size={36} />
+                  )}
+                  <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">FAQ — よくある質問</p>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  {faqs.map((item) => (
+                    <div key={item.q} className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5 transition-all duration-200 hover:bg-white/10 hover:border-white/20">
+                      <p className="text-base font-semibold text-white">{item.q}</p>
+                      <p className="mt-3 text-sm leading-7 text-stone-300">{item.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
         </section>
 
         <section className="px-6 pb-20 pt-4">
@@ -356,7 +363,7 @@ export default async function LandingPage() {
                 <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
                   無料で始める
                 </ButtonLink>
-                <ButtonLink href="/pricing" tone="ghost" className="border-white/85 bg-white text-stone-950 hover:border-white/45 hover:bg-white/12 hover:text-white">
+                <ButtonLink href="/pricing" tone="ghost" className="border-white/60 bg-transparent text-white hover:border-white/40 hover:bg-white/10">
                   料金を見る
                 </ButtonLink>
               </div>

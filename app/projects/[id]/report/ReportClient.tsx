@@ -70,7 +70,7 @@ export default function ReportClient({
           action={(
             <Link
               href={`/projects/${projectId}`}
-              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
             >
               取材先の管理へ戻る
             </Link>
@@ -95,13 +95,13 @@ export default function ReportClient({
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 もう一度確認する
               </button>
               <Link
                 href={`/projects/${projectId}`}
-                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 取材先の管理へ戻る
               </Link>
@@ -116,13 +116,13 @@ export default function ReportClient({
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Link
                   href={`/projects/${projectId}`}
-                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                 >
                   取材先の管理へ戻る
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                 >
                   ダッシュボードへ戻る
                 </Link>
@@ -145,7 +145,7 @@ export default function ReportClient({
           action={(
             <Link
               href={`/projects/${projectId}`}
-              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+              className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
             >
               取材先の管理へ戻る
             </Link>
@@ -260,7 +260,7 @@ export default function ReportClient({
 
       <Link
         href={interviewerPath}
-        className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors text-sm text-center"
+        className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors text-sm text-center"
       >
         この内容をもとにインタビューを始める →
       </Link>

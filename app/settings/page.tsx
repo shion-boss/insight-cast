@@ -79,7 +79,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-stone-50">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
         <div className="mx-auto max-w-lg px-6 py-10">
           <InterviewerSpeech
@@ -103,7 +103,7 @@ export default function SettingsPage() {
 
   if (loadError) {
     return (
-      <div className="min-h-screen bg-stone-50">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
         <div className="mx-auto max-w-lg px-6 py-10">
           <InterviewerSpeech
@@ -126,7 +126,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="設定" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <div className="mx-auto max-w-lg px-6 py-8 space-y-6">

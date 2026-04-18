@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { CharacterAvatar } from '@/components/ui'
+import { ButtonLink, CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
-import { PublicHeader, PublicFooter } from '@/components/public-layout'
+import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
 import { POSTS, CATEGORY_LABELS, getPost, getRelatedPosts } from '@/lib/blog-posts'
 import { ARTICLE_BODIES, type NormalSection } from '@/lib/blog-contents'
 
@@ -68,13 +68,13 @@ export default async function BlogDetailPage({
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#f7f1e4_0%,_#fcfaf6_36%,_#fffdf9_100%)]">
+    <PublicPageFrame>
       <PublicHeader />
 
-      <main className="mx-auto max-w-6xl px-6 py-12">
+      <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
         {/* パンくず */}
         <nav aria-label="パンくず" className="mb-8 flex items-center gap-2 text-sm text-stone-400">
-          <Link href="/blog" className="transition-colors hover:text-stone-600">
+          <Link href="/blog" className="rounded transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
             ブログ
           </Link>
           <span>›</span>
@@ -84,17 +84,17 @@ export default async function BlogDetailPage({
         {/* 記事ヘッダー */}
         <div className="mb-12 max-w-2xl">
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-stone-200 bg-stone-50 px-3 py-0.5 text-xs text-stone-500">
+            <span className="rounded-full border border-stone-200 bg-white/90 px-3 py-1 text-xs font-medium text-stone-500">
               {CATEGORY_LABELS[post.category]}
             </span>
             {post.type === 'interview' && (
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-0.5 text-xs text-amber-700">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
                 インタビュー記事
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl font-bold leading-snug text-stone-800 sm:text-3xl">
+          <h1 className="text-2xl font-bold leading-snug tracking-tight text-stone-950 sm:text-3xl">
             {post.title}
           </h1>
 
@@ -136,7 +136,7 @@ export default async function BlogDetailPage({
                 <p className="mb-8 leading-8 text-stone-600">{body.intro}</p>
 
                 {/* この記事でわかること */}
-                <div className="mb-8 rounded-[1.5rem] border border-stone-200/80 bg-white/70 px-6 py-5">
+                <div className="mb-8 rounded-[1.5rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-6 py-5 backdrop-blur-sm">
                   <p className="mb-3 text-sm font-semibold text-stone-700">この記事でわかること</p>
                   <ul className="space-y-2">
                     {body.highlights.map((item, i) => (
@@ -152,7 +152,7 @@ export default async function BlogDetailPage({
 
                 {/* インタビュアー紹介 */}
                 {interviewerChar && (
-                  <div className="mb-8 flex items-start gap-3">
+                  <div className="mb-8 flex items-start gap-3 rounded-[1.5rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-5 py-4 backdrop-blur-sm">
                     <CharacterAvatar
                       src={interviewerChar.icon96}
                       alt={`${interviewerChar.name}のアイコン`}
@@ -163,7 +163,7 @@ export default async function BlogDetailPage({
                       <p className="text-sm font-semibold text-stone-700">
                         担当: {interviewerChar.name}（{interviewerChar.species}）
                       </p>
-                      <p className="text-sm text-stone-500">{body.interviewerIntro}</p>
+                      <p className="mt-1 text-sm text-stone-500">{body.interviewerIntro}</p>
                     </div>
                   </div>
                 )}
@@ -174,7 +174,7 @@ export default async function BlogDetailPage({
                     if (turn.role === 'owner') {
                       return (
                         <div key={i} className="flex gap-3">
-                          <div className="flex-1 rounded-2xl bg-stone-100 px-5 py-4 text-sm leading-7 text-stone-700">
+                          <div className="flex-1 rounded-2xl border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-5 py-4 text-sm leading-7 text-stone-700 backdrop-blur-sm">
                             {turn.text}
                           </div>
                           <div className="w-10 flex-shrink-0" aria-hidden="true" />
@@ -192,7 +192,7 @@ export default async function BlogDetailPage({
                             className="flex-shrink-0"
                           />
                         )}
-                        <div className="flex-1 rounded-2xl bg-amber-50 px-5 py-4 text-sm leading-7 text-stone-700">
+                        <div className="flex-1 rounded-2xl border border-amber-200/60 bg-amber-50/70 px-5 py-4 text-sm leading-7 text-stone-700">
                           {turn.text}
                         </div>
                       </div>
@@ -201,8 +201,8 @@ export default async function BlogDetailPage({
                 </div>
 
                 {/* まとめ */}
-                <div className="rounded-[1.5rem] border border-amber-200/60 bg-amber-50/60 px-6 py-5">
-                  <p className="text-sm font-semibold text-stone-700 mb-2">取材のまとめ</p>
+                <div className="rounded-[1.5rem] border border-amber-200/60 bg-[linear-gradient(145deg,rgba(255,247,230,0.98),rgba(255,253,249,0.95))] px-6 py-5">
+                  <p className="mb-2 text-sm font-semibold text-stone-700">取材のまとめ</p>
                   <p className="text-sm leading-7 text-stone-600">{body.summary}</p>
                 </div>
               </div>
@@ -214,34 +214,30 @@ export default async function BlogDetailPage({
           )}
 
           {/* 記事末尾 */}
-          <div className="mt-14 flex flex-col gap-6">
+          <div className="mt-14 flex flex-col gap-8">
             <Link
               href="/blog"
-              className="inline-flex items-center text-sm text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded"
+              className="inline-flex items-center rounded text-sm text-stone-500 transition-colors hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
             >
               ← ブログ一覧へ
             </Link>
 
-            <div className="rounded-[2rem] border border-amber-200/60 bg-amber-50/60 px-8 py-10 text-center">
-              <p className="text-base font-semibold text-stone-800">
+            {/* CTA */}
+            <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_58%,_#7c5a31_100%)] px-7 py-10 text-center text-white">
+              <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Start Free</p>
+              <p className="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">
                 あなたのホームページでも試してみませんか
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-stone-500">
+              <p className="mt-3 text-sm leading-7 text-stone-200">
                 登録無料。クレジットカード不要でインタビューを体験できます。
               </p>
-              <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-full bg-stone-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
-                >
+              <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
                   無料ではじめる
-                </Link>
-                <Link
-                  href="/cast"
-                  className="text-sm text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded"
-                >
-                  キャストを見る →
-                </Link>
+                </ButtonLink>
+                <ButtonLink href="/cast" tone="ghost" className="border-white/70 text-white hover:border-white/40 hover:bg-white/10">
+                  キャストを見る
+                </ButtonLink>
               </div>
             </div>
           </div>
@@ -249,9 +245,9 @@ export default async function BlogDetailPage({
 
         {/* 関連記事 */}
         {relatedPosts.length > 0 && (
-          <div className="mt-16 max-w-2xl mx-auto">
-            <h2 className="mb-6 text-lg font-semibold text-stone-700">同じカテゴリの記事</h2>
-            <div className="flex flex-col gap-4">
+          <div className="mx-auto mt-16 max-w-2xl">
+            <h2 className="mb-6 text-base font-semibold tracking-[0.12em] text-stone-400 uppercase">Related</h2>
+            <div className="flex flex-col gap-3">
               {relatedPosts.map((related) => {
                 const relatedInterviewer = related.interviewer
                   ? CHARACTERS.find((c) => c.id === related.interviewer)
@@ -260,10 +256,10 @@ export default async function BlogDetailPage({
                   <Link
                     key={related.slug}
                     href={`/blog/${related.slug}`}
-                    className="flex items-start gap-4 rounded-2xl border border-stone-200/80 bg-white/70 p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+                    className="card-interactive flex items-start gap-4 rounded-[1.6rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                   >
                     <div
-                      className={`h-16 w-16 flex-shrink-0 rounded-xl ${related.coverColor}`}
+                      className={`h-14 w-14 flex-shrink-0 rounded-xl ${related.coverColor}`}
                       aria-hidden="true"
                     />
                     <div className="min-w-0">
@@ -296,6 +292,6 @@ export default async function BlogDetailPage({
       </main>
 
       <PublicFooter />
-    </div>
+    </PublicPageFrame>
   )
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-import { CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
 
@@ -109,10 +109,10 @@ function FaqItem({ faq }: { faq: Faq }) {
   const character = faq.characterId ? getCharacter(faq.characterId) : undefined
 
   return (
-    <div className="rounded-[1.6rem] border border-stone-200 bg-white/90">
+    <div className="rounded-[1.6rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)]">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-start gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-stone-300"
+        className="flex w-full items-start gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600/40"
         aria-expanded={open}
       >
         <span className="mt-0.5 flex-shrink-0 text-base font-semibold text-amber-500">Q</span>
@@ -167,7 +167,7 @@ export default function FaqPage() {
                 <a
                   key={g.label}
                   href={`#${g.label}`}
-                  className="rounded-full border border-stone-200 bg-white/80 px-4 py-2 text-sm text-stone-600 transition-colors hover:bg-white hover:text-stone-900"
+                  className="rounded-full border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-4 py-2 text-sm text-stone-600 transition-all duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   {g.label}
                 </a>
@@ -197,7 +197,7 @@ export default function FaqPage() {
         {/* まだ疑問がある人向け */}
         <section className="px-6 py-14 sm:py-18">
           <div className="mx-auto max-w-3xl">
-            <div className="rounded-[2rem] border border-stone-200 bg-white/90 p-8 sm:p-10">
+            <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 sm:p-10 backdrop-blur-sm">
               <div className="flex flex-wrap items-center gap-3">
                 {featuredCharacters.map((c) => (
                   <CharacterAvatar
@@ -220,13 +220,13 @@ export default function FaqPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-2xl bg-stone-900 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-stone-700"
+                  className={getButtonClass('primary', 'px-6 py-4 text-sm')}
                 >
                   無料で始める
                 </Link>
                 <Link
                   href="/cast"
-                  className="inline-flex items-center justify-center rounded-2xl border border-stone-200 bg-white px-6 py-4 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                  className={getButtonClass('secondary', 'px-6 py-4 text-sm font-medium')}
                 >
                   キャストを見る
                 </Link>

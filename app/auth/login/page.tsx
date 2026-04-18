@@ -1,11 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function LoginPage() {
+import { FieldLabel, PrimaryButton, SecondaryButton, SiteBrand, TextInput } from '@/components/ui'
+import { PublicPageFrame } from '@/components/public-layout'
+
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +22,7 @@ export default function LoginPage() {
     ? oauthErrorMessage ?? 'Googleログインに失敗しました。Supabase の Google Provider 設定をご確認ください'
     : null
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -54,88 +57,97 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#f7f1e4_0%,_#fcfaf6_100%)] flex flex-col items-center justify-center px-4">
-      {/* ロゴ + トップへ戻るリンク */}
-      <div className="w-full max-w-sm mb-8">
-        <div className="flex items-center justify-between">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 relative z-10">
+      <div className="w-full max-w-sm">
+        {/* ブランド */}
+        <div className="mb-8 flex items-center justify-between">
+          <SiteBrand href="/" subtitle={false} />
           <Link
             href="/"
-            className="text-xl font-semibold tracking-[0.12em] text-stone-800 uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md"
+            className="rounded-md text-sm text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
           >
-            Insight Cast
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md"
-          >
-            ← トップに戻る
+            ← トップへ
           </Link>
         </div>
-        <p className="text-sm text-stone-400 mt-2">取材班の続きから、すぐ再開できます。</p>
-      </div>
 
-      {/* カード */}
-      <div className="w-full max-w-sm rounded-[2rem] border border-stone-200 bg-white p-8">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={loading || googleLoading}
-            className="w-full rounded-xl border border-stone-200 bg-white py-3 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 disabled:opacity-50"
-          >
-            {googleLoading ? 'Googleに移動中...' : 'Googleでログイン'}
-          </button>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-950">ログイン</h1>
+          <p className="mt-1 text-sm text-stone-500">取材班の続きから、すぐ再開できます。</p>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-stone-200" />
-            <span className="text-xs text-stone-400">またはメールでログイン</span>
-            <div className="h-px flex-1 bg-stone-200" />
-          </div>
+        {/* カード */}
+        <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 backdrop-blur-sm">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <SecondaryButton
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={loading || googleLoading}
+              className="w-full"
+            >
+              {googleLoading ? 'Googleに移動中...' : 'Googleでログイン'}
+            </SecondaryButton>
 
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">メールアドレス</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="rounded-xl border border-stone-200 px-4 py-3 text-sm focus:ring-2 focus:ring-stone-300 focus:outline-none w-full"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-stone-600 mb-1">パスワード</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="rounded-xl border border-stone-200 px-4 py-3 text-sm focus:ring-2 focus:ring-stone-300 focus:outline-none w-full"
-            />
-          </div>
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-stone-200" />
+              <span className="text-xs text-stone-400">またはメールでログイン</span>
+              <div className="h-px flex-1 bg-stone-200" />
+            </div>
 
-          {(error || oauthError) && (
-            <p className="text-sm text-red-500">{error ?? oauthError}</p>
-          )}
+            <div>
+              <FieldLabel>メールアドレス</FieldLabel>
+              <TextInput
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+            <div>
+              <FieldLabel>パスワード</FieldLabel>
+              <TextInput
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-stone-900 py-3 text-sm font-medium text-white hover:bg-stone-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 disabled:opacity-50"
-          >
-            {loading ? 'ログイン中...' : 'ログインする'}
-          </button>
-        </form>
+            {(error || oauthError) && (
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error ?? oauthError}</p>
+            )}
 
-        <p className="text-center text-sm text-stone-400 mt-6">
-          アカウントをお持ちでない方は
+            <PrimaryButton
+              type="submit"
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'ログイン中...' : 'ログインする'}
+            </PrimaryButton>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center text-sm text-stone-400">
+          アカウントをお持ちでない方は{' '}
           <Link
             href="/auth/signup"
-            className="text-stone-600 underline ml-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+            className="text-stone-700 underline underline-offset-2 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-sm"
           >
             新規登録
           </Link>
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <PublicPageFrame>
+      <Suspense>
+        <LoginForm />
+      </Suspense>
+    </PublicPageFrame>
   )
 }

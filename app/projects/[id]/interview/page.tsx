@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -134,7 +134,7 @@ export default function InterviewPage() {
     init()
   }, [interviewId, projectId, router, sendMessageToAI, supabase])
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!input.trim() || loading) return
     const text = input.trim()
@@ -196,7 +196,7 @@ export default function InterviewPage() {
           <button
             type="button"
             onClick={() => router.push(backHref)}
-            className="rounded-md text-xs text-stone-500 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+            className="rounded-md text-xs text-stone-500 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
           >
             {backLabel}
           </button>
@@ -215,7 +215,7 @@ export default function InterviewPage() {
         </div>
         <button
           onClick={handleManualFinish}
-          className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-500 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors"
+          className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-500 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors"
         >
           インタビューを終わらせる
         </button>
@@ -310,7 +310,7 @@ export default function InterviewPage() {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && e.ctrlKey) {
                 e.preventDefault()
-                handleSubmit(e as unknown as React.FormEvent)
+                handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
               }
             }}
             placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
@@ -322,7 +322,7 @@ export default function InterviewPage() {
           <button
             type="submit"
             disabled={loading || !input.trim()}
-            className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors flex-shrink-0"
+            className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors flex-shrink-0"
           >
             {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
           </button>
@@ -350,13 +350,13 @@ export default function InterviewPage() {
             <div className="space-y-2">
               <button
                 onClick={handleFinish}
-                className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 cursor-pointer transition-colors"
+                className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors"
               >
                 <DevAiLabel>はい、まとめてください</DevAiLabel>
               </button>
               <button
                 onClick={handleContinue}
-                className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-xl cursor-pointer transition-colors"
+                className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-xl cursor-pointer transition-colors"
               >
                 もう少し話す
               </button>

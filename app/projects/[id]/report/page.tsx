@@ -70,7 +70,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   }))
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="取材先の調査結果" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <ReportClient

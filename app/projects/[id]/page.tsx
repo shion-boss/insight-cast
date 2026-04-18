@@ -39,7 +39,7 @@ function formatDateTime(value: string) {
 }
 
 function getInterviewHref(projectId: string, interview: InterviewRow, hasArticles: boolean) {
-  if (hasArticles) return `/projects/${projectId}/summary?interviewId=${interview.id}`
+  if (hasArticles) return null
   if (interview.summary || interview.status === 'completed') return `/projects/${projectId}/summary?interviewId=${interview.id}`
   return `/projects/${projectId}/interview?interviewId=${interview.id}`
 }
@@ -112,7 +112,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const mint = getCharacter('mint')
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="Insight Cast" backHref="/dashboard" backLabel="← ダッシュボード" />
 
       <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
@@ -127,7 +127,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div className="flex flex-col gap-2 sm:min-w-52">
               <Link
                 href={`/projects/${id}/interviewer`}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 新しいインタビュー
               </Link>
@@ -135,7 +135,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <StartAnalysisButton
                   projectId={id}
                   projectName={project.name || project.hp_url}
-                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                  className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                 />
               ) : project.status === 'analyzing' ? (
                 <div className="inline-flex items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
@@ -146,7 +146,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   <Link
                     href={`/projects/${id}/report`}
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                   >
                     この取材先の調査結果を見る
                   </Link>
@@ -154,7 +154,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     projectId={id}
                     projectName={project.name || project.hp_url}
                     force
-                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                    className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-3 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                   />
                 </>
               )}
@@ -181,7 +181,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div className="mt-4">
               <Link
                 href={`/projects/${id}/interviewer`}
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 最初のインタビューを始める
               </Link>
@@ -198,7 +198,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               {interviews.map((interview) => {
                 const interviewArticles = articlesByInterview.get(interview.id) ?? []
                 const char = getCharacter(interview.interviewer_type)
-                const primaryHref = getInterviewHref(id, interview, interviewArticles.length > 0)
+                    const latestArticle = interviewArticles[0] ?? null
+                    const primaryHref = latestArticle
+                      ? `/projects/${id}/articles/${latestArticle.id}`
+                      : getInterviewHref(id, interview, interviewArticles.length > 0)
 
                 return (
                   <details key={interview.id} className="group rounded-2xl border border-stone-100 bg-white" open={false}>
@@ -235,13 +238,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
                         <Link
                           href={primaryHref}
-                          className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                          className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                         >
-                          {interview.summary || interview.status === 'completed' ? '取材メモを見る' : 'インタビューを開く'}
+                          {latestArticle ? '作成済み記事を見る' : interview.summary || interview.status === 'completed' ? '取材メモを見る' : 'インタビューを開く'}
                         </Link>
                         <Link
                           href={`/projects/${id}/article?interviewId=${interview.id}`}
-                          className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-2 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                          className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-4 py-2 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                         >
                           この取材から記事を作る
                         </Link>
@@ -271,7 +274,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                               <li key={article.id}>
                                 <Link
                                   href={`/projects/${id}/articles/${article.id}`}
-                                  className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                                  className="flex items-center justify-between gap-3 rounded-xl border border-stone-100 bg-stone-50 px-4 py-3 hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
                                 >
                                   <div className="min-w-0">
                                     <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { CharacterAvatar, HeaderSurface, SiteBrand } from '@/components/ui'
+import { CharacterAvatar, EyebrowBadge, HeaderSurface, SiteBrand, getButtonClass } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 
 const NAV_LINKS = [
@@ -21,7 +21,6 @@ const FOOTER_COL1 = [
 const FOOTER_COL2 = [
   { href: '/blog', label: 'ブログ' },
   { href: '/philosophy', label: '発信の考え方' },
-  { href: '/about', label: 'About' },
   { href: '/about', label: '会社概要' },
 ]
 
@@ -51,9 +50,9 @@ export function PublicPageFrame({
         className,
       )}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.44),rgba(255,255,255,0))]" aria-hidden="true" />
-      <div className="pointer-events-none absolute left-[-7rem] top-24 h-72 w-72 rounded-full bg-amber-300/25 blur-3xl" aria-hidden="true" />
-      <div className="pointer-events-none absolute right-[-6rem] top-[22rem] h-80 w-80 rounded-full bg-teal-200/25 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[36rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.48),rgba(255,255,255,0))]" aria-hidden="true" />
+      <div className="pointer-events-none absolute left-[-7rem] top-24 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" aria-hidden="true" />
+      <div className="pointer-events-none absolute right-[-6rem] top-[22rem] h-80 w-80 rounded-full bg-teal-200/20 blur-3xl" aria-hidden="true" />
       {children}
     </div>
   )
@@ -85,25 +84,23 @@ export function PublicHero({
       <div
         className={cx(
           'mx-auto grid max-w-6xl gap-10',
-          aside && 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start',
+          !!aside && 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start',
           containerClassName,
         )}
       >
         <div className={cx('max-w-3xl', contentClassName)}>
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-white/95 px-4 py-2 text-xs font-semibold tracking-[0.2em] text-amber-900 uppercase ring-1 ring-amber-100">
-            {eyebrow}
-          </div>
+          <EyebrowBadge>{eyebrow}</EyebrowBadge>
           <h1 className="mt-6 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-stone-950 sm:text-5xl lg:text-[4rem]">
             {title}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-stone-700 sm:text-[1.05rem]">
+          <p className="mt-5 max-w-2xl text-base leading-8 text-stone-600 sm:text-[1.05rem]">
             {description}
           </p>
           {actions && <div className="mt-8">{actions}</div>}
         </div>
 
         {aside && (
-          <div className={cx('rounded-[2rem] border border-stone-300/80 bg-[rgba(255,253,249,0.92)] p-5 backdrop-blur-md', asideClassName)}>
+          <div className={cx('rounded-[2rem] border border-stone-300/80 bg-[rgba(255,253,249,0.94)] p-5 shadow-sm backdrop-blur-md', asideClassName)}>
             {aside}
           </div>
         )}
@@ -155,9 +152,9 @@ export function LegalPageTemplate({
               <div className="sticky top-28 rounded-[1.75rem] border border-stone-300/80 bg-[rgba(255,253,249,0.92)] p-5 backdrop-blur-md">
                 <p className="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">Related</p>
                 <div className="mt-4 space-y-3 text-sm text-stone-700">
-                  <Link href="/privacy" className="block transition-colors hover:text-stone-950">プライバシーポリシー</Link>
-                  <Link href="/terms" className="block transition-colors hover:text-stone-950">利用規約</Link>
-                  <Link href="/tokushoho" className="block transition-colors hover:text-stone-950">特定商取引法に基づく表記</Link>
+                  <Link href="/privacy" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">プライバシーポリシー</Link>
+                  <Link href="/terms" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">利用規約</Link>
+                  <Link href="/tokushoho" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">特定商取引法に基づく表記</Link>
                 </div>
               </div>
             </aside>
@@ -178,19 +175,19 @@ export function PublicHeader() {
   return (
     <HeaderSurface
       bottom={(
-        <nav className="flex gap-2 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav className="flex gap-2 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="メインナビゲーション">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href + link.label}
               href={link.href}
-              className="whitespace-nowrap rounded-full border border-stone-300 bg-white/85 px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/30 hover:bg-white hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/faq"
-            className="whitespace-nowrap rounded-full border border-stone-300 bg-white/85 px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/30 hover:bg-white hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+            className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
           >
             FAQ
           </Link>
@@ -201,13 +198,13 @@ export function PublicHeader() {
       <div className="flex items-center gap-2 sm:gap-3">
         <Link
           href="/auth/login"
-          className="inline-flex items-center justify-center rounded-full border border-stone-300 bg-white/90 px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900/25 hover:bg-white hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+          className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
         >
           ログイン
         </Link>
         <Link
           href="/auth/signup"
-          className="relative isolate inline-flex items-center justify-center overflow-hidden rounded-full bg-[linear-gradient(135deg,#111827,#1f2937)] px-5 py-2.5 text-sm font-semibold text-white transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.08)_20%,rgba(255,255,255,0.32)_48%,rgba(255,255,255,0.08)_76%,transparent_100%)] before:opacity-0 hover:bg-[#243041] hover:before:animate-[button-flash_900ms_ease] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+          className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
         >
           無料ではじめる
         </Link>
@@ -218,12 +215,12 @@ export function PublicHeader() {
 
 export function PublicFooter() {
   return (
-    <footer className="relative border-t border-stone-300/80 bg-[rgba(244,236,223,0.72)]">
+    <footer className="relative border-t border-stone-300/60 bg-[rgba(244,236,223,0.64)] backdrop-blur-sm">
       <div className="mx-auto max-w-6xl px-6 py-14">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-          <div className="rounded-[2rem] border border-stone-300/80 bg-[rgba(255,253,249,0.92)] p-7 backdrop-blur-md">
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
+          <div className="rounded-[2rem] border border-stone-300/70 bg-[rgba(255,253,249,0.94)] p-7 shadow-sm backdrop-blur-md">
+            <div className="flex items-start gap-4">
+              <div className="flex -space-x-2 pt-0.5">
                 {featuredCharacters.map((char) => (
                   <CharacterAvatar
                     key={char.id}
@@ -237,16 +234,25 @@ export function PublicFooter() {
               </div>
               <div>
                 <p className="text-sm font-semibold tracking-[0.16em] text-stone-900 uppercase">Insight Cast</p>
-                <p className="mt-1 text-sm leading-6 text-stone-700">AI取材で、ホームページにまだ書けていない価値を見つけて、次の更新までつなげます。</p>
+                <p className="mt-1.5 text-sm leading-6 text-stone-600">AI取材で、ホームページにまだ書けていない価値を見つけて、次の更新までつなげます。</p>
               </div>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-2">
               {['一次情報を引き出す', '競合比較で軸を整える', '記事素材までつなげる'].map((item) => (
-                <span key={item} className="rounded-full border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs font-medium text-stone-700">
+                <span key={item} className="rounded-full border border-stone-200 bg-stone-50/90 px-3 py-1.5 text-xs font-medium text-stone-600">
                   {item}
                 </span>
               ))}
+            </div>
+
+            <div className="mt-6 pt-5 border-t border-stone-200/80">
+              <Link
+                href="/auth/signup"
+                className={getButtonClass('primary', 'px-5 py-3 text-sm')}
+              >
+                無料で始める
+              </Link>
             </div>
           </div>
 
@@ -263,7 +269,7 @@ export function PublicFooter() {
                     <div key={link.href + link.label}>
                       <Link
                         href={link.href}
-                        className="rounded-sm text-sm text-stone-700 transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                        className="rounded-sm text-sm text-stone-600 transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                       >
                         {link.label}
                       </Link>
@@ -275,16 +281,16 @@ export function PublicFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-stone-300/80 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-stone-500">© 2026 Insight Cast</p>
+        <div className="mt-10 flex flex-col gap-4 border-t border-stone-300/60 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-stone-400">© 2026 Insight Cast</p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/auth/login" className="rounded-sm text-xs text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
+            <Link href="/auth/login" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
               ログイン
             </Link>
-            <Link href="/auth/signup" className="rounded-sm text-xs text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
+            <Link href="/auth/signup" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
               新規登録
             </Link>
-            <Link href="mailto:info@insight-cast.jp" className="rounded-sm text-xs text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
+            <Link href="mailto:info@insight-cast.jp" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
               お問い合わせ
             </Link>
           </div>

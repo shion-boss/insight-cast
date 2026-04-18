@@ -1,9 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { FieldLabel, PrimaryButton, SecondaryButton, StateCard, TextInput } from '@/components/ui'
+
+import { FieldLabel, PrimaryButton, SecondaryButton, SiteBrand, TextInput } from '@/components/ui'
+import { PublicPageFrame } from '@/components/public-layout'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -15,7 +17,7 @@ export default function SignupPage() {
   const [sent, setSent] = useState(false)
   const supabase = createClient()
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (password !== confirm) {
       setError('パスワードが一致しません')
@@ -54,99 +56,127 @@ export default function SignupPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-        <div className="w-full max-w-sm">
-          <StateCard
-            icon="📬"
-            title="確認メールを送りました。"
-            description={(
-              <>
-                <strong>{email}</strong> に確認メールを送りました。<br />
-                メールのリンクを開くと、そのままログインできます。
-              </>
-            )}
-          />
-          <Link href="/auth/login" className="inline-block mt-6 text-sm text-stone-500 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
-            ログインページへ
-          </Link>
+      <PublicPageFrame>
+        <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 relative z-10">
+          <div className="w-full max-w-sm">
+            <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 text-center backdrop-blur-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 ring-1 ring-amber-200">
+                <span className="text-2xl" aria-hidden="true">📬</span>
+              </div>
+              <h2 className="mt-4 text-lg font-semibold text-stone-950">確認メールを送りました</h2>
+              <p className="mt-3 text-sm leading-7 text-stone-600">
+                <strong className="font-semibold text-stone-900">{email}</strong> にメールを送りました。
+                <br />
+                リンクを開くとそのままログインできます。
+              </p>
+            </div>
+            <Link
+              href="/auth/login"
+              className="mt-5 block text-center text-sm text-stone-500 hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md"
+            >
+              ← ログインページへ
+            </Link>
+          </div>
         </div>
-      </div>
+      </PublicPageFrame>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-stone-50 px-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <Link href="/" className="text-xl font-semibold text-stone-800 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
-            Insight Cast
-          </Link>
-          <p className="text-sm text-stone-400 mt-2">取材班を呼べるように、まずは登録を済ませましょう。</p>
+    <PublicPageFrame>
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 relative z-10">
+        <div className="w-full max-w-sm">
+          {/* ブランド */}
+          <div className="mb-8 flex items-center justify-between">
+            <SiteBrand href="/" subtitle={false} />
+            <Link
+              href="/"
+              className="rounded-md text-sm text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+            >
+              ← トップへ
+            </Link>
+          </div>
+
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold tracking-tight text-stone-950">新規登録</h1>
+            <p className="mt-1 text-sm text-stone-500">取材班を呼べるように、まずは登録を済ませましょう。</p>
+          </div>
+
+          {/* カード */}
+          <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 backdrop-blur-sm">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <SecondaryButton
+                type="button"
+                onClick={handleGoogleSignup}
+                disabled={loading || googleLoading}
+                className="w-full"
+              >
+                {googleLoading ? 'Googleに移動中...' : 'Googleで新規登録'}
+              </SecondaryButton>
+
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-stone-200" />
+                <span className="text-xs text-stone-400">またはメールで登録</span>
+                <div className="h-px flex-1 bg-stone-200" />
+              </div>
+
+              <div>
+                <FieldLabel>メールアドレス</FieldLabel>
+                <TextInput
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+              <div>
+                <FieldLabel>パスワード（8文字以上）</FieldLabel>
+                <TextInput
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
+                  required
+                  autoComplete="new-password"
+                />
+              </div>
+              <div>
+                <FieldLabel>パスワード（確認）</FieldLabel>
+                <TextInput
+                  type="password"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  required
+                  autoComplete="new-password"
+                />
+              </div>
+
+              {error && (
+                <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+              )}
+
+              <PrimaryButton
+                type="submit"
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? '登録中...' : '無料で始める'}
+              </PrimaryButton>
+            </form>
+          </div>
+
+          <p className="mt-5 text-center text-sm text-stone-400">
+            すでにアカウントをお持ちの方は{' '}
+            <Link
+              href="/auth/login"
+              className="text-stone-700 underline underline-offset-2 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-sm"
+            >
+              ログイン
+            </Link>
+          </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
-          <SecondaryButton
-            type="button"
-            onClick={handleGoogleSignup}
-            disabled={loading || googleLoading}
-            className="w-full py-3 text-sm font-medium"
-          >
-            {googleLoading ? 'Googleに移動中...' : 'Googleで新規登録'}
-          </SecondaryButton>
-
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-stone-200" />
-            <span className="text-xs text-stone-400">またはメールで登録</span>
-            <div className="h-px flex-1 bg-stone-200" />
-          </div>
-
-          <div>
-            <FieldLabel>メールアドレス</FieldLabel>
-            <TextInput
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <FieldLabel>パスワード（8文字以上）</FieldLabel>
-            <TextInput
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              minLength={8}
-              required
-            />
-          </div>
-          <div>
-            <FieldLabel>パスワード（確認）</FieldLabel>
-            <TextInput
-              type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              required
-            />
-          </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
-
-          <PrimaryButton
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 text-sm"
-          >
-            {loading ? '登録中...' : '無料で始める'}
-          </PrimaryButton>
-        </form>
-
-        <p className="text-center text-sm text-stone-400 mt-4">
-          すでにアカウントをお持ちの方は
-          <Link href="/auth/login" className="text-stone-600 underline ml-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300">
-            ログイン
-          </Link>
-        </p>
       </div>
-    </div>
+    </PublicPageFrame>
   )
 }

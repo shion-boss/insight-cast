@@ -15,7 +15,6 @@ export default function BlogPage() {
 
       <main className="relative z-10">
         <PublicHero
-          compact
           eyebrow="Blog"
           title={<>Insight Cast ブログ</>}
           description={<>取材の記録、事例、ホームページを育てるヒントをお届けします。</>}

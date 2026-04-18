@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { CharacterAvatar } from '@/components/ui'
+import { ButtonLink, CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { POSTS, CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 
@@ -35,10 +35,10 @@ export function BlogClient() {
           <button
             key={tab.id}
             onClick={() => setActiveFilter(tab.id)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 ${
+            className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 ${
               activeFilter === tab.id
-                ? 'bg-stone-800 text-white'
-                : 'border border-stone-200 bg-white text-stone-600 hover:bg-stone-50 hover:text-stone-800'
+                ? 'border-stone-950 bg-stone-950 text-white'
+                : 'border-stone-300 bg-white text-stone-700 hover:border-stone-700 hover:bg-stone-50 hover:text-stone-950'
             }`}
           >
             {tab.label}
@@ -54,7 +54,7 @@ export function BlogClient() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group flex flex-col overflow-hidden rounded-[2rem] border border-stone-200/80 bg-white/85 transition-colors hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+              className="card-interactive group flex flex-col overflow-hidden rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
             >
               {/* カバー */}
               <div className={`h-36 ${post.coverColor}`} />
@@ -109,26 +109,21 @@ export function BlogClient() {
       )}
 
       {/* フッターCTA */}
-      <div className="rounded-[2rem] border border-amber-200/60 bg-amber-50/60 px-8 py-12 text-center">
-        <p className="text-lg font-semibold text-stone-800">
+      <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_58%,_#7c5a31_100%)] px-7 py-10 text-center text-white">
+        <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Start Free</p>
+        <p className="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">
           あなたのホームページでも試してみませんか
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-stone-500">
+        <p className="mt-3 text-sm leading-7 text-stone-200">
           登録無料。クレジットカード不要でインタビューを体験できます。
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href="/auth/signup"
-            className="inline-flex items-center justify-center rounded-full bg-stone-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
-          >
+          <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
             無料ではじめる
-          </Link>
-          <Link
-            href="/cast"
-            className="text-sm text-stone-500 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded"
-          >
-            キャストを見る →
-          </Link>
+          </ButtonLink>
+          <ButtonLink href="/cast" tone="ghost" className="border-white/70 text-white hover:border-white/40 hover:bg-white/10">
+            キャストを見る
+          </ButtonLink>
         </div>
       </div>
     </>

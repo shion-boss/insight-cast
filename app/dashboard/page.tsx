@@ -1,12 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
-import { signOut } from '@/lib/actions/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import LogoutButton from './logout-button'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech, PageHeader, SectionIntro, StateCard, StatusPill, SurfaceCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import StartAnalysisButton from '@/components/start-analysis-button'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
+import AppHeaderActions from '@/components/app-header-actions'
 
 type Project = {
   id: string
@@ -22,6 +22,7 @@ type Interview = {
   interviewer_type: string
   status: string | null
   summary: string | null
+  themes: string[] | null
   created_at: string
 }
 
@@ -50,30 +51,6 @@ function formatShortDateTime(value: string) {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value))
-}
-
-function getInterviewState(interview: Interview, hasArticle: boolean) {
-  if (hasArticle) {
-    return {
-      label: '記事作成へ',
-      color: 'bg-green-50 text-green-600',
-      href: `/projects/${interview.project_id}/article?interviewId=${interview.id}&from=dashboard`,
-    }
-  }
-
-  if (interview.summary || interview.status === 'completed') {
-    return {
-      label: '取材メモを見る',
-      color: 'bg-stone-100 text-stone-500',
-      href: `/projects/${interview.project_id}/summary?interviewId=${interview.id}&from=dashboard`,
-    }
-  }
-
-  return {
-    label: '取材中',
-    color: 'bg-blue-50 text-blue-600',
-    href: `/projects/${interview.project_id}/interview?interviewId=${interview.id}&from=dashboard`,
-  }
 }
 
 export default async function DashboardPage() {
@@ -140,21 +117,22 @@ export default async function DashboardPage() {
   )
 
   let interviews: Interview[] = []
-  const latestInterviewMap: Record<string, string> = {}
-  const articleInterviewIds = new Set<string>()
+  const latestInterviewMap = new Map<string, Interview>()
+  let articleInterviewIds = new Set<string>()
+  let articleCountByInterview = new Map<string, number>()
 
   if (projectList.length > 0) {
     const { data: interviewRows } = await supabase
       .from('interviews')
-      .select('id, project_id, interviewer_type, status, summary, created_at')
+      .select('id, project_id, interviewer_type, status, summary, themes, created_at')
       .in('project_id', projectList.map((project) => project.id))
       .order('created_at', { ascending: false })
 
     interviews = (interviewRows ?? []) as Interview[]
 
     for (const interview of interviews) {
-      if (!latestInterviewMap[interview.project_id]) {
-        latestInterviewMap[interview.project_id] = interview.id
+      if (!latestInterviewMap.has(interview.project_id)) {
+        latestInterviewMap.set(interview.project_id, interview)
       }
     }
 
@@ -164,15 +142,18 @@ export default async function DashboardPage() {
         .select('interview_id')
         .in('interview_id', interviews.map((interview) => interview.id))
 
-      for (const article of articles ?? []) {
-        if (article.interview_id) articleInterviewIds.add(article.interview_id)
-      }
+      const built = buildArticleCountByInterview((articles ?? []) as InterviewArticleRef[])
+      articleInterviewIds = built.articleInterviewIds
+      articleCountByInterview = built.articleCountByInterview
     }
   }
 
   const latestInterview = interviews[0] ?? null
   const latestInterviewProject = latestInterview ? projectMap[latestInterview.project_id] : null
-  const latestInterviewState = latestInterview ? getInterviewState(latestInterview, articleInterviewIds.has(latestInterview.id)) : null
+  const latestInterviewFlags = latestInterview ? getInterviewFlags(latestInterview, articleCountByInterview) : null
+  const latestInterviewHref = latestInterview
+    ? getInterviewManagementHref(latestInterview, articleCountByInterview)
+    : null
   const totalArticles = articleInterviewIds.size
   const projectCountLabel = `${projectList.length}件の取材先`
   const interviewCountLabel = `${interviews.length}件のインタビュー`
@@ -181,21 +162,11 @@ export default async function DashboardPage() {
   const nextProject = projectList[0] ?? null
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.14),transparent_22%),radial-gradient(circle_at_85%_10%,rgba(15,118,110,0.08),transparent_16%),linear-gradient(180deg,_#f2e9dc_0%,_#f7f1e7_36%,_#f5efe6_100%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader
         title="ダッシュボード"
         right={(
-          <div className="flex items-center gap-4">
-            <Link href="/articles" className="hidden rounded-md text-sm font-medium text-stone-700 transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 sm:inline-block">
-              記事一覧
-            </Link>
-            <Link href="/settings" className="rounded-md text-sm font-medium text-stone-700 transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
-              {profile?.name ?? user.email}
-            </Link>
-            <form action={signOut}>
-              <LogoutButton />
-            </form>
-          </div>
+          <AppHeaderActions active="dashboard" accountLabel={profile?.name ?? user.email ?? '設定'} />
         )}
       />
 
@@ -235,10 +206,10 @@ export default async function DashboardPage() {
                 </ButtonLink>
               </div>
 
-              {latestInterview && latestInterviewProject && latestInterviewState && (
+              {latestInterview && latestInterviewProject && latestInterviewHref && (
                 <Link
-                  href={latestInterviewState.href}
-                  className="rounded-[1.8rem] border border-stone-300 bg-white p-4 transition-colors hover:border-stone-900/20 hover:bg-stone-50/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  href={latestInterviewHref}
+                  className="rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-4 backdrop-blur-sm transition-all duration-150 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   <p className="text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">直近のつづき</p>
                   <p className="mt-2 text-sm font-semibold text-stone-950">
@@ -247,10 +218,12 @@ export default async function DashboardPage() {
                   <p className="mt-1 text-xs text-stone-500">
                     {formatDateTime(latestInterview.created_at)}
                   </p>
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className={`rounded-full px-3 py-1 text-xs ${latestInterviewState.color}`}>
-                      {latestInterviewState.label}
-                    </span>
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {latestInterviewFlags?.hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
+                      {latestInterviewFlags?.hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
+                      {latestInterviewFlags?.hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
+                    </div>
                     <span className="text-sm text-stone-400">→</span>
                   </div>
                 </Link>
@@ -319,14 +292,14 @@ export default async function DashboardPage() {
                     if (!project) return null
 
                     const char = getCharacter(interview.interviewer_type)
-                    const interviewState = getInterviewState(interview, articleInterviewIds.has(interview.id))
-                    const hasArticle = articleInterviewIds.has(interview.id)
+                    const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+                    const interviewHref = getInterviewManagementHref(interview, articleCountByInterview)
 
                     return (
                       <li key={interview.id}>
                         <Link
-                          href={interviewState.href}
-                          className="block rounded-[1.8rem] border border-stone-300 bg-white p-5 transition-colors hover:border-stone-900/20 hover:bg-stone-50/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                          href={interviewHref}
+                          className="block rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm transition-all duration-150 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                         >
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex min-w-0 items-start gap-3">
@@ -345,10 +318,9 @@ export default async function DashboardPage() {
                                   {formatDateTime(interview.created_at)} ・ {char?.name ?? 'インタビュアー'}
                                 </p>
                                 <div className="mt-3 flex flex-wrap gap-2">
-                                  <StatusPill tone={hasArticle ? 'success' : interview.summary || interview.status === 'completed' ? 'neutral' : 'info'}>
-                                    {interviewState.label}
-                                  </StatusPill>
-                                  <StatusPill tone="neutral">{hasArticle ? '記事あり' : '記事なし'}</StatusPill>
+                                  {hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
+                                  {hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
+                                  {hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
                                 </div>
                               </div>
                             </div>
@@ -372,7 +344,7 @@ export default async function DashboardPage() {
 
               <ul className="space-y-3">
                 {projectList.map((project) => (
-                  <li key={project.id} className="rounded-[1.8rem] border border-stone-300 bg-white p-4">
+                  <li key={project.id} className="rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-4 backdrop-blur-sm">
                     <div className="flex flex-col gap-4">
                       <Link
                         href={`/projects/${project.id}`}
@@ -382,9 +354,9 @@ export default async function DashboardPage() {
                           <div className="min-w-0">
                             <p className="text-sm font-semibold text-stone-950">{project.name || project.hp_url}</p>
                             <p className="mt-1 text-xs text-stone-500">{formatDate(project.updated_at)} に更新</p>
-                            {latestInterviewMap[project.id] && (
+                            {latestInterviewMap.has(project.id) && (
                               <p className="mt-2 text-xs text-stone-700">
-                                直近の取材: {formatShortDateTime(interviews.find((interview) => interview.id === latestInterviewMap[project.id])?.created_at ?? project.updated_at)}
+                                直近の取材: {formatShortDateTime(latestInterviewMap.get(project.id)?.created_at ?? project.updated_at)}
                               </p>
                             )}
                           </div>

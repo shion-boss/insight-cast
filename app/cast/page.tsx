@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { ButtonLink, CharacterAvatar, SectionIntro, StatusPill, SurfaceCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, SectionIntro, StatusPill, SurfaceCard, getButtonClass } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
 
@@ -110,7 +110,7 @@ export default function CastPage() {
           title={<>6人の取材班から、<br />今ほしい視点を選べます。</>}
           description={(
             <>
-              Insight Cast のキャストは、かわいいキャラクターではなく役割の違う案内役です。
+              Insight Cast のキャストは、それぞれ得意な角度が違う取材班です。
               同じ事業者さんでも、誰が聞くかで引き出せる価値が変わるから、悩みに合わせて選べる設計にしています。
             </>
           )}
@@ -375,7 +375,8 @@ export default function CastPage() {
         {/* Comparison table */}
         <section className="px-6 pb-20">
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-6 text-xl font-semibold text-stone-900">6人まとめて比較する</h2>
+            <p className="mb-2 text-xs font-semibold tracking-[0.22em] text-amber-700/80 uppercase">Compare</p>
+            <h2 className="mb-6 text-2xl font-semibold tracking-tight text-stone-950 sm:text-3xl">6人まとめて比較する</h2>
             <div className="overflow-hidden rounded-[1.8rem] border border-stone-200 bg-white/90">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-sm">
@@ -444,13 +445,13 @@ export default function CastPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="relative isolate inline-flex items-center justify-center overflow-hidden rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.2)_20%,rgba(255,255,255,0.52)_48%,rgba(255,255,255,0.2)_76%,transparent_100%)] before:opacity-0 hover:bg-stone-100 hover:before:animate-[button-flash_900ms_ease]"
+                  className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
                 >
                   無料で始める
                 </Link>
                 <Link
                   href="/auth/login"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-2xl border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                 >
                   ログイン
                 </Link>

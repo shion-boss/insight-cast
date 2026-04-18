@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
 import aboutTeamHero from '@/assets/about/about-team-hero.png'
@@ -106,13 +106,13 @@ export default function AboutPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-2xl bg-stone-950 px-6 py-4 text-sm font-medium text-white transition-colors hover:bg-stone-800"
+                  className={getButtonClass('primary', 'px-6 py-4 text-sm')}
                 >
                   Insight Cast を試してみる
                 </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center rounded-2xl border border-stone-300 bg-white/90 px-6 py-4 text-sm font-medium text-stone-700 transition-colors hover:bg-white hover:text-stone-900"
+                  className={getButtonClass('secondary', 'px-6 py-4 text-sm font-medium')}
                 >
                   サービス紹介へ戻る
                 </Link>
@@ -257,7 +257,7 @@ export default function AboutPage() {
                 return (
                   <article
                     key={member.id}
-                    className="rounded-[2rem] border border-stone-200 bg-white/88 p-6 backdrop-blur-sm"
+                    className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-6 backdrop-blur-sm"
                   >
                     <div className="flex items-center gap-4">
                       <CharacterAvatar
@@ -302,7 +302,7 @@ export default function AboutPage() {
               {workflow.map((item) => (
                 <article
                   key={item.step}
-                  className="flex gap-4 rounded-[2rem] border border-stone-200 bg-white/90 p-5"
+                  className="flex gap-4 rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5"
                 >
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-stone-900 text-sm font-semibold tracking-[0.18em] text-white">
                     {item.step}
@@ -320,7 +320,7 @@ export default function AboutPage() {
         {/* ミッション */}
         <section className="px-6 py-14 sm:py-18">
           <div className="mx-auto max-w-6xl">
-            <div className="rounded-[2rem] border border-stone-200 bg-white/90 p-8 sm:p-10">
+            <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 sm:p-10">
               <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Mission</p>
               <h2 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">
                 伝わっていない価値を、
@@ -386,7 +386,7 @@ export default function AboutPage() {
               ].map((item) => (
                 <article
                   key={item.title}
-                  className="rounded-[2rem] border border-stone-200 bg-white/90 p-7"
+                  className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-7"
                 >
                   <p className="text-base font-semibold text-stone-900">{item.title}</p>
                   <p className="mt-3 text-sm leading-7 text-stone-500">{item.body}</p>
@@ -403,7 +403,7 @@ export default function AboutPage() {
               <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Company</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-tight text-stone-900 sm:text-4xl">会社概要</h2>
             </div>
-            <div className="overflow-hidden rounded-[2rem] border border-stone-200 bg-white/90">
+            <div className="overflow-hidden rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)]">
               <table className="w-full text-sm">
                 <tbody>
                   {[

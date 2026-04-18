@@ -2,9 +2,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { PageHeader, StateCard } from '@/components/ui'
-import { signOut } from '@/lib/actions/auth'
 import { createClient } from '@/lib/supabase/server'
-import LogoutButton from '@/app/dashboard/logout-button'
+import AppHeaderActions from '@/components/app-header-actions'
 
 type ArticleRow = {
   id: string
@@ -84,25 +83,18 @@ export default async function ArticlesPage() {
   const interviews = new Map((interviewRows ?? []).map((interview) => [interview.id, interview as InterviewRow]))
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,_#faf7f2_0%,_#f7f3ea_100%)]">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader
         title="記事一覧"
         backHref="/dashboard"
         backLabel="← ダッシュボード"
         right={(
-          <div className="flex items-center gap-4">
-            <Link href="/settings" className="rounded-md text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors">
-              {profile?.name ?? user.email}
-            </Link>
-            <form action={signOut}>
-              <LogoutButton />
-            </form>
-          </div>
+          <AppHeaderActions active="articles" accountLabel={profile?.name ?? user.email ?? '設定'} />
         )}
       />
 
       <main className="mx-auto max-w-5xl px-6 py-8 space-y-6">
-        <section className="rounded-[2rem] border border-stone-200 bg-white/92 p-6">
+        <section className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-6 backdrop-blur-sm">
           <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">Articles</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-900">作成した記事一覧</h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-500">
@@ -119,7 +111,7 @@ export default async function ArticlesPage() {
             action={(
               <Link
                 href="/dashboard"
-                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors"
+                className="inline-flex items-center justify-center rounded-xl bg-stone-800 px-5 py-3 text-sm text-white hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors"
               >
                 ダッシュボードへ戻る
               </Link>
@@ -135,7 +127,7 @@ export default async function ArticlesPage() {
                 <li key={article.id}>
                   <Link
                     href={`/projects/${article.project_id}/articles/${article.id}`}
-                    className="block rounded-[1.8rem] border border-stone-200 bg-white/95 p-5 transition-colors hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+                    className="block rounded-[1.8rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0">

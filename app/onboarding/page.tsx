@@ -19,7 +19,7 @@ export default async function OnboardingPage() {
   const mint = getCharacter('mint')
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8">
           <InterviewerSpeech

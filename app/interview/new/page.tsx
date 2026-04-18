@@ -5,7 +5,7 @@ import { CharacterAvatar, DevAiLabel } from '@/components/ui'
 
 export default function NewInterviewPage() {
   return (
-    <div className="min-h-screen bg-stone-50 p-6">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)] p-6">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <Link href="/home" className="text-sm text-stone-400 hover:text-stone-600">

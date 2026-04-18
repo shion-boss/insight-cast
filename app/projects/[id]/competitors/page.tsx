@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, type FormEvent } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { saveCompetitors } from '@/lib/actions/projects'
 import { showToast } from '@/lib/client/toast'
@@ -31,7 +31,7 @@ export default function CompetitorsPage() {
     if (urls.length < 3) setUrls([...urls, ''])
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     startTransition(async () => {
@@ -59,7 +59,7 @@ export default function CompetitorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="Insight Cast" backHref="/dashboard" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
@@ -108,7 +108,7 @@ export default function CompetitorsPage() {
             <button
               type="button"
               onClick={addUrl}
-              className="text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 rounded-md cursor-pointer transition-colors"
+              className="text-sm text-stone-500 hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md cursor-pointer transition-colors"
             >
               + もう1件追加する
             </button>
@@ -155,7 +155,7 @@ export default function CompetitorsPage() {
               })
               router.push(`/projects/${id}`)
             }}
-            className="text-sm text-stone-500 hover:text-stone-700 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+            className="text-sm text-stone-500 hover:text-stone-700 underline rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
           >
             <DevAiLabel>競合が分からないのでスキップする</DevAiLabel>
           </button>

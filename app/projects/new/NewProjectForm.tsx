@@ -145,7 +145,7 @@ export default function NewProjectForm() {
             type="button"
             onClick={handleSuggestCompetitors}
             disabled={suggesting || !canSuggest}
-            className="shrink-0 rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 transition-colors cursor-pointer"
+            className="shrink-0 rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors cursor-pointer"
           >
             {suggesting ? '候補を探しています...' : '✨ おすすめを見る'}
           </button>
@@ -207,7 +207,7 @@ export default function NewProjectForm() {
                   key={suggestion.url}
                   onClick={() => toggleSelectedUrl(suggestion.url)}
                   disabled={disabled}
-                  className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 ${
+                  className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 ${
                     selected
                       ? 'border-stone-800 bg-stone-800 text-white'
                       : 'border-stone-200 bg-white text-stone-700 hover:border-stone-300'

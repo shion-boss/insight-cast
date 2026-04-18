@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { CharacterAvatar } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, getButtonClass } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
 
@@ -123,9 +123,15 @@ export default function PricingPage() {
             </>
           )}
           actions={(
-            <div className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              <p className="text-sm text-stone-600">まず無料で体験できます。クレジットカード不要。</p>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <ButtonLink href="/auth/signup">無料で体験してみる</ButtonLink>
+                <ButtonLink href="/service" tone="secondary">サービスの流れを見る</ButtonLink>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                <p className="text-sm text-stone-600">クレジットカード不要。まず無料で体験できます。</p>
+              </div>
             </div>
           )}
         />
@@ -137,8 +143,11 @@ export default function PricingPage() {
               {plans.map((plan) => (
                 <article
                   key={plan.id}
-                  className={`relative flex flex-col overflow-hidden rounded-[2rem] border ${plan.border} ${plan.color}`}
+                  className={`card-interactive relative flex flex-col overflow-hidden rounded-[2rem] border ${plan.border} ${plan.color} ${plan.highlight ? 'shadow-xl ring-2 ring-stone-900/10' : 'shadow-sm'}`}
                 >
+                  <div className={`absolute left-5 top-5 rounded-full px-2.5 py-1 text-[10px] font-semibold ${plan.highlight ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-400'}`}>
+                    予定価格
+                  </div>
                   {plan.highlight && (
                     <div className="absolute right-5 top-5 rounded-full bg-amber-400 px-3 py-1 text-[11px] font-semibold text-stone-900">
                       おすすめ
@@ -192,11 +201,11 @@ export default function PricingPage() {
                   <div className="p-7 pt-0">
                     <Link
                       href="/auth/signup"
-                      className={`relative isolate flex w-full items-center justify-center overflow-hidden rounded-2xl py-4 text-sm font-medium transition-colors before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-[34%] before:content-[''] before:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.08)_20%,rgba(255,255,255,0.32)_48%,rgba(255,255,255,0.08)_76%,transparent_100%)] before:opacity-0 hover:before:animate-[button-flash_900ms_ease] ${
+                      className={
                         plan.highlight
-                          ? 'bg-white text-stone-900 hover:bg-stone-100'
-                          : 'bg-stone-900 text-white hover:bg-stone-700'
-                      }`}
+                          ? getButtonClass('secondary', 'flex w-full py-4 text-sm')
+                          : getButtonClass('primary', 'flex w-full py-4 text-sm')
+                      }
                     >
                       まず無料で試す
                     </Link>
@@ -272,7 +281,7 @@ export default function PricingPage() {
               {options.map((opt) => (
                 <article
                   key={opt.name}
-                  className="rounded-[2rem] border border-stone-200 bg-white/90 p-6"
+                  className="card-interactive rounded-[2rem] border border-stone-200 bg-white/90 p-6 shadow-sm"
                 >
                   <p className="text-base font-semibold text-stone-900">{opt.name}</p>
                   <p className="mt-1 text-lg font-bold text-stone-800">{opt.price}</p>
