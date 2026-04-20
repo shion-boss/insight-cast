@@ -274,8 +274,8 @@ export default function ArticlePage() {
                   <p className="text-[13px] font-semibold text-[var(--text)]">回答を整える</p>
                   <p className="text-[11px] text-[var(--text3)] mt-0.5">誤字・話し言葉を自動修正する</p>
                 </div>
-                <div className={`w-9 h-5 rounded-full flex-shrink-0 transition-colors relative ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                <div className={`w-10 h-6 rounded-full flex-shrink-0 transition-colors relative overflow-hidden ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </button>
             </div>
