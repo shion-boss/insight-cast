@@ -18,7 +18,7 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const { interviewId, articleType, style, volume, theme } = await req.json()
+  const { interviewId, articleType, style, volume, theme, polishAnswers } = await req.json()
 
   const { data: interview } = await supabase
     .from('interviews')
@@ -96,6 +96,10 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 候補にないURLは作らないでください`
     : ''
 
+  const polishInstruction = polishAnswers
+    ? `\n\n## 回答の整頓について\n事業者の回答に含まれる誤字・脱字・言い間違い・話し言葉の崩れは自然な表現に直してください。ただし意味・ニュアンス・その人らしい言い回しは変えないでください。`
+    : ''
+
   let prompt: string
 
   if (articleType === 'client') {
@@ -118,7 +122,7 @@ ${themeInstruction}${internalLinkInstruction}
 - 見出し（##）を2〜3個つけて構造化する
 - お客様に読んでもらう想定で、温かみのある文体で
 - タイトルを最初に書く（# タイトル）
-- Markdown形式で出力`
+- Markdown形式で出力${polishInstruction}`
 
   } else if (articleType === 'interviewer') {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
@@ -138,7 +142,7 @@ ${themeInstruction}${internalLinkInstruction}
 - 文字数: ${volumeLabel}文字程度
 - 見出し（##）を2〜3個つけて構造化する
 - タイトルを最初に書く（# タイトル）
-- Markdown形式で出力`
+- Markdown形式で出力${polishInstruction}`
 
   } else {
     // conversation (Q&A形式)
@@ -161,7 +165,7 @@ ${themeInstruction}${internalLinkInstruction}
 - 実際のインタビューから自然な流れで5〜8往復を選んで構成
 - 全体の文字数: ${volumeLabel}文字程度
 - タイトルを最初に書く（# タイトル）
-- Markdown形式で出力`
+- Markdown形式で出力${polishInstruction}`
   }
 
   const stream = await anthropic.messages.stream({

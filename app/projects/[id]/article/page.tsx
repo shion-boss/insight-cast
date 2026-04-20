@@ -48,6 +48,7 @@ export default function ArticlePage() {
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
   const [theme, setTheme] = useState(initialTheme)
+  const [polishAnswers, setPolishAnswers] = useState(true)
 
   const currentContent = contents[tab] ?? ''
   const isGenerated = !!currentContent
@@ -103,6 +104,7 @@ export default function ArticlePage() {
         style:  tab === 'client' ? style : undefined,
         volume,
         theme:  theme.trim() || undefined,
+        polishAnswers,
       }),
     })
 
@@ -259,6 +261,23 @@ export default function ArticlePage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* 回答の整頓 */}
+            <div className="mb-5">
+              <button
+                type="button"
+                onClick={() => setPolishAnswers(v => !v)}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              >
+                <div className="text-left">
+                  <p className="text-[13px] font-semibold text-[var(--text)]">回答を整える</p>
+                  <p className="text-[11px] text-[var(--text3)] mt-0.5">誤字・話し言葉を自動修正する</p>
+                </div>
+                <div className={`w-9 h-5 rounded-full flex-shrink-0 transition-colors relative ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                </div>
+              </button>
             </div>
 
             <button
