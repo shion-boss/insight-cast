@@ -1,0 +1,283 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+
+import { CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
+
+function cx(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(' ')
+}
+
+function AiBadge({ label }: { label: string }) {
+  return (
+    <span className="ic-loading-badge">
+      <span className="ic-loading-badge-dot" aria-hidden="true" />
+      {label}
+    </span>
+  )
+}
+
+export function AnalysisLoadingScene({
+  projectName,
+}: {
+  projectName: string
+}) {
+  const [tick, setTick] = useState(0)
+  const steps = useMemo(() => ([
+    { label: 'URLを取得中', subLabel: 'ページ構造を読み込んでいます' },
+    { label: 'コンテンツを解析中', subLabel: '情報量と訴求の強さを見ています' },
+    { label: '競合サイトと比較中', subLabel: '競合候補との違いを整理しています' },
+    { label: '取材テーマを提案中', subLabel: 'インタビューの切り口を整えています' },
+  ]), [])
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setTick((current) => (current + 1) % steps.length)
+    }, 1400)
+
+    return () => window.clearInterval(intervalId)
+  }, [steps.length])
+
+  return (
+    <div className="ic-loading-card w-full max-w-[520px]">
+      <div className="ic-loading-card-header">
+        <AiBadge label="AI分析中" />
+        <div className="min-w-0 flex-1">
+          <p className="font-serif text-[15px] font-bold text-[var(--text)]">ホームページを分析しています</p>
+          <p className="mt-0.5 truncate text-xs text-[var(--text3)]">{projectName}</p>
+        </div>
+      </div>
+      <div className="ic-loading-card-body">
+        <div className="ic-scan-shell">
+          <div className="ic-scan-beam" />
+          <div className="ic-scan-highlight" />
+          <div className="space-y-2 p-4 opacity-60">
+            <div className="ic-mock-bar ic-mock-bar-title" />
+            <div className="ic-mock-bar w-full" />
+            <div className="ic-mock-bar w-3/4" />
+            <div className="flex gap-2 pt-1">
+              <div className="ic-mock-bar w-[30%]" />
+              <div className="ic-mock-bar w-[30%]" />
+            </div>
+            <div className="ic-mock-bar mt-2 w-full" />
+            <div className="ic-mock-bar w-1/2" />
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-2.5">
+          {steps.map((step, index) => {
+            const state = index < tick ? 'done' : index === tick ? 'active' : 'idle'
+            return (
+              <div key={step.label} className={cx('ic-progress-step', `ic-progress-step-${state}`)}>
+                <div className={cx('ic-progress-icon', `ic-progress-icon-${state}`)}>
+                  {state === 'done'
+                    ? '✓'
+                    : state === 'active'
+                      ? <span className="ic-progress-spinner" aria-hidden="true">◌</span>
+                      : index + 1}
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold">{step.label}</p>
+                  {state === 'active' && <p className="mt-0.5 text-[11px] opacity-80">{step.subLabel}</p>}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function InterviewLoadingScene({
+  characterId = 'mint',
+  title = '取材班を呼んでいます',
+  subtitle = '席につけたら、そのまま聞き取りを始めます。',
+}: {
+  characterId?: string
+  title?: string
+  subtitle?: string
+}) {
+  const character = getCharacter(characterId)
+  const [shownMessages, setShownMessages] = useState(0)
+  const script = useMemo(() => ([
+    { role: 'cast', text: '今日はよろしくお願いします。最近いちばん喜ばれた仕事から聞かせてください。' },
+    { role: 'user', text: '先日、塗装工事のお客様から安心して住み続けられると言ってもらえました。' },
+    { role: 'cast', text: 'その言葉、とても大事ですね。どんな配慮が安心につながったのでしょう？' },
+  ]), [])
+
+  useEffect(() => {
+    if (shownMessages >= script.length) return
+    const timeoutId = window.setTimeout(() => {
+      setShownMessages((current) => current + 1)
+    }, shownMessages === 0 ? 700 : 1300)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [script.length, shownMessages])
+
+  return (
+    <div className="ic-loading-card w-full max-w-[520px]">
+      <div className="ic-loading-card-header">
+        <CharacterAvatar
+          src={character?.icon48}
+          alt={`${character?.name ?? 'キャスト'}のアイコン`}
+          emoji={character?.emoji}
+          size={40}
+          className="border-2 border-[var(--accent)]"
+        />
+        <div className="min-w-0">
+          <p className="font-serif text-[15px] font-bold text-[var(--text)]">{title}</p>
+          <p className="mt-0.5 text-xs font-semibold text-[var(--teal)]">{subtitle}</p>
+        </div>
+        <div className="ml-auto">
+          <AiBadge label="取材中" />
+        </div>
+      </div>
+      <div className="ic-loading-card-body pb-7">
+        <div className="mb-5">
+          <div className="mb-1.5 flex items-center justify-between text-xs text-[var(--text3)]">
+            <span>取材の進み具合</span>
+            <span>{shownMessages}/7 問</span>
+          </div>
+          <div className="h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
+            <div
+              className="h-full rounded-full bg-[var(--accent)] transition-all duration-500"
+              style={{ width: `${Math.max((shownMessages / 7) * 100, 12)}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {script.slice(0, shownMessages).map((message, index) => (
+            <div
+              key={`${message.role}-${index}`}
+              className={cx('flex gap-2.5', message.role === 'user' ? 'justify-end' : 'justify-start')}
+            >
+              {message.role === 'cast' && (
+                <CharacterAvatar
+                  src={character?.icon48}
+                  alt={`${character?.name ?? 'キャスト'}のアイコン`}
+                  emoji={character?.emoji}
+                  size={32}
+                  className="mt-1 border-[var(--border)]"
+                />
+              )}
+              <div
+                className={cx(
+                  'max-w-[82%] rounded-2xl px-4 py-3 text-[13px] leading-[1.75]',
+                  message.role === 'cast'
+                    ? 'rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
+                    : 'rounded-tr-sm bg-[var(--accent)] text-white',
+                )}
+              >
+                {message.text}
+              </div>
+            </div>
+          ))}
+
+          <div className="flex gap-2.5">
+            <CharacterAvatar
+              src={character?.icon48}
+              alt={`${character?.name ?? 'キャスト'}のアイコン`}
+              emoji={character?.emoji}
+              size={32}
+              className="mt-1 border-[var(--border)]"
+            />
+            <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+              <div className="ic-typing-dots">
+                <span className="ic-typing-dot" />
+                <span className="ic-typing-dot" />
+                <span className="ic-typing-dot" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function WritingLoadingScene({
+  title,
+  description,
+  previewText,
+}: {
+  title: string
+  description: string
+  previewText?: string
+}) {
+  const mint = getCharacter('mint')
+  const [progress, setProgress] = useState(8)
+  const phases = ['取材メモを整理中', '構成を作成中', '文章を整えています']
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setProgress((current) => {
+        if (current >= 94) return 94
+        return Math.min(current + 6, 94)
+      })
+    }, 900)
+
+    return () => window.clearInterval(intervalId)
+  }, [])
+
+  const phaseIndex = progress < 34 ? 0 : progress < 68 ? 1 : 2
+
+  return (
+    <div className="ic-loading-card w-full max-w-[560px]">
+      <div className="ic-loading-card-header">
+        <CharacterAvatar
+          src={mint?.icon48}
+          alt="ミントのアイコン"
+          emoji={mint?.emoji}
+          size={40}
+          className="border-2 border-[var(--accent)]"
+        />
+        <div className="min-w-0">
+          <p className="font-serif text-[15px] font-bold text-[var(--text)]">{title}</p>
+          <p className="mt-0.5 text-xs text-[var(--text3)]">{description}</p>
+        </div>
+        <div className="ml-auto">
+          <AiBadge label="生成中" />
+        </div>
+      </div>
+      <div className="ic-loading-card-body">
+        <div className="mx-auto mb-5 flex h-[72px] w-[72px] items-center justify-center">
+          <div className="ic-orbit">
+            <div className="ic-orbit-ring ic-orbit-ring-1" />
+            <div className="ic-orbit-ring ic-orbit-ring-2" />
+            <div className="ic-orbit-ring ic-orbit-ring-3" />
+            <div className="ic-orbit-center">AI</div>
+          </div>
+        </div>
+
+        <div className="mb-5 text-center">
+          <p className="text-sm font-semibold text-[var(--text)]">{phases[phaseIndex]}</p>
+          <p className="mt-1 text-xs text-[var(--text3)]">取材内容をもとに、読みやすい形へまとめています。</p>
+        </div>
+
+        <div className="mb-5 h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
+          <div className="h-full rounded-full bg-[var(--accent)] transition-all duration-700" style={{ width: `${progress}%` }} />
+        </div>
+
+        <div className="ic-writing-doc">
+          <div className="ic-writing-line ic-writing-line-heading">
+            <div className="ic-writing-shimmer" />
+          </div>
+          {['100%', '84%', '95%', '62%', '100%', '88%'].map((width, index) => (
+            <div key={`${width}-${index}`} className="ic-writing-line" style={{ width }}>
+              <div className="ic-writing-shimmer" />
+            </div>
+          ))}
+        </div>
+
+        {previewText && (
+          <pre className="mt-4 max-h-[32vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
+            {previewText}
+          </pre>
+        )}
+      </div>
+    </div>
+  )
+}

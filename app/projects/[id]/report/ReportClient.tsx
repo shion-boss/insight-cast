@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { AnalysisLoadingScene } from '@/components/loading-scenes'
 import { CharacterAvatar, InterviewerSpeech, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
@@ -87,37 +88,40 @@ export default function ReportClient({
 
   if (status === 'analyzing') {
     return (
-      <div className="max-w-lg mx-auto px-6 py-16 text-center">
-        <StateCard
-          icon={<span className={analysisError ? '' : 'animate-pulse'}>🦉</span>}
-          title={analysisError ? 'いまは調査を続けられていません。' : 'クラウスが調査を進めています'}
-          description={analysisError
-            ? '少し待ってからページを開き直すと、続きから確認できることがあります。'
-            : 'このページで待たなくて大丈夫です。完了したらトーストでお知らせします。'}
-          tone={analysisError ? 'warning' : 'default'}
-          action={analysisError ? (
-            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                className={getButtonClass('primary')}
-              >
-                もう一度確認する
-              </button>
-              <Link
-                href={`/projects/${projectId}`}
-                className={getButtonClass('secondary')}
-              >
-                取材先の管理へ戻る
-              </Link>
-            </div>
-          ) : (
+      <div className="mx-auto max-w-[560px] px-6 py-16">
+        {analysisError ? (
+          <StateCard
+            icon={<span>🦉</span>}
+            title="いまは調査を続けられていません。"
+            description="少し待ってからページを開き直すと、続きから確認できることがあります。"
+            tone="warning"
+            action={(
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className={getButtonClass('primary')}
+                >
+                  もう一度確認する
+                </button>
+                <Link
+                  href={`/projects/${projectId}`}
+                  className={getButtonClass('secondary')}
+                >
+                  取材先の管理へ戻る
+                </Link>
+              </div>
+            )}
+          />
+        ) : (
+          <div className="space-y-4">
+            <AnalysisLoadingScene projectName="ホームページと競合を調査中" />
             <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-[var(--text3)]')}>
               <InterviewerSpeech
-                icon={<span className="animate-pulse"><CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} /></span>}
+                icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
                 name="クラウス"
-                title="ホームページと競合を調査しています"
-                description="このページで待たなくて大丈夫です。完了したらお知らせします。"
+                title="このページで待たなくて大丈夫です"
+                description="完了したらトーストでお知らせします。"
               />
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Link
@@ -134,8 +138,8 @@ export default function ReportClient({
                 </Link>
               </div>
             </div>
-          )}
-        />
+          </div>
+        )}
       </div>
     )
   }

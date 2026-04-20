@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { WritingLoadingScene } from '@/components/loading-scenes'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
@@ -336,22 +337,11 @@ export default function ArticlePage() {
 
             {isGenerating && (
               <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
-                <InterviewerSpeech
-                  icon={
-                    <span className="animate-pulse">
-                      <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />
-                    </span>
-                  }
-                  name="ミント"
+                <WritingLoadingScene
                   title="取材メモから記事を整えています"
                   description="少しお待ちください。"
-                  tone="soft"
+                  previewText={currentContent}
                 />
-                {currentContent && (
-                  <pre className="w-full mt-4 whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)] max-h-[40vh] overflow-y-auto">
-                    {currentContent}
-                  </pre>
-                )}
               </div>
             )}
 

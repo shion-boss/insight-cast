@@ -23,6 +23,9 @@ export function ContactForm() {
   const [message, setMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [serverMessage, setServerMessage] = useState('')
+  const [startedAt] = useState(() => Date.now())
+  const [website, setWebsite] = useState('')
 
   function validate(): FieldErrors {
     const errors: FieldErrors = {}
@@ -45,17 +48,27 @@ export function ContactForm() {
       return
     }
     setFieldErrors({})
+    setServerMessage('')
     setStatus('loading')
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, business: business || undefined, message }),
+        body: JSON.stringify({
+          name,
+          email,
+          business: business || undefined,
+          message,
+          website,
+          startedAt,
+        }),
       })
-      if (!res.ok) throw new Error('送信失敗')
+      const json = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(json?.message ?? '送信失敗')
       setStatus('success')
-    } catch {
+    } catch (error) {
+      setServerMessage(error instanceof Error ? error.message : '送信できませんでした。時間をおいて再度お試しください。')
       setStatus('error')
     }
   }
@@ -83,6 +96,18 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
       {/* お名前 */}
       <div>
         <FieldLabel required>お名前</FieldLabel>
@@ -158,7 +183,7 @@ export function ContactForm() {
             size={32}
           />
           <p className="text-sm text-[var(--text2)]">
-            送信できませんでした。時間をおいて再度お試しください。
+            {serverMessage || '送信できませんでした。時間をおいて再度お試しください。'}
           </p>
         </div>
       )}

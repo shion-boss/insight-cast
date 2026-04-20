@@ -4,6 +4,7 @@ import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { InterviewLoadingScene } from '@/components/loading-scenes'
 import { getCharacter } from '@/lib/characters'
 import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
@@ -248,20 +249,11 @@ export default function InterviewPage() {
   if (initializing) {
     return (
       <div className="h-screen flex items-center justify-center bg-[var(--bg)] px-6">
-        <div className="w-full max-w-md">
-          <InterviewerSpeech
-            icon={(
-              <CharacterAvatar
-                src={char?.icon48}
-                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={char?.emoji}
-                size={48}
-              />
-            )}
-            name={char?.name ?? 'インタビュアー'}
-            title="取材班を呼んでいます。"
-            description="席につけたら、そのまま聞き取りを始めます。"
-            tone="soft"
+        <div className="w-full max-w-[560px]">
+          <InterviewLoadingScene
+            characterId={characterId}
+            title={`${char?.name ?? '取材班'}が準備しています`}
+            subtitle="席につけたら、そのまま聞き取りを始めます。"
           />
         </div>
       </div>
