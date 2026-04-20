@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
+import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { NextRequest } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -20,7 +21,7 @@ export async function POST(
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, interviews_project:projects(user_id, name, hp_url)')
+    .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .single()
@@ -79,12 +80,34 @@ export async function POST(
   const auditResult = auditRow as { gaps?: string[]; suggested_themes?: string[] } | null
   const audit = auditResult ?? null
 
+  const { data: competitorThemeRows } = interview.focus_theme
+    ? await supabase
+      .from('competitor_analyses')
+      .select('raw_data, competitors(url)')
+      .eq('project_id', projectId)
+    : { data: null }
+
+  const matchingCompetitorSources = getCompetitorThemeSourcesForTheme(
+    ((competitorThemeRows ?? []) as Array<{
+      raw_data: Record<string, unknown> | null
+      competitors: { url: string } | { url: string }[] | null
+    }>),
+    interview.focus_theme,
+  )
+
   const contextParts: string[] = []
   if (projectData) {
     contextParts.push(`【取材先】\n取材先名: ${projectData.name ?? '未設定'}\nHP URL: ${projectData.hp_url ?? '未設定'}`)
   }
+  const focusThemeContext = buildInterviewFocusThemeContext(interview.focus_theme_mode, interview.focus_theme)
+  if (focusThemeContext) {
+    contextParts.push(focusThemeContext)
+  }
   if (profile?.name) {
     contextParts.push(`【話し相手】\nお名前: ${profile.name}`)
+  }
+  if (matchingCompetitorSources.length > 0) {
+    contextParts.push(`【競合がこのテーマで伝えていること】\n${matchingCompetitorSources.map((source) => `・${source.url ?? '競合サイト'}: ${source.summary}`).join('\n')}`)
   }
   if (audit) {
     if (audit.gaps?.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${(audit.gaps as string[]).map((g: string) => `・${g}`).join('\n')}`)

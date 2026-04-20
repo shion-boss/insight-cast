@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import ReportClient from './ReportClient'
 import { PageHeader } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
+import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -66,6 +67,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   const competitorAnalyses = (rawCompetitorAnalyses ?? []).map((ca: CompetitorAnalysisRow) => ({
     ...ca,
+    influentialTopics: getCompetitorInfluentialTopics(ca.raw_data),
     competitors: Array.isArray(ca.competitors) ? (ca.competitors[0] ?? null) : ca.competitors,
   }))
 

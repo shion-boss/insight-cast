@@ -15,6 +15,7 @@ type Audit = {
 type CompetitorAnalysis = {
   gaps:          string[] | null
   advantages:    string[] | null
+  influentialTopics: { theme: string; summary: string }[]
   competitor_id: string
   competitors:   { url: string } | null
 }
@@ -234,6 +235,19 @@ export default function ReportClient({
                     {ca.advantages.map((item, j) => (
                       <li key={j} className="text-sm text-stone-600 flex gap-2">
                         <span className="text-green-400 flex-shrink-0">◎</span>{item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {ca.influentialTopics.length > 0 && (
+                <div>
+                  <p className="text-xs text-stone-400 mb-1">競合が前面に出しているテーマ</p>
+                  <ul className="space-y-2">
+                    {ca.influentialTopics.map((topic, j) => (
+                      <li key={`${topic.theme}-${j}`} className="rounded-lg border border-stone-100 bg-stone-50 px-3 py-2">
+                        <p className="text-sm text-stone-700">{topic.theme}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-stone-500">{topic.summary}</p>
                       </li>
                     ))}
                   </ul>

@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { buildProjectAnalysisSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
+import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -48,7 +49,7 @@ ${markdown.slice(0, 8000)}
   "current_content": ["現在伝えていること（3〜4項目）"],
   "strengths": ["強みとして見えるもの（2〜3項目）"],
   "gaps": ["伝えきれていないこと・足りないもの（2〜3項目）"],
-  "suggested_themes": ["インタビューで深めたいテーマ（3〜5項目）"]
+  "suggested_themes": ["インタビューで深めたいテーマ（5項目）"]
 }`,
     }],
   })
@@ -62,7 +63,11 @@ ${markdown.slice(0, 8000)}
 async function compareCompetitor(
   mainMarkdown: string,
   competitorMarkdown: string,
-): Promise<{ gaps: string[]; advantages: string[] }> {
+): Promise<{
+  gaps: string[]
+  advantages: string[]
+  influential_topics: Array<{ theme: string; summary: string }>
+}> {
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 512,
@@ -79,15 +84,50 @@ ${competitorMarkdown.slice(0, 4000)}
 ## 出力形式（JSONのみ返してください）
 {
   "gaps": ["競合が伝えていて自社にないもの（2〜4項目）"],
-  "advantages": ["自社が競合より詳しく伝えているもの（1〜3項目）"]
+  "advantages": ["自社が競合より詳しく伝えているもの（1〜3項目）"],
+  "influential_topics": [
+    {
+      "theme": "競合が前面に出しているテーマ（短く）",
+      "summary": "その競合がこのテーマをどんな内容で伝えているかの要約（1文）"
+    }
+  ]
 }`,
     }],
   })
 
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const jsonMatch = text.match(/\{[\s\S]*\}/)
-  if (!jsonMatch) return { gaps: [], advantages: [] }
-  return JSON.parse(jsonMatch[0])
+  if (!jsonMatch) return { gaps: [], advantages: [], influential_topics: [] }
+
+  const parsed = JSON.parse(jsonMatch[0]) as {
+    gaps?: unknown
+    advantages?: unknown
+    influential_topics?: unknown
+  }
+
+  const normalizeStringList = (input: unknown) =>
+    Array.isArray(input)
+      ? input
+        .filter((value): value is string => typeof value === 'string')
+        .map((value) => value.trim())
+        .filter(Boolean)
+      : []
+
+  const influentialTopics = Array.isArray(parsed.influential_topics)
+    ? parsed.influential_topics.flatMap((item) => {
+        if (!item || typeof item !== 'object') return []
+        const theme = normalizeInterviewFocusTheme((item as { theme?: unknown }).theme)
+        const summary = normalizeCompetitorThemeSummary((item as { summary?: unknown }).summary)
+        if (!theme || !summary) return []
+        return [{ theme, summary }]
+      })
+    : []
+
+  return {
+    gaps: normalizeStringList(parsed.gaps),
+    advantages: normalizeStringList(parsed.advantages),
+    influential_topics: influentialTopics,
+  }
 }
 
 export async function GET(
@@ -263,6 +303,7 @@ export async function POST(
           source_url: string
           markdown_length: number
           analyzed_at: string
+          influential_topics: Array<{ theme: string; summary: string }>
         }
       }> = []
 
@@ -280,6 +321,7 @@ export async function POST(
             source_url: normalizeAnalysisUrl(comp.url),
             markdown_length: compMarkdown.length,
             analyzed_at: new Date().toISOString(),
+            influential_topics: result.influential_topics,
           },
         })
       }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
+import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
@@ -36,6 +37,7 @@ export default function InterviewPage() {
   const [showComplete, setShowComplete] = useState(false)
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [focusThemeLabel, setFocusThemeLabel] = useState<string | null>('テーマ: お任せ')
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
@@ -110,11 +112,14 @@ export default function InterviewPage() {
     async function init() {
       const { data: interview } = await supabase
         .from('interviews')
-        .select('interviewer_type')
+        .select('interviewer_type, focus_theme_mode, focus_theme')
         .eq('id', interviewId)
         .single()
 
-      if (interview) setCharacterId(interview.interviewer_type)
+      if (interview) {
+        setCharacterId(interview.interviewer_type)
+        setFocusThemeLabel(getInterviewFocusThemeLabel(interview.focus_theme_mode, interview.focus_theme))
+      }
 
       const { data: history } = await supabase
         .from('interview_messages')
@@ -210,6 +215,9 @@ export default function InterviewPage() {
             <div>
               <p className="text-sm font-medium text-stone-800">{char?.name}</p>
               <p className="text-xs text-stone-400">{char?.specialty}</p>
+              {focusThemeLabel && (
+                <p className="mt-1 text-xs text-amber-700">{focusThemeLabel}</p>
+              )}
             </div>
           </div>
         </div>
@@ -317,7 +325,7 @@ export default function InterviewPage() {
             disabled={loading}
             rows={3}
             autoFocus
-            className="flex-1 px-4 py-3 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus:ring-2 focus:ring-stone-300 disabled:opacity-50 resize-none leading-relaxed"
+            className="flex-1 px-4 py-3 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 disabled:opacity-50 resize-none leading-relaxed"
           />
           <button
             type="submit"

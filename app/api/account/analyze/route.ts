@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
+import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -34,7 +35,7 @@ ${markdown.slice(0, 8000)}
   "current_content": ["現在伝えていること（3〜4項目）"],
   "strengths": ["強みとして見えるもの（2〜3項目）"],
   "gaps": ["伝えきれていないこと・足りないもの（2〜3項目）"],
-  "suggested_themes": ["インタビューで深めたいテーマ（3〜5項目）"]
+  "suggested_themes": ["インタビューで深めたいテーマ（5項目）"]
 }`,
     }],
   })
@@ -61,14 +62,49 @@ ${competitorMarkdown.slice(0, 4000)}
 ## 出力形式（JSONのみ返してください）
 {
   "gaps": ["競合が伝えていて自社にないもの（2〜4項目）"],
-  "advantages": ["自社が競合より詳しく伝えているもの（1〜3項目）"]
+  "advantages": ["自社が競合より詳しく伝えているもの（1〜3項目）"],
+  "influential_topics": [
+    {
+      "theme": "競合が前面に出しているテーマ（短く）",
+      "summary": "その競合がこのテーマをどんな内容で伝えているかの要約（1文）"
+    }
+  ]
 }`,
     }],
   })
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return { gaps: [], advantages: [] }
-  return JSON.parse(m[0])
+  if (!m) return { gaps: [], advantages: [], influential_topics: [] }
+
+  const parsed = JSON.parse(m[0]) as {
+    gaps?: unknown
+    advantages?: unknown
+    influential_topics?: unknown
+  }
+
+  const normalizeStringList = (input: unknown) =>
+    Array.isArray(input)
+      ? input
+        .filter((value): value is string => typeof value === 'string')
+        .map((value) => value.trim())
+        .filter(Boolean)
+      : []
+
+  const influentialTopics = Array.isArray(parsed.influential_topics)
+    ? parsed.influential_topics.flatMap((item) => {
+        if (!item || typeof item !== 'object') return []
+        const theme = normalizeInterviewFocusTheme((item as { theme?: unknown }).theme)
+        const summary = normalizeCompetitorThemeSummary((item as { summary?: unknown }).summary)
+        if (!theme || !summary) return []
+        return [{ theme, summary }]
+      })
+    : []
+
+  return {
+    gaps: normalizeStringList(parsed.gaps),
+    advantages: normalizeStringList(parsed.advantages),
+    influential_topics: influentialTopics,
+  }
 }
 
 export async function POST() {
