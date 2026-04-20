@@ -4,7 +4,10 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
-import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
+import {
+  clearPendingProjectAnalysis,
+  trackPendingProjectAnalysis,
+} from '@/components/project-analysis-notifier'
 import { DevAiLabel, PrimaryButton } from '@/components/ui'
 import { saveCompetitors } from '@/lib/actions/projects'
 import { showToast } from '@/lib/client/toast'
@@ -57,14 +60,21 @@ export default function CompetitorsForm({
         description: '競合設定を更新したので、最新の内容で結果を作り直します。',
       })
 
-      fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' }).catch(() => {
-        showToast({
-          id: `analysis-error-${projectId}`,
-          title: '調査を開始できませんでした',
-          description: '少し待ってから、もう一度お試しください。',
-          tone: 'warning',
+      void fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('failed to analyze')
+          }
         })
-      })
+        .catch(() => {
+          clearPendingProjectAnalysis(projectId)
+          showToast({
+            id: `analysis-error-${projectId}`,
+            title: '調査を開始できませんでした',
+            description: '少し待ってから、もう一度お試しください。',
+            tone: 'warning',
+          })
+        })
 
       router.push(`/projects/${projectId}`)
     })

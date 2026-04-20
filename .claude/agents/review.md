@@ -1,5 +1,5 @@
 ---
-name: reviewer
+name: review
 description: Insight Cast の品質監査担当。コード品質、プロダクトAI出力品質、世界観一貫性の3領域をレビューする。builder や ai-architect が実装・設計を完了した後に MUST BE USED。pm が品質に関する判断を必要としている時にも使う。「レビュー」「チェック」「品質」「評価」「世界観に合ってるか」「ユーザーに伝わるか」等のトピックで呼ぶ。
 tools: Read, Edit, Bash, Glob, Grep
 model: sonnet

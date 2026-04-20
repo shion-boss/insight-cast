@@ -31,7 +31,6 @@ export async function POST(
       .from('hp_audits')
       .delete()
       .eq('project_id', id)
-      .eq('project_id', project.id)
 
     if (deleteAuditError) {
       return NextResponse.json({ error: 'failed to clear hp audit' }, { status: 500 })

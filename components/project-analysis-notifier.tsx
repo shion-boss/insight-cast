@@ -29,6 +29,13 @@ export function trackPendingProjectAnalysis(projectId: string, name: string) {
   writePendingProjects(next)
 }
 
+export function clearPendingProjectAnalysis(projectId: string) {
+  const next = readPendingProjects()
+  if (!next[projectId]) return
+  delete next[projectId]
+  writePendingProjects(next)
+}
+
 export default function ProjectAnalysisNotifier() {
   const router = useRouter()
   const startingRef = useRef<Set<string>>(new Set())
@@ -55,10 +62,7 @@ export default function ProjectAnalysisNotifier() {
       for (const project of projects) {
         if (!project?.id || !nextPending[project.id]) continue
 
-        if (
-          (project.status === 'analysis_pending' || project.status === 'analyzing')
-          && !startingRef.current.has(project.id)
-        ) {
+        if (project.status === 'analysis_pending' && !startingRef.current.has(project.id)) {
           startingRef.current.add(project.id)
 
           fetch(`/api/projects/${project.id}/analyze`, { method: 'POST' })

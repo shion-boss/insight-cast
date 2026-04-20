@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import Image from 'next/image'
 
-import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
 

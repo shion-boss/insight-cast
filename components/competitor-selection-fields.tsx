@@ -149,8 +149,17 @@ export default function CompetitorSelectionFields({
       </div>
 
       <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-xs text-[var(--text3)]">
-        {helperText}
+        <div className="flex items-center justify-between gap-3">
+          <span>{helperText}</span>
+          <span className="whitespace-nowrap font-medium text-[var(--text2)]">{chosenUrls.length}/{MAX_COMPETITORS}件</span>
+        </div>
       </div>
+
+      {reachedMax && (
+        <p className="text-xs text-amber-700">
+          競合は3件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
+        </p>
+      )}
 
       {!canSuggest && (
         <p className="text-xs text-[var(--text3)]">
@@ -249,6 +258,23 @@ export default function CompetitorSelectionFields({
           />
         ))}
       </div>
+
+      {chosenUrls.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-xs font-medium text-[var(--text3)]">いま登録される競合URL</p>
+          <div className="flex flex-wrap gap-2">
+            {chosenUrls.map((urlValue) => (
+              <span
+                key={urlValue}
+                className="inline-flex max-w-full items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)]"
+                title={urlValue}
+              >
+                <span className="truncate">{urlValue}</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {chosenUrls.map((urlValue) => (
         <input key={urlValue} type="hidden" name={inputName} value={urlValue} />

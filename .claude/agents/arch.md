@@ -1,5 +1,5 @@
 ---
-name: ai-architect
+name: arch
 description: Insight Cast のプロダクトAI（インタビュアーキャラ・裏方AI）を設計・実装する担当。キャラのシステムプロンプト、質問生成ロジック、競合調査・HP分析の観点、モデル選定、出力構造、評価ルーブリック初版を作る。MUST BE USED when the user or pm asks about "キャラの質問" "プロンプト" "AIの設計" "モデル選定" "調査ロジック" "インタビュー設計" "AI出力の構造" "評価基準" and similar AI intelligence topics. DO NOT USE for Next.js/Supabase implementation — that's builder's domain.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import StartAnalysisButton from '@/components/start-analysis-button'
-import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
+import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
 import { AppShell } from '@/components/app-shell'
@@ -102,6 +102,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     audit: auditRow,
     competitorAnalyses: competitorAnalyses ?? [],
   }).isReady
+  const analysisStatus = resolveProjectAnalysisStatus(project.status, analysisReady)
 
   let articles: ArticleRow[] = []
   if (interviews.length > 0) {
@@ -156,12 +157,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {!analysisReady || project.status === 'analysis_pending' ? (
-                <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
-              ) : project.status === 'analyzing' ? (
+              {analysisStatus === 'analyzing' ? (
                 <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
-              ) : (
+              ) : analysisStatus === 'report_ready' ? (
                 <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
+              ) : (
+                <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
               )}
               {competitors && competitors.length > 0 && (
                 <span className="text-[11px] bg-[rgba(255,255,255,0.5)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">競合 {competitors.length}件</span>
@@ -320,23 +321,23 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </p>
           </div>
           <div className="flex flex-col gap-2 flex-shrink-0">
-            {!analysisReady || project.status === 'analysis_pending' ? (
-              <StartAnalysisButton
-                projectId={id}
-                projectName={project.name || project.hp_url}
-                className={getButtonClass('secondary')}
-              />
-            ) : project.status === 'analyzing' ? (
+            {analysisStatus === 'analyzing' ? (
               <div className="inline-flex items-center justify-center rounded-xl border border-[var(--warn)]/30 bg-[var(--warn-l)] px-4 py-3 text-sm text-[var(--warn)]">
                 調査中
               </div>
-            ) : (
+            ) : analysisStatus === 'report_ready' ? (
               <>
                 <Link href={`/projects/${id}/report`} prefetch={false} className={getButtonClass('secondary')}>
                   調査結果を見る
                 </Link>
                 <StartAnalysisButton projectId={id} projectName={project.name || project.hp_url} force className={getButtonClass('secondary')} />
               </>
+            ) : (
+              <StartAnalysisButton
+                projectId={id}
+                projectName={project.name || project.hp_url}
+                className={getButtonClass('secondary')}
+              />
             )}
             <Link href={`/projects/${id}/competitors`} className={getButtonClass('secondary')}>
               競合設定を見直す

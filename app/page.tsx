@@ -17,9 +17,9 @@ const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
 
 const PAIN_ITEMS = [
-  { n: '01', title: '「何を書けばいいか分からない」', body: 'コンテンツを作りたくても、どんな記事を書けばいいか見当がつかない。' },
-  { n: '02', title: '「取材・撮影が大変で後回しになる」', body: '記事を作るには人手も時間もかかる。気づいたら数年前の情報のまま放置。' },
-  { n: '03', title: '「自社の強みを言葉にできない」', body: '毎日やっていることが当たり前に見えて、何が価値なのか文章にするのが難しい。' },
+  { n: '01', title: '「何を書けばいいか分からない」', body: 'ブログを書こうと思っても、「今さら何を書くの？」と手が止まる。' },
+  { n: '02', title: '「取材・撮影が大変で後回しになる」', body: '更新しようと思うたびに写真を撮ったり文章を考えたり。疲れて結局後回し。' },
+  { n: '03', title: '「自社の強みを言葉にできない」', body: '自分の仕事には特別なことなんてない、と思ってしまう。でも、それが一番伝わっていない価値かもしれない。' },
 ] as const
 
 const OUTCOME_ITEMS = [
@@ -35,12 +35,12 @@ const WORKFLOW_ITEMS = [
 ] as const
 
 const COMPARE_ROWS = [
-  { label: 'ホームページの現状分析', ai: false, none: false },
-  { label: '競合との比較', ai: false, none: false },
-  { label: '一次情報の収集（取材）', ai: false, none: false },
-  { label: '記事ネタのご提案', ai: '△', none: false },
-  { label: '記事テキストの生成', ai: true, none: false },
-  { label: '取材メモ・素材の整理', ai: false, none: false },
+  { label: '「何を書くか」を考えなくていい',  ai: false, none: false },
+  { label: '自社だけの一次情報が使われる',     ai: false, none: true  },
+  { label: '専門知識がなくても使える',          ai: true,  none: false },
+  { label: '継続しやすい（止まりにくい）',      ai: false, none: false },
+  { label: 'ホームページの現状分析つき',        ai: false, none: false },
+  { label: '費用がかかる',                      ai: false, none: false },
 ] as const
 
 const PLANS = [
@@ -79,7 +79,7 @@ const PLANS = [
 const FAQS = [
   { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を月2回ご利用いただけます。取材メモと記事素材の生成まで無料で体験できます。' },
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
-  { q: '届いた記事素材はそのまま使えますか？', a: '取材内容をもとにした記事の「素材」として提供されます。そのまま使うこともできますが、ご自身で整えることでより自然な文体に仕上がります。' },
+  { q: '届いた記事素材はそのまま使えますか？', a: 'そのままホームページやブログに貼って使えます。少し手を加えるとより自然な文体になりますが、時間がなければそのままでも十分です。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種の専門知識を背景に取材します。専門用語を使わずに話していただければ、価値を分かりやすく言語化します。' },
   { q: '途中でキャンセルできますか？', a: '有料プランは月次のサブスクリプションです。いつでもキャンセル可能で、翌月から課金は発生しません。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
@@ -112,7 +112,7 @@ export default async function LandingPage() {
                   あなたの「当たり前」に、<br /><em className="text-[var(--accent)] not-italic">まだ伝わっていない</em><br />価値がある。
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  AIキャストが丁寧に取材して、あなたの話から記事の素材を引き出します。ホームページを更新し続けるための、一番やさしい方法です。
+                  AIキャストが丁寧に取材して、あなたの話を「ホームページに載せられる文章」に整えます。ホームページを更新し続けるための、一番やさしい方法です。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
@@ -458,15 +458,15 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why Insight Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              AIライティングツールとの違い
+              「自分で書く」との違い
             </h2>
             <div className="mt-11 rounded-[20px] overflow-hidden border border-[var(--border)]">
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[38%]"></th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIライティングツール</th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">取材なし</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">ChatGPTで自分で書く</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">社員・自分で書く</th>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
                   </tr>
                 </thead>
@@ -475,11 +475,16 @@ export default async function LandingPage() {
                     <tr key={row.label}>
                       <td className="px-[22px] py-[15px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
                       <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.ai === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : row.ai ? <span className="text-[var(--accent)] text-[13px] font-semibold">{row.ai}</span> : <span className="text-[var(--text3)]">✕</span>}
+                        {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
                       </td>
-                      <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">✕</td>
+                      <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
+                        {row.none === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
+                      </td>
                       <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
-                        <span className="text-[var(--teal)] text-lg font-bold">✓</span>
+                        {row.label === '費用がかかる'
+                          ? <span className="text-[var(--accent)] text-[13px] font-semibold">有料</span>
+                          : <span className="text-[var(--teal)] text-lg font-bold">✓</span>
+                        }
                       </td>
                     </tr>
                   ))}
@@ -496,7 +501,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               まず無料で、気軽に始められます
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">登録不要で体験できます。有料プランはいつでもキャンセル可能です。</p>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで、すぐに始められます。クレジットカード不要。有料プランはいつでも停止・解約できます。</p>
             <div className="grid grid-cols-3 gap-6 mt-11">
               {PLANS.map((plan) => (
                 <div

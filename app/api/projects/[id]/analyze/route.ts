@@ -312,10 +312,20 @@ export async function POST(
       }> = []
 
       for (const comp of competitors) {
-        const compMarkdown = await fetchMarkdown(comp.url)
-        if (!compMarkdown) continue
-        const result = await compareCompetitor(mainMarkdown, compMarkdown)
-        const competitorBlogPosts = await discoverSiteBlogPosts(comp.url, 4)
+        let compMarkdown = ''
+        let result = { gaps: [], advantages: [], influential_topics: [] as Array<{ theme: string; summary: string }> }
+        let competitorBlogPosts: Array<{ url: string; title: string; summary: string }> = []
+
+        try {
+          compMarkdown = await fetchMarkdown(comp.url)
+          if (compMarkdown) {
+            result = await compareCompetitor(mainMarkdown, compMarkdown)
+          }
+          competitorBlogPosts = await discoverSiteBlogPosts(comp.url, 4)
+        } catch (error) {
+          console.error('[analyze:competitor]', comp.url, error)
+        }
+
         competitorRows.push({
           project_id: id,
           competitor_id: comp.id,

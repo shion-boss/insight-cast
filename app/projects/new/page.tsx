@@ -2,8 +2,22 @@ import { getCharacter } from '@/lib/characters'
 import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 import NewProjectForm from './NewProjectForm'
 
-export default function NewProjectPage() {
+function getErrorMessage(error: string) {
+  if (error === 'name') return '取材先名を入力してから、もう一度登録してください。'
+  if (error === 'url') return '自社HP URL を入力してから、もう一度登録してください。'
+  if (error === '1') return '登録中に問題が起きました。少し待ってから、もう一度お試しください。'
+  return ''
+}
+
+export default async function NewProjectPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const claus = getCharacter('claus')
+  const query = await searchParams
+  const errorParam = Array.isArray(query.error) ? query.error[0] ?? '' : query.error ?? ''
+  const errorMessage = getErrorMessage(errorParam)
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
@@ -27,7 +41,7 @@ export default function NewProjectPage() {
           />
         </div>
 
-        <NewProjectForm />
+        <NewProjectForm errorMessage={errorMessage} />
       </div>
     </div>
   )

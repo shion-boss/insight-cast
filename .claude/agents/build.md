@@ -1,5 +1,5 @@
 ---
-name: builder
+name: build
 description: Insight Cast の基盤実装担当。Next.js 15 (App Router) / TypeScript / Tailwind / Supabase を使って、画面・API・DB・認証・ファイル処理・インフラ設定を実装する。MUST BE USED when the user or pm asks for "実装" "コード書いて" "画面作って" "API作って" "DBスキーマ" "認証" "デプロイ設定" and similar implementation tasks on the application shell. DO NOT USE for AI prompt design, model selection, or intelligence logic — those are ai-architect's domain.
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: sonnet

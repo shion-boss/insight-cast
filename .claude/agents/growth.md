@@ -1,5 +1,5 @@
 ---
-name: marketer
+name: growth
 description: Insight Cast の自社HP運用・顧客獲得・発信戦略を担当。ドッグフーディング戦略の実行部隊であり、中間マイルストーンの定義・追跡も担う。MUST BE USED when the user or pm asks about "マーケティング" "集客" "LP" "ブログ" "コピー" "問い合わせ" "中間マイルストーン" "どう売るか" "ドッグフーディング" "自社HP" "市場調査" "競合サービス" and similar acquisition/branding topics.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet

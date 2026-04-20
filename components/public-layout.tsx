@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { href: '/cast', label: 'キャスト' },
   { href: '/blog', label: 'ブログ' },
   { href: '/about', label: 'About' },
+  { href: '/contact', label: 'お問い合わせ' },
 ]
 
 function cx(...classes: Array<string | false | null | undefined>) {
