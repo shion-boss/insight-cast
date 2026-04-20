@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import StartAnalysisButton from '@/components/start-analysis-button'
+import InterviewStatusPills from '@/components/interview-status-pills'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
@@ -261,9 +262,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     {interviewArticles.length > 0 && (
                       <span className="text-[11px] text-[var(--text3)]">記事 {interviewArticles.length}本</span>
                     )}
-                    {hasSummary && <StatusPill tone="neutral">メモ</StatusPill>}
-                    {hasArticle && <StatusPill tone="success">記事</StatusPill>}
-                    {hasUncreatedThemes && <StatusPill tone="warning">未作成</StatusPill>}
+                    <InterviewStatusPills
+                      interviewId={interview.id}
+                      hasSummary={hasSummary}
+                      hasArticle={hasArticle}
+                      hasUncreatedThemes={hasUncreatedThemes}
+                    />
                     {latestInterviewArticle && (
                       <Link href={`/projects/${id}/articles/${latestInterviewArticle.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
                         記事を見る

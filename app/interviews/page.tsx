@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import { ButtonLink, CharacterAvatar, StateCard, StatusPill } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, StateCard } from '@/components/ui'
 import { AppShell } from '@/components/app-shell'
+import InterviewStatusPills from '@/components/interview-status-pills'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { createClient } from '@/lib/supabase/server'
@@ -147,9 +148,16 @@ export default async function InterviewsPage() {
                     {char?.name ?? 'インタビュアー'} · {formatDate(interview.created_at)}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
-                    {hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
-                    {hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
+                    <InterviewStatusPills
+                      interviewId={interview.id}
+                      hasSummary={hasSummary}
+                      hasArticle={hasArticle}
+                      hasUncreatedThemes={hasUncreatedThemes}
+                      summaryLabel="取材メモあり"
+                      articleLabel="記事あり"
+                      creatingLabel="作成中"
+                      uncreatedLabel="未作成テーマあり"
+                    />
                   </div>
                 </div>
 

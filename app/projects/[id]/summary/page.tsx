@@ -1,11 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
+import { hasPendingInterviewSummary, trackPendingInterviewSummary } from '@/components/project-analysis-notifier'
 import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard, getButtonClass } from '@/components/ui'
+import { showToast } from '@/lib/client/toast'
 
 type SummaryData = {
   values: string[]
@@ -21,6 +23,14 @@ type ArticleRow = {
   created_at: string
 }
 
+function parseSummaryValues(summary: string | null) {
+  if (!summary) return []
+
+  return summary
+    .split('\n')
+    .map((line) => line.trim().replace(/^・/, '').trim())
+    .filter(Boolean)
+}
 
 export default function SummaryPage() {
   const { id: projectId } = useParams<{ id: string }>()
@@ -28,12 +38,13 @@ export default function SummaryPage() {
   const interviewId = searchParams.get('interviewId') ?? ''
   const from = searchParams.get('from')
   const router = useRouter()
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
   const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
 
   const [data, setData] = useState<SummaryData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [pendingSummary, setPendingSummary] = useState(false)
   const [showMessages, setShowMessages] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [articles, setArticles] = useState<ArticleRow[]>([])
@@ -42,24 +53,51 @@ export default function SummaryPage() {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
 
     async function load() {
+      const supabase = supabaseRef.current
       try {
         setLoadError(null)
-
-        const res = await fetch(`/api/projects/${projectId}/interview/summarize`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ interviewId }),
-        })
-        if (!res.ok) {
-          throw new Error('summary failed')
-        }
-        const json = await res.json()
-
         const { data: interview } = await supabase
           .from('interviews')
-          .select('interviewer_type')
+          .select('interviewer_type, summary, themes')
           .eq('id', interviewId)
           .single()
+
+        if (!interview) {
+          throw new Error('interview not found')
+        }
+
+        if (!interview.summary) {
+          const { data: project } = await supabase
+            .from('projects')
+            .select('name, hp_url')
+            .eq('id', projectId)
+            .maybeSingle()
+
+          const projectName = project?.name ?? project?.hp_url ?? 'この取材先'
+
+          if (!hasPendingInterviewSummary(interviewId)) {
+            trackPendingInterviewSummary({
+              interviewId,
+              projectId,
+              projectName,
+            })
+            showToast({
+              id: `summary-started-${interviewId}`,
+              title: '取材メモの作成を開始しました',
+              description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+            })
+          }
+
+          setData({
+            values: [],
+            themes: Array.isArray(interview.themes) ? interview.themes : [],
+            messages: [],
+            interviewerType: interview.interviewer_type ?? 'mint',
+          })
+          setArticles([])
+          setPendingSummary(true)
+          return
+        }
 
         const { data: messages } = await supabase
           .from('interview_messages')
@@ -74,12 +112,13 @@ export default function SummaryPage() {
           .order('created_at', { ascending: false })
 
         setData({
-          values: Array.isArray(json.summary) ? json.summary : [],
-          themes: Array.isArray(json.themes) ? json.themes : [],
+          values: parseSummaryValues(interview.summary),
+          themes: Array.isArray(interview.themes) ? interview.themes : [],
           messages: messages ?? [],
           interviewerType: interview?.interviewer_type ?? 'mint',
         })
         setArticles((articleRows ?? []) as ArticleRow[])
+        setPendingSummary(false)
       } catch {
         setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
       } finally {
@@ -87,22 +126,60 @@ export default function SummaryPage() {
       }
     }
     load()
-  }, [interviewId, projectId, router, supabase])
+  }, [interviewId, projectId, router])
 
   const char = data ? getCharacter(data.interviewerType) : null
 
   if (loading) {
-    const mint = getCharacter('mint')
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] px-6">
         <div className="w-full max-w-md">
-          <InterviewerSpeech
-            icon={<span className="animate-pulse"><CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} /></span>}
-            name="ミント"
-            title="取材メモを整理しています"
-            description="少しお待ちください。インタビューの内容をまとめています。"
+          <StateCard
+            icon="📝"
+            title="取材メモの状態を確認しています"
+            description="保存済みのメモがあればすぐ開きます。"
             tone="soft"
           />
+        </div>
+      </div>
+    )
+  }
+
+  if (pendingSummary) {
+    const mint = getCharacter(data?.interviewerType ?? 'mint')
+    return (
+      <div className="min-h-screen bg-[var(--bg)]">
+        <PageHeader title="取材メモ" backHref={backHref} backLabel={backLabel} />
+
+        <div className="max-w-2xl mx-auto px-6 py-12">
+          <InterviewerSpeech
+            icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+            name={mint?.name ?? 'ミント'}
+            title="取材メモを作成しています"
+            description="AIで整理しているので、このページで待たなくて大丈夫です。完了したらお知らせします。"
+            tone="soft"
+          />
+          <div className="mt-6">
+            <StateCard
+              icon="⏳"
+              title="バックグラウンドで処理中です"
+              description="数分かかることがあります。通知が来たら、取材メモや記事づくりに進めます。"
+              action={(
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <button
+                    type="button"
+                    onClick={() => window.location.reload()}
+                    className={getButtonClass('primary')}
+                  >
+                    完了を確認する
+                  </button>
+                  <Link href={backHref} className={getButtonClass('secondary')}>
+                    {backLabel}
+                  </Link>
+                </div>
+              )}
+            />
+          </div>
         </div>
       </div>
     )

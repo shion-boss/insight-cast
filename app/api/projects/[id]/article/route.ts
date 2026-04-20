@@ -10,6 +10,43 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const VOLUME_MAP = { short: '600〜800', medium: '1200〜1500', long: '2000〜2500' }
 const STYLE_MAP  = { desu: 'ですます体', 'de-aru': 'である体', 'da-na': 'だ・な体（口語的）' }
 
+async function saveArticle(input: {
+  supabase: Awaited<ReturnType<typeof createClient>>
+  projectId: string
+  interviewId: string
+  articleType: string
+  content: string
+}) {
+  const titleMatch = input.content.match(/^#\s+(.+)/m)
+  const title = titleMatch?.[1]?.trim() ?? '記事'
+
+  const { data: savedArticle } = await input.supabase
+    .from('articles')
+    .insert({
+      project_id: input.projectId,
+      interview_id: input.interviewId,
+      article_type: input.articleType,
+      title,
+      content: input.content,
+    })
+    .select('id')
+    .single()
+
+  await input.supabase.from('projects').update({ status: 'article_ready' }).eq('id', input.projectId)
+  revalidatePath('/dashboard')
+  revalidatePath('/projects')
+  revalidatePath('/articles')
+  revalidatePath('/interviews')
+  revalidatePath(`/projects/${input.projectId}`)
+  revalidatePath(`/projects/${input.projectId}/summary`)
+  revalidatePath(`/projects/${input.projectId}/article`)
+  if (savedArticle?.id) {
+    revalidatePath(`/projects/${input.projectId}/articles/${savedArticle.id}`)
+  }
+
+  return savedArticle
+}
+
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -19,7 +56,15 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const { interviewId, articleType, style, volume, theme, polishAnswers } = await req.json()
+  const {
+    interviewId,
+    articleType,
+    style,
+    volume,
+    theme,
+    polishAnswers,
+    background,
+  } = await req.json()
 
   const { data: interview } = await supabase
     .from('interviews')
@@ -175,6 +220,26 @@ ${themeInstruction}${internalLinkInstruction}
     messages: [{ role: 'user', content: prompt }],
   })
 
+  if (background) {
+    let fullText = ''
+
+    for await (const chunk of stream) {
+      if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+        fullText += chunk.delta.text
+      }
+    }
+
+    const savedArticle = await saveArticle({
+      supabase,
+      projectId,
+      interviewId,
+      articleType,
+      content: fullText,
+    })
+
+    return Response.json({ ok: true, articleId: savedArticle?.id ?? null })
+  }
+
   let fullText = ''
   const readable = new ReadableStream({
     async start(controller) {
@@ -184,33 +249,13 @@ ${themeInstruction}${internalLinkInstruction}
           controller.enqueue(new TextEncoder().encode(chunk.delta.text))
         }
       }
-
-      const titleMatch = fullText.match(/^#\s+(.+)/m)
-      const title = titleMatch?.[1]?.trim() ?? '記事'
-
-      const { data: savedArticle } = await supabase
-        .from('articles')
-        .insert({
-          project_id: projectId,
-          interview_id: interviewId,
-          article_type: articleType,
-          title,
-          content: fullText,
-        })
-        .select('id')
-        .single()
-
-      await supabase.from('projects').update({ status: 'article_ready' }).eq('id', projectId)
-      revalidatePath('/dashboard')
-      revalidatePath('/projects')
-      revalidatePath('/articles')
-      revalidatePath('/interviews')
-      revalidatePath(`/projects/${projectId}`)
-      revalidatePath(`/projects/${projectId}/summary`)
-      revalidatePath(`/projects/${projectId}/article`)
-      if (savedArticle?.id) {
-        revalidatePath(`/projects/${projectId}/articles/${savedArticle.id}`)
-      }
+      await saveArticle({
+        supabase,
+        projectId,
+        interviewId,
+        articleType,
+        content: fullText,
+      })
       controller.close()
     },
   })

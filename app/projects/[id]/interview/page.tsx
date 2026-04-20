@@ -4,10 +4,9 @@ import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { InterviewLoadingScene } from '@/components/loading-scenes'
 import { getCharacter } from '@/lib/characters'
 import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, StateCard } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
 type SupportPost = { url: string; title: string; summary: string }
@@ -28,7 +27,7 @@ export default function InterviewPage() {
   const interviewId = searchParams.get('interviewId') ?? ''
   const from = searchParams.get('from')
   const router = useRouter()
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
   const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
 
@@ -125,6 +124,7 @@ export default function InterviewPage() {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
 
     async function init() {
+      const supabase = supabaseRef.current
       const { data: interview } = await supabase
         .from('interviews')
         .select('interviewer_type, focus_theme_mode, focus_theme')
@@ -152,7 +152,7 @@ export default function InterviewPage() {
       setTimeout(() => textareaRef.current?.focus(), 50)
     }
     init()
-  }, [interviewId, projectId, router, sendMessageToAI, supabase])
+  }, [interviewId, projectId, router, sendMessageToAI])
 
   const latestInterviewerMessage = [...messages].reverse().find((message) => message.role === 'interviewer')?.content ?? ''
 
@@ -249,11 +249,19 @@ export default function InterviewPage() {
   if (initializing) {
     return (
       <div className="h-screen flex items-center justify-center bg-[var(--bg)] px-6">
-        <div className="w-full max-w-[560px]">
-          <InterviewLoadingScene
-            characterId={characterId}
-            title={`${char?.name ?? '取材班'}が準備しています`}
-            subtitle="席につけたら、そのまま聞き取りを始めます。"
+        <div className="w-full max-w-[520px] space-y-4">
+          <InterviewerSpeech
+            icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? '取材班'}のアイコン`} emoji={char?.emoji} size={48} />}
+            name={char?.name ?? '取材班'}
+            title="取材画面を開いています"
+            description="会話履歴と設定を読み込んでいます。通常はすぐに始まります。"
+            tone="soft"
+          />
+          <StateCard
+            icon="🎤"
+            title="AIの長時間処理ではありません"
+            description="ここは画面の準備だけなので、派手なアニメーションは使わないようにしました。"
+            tone="soft"
           />
         </div>
       </div>
