@@ -18,7 +18,6 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [saved, setSaved] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -71,8 +70,6 @@ export default function SettingsPage() {
 
     setInitialName(nextName)
     setSaving(false)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
   }
 
   const hasUnsavedChanges = name.trim() !== initialName.trim()
@@ -141,7 +138,7 @@ export default function SettingsPage() {
           )}
           name={mint?.name ?? 'インタビュアー'}
           title="ここでは、お呼びするお名前だけ教えてください。"
-          description="取材先のホームページや競合候補は、取材先を登録するときにまとめて決められます。"
+          description="取材先のホームページや競合候補は、取材先の登録時に決められますし、あとから管理画面で見直すこともできます。"
           tone="soft"
         />
 

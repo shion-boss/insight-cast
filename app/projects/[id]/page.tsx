@@ -175,6 +175,40 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           </div>
         </section>
 
+        <section className={getPanelClass('rounded-[2rem] p-6')}>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs text-stone-400">競合設定</p>
+              <h2 className="mt-1 text-sm font-medium text-stone-800">
+                {competitors && competitors.length > 0 ? `${competitors.length}件の競合HPを設定中` : 'まだ競合HPは設定していません'}
+              </h2>
+              <p className="mt-2 text-xs leading-relaxed text-stone-500">
+                登録時と同じように、おすすめから選ぶことも、URLを手入力することもできます。
+              </p>
+
+              {competitors && competitors.length > 0 && (
+                <ul className="mt-4 space-y-2">
+                  {competitors.map((competitor) => (
+                    <li
+                      key={competitor.id}
+                      className="truncate rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-xs text-stone-500"
+                    >
+                      {competitor.url}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            <Link
+              href={`/projects/${id}/competitors`}
+              className={getButtonClass('secondary')}
+            >
+              競合設定を見直す
+            </Link>
+          </div>
+        </section>
+
         {interviews.length === 0 ? (
           <>
             <InterviewerSpeech
