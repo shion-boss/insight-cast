@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { GENRES, EFFECTS, buildContentMatrix, type ClassifiedPost } from '@/lib/content-map'
-import { CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel } from '@/components/ui'
 import type { StaticImageData } from 'next/image'
 
 type Props = {
@@ -100,13 +100,11 @@ export function ContentMapPanel({
           >
             {loading ? (
               <>
-                <span
-                  className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin"
-                />
+                <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 分析中…
               </>
             ) : (
-              '記事を分析する'
+              <DevAiLabel>記事を分析する</DevAiLabel>
             )}
           </button>
         )}

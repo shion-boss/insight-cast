@@ -64,7 +64,7 @@ function DonutChart({ data }: { data: ThemeDataPoint[] }) {
       </div>
       <div className="flex flex-col gap-2 flex-1">
         {data.map((d, i) => (
-          <div key={i}
+          <div key={d.label}
             className="flex items-center gap-2 text-[12px] cursor-default"
             style={{ color: 'var(--text2)', opacity: hovered !== null && hovered !== i ? 0.45 : 1, transition: 'opacity .15s' }}
             onMouseEnter={() => setHovered(i)}
@@ -132,6 +132,13 @@ function cellColor(count: number) {
   return HM_COLORS[4]
 }
 
+function localDateKey(dt: Date): string {
+  const y = dt.getFullYear()
+  const m = String(dt.getMonth() + 1).padStart(2, '0')
+  const d = String(dt.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 function buildHeatmapGrid(data: HeatmapEntry[]) {
   const countMap = new Map(data.map((e) => [e.date, e.count]))
   const today = new Date()
@@ -139,15 +146,15 @@ function buildHeatmapGrid(data: HeatmapEntry[]) {
   start.setDate(start.getDate() - 167)
   start.setDate(start.getDate() - start.getDay()) // back to Sunday
 
-  const cols: Array<Array<{ label: string; count: number } | null>> = []
+  const cols: Array<Array<{ label: string; count: number; key: string } | null>> = []
   for (let w = 0; w < 25; w++) {
-    const col: Array<{ label: string; count: number } | null> = []
+    const col: Array<{ label: string; count: number; key: string } | null> = []
     for (let d = 0; d < 7; d++) {
       const dt = new Date(start)
       dt.setDate(start.getDate() + w * 7 + d)
       if (dt > today) { col.push(null); continue }
-      const key = dt.toISOString().slice(0, 10)
-      col.push({ label: `${dt.getMonth() + 1}/${dt.getDate()}`, count: countMap.get(key) ?? 0 })
+      const key = localDateKey(dt)
+      col.push({ label: `${dt.getMonth() + 1}/${dt.getDate()}`, count: countMap.get(key) ?? 0, key })
     }
     cols.push(col)
   }
@@ -159,14 +166,14 @@ function Heatmap({ data }: { data: HeatmapEntry[] }) {
   const DAY_LABELS = ['', '月', '', '水', '', '金', '']
   const cols = buildHeatmapGrid(data)
 
+  // Derive month labels from grid cells (avoids separate date calculation)
   const monthLabels: Array<{ wi: number; label: string }> = []
   cols.forEach((col, wi) => {
     const first = col.find((c) => c !== null)
     if (!first) return
-    const dt = new Date()
-    dt.setDate(dt.getDate() - 167 - dt.getDay() + wi * 7)
-    if (dt.getDate() <= 7 || wi === 0) {
-      monthLabels.push({ wi, label: `${dt.getMonth() + 1}月` })
+    const [, m, d] = first.key.split('-').map(Number)
+    if (d <= 7 || wi === 0) {
+      monthLabels.push({ wi, label: `${m}月` })
     }
   })
 
@@ -276,7 +283,7 @@ export function AnalyticsSection({ themeDistribution, monthlyArticles, heatmapDa
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-1">ホームページの更新状況</div>
-            <div className="text-[12px]" style={{ color: 'var(--text3)' }}>記事素材の生成・投稿の継続性</div>
+            <div className="text-[12px]" style={{ color: 'var(--text3)' }}>記事の作成・投稿の継続ペース</div>
           </div>
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
         </div>

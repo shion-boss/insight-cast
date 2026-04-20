@@ -17,6 +17,7 @@ type Project = {
   name: string | null
   hp_url: string
   status: string
+  created_at: string
   updated_at: string
 }
 
@@ -72,24 +73,39 @@ function buildMonthlyArticlePoints(articles: ArticleRow[]): MonthlyPoint[] {
   return points
 }
 
+function toLocalDateKey(isoString: string): string {
+  // Use local date to avoid UTC-vs-JST off-by-one near midnight
+  const d = new Date(isoString)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 function buildHeatmapEntries(articles: ArticleRow[]): HeatmapEntry[] {
   const countMap = new Map<string, number>()
   for (const a of articles) {
-    const key = a.created_at.slice(0, 10)
+    const key = toLocalDateKey(a.created_at)
     countMap.set(key, (countMap.get(key) ?? 0) + 1)
   }
   return [...countMap.entries()].map(([date, count]) => ({ date, count }))
 }
 
 function computeContinuityScore(articles: ArticleRow[]): number {
-  // Count weeks with ≥1 article in the past 12 weeks
+  // Split past 12 calendar weeks (Sun–Sat) and count weeks with ≥1 article.
+  // w=0 = current week (Sun of this week to now), w=11 = oldest week.
   const now = new Date()
+  const thisSunday = new Date(now)
+  thisSunday.setDate(now.getDate() - now.getDay()) // rewind to Sunday
+  thisSunday.setHours(0, 0, 0, 0)
+
   let activeWeeks = 0
   for (let w = 0; w < 12; w++) {
-    const weekStart = new Date(now)
-    weekStart.setDate(now.getDate() - (w + 1) * 7)
-    const weekEnd = new Date(now)
-    weekEnd.setDate(now.getDate() - w * 7)
+    const weekStart = new Date(thisSunday)
+    weekStart.setDate(thisSunday.getDate() - w * 7)
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekStart.getDate() + 7)
+
     const hasArticle = articles.some((a) => {
       const d = new Date(a.created_at)
       return d >= weekStart && d < weekEnd
@@ -160,7 +176,7 @@ export default async function DashboardPage() {
 
   const { data: projects } = await supabase
     .from('projects')
-    .select('id, name, hp_url, status, updated_at')
+    .select('id, name, hp_url, status, created_at, updated_at')
     .eq('user_id', user.id)
     .order('updated_at', { ascending: false })
 
@@ -257,8 +273,9 @@ export default async function DashboardPage() {
   const lastMonthArticles = allArticles.filter((a) => a.created_at.slice(0, 7) === lastMonthKey).length
   const articleDelta = thisMonthArticles - lastMonthArticles
 
-  const prevMonthProjects = projectList.filter((p) => p.updated_at.slice(0, 7) <= lastMonthKey).length
-  const projectDelta = projectList.length - prevMonthProjects
+  const thisMonthProjects = projectList.filter((p) => p.created_at.slice(0, 7) === thisMonthKey).length
+  const lastMonthProjectCount = projectList.filter((p) => p.created_at.slice(0, 7) === lastMonthKey).length
+  const projectDelta = thisMonthProjects - lastMonthProjectCount
 
   // Analytics data
   const themeDistribution = buildThemeDistribution(interviews)

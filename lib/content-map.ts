@@ -74,7 +74,7 @@ ${posts.map((p, i) => `${i + 1}. title: ${p.title}\n   summary: ${p.summary}\n  
 ## 出力形式（JSONのみ）
 {
   "classifications": [
-    { "url": "...", "genre": "case_study", "effect": "trust" }
+    { "url": "...", "title": "記事タイトル", "genre": "case_study", "effect": "trust" }
   ]
 }`
 
@@ -99,7 +99,10 @@ ${posts.map((p, i) => `${i + 1}. title: ${p.title}\n   summary: ${p.summary}\n  
     })
     .map((item) => ({
       url:    item.url,
-      title:  posts.find((p) => p.url === item.url)?.title ?? '',
+      // Prefer title from AI response; fall back to original posts list by URL
+      title:  (typeof item.title === 'string' && item.title.trim())
+        ? item.title.trim()
+        : (posts.find((p) => p.url === item.url)?.title ?? ''),
       genre:  item.genre,
       effect: item.effect,
       source: 'existing' as const,

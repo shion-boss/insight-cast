@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { CharacterAvatar, InterviewerSpeech, TextInput } from '@/components/ui'
@@ -37,7 +37,7 @@ function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 
 export default function SettingsPage() {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const mint = getCharacter('mint')
 
   const [userId, setUserId] = useState('')
@@ -262,12 +262,10 @@ export default function SettingsPage() {
                   <p className="text-[13px] text-[var(--text2)] leading-[1.75] mb-4">
                     すべての取材先・取材メモ・記事素材が完全に削除されます。この操作は取り消せません。削除前にデータをエクスポートしてください。
                   </p>
-                  <button
-                    type="button"
-                    className="bg-[var(--err)] text-white text-sm font-semibold px-4 py-2 rounded-[var(--r-sm)] hover:opacity-90 transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
-                  >
+                  <span className="inline-flex items-center gap-2 bg-[var(--err)] text-white text-sm font-semibold px-4 py-2 rounded-[var(--r-sm)] opacity-40 cursor-not-allowed select-none">
                     アカウントを削除する
-                  </button>
+                  </span>
+                  <p className="text-[12px] text-[var(--text3)] mt-2">この機能は現在準備中です</p>
                 </div>
               </section>
             </>
