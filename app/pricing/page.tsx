@@ -63,7 +63,7 @@ const PLANS = [
     features: [
       { ok: true, label: '取材回数：月20回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: '取材先登録：最大5件' },
+      { ok: true, label: '取材先登録：最大3件' },
       { ok: true, label: '競合調査：各取材先3社' },
       { ok: true, label: '取材メモ生成' },
       { ok: true, label: '記事素材生成' },
@@ -78,7 +78,7 @@ const PLANS = [
 const TABLE_ROWS = [
   { label: '取材回数（月）', free: '2回', personal: '10回', business: '20回' },
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
-  { label: '取材先登録', free: '1件', personal: '1件', business: '最大5件' },
+  { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
   { label: '競合調査', free: '1社', personal: '3社', business: '各取材先3社' },
   { label: '取材メモ生成', free: '○', personal: '○', business: '○' },
   { label: '記事素材生成', free: '○', personal: '○', business: '○' },
@@ -116,7 +116,7 @@ const SELECTION_GUIDE = [
 const FAQS = [
   { q: '無料プランにクレジットカードは必要ですか？', a: '不要です。メールアドレスのみで登録できます。' },
   { q: '追加キャストはどのプランで使えますか？', a: 'お試し・個人向け・法人向けすべてのプランでお使いいただけます。一度購入すれば、プランを変更しても引き続きお使いいただけます。' },
-  { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大5件の取材先を登録でき、優先サポートが付きます。' },
+  { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
   { q: 'プランはいつでも変更できますか？', a: 'はい、いつでも変更・停止・解約できます。有料プランは翌月から課金が発生しなくなります。' },
   { q: '解約するとデータはどうなりますか？', a: '取材メモ・記事素材はエクスポートしていただければ保持できます。解約後30日以内はデータにアクセス可能です。' },
 ] as const
@@ -129,7 +129,7 @@ export default function PricingPage() {
       <main className="relative z-10">
         {/* Hero */}
         <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px] text-center">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
               シンプルな料金体系
@@ -142,9 +142,9 @@ export default function PricingPage() {
 
         {/* Selection Guide */}
         <section className="py-[56px] bg-[var(--bg)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[13px] font-semibold text-[var(--text2)] mb-5">どれを選べばいいか迷ったら</div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid gap-4 md:grid-cols-3">
               {SELECTION_GUIDE.map((item) => (
                 <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-start">
                   <span className="text-[var(--accent)] font-bold text-sm flex-shrink-0 mt-0.5">→</span>
@@ -160,8 +160,8 @@ export default function PricingPage() {
 
         {/* Plan cards */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid grid-cols-3 gap-6 items-start mt-0">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="mt-0 grid gap-6 lg:grid-cols-3 lg:items-start">
               {PLANS.map((plan) => (
                 <div
                   key={plan.id}
@@ -213,13 +213,13 @@ export default function PricingPage() {
 
         {/* Compare Table */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Plan Comparison</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
-            <div className="mt-10 rounded-[20px] overflow-hidden border border-[var(--border)]">
-              <table className="w-full border-collapse">
+            <div className="mt-10 overflow-x-auto rounded-[20px] border border-[var(--border)]">
+              <table className="min-w-[720px] w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="px-5 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[30%]"></th>
@@ -245,13 +245,13 @@ export default function PricingPage() {
 
         {/* Add-on Cast (buyout) */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               専門キャストを追加する（買い切り）
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">一度お求めいただければ、プランに関わらずずっとお使いいただけます。</p>
-            <div className="grid grid-cols-3 gap-5 mt-10">
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)
                 return (
@@ -279,7 +279,7 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[720px] px-12">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある質問</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               料金についての Q&A

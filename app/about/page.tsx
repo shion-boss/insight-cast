@@ -32,8 +32,8 @@ export default function AboutPage() {
       <main className="relative z-10">
         {/* Hero */}
         <section style={{ padding: '112px 0 80px', background: 'linear-gradient(135deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid grid-cols-2 gap-16 items-center">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
               <div>
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">About</div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
@@ -45,7 +45,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <div className="bg-[var(--bg2)] rounded-[24px] overflow-hidden border border-[var(--border)]">
-                  <div className="grid grid-cols-3 gap-3 p-6">
+                  <div className="grid grid-cols-3 gap-3 p-4 sm:p-6">
                     {allCasts.map((char, i) => (
                       <div key={char.id} className={`text-center ${i > 2 ? 'opacity-70' : ''}`}>
                         <div className="rounded-[16px] overflow-hidden border-[1.5px] border-[var(--border)] mb-2.5 bg-[var(--bg2)]">
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
         {/* Mission */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[720px] px-12">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Mission</div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.6] mt-5" style={{ fontSize: 'clamp(22px,3vw,34px)' }}>
               <span className="text-[var(--accent)]">一次情報こそが、</span>小規模事業者の唯一の差別化である。<br />
@@ -86,12 +86,12 @@ export default function AboutPage() {
 
         {/* Trust points */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why We Exist</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               私たちが大切にしていること
             </h2>
-            <div className="grid grid-cols-3 gap-5 mt-10">
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
               {TRUST_POINTS.map((item) => (
                 <div key={item.title} className="text-center py-8 px-5 bg-[var(--surface)] border border-[var(--border)] rounded-[18px]">
                   <div className="text-[36px] mb-4">{item.icon}</div>
@@ -105,12 +105,12 @@ export default function AboutPage() {
 
         {/* Principles */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Principles</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               行動指針
             </h2>
-            <div className="grid grid-cols-2 gap-6 mt-11">
+            <div className="mt-11 grid gap-6 lg:grid-cols-2">
               {PRINCIPLES.map((item) => (
                 <div key={item.n} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden">
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[48px] font-bold text-[var(--border)] absolute top-4 right-5 leading-none">{item.n}</div>
@@ -124,12 +124,12 @@ export default function AboutPage() {
 
         {/* Cast team */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Our Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               取材チームを紹介します
             </h2>
-            <div className="grid grid-cols-6 gap-4 mt-10">
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
               {allCasts.map((char, i) => (
                 <div key={char.id} className="text-center">
                   <div className={`rounded-[16px] overflow-hidden border-[1.5px] border-[var(--border)] mb-2.5 bg-[var(--bg2)] ${i > 2 ? 'opacity-70' : ''}`}>

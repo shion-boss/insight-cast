@@ -61,8 +61,8 @@ export default function CastPage() {
       <main className="relative z-10">
         {/* Hero */}
         <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="flex items-center gap-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">
               <div className="flex-1">
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
@@ -72,7 +72,7 @@ export default function CastPage() {
                   6名のキャストが、それぞれ異なる切り口でインタビューを行います。得意分野に合わせて選んでください。
                 </p>
               </div>
-              <div className="flex-shrink-0 w-[320px]">
+              <div className="w-full max-w-[320px] flex-shrink-0 self-center lg:self-auto">
                 <div className="grid grid-cols-3 gap-3">
                   {CHARACTERS.map((char, i) => (
                     <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${i > 2 ? 'opacity-70' : ''}`}>
@@ -95,9 +95,9 @@ export default function CastPage() {
 
         {/* How to choose */}
         <section className="py-14 bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">どのキャストを選べばいいですか？</h2>
-            <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
               {[
                 { q: '自社の雰囲気や人柄を伝えたい', a: '→ ミント（Story Listener）' },
                 { q: '技術・専門性の違いを言語化したい', a: '→ クラウス（Industry Editor）' },
@@ -114,7 +114,7 @@ export default function CastPage() {
 
         {/* Free Casts Detail */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Free Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               無料キャスト
@@ -127,8 +127,7 @@ export default function CastPage() {
                   <div
                     key={char.id}
                     id={char.id}
-                    className={`grid gap-14 items-start pb-14 ${index < freeCasts.length - 1 ? 'border-b border-[var(--border)] mb-14' : ''}`}
-                    style={{ gridTemplateColumns: '340px 1fr' }}
+                    className={`grid gap-8 pb-14 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-14 ${index < freeCasts.length - 1 ? 'mb-14 border-b border-[var(--border)]' : ''}`}
                   >
                     <div>
                       <div className="rounded-[24px] overflow-hidden shadow-[0_16px_48px_var(--shadow)] bg-[var(--bg2)] aspect-square flex items-center justify-center">
@@ -186,7 +185,7 @@ export default function CastPage() {
 
         {/* Addon Casts */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               追加キャスト（近日公開）
@@ -199,8 +198,7 @@ export default function CastPage() {
                 return (
                   <div
                     key={char.id}
-                    className="grid gap-10 items-start bg-[var(--surface)] border border-[var(--border)] rounded-[20px] p-10 opacity-75"
-                    style={{ gridTemplateColumns: '200px 1fr' }}
+                    className="grid gap-8 rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 opacity-75 lg:grid-cols-[200px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:p-10"
                   >
                     <div>
                       <div className="rounded-[18px] overflow-hidden bg-[var(--bg2)] aspect-square flex items-center justify-center">

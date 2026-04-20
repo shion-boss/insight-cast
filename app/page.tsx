@@ -69,7 +69,7 @@ const PLANS = [
     price: '¥14,800',
     period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
-    features: ['取材回数：月20回まで', 'フリーキャスト 3名', '取材先登録：最大5件', '競合調査：各取材先3社', '取材メモ・記事素材の生成', '追加キャスト：買い切りで追加可（全取材先共用）', '優先サポート'],
+    features: ['取材回数：月20回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材の生成', '追加キャスト：買い切りで追加可（全取材先共用）', '優先サポート'],
     cta: '法人向けで始める',
     href: '/auth/signup',
     highlight: false,
@@ -102,8 +102,8 @@ export default async function LandingPage() {
 
         {/* ① Hero */}
         <section style={{ padding: '112px 0 88px', background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid items-center gap-14" style={{ gridTemplateColumns: '1fr 480px' }}>
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_480px] lg:gap-14">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-l)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-6">
                   ✦ AI取材サービス
@@ -122,7 +122,7 @@ export default async function LandingPage() {
                     キャストを見る
                   </Link>
                 </div>
-                <div className="flex gap-9 mt-9 pt-8 border-t border-[var(--border)]/70">
+                <div className="mt-9 flex flex-wrap gap-6 border-t border-[var(--border)]/70 pt-8 sm:gap-9">
                   {[
                     { n: '3名', l: '無料キャスト' },
                     { n: '20分', l: '平均取材時間' },
@@ -162,12 +162,12 @@ export default async function LandingPage() {
 
         {/* ② Pain */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pain Points</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               ホームページが止まっている、<br />よくある理由
             </h2>
-            <div className="grid grid-cols-3 gap-5 mt-11">
+            <div className="mt-11 grid gap-5 md:grid-cols-3">
               {PAIN_ITEMS.map((item) => (
                 <div key={item.n} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8">
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[44px] font-bold text-[var(--border)] leading-none mb-4">{item.n}</div>
@@ -181,12 +181,12 @@ export default async function LandingPage() {
 
         {/* ③ Outcome */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">What You Get</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               Insight Cast を使うと
             </h2>
-            <div className="grid grid-cols-3 gap-5 mt-11">
+            <div className="mt-11 grid gap-5 md:grid-cols-3">
               {OUTCOME_ITEMS.map((item) => (
                 <div key={item.title} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[var(--accent)]">
                   <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-xl mb-5">{item.icon}</div>
@@ -200,13 +200,13 @@ export default async function LandingPage() {
 
         {/* ④ Workflow */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">How It Works</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               たった3ステップで、<br />記事の素材が届く
             </h2>
-            <div className="grid grid-cols-3 relative mt-14">
-              <div className="absolute top-[44px] left-[calc(16.67%+8px)] right-[calc(16.67%+8px)] h-px bg-[var(--border)]" aria-hidden="true" />
+            <div className="relative mt-14 grid gap-8 md:grid-cols-3">
+              <div className="absolute left-[calc(16.67%+8px)] right-[calc(16.67%+8px)] top-[44px] hidden h-px bg-[var(--border)] md:block" aria-hidden="true" />
               {WORKFLOW_ITEMS.map((item) => (
                 <div key={item.n} className="text-center px-8">
                   <div className="w-[88px] h-[88px] rounded-full bg-[var(--surface)] border-[1.5px] border-[var(--border)] flex items-center justify-center mx-auto mb-6 font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--accent)] relative z-[1]">
@@ -222,8 +222,8 @@ export default async function LandingPage() {
 
         {/* ⑤ Competitor Analysis Scene — text left, image right */}
         <section className="py-[96px] overflow-hidden bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid items-center gap-16" style={{ gridTemplateColumns: '1fr 520px' }}>
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
               <div>
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 01 — HP Analysis</div>
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
@@ -263,8 +263,8 @@ export default async function LandingPage() {
 
         {/* ⑤ Planning Scene — image left, text right */}
         <section className="py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid items-center gap-16" style={{ gridTemplateColumns: '520px 1fr' }}>
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid items-center gap-10 lg:grid-cols-[520px_minmax(0,1fr)] lg:gap-16">
               <div className="relative">
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
                   <Image src={scenePlanning} alt="取材班が机で取材の準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" />
@@ -301,8 +301,8 @@ export default async function LandingPage() {
 
         {/* ⑦ Growth Scene — text left, image right */}
         <section className="py-[96px] overflow-hidden">
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid items-center gap-16" style={{ gridTemplateColumns: '1fr 520px' }}>
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
               <div>
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 03 — Growth</div>
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
@@ -311,7 +311,7 @@ export default async function LandingPage() {
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
                   一回の取材で終わりではありません。取材を重ねるほど、あなたのホームページには一次情報が蓄積され、検索でも口コミでも「信頼できる」と思われやすくなっていきます。
                 </p>
-                <div className="mt-8 grid grid-cols-2 gap-4">
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {[
                     { label: 'HP現状分析', body: '今のホームページで何が足りないかを可視化' },
                     { label: '競合比較', body: '同業他社との違いを客観的に整理' },
@@ -343,13 +343,13 @@ export default async function LandingPage() {
 
         {/* ⑨ Output Example */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               こんな記事素材が届きます
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">実際の取材の流れと、そこから届く記事素材の例です。</p>
-            <div className="grid grid-cols-2 gap-8 mt-11">
+            <div className="mt-11 grid gap-8 xl:grid-cols-2">
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
                   <CharacterAvatar src={freeCast[0]?.icon48} alt={`${freeCast[0]?.name ?? 'ミント'}のアイコン`} emoji={freeCast[0]?.emoji} size={28} />
@@ -389,13 +389,13 @@ export default async function LandingPage() {
 
         {/* ⑩ Cast */}
         <section className="py-[88px] bg-[var(--bg)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               あなたを担当するキャスト
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">目的に合わせて選べる3名のキャストが無料でご利用いただけます。</p>
-            <div className="grid grid-cols-3 gap-[22px] mt-11">
+            <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {freeCast.map((char) => (
                 <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)]">
                   <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
@@ -425,7 +425,7 @@ export default async function LandingPage() {
                   <span className="text-[13px] font-semibold text-[var(--text2)] whitespace-nowrap">追加キャスト（近日公開）</span>
                   <hr className="flex-1 border-none border-t border-[var(--border)] h-px bg-[var(--border)]" />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid gap-4 md:grid-cols-3">
                   {addonCast.map((char) => (
                     <div key={char.id} className="bg-[var(--bg2)] border border-dashed border-[var(--border)] rounded-[18px] overflow-hidden opacity-[0.72]">
                       <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
@@ -455,13 +455,13 @@ export default async function LandingPage() {
 
         {/* ⑪ Compare */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why Insight Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               「自分で書く」との違い
             </h2>
-            <div className="mt-11 rounded-[20px] overflow-hidden border border-[var(--border)]">
-              <table className="w-full border-collapse">
+            <div className="mt-11 overflow-x-auto rounded-[20px] border border-[var(--border)]">
+              <table className="min-w-[720px] w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[38%]"></th>
@@ -496,13 +496,13 @@ export default async function LandingPage() {
 
         {/* ⑫ Pricing */}
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               まず無料で、気軽に始められます
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで、すぐに始められます。クレジットカード不要。有料プランはいつでも停止・解約できます。</p>
-            <div className="grid grid-cols-3 gap-6 mt-11">
+            <div className="mt-11 grid gap-6 lg:grid-cols-3">
               {PLANS.map((plan) => (
                 <div
                   key={plan.name}
@@ -541,12 +541,12 @@ export default async function LandingPage() {
 
         {/* ⑬ Blog Preview */}
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Blog</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               最新の記事
             </h2>
-            <div className="grid grid-cols-3 gap-[22px] mt-11">
+            <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {POSTS.slice(0, 3).map((post) => (
                 <Link
                   key={post.slug}
@@ -574,7 +574,7 @@ export default async function LandingPage() {
 
         {/* ⑭ FAQ */}
         <section className="py-[88px] bg-[var(--bg)]">
-          <div className="mx-auto max-w-[720px] px-12">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">FAQ</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               よくある質問

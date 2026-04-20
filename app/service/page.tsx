@@ -135,7 +135,7 @@ export default function ServicePage() {
 
       <main className="relative z-10">
         <section style={{ padding: '112px 0 80px', background: 'linear-gradient(135deg,#fdf8f2 0%,#f0e5d0 100%)' }} className="text-center">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Service</div>
             <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] mx-auto" style={{ fontSize: 'clamp(28px,3.5vw,44px)', maxWidth: 680 }}>
               AIが取材して、<br />記事の素材を届けるまで
@@ -151,8 +151,8 @@ export default function ServicePage() {
         </section>
 
         <section className="py-14 bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-12">
-            <div className="grid grid-cols-3 gap-6">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="grid gap-6 md:grid-cols-3">
               {STEP_SUMMARY.map((item) => (
                 <div key={item.step} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-8">
                   <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">{item.step}</div>
@@ -165,7 +165,7 @@ export default function ServicePage() {
         </section>
 
         <section className="py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-12">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">詳しい流れ</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>3つのステップの中身</h2>
 
@@ -173,10 +173,9 @@ export default function ServicePage() {
               {STEP_DETAILS.map((item, index) => (
                 <div
                   key={item.step}
-                  className={`grid gap-14 items-center border-b border-[var(--border)] py-16 last:border-b-0 last:pb-0 ${
-                    index % 2 === 1 ? '[direction:rtl]' : ''
+                  className={`grid gap-10 border-b border-[var(--border)] py-16 last:border-b-0 last:pb-0 lg:grid-cols-2 lg:items-center lg:gap-14 ${
+                    index % 2 === 1 ? 'lg:[direction:rtl]' : ''
                   }`}
-                  style={{ gridTemplateColumns: '1fr 1fr', direction: index % 2 === 1 ? 'rtl' : 'ltr' }}
                 >
                   <div style={{ direction: 'ltr' }}>
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-[80px] font-bold leading-none text-[var(--border)]">{item.step}</div>
@@ -207,7 +206,7 @@ export default function ServicePage() {
         </section>
 
         <section className="py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[720px] px-12">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Deliverables</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>届けられるもの</h2>
             <div className="mt-10 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-8">
