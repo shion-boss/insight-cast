@@ -224,24 +224,37 @@ export function PublicFooter() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
-        <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
-        <div className="flex flex-wrap gap-5">
-          {[
-            { href: '/privacy', label: 'プライバシーポリシー' },
-            { href: '/terms', label: '利用規約' },
-            { href: '/tokushoho', label: '特定商取引法に基づく表記' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-xs text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {link.label}
-            </Link>
-          ))}
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
+          <div>
+            <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
+            <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">AIキャストによる取材で、<br />あなたのHPを継続的に育てます。</p>
+          </div>
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            {[
+              { heading: 'サービス', links: [{ href: '/service', label: 'サービス内容' }, { href: '/pricing', label: '料金プラン' }, { href: '/cast', label: 'キャスト紹介' }] },
+              { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/about', label: 'Insight Castについて' }, { href: '/faq', label: 'よくある質問' }] },
+              { heading: 'サポート', links: [{ href: '/contact', label: 'お問い合わせ' }, { href: '/privacy', label: 'プライバシーポリシー' }, { href: '/terms', label: '利用規約' }] },
+              { heading: 'アカウント', links: [{ href: '/auth/signup', label: '無料で始める' }, { href: '/auth/login', label: 'ログイン' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }] },
+            ].map((col) => (
+              <div key={col.heading}>
+                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mb-3">{col.heading}</p>
+                <ul className="space-y-2.5">
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>
+        <div className="mt-8 border-t border-[var(--border)] pt-6">
+          <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>
+        </div>
       </div>
     </footer>
   )
