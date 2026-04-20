@@ -8,6 +8,7 @@ import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
+type SupportPost = { url: string; title: string; summary: string }
 
 const MAX_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
@@ -39,6 +40,17 @@ export default function InterviewPage() {
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [focusThemeLabel, setFocusThemeLabel] = useState<string | null>('テーマ: お任せ')
+  const [supportPosts, setSupportPosts] = useState<{
+    ownPosts: SupportPost[]
+    competitorPosts: SupportPost[]
+    loading: boolean
+    error: string | null
+  }>({
+    ownPosts: [],
+    competitorPosts: [],
+    loading: false,
+    error: null,
+  })
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
@@ -139,6 +151,56 @@ export default function InterviewPage() {
     }
     init()
   }, [interviewId, projectId, router, sendMessageToAI, supabase])
+
+  const latestInterviewerMessage = [...messages].reverse().find((message) => message.role === 'interviewer')?.content ?? ''
+
+  useEffect(() => {
+    if (!interviewId || !latestInterviewerMessage.trim()) return
+
+    let cancelled = false
+    setSupportPosts((prev) => ({ ...prev, loading: true, error: null }))
+
+    async function loadSupport() {
+      try {
+        const res = await fetch(`/api/projects/${projectId}/interview/support`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            interviewId,
+            question: latestInterviewerMessage,
+          }),
+        })
+
+        if (!res.ok) throw new Error('request failed')
+        const json = await res.json() as {
+          ownPosts?: SupportPost[]
+          competitorPosts?: SupportPost[]
+        }
+
+        if (cancelled) return
+        setSupportPosts({
+          ownPosts: Array.isArray(json.ownPosts) ? json.ownPosts : [],
+          competitorPosts: Array.isArray(json.competitorPosts) ? json.competitorPosts : [],
+          loading: false,
+          error: null,
+        })
+      } catch {
+        if (cancelled) return
+        setSupportPosts({
+          ownPosts: [],
+          competitorPosts: [],
+          loading: false,
+          error: '関連記事はいま取得できていません。',
+        })
+      }
+    }
+
+    loadSupport()
+
+    return () => {
+      cancelled = true
+    }
+  }, [interviewId, latestInterviewerMessage, projectId])
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -304,6 +366,63 @@ export default function InterviewPage() {
 
       {/* 入力欄 */}
       <div className="bg-white border-t border-stone-100 px-4 py-4 flex-shrink-0">
+        {(supportPosts.loading || supportPosts.error || supportPosts.ownPosts.length > 0 || supportPosts.competitorPosts.length > 0) && (
+          <div className="max-w-2xl mx-auto mb-3 rounded-2xl border border-stone-200 bg-stone-50 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-medium text-stone-500">この質問と似たテーマを扱う記事</p>
+                <p className="mt-1 text-xs text-stone-400">自社HPの記事は内部リンク候補、競合記事は読み比べ用の参考です。</p>
+              </div>
+              {supportPosts.loading && <p className="text-xs text-stone-400">探しています...</p>}
+            </div>
+
+            {supportPosts.error && (
+              <p className="mt-3 text-xs text-stone-400">{supportPosts.error}</p>
+            )}
+
+            {supportPosts.ownPosts.length > 0 && (
+              <div className="mt-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-700">自社HPで似たテーマを扱う記事</p>
+                <div className="mt-2 grid gap-3">
+                  {supportPosts.ownPosts.map((post) => (
+                    <a
+                      key={post.url}
+                      href={post.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block rounded-xl border border-amber-100 bg-white px-4 py-3 transition-colors hover:border-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                    >
+                      <p className="text-sm font-medium text-stone-700">{post.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-stone-500">{post.summary}</p>
+                      <p className="mt-2 truncate text-[11px] text-stone-400">{post.url}</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {supportPosts.competitorPosts.length > 0 && (
+              <div className="mt-4">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-teal-700">競合で似たテーマを扱う記事</p>
+                <div className="mt-2 grid gap-3">
+                  {supportPosts.competitorPosts.map((post) => (
+                    <a
+                      key={post.url}
+                      href={post.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block rounded-xl border border-teal-100 bg-white px-4 py-3 transition-colors hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                    >
+                      <p className="text-sm font-medium text-stone-700">{post.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-stone-500">{post.summary}</p>
+                      <p className="mt-2 truncate text-[11px] text-stone-400">{post.url}</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         {submitError && (
           <div className="max-w-2xl mx-auto mb-3">
             <InterviewerSpeech

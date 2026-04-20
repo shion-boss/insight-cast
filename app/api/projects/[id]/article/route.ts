@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
+import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -46,6 +47,14 @@ export async function POST(
     .eq('id', user.id)
     .single()
 
+  const { data: auditRow } = await supabase
+    .from('hp_audits')
+    .select('raw_data')
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
   const char = getCharacter(interview.interviewer_type)
   const charName = char?.name ?? 'インタビュアー'
   const bizName = project?.name ?? project?.hp_url ?? '取材先'
@@ -62,6 +71,30 @@ export async function POST(
   ].filter(Boolean).join('\n')
 
   const themeInstruction = theme ? `\n\n## テーマ\n特に「${theme}」という観点で書いてください。` : ''
+  const ownBlogPosts = getStoredSiteBlogPosts((auditRow?.raw_data as Record<string, unknown> | null | undefined) ?? null)
+  const relevantOwnBlogPosts = ownBlogPosts.length > 0
+    ? (await selectRelevantBlogPosts({
+        query: [
+          theme ? `テーマ: ${theme}` : null,
+          interview.summary ? `インタビュー要約: ${interview.summary}` : null,
+          conversation.slice(0, 3000),
+        ].filter(Boolean).join('\n\n'),
+        ownPosts: ownBlogPosts,
+        maxOwnPosts: 3,
+        maxCompetitorPosts: 0,
+      })).ownPosts
+    : []
+
+  const internalLinkInstruction = relevantOwnBlogPosts.length > 0
+    ? `\n\n## 内部リンク候補
+${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.summary}`).join('\n')}
+
+## 内部リンクの使い方
+- 上の候補は自社HPの過去ブログです
+- 本文内で自然につながる箇所に、1〜3件のMarkdownリンクとして入れてください
+- インタビューで直接触れていなくても、読者の理解が深まるなら積極的に使ってください
+- 候補にないURLは作らないでください`
+    : ''
 
   let prompt: string
 
@@ -76,7 +109,7 @@ ${bizContext}
 
 ## インタビュー記録
 ${conversation}
-${themeInstruction}
+${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 一人称は「私」または「弊社」
@@ -95,7 +128,7 @@ ${bizContext}
 
 ## インタビュー記録
 ${conversation}
-${themeInstruction}
+${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - インタビュアーが「取材して発見した魅力」を語るスタイル
@@ -114,7 +147,7 @@ ${bizContext}
 
 ## インタビュー記録
 ${conversation}
-${themeInstruction}
+${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 最初に導入文（2〜3行）

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
+import { discoverSiteBlogPosts } from '@/lib/site-blog-support'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -125,6 +126,7 @@ export async function POST() {
     if (!mainMarkdown) return NextResponse.json({ error: 'fetch failed' }, { status: 400 })
 
     const audit = await analyzeHp(mainMarkdown)
+    const ownBlogPosts = await discoverSiteBlogPosts(profile.url)
 
     const competitorResults: { url: string; gaps: string[]; advantages: string[] }[] = []
     const competitorUrls: string[] = profile.competitor_urls ?? []
@@ -139,7 +141,10 @@ export async function POST() {
     await supabase
       .from('profiles')
       .update({
-        hp_audit_result:       audit,
+        hp_audit_result:       {
+          ...audit,
+          blog_posts: ownBlogPosts,
+        },
         competitor_audit_result: competitorResults.length > 0 ? competitorResults : null,
         audit_updated_at:      new Date().toISOString(),
       })

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { buildProjectAnalysisSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
+import { discoverSiteBlogPosts } from '@/lib/site-blog-support'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -261,6 +262,7 @@ export async function POST(
     const normalizedHpUrl = normalizeAnalysisUrl(project.hp_url)
 
     const audit = await analyzeHp(mainMarkdown)
+    const ownBlogPosts = await discoverSiteBlogPosts(project.hp_url)
     const auditPayload = {
       project_id: id,
       current_content: audit.current_content,
@@ -272,6 +274,7 @@ export async function POST(
         source_url: normalizedHpUrl,
         markdown_length: mainMarkdown.length,
         analyzed_at: new Date().toISOString(),
+        blog_posts: ownBlogPosts,
       },
     }
 
@@ -304,6 +307,7 @@ export async function POST(
           markdown_length: number
           analyzed_at: string
           influential_topics: Array<{ theme: string; summary: string }>
+          blog_posts: Array<{ url: string; title: string; summary: string }>
         }
       }> = []
 
@@ -311,6 +315,7 @@ export async function POST(
         const compMarkdown = await fetchMarkdown(comp.url)
         if (!compMarkdown) continue
         const result = await compareCompetitor(mainMarkdown, compMarkdown)
+        const competitorBlogPosts = await discoverSiteBlogPosts(comp.url, 4)
         competitorRows.push({
           project_id: id,
           competitor_id: comp.id,
@@ -322,6 +327,7 @@ export async function POST(
             markdown_length: compMarkdown.length,
             analyzed_at: new Date().toISOString(),
             influential_topics: result.influential_topics,
+            blog_posts: competitorBlogPosts,
           },
         })
       }
