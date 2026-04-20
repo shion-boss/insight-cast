@@ -21,16 +21,19 @@ type CompetitorAnalysis = {
   competitors:   { url: string } | null
 }
 
+type PostFrequencyEntry = { month: string; count: number }
+
 type Props = {
   projectId:          string
   initialStatus:      string
   audit:              Audit | null
   competitorAnalyses: CompetitorAnalysis[]
   interviewerPath:    string
+  postFrequency:      PostFrequencyEntry[]
 }
 
 export default function ReportClient({
-  projectId, initialStatus, audit, competitorAnalyses, interviewerPath,
+  projectId, initialStatus, audit, competitorAnalyses, interviewerPath, postFrequency,
 }: Props) {
   const [analysisError, setAnalysisError] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -109,7 +112,7 @@ export default function ReportClient({
               </Link>
             </div>
           ) : (
-            <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-stone-400')}>
+            <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-[var(--text3)]')}>
               <InterviewerSpeech
                 icon={<span className="animate-pulse"><CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} /></span>}
                 name="クラウス"
@@ -167,17 +170,66 @@ export default function ReportClient({
         description="インタビュー前の準備として結果をご覧ください。"
       />
 
+      {/* 投稿頻度グラフ */}
+      {postFrequency.length >= 2 && (() => {
+        const maxCount = Math.max(...postFrequency.map(e => e.count))
+        const scrollable = postFrequency.length > 12
+        return (
+          <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
+            <div>
+              <h2 className="text-sm font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
+              <p className="text-xs text-[var(--text3)] mt-1">URLから確認できた投稿日を月別に集計しています。</p>
+            </div>
+            <div className={scrollable ? 'overflow-x-auto' : ''}>
+              <div
+                className="flex items-end gap-1"
+                style={{
+                  height: '160px',
+                  minWidth: scrollable ? `${postFrequency.length * 36}px` : undefined,
+                }}
+              >
+                {postFrequency.map(({ month, count }) => {
+                  const heightPct = maxCount > 0 ? Math.round((count / maxCount) * 100) : 0
+                  const label = month.slice(2).replace('-', '/')
+                  return (
+                    <div
+                      key={month}
+                      className="flex flex-col items-center justify-end flex-1 min-w-0 h-full gap-1"
+                    >
+                      {count > 0 && (
+                        <span className="text-[10px] leading-none text-[var(--text3)]">{count}</span>
+                      )}
+                      <div
+                        className="w-full rounded-t-sm bg-[var(--accent)]"
+                        style={{ height: `${heightPct}%` }}
+                        aria-label={`${month}: ${count}件`}
+                      />
+                      <span
+                        className="text-[9px] leading-none text-[var(--text3)] truncate w-full text-center"
+                        title={month}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        )
+      })()}
+
       {/* 自社HP現状 */}
-      <section className="bg-white rounded-xl border border-stone-100 p-5 space-y-4">
-        <h2 className="text-sm font-medium text-stone-600">あなたのHPの現状</h2>
+      <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+        <h2 className="text-sm font-medium text-[var(--text2)]">あなたのHPの現状</h2>
 
         {audit.current_content && audit.current_content.length > 0 && (
           <div>
-            <p className="text-xs text-stone-400 mb-2">現在伝えていること</p>
+            <p className="text-xs text-[var(--text3)] mb-2">現在伝えていること</p>
             <ul className="space-y-1">
               {audit.current_content.map((item, i) => (
-                <li key={i} className="text-sm text-stone-600 flex gap-2">
-                  <span className="text-stone-300 flex-shrink-0">・</span>{item}
+                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                  <span className="text-[rgba(255,255,255,0.56)] flex-shrink-0">・</span>{item}
                 </li>
               ))}
             </ul>
@@ -186,10 +238,10 @@ export default function ReportClient({
 
         {audit.strengths && audit.strengths.length > 0 && (
           <div>
-            <p className="text-xs text-stone-400 mb-2">強みとして見えるもの</p>
+            <p className="text-xs text-[var(--text3)] mb-2">強みとして見えるもの</p>
             <ul className="space-y-1">
               {audit.strengths.map((item, i) => (
-                <li key={i} className="text-sm text-stone-600 flex gap-2">
+                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
                   <span className="text-green-400 flex-shrink-0">✓</span>{item}
                 </li>
               ))}
@@ -199,10 +251,10 @@ export default function ReportClient({
 
         {audit.gaps && audit.gaps.length > 0 && (
           <div>
-            <p className="text-xs text-stone-400 mb-2">伝えきれていないこと</p>
+            <p className="text-xs text-[var(--text3)] mb-2">伝えきれていないこと</p>
             <ul className="space-y-1">
               {audit.gaps.map((item, i) => (
-                <li key={i} className="text-sm text-stone-600 flex gap-2">
+                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
                   <span className="text-amber-400 flex-shrink-0">△</span>{item}
                 </li>
               ))}
@@ -213,19 +265,19 @@ export default function ReportClient({
 
       {/* 競合比較 */}
       {competitorAnalyses.length > 0 && (
-        <section className="bg-white rounded-xl border border-stone-100 p-5 space-y-4">
-          <h2 className="text-sm font-medium text-stone-600">競合との比較</h2>
+        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+          <h2 className="text-sm font-medium text-[var(--text2)]">競合との比較</h2>
           {competitorAnalyses.map((ca, i) => (
             <div key={i} className="space-y-3">
               {ca.competitors?.url && (
-                <p className="text-xs text-stone-400 truncate">{ca.competitors.url}</p>
+                <p className="text-xs text-[var(--text3)] truncate">{ca.competitors.url}</p>
               )}
               {ca.gaps && ca.gaps.length > 0 && (
                 <div>
-                  <p className="text-xs text-stone-400 mb-1">競合が伝えていてあなたのHPにないこと</p>
+                  <p className="text-xs text-[var(--text3)] mb-1">競合が伝えていてあなたのHPにないこと</p>
                   <ul className="space-y-1">
                     {ca.gaps.map((item, j) => (
-                      <li key={j} className="text-sm text-stone-600 flex gap-2">
+                      <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
                         <span className="text-red-300 flex-shrink-0">▲</span>{item}
                       </li>
                     ))}
@@ -234,10 +286,10 @@ export default function ReportClient({
               )}
               {ca.advantages && ca.advantages.length > 0 && (
                 <div>
-                  <p className="text-xs text-stone-400 mb-1">あなたのHPが競合より詳しいこと</p>
+                  <p className="text-xs text-[var(--text3)] mb-1">あなたのHPが競合より詳しいこと</p>
                   <ul className="space-y-1">
                     {ca.advantages.map((item, j) => (
-                      <li key={j} className="text-sm text-stone-600 flex gap-2">
+                      <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
                         <span className="text-green-400 flex-shrink-0">◎</span>{item}
                       </li>
                     ))}
@@ -246,12 +298,12 @@ export default function ReportClient({
               )}
               {ca.influentialTopics.length > 0 && (
                 <div>
-                  <p className="text-xs text-stone-400 mb-1">競合が前面に出しているテーマ</p>
+                  <p className="text-xs text-[var(--text3)] mb-1">競合が前面に出しているテーマ</p>
                   <ul className="space-y-2">
                     {ca.influentialTopics.map((topic, j) => (
-                      <li key={`${topic.theme}-${j}`} className="rounded-lg border border-stone-100 bg-stone-50 px-3 py-2">
-                        <p className="text-sm text-stone-700">{topic.theme}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-stone-500">{topic.summary}</p>
+                      <li key={`${topic.theme}-${j}`} className="rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2">
+                        <p className="text-sm text-[var(--text2)]">{topic.theme}</p>
+                        <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">{topic.summary}</p>
                       </li>
                     ))}
                   </ul>
@@ -264,12 +316,12 @@ export default function ReportClient({
 
       {/* インタビューテーマ */}
       {audit.suggested_themes && audit.suggested_themes.length > 0 && (
-        <section className="bg-white rounded-xl border border-stone-100 p-5 space-y-3">
-          <h2 className="text-sm font-medium text-stone-600">インタビューで深めたいテーマ</h2>
+        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
+          <h2 className="text-sm font-medium text-[var(--text2)]">インタビューで深めたいテーマ</h2>
           <ul className="space-y-2">
             {audit.suggested_themes.map((theme, i) => (
-              <li key={i} className="text-sm text-stone-600 flex gap-2">
-                <span className="text-stone-300 flex-shrink-0">💬</span>{theme}
+              <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                <span className="text-[rgba(255,255,255,0.56)] flex-shrink-0">💬</span>{theme}
               </li>
             ))}
           </ul>
@@ -278,7 +330,7 @@ export default function ReportClient({
 
       <Link
         href={interviewerPath}
-        className="block w-full py-4 bg-stone-800 text-white rounded-xl hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors text-sm text-center"
+        className="block w-full py-4 bg-[var(--text)] text-white rounded-xl hover:bg-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors text-sm text-center"
       >
         この内容をもとにインタビューを始める →
       </Link>

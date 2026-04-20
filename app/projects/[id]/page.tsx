@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
-import AppHeaderActions from '@/components/app-header-actions'
 import StartAnalysisButton from '@/components/start-analysis-button'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
-import { ButtonLink, CharacterAvatar, InterviewerSpeech, PageHeader, StatusPill, getButtonClass, getInteractivePanelClass, getPanelClass } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
+import { AppShell } from '@/components/app-shell'
 
 type InterviewRow = {
   id: string
@@ -44,17 +44,25 @@ function formatDateTime(value: string) {
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/')
+  let supabase
+  let user
+  try {
+    supabase = await createClient()
+    const authResult = await supabase.auth.getUser()
+    user = authResult.data.user
+  } catch {
+    redirect('/')
+  }
+  if (!user || !supabase) redirect('/')
+  const db = supabase!
 
-  const { data: profile } = await supabase
+  const { data: profile } = await db
     .from('profiles')
     .select('name')
     .eq('id', user.id)
     .maybeSingle()
 
-  const { data: project } = await supabase
+  const { data: project } = await db
     .from('projects')
     .select('id, name, hp_url, status, updated_at')
     .eq('id', id)
@@ -63,13 +71,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   if (!project) redirect('/dashboard')
 
-  const { data: interviewRows } = await supabase
+  const { data: interviewRows } = await db
     .from('interviews')
     .select('id, project_id, interviewer_type, status, summary, themes, created_at')
     .eq('project_id', id)
     .order('created_at', { ascending: false })
 
-  const { data: auditRow } = await supabase
+  const { data: auditRow } = await db
     .from('hp_audits')
     .select('id, raw_data')
     .eq('project_id', id)
@@ -77,12 +85,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     .limit(1)
     .maybeSingle()
 
-  const { data: competitors } = await supabase
+  const { data: competitors } = await db
     .from('competitors')
     .select('id, url')
     .eq('project_id', id)
 
-  const { data: competitorAnalyses } = await supabase
+  const { data: competitorAnalyses } = await db
     .from('competitor_analyses')
     .select('competitor_id, raw_data')
     .eq('project_id', id)
@@ -97,7 +105,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   let articles: ArticleRow[] = []
   if (interviews.length > 0) {
-    const { data: articleRows } = await supabase
+    const { data: articleRows } = await db
       .from('articles')
       .select('id, interview_id, article_type, title, created_at')
       .in('interview_id', interviews.map((interview) => interview.id))
@@ -117,97 +125,75 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const mint = getCharacter('mint')
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader
-        title={project.name || project.hp_url}
-        description={project.hp_url}
-        backHref="/projects"
-        backLabel="← 取材先一覧"
-        right={(
-          <AppHeaderActions active="projects" accountLabel={profile?.name ?? user.email ?? '設定'} />
-        )}
-      />
-
-      <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
-        <section className={getPanelClass('rounded-[2rem] p-6')}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <p className="text-xs text-stone-400">取材先</p>
-              <h1 className="mt-1 text-lg font-semibold text-stone-800">{project.name || project.hp_url}</h1>
-              <p className="mt-2 truncate text-sm text-stone-500">{project.hp_url}</p>
-              <p className="mt-1 text-xs text-stone-400">更新日: {formatDateTime(project.updated_at)}</p>
+    <AppShell
+      title={project.name || project.hp_url}
+      active="projects"
+      accountLabel={profile?.name ?? user.email ?? '設定'}
+      headerRight={(
+        <div className="flex items-center gap-2">
+          <Link href="/projects" className={getButtonClass('secondary', 'px-4 py-2.5 text-sm')}>
+            ← 一覧へ戻る
+          </Link>
+          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+            + 取材する
+          </Link>
+        </div>
+      )}
+      contentClassName="max-w-5xl"
+    >
+      {/* Overview panel */}
+      <div
+        className="rounded-[var(--r-lg)] border border-[var(--border)] p-7 mb-7"
+        style={{ background: 'linear-gradient(135deg,var(--accent-l),var(--teal-l))' }}
+      >
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-[32px]">🏢</div>
+              <div>
+                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
+                <div className="text-[13px] text-[var(--text2)]">🔗 {project.hp_url}</div>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 sm:min-w-52">
-              <Link
-                href={`/projects/${id}/interviewer`}
-                className={getButtonClass('primary')}
-              >
-                新しいインタビュー
-              </Link>
+            <div className="flex gap-2 flex-wrap">
               {!analysisReady || project.status === 'analysis_pending' ? (
-                <StartAnalysisButton
-                  projectId={id}
-                  projectName={project.name || project.hp_url}
-                  className={getButtonClass('secondary')}
-                />
+                <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
               ) : project.status === 'analyzing' ? (
-                <div className="inline-flex items-center justify-center rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-                  調査中
-                </div>
+                <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
               ) : (
-                <>
-                  <Link
-                    href={`/projects/${id}/report`}
-                    prefetch={false}
-                    className={getButtonClass('secondary')}
-                  >
-                    この取材先の調査結果を見る
-                  </Link>
-                  <StartAnalysisButton
-                    projectId={id}
-                    projectName={project.name || project.hp_url}
-                    force
-                    className={getButtonClass('secondary')}
-                  />
-                </>
+                <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
               )}
-            </div>
-          </div>
-        </section>
-
-        <section className={getPanelClass('rounded-[2rem] p-6')}>
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <p className="text-xs text-stone-400">競合設定</p>
-              <h2 className="mt-1 text-sm font-medium text-stone-800">
-                {competitors && competitors.length > 0 ? `${competitors.length}件の競合HPを設定中` : 'まだ競合HPは設定していません'}
-              </h2>
-              <p className="mt-2 text-xs leading-relaxed text-stone-500">
-                登録時と同じように、おすすめから選ぶことも、URLを手入力することもできます。
-              </p>
-
               {competitors && competitors.length > 0 && (
-                <ul className="mt-4 space-y-2">
-                  {competitors.map((competitor) => (
-                    <li
-                      key={competitor.id}
-                      className="truncate rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-xs text-stone-500"
-                    >
-                      {competitor.url}
-                    </li>
-                  ))}
-                </ul>
+                <span className="text-[11px] bg-[rgba(255,255,255,0.5)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">競合 {competitors.length}件</span>
               )}
             </div>
-
-            <Link
-              href={`/projects/${id}/competitors`}
-              className={getButtonClass('secondary')}
-            >
-              競合設定を見直す
-            </Link>
           </div>
-        </section>
+          <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
+            {[
+              { n: interviews.length, l: '取材回数' },
+              { n: articles.length, l: '記事素材' },
+              { n: formatDateTime(project.updated_at), l: '最終更新', small: true },
+            ].map((s) => (
+              <div key={s.l} className="rounded-[10px] px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.6)' }}>
+                <div
+                  className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]"
+                  style={{ fontSize: s.small ? 11 : 22 }}
+                >{s.n}</div>
+                <div className="text-[11px] text-[var(--text2)] mt-1">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Interview history */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">取材履歴</h2>
+          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'text-sm px-4 py-2')}>
+            + 新しく取材する
+          </Link>
+        </div>
 
         {interviews.length === 0 ? (
           <>
@@ -230,115 +216,134 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </div>
           </>
         ) : (
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-sm font-medium text-stone-800">インタビュー一覧</h2>
-              <p className="mt-1 text-xs text-stone-400">各インタビューに、その取材から作った記事をひもづけて見られます。</p>
-            </div>
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
+            {interviews.map((interview, i) => {
+              const interviewArticles = articlesByInterview.get(interview.id) ?? []
+              const char = getCharacter(interview.interviewer_type)
+              const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+              const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
 
-            <div className="space-y-4">
-              {interviews.map((interview) => {
-                const interviewArticles = articlesByInterview.get(interview.id) ?? []
-                const char = getCharacter(interview.interviewer_type)
-                const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
-                const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
-
-                return (
-                  <details key={interview.id} className={getPanelClass('group')} open={false}>
-                    <summary className="list-none p-5">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex min-w-0 items-start gap-3">
-                          <CharacterAvatar
-                            src={char?.icon48}
-                            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                            emoji={char?.emoji}
-                            size={44}
-                          />
-                          <div className="min-w-0">
-                            <p className="text-sm font-medium text-stone-800">{formatDateTime(interview.created_at)}</p>
-                            <p className="mt-1 text-xs text-stone-500">{char?.name ?? 'インタビュアー'} が担当</p>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
-                              {hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
-                              {hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center justify-between gap-3 sm:justify-end">
-                          <span className="text-xs text-stone-400">
-                            {interviewArticles.length > 0 ? `作成した記事 ${interviewArticles.length} 本` : 'まだ記事は作っていません'}
-                          </span>
-                          <span className="rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-500 transition group-open:bg-stone-800 group-open:text-white group-open:border-stone-800">
-                            <span className="group-open:hidden">開く</span>
-                            <span className="hidden group-open:inline">閉じる</span>
-                          </span>
-                        </div>
-                      </div>
-                    </summary>
-
-                    <div className="border-t border-stone-100 p-5 space-y-4">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-                        <Link
-                          href={managementHref}
-                          className={getButtonClass('secondary')}
-                        >
-                          {hasSummary ? '取材メモを見る' : 'インタビューを開く'}
-                        </Link>
-                        <Link
-                          href={`/projects/${id}/article?interviewId=${interview.id}`}
-                          className={getButtonClass('primary')}
-                        >
-                          {hasArticle ? '追加で記事を作る' : 'この取材から記事を作る'}
-                        </Link>
-                      </div>
-
-                      {interview.summary && (
-                        <div className="rounded-xl border border-stone-200/80 bg-stone-50/80 p-4">
-                          <p className="text-xs text-stone-400">取材メモ</p>
-                          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-stone-600">
-                            {interview.summary}
-                          </p>
-                        </div>
-                      )}
-
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between gap-3">
-                          <h3 className="text-sm font-medium text-stone-700">このインタビューから作った記事</h3>
-                        </div>
-
-                        {interviewArticles.length === 0 ? (
-                          <div className="rounded-xl border border-dashed border-stone-200 px-4 py-5 text-sm text-stone-400">
-                            まだ記事はありません。この取材から必要な記事を作れます。
-                          </div>
-                        ) : (
-                          <ul className="space-y-3">
-                            {interviewArticles.map((article) => (
-                              <li key={article.id}>
-                                <Link
-                                  href={`/projects/${id}/articles/${article.id}`}
-                                  className={getInteractivePanelClass('flex items-center justify-between gap-3 rounded-xl px-4 py-3')}
-                                >
-                                  <div className="min-w-0">
-                                    <p className="truncate text-sm font-medium text-stone-800">{article.title || '記事'}</p>
-                                    <p className="mt-1 text-xs text-stone-400">
-                                      {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
-                                    </p>
-                                  </div>
-                                  <span className="text-sm text-stone-300">→</span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+              return (
+                <div
+                  key={interview.id}
+                  className={`flex items-center gap-[14px] py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
+                >
+                  <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                    <CharacterAvatar
+                      src={char?.icon48}
+                      alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                      emoji={char?.emoji}
+                      size={38}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
+                      {char?.name ?? 'インタビュアー'} · {formatDateTime(interview.created_at)}
                     </div>
-                  </details>
-                )
-              })}
-            </div>
-          </section>
+                    <div className="text-[12px] text-[var(--text3)]">
+                      {interview.themes && interview.themes.length > 0
+                        ? interview.themes.join('、')
+                        : 'テーマ未確定'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {interviewArticles.length > 0 && (
+                      <span className="text-[11px] text-[var(--text3)]">記事 {interviewArticles.length}本</span>
+                    )}
+                    {hasSummary && <StatusPill tone="neutral">メモ</StatusPill>}
+                    {hasArticle && <StatusPill tone="success">記事</StatusPill>}
+                    {hasUncreatedThemes && <StatusPill tone="warning">未作成</StatusPill>}
+                    <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                      メモを見る
+                    </Link>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         )}
-      </main>
-    </div>
+      </div>
+
+      {/* Articles section */}
+      {articles.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">記事素材</h2>
+          </div>
+          <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--border)]">
+            <table className="w-full">
+              <thead className="bg-[var(--bg2)]">
+                <tr>
+                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
+                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
+                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">生成日</th>
+                  <th className="px-5 py-3"></th>
+                </tr>
+              </thead>
+              <tbody className="bg-[var(--surface)]">
+                {articles.map((article, i) => (
+                  <tr key={article.id} className={i < articles.length - 1 ? 'border-b border-[var(--border)]' : ''}>
+                    <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] max-w-[320px]">
+                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">{article.title || '記事'}</div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
+                        {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.created_at)}</td>
+                    <td className="px-5 py-3">
+                      <Link href={`/projects/${id}/articles/${article.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                        詳細
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Analysis / competitors section */}
+      <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-2">調査レポート</div>
+            <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
+            <p className="text-[13px] text-[var(--text2)] leading-relaxed">
+              {competitors && competitors.length > 0
+                ? `${competitors.length}件の競合HPを設定中。`
+                : 'まだ競合HPは設定していません。'}
+              調査結果から取材テーマが自動提案されます。
+            </p>
+          </div>
+          <div className="flex flex-col gap-2 flex-shrink-0">
+            {!analysisReady || project.status === 'analysis_pending' ? (
+              <StartAnalysisButton
+                projectId={id}
+                projectName={project.name || project.hp_url}
+                className={getButtonClass('secondary')}
+              />
+            ) : project.status === 'analyzing' ? (
+              <div className="inline-flex items-center justify-center rounded-xl border border-[var(--warn)]/30 bg-[var(--warn-l)] px-4 py-3 text-sm text-[var(--warn)]">
+                調査中
+              </div>
+            ) : (
+              <>
+                <Link href={`/projects/${id}/report`} prefetch={false} className={getButtonClass('secondary')}>
+                  調査結果を見る
+                </Link>
+                <StartAnalysisButton projectId={id} projectName={project.name || project.hp_url} force className={getButtonClass('secondary')} />
+              </>
+            )}
+            <Link href={`/projects/${id}/competitors`} className={getButtonClass('secondary')}>
+              競合設定を見直す
+            </Link>
+          </div>
+        </div>
+      </div>
+    </AppShell>
   )
 }

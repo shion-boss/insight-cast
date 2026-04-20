@@ -57,6 +57,42 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     redirect(resolvedStatus === 'report_ready' ? `/projects/${id}/report` : `/projects/${id}`)
   }
 
+  // 投稿頻度集計
+  type BlogPost = { url?: unknown; title?: unknown }
+  const blogPosts: BlogPost[] = Array.isArray(
+    (audit?.raw_data as Record<string, unknown> | null | undefined)?.blog_posts
+  )
+    ? ((audit!.raw_data as Record<string, unknown>).blog_posts as BlogPost[])
+    : []
+
+  function extractYearMonth(post: BlogPost): string | null {
+    const url = typeof post.url === 'string' ? post.url : ''
+    const title = typeof post.title === 'string' ? post.title : ''
+
+    // 優先度1: /2024/03 または /2024-03
+    const m1 = url.match(/[/_-](\d{4})[/_-](0[1-9]|1[0-2])(?:[/_-]|$)/)
+    if (m1) return `${m1[1]}-${m1[2]}`
+
+    // 優先度2: 8桁数字 20240315
+    const m2 = url.match(/(\d{4})(0[1-9]|1[0-2])\d{2}/)
+    if (m2) return `${m2[1]}-${m2[2]}`
+
+    // 優先度3: タイトル内 2024年3月
+    const m3 = title.match(/(\d{4})年(\d{1,2})月/)
+    if (m3) return `${m3[1]}-${m3[2].padStart(2, '0')}`
+
+    return null
+  }
+
+  const freqMap = new Map<string, number>()
+  for (const post of blogPosts) {
+    const ym = extractYearMonth(post)
+    if (ym) freqMap.set(ym, (freqMap.get(ym) ?? 0) + 1)
+  }
+  const postFrequency = Array.from(freqMap.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, count]) => ({ month, count }))
+
   type CompetitorAnalysisRow = {
     gaps: string[] | null
     advantages: string[] | null
@@ -81,6 +117,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         audit={audit}
         competitorAnalyses={competitorAnalyses ?? []}
         interviewerPath={`/projects/${id}/interviewer`}
+        postFrequency={postFrequency}
       />
     </div>
   )

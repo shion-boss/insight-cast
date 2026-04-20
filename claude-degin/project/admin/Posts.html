@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>記事管理 — Insight Cast Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.toggle{width:36px;height:20px;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+.toggle-knob{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const {useState}=React;
+const INIT_POSTS=[
+  {id:1,title:'ホームページを更新し続けるために必要な「取材思考」とは',slug:'interview-mindset',cat:'ノウハウ',date:'2026.04.10',published:true,type:'normal'},
+  {id:2,title:'AIキャスト「クラウス」が専門業種の強みを引き出す仕組み',slug:'claus-interview',cat:'サービス',date:'2026.03.28',published:true,type:'interview'},
+  {id:3,title:'工務店が3ヶ月でコンテンツを5本作った話',slug:'case-koumuten',cat:'事例',date:'2026.03.15',published:true,type:'interview'},
+  {id:4,title:'一次情報こそが、小規模事業者の唯一の差別化である',slug:'primary-info-value',cat:'思想',date:'2026.03.05',published:false,type:'normal'},
+  {id:5,title:'キャストの選び方ガイド：ミント・クラウス・レインの違いと使い分け',slug:'how-to-choose-cast',cat:'ノウハウ',date:'2026.02.20',published:true,type:'normal'},
+  {id:6,title:'HP分析レポートの読み方と、次の取材テーマの決め方',slug:'report-guide',cat:'サービス',date:'2026.02.08',published:true,type:'normal'},
+];
+
+function App(){
+  const [posts,setPosts]=useState(INIT_POSTS);
+  const toggle=(id)=>setPosts(ps=>ps.map(p=>p.id===id?{...p,published:!p.published}:p));
+  const [filter,setFilter]=useState('すべて');
+  const cats=['すべて','ノウハウ','サービス','事例','思想'];
+  const filtered=filter==='すべて'?posts:posts.filter(p=>p.cat===filter);
+
+  return(
+    <AdminShell active="記事管理" title="記事管理">
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          {cats.map(c=>(
+            <button key={c} onClick={()=>setFilter(c)} style={{padding:'6px 12px',borderRadius:100,fontSize:12,fontWeight:600,cursor:'pointer',border:'1.5px solid '+(filter===c?'var(--accent)':'var(--border)'),background:filter===c?'var(--accent)':'transparent',color:filter===c?'#fff':'var(--text2)',fontFamily:'var(--sans)',transition:'all .2s'}}>{c}</button>
+          ))}
+          <span style={{fontSize:13,color:'var(--text3)',marginLeft:4}}>{filtered.length}件</span>
+        </div>
+        <a className="btn btn-primary btn-sm" href="PostEdit.html">+ 新しい記事</a>
+      </div>
+
+      <div className="table-wrap">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>タイトル</th>
+              <th>カテゴリ</th>
+              <th>種類</th>
+              <th>公開日</th>
+              <th style={{textAlign:'center'}}>公開</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(p=>(
+              <tr key={p.id}>
+                <td style={{maxWidth:320}}>
+                  <div style={{fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginBottom:3}}>{p.title}</div>
+                  <div style={{fontSize:11,color:'var(--text3)'}}>/{p.slug}</div>
+                </td>
+                <td><span className="badge badge-gray">{p.cat}</span></td>
+                <td className="muted">{p.type==='interview'?'インタビュー':'通常'}</td>
+                <td className="muted">{p.date}</td>
+                <td style={{textAlign:'center'}}>
+                  <button
+                    className="toggle"
+                    style={{background:p.published?'var(--teal)':'var(--border)'}}
+                    onClick={()=>toggle(p.id)}
+                  >
+                    <div className="toggle-knob" style={{left:p.published?19:3}}/>
+                  </button>
+                </td>
+                <td>
+                  <div style={{display:'flex',gap:6}}>
+                    <a className="btn btn-ghost btn-xs" href="PostEdit.html">編集</a>
+                    <button className="btn btn-ghost btn-xs" style={{color:'var(--err)'}} onClick={()=>setPosts(ps=>ps.filter(x=>x.id!==p.id))}>削除</button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </AdminShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

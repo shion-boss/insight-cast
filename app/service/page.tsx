@@ -1,472 +1,234 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 
-import { ButtonLink, CharacterAvatar, SectionIntro, StatusPill, SurfaceCard } from '@/components/ui'
-import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
-import { getCharacter } from '@/lib/characters'
-
-import sceneCompetitorAnalysis from '@/assets/scene/scene-competitor-analysis.png'
-import sceneStoryPlanning from '@/assets/scene/scene-story-planning.png'
-import sceneTeamBreak from '@/assets/scene/scene-team-break.png'
+import { ButtonLink } from '@/components/ui'
+import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
-  description: 'Insight Cast がホームページ調査、競合比較、AI取材、記事素材化までをどう進めるかを紹介します。',
+  description: 'AI取材、HP分析、競合比較、記事素材化までの流れを紹介します。',
 }
 
-const serviceSteps = [
+const STEP_SUMMARY = [
+  { step: 'STEP 01', title: 'HPを分析する', body: 'URL入力だけ。AI が現状と競合を即座に調査。' },
+  { step: 'STEP 02', title: 'AIが取材する', body: 'キャストがチャットで丁寧に取材。話すだけで OK。' },
+  { step: 'STEP 03', title: '記事素材を届ける', body: '取材メモから記事の材料を自動生成。' },
+] as const
+
+const STEP_DETAILS = [
   {
     step: '01',
-    title: 'HP調査',
-    body: 'まず今のホームページを読み、何が伝わっていて何が埋もれているかを整理します。',
+    title: 'ホームページを分析する',
+    paragraphs: [
+      '取材先のURLを登録するだけで、AIが現状のホームページを解析。現在の情報量・訴求の強さ・不足しているコンテンツを可視化します。',
+      'さらに、主要な競合サイトと比較して「何が差別化になるか」「どこを掘り下げると差がつくか」を提案。取材の方向性を最初に固めます。',
+    ],
+    badges: ['自動収集', '競合比較', '取材テーマ提案'],
+    visual: 'analysis' as const,
   },
   {
     step: '02',
-    title: '競合比較',
-    body: '同業他社と並べながら、違いとして残せるポイントを洗い出します。',
+    title: 'AIキャストが取材する',
+    paragraphs: [
+      '分析結果をもとに、キャストがチャット形式で取材を行います。専門用語も難しい質問もありません。日常会話のように答えるだけで、価値が引き出されていきます。',
+      'ミント・クラウス・レインの3名が、それぞれ異なる切り口で取材します。',
+    ],
+    badges: ['チャット形式', '3種のキャスト', '20分程度'],
+    visual: 'chat' as const,
   },
   {
     step: '03',
-    title: 'AI取材',
-    body: '役割の違うキャストが、答えやすい質問で価値の輪郭を引き出します。',
-  },
-  {
-    step: '04',
-    title: '記事素材化',
-    body: '見出し、比較軸、発信テーマまで整えて、更新の手前までつなげます。',
-  },
-] as const
-
-const deliverables = [
-  'ホームページでまだ伝わっていない価値の整理',
-  '競合と比べて残る違いの候補',
-  'インタビューから見えた訴求ポイント',
-  '記事やLPに使える見出しと話材の下書き',
-] as const
-
-const castFlow = [
-  {
-    name: 'クラウス',
-    title: '調査と比較の視点',
-    body: 'ホームページと競合を先に読み、どこを深掘りすべきか論点を整理します。',
-  },
-  {
-    name: 'ミント',
-    title: '会話から魅力を拾う視点',
-    body: '安心感や人柄の価値を、構えず答えられる質問で引き出します。',
-  },
-  {
-    name: 'レイン',
-    title: '訴求へ変える視点',
-    body: 'お客様が選ぶ理由として、ホームページに載せる言葉へ整えていきます。',
-  },
-] as const
-
-const reports = [
-  {
-    title: '現在伝わっていること',
-    items: ['施工実績や対応エリアは見える', 'サービス内容の大枠は分かる', '問い合わせ導線は整っている'],
-  },
-  {
-    title: 'まだ埋もれていること',
-    items: ['説明の丁寧さが安心感につながっていること', '他社が断る案件への対応力', '判断基準や材料選びのこだわり'],
-  },
-  {
-    title: '取材で聞くべきこと',
-    items: ['図で説明する理由は何か', '相談時に特に気をつけていることは何か', '他社との違いが出る判断場面はどこか'],
-  },
-] as const
-
-const articleFormats = [
-  {
-    title: '通常記事',
-    tag: 'SEO・比較・解説向き',
-    body: '比較やFAQも交えながら、検索で読まれやすい構成に整えます。',
-  },
-  {
-    title: 'インタビュー風記事',
-    tag: '一次情報・人柄訴求向き',
-    body: '話した内容の温度を残しながら、本人らしい言葉が見える記事に仕立てます。',
-  },
-] as const
-
-const fitComparisons = [
-  {
-    title: '一般的なAIブログツールが向く場面',
-    body: 'すでに発信テーマが決まっていて、キーワード調査、SEO/GEO最適化、ブランドボイス運用を効率化したいとき。',
-    points: [
-      '記事制作の速度を上げたい',
-      'ブランドルールや編集体制がある',
-      '既存のマーケ運用を自動化したい',
+    title: '記事素材として届ける',
+    paragraphs: [
+      '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が自動生成されます。',
+      '記事のタイプ（インタビュー形式・通常記事）や文字量も選択可能。生成後はコピー・ダウンロードしてすぐに使えます。',
     ],
-    tone: 'default' as const,
-  },
-  {
-    title: 'Insight Cast が向く場面',
-    body: 'ホームページに価値はあるのに、何を書けばいいかがまだ固まっていないとき。会話から一次情報を引き出したいとき。',
-    points: [
-      '自分たちの強みをうまく言語化できない',
-      'FAQ、事例、サービス説明の芯が足りない',
-      '担当者や社長が答えられる形で進めたい',
-    ],
-    tone: 'warm' as const,
+    badges: ['取材メモ', '記事素材', 'コピー即使用'],
+    visual: 'article' as const,
   },
 ] as const
 
-const usageNotes = [
+const DELIVERABLES = [
   {
-    title: 'Insight Cast を先に使うと良いとき',
-    body: '何を書くべきかがまだ固まっていない、FAQや比較軸の材料が足りない、社長や担当者の言葉から価値を拾いたいときに向いています。',
+    title: 'HP調査レポート',
+    body: '現状ページの評価・競合比較・改善提案が一枚のレポートにまとまります。',
   },
   {
-    title: '他のAIブログツールを重ねやすいとき',
-    body: '発信テーマや編集体制が見えてきたら、SEO/GEO最適化、ブランドボイス運用、記事量産のためのSaaSと併用しやすくなります。',
+    title: '取材メモ',
+    body: 'AI取材の内容を整理した記録。抽出された強み・記事テーマ一覧が含まれます。',
+  },
+  {
+    title: '記事素材',
+    body: '取材メモから生成された記事のテキスト。ブログ・採用ページ・実績ページなどに使えます。',
   },
 ] as const
+
+function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }) {
+  if (type === 'analysis') {
+    return (
+      <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
+        <div className="flex items-center gap-2 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[13px] text-[var(--text2)]">
+          🔗 https://tanaka-kensetsu.example.jp
+        </div>
+        {[
+          ['現状評価', '情報が古く、施工実績が少ない'],
+          ['競合との差', '下地処理へのこだわりが未掲載'],
+          ['提案テーマ', '職人技・お客様エピソード'],
+        ].map(([label, value]) => (
+          <div key={label} className="flex items-center gap-[10px] py-[10px] px-3 rounded-[8px] bg-[var(--surface)] border border-[var(--border)] mb-[6px]">
+            <span className="text-[11px] bg-[var(--accent-l)] text-[var(--accent)] py-0.5 px-2 rounded-full font-semibold">
+              {label}
+            </span>
+            <span className="text-[13px] text-[var(--text)]">{value}</span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'chat') {
+    return (
+      <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
+        {[
+          { side: 'cast', text: 'お客様から「ありがとう」と言われた仕事を、最近で一つ教えてもらえますか？' },
+          { side: 'user', text: '先月、外壁塗装のお客さんに「また頼みたい」と連絡が来ました。' },
+          { side: 'cast', text: '嬉しいですね。その方が再依頼してくれた理由、心当たりはありますか？' },
+        ].map((message, index) => (
+          <div key={index} className={`flex ${message.side === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
+              className={`max-w-[82%] rounded-xl px-4 py-3 text-sm leading-7 ${
+                message.side === 'user'
+                  ? 'rounded-tr-sm bg-[var(--accent)] text-white'
+                  : 'rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
+              }`}
+            >
+              {message.text}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
+      <div className="rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-4">
+        <div className="text-[12px] font-bold text-[var(--accent)] mb-2">届いた記事素材</div>
+        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[14px] font-bold text-[var(--text)] mb-2 leading-[1.45]">
+          「また頼みたい」と言われる外壁塗装業者のこだわり
+        </div>
+        <div className="text-[12px] text-[var(--text2)] leading-[1.8]">
+          施工の質だけでなく、終わった後のフォローまで大切にしているのが田中建設の特徴です。先月、過去のお客様から再依頼の連絡が入りました…
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold">📋 コピー</button>
+        <button className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold">↓ ダウンロード</button>
+      </div>
+    </div>
+  )
+}
 
 export default function ServicePage() {
-  const claus = getCharacter('claus')
-  const rain = getCharacter('rain')
-
   return (
     <PublicPageFrame>
       <PublicHeader />
 
       <main className="relative z-10">
-        <PublicHero
-          eyebrow="Service"
-          title={<>調べて、聞いて、整えて、<br />更新できる状態まで運ぶ。</>}
-          description={(
-            <>
-              Insight Cast は、ホームページ調査、競合比較、AI取材、記事素材化を
-              ひとつの流れとしてまとめたサービスです。何を聞けばいいか分からないところから、
-              何を書けばいいか見えるところまで伴走します。
-            </>
-          )}
-          actions={(
-            <div className="space-y-5">
-              <div className="flex flex-wrap gap-3">
-                <StatusPill tone="neutral">URL登録から開始</StatusPill>
-                <StatusPill tone="neutral">競合比較も対応</StatusPill>
-                <StatusPill tone="success">記事の素まで残る</StatusPill>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup">無料で取材を始める</ButtonLink>
-                <ButtonLink href="/cast" tone="secondary">
-                  キャストを見る
-                </ButtonLink>
-              </div>
-            </div>
-          )}
-          aside={(
-            <SurfaceCard tone="soft" className="border-0 bg-transparent p-0">
-              <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">このページで分かること</p>
-              <div className="mt-4 space-y-3">
-                {serviceSteps.map((item) => (
-                  <div key={item.step} className="rounded-2xl border border-stone-300 bg-white px-4 py-4">
-                    <p className="text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">{item.step}</p>
-                    <p className="mt-2 text-sm font-semibold text-stone-950">{item.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-stone-700">{item.body}</p>
-                  </div>
-                ))}
-              </div>
-            </SurfaceCard>
-          )}
-        />
-
-        <section className="px-6 pb-10 sm:pb-14">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-stone-300 bg-[linear-gradient(135deg,rgba(255,252,246,0.97),rgba(255,248,240,0.94))] p-6 sm:p-8">
-              <Image
-                src={sceneCompetitorAnalysis}
-                alt="Insight Cast のキャストが競合分析をしている様子"
-                className="absolute inset-y-0 right-0 h-full w-[46%] object-cover opacity-12"
-              />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_left_top,rgba(251,191,36,0.14),transparent_34%),linear-gradient(90deg,rgba(255,255,255,0.94)_0%,rgba(255,255,255,0.9)_38%,rgba(255,255,255,0.84)_72%,rgba(255,255,255,0.92)_100%)]" />
-              <div className="relative grid gap-4 md:grid-cols-2">
-                <div className="rounded-[1.9rem] border border-white bg-white/94 p-5 backdrop-blur-sm">
-                  <p className="text-sm font-semibold text-stone-950">いきなり質問しないから、取材がぶれにくい</p>
-                  <p className="mt-2 text-sm leading-7 text-stone-700">
-                    ホームページと競合を先に見てから会話に入るので、聞く内容が感覚頼みになりません。
-                  </p>
-                </div>
-                <div className="rounded-[1.9rem] border border-white bg-white/94 p-5 backdrop-blur-sm">
-                  <p className="text-sm font-semibold text-stone-950">比較があるから、違いを言葉にしやすい</p>
-                  <p className="mt-2 text-sm leading-7 text-stone-700">
-                    強みを考えるのではなく、他社と比べて何が違うかを見ながら整理できる構成です。
-                  </p>
-                </div>
-              </div>
+        <section style={{ padding: '112px 0 80px', background: 'linear-gradient(135deg,#fdf8f2 0%,#f0e5d0 100%)' }} className="text-center">
+          <div className="mx-auto max-w-[1160px] px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Service</div>
+            <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] mx-auto" style={{ fontSize: 'clamp(28px,3.5vw,44px)', maxWidth: 680 }}>
+              AIが取材して、<br />記事の素材を届けるまで
+            </h1>
+            <p className="text-base text-[var(--text2)] mt-4 leading-relaxed mx-auto" style={{ maxWidth: 520 }}>
+              Insight Castは、HP分析・競合調査・AI取材・記事素材化の流れをひとつのサービスとして提供します。
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <ButtonLink href="/auth/signup" className="px-7 py-4">無料で始める →</ButtonLink>
+              <ButtonLink href="/pricing" tone="secondary" className="px-7 py-4">料金を見る</ButtonLink>
             </div>
           </div>
         </section>
 
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <SectionIntro
-              eyebrow="What We Deliver"
-              title={<>ホームページ改善に必要な材料を、<br />一連の流れで残します。</>}
-              description="単発の会話ではなく、調査から記事の芯までがつながるのがこのサービスの役割です。"
-              className="max-w-2xl"
-            />
-
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {deliverables.map((item) => (
-                <SurfaceCard key={item} className="rounded-[1.9rem] p-5" interactive>
-                  <p className="text-sm leading-7 text-stone-600">{item}</p>
-                </SurfaceCard>
+        <section className="py-14 bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[1160px] px-12">
+            <div className="grid grid-cols-3 gap-6">
+              {STEP_SUMMARY.map((item) => (
+                <div key={item.step} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">{item.step}</div>
+                  <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 text-[22px] font-bold text-[var(--text)]">{item.title}</h2>
+                  <p className="mt-3 text-sm leading-7 text-[var(--text2)]">{item.body}</p>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-center">
-              <div>
-                <SectionIntro
-                  eyebrow="Step 01"
-                  title={<>まず、今のホームページを<br />丁寧に読み込みます。</>}
-                  description="クラウスがホームページ全体を見て、すでに伝わっていること、まだ言葉になっていないこと、取材で聞くべきことを整理します。"
-                />
-              </div>
+        <section className="py-[88px]">
+          <div className="mx-auto max-w-[1160px] px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">詳しい流れ</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>3つのステップの中身</h2>
 
-              <SurfaceCard className="rounded-[2rem] p-6">
-                {claus && (
-                  <div className="flex items-center gap-4">
-                    <CharacterAvatar src={claus.icon96} alt={`${claus.name}のアイコン`} emoji={claus.emoji} size={56} className="border-stone-100" />
-                    <div>
-                      <p className="text-xs font-semibold tracking-[0.16em] text-stone-400 uppercase">{claus.label || 'Industry Insight'}</p>
-                      <h3 className="mt-2 text-2xl font-semibold text-stone-900">{claus.name}</h3>
-                      <p className="text-sm text-stone-500">{claus.species}</p>
+            <div className="mt-10">
+              {STEP_DETAILS.map((item, index) => (
+                <div
+                  key={item.step}
+                  className={`grid gap-14 items-center border-b border-[var(--border)] py-16 last:border-b-0 last:pb-0 ${
+                    index % 2 === 1 ? '[direction:rtl]' : ''
+                  }`}
+                  style={{ gridTemplateColumns: '1fr 1fr', direction: index % 2 === 1 ? 'rtl' : 'ltr' }}
+                >
+                  <div style={{ direction: 'ltr' }}>
+                    <div className="font-[family-name:var(--font-noto-serif-jp)] text-[80px] font-bold leading-none text-[var(--border)]">{item.step}</div>
+                    <h3 className="font-[family-name:var(--font-noto-serif-jp)] mt-4 text-[26px] font-bold text-[var(--text)] leading-[1.35]">{item.title}</h3>
+                    <div className="mt-4 space-y-3">
+                      {item.paragraphs.map((paragraph) => (
+                        <p key={paragraph} className="text-[15px] leading-[1.9] text-[var(--text2)]">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      {item.badges.map((badge) => (
+                        <span key={badge} className="rounded-full bg-[var(--accent-l)] px-3 py-1.5 text-xs font-semibold text-[var(--accent)]">
+                          {badge}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                )}
-                <div className="mt-5 space-y-3">
-                  {reports.map((block) => (
-                    <div key={block.title} className="rounded-[1.4rem] border border-stone-200 bg-stone-50/90 px-5 py-4">
-                      <p className="text-[11px] font-semibold tracking-[0.16em] text-stone-400 uppercase">{block.title}</p>
-                      <ul className="mt-2 space-y-1">
-                        {block.items.map((item) => (
-                          <li key={item} className="text-sm text-stone-700">
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </SurfaceCard>
-            </div>
-          </div>
-        </section>
 
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-stone-200/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.94),rgba(255,249,240,0.9))] p-7 sm:p-8">
-              <Image
-                src={sceneStoryPlanning}
-                alt="Insight Cast のキャストが取材の流れを組み立てている様子"
-                className="absolute inset-y-0 right-0 h-full w-[55%] object-cover opacity-14"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,252,246,0.97)_0%,rgba(255,252,246,0.92)_44%,rgba(255,252,246,0.76)_100%)]" />
-              <div className="relative grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-                <SectionIntro
-                  eyebrow="Step 02"
-                  title={<>次に、役割の違うキャストが<br />会話で価値を引き出します。</>}
-                  description="同じ質問を誰にでも投げるのではなく、何を見つけたいかに応じて視点を変えながら取材を進めます。"
-                />
-
-                <div className="space-y-4">
-                  {castFlow.map((item) => {
-                    const char = getCharacter(item.name === 'クラウス' ? 'claus' : item.name === 'ミント' ? 'mint' : 'rain')
-
-                    return (
-                      <div key={item.name} className="rounded-[1.7rem] border border-white/80 bg-white/84 px-5 py-5">
-                        <div className="flex items-center gap-3">
-                          {char && (
-                            <CharacterAvatar
-                              src={char.icon48}
-                              alt={`${char.name}のアイコン`}
-                              emoji={char.emoji}
-                              size={36}
-                              className="border-stone-100"
-                            />
-                          )}
-                          <div>
-                            <p className="text-sm font-semibold text-stone-900">{item.name}</p>
-                            <p className="text-xs text-stone-500">{item.title}</p>
-                          </div>
-                        </div>
-                        <p className="mt-3 text-sm leading-7 text-stone-500">{item.body}</p>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              <div>
-                <SectionIntro
-                  eyebrow="Step 03"
-                  title={<>引き出した言葉を、<br />更新できる形に整えます。</>}
-                  description="会話が終わったら、通常記事やインタビュー風記事に使える形で話材を整理します。見出し候補や比較軸も一緒に残るので、そのまま次の更新へ進めます。"
-                />
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {articleFormats.map((format) => (
-                    <div key={format.title} className="card-interactive rounded-[1.6rem] border border-stone-200 bg-white/92 p-5">
-                      <p className="text-sm font-semibold text-stone-900">{format.title}</p>
-                      <span className="mt-2 inline-flex rounded-full bg-stone-100 px-2.5 py-1 text-[11px] text-stone-500">
-                        {format.tag}
-                      </span>
-                      <p className="mt-3 text-sm leading-6 text-stone-500">{format.body}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <SurfaceCard tone="warm" className="rounded-[2rem] p-6">
-                {rain && (
-                  <div className="flex items-center gap-3">
-                    <CharacterAvatar src={rain.icon96} alt={`${rain.name}のアイコン`} emoji={rain.emoji} size={44} className="border-amber-100" />
-                    <div>
-                      <p className="font-semibold text-stone-900">{rain.name}の整理メモ</p>
-                      <p className="text-xs text-stone-400">見出し候補のイメージ</p>
-                    </div>
+                  <div style={{ direction: 'ltr' }}>
+                    <VisualPanel type={item.visual} />
                   </div>
-                )}
-                <div className="mt-5 rounded-[1.4rem] border border-amber-100 bg-white p-5">
-                  <p className="text-xs font-semibold tracking-[0.16em] text-stone-400 uppercase">Headline Draft</p>
-                  <p className="mt-2 text-lg font-semibold leading-8 text-stone-900">
-                    「図を書いて説明する」習慣が、
-                    <br />
-                    相談しやすさの理由だった
-                  </p>
                 </div>
-                <div className="mt-4 space-y-2">
-                  {[
-                    '口頭だけでなく図を使うことで、お客様の不安を減らしている',
-                    '説明の丁寧さが安心感につながり、初回相談のしやすさを生んでいる',
-                    '他社が断る案件を引き受ける判断基準が、専門性として差別化になる',
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-3 rounded-2xl border border-white/80 bg-white/84 px-4 py-3">
-                      <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
-                      <p className="text-sm leading-6 text-stone-700">{item}</p>
-                    </div>
-                  ))}
-                </div>
-              </SurfaceCard>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-              <SectionIntro
-                eyebrow="Where It Fits"
-                title={<>AIブログツールと、<br />置き換える関係ではありません。</>}
-                description="SEO/GEO、ブランドボイス、ワークフロー自動化を強く持つSaaSは、すでに回っている発信を伸ばすのが得意です。Insight Cast は、その前にある『何を伝えるべきか』を整える役割です。"
-              />
-
-              <div>
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {fitComparisons.map((item) => (
-                    <SurfaceCard key={item.title} tone={item.tone} className="rounded-[2rem] p-6">
-                      <p className="text-lg font-semibold text-stone-900">{item.title}</p>
-                      <p className="mt-3 text-sm leading-7 text-stone-600">{item.body}</p>
-                      <div className="mt-5 space-y-3">
-                        {item.points.map((point) => (
-                          <div key={point} className="flex items-start gap-3 rounded-2xl border border-white/80 bg-white/84 px-4 py-3">
-                            <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
-                            <p className="text-sm leading-6 text-stone-700">{point}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </SurfaceCard>
-                  ))}
+        <section className="py-[88px] bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[720px] px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Deliverables</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>届けられるもの</h2>
+            <div className="mt-10 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-8">
+              {DELIVERABLES.map((item, index) => (
+                <div
+                  key={item.title}
+                  className={`flex items-start gap-[14px] py-[14px] ${index < DELIVERABLES.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
+                >
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-[var(--accent-l)] text-lg">
+                    {index === 0 ? '📊' : index === 1 ? '📝' : '📄'}
+                  </div>
+                  <div>
+                    <div className="text-[15px] font-bold text-[var(--text)] mb-1">{item.title}</div>
+                    <div className="text-[13px] text-[var(--text2)] leading-[1.7]">{item.body}</div>
+                  </div>
                 </div>
-
-                <div className="mt-5 grid gap-4 md:grid-cols-2">
-                  {usageNotes.map((note) => (
-                    <div key={note.title} className="rounded-[1.8rem] border border-stone-200 bg-white/92 px-5 py-5">
-                      <p className="text-sm font-semibold text-stone-900">{note.title}</p>
-                      <p className="mt-2 text-sm leading-7 text-stone-600">{note.body}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-[2.4rem] border border-stone-200 bg-stone-900 p-8 text-white sm:p-10">
-              <Image
-                src={sceneTeamBreak}
-                alt="Insight Cast のキャストが休憩しながら話している様子"
-                className="absolute inset-y-0 right-0 h-full w-[44%] object-cover opacity-12"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(28,25,23,0.96)_0%,rgba(28,25,23,0.92)_55%,rgba(28,25,23,0.78)_100%)]" />
-              <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-                <div className="max-w-2xl">
-                  <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">Continuous Update</p>
-                  <h2 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                    一度で終わらず、
-                    <br />
-                    ホームページを育て続ける。
-                  </h2>
-                  <p className="mt-5 text-sm leading-8 text-stone-300">
-                    話すテーマを変えながら何度も取材を重ねることで、サービス紹介、事例、FAQ、お知らせまで
-                    ホームページ全体の言葉が少しずつ増えていきます。
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {[
-                    '1回目: 接客の安心感を言葉にする',
-                    '2回目: 専門性や判断基準を整理する',
-                    '3回目: 季節のおすすめや新サービスを発信する',
-                  ].map((item) => (
-                    <div key={item} className="rounded-2xl border border-white/10 bg-white/6 px-4 py-4 text-sm text-stone-200">
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="px-6 pb-20 pt-4">
-          <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.6rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_58%,_#7c5a31_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
-            <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Try The Service</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-              <div className="max-w-xl">
-                <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                  まず1回、取材の流れを体験してください。
-                </h2>
-                <p className="mt-4 text-sm leading-7 text-stone-200">
-                  登録無料・クレジットカード不要。最初の3人の取材班をすぐに試せます。
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
-                  無料で取材を始める
-                </ButtonLink>
-                <ButtonLink href="/pricing" tone="ghost" className="border-white/85 bg-white text-stone-950 hover:border-white/45 hover:bg-white/12 hover:text-white">
-                  料金を見る
-                </ButtonLink>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <PublicFooter />

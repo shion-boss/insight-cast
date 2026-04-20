@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -202,7 +203,7 @@ export default function InterviewPage() {
     }
   }, [interviewId, latestInterviewerMessage, projectId])
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!input.trim() || loading) return
     const text = input.trim()
@@ -246,7 +247,7 @@ export default function InterviewPage() {
 
   if (initializing) {
     return (
-      <div className="h-screen flex items-center justify-center bg-stone-50 px-6">
+      <div className="h-screen flex items-center justify-center bg-[var(--bg)] px-6">
         <div className="w-full max-w-md">
           <InterviewerSpeech
             icon={(
@@ -268,63 +269,58 @@ export default function InterviewPage() {
   }
 
   return (
-    <div className="h-screen bg-stone-50 flex flex-col overflow-hidden">
+    <div className="bg-[var(--bg)] h-screen flex flex-col overflow-hidden">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-stone-100 px-6 py-3 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => router.push(backHref)}
-            className="rounded-md text-xs text-stone-500 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-          >
-            {backLabel}
-          </button>
-          <div className="flex items-center gap-3">
-            <CharacterAvatar
-              src={char?.icon48}
-              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-              emoji={char?.emoji}
-              size={40}
-            />
-            <div>
-              <p className="text-sm font-medium text-stone-800">{char?.name}</p>
-              <p className="text-xs text-stone-400">{char?.specialty}</p>
-              {focusThemeLabel && (
-                <p className="mt-1 text-xs text-amber-700">{focusThemeLabel}</p>
-              )}
-            </div>
+      <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-6 gap-4 flex-shrink-0">
+        <button
+          type="button"
+          onClick={() => router.push(backHref)}
+          className="rounded-[var(--r-sm)] text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        >
+          {backLabel}
+        </button>
+        <div className="flex items-center gap-3 flex-1">
+          <CharacterAvatar
+            src={char?.icon48}
+            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+            emoji={char?.emoji}
+            size={40}
+            className="border-2 border-[var(--accent)]"
+          />
+          <div>
+            <p className="font-serif font-bold text-[var(--text)] text-sm">{char?.name}</p>
+            <p className="text-xs text-[var(--teal)]">{char?.specialty}</p>
+            {focusThemeLabel && (
+              <p className="mt-0.5 text-xs text-[var(--text3)]">{focusThemeLabel}</p>
+            )}
           </div>
         </div>
         <button
           onClick={handleManualFinish}
-          className="text-xs px-3 py-1.5 border border-stone-200 rounded-lg text-stone-500 hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors"
+          className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
         >
           インタビューを終わらせる
         </button>
       </header>
 
-      {/* 進捗バー（7ドット）- flex-shrink-0 で常に表示 */}
-      <div className="bg-white border-b border-stone-100 px-6 py-3 flex-shrink-0">
+      {/* 進捗バー */}
+      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-6 py-3 flex-shrink-0">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-stone-400">{getProgressLabel(userTurns)}</span>
-            <span className="text-xs text-stone-300">{Math.min(userTurns, MAX_TURNS)}/{MAX_TURNS}</span>
+            <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
+            <span className="text-xs text-[var(--text3)]">{Math.min(userTurns, MAX_TURNS)}/{MAX_TURNS}</span>
           </div>
-          <div className="flex gap-2 justify-center">
-            {Array.from({ length: MAX_TURNS }).map((_, i) => (
-              <div
-                key={i}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  i < userTurns ? 'bg-amber-400 scale-110' : 'bg-stone-200'
-                }`}
-              />
-            ))}
+          <div className="bg-[var(--border)] h-1 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-[var(--accent)] rounded-full transition-all duration-300"
+              style={{ width: `${Math.min((userTurns / MAX_TURNS) * 100, 100)}%` }}
+            />
           </div>
         </div>
       </div>
 
-      {/* 会話ログ（スクロール可能） */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4 max-w-2xl w-full mx-auto">
+      {/* 会話ログ */}
+      <div className="flex-1 overflow-y-auto p-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
@@ -333,15 +329,15 @@ export default function InterviewPage() {
                 alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
                 emoji={char?.emoji}
                 size={32}
-                className="mt-1 border-amber-100 bg-amber-50"
+                className="mt-1 border-[var(--border)] bg-[var(--accent-l)]"
               />
             )}
-            <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap leading-relaxed ${
+            <div className={`max-w-[68%] px-4 py-3 text-sm whitespace-pre-wrap leading-[1.75] ${
               msg.role === 'interviewer'
-                ? 'bg-white text-stone-700 rounded-tl-sm'
-                : 'bg-stone-800 text-white rounded-tr-sm'
+                ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
+                : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
             }`}>
-              {msg.content || <span className="text-stone-300">...</span>}
+              {msg.content || <span className="opacity-50">...</span>}
             </div>
           </div>
         ))}
@@ -352,10 +348,10 @@ export default function InterviewPage() {
               alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
               emoji={char?.emoji}
               size={32}
-              className="border-amber-100 bg-amber-50"
+              className="border-[var(--border)] bg-[var(--accent-l)]"
             />
-            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm">
-              <span className="text-stone-500 text-sm whitespace-pre-wrap leading-relaxed">
+            <div className="bg-[var(--surface)] border border-[var(--border)] px-4 py-3 rounded-2xl rounded-tl-sm">
+              <span className="text-[var(--text2)] text-sm whitespace-pre-wrap leading-[1.75]">
                 {streamingMessage || '考えをまとめています...'}
               </span>
             </div>
@@ -364,25 +360,25 @@ export default function InterviewPage() {
         <div ref={bottomRef} />
       </div>
 
-      {/* 入力欄 */}
-      <div className="bg-white border-t border-stone-100 px-4 py-4 flex-shrink-0">
+      {/* 入力エリア */}
+      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex-shrink-0">
         {(supportPosts.loading || supportPosts.error || supportPosts.ownPosts.length > 0 || supportPosts.competitorPosts.length > 0) && (
-          <div className="max-w-2xl mx-auto mb-3 rounded-2xl border border-stone-200 bg-stone-50 p-4">
+          <div className="max-w-2xl mx-auto mb-3 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--bg2)] p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-xs font-medium text-stone-500">この質問と似たテーマを扱う記事</p>
-                <p className="mt-1 text-xs text-stone-400">自社HPの記事は内部リンク候補、競合記事は読み比べ用の参考です。</p>
+                <p className="text-xs font-medium text-[var(--text2)]">この質問と似たテーマを扱う記事</p>
+                <p className="mt-1 text-xs text-[var(--text3)]">自社HPの記事は内部リンク候補、競合記事は読み比べ用の参考です。</p>
               </div>
-              {supportPosts.loading && <p className="text-xs text-stone-400">探しています...</p>}
+              {supportPosts.loading && <p className="text-xs text-[var(--text3)]">探しています...</p>}
             </div>
 
             {supportPosts.error && (
-              <p className="mt-3 text-xs text-stone-400">{supportPosts.error}</p>
+              <p className="mt-3 text-xs text-[var(--text3)]">{supportPosts.error}</p>
             )}
 
             {supportPosts.ownPosts.length > 0 && (
               <div className="mt-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-700">自社HPで似たテーマを扱う記事</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">自社HPで似たテーマを扱う記事</p>
                 <div className="mt-2 grid gap-3">
                   {supportPosts.ownPosts.map((post) => (
                     <a
@@ -390,11 +386,11 @@ export default function InterviewPage() {
                       href={post.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="block rounded-xl border border-amber-100 bg-white px-4 py-3 transition-colors hover:border-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                     >
-                      <p className="text-sm font-medium text-stone-700">{post.title}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-stone-500">{post.summary}</p>
-                      <p className="mt-2 truncate text-[11px] text-stone-400">{post.url}</p>
+                      <p className="text-sm font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="mt-2 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
                     </a>
                   ))}
                 </div>
@@ -403,7 +399,7 @@ export default function InterviewPage() {
 
             {supportPosts.competitorPosts.length > 0 && (
               <div className="mt-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-teal-700">競合で似たテーマを扱う記事</p>
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal)]">競合で似たテーマを扱う記事</p>
                 <div className="mt-2 grid gap-3">
                   {supportPosts.competitorPosts.map((post) => (
                     <a
@@ -411,11 +407,11 @@ export default function InterviewPage() {
                       href={post.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="block rounded-xl border border-teal-100 bg-white px-4 py-3 transition-colors hover:border-teal-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                     >
-                      <p className="text-sm font-medium text-stone-700">{post.title}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-stone-500">{post.summary}</p>
-                      <p className="mt-2 truncate text-[11px] text-stone-400">{post.url}</p>
+                      <p className="text-sm font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="mt-2 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
                     </a>
                   ))}
                 </div>
@@ -443,17 +439,17 @@ export default function InterviewPage() {
         )}
         <div className="max-w-2xl mx-auto">
           <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-xs text-stone-400">答えづらい質問は、無理せずパスして次へ進めます。</p>
+            <p className="text-xs text-[var(--text3)]">答えづらい質問は、無理せずパスして次へ進めます。</p>
             <button
               type="button"
               onClick={handlePassQuestion}
               disabled={loading}
-              className="rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-500 transition-colors hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer"
+              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-4 py-2.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
             >
               この質問はパス
             </button>
           </div>
-          <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+          <form onSubmit={handleSubmit} className="flex gap-3 items-end">
             <textarea
               ref={textareaRef}
               value={input}
@@ -461,19 +457,19 @@ export default function InterviewPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
                   e.preventDefault()
-                  handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
+                  handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
               placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
               disabled={loading}
               rows={3}
               autoFocus
-              className="flex-1 px-4 py-3 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 disabled:opacity-50 resize-none leading-relaxed"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors flex-shrink-0"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-5 py-2.5 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
             >
               {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
             </button>
@@ -484,31 +480,32 @@ export default function InterviewPage() {
       {/* 完了確認モーダル */}
       {showComplete && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
-            <div className="flex justify-center mb-3">
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]">
+            <div className="flex justify-center mb-4">
               <CharacterAvatar
                 src={char?.icon96}
                 alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
                 emoji={char?.emoji}
                 size={72}
+                className="border-2 border-[var(--accent)]"
               />
             </div>
-            <p className="text-stone-800 font-medium text-center mb-2">
+            <p className="text-[var(--text)] font-semibold text-center mb-2">
               いいお話がたくさん聞けました。
             </p>
-            <p className="text-sm text-stone-500 text-center mb-6">
+            <p className="text-sm text-[var(--text2)] text-center mb-6">
               これを記事の素材にまとめてもいいですか？
             </p>
             <div className="space-y-2">
               <button
                 onClick={handleFinish}
-                className="w-full py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors"
+                className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
               >
                 <DevAiLabel>はい、まとめてください</DevAiLabel>
               </button>
               <button
                 onClick={handleContinue}
-                className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-xl cursor-pointer transition-colors"
+                className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
               >
                 もう少し話す
               </button>

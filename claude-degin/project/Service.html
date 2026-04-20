@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サービス紹介 — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.step-detail{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:64px 0;border-bottom:1px solid var(--border)}
+.step-detail:last-child{border-bottom:none}
+.step-detail.rev{direction:rtl}.step-detail.rev>*{direction:ltr}
+.step-num-lg{font-family:var(--serif);font-size:80px;font-weight:700;color:var(--border);line-height:1;margin-bottom:16px}
+.step-detail h3{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--text);margin-bottom:16px;line-height:1.35}
+.step-detail p{font-size:15px;color:var(--text2);line-height:1.9;margin-bottom:12px}
+.step-visual{background:var(--bg2);border-radius:20px;border:1px solid var(--border);padding:32px;min-height:280px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.deliverable{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.deliverable:last-child{border-bottom:none}
+.del-icon{width:40px;height:40px;border-radius:10px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.del-t{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
+.del-sub{font-size:13px;color:var(--text2);line-height:1.7}
+.url-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2)}
+.analysis-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);margin-bottom:6px}
+.analysis-row .label-tag{font-size:11px;background:var(--accent-l);color:var(--accent);padding:2px 8px;border-radius:100px;font-weight:600}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="shared/components.jsx"></script>
+<script type="text/babel">
+const {useState} = React;
+
+const NAV=[['サービス','Service.html'],['料金','Pricing.html'],['キャスト','Cast.html'],['ブログ','Blog.html'],['About','About.html']];
+
+function Nav(){
+  const [sc,setSc]=useState(false);
+  React.useEffect(()=>{const f=()=>setSc(window.scrollY>20);window.addEventListener('scroll',f);return()=>window.removeEventListener('scroll',f);},[]);
+  return(
+    <nav className={`pub-nav${sc?' scrolled':''}`}>
+      <div className="pub-nav-inner">
+        <a className="pub-logo" href="Top Page.html">Insight <em>Cast</em></a>
+        <div className="pub-nav-links">{NAV.map(([l,h])=><a key={l} className={`pub-nav-link${l==='サービス'?' active':''}`} href={h}>{l}</a>)}</div>
+        <div className="flex gap-3"><a className="btn btn-ghost btn-sm" href="Login.html">ログイン</a><a className="btn btn-primary btn-sm" href="Signup.html">無料で試す →</a></div>
+      </div>
+    </nav>
+  );
+}
+
+function App(){
+  return(
+    <>
+    <Nav/>
+    {/* Hero */}
+    <section className="pub-hero-sm">
+      <div className="container text-center">
+        <div className="label">Service</div>
+        <h1 className="display mt-3" style={{maxWidth:680,margin:'12px auto 0'}}>AIが取材して、<br/>記事の素材を届けるまで</h1>
+        <p className="body-lg mt-4" style={{maxWidth:520,margin:'16px auto 0'}}>Insight Castは、HP分析・競合調査・AI取材・記事素材化の流れをひとつのサービスとして提供します。</p>
+        <div className="flex gap-3 justify-center mt-8" style={{marginTop:32}}>
+          <a className="btn btn-primary btn-lg" href="Signup.html">無料で始める →</a>
+          <a className="btn btn-outline" href="Pricing.html">料金を見る</a>
+        </div>
+      </div>
+    </section>
+
+    {/* Step Summary */}
+    <section className="section-sm" style={{background:'var(--bg2)'}}>
+      <div className="container">
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:24}}>
+          {[
+            {n:'STEP 01',t:'HPを分析する',sub:'URL入力だけ。AI が現状と競合を即座に調査。'},
+            {n:'STEP 02',t:'AIが取材する',sub:'キャストがチャットで丁寧に取材。話すだけで OK。'},
+            {n:'STEP 03',t:'記事素材を届ける',sub:'取材メモから記事の材料を自動生成。'},
+          ].map(s=>(
+            <div key={s.n} className="card">
+              <div className="label">{s.n}</div>
+              <div className="subheading mt-3">{s.t}</div>
+              <p className="body mt-3">{s.sub}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Step details */}
+    <section className="section">
+      <div className="container">
+        <div className="label">詳しい流れ</div>
+        <h2 className="heading mt-3">3つのステップの中身</h2>
+
+        {/* Step 01 */}
+        <div className="step-detail">
+          <div>
+            <div className="step-num-lg">01</div>
+            <h3>ホームページを分析する</h3>
+            <p>取材先のURLを登録するだけで、AIが現状のホームページを解析。現在の情報量・訴求の強さ・不足しているコンテンツを可視化します。</p>
+            <p>さらに、主要な競合サイトと比較して「何が差別化になるか」「どこを掘り下げると差がつくか」を提案。取材の方向性を最初に固めます。</p>
+            <div className="flex gap-3 mt-6" style={{marginTop:24}}>
+              <span className="badge badge-amber">自動収集</span>
+              <span className="badge badge-teal">競合比較</span>
+              <span className="badge badge-ok">取材テーマ提案</span>
+            </div>
+          </div>
+          <div className="step-visual">
+            <div className="url-box">🔗 https://tanaka-kensetsu.example.jp</div>
+            {[
+              {l:'現状評価',v:'情報が古く、施工実績が少ない'},
+              {l:'競合との差',v:'下地処理へのこだわりが未掲載'},
+              {l:'提案テーマ',v:'職人技・お客様エピソード'},
+            ].map(r=>(
+              <div className="analysis-row" key={r.l}>
+                <span className="label-tag">{r.l}</span>
+                <span style={{fontSize:13,color:'var(--text)'}}>{r.v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Step 02 */}
+        <div className="step-detail rev">
+          <div>
+            <div className="step-num-lg">02</div>
+            <h3>AIキャストが取材する</h3>
+            <p>分析結果をもとに、キャストがチャット形式で取材を行います。専門用語も難しい質問もありません。日常会話のように答えるだけで、価値が引き出されていきます。</p>
+            <p>ミント（Story Listener）・クラウス（Industry Editor）・レイン（Message Strategist）の3名が、それぞれ異なる切り口で取材します。</p>
+            <div className="flex gap-3 mt-6" style={{marginTop:24}}>
+              <span className="badge badge-amber">チャット形式</span>
+              <span className="badge badge-teal">3種のキャスト</span>
+              <span className="badge badge-ok">20分程度</span>
+            </div>
+          </div>
+          <div className="step-visual">
+            {[
+              {side:'cast',text:'お客様から「ありがとう」と言われた仕事を、最近で一つ教えてもらえますか？'},
+              {side:'user',text:'先月、外壁塗装のお客さんに「また頼みたい」と連絡が来ました。'},
+              {side:'cast',text:'嬉しいですね！その方が再依頼してくれた理由、心当たりはありますか？'},
+            ].map((m,i)=>(
+              <div key={i} style={{display:'flex',justifyContent:m.side==='user'?'flex-end':'flex-start'}}>
+                <div style={{maxWidth:'80%',padding:'10px 14px',borderRadius:12,fontSize:13,lineHeight:1.7,
+                  background:m.side==='cast'?'var(--surface)':'var(--accent)',
+                  color:m.side==='cast'?'var(--text)':'#fff',
+                  border:m.side==='cast'?'1px solid var(--border)':'none'}}>
+                  {m.text}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Step 03 */}
+        <div className="step-detail">
+          <div>
+            <div className="step-num-lg">03</div>
+            <h3>記事素材として届ける</h3>
+            <p>取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が自動生成されます。</p>
+            <p>記事のタイプ（インタビュー形式・通常記事）や文字量も選択可能。生成後はコピー・ダウンロードしてすぐに使えます。</p>
+            <div className="flex gap-3 mt-6" style={{marginTop:24}}>
+              <span className="badge badge-amber">取材メモ</span>
+              <span className="badge badge-teal">記事素材</span>
+              <span className="badge badge-ok">コピー即使用</span>
+            </div>
+          </div>
+          <div className="step-visual">
+            <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:16}}>
+              <div style={{fontSize:12,color:'var(--accent)',fontWeight:700,marginBottom:8}}>生成された記事素材</div>
+              <div style={{fontFamily:'var(--serif)',fontSize:14,fontWeight:700,color:'var(--text)',marginBottom:8,lineHeight:1.45}}>「また頼みたい」と言われる外壁塗装業者のこだわり</div>
+              <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.8}}>施工の質だけでなく、終わった後のフォローまで大切にしているのが田中建設の特徴です。先月、過去のお客様から再依頼の連絡が入りました…</div>
+            </div>
+            <div style={{display:'flex',gap:8}}>
+              <button style={{flex:1,padding:'8px',background:'var(--accent-l)',color:'var(--accent)',border:'none',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'var(--sans)'}}>📋 コピー</button>
+              <button style={{flex:1,padding:'8px',background:'var(--bg2)',color:'var(--text2)',border:'1px solid var(--border)',borderRadius:8,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'var(--sans)'}}>↓ ダウンロード</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Deliverables */}
+    <section className="section" style={{background:'var(--bg2)'}}>
+      <div className="container-sm">
+        <div className="label">Deliverables</div>
+        <h2 className="heading mt-3">届けられるもの</h2>
+        <div className="card mt-10" style={{marginTop:40}}>
+          {[
+            {icon:'📊',t:'HP調査レポート',sub:'現状ページの評価・競合比較・改善提案が一枚のレポートにまとまります。'},
+            {icon:'📝',t:'取材メモ',sub:'AI取材の内容を整理した記録。抽出された強み・記事テーマ一覧が含まれます。'},
+            {icon:'📄',t:'記事素材',sub:'取材メモから生成された記事のテキスト。ブログ・採用ページ・実績ページなどに使えます。'},
+          ].map(d=>(
+            <div className="deliverable" key={d.t}>
+              <div className="del-icon">{d.icon}</div>
+              <div><div className="del-t">{d.t}</div><div className="del-sub">{d.sub}</div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Final CTA */}
+    <div className="final-cta">
+      <h2>サービスを無料で体験する</h2>
+      <p>登録はメールアドレスだけ。まず1回、取材を体験してみてください。</p>
+      <div className="cta-actions">
+        <a className="btn btn-white btn-lg" href="Signup.html">無料で取材を始める →</a>
+        <a className="btn btn-ghost-white" href="Pricing.html">料金を見る</a>
+      </div>
+    </div>
+    <footer className="pub-footer"><div className="pub-footer-in"><div className="f-logo">Insight Cast</div><div className="f-links">{['プライバシーポリシー','利用規約','特定商取引法に基づく表記'].map(l=><span key={l} className="f-link">{l}</span>)}</div><div className="f-copy">© 2026 Insight Cast</div></div></footer>
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

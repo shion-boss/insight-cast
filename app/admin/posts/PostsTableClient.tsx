@@ -27,6 +27,25 @@ function formatDate(date: string): string {
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`
 }
 
+function ToggleSwitch({ on, onToggle, disabled }: { on: boolean; onToggle: () => void; disabled: boolean }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={onToggle}
+      disabled={disabled}
+      className="w-9 h-5 rounded-full relative transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50 disabled:pointer-events-none flex-shrink-0 cursor-pointer"
+      style={{ background: on ? 'var(--teal)' : 'var(--border)' }}
+    >
+      <span
+        className="block w-3.5 h-3.5 rounded-full bg-white absolute top-[3px] transition-[left] duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
+        style={{ left: on ? '19px' : '3px' }}
+      />
+    </button>
+  )
+}
+
 export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   const [rows, setRows] = useState(posts)
   const [isPending, startTransition] = useTransition()
@@ -51,63 +70,62 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   return (
     <div>
       {errorMsg && (
-        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {errorMsg}
         </div>
       )}
-      <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
-        {/* テーブルヘッダー */}
-        <div className="grid grid-cols-[1fr_100px_90px_90px_80px] gap-4 border-b border-stone-100 bg-stone-50 px-5 py-3 text-xs font-semibold text-stone-400 uppercase tracking-wider">
-          <span>タイトル</span>
-          <span>カテゴリ</span>
-          <span>公開日</span>
-          <span>状態</span>
-          <span />
+      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
+                <th className="px-4 py-3 text-center text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((post, i) => (
+                <tr
+                  key={post.id}
+                  className={`transition-colors hover:bg-[var(--bg2)] ${i < rows.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
+                >
+                  <td className="max-w-xs px-5 py-4">
+                    <p className="font-semibold text-[var(--text)] overflow-hidden text-ellipsis whitespace-nowrap mb-0.5">{post.title}</p>
+                    <p className="text-[11px] text-[var(--text3)]">/{post.slug}</p>
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <span className="bg-[var(--bg2)] text-[var(--text3)] text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-[var(--border)]">
+                      {CATEGORY_LABELS[post.category] ?? post.category}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
+                    {formatDate(post.date)}
+                  </td>
+                  <td className="px-4 py-4 text-center">
+                    <ToggleSwitch
+                      on={post.published}
+                      onToggle={() => handleToggle(post.id, post.published)}
+                      disabled={isPending}
+                    />
+                  </td>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/posts/${post.id}/edit`}
+                        className="text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      >
+                        編集
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        {rows.map((post, i) => (
-          <div
-            key={post.id}
-            className={`grid grid-cols-[1fr_100px_90px_90px_80px] items-center gap-4 px-5 py-4 ${
-              i < rows.length - 1 ? 'border-b border-stone-100' : ''
-            }`}
-          >
-            {/* タイトル */}
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-stone-800">{post.title}</p>
-              <p className="mt-0.5 truncate text-xs text-stone-400">/{post.slug}</p>
-            </div>
-
-            {/* カテゴリ */}
-            <span className="text-xs text-stone-500">
-              {CATEGORY_LABELS[post.category] ?? post.category}
-            </span>
-
-            {/* 日付 */}
-            <span className="text-xs text-stone-400">{formatDate(post.date)}</span>
-
-            {/* 公開切替 */}
-            <button
-              onClick={() => handleToggle(post.id, post.published)}
-              disabled={isPending}
-              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 disabled:pointer-events-none disabled:opacity-50 ${
-                post.published
-                  ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                  : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
-              }`}
-            >
-              {post.published ? '公開中' : '下書き'}
-            </button>
-
-            {/* 編集ボタン */}
-            <Link
-              href={`/admin/posts/${post.id}/edit`}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-            >
-              編集
-            </Link>
-          </div>
-        ))}
       </div>
     </div>
   )

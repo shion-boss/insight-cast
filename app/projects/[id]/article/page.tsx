@@ -4,17 +4,17 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
 type ArticleVolume = 'short' | 'medium' | 'long'
 
-const TABS: { type: ArticleType; label: string; emoji: string; desc: string }[] = [
-  { type: 'client',       label: 'クライアント視点', emoji: '🏪', desc: '事業者の言葉で語る読み物記事' },
-  { type: 'interviewer',  label: 'インタビュアー視点', emoji: '🎙️', desc: 'インタビュアーが伝える紹介記事' },
-  { type: 'conversation', label: '会話込み',          emoji: '💬', desc: 'Q&A形式のインタビュー記事' },
+const TABS: { type: ArticleType; label: string; desc: string }[] = [
+  { type: 'client',       label: 'ブログ記事',       desc: '事業者の言葉で語る読み物記事' },
+  { type: 'interviewer',  label: 'インタビュー形式',  desc: 'インタビュアーが伝える紹介記事' },
+  { type: 'conversation', label: '会話込み',          desc: 'Q&A形式のインタビュー記事' },
 ]
 
 const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
@@ -24,9 +24,9 @@ const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
 ]
 
 const VOLUME_OPTIONS: { value: ArticleVolume; label: string }[] = [
-  { value: 'short',  label: '短め（600字）' },
-  { value: 'medium', label: '普通（1200字）' },
-  { value: 'long',   label: '長め（2000字）' },
+  { value: 'short',  label: 'コンパクト' },
+  { value: 'medium', label: '標準' },
+  { value: 'long',   label: '詳細' },
 ]
 
 export default function ArticlePage() {
@@ -50,6 +50,7 @@ export default function ArticlePage() {
 
   const currentContent = contents[tab] ?? ''
   const isGenerated = !!currentContent
+  const isGenerating = generating === tab
 
   useEffect(() => {
     if (!interviewId) {
@@ -66,7 +67,9 @@ export default function ArticlePage() {
         .eq('id', interviewId)
         .single()
 
-      const nextThemes = Array.isArray(interview?.themes) ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0) : []
+      const nextThemes = Array.isArray(interview?.themes)
+        ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+        : []
       setAvailableThemes(nextThemes)
 
       if (nextThemes.length > 0) {
@@ -96,8 +99,8 @@ export default function ArticlePage() {
       body: JSON.stringify({
         interviewId,
         articleType: tab,
-        style:  tab === 'client' ? style  : undefined,
-        volume: tab === 'client' ? volume : undefined,
+        style:  tab === 'client' ? style : undefined,
+        volume,
         theme:  theme.trim() || undefined,
       }),
     })
@@ -135,198 +138,252 @@ export default function ArticlePage() {
     URL.revokeObjectURL(url)
   }
 
-  const currentTab = TABS.find(t => t.type === tab)!
+  const mint = getCharacter('mint')
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
+    <div className="min-h-screen bg-[var(--bg)]">
       <PageHeader title="記事を作る" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
-      <div className="max-w-2xl mx-auto px-6 py-8">
-        {/* タブ */}
-        <div className="flex gap-1 bg-stone-100 p-1 rounded-xl mb-6">
-          {TABS.map((t) => (
-            <button
-              key={t.type}
-              onClick={() => setTab(t.type)}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
-                tab === t.type ? 'bg-white text-stone-800' : 'text-stone-400 hover:text-stone-600'
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* breadcrumb */}
+        <nav className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
+          <Link href="/projects" className="hover:text-[var(--text2)] transition-colors">取材先一覧</Link>
+          <span>/</span>
+          <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors">取材先の管理</Link>
+          <span>/</span>
+          <Link
+            href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
+            className="hover:text-[var(--text2)] transition-colors"
+          >
+            取材メモ
+          </Link>
+          <span>/</span>
+          <span className="text-[var(--text2)]">記事素材を生成</span>
+        </nav>
 
-        {/* 未生成状態 */}
-        {!isGenerated && generating !== tab && (
-          <>
-            {error && (
-              <div className="mb-4">
-                <StateCard
-                  icon="✍️"
-                  title="いまは記事を用意できません。"
-                  description={error}
-                  tone="warning"
-                  align="left"
-                />
+        {/* 2カラムレイアウト */}
+        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-7 items-start">
+
+          {/* 設定パネル */}
+          <aside className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 lg:sticky lg:top-20">
+            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base mb-5">設定</p>
+
+            {/* 記事の種類 */}
+            <div className="mb-5">
+              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">記事の種類</p>
+              <div className="flex flex-wrap gap-2">
+                {TABS.map((t) => (
+                  <button
+                    key={t.type}
+                    onClick={() => setTab(t.type)}
+                    className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      tab === t.type
+                        ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                        : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
               </div>
-            )}
+            </div>
 
-            <div className="mb-4 rounded-xl border border-stone-100 bg-white p-4">
-              <p className="text-xs text-stone-500">記事テーマ</p>
-              <p className="mt-1 text-xs leading-relaxed text-stone-400">
-                インタビュー後に整理したテーマから選べます。
-              </p>
-
+            {/* テーマ */}
+            <div className="mb-5">
+              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">テーマ</p>
               {loadingThemes ? (
-                <p className="mt-3 text-sm text-stone-400">テーマを確認しています...</p>
+                <p className="text-sm text-[var(--text3)]">テーマを確認しています...</p>
               ) : availableThemes.length > 0 ? (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="space-y-2">
                   {availableThemes.map((item) => (
                     <button
                       key={item}
                       type="button"
                       onClick={() => setTheme(item)}
-                      className={`rounded-full px-3 py-2 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
+                      className={`w-full text-left flex items-center justify-between px-3.5 py-2.5 rounded-[var(--r-sm)] text-[13px] cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         theme === item
-                          ? 'bg-stone-800 text-white'
-                          : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
+                          ? 'bg-[var(--accent-l)] border border-[var(--accent)] text-[var(--accent)] font-semibold'
+                          : 'bg-[var(--bg2)] border border-[var(--border)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                       }`}
                     >
-                      {item}
+                      <span className="leading-[1.5]">{item}</span>
+                      {theme === item && <span className="flex-shrink-0 ml-2">✓</span>}
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="mt-3 text-sm text-stone-400">
-                  まだ選べるテーマがありません。取材メモを開くと、提案テーマを先に整理できます。
+                <p className="text-[13px] text-[var(--text3)] leading-[1.7]">
+                  まだ選べるテーマがありません。取材メモからテーマを整理できます。
                 </p>
               )}
             </div>
 
-            {/* クライアント視点のみ追加オプション */}
+            {/* ブログ記事のみ: 語尾スタイル */}
             {tab === 'client' && (
-              <div className="bg-white rounded-xl border border-stone-100 p-4 mb-4 space-y-4">
-                <div>
-                  <label className="block text-xs text-stone-500 mb-2">語尾スタイル</label>
-                  <div className="flex gap-2">
-                    {STYLE_OPTIONS.map(opt => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setStyle(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
-                          style === opt.value
-                            ? 'bg-stone-800 text-white'
-                            : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
-                        }`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs text-stone-500 mb-2">ボリューム</label>
-                  <div className="flex gap-2">
-                    {VOLUME_OPTIONS.map(opt => (
-                      <button
-                        key={opt.value}
-                        onClick={() => setVolume(opt.value)}
-                        className={`flex-1 py-2 px-3 rounded-lg text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors ${
-                          volume === opt.value
-                            ? 'bg-stone-800 text-white'
-                            : 'border border-stone-200 text-stone-600 hover:bg-stone-50'
-                        }`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
+              <div className="mb-5">
+                <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">語尾スタイル</p>
+                <div className="flex flex-wrap gap-2">
+                  {STYLE_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setStyle(opt.value)}
+                      className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                        style === opt.value
+                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                          : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-stone-100 p-8">
-              <InterviewerSpeech
-                icon={<CharacterAvatar src={getCharacter('mint')?.icon48} alt="ミントのアイコン" emoji={getCharacter('mint')?.emoji} size={48} />}
-                name="ミント"
-                title="どの記事を作りますか？"
-                description="インタビューの内容をもとに整えます。"
-                tone="soft"
-              />
-              <div className="mt-6 flex justify-center">
-                <PrimaryButton
-                  onClick={generate}
-                  className="px-6 py-3 text-sm"
-                >
-                  <DevAiLabel>この形で記事をまとめる</DevAiLabel>
-                </PrimaryButton>
+            {/* 全タイプ共通: 文字量 */}
+            <div className="mb-5">
+              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">文字量</p>
+              <div className="flex flex-wrap gap-2">
+                {VOLUME_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setVolume(opt.value)}
+                    className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      volume === opt.value
+                        ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                        : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
-            </div>
-          </>
-        )}
-
-        {/* 生成中 */}
-        {generating === tab && (
-          <div className="space-y-4">
-            <InterviewerSpeech
-              icon={<span className="animate-pulse"><CharacterAvatar src={getCharacter('mint')?.icon48} alt="ミントのアイコン" emoji={getCharacter('mint')?.emoji} size={48} /></span>}
-              name="ミント"
-              title="記事を整えています"
-              description="少しお待ちください。"
-              tone="soft"
-            />
-            {currentContent && (
-              <pre className="mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed text-stone-700">
-                {currentContent}
-              </pre>
-            )}
-          </div>
-        )}
-
-        {/* 生成済み */}
-        {isGenerated && generating !== tab && (
-          <>
-            <div className="bg-white rounded-xl border border-stone-100 p-6 mb-4">
-              <pre className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed font-sans max-h-[60vh] overflow-y-auto">
-                {currentContent}
-              </pre>
-            </div>
-
-            <div className="flex gap-2 mb-4">
-              <SecondaryButton
-                onClick={handleCopy}
-                className="flex-1 py-2 text-sm"
-              >
-                {copied ? 'コピーしました ✓' : 'コピーする'}
-              </SecondaryButton>
-              <SecondaryButton
-                onClick={handleDownload}
-                className="flex-1 py-2 text-sm"
-              >
-                テキストでダウンロード
-              </SecondaryButton>
             </div>
 
             <button
               onClick={generate}
-              className="w-full py-2 text-sm text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors border border-stone-100 rounded-xl"
+              disabled={isGenerating}
+              className="w-full flex items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer mt-2"
             >
-              <DevAiLabel>もう一度まとめる</DevAiLabel>
+              {isGenerating
+                ? <DevAiLabel>まとめています...</DevAiLabel>
+                : <DevAiLabel>記事素材を生成する →</DevAiLabel>
+              }
             </button>
-          </>
-        )}
+            {isGenerated && !isGenerating && (
+              <p className="mt-2.5 text-[12px] text-[var(--teal)] text-center font-semibold">✓ 生成完了</p>
+            )}
+          </aside>
 
-        <div className="mt-6">
+          {/* プレビューパネル */}
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
+            {/* プレビューヘッダー */}
+            <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <span className="bg-[var(--accent-l)] text-[var(--accent)] text-[10px] font-semibold px-2.5 py-0.5 rounded-full">
+                  {TABS.find(t => t.type === tab)?.label ?? tab}
+                </span>
+              </div>
+              {isGenerated && !isGenerating && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCopy}
+                    className="border border-[var(--border)] text-[var(--text2)] hover:bg-[var(--bg)] rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+                  >
+                    {copied ? '✓ コピー済み' : 'コピー'}
+                  </button>
+                  <button
+                    onClick={handleDownload}
+                    className="text-[var(--text3)] hover:text-[var(--text2)] rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+                  >
+                    ↓ ダウンロード
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* コンテンツ */}
+            {!isGenerated && !isGenerating && (
+              <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
+                {error ? (
+                  <StateCard
+                    icon="✍️"
+                    title="いまは記事を用意できません。"
+                    description={error}
+                    tone="warning"
+                    align="left"
+                  />
+                ) : (
+                  <>
+                    <InterviewerSpeech
+                      icon={
+                        <CharacterAvatar
+                          src={mint?.icon48}
+                          alt="ミントのアイコン"
+                          emoji={mint?.emoji}
+                          size={48}
+                        />
+                      }
+                      name="ミント"
+                      title="設定を選んで「記事素材を生成する」を押してください"
+                      description="取材の内容をもとに、記事の素材を整えます。"
+                      tone="soft"
+                    />
+                  </>
+                )}
+              </div>
+            )}
+
+            {isGenerating && (
+              <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
+                <InterviewerSpeech
+                  icon={
+                    <span className="animate-pulse">
+                      <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />
+                    </span>
+                  }
+                  name="ミント"
+                  title="取材メモから記事を整えています"
+                  description="少しお待ちください。"
+                  tone="soft"
+                />
+                {currentContent && (
+                  <pre className="w-full mt-4 whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)] max-h-[40vh] overflow-y-auto">
+                    {currentContent}
+                  </pre>
+                )}
+              </div>
+            )}
+
+            {isGenerated && !isGenerating && (
+              <div className="p-8">
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-[1.9] text-[var(--text)] max-h-[60vh] overflow-y-auto">
+                  {currentContent}
+                </pre>
+                <div className="mt-6 pt-5 border-t border-[var(--border)]">
+                  <button
+                    onClick={generate}
+                    className="w-full py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
+                  >
+                    <DevAiLabel>もう一度まとめる</DevAiLabel>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 下部リンク */}
+        <div className="mt-6 flex flex-wrap gap-4 justify-center">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md transition-colors"
+            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
           >
             取材に戻って話を足す
           </Link>
           <Link
             href={`/projects/${projectId}`}
-            className="mt-3 block text-center text-sm text-stone-300 hover:text-stone-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-md transition-colors"
+            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
           >
             取材先の管理に戻る
           </Link>

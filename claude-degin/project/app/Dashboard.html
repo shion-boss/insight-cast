@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ダッシュボード — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px}
+.stat-n{font-family:var(--serif);font-size:34px;font-weight:700;color:var(--text);line-height:1}
+.stat-l{font-size:13px;color:var(--text2);margin-top:6px}
+.stat-delta{font-size:12px;color:var(--teal);margin-top:4px;font-weight:600}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-head h2{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--text)}
+.project-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:box-shadow .2s}
+.project-card:hover{box-shadow:0 4px 20px var(--shadow)}
+.project-icon{width:44px;height:44px;border-radius:10px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.project-meta{flex:1;min-width:0}
+.project-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.project-sub{font-size:12px;color:var(--text3)}
+.interview-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.interview-row:last-child{border-bottom:none}
+.cast-dot{width:32px;height:32px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1.5px solid var(--border)}
+.cast-dot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.qa-btn{background:var(--surface);border:1.5px dashed var(--border);border-radius:var(--r-lg);padding:20px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;transition:all .2s;text-decoration:none}
+.qa-btn:hover{border-color:var(--accent);background:var(--accent-l)}
+.qa-icon{font-size:28px}
+.qa-label{font-size:13px;font-weight:600;color:var(--text2)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const {useState}=React;
+const PROJECTS=[
+  {name:'田中建設株式会社',icon:'🏗',sub:'最終取材: 2日前',status:'badge-ok',statusL:'取材済み'},
+  {name:'やまと整骨院',icon:'🏥',sub:'最終取材: 1週間前',status:'badge-warn',statusL:'分析中'},
+  {name:'フローリスト花みどり',icon:'🌸',sub:'最終取材: 2週間前',status:'badge-gray',statusL:'下書き'},
+  {name:'カフェ・プリムラ',icon:'☕',sub:'最終取材: 1ヶ月前',status:'badge-gray',statusL:'未取材'},
+];
+const INTERVIEWS=[
+  {cast:'ミント',img:'../uploads/portrait-half-e56f0f59.png',project:'田中建設株式会社',date:'2026.04.10',status:'badge-ok',statusL:'完了'},
+  {cast:'クラウス',img:'../uploads/portrait-half.png',project:'やまと整骨院',date:'2026.04.03',status:'badge-ok',statusL:'完了'},
+  {cast:'レイン',img:'../uploads/portrait-half-c748dc68.png',project:'田中建設株式会社',date:'2026.03.28',status:'badge-ok',statusL:'完了'},
+  {cast:'ミント',img:'../uploads/portrait-half-e56f0f59.png',project:'フローリスト花みどり',date:'2026.03.20',status:'badge-warn',statusL:'途中'},
+];
+
+function App(){
+  const hour=new Date().getHours();
+  const greet=hour<12?'おはようございます':'こんにちは';
+  return(
+    <AppShell active="ダッシュボード" title="ダッシュボード" headerRight={
+      <a className="btn btn-primary btn-sm" href="Projects.html">+ 取材先を追加</a>
+    }>
+      {/* Greeting */}
+      <div style={{marginBottom:28,padding:'24px 28px',background:'linear-gradient(135deg,var(--accent-l),var(--teal-l))',borderRadius:20,border:'1px solid var(--border)'}}>
+        <div style={{fontFamily:'var(--serif)',fontSize:22,fontWeight:700,color:'var(--text)',marginBottom:6}}>{greet}、山田さん 👋</div>
+        <div style={{fontSize:14,color:'var(--text2)'}}>今月の取材残り: <strong>1回</strong>（Free プラン・月2回まで）</div>
+        <div style={{marginTop:12,display:'flex',gap:8}}>
+          <div style={{height:6,flex:1,background:'var(--accent)',borderRadius:3}}/>
+          <div style={{height:6,flex:1,background:'var(--border)',borderRadius:3}}/>
+        </div>
+        <div style={{fontSize:12,color:'var(--text3)',marginTop:6}}>1 / 2 回使用済み</div>
+      </div>
+
+      {/* Stats */}
+      <div className="stat-grid">
+        {[
+          {n:'4',l:'取材先',d:'先月比 +1'},
+          {n:'12',l:'完了した取材',d:'先月比 +3'},
+          {n:'8',l:'生成した記事',d:'先月比 +2'},
+          {n:'2',l:'今月の残り取材',d:'Free プラン'},
+        ].map(s=>(
+          <div key={s.l} className="stat-card">
+            <div className="stat-n">{s.n}</div>
+            <div className="stat-l">{s.l}</div>
+            <div className="stat-delta">{s.d}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick actions */}
+      <div className="quick-actions">
+        <a className="qa-btn" href="Projects.html">
+          <div className="qa-icon">🏢</div>
+          <div className="qa-label">取材先を追加する</div>
+        </a>
+        <a className="qa-btn" href="Project.html">
+          <div className="qa-icon">🎤</div>
+          <div className="qa-label">取材を続ける</div>
+        </a>
+        <a className="qa-btn" href="Articles.html">
+          <div className="qa-icon">📄</div>
+          <div className="qa-label">記事素材を確認する</div>
+        </a>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+        {/* Projects */}
+        <div>
+          <div className="section-head">
+            <h2>取材先一覧</h2>
+            <a className="btn btn-ghost btn-sm" href="Projects.html">すべて見る →</a>
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            {PROJECTS.map(p=>(
+              <a key={p.name} className="project-card" href="Project.html">
+                <div className="project-icon">{p.icon}</div>
+                <div className="project-meta">
+                  <div className="project-name">{p.name}</div>
+                  <div className="project-sub">{p.sub}</div>
+                </div>
+                <span className={`badge ${p.status}`}>{p.statusL}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent interviews */}
+        <div>
+          <div className="section-head">
+            <h2>最近の取材</h2>
+            <a className="btn btn-ghost btn-sm" href="Interviews.html">すべて見る →</a>
+          </div>
+          <div className="card" style={{padding:'4px 20px'}}>
+            {INTERVIEWS.map((iv,i)=>(
+              <div key={i} className="interview-row">
+                <div className="cast-dot"><img src={iv.img} alt={iv.cast}/></div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:2}}>{iv.project}</div>
+                  <div style={{fontSize:12,color:'var(--text3)'}}>{iv.cast} · {iv.date}</div>
+                </div>
+                <span className={`badge ${iv.status}`}>{iv.statusL}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

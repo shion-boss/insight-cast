@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取材メモ — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.summary-grid{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+.summary-main{display:flex;flex-direction:column;gap:20px}
+.value-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--accent-l);color:var(--accent);border-radius:100px;font-size:13px;font-weight:600;border:1px solid rgba(194,114,42,.2)}
+.theme-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;cursor:pointer;transition:box-shadow .2s}
+.theme-card:hover{box-shadow:0 4px 16px var(--shadow)}
+.theme-title{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;line-height:1.4}
+.theme-sub{font-size:13px;color:var(--text2);line-height:1.7}
+.log-item{padding:16px 0;border-bottom:1px solid var(--border);display:flex;gap:12px}
+.log-item:last-child{border-bottom:none}
+.log-side{font-size:11px;font-weight:600;width:48px;flex-shrink:0;padding-top:2px}
+.log-side.cast{color:var(--accent)}
+.log-side.user{color:var(--teal)}
+.log-text{font-size:14px;color:var(--text);line-height:1.78;flex:1}
+.sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;margin-bottom:16px}
+.sidebar-card h3{font-family:var(--serif);font-size:15px;font-weight:700;color:var(--text);margin-bottom:14px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const {useState}=React;
+const VALUES=['下地処理へのこだわり','再依頼されるアフターフォロー','職人との信頼関係','お客様への安心感','長く住み続けられる施工'];
+const THEMES=[
+  {t:'「また頼みたい」と言われる外壁塗装業者のこだわり',sub:'下地処理と施工後フォローを軸にしたブログ記事'},
+  {t:'老夫婦から届いた「住み続けられる気がした」という言葉',sub:'お客様エピソードを主軸にしたインタビュー形式記事'},
+  {t:'塗装業者が選ばれ続ける理由：職人の判断基準とは',sub:'専門性・こだわりを伝える読み物記事'},
+];
+const LOG=[
+  {side:'cast',text:'こんにちは！ミントです。今日は田中建設さんのお話を聞かせてもらいますね。まず、仕事をしていて「ああ、この仕事をやっていてよかったな」と思った瞬間を、最近で一つ教えていただけますか？'},
+  {side:'user',text:'去年、外壁塗装をした老夫婦のお客さんに「ここに住み続けられる気がした」って言ってもらえたのがうれしかったです。'},
+  {side:'cast',text:'素敵なエピソードですね。「住み続けられる気がした」という言葉、印象的です。その工事でこだわったことは何かありましたか？'},
+  {side:'user',text:'下地処理を丁寧にやりました。見えないところですが、そこが長持ちするかどうかを決めるので。'},
+  {side:'cast',text:'それは大切なこだわりですね。他の業者と比べて、その下地処理は珍しいですか？'},
+  {side:'user',text:'手間がかかるので省く業者も多いと聞きます。うちは絶対に省かないと決めています。'},
+];
+
+function App(){
+  const [logOpen,setLogOpen]=useState(false);
+  return(
+    <AppShell active="取材先一覧" title="取材メモ" headerRight={
+      <div className="flex gap-3">
+        <a className="btn btn-outline btn-sm" href="Project.html">← 取材先に戻る</a>
+        <a className="btn btn-primary btn-sm" href="Article.html">記事素材を生成する →</a>
+      </div>
+    }>
+      <div className="breadcrumb">
+        <a href="Projects.html">取材先一覧</a>
+        <span className="breadcrumb-sep">/</span>
+        <a href="Project.html">田中建設株式会社</a>
+        <span className="breadcrumb-sep">/</span>
+        <span>取材メモ</span>
+      </div>
+
+      {/* Cast intro */}
+      <div style={{display:'flex',alignItems:'center',gap:16,padding:'20px 24px',background:'var(--accent-l)',borderRadius:'var(--r-lg)',border:'1px solid rgba(194,114,42,.2)',marginBottom:24}}>
+        <img src="../uploads/portrait-half-e56f0f59.png" style={{width:48,height:48,borderRadius:'50%',objectFit:'cover',objectPosition:'top',border:'2px solid var(--accent)'}} alt="ミント"/>
+        <div>
+          <div style={{fontFamily:'var(--serif)',fontSize:15,fontWeight:700,color:'var(--text)'}}>ミントの取材メモ</div>
+          <div style={{fontSize:13,color:'var(--text2)',marginTop:2}}>田中建設株式会社 · 2026.04.10 · 7問の取材を完了</div>
+        </div>
+        <span className="badge badge-ok" style={{marginLeft:'auto'}}>完了</span>
+      </div>
+
+      <div className="summary-grid">
+        <div className="summary-main">
+          {/* Extracted values */}
+          <div className="card">
+            <div className="label">抽出された価値</div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:8,marginTop:14}}>
+              {VALUES.map(v=><span key={v} className="value-tag">✦ {v}</span>)}
+            </div>
+          </div>
+
+          {/* Article themes */}
+          <div>
+            <div style={{fontFamily:'var(--serif)',fontSize:16,fontWeight:700,color:'var(--text)',marginBottom:14}}>記事テーマ候補</div>
+            {THEMES.map((t,i)=>(
+              <div key={i} className="theme-card" style={{marginBottom:10}}>
+                <div>
+                  <div className="theme-title">{t.t}</div>
+                  <div className="theme-sub">{t.sub}</div>
+                </div>
+                <a className="btn btn-primary btn-sm" href="Article.html" style={{flexShrink:0}}>この記事を作る →</a>
+              </div>
+            ))}
+          </div>
+
+          {/* Log */}
+          <div className="card">
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:logOpen?16:0}}>
+              <div style={{fontFamily:'var(--serif)',fontSize:15,fontWeight:700,color:'var(--text)'}}>取材ログ</div>
+              <button className="btn btn-ghost btn-sm" onClick={()=>setLogOpen(!logOpen)}>{logOpen?'折りたたむ ↑':'ログを見る ↓'}</button>
+            </div>
+            {logOpen&&(
+              <div>
+                {LOG.map((l,i)=>(
+                  <div key={i} className="log-item">
+                    <span className={`log-side ${l.side}`}>{l.side==='cast'?'ミント':'あなた'}</span>
+                    <span className="log-text">{l.text}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div>
+          <div className="sidebar-card">
+            <h3>記事素材を生成する</h3>
+            <p style={{fontSize:13,color:'var(--text2)',lineHeight:1.75,marginBottom:16}}>上のテーマから選んで記事を生成します。種類・文字量を設定できます。</p>
+            <a className="btn btn-primary w-full" style={{justifyContent:'center'}} href="Article.html">記事素材を生成する →</a>
+          </div>
+          <div className="sidebar-card">
+            <h3>取材情報</h3>
+            {[['キャスト','ミント（Story Listener）'],['取材先','田中建設株式会社'],['実施日','2026年4月10日'],['問数','7問 / 7問'],['所要時間','約22分']].map(([k,v])=>(
+              <div key={k} style={{display:'flex',fontSize:13,padding:'7px 0',borderBottom:'1px solid var(--border)'}}>
+                <span style={{color:'var(--text3)',width:90,flexShrink:0}}>{k}</span>
+                <span style={{color:'var(--text)',fontWeight:500}}>{v}</span>
+              </div>
+            ))}
+          </div>
+          <div className="sidebar-card">
+            <h3>関連する記事素材</h3>
+            {[
+              {t:'下地処理へのこだわり記事',date:'2026.04.02'},
+              {t:'お客様エピソード記事',date:'2026.04.12'},
+            ].map(a=>(
+              <a key={a.t} href="ArticleDetail.html" style={{display:'block',padding:'10px 0',borderBottom:'1px solid var(--border)',fontSize:13,color:'var(--accent)',textDecoration:'none',cursor:'pointer'}}>
+                {a.t}<span style={{color:'var(--text3)',marginLeft:8}}>{a.date}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

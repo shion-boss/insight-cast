@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>取材先一覧 — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;cursor:pointer;transition:box-shadow .2s,transform .2s}
+.proj-card:hover{box-shadow:0 8px 32px var(--shadow);transform:translateY(-2px)}
+.proj-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.proj-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.proj-name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px}
+.proj-url{font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proj-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.proj-stat{background:var(--bg2);border-radius:8px;padding:10px;text-align:center}
+.proj-stat-n{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--text)}
+.proj-stat-l{font-size:11px;color:var(--text3);margin-top:2px}
+.proj-actions{display:flex;gap:8px;flex-wrap:wrap}
+.new-proj-card{background:var(--bg2);border:2px dashed var(--border);border-radius:var(--r-lg);padding:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;cursor:pointer;transition:all .2s;text-decoration:none;min-height:200px}
+.new-proj-card:hover{border-color:var(--accent);background:var(--accent-l)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const PROJECTS=[
+  {name:'田中建設株式会社',icon:'🏗',url:'tanaka-kensetsu.example.jp',status:'badge-ok',statusL:'取材済み',interviews:4,articles:3,lastDate:'2026.04.10'},
+  {name:'やまと整骨院',icon:'🏥',url:'yamato-seikotsu.example.jp',status:'badge-warn',statusL:'分析中',interviews:2,articles:1,lastDate:'2026.04.03'},
+  {name:'フローリスト花みどり',icon:'🌸',url:'hana-midori.example.jp',status:'badge-gray',statusL:'下書き',interviews:1,articles:0,lastDate:'2026.03.20'},
+  {name:'カフェ・プリムラ',icon:'☕',url:'cafe-primula.example.jp',status:'badge-gray',statusL:'未取材',interviews:0,articles:0,lastDate:'—'},
+];
+
+function App(){
+  return(
+    <AppShell active="取材先一覧" title="取材先一覧" headerRight={
+      <a className="btn btn-primary btn-sm" href="NewProject.html">+ 取材先を追加</a>
+    }>
+      {/* Summary */}
+      <div style={{display:'flex',gap:16,marginBottom:28}}>
+        {[{n:4,l:'取材先'},{n:7,l:'総インタビュー'},{n:4,l:'生成記事'}].map(s=>(
+          <div key={s.l} style={{background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'16px 24px',display:'flex',gap:12,alignItems:'center'}}>
+            <span style={{fontFamily:'var(--serif)',fontSize:28,fontWeight:700,color:'var(--accent)'}}>{s.n}</span>
+            <span style={{fontSize:13,color:'var(--text2)'}}>{s.l}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="proj-grid">
+        {PROJECTS.map(p=>(
+          <a key={p.name} className="proj-card" href="Project.html">
+            <div className="proj-header">
+              <div className="proj-icon">{p.icon}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div className="proj-name">{p.name}</div>
+                <div className="proj-url">🔗 {p.url}</div>
+              </div>
+              <span className={`badge ${p.status}`}>{p.statusL}</span>
+            </div>
+            <div className="proj-stats">
+              <div className="proj-stat"><div className="proj-stat-n">{p.interviews}</div><div className="proj-stat-l">取材回数</div></div>
+              <div className="proj-stat"><div className="proj-stat-n">{p.articles}</div><div className="proj-stat-l">記事素材</div></div>
+              <div className="proj-stat"><div className="proj-stat-n" style={{fontSize:14}}>{p.lastDate}</div><div className="proj-stat-l">最終取材</div></div>
+            </div>
+            <div className="proj-actions">
+              <span className="btn btn-primary btn-xs" onClick={e=>{e.preventDefault();window.location.href='Interview.html'}}>取材する →</span>
+              <span className="btn btn-outline btn-xs" onClick={e=>{e.preventDefault();window.location.href='Project.html'}}>管理</span>
+              <span className="btn btn-outline btn-xs" onClick={e=>{e.preventDefault()}}>レポート</span>
+            </div>
+          </a>
+        ))}
+        <a className="new-proj-card" href="NewProject.html">
+          <div style={{fontSize:36,color:'var(--text3)'}}>＋</div>
+          <div style={{fontSize:14,fontWeight:600,color:'var(--text2)'}}>新しい取材先を追加する</div>
+          <div style={{fontSize:12,color:'var(--text3)'}}>URLを入れるだけで分析開始</div>
+        </a>
+      </div>
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

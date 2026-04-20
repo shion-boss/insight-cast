@@ -106,7 +106,7 @@ export default function CompetitorSelectionFields({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
+    <section className="bg-white rounded-2xl border border-[var(--border)] p-6 space-y-4">
       <div className="space-y-4">
         <div>
           <FieldLabel>業界情報</FieldLabel>
@@ -117,7 +117,7 @@ export default function CompetitorSelectionFields({
             onChange={(e) => setIndustryMemo(e.target.value)}
             placeholder="例: 地域密着の工務店、住宅リフォーム"
           />
-          <p className="mt-1 text-xs text-stone-400">競合候補を探すときの手がかりに使います。</p>
+          <p className="mt-1 text-xs text-[var(--text3)]">競合候補を探すときの手がかりに使います。</p>
         </div>
         <div>
           <FieldLabel>地域・商圏（任意）</FieldLabel>
@@ -133,8 +133,8 @@ export default function CompetitorSelectionFields({
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-medium text-stone-700">競合HPのおすすめ</h2>
-          <p className="mt-1 text-xs leading-relaxed text-stone-400">
+          <h2 className="text-sm font-medium text-[var(--text2)]">競合HPのおすすめ</h2>
+          <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">
             自社HPと業界情報をもとに、似た相手を5件ほど探します。気になる相手だけ選べば大丈夫です。
           </p>
         </div>
@@ -142,18 +142,18 @@ export default function CompetitorSelectionFields({
           type="button"
           onClick={handleSuggestCompetitors}
           disabled={suggesting || !canSuggest}
-          className="shrink-0 rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors cursor-pointer"
+          className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer"
         >
           {suggesting ? '候補を探しています...' : <DevAiLabel>おすすめを見る</DevAiLabel>}
         </button>
       </div>
 
-      <div className="rounded-xl bg-stone-50 px-4 py-3 text-xs text-stone-500">
+      <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-xs text-[var(--text3)]">
         {helperText}
       </div>
 
       {!canSuggest && (
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-[var(--text3)]">
           おすすめを見るには、自社HP URL と業界情報の両方を入力してください。
         </p>
       )}
@@ -205,25 +205,25 @@ export default function CompetitorSelectionFields({
                 key={suggestion.url}
                 onClick={() => toggleSelectedUrl(suggestion.url)}
                 disabled={disabled}
-                className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 ${
+                className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                   selected
-                    ? 'border-stone-800 bg-stone-800 text-white'
-                    : 'border-stone-200 bg-white text-stone-700 hover:border-stone-300'
+                    ? 'border-[var(--text)] bg-[var(--text)] text-white'
+                    : 'border-[var(--border)] bg-white text-[var(--text2)] hover:border-[var(--border2)]'
                 } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className={`text-sm font-medium ${selected ? 'text-white' : 'text-stone-800'}`}>
+                    <p className={`text-sm font-medium ${selected ? 'text-white' : 'text-[var(--text)]'}`}>
                       {suggestion.name}
                     </p>
-                    <p className={`mt-1 truncate text-xs ${selected ? 'text-stone-200' : 'text-stone-400'}`}>
+                    <p className={`mt-1 truncate text-xs ${selected ? 'text-[rgba(255,255,255,0.7)]' : 'text-[var(--text3)]'}`}>
                       {normalizedUrl}
                     </p>
-                    <p className={`mt-3 text-sm leading-relaxed ${selected ? 'text-stone-100' : 'text-stone-500'}`}>
+                    <p className={`mt-3 text-sm leading-relaxed ${selected ? 'text-[rgba(255,255,255,0.55)]' : 'text-[var(--text3)]'}`}>
                       {suggestion.summary}
                     </p>
                   </div>
-                  <span className={`rounded-full px-2 py-1 text-xs ${selected ? 'bg-white text-stone-800' : 'bg-stone-100 text-stone-500'}`}>
+                  <span className={`rounded-full px-2 py-1 text-xs ${selected ? 'bg-white text-[var(--text)]' : 'bg-[var(--bg2)] text-[var(--text3)]'}`}>
                     {selected ? '選択中' : '選ぶ'}
                   </span>
                 </div>
@@ -235,8 +235,8 @@ export default function CompetitorSelectionFields({
 
       <div className="space-y-3 pt-2">
         <div>
-          <h3 className="text-xs font-medium text-stone-500">自分で追加する競合HP</h3>
-          <p className="mt-1 text-xs text-stone-400">おすすめを使わず、手入力だけで3件まで登録しても大丈夫です。</p>
+          <h3 className="text-xs font-medium text-[var(--text3)]">自分で追加する競合HP</h3>
+          <p className="mt-1 text-xs text-[var(--text3)]">おすすめを使わず、手入力だけで3件まで登録しても大丈夫です。</p>
         </div>
         {Array.from({ length: MANUAL_INPUT_COUNT }).map((_, index) => (
           <TextInput

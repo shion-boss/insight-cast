@@ -13,7 +13,7 @@ const DEFAULT_DURATION_MS = 5000
 function toneClass(tone: ToastItem['tone']) {
   if (tone === 'success') return 'border-emerald-200 bg-emerald-50'
   if (tone === 'warning') return 'border-amber-200 bg-amber-50'
-  return 'border-stone-200 bg-white'
+  return 'border-[var(--border)] bg-[var(--surface)]'
 }
 
 export default function ToastViewport() {
@@ -45,15 +45,15 @@ export default function ToastViewport() {
           key={toast.id}
           className={`pointer-events-auto rounded-2xl border px-4 py-3 ${toneClass(toast.tone)}`}
         >
-          <p className="text-sm font-medium text-stone-800">{toast.title}</p>
+          <p className="text-sm font-medium text-[var(--text)]">{toast.title}</p>
           {toast.description && (
-            <p className="mt-1 text-sm leading-relaxed text-stone-500">{toast.description}</p>
+            <p className="mt-1 text-sm leading-relaxed text-[var(--text3)]">{toast.description}</p>
           )}
           {toast.href && (
             <Link
               href={toast.href}
               prefetch={false}
-              className="mt-3 inline-flex rounded-md text-sm text-stone-700 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300"
+              className="mt-3 inline-flex rounded-md text-sm text-[var(--text2)] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
             >
               {toast.hrefLabel ?? '開く'}
             </Link>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インタビュー履歴 — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.iv-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:start;cursor:pointer;transition:box-shadow .2s}
+.iv-card:hover{box-shadow:0 4px 20px var(--shadow)}
+.iv-cast-img{width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid var(--border)}
+.iv-cast-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+.iv-themes{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const INTERVIEWS=[
+  {cast:'ミント',img:'../uploads/portrait-half-e56f0f59.png',project:'田中建設株式会社',date:'2026.04.10',status:'badge-ok',statusL:'完了',q:7,articles:2,themes:['お客様エピソード','接客の心がけ']},
+  {cast:'クラウス',img:'../uploads/portrait-half.png',project:'やまと整骨院',date:'2026.04.03',status:'badge-ok',statusL:'完了',q:8,articles:1,themes:['施術の特徴','予約の取りやすさ']},
+  {cast:'レイン',img:'../uploads/portrait-half-c748dc68.png',project:'田中建設株式会社',date:'2026.03.28',status:'badge-ok',statusL:'完了',q:7,articles:1,themes:['選ばれる理由','競合との差']},
+  {cast:'ミント',img:'../uploads/portrait-half-e56f0f59.png',project:'フローリスト花みどり',date:'2026.03.20',status:'badge-warn',statusL:'途中',q:4,articles:0,themes:[]},
+  {cast:'クラウス',img:'../uploads/portrait-half.png',project:'田中建設株式会社',date:'2026.03.15',status:'badge-ok',statusL:'完了',q:9,articles:1,themes:['下地処理','使用材料の違い']},
+  {cast:'レイン',img:'../uploads/portrait-half-c748dc68.png',project:'やまと整骨院',date:'2026.02.28',status:'badge-ok',statusL:'完了',q:7,articles:0,themes:['患者さんとの関係','口コミの理由']},
+];
+
+function App(){
+  const [filter,setFilter]=useState('すべて');
+  const statuses=['すべて','完了','途中'];
+  const filtered=filter==='すべて'?INTERVIEWS:INTERVIEWS.filter(i=>i.statusL===filter);
+  return(
+    <AppShell active="インタビュー履歴" title="インタビュー履歴">
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:24}}>
+        <div style={{display:'flex',gap:8}}>
+          {statuses.map(s=>(
+            <button key={s} onClick={()=>setFilter(s)} style={{padding:'6px 14px',borderRadius:100,fontSize:13,fontWeight:600,cursor:'pointer',border:'1.5px solid '+(filter===s?'var(--accent)':'var(--border)'),background:filter===s?'var(--accent)':'transparent',color:filter===s?'#fff':'var(--text2)',fontFamily:'var(--sans)',transition:'all .2s'}}>{s}</button>
+          ))}
+        </div>
+        <span style={{fontSize:13,color:'var(--text3)'}}>{filtered.length}件</span>
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:12}}>
+        {filtered.map((iv,i)=>(
+          <a key={i} className="iv-card" href="Summary.html">
+            <div className="iv-cast-img"><img src={iv.img} alt={iv.cast}/></div>
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+                <span style={{fontFamily:'var(--serif)',fontSize:16,fontWeight:700,color:'var(--text)'}}>{iv.project}</span>
+                <span className={`badge ${iv.status}`}>{iv.statusL}</span>
+              </div>
+              <div style={{fontSize:13,color:'var(--text2)',marginBottom:8}}>{iv.cast} · {iv.date} · {iv.q}問回答</div>
+              {iv.themes.length>0&&(
+                <div className="iv-themes">
+                  {iv.themes.map(t=><span key={t} className="badge badge-amber">{t}</span>)}
+                </div>
+              )}
+            </div>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:8}}>
+              <div style={{fontSize:12,color:'var(--text3)'}}>記事素材 {iv.articles}本</div>
+              {iv.statusL==='完了'&&<span className="btn btn-outline btn-xs">メモを見る →</span>}
+              {iv.statusL==='途中'&&<span className="btn btn-primary btn-xs">続きを取材する →</span>}
+            </div>
+          </a>
+        ))}
+      </div>
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

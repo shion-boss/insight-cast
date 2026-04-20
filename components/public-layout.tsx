@@ -1,36 +1,15 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { CharacterAvatar, EyebrowBadge, HeaderSurface, SiteBrand, getButtonClass, getPanelClass } from '@/components/ui'
-import { CHARACTERS } from '@/lib/characters'
+import { EyebrowBadge, HeaderSurface, getButtonClass, getPanelClass } from '@/components/ui'
 
 const NAV_LINKS = [
   { href: '/service', label: 'サービス' },
-  { href: '/cast', label: 'キャスト' },
   { href: '/pricing', label: '料金' },
-  { href: '/blog', label: 'ブログ' },
-]
-
-const FOOTER_COL1 = [
-  { href: '/service', label: 'サービス' },
   { href: '/cast', label: 'キャスト' },
-  { href: '/pricing', label: '料金' },
-  { href: '/faq', label: 'FAQ' },
-]
-
-const FOOTER_COL2 = [
   { href: '/blog', label: 'ブログ' },
-  { href: '/philosophy', label: '発信の考え方' },
-  { href: '/about', label: '会社概要' },
+  { href: '/about', label: 'About' },
 ]
-
-const FOOTER_COL3 = [
-  { href: '/privacy', label: 'プライバシーポリシー' },
-  { href: '/terms', label: '利用規約' },
-  { href: '/tokushoho', label: '特定商取引法に基づく表記' },
-]
-
-const featuredCharacters = CHARACTERS.slice(0, 3)
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
@@ -46,13 +25,10 @@ export function PublicPageFrame({
   return (
     <div
       className={cx(
-        'relative min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,_rgba(245,158,11,0.2),_transparent_24%),radial-gradient(circle_at_82%_10%,_rgba(15,118,110,0.12),_transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)] text-stone-950',
+        'relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]',
         className,
       )}
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[36rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.48),rgba(255,255,255,0))]" aria-hidden="true" />
-      <div className="pointer-events-none absolute left-[-7rem] top-24 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" aria-hidden="true" />
-      <div className="pointer-events-none absolute right-[-6rem] top-[22rem] h-80 w-80 rounded-full bg-teal-200/20 blur-3xl" aria-hidden="true" />
       {children}
     </div>
   )
@@ -80,7 +56,10 @@ export function PublicHero({
   contentClassName?: string
 }) {
   return (
-    <section className={cx('relative z-10 px-6', compact ? 'pb-12 pt-12 sm:pb-16 sm:pt-16' : 'pb-16 pt-14 sm:pb-22 sm:pt-20')}>
+    <section className={cx(
+      'relative z-10 px-6 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8]',
+      compact ? 'pb-12 pt-12 sm:pb-16 sm:pt-16' : 'pb-16 pt-[108px] sm:pb-[72px]',
+    )}>
       <div
         className={cx(
           'mx-auto grid max-w-6xl gap-10',
@@ -90,17 +69,17 @@ export function PublicHero({
       >
         <div className={cx('max-w-3xl', contentClassName)}>
           <EyebrowBadge>{eyebrow}</EyebrowBadge>
-          <h1 className="mt-6 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-stone-950 sm:text-5xl lg:text-[4rem]">
+          <h1 className="mt-6 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text)] sm:text-5xl lg:text-[4rem]">
             {title}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-stone-600 sm:text-[1.05rem]">
+          <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--text2)] sm:text-[1.05rem]">
             {description}
           </p>
           {actions && <div className="mt-8">{actions}</div>}
         </div>
 
         {aside && (
-          <div className={cx(getPanelClass('rounded-[2rem] p-5'), asideClassName)}>
+          <div className={cx(getPanelClass('rounded-[var(--r-xl)] p-5'), asideClassName)}>
             {aside}
           </div>
         )}
@@ -133,14 +112,14 @@ export function LegalPageTemplate({
           aside={
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">Document</p>
-                <p className="mt-2 text-sm leading-6 text-stone-700">
+                <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Document</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                   サービス利用前に確認しやすいよう、要点を読みやすい形で整理しています。
                 </p>
               </div>
-              <div className="rounded-2xl border border-stone-300 bg-stone-50 px-4 py-4">
-                <p className="text-xs font-semibold tracking-[0.16em] text-stone-400 uppercase">Last Updated</p>
-                <p className="mt-2 text-sm font-semibold text-stone-900">{updatedAt}</p>
+              <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+                <p className="text-xs font-semibold tracking-[0.16em] text-[var(--text3)] uppercase">Last Updated</p>
+                <p className="mt-2 text-sm font-semibold text-[var(--text)]">{updatedAt}</p>
               </div>
             </div>
           }
@@ -149,17 +128,17 @@ export function LegalPageTemplate({
         <section className="relative z-10 px-6 pb-20">
           <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
             <aside className="hidden lg:block">
-              <div className="sticky top-28 rounded-[1.75rem] border border-stone-300/80 bg-[rgba(255,253,249,0.92)] p-5 backdrop-blur-md">
-                <p className="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">Related</p>
-                <div className="mt-4 space-y-3 text-sm text-stone-700">
-                  <Link href="/privacy" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">プライバシーポリシー</Link>
-                  <Link href="/terms" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">利用規約</Link>
-                  <Link href="/tokushoho" className="block rounded transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">特定商取引法に基づく表記</Link>
+              <div className="sticky top-28 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
+                <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Related</p>
+                <div className="mt-4 space-y-3 text-sm text-[var(--text2)]">
+                  <Link href="/privacy" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">プライバシーポリシー</Link>
+                  <Link href="/terms" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">利用規約</Link>
+                  <Link href="/tokushoho" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">特定商取引法に基づく表記</Link>
                 </div>
               </div>
             </aside>
 
-            <div className="rounded-[2rem] border border-stone-300/80 bg-[rgba(255,253,249,0.94)] p-7 backdrop-blur-md sm:p-10">
+            <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7 sm:p-10">
               <div className="legal-doc space-y-8">{children}</div>
             </div>
           </div>
@@ -180,25 +159,30 @@ export function PublicHeader() {
             <Link
               key={link.href + link.label}
               href={link.href}
-              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
+              className="rounded-full px-4 py-2 text-sm font-medium text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {link.label}
             </Link>
           ))}
           <Link
             href="/faq"
-            className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
+            className="rounded-full px-4 py-2 text-sm font-medium text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             FAQ
           </Link>
         </nav>
       )}
     >
-      <SiteBrand href="/" />
+      <Link
+        href="/"
+        className="font-serif text-[19px] font-bold text-[var(--text)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+      >
+        Insight <span className="text-[var(--accent)]">Cast</span>
+      </Link>
       <div className="flex items-center gap-2 sm:gap-3">
         <Link
           href="/auth/login"
-          className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
+          className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
         >
           ログイン
         </Link>
@@ -206,7 +190,7 @@ export function PublicHeader() {
           href="/auth/signup"
           className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
         >
-          無料で始める
+          無料で試す →
         </Link>
       </div>
     </HeaderSurface>
@@ -215,86 +199,48 @@ export function PublicHeader() {
 
 export function PublicFooter() {
   return (
-    <footer className="relative border-t border-stone-300/60 bg-[rgba(244,236,223,0.64)] backdrop-blur-sm">
-      <div className="mx-auto max-w-6xl px-6 py-14">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-          <div className={getPanelClass('rounded-[2rem] p-7')}>
-            <div className="flex items-start gap-4">
-              <div className="flex -space-x-2 pt-0.5">
-                {featuredCharacters.map((char) => (
-                  <CharacterAvatar
-                    key={char.id}
-                    src={char.icon48}
-                    alt={`${char.name}のアイコン`}
-                    emoji={char.emoji}
-                    size={32}
-                    className="border-white"
-                  />
-                ))}
-              </div>
-              <div>
-                <p className="text-sm font-semibold tracking-[0.16em] text-stone-900 uppercase">Insight Cast</p>
-                <p className="mt-1.5 text-sm leading-6 text-stone-600">AI取材で、ホームページにまだ書けていない価値を見つけて、次の更新までつなげます。</p>
-              </div>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {['一次情報を引き出す', '競合比較で軸を整える', '記事素材までつなげる'].map((item) => (
-                <span key={item} className="rounded-full border border-stone-200 bg-stone-50/90 px-3 py-1.5 text-xs font-medium text-stone-600">
-                  {item}
-                </span>
-              ))}
-            </div>
-
-            <div className="mt-6 pt-5 border-t border-stone-200/80">
-              <Link
-                href="/auth/signup"
-                className={getButtonClass('primary', 'px-5 py-3 text-sm')}
-              >
-                無料で取材を始める
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-3">
-            {[
-              { title: 'Service', links: FOOTER_COL1 },
-              { title: 'Company', links: FOOTER_COL2 },
-              { title: 'Legal', links: FOOTER_COL3 },
-            ].map((group) => (
-              <div key={group.title}>
-                <p className="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">{group.title}</p>
-                <div className="mt-4 space-y-3">
-                  {group.links.map((link) => (
-                    <div key={link.href + link.label}>
-                      <Link
-                        href={link.href}
-                        className="rounded-sm text-sm text-stone-600 transition-colors hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-                      >
-                        {link.label}
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-10 flex flex-col gap-4 border-t border-stone-300/60 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-stone-400">© 2026 Insight Cast</p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href="/auth/login" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
-              ログイン
+    <footer className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
+      <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
+          <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+            登録はメールアドレスだけ。3名のキャストが今日から使えます。
+          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href="/auth/signup"
+              className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+            >
+              無料で取材を始める →
             </Link>
-            <Link href="/auth/signup" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
-              新規登録
-            </Link>
-            <Link href="mailto:info@insight-cast.jp" className="rounded-sm text-xs text-stone-400 transition-colors hover:text-stone-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40">
-              お問い合わせ
+            <Link
+              href="/cast"
+              className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              キャストを見る
             </Link>
           </div>
         </div>
+      </div>
+
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
+        <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
+        <div className="flex flex-wrap gap-5">
+          {[
+            { href: '/privacy', label: 'プライバシーポリシー' },
+            { href: '/terms', label: '利用規約' },
+            { href: '/tokushoho', label: '特定商取引法に基づく表記' },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-xs text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>
       </div>
     </footer>
   )

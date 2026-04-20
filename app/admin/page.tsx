@@ -32,80 +32,104 @@ function formatDate(date: string): string {
 export default async function AdminDashboardPage() {
   const stats = await getStats()
 
+  const statCards = [
+    { n: String(stats.total),     l: '総記事数' },
+    { n: String(stats.published), l: '公開中' },
+    { n: String(stats.draft),     l: '下書き' },
+    { n: '—',                     l: '今月PV' },
+  ]
+
   return (
     <div className="space-y-8">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-stone-950">ダッシュボード</h1>
-          <p className="mt-1 text-sm text-stone-500">ブログ記事の管理・公開を行います</p>
+          <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">管理ダッシュボード</h1>
+          <p className="mt-1 text-sm text-[var(--text2)]">ブログ記事の管理・公開を行います</p>
         </div>
         <ButtonLink href="/admin/posts/new">新しい記事を書く</ButtonLink>
       </div>
 
-      {/* サマリーカード */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-stone-200 bg-white p-5">
-          <p className="text-xs font-semibold tracking-wider text-stone-400 uppercase">総記事数</p>
-          <p className="mt-2 text-3xl font-bold text-stone-950">{stats.total}</p>
-        </div>
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-          <p className="text-xs font-semibold tracking-wider text-emerald-600 uppercase">公開中</p>
-          <p className="mt-2 text-3xl font-bold text-emerald-700">{stats.published}</p>
-        </div>
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5">
-          <p className="text-xs font-semibold tracking-wider text-amber-600 uppercase">下書き</p>
-          <p className="mt-2 text-3xl font-bold text-amber-700">{stats.draft}</p>
-        </div>
+      {/* 4枚 stat カード */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {statCards.map((s) => (
+          <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">{s.l}</p>
+            <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]">{s.n}</p>
+          </div>
+        ))}
       </div>
 
-      {/* 最近の記事 */}
-      <div>
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-stone-800">最近の記事</h2>
-          <Link href="/admin/posts" className="text-sm text-stone-500 hover:text-stone-900 transition-colors">
-            すべて見る →
-          </Link>
-        </div>
-
-        {stats.recentPosts.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-center">
-            <p className="text-sm text-stone-400">まだ記事がありません</p>
-            <ButtonLink href="/admin/posts/new" className="mt-4 inline-flex">
-              最初の記事を書く
-            </ButtonLink>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+        {/* 最近の記事 */}
+        <div>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">最近の記事</h2>
+            <Link href="/admin/posts" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
+              すべて見る →
+            </Link>
           </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
-            {stats.recentPosts.map((post, i) => (
-              <div
-                key={post.id as string}
-                className={`flex items-center gap-4 px-5 py-4 ${
-                  i < stats.recentPosts.length - 1 ? 'border-b border-stone-100' : ''
-                }`}
-              >
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-stone-800">{post.title as string}</p>
-                  <p className="mt-0.5 text-xs text-stone-400">{formatDate(post.date as string)}</p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    post.published
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-stone-100 text-stone-500'
+
+          {stats.recentPosts.length === 0 ? (
+            <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-8 text-center">
+              <p className="text-sm text-[var(--text3)]">まだ記事がありません</p>
+              <ButtonLink href="/admin/posts/new" className="mt-4 inline-flex">
+                最初の記事を書く
+              </ButtonLink>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+              {stats.recentPosts.map((post, i) => (
+                <div
+                  key={post.id as string}
+                  className={`flex items-center gap-4 px-5 py-4 ${
+                    i < stats.recentPosts.length - 1 ? 'border-b border-[var(--border)]' : ''
                   }`}
                 >
-                  {post.published ? '公開中' : '下書き'}
-                </span>
-                <Link
-                  href={`/admin/posts/${post.id as string}/edit`}
-                  className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-                >
-                  編集
-                </Link>
-              </div>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-[var(--text)]">{post.title as string}</p>
+                    <p className="mt-0.5 text-xs text-[var(--text3)]">{formatDate(post.date as string)}</p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                      post.published
+                        ? 'bg-[var(--ok-l)] text-[var(--ok)]'
+                        : 'bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)]'
+                    }`}
+                  >
+                    {post.published ? '公開中' : '下書き'}
+                  </span>
+                  <Link
+                    href={`/admin/posts/${post.id as string}/edit`}
+                    className="shrink-0 rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    編集
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-3 text-right">
+            <Link href="/admin/posts" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
+              すべて見る →
+            </Link>
           </div>
-        )}
+        </div>
+
+        {/* サイド情報 */}
+        <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 h-fit">
+          <h3 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm mb-4">クイックアクション</h3>
+          <div className="space-y-2">
+            <ButtonLink href="/admin/posts/new" className="w-full justify-center">
+              + 新しい記事を書く
+            </ButtonLink>
+            <Link
+              href="/"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+            >
+              公開サイトを確認 →
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

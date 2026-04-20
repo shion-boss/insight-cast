@@ -1,9 +1,9 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
-import AppHeaderActions from '@/components/app-header-actions'
 import StartAnalysisButton from '@/components/start-analysis-button'
-import { ButtonLink, PageHeader, StateCard, SurfaceCard, getButtonClass, getInteractivePanelClass, getPanelClass } from '@/components/ui'
+import { getButtonClass } from '@/components/ui'
+import { AppShell } from '@/components/app-shell'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { createClient } from '@/lib/supabase/server'
 
@@ -21,13 +21,6 @@ type Interview = {
   created_at: string
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(value))
-}
 
 function formatShortDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
@@ -39,14 +32,21 @@ function formatShortDateTime(value: string) {
 }
 
 export default async function ProjectsPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  let supabase
+  let user
 
-  if (!user) redirect('/')
+  try {
+    supabase = await createClient()
+    const authResult = await supabase.auth.getUser()
+    user = authResult.data.user
+  } catch {
+    redirect('/')
+  }
 
-  const { data: profile } = await supabase
+  if (!user || !supabase) redirect('/')
+  const db = supabase!
+
+  const { data: profile } = await db
     .from('profiles')
     .select('name, onboarded')
     .eq('id', user.id)
@@ -54,7 +54,7 @@ export default async function ProjectsPage() {
 
   if (!profile?.onboarded) redirect('/onboarding')
 
-  const { data: projects } = await supabase
+  const { data: projects } = await db
     .from('projects')
     .select('id, name, hp_url, status, updated_at')
     .eq('user_id', user.id)
@@ -63,21 +63,21 @@ export default async function ProjectsPage() {
   const projectList = (projects ?? []) as Project[]
 
   const { data: auditRows } = projectList.length > 0
-    ? await supabase
+    ? await db
       .from('hp_audits')
       .select('id, project_id, raw_data, created_at')
       .in('project_id', projectList.map((project) => project.id))
     : { data: [] }
 
   const { data: competitorRows } = projectList.length > 0
-    ? await supabase
+    ? await db
       .from('competitors')
       .select('id, project_id, url')
       .in('project_id', projectList.map((project) => project.id))
     : { data: [] }
 
   const { data: competitorAnalysisRows } = projectList.length > 0
-    ? await supabase
+    ? await db
       .from('competitor_analyses')
       .select('project_id, competitor_id, raw_data')
       .in('project_id', projectList.map((project) => project.id))
@@ -95,7 +95,7 @@ export default async function ProjectsPage() {
   )
 
   const { data: interviewRows } = projectList.length > 0
-    ? await supabase
+    ? await db
       .from('interviews')
       .select('id, project_id, created_at')
       .in('project_id', projectList.map((project) => project.id))
@@ -111,117 +111,138 @@ export default async function ProjectsPage() {
     }
   }
 
+  const interviewCountByProject = new Map<string, number>()
+  for (const interview of interviews) {
+    interviewCountByProject.set(
+      interview.project_id,
+      (interviewCountByProject.get(interview.project_id) ?? 0) + 1,
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader
-        title="取材先一覧"
-        backHref="/dashboard"
-        backLabel="← ダッシュボード"
-        right={(
-          <AppHeaderActions active="projects" accountLabel={profile?.name ?? user.email ?? '設定'} />
-        )}
-      />
-
-      <main className="mx-auto max-w-6xl px-6 py-8 space-y-6">
-        <SurfaceCard tone="warm" className="rounded-[2.2rem]">
-          <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">Projects</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-950">登録した取材先をまとめて管理できます。</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-700">
-            ホームページ調査、取材の再開、記事作成の入口を取材先ごとに整理しています。
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-stone-700 ring-1 ring-stone-300">
-              {projectList.length}件の取材先
-            </span>
-            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-stone-700 ring-1 ring-stone-300">
-              {interviews.length}件のインタビュー
-            </span>
+    <AppShell
+      title="取材先一覧"
+      active="projects"
+      accountLabel={profile?.name ?? user.email ?? '設定'}
+      headerRight={(
+        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+          + 取材先を追加
+        </Link>
+      )}
+    >
+      {/* Summary */}
+      <div className="flex gap-4 mb-7">
+        {[
+          { n: projectList.length, l: '取材先' },
+          { n: interviews.length, l: '総インタビュー' },
+        ].map((s) => (
+          <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[12px] px-6 py-4 flex gap-3 items-center">
+            <span className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)]">{s.n}</span>
+            <span className="text-[13px] text-[var(--text2)]">{s.l}</span>
           </div>
-        </SurfaceCard>
+        ))}
+      </div>
 
-        {projectList.length === 0 ? (
-          <StateCard
-            icon="🏷️"
-            title="まだ取材先はありません。"
-            description="最初の取材先を登録すると、ここに調査やインタビューの導線が並びます。"
-            align="left"
-            action={(
-              <ButtonLink href="/projects/new">
-                最初の取材先を登録する
-              </ButtonLink>
-            )}
-          />
-        ) : (
-          <ul className="grid gap-4 lg:grid-cols-2">
-            {projectList.map((project) => {
-              const latestInterview = latestInterviewMap.get(project.id)
+      {projectList.length === 0 ? (
+        <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
+          <Link
+            href="/projects/new"
+            className="bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
+          >
+            <div className="text-[36px] text-[var(--text3)]">＋</div>
+            <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
+            <div className="text-[12px] text-[var(--text3)]">URLを入れるだけで分析開始</div>
+          </Link>
+        </div>
+      ) : (
+        <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
+          {projectList.map((project) => {
+            const latestInterview = latestInterviewMap.get(project.id)
+            const ivCount = interviewCountByProject.get(project.id) ?? 0
 
-              return (
-                <li key={project.id} className={getPanelClass('p-5')}>
-                  <div className="flex flex-col gap-4">
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className={getInteractivePanelClass('block rounded-[1.2rem] px-3 py-3')}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-stone-950">{project.name || project.hp_url}</p>
-                          <p className="mt-1 text-xs text-stone-500">{formatDate(project.updated_at)} に更新</p>
-                          {latestInterview && (
-                            <p className="mt-2 text-xs text-stone-700">
-                              直近の取材: {formatShortDateTime(latestInterview.created_at)}
-                            </p>
-                          )}
-                        </div>
-                        <span className="mt-0.5 flex-shrink-0 text-sm text-stone-400">→</span>
-                      </div>
+            return (
+              <div
+                key={project.id}
+                className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6"
+              >
+                {/* Header */}
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-[12px] bg-[var(--accent-l)] flex items-center justify-center text-[22px] flex-shrink-0">🏢</div>
+                  <div className="flex-1 min-w-0">
+                    <Link href={`/projects/${project.id}`} className="block">
+                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>
+                      <div className="text-[12px] text-[var(--text3)] overflow-hidden text-ellipsis whitespace-nowrap">🔗 {project.hp_url}</div>
                     </Link>
-
-                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                      {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
-                        <StartAnalysisButton
-                          projectId={project.id}
-                          projectName={project.name || project.hp_url}
-                          compact
-                          className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                        />
-                      ) : project.status === 'analyzing' ? (
-                        <div className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 sm:whitespace-nowrap">
-                          調査中
-                        </div>
-                      ) : (
-                        <>
-                          <Link
-                            href={`/projects/${project.id}/report`}
-                            prefetch={false}
-                            className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                          >
-                            調査結果を見る
-                          </Link>
-                          <StartAnalysisButton
-                          projectId={project.id}
-                          projectName={project.name || project.hp_url}
-                          compact
-                          force
-                          className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                        />
-                      </>
-                    )}
-
-                    <Link
-                      href={`/projects/${project.id}/interviewer`}
-                      className={getButtonClass('primary', 'sm:col-span-2 sm:whitespace-nowrap')}
-                    >
-                      インタビューを始める
-                    </Link>
-                    </div>
                   </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </main>
-    </div>
+                  <div className="flex-shrink-0">
+                    {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
+                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
+                    ) : project.status === 'analyzing' ? (
+                      <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
+                    ) : (
+                      <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {[
+                    { n: ivCount, l: '取材回数' },
+                    { n: 0, l: '記事素材' },
+                    { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
+                  ].map((s) => (
+                    <div key={s.l} className="bg-[var(--bg2)] rounded-[8px] p-2.5 text-center">
+                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold text-[var(--text)]" style={{ fontSize: String(s.n).length > 4 ? 14 : undefined }}>{s.n}</div>
+                      <div className="text-[11px] text-[var(--text3)] mt-0.5">{s.l}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2 flex-wrap">
+                  <Link
+                    href={`/projects/${project.id}/interviewer`}
+                    className={getButtonClass('primary', 'text-xs px-3 py-1.5')}
+                  >
+                    取材する →
+                  </Link>
+                  <Link
+                    href={`/projects/${project.id}`}
+                    className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                  >
+                    管理
+                  </Link>
+                  {analysisReadyProjectIds.has(project.id) && project.status !== 'analyzing' ? (
+                    <Link
+                      href={`/projects/${project.id}/report`}
+                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                    >
+                      レポート
+                    </Link>
+                  ) : (
+                    <StartAnalysisButton
+                      projectId={project.id}
+                      projectName={project.name || project.hp_url}
+                      compact
+                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                    />
+                  )}
+                </div>
+              </div>
+            )
+          })}
+
+          <Link
+            href="/projects/new"
+            className="bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
+          >
+            <div className="text-[36px] text-[var(--text3)]">＋</div>
+            <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
+            <div className="text-[12px] text-[var(--text3)]">URLを入れるだけで分析開始</div>
+          </Link>
+        </div>
+      )}
+    </AppShell>
   )
 }

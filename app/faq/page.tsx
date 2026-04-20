@@ -1,245 +1,201 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
 
-import { CharacterAvatar, getButtonClass } from '@/components/ui'
-import { CHARACTERS, getCharacter } from '@/lib/characters'
-import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
-
-const featuredCharacters = CHARACTERS.filter((c) => ['mint', 'claus', 'rain'].includes(c.id))
-
-type Faq = {
-  q: string
-  a: string
-  characterId?: 'mint' | 'claus' | 'rain'
-}
+import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 
 type FaqGroup = {
+  id: string
   label: string
-  faqs: Faq[]
+  items: Array<{ q: string; a: string }>
 }
 
 const FAQ_GROUPS: FaqGroup[] = [
   {
+    id: 'service',
     label: 'サービスについて',
-    faqs: [
+    items: [
       {
-        q: 'AIだけで作るの？人は関わらないの？',
-        a: 'AI取材班が会話を進め、素材の整理や記事の下書きまで手伝います。ただし、最終的に「これをホームページに使う」と決めるのは事業者さん自身です。AIはたたき台を用意する存在で、公開する言葉や内容の判断は、あなたが行います。',
-        characterId: 'mint',
+        q: 'Insight Castはどんなサービスですか？',
+        a: 'ホームページの更新に困っている中小事業者向けに、AI取材から記事素材化までを提供するサービスです。URLを入れるだけでHP調査から競合比較、キャストによる取材、記事素材の生成までを担います。',
       },
       {
-        q: 'ホームページがなくても使えますか？',
-        a: 'Insight Cast は「すでにホームページがある」事業者さんを主な対象にしています。インタビューそのものは利用できますが、HP分析や競合比較の機能はURLが必要です。制作中・リニューアル前の段階でのインタビューにも活用いただけます。',
-        characterId: 'claus',
+        q: 'AIライティングツールと何が違いますか？',
+        a: 'Insight Castは「一次情報を引き出す」取材プロセスを重視します。あなた自身の言葉・体験・こだわりを素材にするため、他社のコンテンツとは差別化しやすくなります。',
       },
       {
-        q: '一般的なAIブログツールと何が違いますか？',
-        a: '一般的なAIブログツールは、SEO/GEO最適化、ブランドボイス運用、記事制作の効率化が得意です。Insight Cast はその前段にある「何を伝えるべきか」を、ホームページと会話から見つけることに寄せています。最初からキーワードや構成案を用意しなくても進められるのが違いです。',
-        characterId: 'rain',
-      },
-      {
-        q: '他のAIブログツールやSEOツールと併用できますか？',
-        a: 'はい、相性は良いです。Insight Cast で一次情報や発信テーマの芯を整理し、そのあとにSEO/GEO向けの最適化や量産系のSaaSを使う流れは自然です。置き換えというより、役割分担で併用するイメージです。',
-        characterId: 'claus',
-      },
-      {
-        q: 'どんな業種でも使えますか？',
-        a: 'はい。特定の業種に絞らず、汎用的に機能するように設計しています。工務店・美容室・士業・飲食店・整体院・EC事業者など、インタビューを重ねてきた業種は多岐にわたります。業種特化の型は、今後の顧客の声をもとに追加していく予定です。',
-        characterId: 'rain',
-      },
-      {
-        q: '記事を自動で公開してもらえますか？',
-        a: 'インタビュー素材の整理と記事の下書きまでが Insight Cast の役割です。公開作業（WordPressへの投稿など）はご自身で行っていただく形になります。コピー・Markdownダウンロードで、そのまま貼り付けやすい形で出力します。',
+        q: 'どんな業種に向いていますか？',
+        a: '特定の業種制限はありませんが、「専門性があるのに伝えられていない」事業者に特に効果的です。建設業・整骨院・美容・飲食・士業など、様々な業種でご利用いただいています。',
       },
     ],
   },
   {
-    label: 'インタビューについて',
-    faqs: [
+    id: 'cast',
+    label: 'キャストについて',
+    items: [
       {
-        q: '何を話せばいいか分からなくても大丈夫ですか？',
-        a: '大丈夫です。取材班が質問を投げかけますので、答えていくだけで話が進みます。「自社の強みを考えてきてください」といった事前準備も必要ありません。むしろ、事前に整理されていない言葉の中に、本当の価値が眠っていることが多いです。',
-        characterId: 'mint',
+        q: 'キャストとは何ですか？',
+        a: 'AIが担う「取材担当者」です。それぞれ異なる取材スタイルを持ち、目的に合わせて選べます。ミント・クラウス・レインの3名が無料でご利用いただけます。',
       },
       {
-        q: 'どのキャラクターを選べばいいか分かりません',
-        a: '迷ったらミントから始めてください。ミントはお客様目線でやさしく話を引き出すので、初めてのインタビューでも構えずに進められます。2回目以降は、「専門性を掘りたい」ならクラウス、「訴求の言葉を整理したい」ならレインと切り替えてみてください。',
-        characterId: 'mint',
+        q: 'キャストはどのくらい質問しますか？',
+        a: '平均10〜15問、所要時間は20分前後です。途中で終了することも可能です。最低7回の応答で素材生成が可能です。',
       },
       {
-        q: '1回のインタビューでどれくらい話しますか？',
-        a: '目安は15〜30分程度です。会話の深まり方によって変わりますが、取材班が「素材が集まった」と判断したタイミングで「まとめに入りましょうか？」と確認します。途中で止めることもできますし、続けて深掘りすることもできます。',
-        characterId: 'claus',
+        q: '追加キャストはいつから使えますか？',
+        a: 'ハル・モグロ・コッコは近日公開予定です。将来的に追加オプションとして提供予定です。',
       },
       {
-        q: '同じキャラクターに何度もインタビューしてもいいですか？',
-        a: 'はい、何度でもご利用いただけます。季節のトピック、新しい取り組み、別のサービスについてなど、テーマを変えてインタビューするほど、ホームページで伝えられる素材が増えていきます。繰り返し使うことを前提にしています。',
+        q: '同じキャストで何度も取材できますか？',
+        a: '可能です。取材先ごとに複数回取材ができます。テーマを変えて積み重ねることで、より豊かなコンテンツ素材が溜まっていきます。',
       },
     ],
   },
   {
-    label: '料金・プランについて',
-    faqs: [
+    id: 'output',
+    label: '記事素材について',
+    items: [
       {
-        q: '無料でどこまで使えますか？',
-        a: '登録すると、ミント・クラウス・レインの3人の取材班が無料でご利用いただけます。インタビュー・素材整理・記事下書きまでの一連の流れを体験できます。ハル・モグロ・コッコは買い切りでの追加対応を予定しています。',
-        characterId: 'rain',
+        q: '生成された記事はすぐ公開できますか？',
+        a: '「素材」として提供されます。そのまま使うことも可能ですが、ご自身の言葉に合わせて整えることで、より自然な仕上がりになります。',
       },
       {
-        q: '月額プランと買い切りの違いは？',
-        a: 'インタビューの基本機能は月額プランで継続的にご利用いただけます。追加キャラクター（ハル・モグロ・コッコ）は買い切り形式で、一度購入すれば以降は使い続けられる予定です。料金の詳細はリリース時にお知らせします。',
+        q: '記事のスタイルは選べますか？',
+        a: '通常記事・インタビュー形式の2種から選べます。また文字量も選択可能です。',
       },
       {
-        q: '途中でやめたらどうなりますか？',
-        a: '月途中でのキャンセルは翌月から停止します。それまでに作成したインタビュー記録や記事素材のデータは、退会後も一定期間保持します（詳細はリリース時にご案内します）。クレジットカード不要で始められる無料プランからお試しください。',
+        q: 'コピーライトはどちらに帰属しますか？',
+        a: '生成された記事素材の権利はご利用者に帰属します。Insight Cast側は権利を主張しません。',
       },
     ],
   },
   {
-    label: '品質・精度について',
-    faqs: [
+    id: 'plan',
+    label: 'プラン・料金について',
+    items: [
       {
-        q: '出てきた記事は、そのまま使えますか？',
-        a: 'そのまま使えるケースもありますが、事実確認と微調整をおすすめしています。取材班は会話から素材を引き出し下書きまで作りますが、事業者さんしか知らない細かいニュアンスや最新情報は、ご自身で補っていただくと完成度が上がります。',
-        characterId: 'rain',
+        q: '無料プランでできることは？',
+        a: '月2回のAI取材・3名のフリーキャスト・基本HP分析レポート・取材メモ生成・記事素材月2本が無料でご利用いただけます。クレジットカードは不要です。',
       },
       {
-        q: '競合調査はどこまで正確ですか？',
-        a: '登録いただいたURLをもとにホームページを読み込み、伝えている内容・構成・訴求軸を分析します。公開情報の範囲での分析になるため、価格・実績・口コミなど非公開情報は含まれません。「HPの見せ方の差」を整理することを目的にしています。',
-        characterId: 'claus',
+        q: 'いつでも解約できますか？',
+        a: '有料プランはいつでも解約可能です。解約後も月末まではサービスをご利用いただけます。',
+      },
+      {
+        q: 'プランの途中変更は可能ですか？',
+        a: '可能です。アップグレードは即時、ダウングレードは翌月から適用されます。',
       },
     ],
   },
-]
+  {
+    id: 'data',
+    label: 'データ・セキュリティについて',
+    items: [
+      {
+        q: '取材内容は外部に共有されますか？',
+        a: '取材内容は当社サービスの改善目的以外には使用しません。第三者への提供は行いません。詳細はプライバシーポリシーをご確認ください。',
+      },
+      {
+        q: '解約後データはどうなりますか？',
+        a: '解約後30日以内はデータにアクセス可能です。事前にエクスポートしてください。30日経過後は順次削除されます。',
+      },
+    ],
+  },
+] as const
 
-function FaqItem({ faq }: { faq: Faq }) {
-  const [open, setOpen] = useState(false)
-  const character = faq.characterId ? getCharacter(faq.characterId) : undefined
+function FaqGroupSection({ group }: { group: FaqGroup }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <div className="rounded-[1.6rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)]">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-start gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-amber-600/40"
-        aria-expanded={open}
-      >
-        <span className="mt-0.5 flex-shrink-0 text-base font-semibold text-amber-500">Q</span>
-        <span className="flex-1 text-sm font-medium leading-7 text-stone-800 sm:text-base">{faq.q}</span>
-        <span className={`mt-1 flex-shrink-0 text-stone-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} aria-hidden="true">
-          ▾
-        </span>
-      </button>
-
-      {open && (
-        <div className="border-t border-stone-100 px-6 pb-6 pt-5">
-          <div className="flex gap-4">
-            {character ? (
-              <CharacterAvatar
-                src={character.icon96}
-                alt={`${character.name}のアイコン`}
-                emoji={character.emoji}
-                size={40}
-                className="flex-shrink-0 border-stone-100"
-              />
-            ) : (
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-stone-100 text-base font-semibold text-stone-400">
-                A
-              </div>
-            )}
-            <p className="flex-1 text-sm leading-8 text-stone-600">{faq.a}</p>
-          </div>
-        </div>
-      )}
-    </div>
+    <section id={group.id} className="scroll-mt-32">
+      <h2 className="border-b border-[var(--border)] pb-4 font-serif text-2xl font-bold text-[var(--text)]">
+        {group.label}
+      </h2>
+      <div className="mt-6 overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)]">
+        {group.items.map((item, index) => {
+          const open = openIndex === index
+          return (
+            <div key={item.q} className={index < group.items.length - 1 ? 'border-b border-[var(--border)]' : ''}>
+              <button
+                type="button"
+                onClick={() => setOpenIndex(open ? null : index)}
+                className="flex w-full items-center justify-between gap-4 bg-[var(--surface)] px-6 py-5 text-left transition-colors hover:bg-[var(--surface2)]"
+                aria-expanded={open}
+              >
+                <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>
+                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`}>⌄</span>
+              </button>
+              {open && (
+                <div className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]">
+                  {item.a}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
 export default function FaqPage() {
+  const [activeId, setActiveId] = useState('service')
+
   return (
     <PublicPageFrame>
       <PublicHeader />
 
       <main className="relative z-10">
-        <PublicHero
-          eyebrow="FAQ"
-          title="よくある質問"
-          description={(
-            <>
-              使い始める前の不安を、まとめて解消しておきましょう。
-              答えが見つからないときは、取材班に直接聞いてみてください。
-            </>
-          )}
-          actions={(
-            <div className="flex flex-wrap gap-2">
-              {FAQ_GROUPS.map((g) => (
-                <a
-                  key={g.label}
-                  href={`#${g.label}`}
-                  className="rounded-full border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-4 py-2 text-sm text-stone-600 transition-colors duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-                >
-                  {g.label}
-                </a>
-              ))}
-            </div>
-          )}
-        />
-
-        {/* FAQグループ */}
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-3xl space-y-14">
-            {FAQ_GROUPS.map((group) => (
-              <div key={group.label} id={group.label}>
-                <h2 className="mb-5 text-xs font-semibold tracking-[0.2em] text-stone-400 uppercase">
-                  {group.label}
-                </h2>
-                <div className="space-y-3">
-                  {group.faqs.map((faq) => (
-                    <FaqItem key={faq.q} faq={faq} />
-                  ))}
-                </div>
-              </div>
-            ))}
+        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[88px] sm:pb-16 sm:pt-[96px]">
+          <div className="mx-auto max-w-6xl">
+            <p className="text-xs font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">FAQ</p>
+            <h1 className="mt-3 font-serif text-4xl font-bold text-[var(--text)] sm:text-5xl">よくある質問</h1>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text2)]">
+              サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。
+            </p>
           </div>
         </section>
 
-        {/* まだ疑問がある人向け */}
-        <section className="px-6 py-14 sm:py-18">
-          <div className="mx-auto max-w-3xl">
-            <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 sm:p-10 backdrop-blur-sm">
-              <div className="flex flex-wrap items-center gap-3">
-                {featuredCharacters.map((c) => (
-                  <CharacterAvatar
-                    key={c.id}
-                    src={c.icon48}
-                    alt={`${c.name}のアイコン`}
-                    emoji={c.emoji}
-                    size={40}
-                    className="border-stone-100"
-                  />
+        <section className="px-6 py-[88px]">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
+            <aside className="lg:sticky lg:top-28 lg:self-start">
+              <div className="space-y-1">
+                {FAQ_GROUPS.map((group) => (
+                  <a
+                    key={group.id}
+                    href={`#${group.id}`}
+                    onClick={() => setActiveId(group.id)}
+                    className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors ${
+                      activeId === group.id
+                        ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
+                        : 'border-transparent text-[var(--text2)] hover:text-[var(--accent)]'
+                    }`}
+                  >
+                    {group.label}
+                  </a>
                 ))}
               </div>
-              <h2 className="mt-5 text-xl font-semibold text-stone-900">
-                答えが見つからなかった方へ
-              </h2>
-              <p className="mt-3 text-sm leading-7 text-stone-500">
-                まずは無料で試してみてください。登録してインタビューを1回体験すると、
-                疑問のほとんどが解消します。クレジットカードは不要です。
-              </p>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/auth/signup"
-                  className={getButtonClass('primary', 'px-6 py-4 text-sm')}
+            </aside>
+
+            <div className="space-y-14">
+              {FAQ_GROUPS.map((group) => (
+                <FaqGroupSection key={group.id} group={group} />
+              ))}
+
+              <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] text-2xl text-[var(--accent)]">
+                  ?
+                </div>
+                <h2 className="mt-5 font-serif text-2xl font-bold text-[var(--text)]">解決しない質問がありますか？</h2>
+                <p className="mt-3 text-sm leading-7 text-[var(--text2)]">
+                  お問い合わせフォームからお気軽にご連絡ください。
+                </p>
+                <a
+                  href="mailto:hello@insightcast.jp"
+                  className="mt-6 inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
                 >
-                  無料で取材を始める
-                </Link>
-                <Link
-                  href="/cast"
-                  className={getButtonClass('secondary', 'px-6 py-4 text-sm font-medium')}
-                >
-                  キャストを見る
-                </Link>
+                  お問い合わせ →
+                </a>
               </div>
             </div>
           </div>

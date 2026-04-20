@@ -2,16 +2,22 @@ import type { StaticImageData } from 'next/image'
 
 import mintIcon48 from '@/assets/characters/mint/icons/icon-48.png'
 import mintIcon96 from '@/assets/characters/mint/icons/icon-96.png'
+import mintPortrait from '@/assets/characters/mint/portraits/portrait-half.png'
 import clausIcon48 from '@/assets/characters/claus/icons/icon-48.png'
 import clausIcon96 from '@/assets/characters/claus/icons/icon-96.png'
+import clausPortrait from '@/assets/characters/claus/portraits/portrait-half.png'
 import rainIcon48 from '@/assets/characters/rain/icons/icon-48.png'
 import rainIcon96 from '@/assets/characters/rain/icons/icon-96.png'
+import rainPortrait from '@/assets/characters/rain/portraits/portrait-half.png'
 import halIcon48 from '@/assets/characters/hal/icons/icon-48.png'
 import halIcon96 from '@/assets/characters/hal/icons/icon-96.png'
+import halPortrait from '@/assets/characters/hal/portraits/portrait-half.png'
 import mogroIcon48 from '@/assets/characters/mogro/icons/icon-48.png'
 import mogroIcon96 from '@/assets/characters/mogro/icons/icon-96.png'
+import mogroPortrait from '@/assets/characters/mogro/portraits/portrait-half.png'
 import coccoIcon48 from '@/assets/characters/cocco/icons/icon-48.png'
 import coccoIcon96 from '@/assets/characters/cocco/icons/icon-96.png'
+import coccoPortrait from '@/assets/characters/cocco/portraits/portrait-half.png'
 
 export type Character = {
   id: string
@@ -24,6 +30,7 @@ export type Character = {
   available: boolean
   icon48: StaticImageData
   icon96: StaticImageData
+  portrait: StaticImageData
 }
 
 export const CHARACTERS: Character[] = [
@@ -38,6 +45,7 @@ export const CHARACTERS: Character[] = [
     available: true,
     icon48: mintIcon48,
     icon96: mintIcon96,
+    portrait: mintPortrait,
   },
   {
     id: 'claus',
@@ -50,6 +58,7 @@ export const CHARACTERS: Character[] = [
     available: true,
     icon48: clausIcon48,
     icon96: clausIcon96,
+    portrait: clausPortrait,
   },
   {
     id: 'rain',
@@ -62,6 +71,7 @@ export const CHARACTERS: Character[] = [
     available: true,
     icon48: rainIcon48,
     icon96: rainIcon96,
+    portrait: rainPortrait,
   },
   {
     id: 'hal',
@@ -74,6 +84,7 @@ export const CHARACTERS: Character[] = [
     available: false,
     icon48: halIcon48,
     icon96: halIcon96,
+    portrait: halPortrait,
   },
   {
     id: 'mogro',
@@ -86,6 +97,7 @@ export const CHARACTERS: Character[] = [
     available: false,
     icon48: mogroIcon48,
     icon96: mogroIcon96,
+    portrait: mogroPortrait,
   },
   {
     id: 'cocco',
@@ -98,6 +110,7 @@ export const CHARACTERS: Character[] = [
     available: false,
     icon48: coccoIcon48,
     icon96: coccoIcon96,
+    portrait: coccoPortrait,
   },
 ]
 

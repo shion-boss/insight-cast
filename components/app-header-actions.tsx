@@ -14,10 +14,10 @@ const NAV_ITEMS: Array<{ href: string; label: string; key: HeaderSection }> = [
 
 function navClass(active: boolean) {
   if (active) {
-    return 'rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-semibold text-stone-950'
+    return 'rounded-full border border-[var(--border2)] bg-[var(--surface)] px-3 py-1.5 text-sm font-semibold text-[var(--text)]'
   }
 
-  return 'rounded-full border border-transparent px-3 py-1.5 text-sm font-medium text-stone-700 transition-colors hover:border-stone-200 hover:bg-white/80 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40'
+  return 'rounded-full border border-transparent px-3 py-1.5 text-sm font-medium text-[var(--text2)] transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]/80 hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 }
 
 export default function AppHeaderActions({

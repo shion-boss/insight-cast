@@ -39,7 +39,7 @@ function slugify(text: string): string {
 }
 
 const selectClass =
-  'min-h-11 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 transition-colors duration-150 hover:border-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-600/40'
+  'min-h-11 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 
 export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const router = useRouter()
@@ -122,12 +122,12 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
     <div className="space-y-8">
       {/* エラー・成功メッセージ */}
       {errorMsg && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {errorMsg}
         </div>
       )}
       {successMsg && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <div className="rounded-[var(--r-sm)] bg-[var(--ok-l)] px-4 py-3 text-sm text-[var(--ok)]">
           {successMsg}
         </div>
       )}
@@ -164,7 +164,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               onChange={(e) => handleChange('excerpt', e.target.value)}
               rows={3}
               placeholder="記事の概要を150字程度で書いてください"
-              className="min-h-24 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 text-sm text-stone-900 transition-colors duration-150 placeholder:text-stone-400 hover:border-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-600/40 resize-y"
+              className="min-h-24 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
             />
           </div>
 
@@ -175,7 +175,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               onChange={(e) => handleChange('body', e.target.value)}
               rows={20}
               placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
-              className="min-h-96 w-full rounded-xl border border-stone-300 bg-white px-4 py-3 font-mono text-sm text-stone-900 transition-colors duration-150 placeholder:text-stone-400 hover:border-stone-400/70 focus:outline-none focus:ring-2 focus:ring-amber-600/40 resize-y"
+              className="min-h-96 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
             />
           </div>
         </div>
@@ -183,15 +183,15 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         {/* サイドカラム */}
         <div className="space-y-5">
           {/* 公開設定 */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-stone-700">公開設定</h3>
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-[var(--text)]">公開設定</h3>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.published}
                 onChange={(e) => handleChange('published', e.target.checked)}
-                className="h-4 w-4 rounded border-stone-300 accent-stone-900 focus:ring-2 focus:ring-amber-600/40"
+                className="h-4 w-4 rounded border-[var(--border)] accent-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               />
               <span className="text-sm text-stone-700">公開する</span>
             </label>
@@ -207,8 +207,8 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           {/* 分類 */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-stone-700">分類</h3>
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
+            <h3 className="text-sm font-semibold text-[var(--text)]">分類</h3>
 
             <div>
               <FieldLabel required>カテゴリ</FieldLabel>
@@ -251,15 +251,15 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           {/* カバーカラー */}
-          <div className="rounded-2xl border border-stone-200 bg-white p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-stone-700">カバーカラー</h3>
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-3">
+            <h3 className="text-sm font-semibold text-[var(--text)]">カバーカラー</h3>
             <div>
               <TextInput
                 value={form.cover_color}
                 onChange={(e) => handleChange('cover_color', e.target.value)}
                 placeholder="bg-emerald-100"
               />
-              <p className="mt-1 text-xs text-stone-400">Tailwind CSSのクラス名を入力</p>
+              <p className="mt-1 text-[12px] text-[var(--text3)]">Tailwind CSSのクラス名を入力</p>
             </div>
             {/* プレビュー */}
             <div className={`h-12 rounded-xl ${form.cover_color}`} aria-hidden="true" />

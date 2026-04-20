@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>料金 — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;align-items:start}
+.plan-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;padding:36px;display:flex;flex-direction:column;gap:0;position:relative}
+.plan-card.featured{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:5px 16px;border-radius:100px;letter-spacing:.06em;white-space:nowrap}
+.plan-name{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.plan-price{font-family:var(--serif);font-size:44px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px}
+.plan-price sub{font-size:16px;color:var(--text2);font-family:var(--sans);font-weight:400}
+.plan-price sup{font-size:22px;vertical-align:super;font-family:var(--sans)}
+.plan-note{font-size:13px;color:var(--text3);margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.plan-features{display:flex;flex-direction:column;gap:0;margin-bottom:28px;flex:1}
+.plan-feat{display:flex;align-items:baseline;gap:10px;font-size:14px;color:var(--text2);padding:10px 0;border-bottom:1px solid var(--border)}
+.plan-feat:last-child{border-bottom:none}
+.plan-feat::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0}
+.plan-feat.no::before{content:'–';color:var(--text3)}
+.plan-feat.no{color:var(--text3)}
+.add-on-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.add-on-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;display:flex;gap:14px}
+.add-on-img{width:64px;height:64px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1.5px solid var(--border)}
+.add-on-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+.add-on-name{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px}
+.add-on-role{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.08em;margin-bottom:8px}
+.add-on-price{font-size:15px;font-weight:700;color:var(--text);margin-top:8px}
+.compare-table{margin-top:48px;border-radius:20px;overflow:hidden;border:1px solid var(--border)}
+.compare-table table{width:100%;border-collapse:collapse}
+.compare-table th{padding:14px 20px;font-size:13px;font-weight:700;text-align:center;border-bottom:1px solid var(--border);background:var(--bg2);color:var(--text2)}
+.compare-table th:first-child{text-align:left;width:35%}
+.compare-table td{padding:13px 20px;font-size:14px;text-align:center;border-bottom:1px solid var(--border);color:var(--text2)}
+.compare-table td:first-child{text-align:left;color:var(--text);font-weight:500}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .hl td,.compare-table .hl th{background:var(--accent-l)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="shared/components.jsx"></script>
+<script type="text/babel">
+const {useState}=React;
+const NAV=[['サービス','Service.html'],['料金','Pricing.html'],['キャスト','Cast.html'],['ブログ','Blog.html'],['About','About.html']];
+
+const PLANS=[
+  {name:'Free',price:0,note:'クレジットカード不要',featured:false,feats:[
+    '月2回のAI取材',
+    'フリーキャスト3名',
+    'HP分析レポート（基本）',
+    '取材メモ生成',
+    '記事素材 月2本',
+    {no:true,t:'追加キャスト'},
+    {no:true,t:'記事素材 無制限'},
+    {no:true,t:'競合詳細分析'},
+  ],cta:'無料で始める',href:'Signup.html'},
+  {name:'Standard',price:4980,note:'月払い・いつでも解約可',featured:true,feats:[
+    '月10回のAI取材',
+    'フリーキャスト3名',
+    'HP分析レポート（詳細）',
+    '取材メモ生成',
+    '記事素材 月10本',
+    '競合詳細分析',
+    {no:true,t:'追加キャスト'},
+    {no:true,t:'記事素材 無制限'},
+  ],cta:'スタンダードで始める',href:'Signup.html'},
+  {name:'Pro',price:14800,note:'月払い・いつでも解約可',featured:false,feats:[
+    'AI取材 無制限',
+    'フリーキャスト3名',
+    'HP分析レポート（詳細）',
+    '取材メモ生成',
+    '記事素材 無制限',
+    '競合詳細分析',
+    '追加キャスト対象',
+    '優先サポート',
+  ],cta:'Proで始める',href:'Signup.html'},
+];
+
+const ADDON_CASTS=[
+  {name:'ハル',role:'Atmosphere Finder',img:'uploads/portrait-half-134e2225.png',price:'＋980円/月',desc:'写真を起点に雰囲気・人柄を引き出す'},
+  {name:'モグロ',role:'Yes / No Deep Dive',img:'uploads/portrait-half-29476351.png',price:'＋980円/月',desc:'はい/いいえで価値の輪郭を深掘りする'},
+  {name:'コッコ',role:'Campaign Voice',img:'uploads/portrait-half-35f1e736.png',price:'＋980円/月',desc:'キャンペーン・今伝えたいことを引き出す'},
+];
+
+const TABLE_ROWS=[
+  {l:'月次AI取材回数',free:'2回',std:'10回',pro:'無制限'},
+  {l:'フリーキャスト',free:'3名',std:'3名',pro:'3名'},
+  {l:'追加キャスト',free:'×',std:'×',pro:'○ (別途)'},
+  {l:'HP分析レポート',free:'基本',std:'詳細',pro:'詳細'},
+  {l:'競合サイト分析数',free:'1社',std:'3社',pro:'5社'},
+  {l:'記事素材生成数',free:'月2本',std:'月10本',pro:'無制限'},
+  {l:'取材メモ',free:'○',std:'○',pro:'○'},
+  {l:'ダウンロード',free:'○',std:'○',pro:'○'},
+];
+
+function Nav(){
+  const [sc,setSc]=useState(false);
+  React.useEffect(()=>{const f=()=>setSc(window.scrollY>20);window.addEventListener('scroll',f);return()=>window.removeEventListener('scroll',f);},[]);
+  return(
+    <nav className={`pub-nav${sc?' scrolled':''}`}>
+      <div className="pub-nav-inner">
+        <a className="pub-logo" href="Top Page.html">Insight <em>Cast</em></a>
+        <div className="pub-nav-links">{NAV.map(([l,h])=><a key={l} className={`pub-nav-link${l==='料金'?' active':''}`} href={h}>{l}</a>)}</div>
+        <div className="flex gap-3"><a className="btn btn-ghost btn-sm" href="Login.html">ログイン</a><a className="btn btn-primary btn-sm" href="Signup.html">無料で試す →</a></div>
+      </div>
+    </nav>
+  );
+}
+
+function App(){
+  return(
+    <>
+    <Nav/>
+    <section className="pub-hero-sm">
+      <div className="container text-center">
+        <div className="label">Pricing</div>
+        <h1 className="display mt-3">シンプルな料金体系</h1>
+        <p className="body-lg mt-4" style={{maxWidth:480,margin:'16px auto 0'}}>まず無料で体験して、必要に応じてプランをアップグレードしてください。</p>
+      </div>
+    </section>
+
+    <section className="section" style={{background:'var(--bg2)'}}>
+      <div className="container">
+        <div className="plans">
+          {PLANS.map(p=>(
+            <div key={p.name} className={`plan-card${p.featured?' featured':''}`}>
+              {p.featured&&<div className="plan-badge">✦ おすすめ</div>}
+              <div className="plan-name">{p.name}</div>
+              <div className="plan-price">
+                {p.price===0?<span style={{fontSize:28,fontWeight:700}}>無料</span>:<><sup>¥</sup>{p.price.toLocaleString()}<sub>/月</sub></>}
+              </div>
+              <div className="plan-note">{p.note}</div>
+              <div className="plan-features">
+                {p.feats.map((f,i)=>(
+                  <div key={i} className={`plan-feat${f.no?' no':''}`}>{f.no?f.t:f}</div>
+                ))}
+              </div>
+              <a className={`btn w-full text-center${p.featured?' btn-primary':' btn-outline'}`} href={p.href} style={{justifyContent:'center'}}>{p.cta}</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section className="section">
+      <div className="container">
+        <div className="label">Plan Comparison</div>
+        <h2 className="heading mt-3">プラン比較表</h2>
+        <div className="compare-table mt-10" style={{marginTop:40}}>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Free</th>
+                <th>Standard</th>
+                <th style={{background:'var(--accent)',color:'#fff'}}>Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TABLE_ROWS.map(r=>(
+                <tr key={r.l}>
+                  <td>{r.l}</td>
+                  <td>{r.free}</td>
+                  <td>{r.std}</td>
+                  <td style={{background:'var(--accent-l)',fontWeight:600,color:'var(--text)'}}>{r.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section className="section" style={{background:'var(--bg2)'}}>
+      <div className="container">
+        <div className="label">Add-on Cast</div>
+        <h2 className="heading mt-3">追加キャスト</h2>
+        <p className="body-lg mt-3">Proプランをご利用中の方は、追加キャストを月単位で追加できます。</p>
+        <div className="add-on-grid">
+          {ADDON_CASTS.map(c=>(
+            <div key={c.name} className="add-on-card">
+              <div className="add-on-img"><img src={c.img} alt={c.name}/></div>
+              <div>
+                <div className="add-on-name">{c.name}</div>
+                <div className="add-on-role">{c.role}</div>
+                <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.65}}>{c.desc}</div>
+                <div className="add-on-price">{c.price}</div>
+                <span className="badge badge-gray mt-2" style={{marginTop:8}}>準備中</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section className="section">
+      <div className="container-sm">
+        <div className="label">よくある質問</div>
+        <h2 className="heading mt-3">料金についての Q&A</h2>
+        <div className="faq-list mt-10" style={{marginTop:40}}>
+          {[
+            {q:'無料プランにクレジットカードは必要ですか？',a:'不要です。メールアドレスのみで登録できます。'},
+            {q:'途中でプランを変更できますか？',a:'いつでも変更可能です。アップグレードは即時反映、ダウングレードは翌月から適用されます。'},
+            {q:'解約するとデータはどうなりますか？',a:'取材メモ・記事素材はエクスポートしていただければ保持できます。解約後30日以内はデータにアクセス可能です。'},
+            {q:'追加取材は別途購入できますか？',a:'現在は月次プランのみです。追加購入オプションは近日公開予定です。'},
+          ].map((f,i)=>{
+            const [o,setO]=useState(false);
+            return(
+              <div className="faq-item" key={i}>
+                <button className="faq-q" onClick={()=>setO(!o)}><span>{f.q}</span><i className={`faq-chevron${o?' open':''}`}>⌄</i></button>
+                <div className={`faq-a${o?' open':''}`}><div className="faq-a-in">{f.a}</div></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <div className="final-cta">
+      <h2>まずは無料で試してみる</h2>
+      <p>クレジットカード不要。3名のキャストと今すぐ取材を始められます。</p>
+      <div className="cta-actions">
+        <a className="btn btn-white btn-lg" href="Signup.html">無料で取材を始める →</a>
+        <a className="btn btn-ghost-white" href="Service.html">サービスの流れを見る</a>
+      </div>
+    </div>
+    <footer className="pub-footer"><div className="pub-footer-in"><div className="f-logo">Insight Cast</div><div className="f-links">{['プライバシーポリシー','利用規約','特定商取引法に基づく表記'].map(l=><span key={l} className="f-link">{l}</span>)}</div><div className="f-copy">© 2026 Insight Cast</div></div></footer>
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -121,9 +121,9 @@ export default function PhilosophyPage() {
                 <a
                   key={a.id}
                   href={`#${a.id}`}
-                  className="flex items-center gap-3 rounded-2xl border border-stone-200/80 bg-[rgba(255,253,249,0.94)] px-5 py-3 text-sm text-stone-600 transition-colors duration-150 hover:border-stone-300 hover:text-stone-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="flex items-center gap-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--text2)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
-                  <span className="rounded-full bg-stone-100 px-2 py-0.5 text-[11px] font-medium text-stone-500">{a.tag}</span>
+                  <span className="rounded-full bg-[var(--bg2)] px-2 py-0.5 text-[11px] font-medium text-[var(--text2)]">{a.tag}</span>
                   {a.title}
                 </a>
               ))}
@@ -137,23 +137,23 @@ export default function PhilosophyPage() {
           <section
             key={article.id}
             id={article.id}
-            className="px-6 py-14 sm:py-18"
+            className="px-6 py-[88px]"
           >
             <div className="mx-auto max-w-6xl">
               <div className={`grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] ${articleIndex % 2 === 1 ? 'lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]' : ''}`}>
                 {/* 左: ラベル・タイトル */}
                 <div className={articleIndex % 2 === 1 ? 'lg:order-2' : ''}>
                   <div className="sticky top-24">
-                    <span className="inline-block rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+                    <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
                       {article.tag}
                     </span>
-                    <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-stone-900 sm:text-3xl">
+                    <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
                       {article.title}
                     </h2>
-                    <p className="mt-4 text-sm leading-7 text-stone-500">{article.lead}</p>
+                    <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{article.lead}</p>
 
-                    <div className="mt-8 h-px bg-gradient-to-r from-stone-200 to-transparent" />
-                    <p className="mt-6 text-xs text-stone-400">
+                    <div className="mt-8 h-px bg-gradient-to-r from-[var(--border2)] to-transparent" />
+                    <p className="mt-6 text-xs text-[var(--text3)]">
                       {article.sections.length} つの観点で整理しています
                     </p>
                   </div>
@@ -164,19 +164,19 @@ export default function PhilosophyPage() {
                   {article.sections.map((section, i) => (
                     <article
                       key={i}
-                      className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-7"
+                      className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7"
                     >
                       <div className="flex items-start gap-4">
-                        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-stone-900 text-xs font-semibold text-white">
+                        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
                           {String(i + 1).padStart(2, '0')}
                         </span>
-                        <h3 className="pt-1 text-base font-semibold leading-snug text-stone-900 sm:text-lg">
+                        <h3 className="pt-1 text-base font-semibold leading-snug text-[var(--text)] sm:text-lg">
                           {section.heading}
                         </h3>
                       </div>
                       <div className="mt-5 space-y-4 pl-12">
                         {section.body.map((para, j) => (
-                          <p key={j} className="text-sm leading-8 text-stone-500">
+                          <p key={j} className="text-sm leading-8 text-[var(--text2)]">
                             {para}
                           </p>
                         ))}
@@ -190,10 +190,10 @@ export default function PhilosophyPage() {
         ))}
 
         {/* まとめ */}
-        <section className="px-6 py-14 sm:py-18">
+        <section className="px-6 py-[88px]">
           <div className="mx-auto max-w-6xl">
-            <div className="rounded-[2rem] border border-stone-200 bg-stone-900 p-8 text-white sm:p-10">
-              <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Summary</p>
+            <div className="rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] p-8 text-white sm:p-10">
+              <p className="text-xs font-medium tracking-[0.22em] text-[var(--text3)] uppercase">Summary</p>
               <h2 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
                 「書く」より「聞く」が先。
                 <br />
@@ -205,9 +205,9 @@ export default function PhilosophyPage() {
                   { num: '02', text: 'インタビューは「強みを聞く」のではなく「エピソードから引き出す」' },
                   { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
                 ].map((item) => (
-                  <div key={item.num} className="rounded-[1.6rem] border border-white/10 bg-white/6 p-5">
-                    <p className="text-xs font-semibold tracking-[0.2em] text-stone-400 uppercase">{item.num}</p>
-                    <p className="mt-3 text-sm leading-7 text-stone-200">{item.text}</p>
+                  <div key={item.num} className="rounded-[var(--r-sm)] border border-white/10 bg-white/6 p-5">
+                    <p className="text-xs font-semibold tracking-[0.2em] text-[var(--text3)] uppercase">{item.num}</p>
+                    <p className="mt-3 text-sm leading-7 text-[rgba(255,255,255,0.72)]">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -216,15 +216,15 @@ export default function PhilosophyPage() {
         </section>
 
         {/* CTA */}
-        <section className="px-6 pb-20 pt-4">
-          <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.4rem] border border-stone-200 bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_55%,_#6b4f2c_100%)] px-6 py-10 text-white sm:px-10 sm:py-12">
-            <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Try It</p>
+        <section className="px-6 py-[88px]">
+          <div className="mx-auto max-w-6xl overflow-hidden rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] px-6 py-10 text-white sm:px-10 sm:py-12">
+            <p className="text-xs font-medium tracking-[0.22em] text-[var(--accent-l)] uppercase">Try It</p>
             <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-xl">
                 <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
                   まず一度、取材班に話しかけてみてください。
                 </h2>
-                <p className="mt-4 text-sm leading-7 text-stone-200">
+                <p className="mt-4 text-sm leading-7 text-[rgba(255,255,255,0.72)]">
                   理論を読んでいただけたら、次は体験です。
                   登録無料で、ミント・クラウス・レインの取材を試せます。
                 </p>
@@ -238,7 +238,7 @@ export default function PhilosophyPage() {
                 </Link>
                 <Link
                   href="/cast"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   キャストを見る
                 </Link>

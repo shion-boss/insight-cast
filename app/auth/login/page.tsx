@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, Suspense, type FormEvent } from 'react'
+import React from 'react'
+import { useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-import { FieldLabel, PrimaryButton, SecondaryButton, SiteBrand, TextInput } from '@/components/ui'
-import { PublicPageFrame } from '@/components/public-layout'
+import { FieldLabel, TextInput } from '@/components/ui'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -22,7 +22,7 @@ function LoginForm() {
     ? oauthErrorMessage ?? 'Googleログインに失敗しました。Supabase の Google Provider 設定をご確認ください'
     : null
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
@@ -57,40 +57,33 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 relative z-10">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-[440px]">
         {/* ブランド */}
-        <div className="mb-8 flex items-center justify-between">
-          <SiteBrand href="/" subtitle={false} />
-          <Link
-            href="/"
-            className="rounded-md text-sm text-stone-400 transition-colors hover:text-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-          >
-            ← トップへ
-          </Link>
-        </div>
-
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-950">ログイン</h1>
-          <p className="mt-1 text-sm text-stone-500">取材班の続きから、すぐ再開できます。</p>
+        <div className="mb-8 text-center">
+          <span className="font-serif text-[22px] font-bold text-[var(--text)]">
+            Insight <span className="text-[var(--accent)]">Cast</span>
+          </span>
         </div>
 
         {/* カード */}
-        <div className="rounded-[2rem] border border-stone-200/80 bg-[rgba(255,253,249,0.94)] p-8 backdrop-blur-sm">
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-12 w-full shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
+          <h1 className="font-serif text-[22px] font-bold text-[var(--text)] text-center mb-8">ログイン</h1>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <SecondaryButton
+            <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading || googleLoading}
-              className="w-full"
+              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {googleLoading ? 'Googleに移動中...' : 'Googleでログイン'}
-            </SecondaryButton>
+            </button>
 
             <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-stone-200" />
-              <span className="text-xs text-stone-400">またはメールでログイン</span>
-              <div className="h-px flex-1 bg-stone-200" />
+              <hr className="flex-1 border-[var(--border)]" />
+              <span className="text-xs text-[var(--text3)]">または</span>
+              <hr className="flex-1 border-[var(--border)]" />
             </div>
 
             <div>
@@ -115,26 +108,37 @@ function LoginForm() {
             </div>
 
             {(error || oauthError) && (
-              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error ?? oauthError}</p>
+              <p className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-4 py-3 text-sm">
+                {error ?? oauthError}
+              </p>
             )}
 
-            <PrimaryButton
+            <button
               type="submit"
               disabled={loading}
-              className="w-full"
+              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {loading ? 'ログイン中...' : 'ログインする'}
-            </PrimaryButton>
+            </button>
           </form>
         </div>
 
-        <p className="mt-5 text-center text-sm text-stone-400">
+        <p className="mt-5 text-center text-sm text-[var(--text3)]">
           アカウントをお持ちでない方は{' '}
           <Link
             href="/auth/signup"
-            className="text-stone-700 underline underline-offset-2 hover:text-stone-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 rounded-sm"
+            className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
           >
             新規登録
+          </Link>
+        </p>
+
+        <p className="mt-3 text-center">
+          <Link
+            href="/"
+            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
+          >
+            ← トップへ
           </Link>
         </p>
       </div>
@@ -144,10 +148,8 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <PublicPageFrame>
-      <Suspense>
-        <LoginForm />
-      </Suspense>
-    </PublicPageFrame>
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }

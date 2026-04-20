@@ -1,30 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4efe6;
-  --foreground: #171717;
-  --foreground-strong: #0f172a;
-  --muted: #44403c;
-  --muted-strong: #292524;
-  --line: rgba(68, 64, 60, 0.18);
-  --line-strong: rgba(41, 37, 36, 0.24);
-  --surface: rgba(255, 255, 255, 0.92);
-  --surface-strong: #fffdf9;
-  --brand: #b45309;
-  --brand-strong: #7c2d12;
-  --brand-soft: #f59e0b;
-  --accent: #0f766e;
-  --accent-soft: #ccfbf1;
-
+  /* Design tokens */
+  --bg: #faf6f0;
+  --bg2: #f0e9de;
+  --bg3: #e8ddd0;
+  --surface: #fffdf9;
+  --surface2: #f5ede0;
+  --border: #e2d5c3;
+  --border2: #d0c0a8;
+  --text: #1c1410;
+  --text2: #7a6555;
+  --text3: #b8a898;
+  --accent: #c2722a;
+  --accent-h: #a85e20;
+  --accent-l: #fdf0e4;
+  --accent-d: #8a4a18;
+  --teal: #0d9488;
+  --teal-h: #0a7a70;
+  --teal-l: #e0f5f3;
+  --ok: #16a34a;
+  --ok-l: #dcfce7;
+  --warn: #d97706;
+  --warn-l: #fef3c7;
+  --err: #dc2626;
+  --err-l: #fee2e2;
+  --shadow: rgba(0,0,0,0.07);
+  --shadow-lg: rgba(0,0,0,0.13);
+  --r: 12px; --r-sm: 8px; --r-lg: 20px; --r-xl: 28px;
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-noto-sans-jp);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-noto-serif-jp), "Noto Serif JP", Georgia, serif;
 }
 
 html {
@@ -33,12 +46,9 @@ html {
 
 body {
   min-height: 100dvh;
-  background:
-    radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 24%),
-    radial-gradient(circle at 85% 10%, rgba(15, 118, 110, 0.12), transparent 20%),
-    linear-gradient(180deg, #efe5d6 0%, #f7f2e9 22%, #f4efe6 100%);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-noto-sans-jp), "Hiragino Sans", "Noto Sans JP", sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -56,24 +66,13 @@ button:disabled,
 }
 
 :where(a, button, input, textarea, select, summary, [role="button"]):focus-visible {
-  outline: 3px solid rgba(180, 83, 9, 0.55);
+  outline: 3px solid rgba(194, 114, 42, 0.45);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: rgba(245, 158, 11, 0.3);
-  color: #111827;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.24), rgba(255,255,255,0)),
-    linear-gradient(90deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
-  z-index: -1;
+  background: rgba(194, 114, 42, 0.22);
+  color: #1c1410;
 }
 
 .text-balance {
@@ -139,15 +138,19 @@ body::before {
 .card-interactive {
   transition:
     border-color 0.18s ease,
-    background-color 0.18s ease;
+    background-color 0.18s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
 .card-interactive:hover {
-  border-color: rgba(120, 113, 108, 0.45);
+  border-color: var(--border2);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px var(--shadow);
 }
 
 .card-interactive:active {
-  border-color: rgba(87, 83, 78, 0.52);
+  border-color: var(--border2);
 }
 
 /* ─── Legal doc styles ───────────────────────────────────── */
@@ -158,7 +161,7 @@ body::before {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--foreground-strong);
+  color: var(--text);
 }
 
 .legal-doc p,
@@ -167,7 +170,7 @@ body::before {
 .legal-doc th {
   font-size: 0.96rem;
   line-height: 1.95;
-  color: var(--muted-strong);
+  color: var(--text2);
 }
 
 .legal-doc ul {
@@ -181,7 +184,7 @@ body::before {
 }
 
 .legal-doc a {
-  color: var(--brand-strong);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 0.18em;
 }
@@ -190,12 +193,12 @@ body::before {
   width: 100%;
   overflow: hidden;
   border-radius: 1.2rem;
-  border: 1px solid var(--line-strong);
-  background: rgba(255, 253, 249, 0.9);
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .legal-doc tbody tr + tr {
-  border-top: 1px solid rgba(214, 211, 209, 0.95);
+  border-top: 1px solid var(--border);
 }
 
 .legal-doc th,
@@ -206,7 +209,7 @@ body::before {
 
 .legal-doc th {
   width: 10rem;
-  background: rgba(245, 245, 244, 1);
+  background: var(--bg2);
   font-weight: 600;
-  color: var(--muted-strong);
+  color: var(--text2);
 }

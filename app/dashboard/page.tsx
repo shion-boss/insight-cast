@@ -1,12 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ButtonLink, CharacterAvatar, InterviewerSpeech, PageHeader, SectionIntro, StateCard, StatusPill, SurfaceCard, getButtonClass, getInteractivePanelClass, getPanelClass } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
+import { AppShell } from '@/components/app-shell'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
-import StartAnalysisButton from '@/components/start-analysis-button'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
-import AppHeaderActions from '@/components/app-header-actions'
 
 type Project = {
   id: string
@@ -26,15 +25,6 @@ type Interview = {
   created_at: string
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(value))
-}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
@@ -148,267 +138,191 @@ export default async function DashboardPage() {
     }
   }
 
-  const latestInterview = interviews[0] ?? null
-  const latestInterviewProject = latestInterview ? projectMap[latestInterview.project_id] : null
-  const latestInterviewFlags = latestInterview ? getInterviewFlags(latestInterview, articleCountByInterview) : null
-  const latestInterviewHref = latestInterview
-    ? getInterviewManagementHref(latestInterview, articleCountByInterview)
-    : null
   const totalArticles = articleInterviewIds.size
-  const projectCountLabel = `${projectList.length}件の取材先`
-  const interviewCountLabel = `${interviews.length}件のインタビュー`
-  const articleCountLabel = `${totalArticles}件の記事`
   const mint = getCharacter('mint')
   const nextProject = projectList[0] ?? null
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader
-        title="ダッシュボード"
-        right={(
-          <AppHeaderActions active="dashboard" accountLabel={profile?.name ?? user.email ?? '設定'} />
-        )}
-      />
+    <AppShell
+      title="ダッシュボード"
+      active="dashboard"
+      accountLabel={profile?.name ?? user.email ?? '設定'}
+      headerRight={(
+        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+          + 取材先を追加
+        </Link>
+      )}
+    >
+      {/* Greeting banner */}
+      <div
+        className="mb-7 rounded-[var(--r-lg)] border border-[var(--border)] px-7 py-6"
+        style={{ background: 'linear-gradient(135deg,var(--accent-l),var(--teal-l))' }}
+      >
+        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)] mb-1.5">
+          こんにちは、{profile?.name ?? 'ゲスト'}さん 👋
+        </div>
+        <div className="text-[14px] text-[var(--text2)]">取材先 {projectList.length}件 · インタビュー {interviews.length}件 · 記事素材 {totalArticles}件</div>
+      </div>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <SurfaceCard tone="warm" className="rounded-[2.4rem]">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-xs font-medium tracking-[0.18em] text-stone-400 uppercase">Dashboard</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight text-stone-950">今日はどの取材を進めますか？</h1>
-              <p className="mt-3 text-sm leading-relaxed text-stone-700">
-                まずは次の一歩を決めやすいように、続きを開く場所と取材先ごとの準備を分けて置いています。
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {[projectCountLabel, interviewCountLabel, articleCountLabel].map((label) => (
-                  <span key={label} className="rounded-full bg-white px-3 py-1.5 text-xs font-medium text-stone-700 ring-1 ring-stone-300">
-                    {label}
-                  </span>
-                ))}
-              </div>
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-4 mb-8 lg:grid-cols-4">
+        {[
+          { n: projectList.length, l: '取材先', d: '' },
+          { n: interviews.length, l: '完了した取材', d: '' },
+          { n: totalArticles, l: '記事素材', d: '' },
+          { n: '∞', l: '今月の残り取材', d: 'Free プラン' },
+        ].map((stat) => (
+          <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
+            <div className="font-[family-name:var(--font-noto-serif-jp)] text-[34px] font-bold text-[var(--text)] leading-none">{stat.n}</div>
+            <div className="text-[13px] text-[var(--text2)] mt-1.5">{stat.l}</div>
+            {stat.d && <div className="text-[12px] text-[var(--teal,#0d9488)] mt-1 font-semibold">{stat.d}</div>}
+          </div>
+        ))}
+      </div>
+
+      {/* Quick actions */}
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <Link
+          href="/projects/new"
+          className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] text-decoration-none"
+        >
+          <div className="text-[28px]">🏢</div>
+          <div className="text-[13px] font-semibold text-[var(--text2)]">取材先を追加する</div>
+        </Link>
+        <Link
+          href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+          className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+        >
+          <div className="text-[28px]">🎤</div>
+          <div className="text-[13px] font-semibold text-[var(--text2)]">取材を続ける</div>
+        </Link>
+        <Link
+          href="/articles"
+          className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+        >
+          <div className="text-[28px]">📄</div>
+          <div className="text-[13px] font-semibold text-[var(--text2)]">記事素材を確認する</div>
+        </Link>
+      </div>
+
+      {projectList.length === 0 ? (
+        <div className="mt-4">
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={mint?.icon48}
+                alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={mint?.emoji}
+                size={48}
+              />
+            )}
+            name={mint?.name ?? 'インタビュアー'}
+            title="まだ取材先がありません。"
+            description="最初の取材先を登録すると、ここにインタビュー履歴と取材先の管理が並びます。"
+            tone="soft"
+          />
+          <div className="mt-4">
+            <ButtonLink href="/projects/new">最初の取材先を登録する</ButtonLink>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
+          {/* Projects */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
+              <Link href="/projects" className="text-[13px] text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
             </div>
-
-              <div className="flex w-full flex-col gap-3 lg:max-w-sm">
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                <ButtonLink
-                  href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-                  className="gap-2 whitespace-nowrap"
-                >
-                  <span className="text-base">+</span>
-                  {nextProject ? 'インタビューを始める' : '最初の取材先を登録する'}
-                </ButtonLink>
-                <ButtonLink
-                  href="/projects/new"
-                  tone="secondary"
-                  className="whitespace-nowrap"
-                >
-                  取材先を追加する
-                </ButtonLink>
-              </div>
-
-              {latestInterview && latestInterviewProject && latestInterviewHref && (
+            <div className="flex flex-col gap-[10px]">
+              {projectList.slice(0, 4).map((project) => (
                 <Link
-                  href={latestInterviewHref}
-                  className={getInteractivePanelClass('p-4')}
+                  key={project.id}
+                  href={`/projects/${project.id}`}
+                  className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
                 >
-                  <p className="text-xs font-medium tracking-[0.16em] text-stone-400 uppercase">直近のつづき</p>
-                  <p className="mt-2 text-sm font-semibold text-stone-950">
-                    {latestInterviewProject.name || latestInterviewProject.hp_url}
-                  </p>
-                  <p className="mt-1 text-xs text-stone-500">
-                    {formatShortDateTime(latestInterview.created_at)}
-                  </p>
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <div className="flex flex-wrap gap-2">
-                      {latestInterviewFlags?.hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
-                      {latestInterviewFlags?.hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
-                      {latestInterviewFlags?.hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
+                  <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-[20px] flex-shrink-0">🏢</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
+                      {project.name || project.hp_url}
                     </div>
-                    <span className="text-sm text-stone-400">→</span>
+                    <div className="text-[12px] text-[var(--text3)]">
+                      {latestInterviewMap.has(project.id)
+                        ? `最終取材: ${formatShortDateTime(latestInterviewMap.get(project.id)!.created_at)}`
+                        : `更新: ${formatDate(project.updated_at)}`}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
+                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
+                    ) : project.status === 'analyzing' ? (
+                      <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
+                    ) : (
+                      <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
+                    )}
                   </div>
                 </Link>
-              )}
+              ))}
             </div>
           </div>
-        </SurfaceCard>
 
-        {projectList.length === 0 ? (
-          <div className="mt-8">
-            <InterviewerSpeech
-              icon={(
-                <CharacterAvatar
-                  src={mint?.icon48}
-                  alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
-                  emoji={mint?.emoji}
-                  size={48}
-                />
-              )}
-              name={mint?.name ?? 'インタビュアー'}
-              title="まだ取材先がありません。"
-              description="最初の取材先を登録すると、ここにインタビュー履歴と取材先の管理が並びます。"
-              tone="soft"
-            />
-            <div className="mt-4">
-              <ButtonLink
-                href="/projects/new"
-              >
-                最初の取材先を登録する
-              </ButtonLink>
+          {/* Recent interviews */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
+              <Link href="/interviews" className="text-[13px] text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
             </div>
-          </div>
-        ) : (
-          <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.95fr)]">
-            <section className="space-y-4">
-              <div className="flex items-end justify-between gap-3">
-                <SectionIntro
-                  eyebrow="Next Action"
-                  title="最近のインタビュー"
-                  description="まずは続きを開くものをここから選べます。"
-                  className="max-w-md"
-                />
-                {interviews.length > 0 && (
-                  <span className="rounded-full bg-white px-3 py-1 text-xs text-stone-400 ring-1 ring-stone-200">
-                    新しい順
-                  </span>
-                )}
-              </div>
-
-              {interviews.length === 0 ? (
-                <div className="space-y-4">
-                  <InterviewerSpeech
-                    icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
-                    name={mint?.name ?? 'インタビュアー'}
-                    title="まだインタビューは始まっていません。"
-                    description="取材先を選んで、必要なタイミングでインタビューを始められます。"
-                    tone="soft"
-                  />
-                  <ButtonLink href={`/projects/${projectList[0].id}/interviewer`}>
-                    最初のインタビューを始める
-                  </ButtonLink>
-                </div>
-              ) : (
-                <ul className="space-y-3">
-                  {interviews.map((interview) => {
-                    const project = projectMap[interview.project_id]
-                    if (!project) return null
-
-                    const char = getCharacter(interview.interviewer_type)
-                    const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
-                    const interviewHref = getInterviewManagementHref(interview, articleCountByInterview)
-
-                    return (
-                      <li key={interview.id}>
-                        <Link
-                          href={interviewHref}
-                          className={getInteractivePanelClass('block p-5')}
-                        >
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex min-w-0 items-start gap-3">
-                              <CharacterAvatar
-                                src={char?.icon48}
-                                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                                emoji={char?.emoji ?? '🎙️'}
-                                size={44}
-                                className="mt-0.5 border-amber-100 bg-amber-50"
-                              />
-                              <div className="min-w-0">
-                                <p className="text-sm font-semibold text-stone-950">
-                                  {project.name || project.hp_url}
-                                </p>
-                                <p className="mt-1 text-xs text-stone-500">
-                                  {formatDateTime(interview.created_at)} ・ {char?.name ?? 'インタビュアー'}
-                                </p>
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                  {hasSummary && <StatusPill tone="neutral">取材メモあり</StatusPill>}
-                                  {hasArticle && <StatusPill tone="success">記事あり</StatusPill>}
-                                  {hasUncreatedThemes && <StatusPill tone="warning">未作成テーマあり</StatusPill>}
-                                </div>
-                              </div>
-                            </div>
-                            <span className="mt-1 text-sm text-stone-400">→</span>
-                          </div>
-                        </Link>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </section>
-
-            <aside className="space-y-4">
-              <SurfaceCard className="p-5">
-                <h2 className="text-sm font-semibold text-stone-950">取材先ごとの準備</h2>
-                <p className="mt-1 text-xs leading-relaxed text-stone-600">
-                  調査や管理を開く場所は右側にまとめました。インタビューの流れを邪魔しない置き方にしています。
-                </p>
-              </SurfaceCard>
-
-              <ul className="space-y-3">
-                {projectList.map((project) => (
-                  <li key={project.id} className={getPanelClass('p-4')}>
-                    <div className="flex flex-col gap-4">
-                      <Link
-                        href={`/projects/${project.id}`}
-                        className="block min-w-0 rounded-[1.2rem] px-1 py-1 transition-colors hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold text-stone-950">{project.name || project.hp_url}</p>
-                            <p className="mt-1 text-xs text-stone-500">{formatDate(project.updated_at)} に更新</p>
-                            {latestInterviewMap.has(project.id) && (
-                              <p className="mt-2 text-xs text-stone-700">
-                                直近の取材: {formatShortDateTime(latestInterviewMap.get(project.id)?.created_at ?? project.updated_at)}
-                              </p>
-                            )}
-                          </div>
-                          <span className="mt-0.5 flex-shrink-0 text-sm text-stone-400">→</span>
-                        </div>
-                      </Link>
-                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                        {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
-                          <StartAnalysisButton
-                            projectId={project.id}
-                            projectName={project.name || project.hp_url}
-                            compact
-                            className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                          />
-                        ) : project.status === 'analyzing' ? (
-                          <div className="inline-flex min-h-10 items-center justify-center rounded-xl border border-amber-300 bg-amber-100 px-4 py-2 text-sm font-medium text-amber-900 sm:whitespace-nowrap">
-                            調査中
-                          </div>
-                        ) : (
-                          <>
-                            <Link
-                              href={`/projects/${project.id}/report`}
-                              prefetch={false}
-                              className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                            >
-                              調査結果を見る
-                            </Link>
-                            <StartAnalysisButton
-                              projectId={project.id}
-                              projectName={project.name || project.hp_url}
-                              compact
-                              force
-                              className={getButtonClass('secondary', 'sm:whitespace-nowrap')}
-                            />
-                          </>
-                        )}
-                        <Link
-                          href={`/projects/${project.id}/interviewer`}
-                          className={getButtonClass('primary', 'sm:col-span-2 sm:whitespace-nowrap')}
-                        >
-                          インタビューを始める
-                        </Link>
+            {interviews.length === 0 ? (
+              <InterviewerSpeech
+                icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
+                name={mint?.name ?? 'インタビュアー'}
+                title="まだインタビューは始まっていません。"
+                description="取材先を選んで、インタビューを始めましょう。"
+                tone="soft"
+              />
+            ) : (
+              <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
+                {interviews.slice(0, 4).map((interview, i) => {
+                  const project = projectMap[interview.project_id]
+                  if (!project) return null
+                  const char = getCharacter(interview.interviewer_type)
+                  const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+                  const interviewHref = getInterviewManagementHref(interview, articleCountByInterview)
+                  return (
+                    <Link
+                      key={interview.id}
+                      href={interviewHref}
+                      className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors`}
+                    >
+                      <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                        <CharacterAvatar
+                          src={char?.icon48}
+                          alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                          emoji={char?.emoji ?? '🎙️'}
+                          size={32}
+                          className="w-full h-full object-cover object-top"
+                        />
                       </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
+                          {project.name || project.hp_url}
+                        </div>
+                        <div className="text-[12px] text-[var(--text3)]">
+                          {char?.name ?? 'インタビュアー'} · {formatDate(interview.created_at)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {hasSummary && <StatusPill tone="neutral">メモ</StatusPill>}
+                        {hasArticle && <StatusPill tone="success">記事</StatusPill>}
+                        {hasUncreatedThemes && <StatusPill tone="warning">未作成</StatusPill>}
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </div>
-        )}
-      </main>
-    </div>
+        </div>
+      )}
+    </AppShell>
   )
 }

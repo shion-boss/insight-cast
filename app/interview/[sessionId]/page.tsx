@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -91,7 +92,7 @@ export default function InterviewPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!input.trim() || loading) return
     const text = input.trim()
@@ -127,7 +128,7 @@ export default function InterviewPage() {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)] flex flex-col">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-stone-100 px-6 py-4 flex items-center justify-between">
+      <header className="bg-[var(--surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <CharacterAvatar
             src={char?.icon48}
@@ -136,8 +137,8 @@ export default function InterviewPage() {
             size={40}
           />
           <div>
-            <p className="text-sm font-medium text-stone-800">{char?.name}</p>
-            <p className="text-xs text-stone-400">{char?.description}</p>
+            <p className="text-sm font-medium text-[var(--text)]">{char?.name}</p>
+            <p className="text-xs text-[var(--text3)]">{char?.description}</p>
           </div>
         </div>
         <form action={completeSession.bind(null, sessionId)}>
@@ -160,13 +161,13 @@ export default function InterviewPage() {
                 alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
                 emoji={char?.emoji}
                 size={32}
-                className="mt-1 border-amber-100 bg-amber-50"
+                className="mt-1 border-[var(--border)] bg-[var(--surface)]"
               />
             )}
             <div className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap ${
               msg.role === 'assistant'
-                ? 'bg-white text-stone-700 rounded-tl-sm'
-                : 'bg-stone-800 text-white rounded-tr-sm'
+                ? 'bg-[var(--surface)] text-[var(--text2)] rounded-tl-sm'
+                : 'bg-[var(--text)] text-white rounded-tr-sm'
             }`}>
               {msg.content}
             </div>
@@ -179,10 +180,10 @@ export default function InterviewPage() {
               alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
               emoji={char?.emoji}
               size={32}
-              className="border-amber-100 bg-amber-50"
+              className="border-[var(--border)] bg-[var(--surface)]"
             />
-            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm">
-              <span className="text-stone-400 text-sm">...</span>
+            <div className="bg-[var(--surface)] px-4 py-3 rounded-2xl rounded-tl-sm">
+              <span className="text-[var(--text3)] text-sm">...</span>
             </div>
           </div>
         )}
@@ -190,7 +191,7 @@ export default function InterviewPage() {
       </div>
 
       {/* 入力欄 */}
-      <div className="bg-white border-t border-stone-100 px-4 py-4">
+      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-4 py-4">
         <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex gap-2">
           <TextInput
             type="text"

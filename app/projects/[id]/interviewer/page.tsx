@@ -92,23 +92,23 @@ export default async function InterviewerPage({
               <Link
                 key={char.id}
                 href={`/projects/${id}/interviewer?cast=${char.id}`}
-                className="block rounded-xl border border-stone-200 bg-white p-5 text-left transition-colors hover:border-stone-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                className="block rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:border-[var(--border2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <CharacterAvatar
                   src={char.icon96}
                   alt={`${char.name}のアイコン`}
                   emoji={char.emoji}
                   size={64}
-                  className="mb-3 border-stone-100"
+                  className="mb-3 border-[var(--border)]"
                 />
-                <div className="font-medium text-stone-800 text-sm">{char.name}</div>
-                <div className="text-xs text-stone-400 mt-0.5">{char.species}</div>
+                <div className="font-medium text-[var(--text)] text-sm">{char.name}</div>
+                <div className="text-xs text-[var(--text3)] mt-0.5">{char.species}</div>
                 {char.label && (
                   <div className="text-xs text-amber-600 mt-1 font-medium">{char.label}</div>
                 )}
-                <div className="text-xs text-stone-500 mt-2 leading-relaxed">{char.description}</div>
-                <div className="text-xs text-stone-400 mt-3 font-medium">得意: {char.specialty}</div>
-                <div className="mt-4 text-xs text-center py-2 bg-stone-800 text-white rounded-lg">
+                <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
+                <div className="text-xs text-[var(--text3)] mt-3 font-medium">得意: {char.specialty}</div>
+                <div className="mt-4 text-xs text-center py-2 bg-[var(--text)] text-white rounded-lg">
                   <DevAiLabel>このキャストで進む</DevAiLabel>
                 </div>
               </Link>
@@ -116,7 +116,7 @@ export default async function InterviewerPage({
           </div>
         ) : (
           <div className="mb-8 space-y-6">
-            <section className="rounded-2xl border border-stone-200 bg-white/90 p-5">
+            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <CharacterAvatar
@@ -124,18 +124,18 @@ export default async function InterviewerPage({
                     alt={`${selectedCharacter.name}のアイコン`}
                     emoji={selectedCharacter.emoji}
                     size={64}
-                    className="border-stone-100"
+                    className="border-[var(--border)]"
                   />
                   <div>
-                    <p className="text-sm font-medium text-stone-800">{selectedCharacter.name}</p>
-                    <p className="mt-1 text-xs text-stone-400">{selectedCharacter.species}</p>
-                    <p className="mt-3 text-sm text-stone-600 leading-relaxed">{selectedCharacter.description}</p>
-                    <p className="mt-2 text-xs font-medium text-stone-500">得意: {selectedCharacter.specialty}</p>
+                    <p className="text-sm font-medium text-[var(--text)]">{selectedCharacter.name}</p>
+                    <p className="mt-1 text-xs text-[var(--text3)]">{selectedCharacter.species}</p>
+                    <p className="mt-3 text-sm text-[var(--text2)] leading-relaxed">{selectedCharacter.description}</p>
+                    <p className="mt-2 text-xs font-medium text-[var(--text3)]">得意: {selectedCharacter.specialty}</p>
                   </div>
                 </div>
                 <Link
                   href={`/projects/${id}/interviewer`}
-                  className="rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-500 transition-colors hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   選び直す
                 </Link>
@@ -148,10 +148,10 @@ export default async function InterviewerPage({
               </div>
             )}
 
-            <section className="rounded-2xl border border-stone-200 bg-white/90 p-5">
+            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-stone-500">AIがおすすめするテーマ</p>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="text-xs font-medium text-[var(--text3)]">AIがおすすめするテーマ</p>
+                <p className="mt-1 text-sm text-[var(--text3)]">
                   ホームページの内容から、先に深めるとよさそうなテーマを5つまで並べます。
                 </p>
               </div>
@@ -165,27 +165,27 @@ export default async function InterviewerPage({
                       <input type="hidden" name="focusTheme" value={theme} />
                       <button
                         type="submit"
-                        className="w-full cursor-pointer rounded-xl border border-stone-200 bg-stone-50 px-4 py-4 text-left transition-colors hover:border-amber-300 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--warn)]/40 hover:bg-[var(--warn-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
-                        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-amber-700">Recommended</p>
-                        <p className="mt-2 text-sm leading-relaxed text-stone-700">{theme}</p>
-                        <p className="mt-3 text-xs text-stone-400">このテーマでインタビューを始める</p>
+                        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--warn)]">Recommended</p>
+                        <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{theme}</p>
+                        <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
                       </button>
                     </form>
                   ))}
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-stone-200 bg-stone-50 px-4 py-4 text-sm text-stone-500">
+                <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-sm text-[var(--text3)]">
                   まだおすすめテーマは準備できていません。いまは自由入力か、お任せで始められます。
                 </div>
               )}
             </section>
 
             {competitorThemeSuggestions.length > 0 && (
-              <section className="rounded-2xl border border-stone-200 bg-white/90 p-5">
+              <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
                 <div className="mb-4">
-                  <p className="text-xs font-medium text-stone-500">競合から見えてくるテーマ</p>
-                  <p className="mt-1 text-sm text-stone-500">
+                  <p className="text-xs font-medium text-[var(--text3)]">競合から見えてくるテーマ</p>
+                  <p className="mt-1 text-sm text-[var(--text3)]">
                     競合が前面に出している切り口です。違う意見なら違いを話せますし、同じ方向なら自社で足りない発信テーマとして使えます。
                   </p>
                 </div>
@@ -198,21 +198,21 @@ export default async function InterviewerPage({
                       <input type="hidden" name="focusTheme" value={suggestion.theme} />
                       <button
                         type="submit"
-                        className="w-full cursor-pointer rounded-xl border border-stone-200 bg-stone-50 px-4 py-4 text-left transition-colors hover:border-teal-300 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-teal-300 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-teal-700">Competitive Signal</p>
-                        <p className="mt-2 text-sm leading-relaxed text-stone-700">{suggestion.theme}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{suggestion.theme}</p>
                         <div className="mt-3 space-y-2">
                           {suggestion.sources.map((source, index) => (
                             <div key={`${suggestion.theme}-${source.url ?? 'source'}-${index}`} className="rounded-lg border border-white/80 bg-white/70 px-3 py-2">
                               {source.url && (
-                                <p className="truncate text-[11px] text-stone-400">{source.url}</p>
+                                <p className="truncate text-[11px] text-[var(--text3)]">{source.url}</p>
                               )}
-                              <p className="mt-1 text-xs leading-relaxed text-stone-500">{source.summary}</p>
+                              <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">{source.summary}</p>
                             </div>
                           ))}
                         </div>
-                        <p className="mt-3 text-xs text-stone-400">このテーマでインタビューを始める</p>
+                        <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
                       </button>
                     </form>
                   ))}
@@ -220,10 +220,10 @@ export default async function InterviewerPage({
               </section>
             )}
 
-            <section className="rounded-2xl border border-stone-200 bg-white/90 p-5">
+            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-stone-500">自由にテーマを書く</p>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="text-xs font-medium text-[var(--text3)]">自由にテーマを書く</p>
+                <p className="mt-1 text-sm text-[var(--text3)]">
                   すでに聞きたい切り口があるなら、そのまま短く入れてください。
                 </p>
               </div>
@@ -239,22 +239,22 @@ export default async function InterviewerPage({
                     required
                     maxLength={INTERVIEW_FOCUS_THEME_MAX_LENGTH}
                     placeholder="例: 初めて相談する人が安心できる理由"
-                    className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700 outline-none transition-colors placeholder:text-stone-400 focus:border-amber-400 focus:bg-white"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] outline-none transition-colors placeholder:text-[var(--text3)] focus:border-amber-400 focus:bg-white"
                   />
                 </label>
                 <button
                   type="submit"
-                  className="w-full cursor-pointer rounded-xl bg-stone-800 px-4 py-3 text-sm text-white transition-colors hover:bg-stone-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="w-full cursor-pointer rounded-xl bg-[var(--text)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   このテーマで始める
                 </button>
               </form>
             </section>
 
-            <section className="rounded-2xl border border-stone-200 bg-white/90 p-5">
+            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-stone-500">テーマはお任せ</p>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="text-xs font-medium text-[var(--text3)]">テーマはお任せ</p>
+                <p className="mt-1 text-sm text-[var(--text3)]">
                   まだ切り口が決まっていなくても大丈夫です。これまで通り、会話しながら価値を一緒に見つけます。
                 </p>
               </div>
@@ -264,7 +264,7 @@ export default async function InterviewerPage({
                 <input type="hidden" name="focusThemeMode" value="omakase" />
                 <button
                   type="submit"
-                  className="w-full cursor-pointer rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700 transition-colors hover:border-stone-300 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   お任せでインタビューを始める
                 </button>
@@ -275,10 +275,10 @@ export default async function InterviewerPage({
 
         {/* coming soon */}
         <div>
-          <p className="text-xs text-stone-500 mb-3">これから来てもらえる取材班</p>
+          <p className="text-xs text-[var(--text3)] mb-3">これから来てもらえる取材班</p>
           <div className="grid grid-cols-3 gap-3">
             {CHARACTERS.filter(c => !c.available).map((char) => (
-              <div key={char.id} className="p-4 bg-white rounded-xl border border-stone-100 opacity-40">
+              <div key={char.id} className="p-4 bg-white rounded-xl border border-[var(--border)] opacity-40">
                 <CharacterAvatar
                   src={char.icon48}
                   alt={`${char.name}のアイコン`}
@@ -286,9 +286,9 @@ export default async function InterviewerPage({
                   size={44}
                   className="mb-2 grayscale"
                 />
-                <div className="text-xs font-medium text-stone-600">{char.name}</div>
-                {char.label && <div className="text-xs text-stone-400 mt-0.5">{char.label}</div>}
-                <div className="text-xs text-stone-300 mt-2">準備を進めています</div>
+                <div className="text-xs font-medium text-[var(--text2)]">{char.name}</div>
+                {char.label && <div className="text-xs text-[var(--text3)] mt-0.5">{char.label}</div>}
+                <div className="text-xs text-[var(--text3)] mt-2">準備を進めています</div>
               </div>
             ))}
           </div>

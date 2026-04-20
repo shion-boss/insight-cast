@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.faq-layout{display:grid;grid-template-columns:220px 1fr;gap:48px;align-items:start}
+.faq-nav{position:sticky;top:80px}
+.faq-nav-link{display:block;padding:8px 12px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;border-left:2px solid transparent;margin-bottom:2px}
+.faq-nav-link:hover{color:var(--accent)}
+.faq-nav-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-l)}
+.faq-group{margin-bottom:56px}
+.faq-group-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--text);margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="shared/components.jsx"></script>
+<script type="text/babel">
+const {useState,useRef}=React;
+const NAV=[['サービス','Service.html'],['料金','Pricing.html'],['キャスト','Cast.html'],['ブログ','Blog.html'],['About','About.html']];
+
+const FAQ_GROUPS=[
+  {id:'service',label:'サービスについて',items:[
+    {q:'Insight Castはどんなサービスですか？',a:'ホームページの更新に困っている中小事業者向けに、AI取材→記事素材化を提供するサービスです。URLを入れるだけでHP調査から競合比較、キャストによる取材、記事素材の生成までを担います。'},
+    {q:'AIライティングツールと何が違いますか？',a:'AIライティングツールはテキストを生成しますが、Insight Castは「一次情報を引き出す」取材プロセスを重視します。あなた自身の言葉・体験・こだわりを素材にするため、他社のコンテンツとは差別化されます。'},
+    {q:'どんな業種に向いていますか？',a:'特定の業種制限はありませんが、「専門性があるのに伝えられていない」事業者に特に効果的です。建設業・整骨院・美容・飲食・士業など、様々な業種でご利用いただいています。'},
+  ]},
+  {id:'cast',label:'キャストについて',items:[
+    {q:'キャストとは何ですか？',a:'AIが担う「取材担当者」です。それぞれ異なる取材スタイルを持ち、目的に合わせて選べます。ミント（Story Listener）・クラウス（Industry Editor）・レイン（Message Strategist）の3名が無料でご利用いただけます。'},
+    {q:'キャストはどのくらい質問しますか？',a:'平均10〜15問、所要時間は20分前後です。途中で終了することも可能です。最低7回の応答で素材生成が可能です。'},
+    {q:'追加キャストはいつから使えますか？',a:'ハル・モグロ・コッコは近日公開予定です。Proプランで追加オプションとして提供される予定です。'},
+    {q:'同じキャストで何度も取材できますか？',a:'可能です。取材先（プロジェクト）ごとに複数回取材ができます。テーマを変えて積み重ねることで、より豊かなコンテンツ素材が溜まっていきます。'},
+  ]},
+  {id:'output',label:'記事素材について',items:[
+    {q:'生成された記事はすぐ公開できますか？',a:'「素材」として提供されます。そのまま使うことも可能ですが、ご自身の言葉に合わせて整えることで、より自然な仕上がりになります。'},
+    {q:'記事のスタイルは選べますか？',a:'通常記事・インタビュー形式の2種から選べます。また文字量（コンパクト・標準・詳細）も選択可能です。'},
+    {q:'コピーライトはどちらに帰属しますか？',a:'生成された記事素材の権利はご利用者（事業者）に帰属します。Insight Cast側は権利を主張しません。'},
+  ]},
+  {id:'plan',label:'プラン・料金について',items:[
+    {q:'無料プランでできることは？',a:'月2回のAI取材・3名のフリーキャスト・基本HP分析レポート・取材メモ生成・記事素材月2本が無料でご利用いただけます。クレジットカードは不要です。'},
+    {q:'いつでも解約できますか？',a:'有料プランはいつでも解約可能です。解約後も月末まではサービスをご利用いただけます。'},
+    {q:'プランの途中変更は可能ですか？',a:'可能です。アップグレードは即時、ダウングレードは翌月から適用されます。'},
+  ]},
+  {id:'data',label:'データ・セキュリティについて',items:[
+    {q:'取材内容は外部に共有されますか？',a:'取材内容は当社サービスの改善目的以外には使用しません。第三者への提供は行いません。詳細はプライバシーポリシーをご確認ください。'},
+    {q:'解約後データはどうなりますか？',a:'解約後30日以内はデータにアクセス可能です。事前にエクスポートしてください。30日経過後は順次削除されます。'},
+  ]},
+];
+
+function Nav(){
+  const [sc,setSc]=useState(false);
+  React.useEffect(()=>{const f=()=>setSc(window.scrollY>20);window.addEventListener('scroll',f);return()=>window.removeEventListener('scroll',f);},[]);
+  return(
+    <nav className={`pub-nav${sc?' scrolled':''}`}>
+      <div className="pub-nav-inner">
+        <a className="pub-logo" href="Top Page.html">Insight <em>Cast</em></a>
+        <div className="pub-nav-links">{NAV.map(([l,h])=><a key={l} className="pub-nav-link" href={h}>{l}</a>)}</div>
+        <div className="flex gap-3"><a className="btn btn-ghost btn-sm" href="Login.html">ログイン</a><a className="btn btn-primary btn-sm" href="Signup.html">無料で試す →</a></div>
+      </div>
+    </nav>
+  );
+}
+
+function FaqGroup({group}){
+  const [open,setOpen]=useState(null);
+  return(
+    <div className="faq-group" id={group.id}>
+      <div className="faq-group-title">{group.label}</div>
+      <div className="faq-list">
+        {group.items.map((f,i)=>(
+          <div className="faq-item" key={i}>
+            <button className="faq-q" onClick={()=>setOpen(open===i?null:i)}>
+              <span>{f.q}</span>
+              <i className={`faq-chevron${open===i?' open':''}`}>⌄</i>
+            </button>
+            <div className={`faq-a${open===i?' open':''}`}><div className="faq-a-in">{f.a}</div></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [activeId,setActiveId]=useState('service');
+  return(
+    <>
+    <Nav/>
+    <section className="pub-hero-sm">
+      <div className="container">
+        <div className="label">FAQ</div>
+        <h1 className="display mt-3">よくある質問</h1>
+        <p className="body-lg mt-3" style={{maxWidth:520}}>サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。</p>
+      </div>
+    </section>
+    <section className="section" style={{paddingTop:48}}>
+      <div className="container">
+        <div className="faq-layout">
+          <div className="faq-nav">
+            {FAQ_GROUPS.map(g=>(
+              <div key={g.id} className={`faq-nav-link${activeId===g.id?' active':''}`} onClick={()=>setActiveId(g.id)}>{g.label}</div>
+            ))}
+          </div>
+          <div>
+            {FAQ_GROUPS.map(g=><FaqGroup key={g.id} group={g}/>)}
+            <div className="card text-center" style={{padding:40}}>
+              <div style={{fontSize:32,marginBottom:16}}>💬</div>
+              <h3 style={{fontFamily:'var(--serif)',fontSize:20,marginBottom:10}}>解決しない質問がありますか？</h3>
+              <p style={{fontSize:14,color:'var(--text2)',marginBottom:20}}>お問い合わせフォームからお気軽にご連絡ください。</p>
+              <a className="btn btn-primary" href="mailto:hello@insightcast.jp">お問い合わせ →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer className="pub-footer"><div className="pub-footer-in"><div className="f-logo">Insight Cast</div><div className="f-links">{['プライバシーポリシー','利用規約','特定商取引法に基づく表記'].map(l=><span key={l} className="f-link">{l}</span>)}</div><div className="f-copy">© 2026 Insight Cast</div></div></footer>
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

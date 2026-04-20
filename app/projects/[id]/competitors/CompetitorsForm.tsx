@@ -1,7 +1,8 @@
 'use client'
 
+import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition, type FormEvent } from 'react'
+import { useState, useTransition } from 'react'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
 import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
 import { DevAiLabel, PrimaryButton } from '@/components/ui'
@@ -29,7 +30,7 @@ export default function CompetitorsForm({
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
 
@@ -71,16 +72,16 @@ export default function CompetitorsForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <section className="bg-white rounded-2xl border border-stone-100 p-6 space-y-3">
+      <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-3">
         <div>
-          <p className="text-xs text-stone-400">自社HP URL</p>
-          <p className="mt-1 break-all text-sm font-medium text-stone-700">{siteUrl}</p>
+          <p className="text-xs text-[var(--text3)]">自社HP URL</p>
+          <p className="mt-1 break-all text-sm font-medium text-[var(--text2)]">{siteUrl}</p>
         </div>
-        <p className="text-xs leading-relaxed text-stone-500">
+        <p className="text-xs leading-relaxed text-[var(--text3)]">
           いま設定している競合URLは下の入力欄に入っています。空にして保存すると、競合なしで再調査します。
         </p>
         {initialCompetitorUrls.length === 0 && (
-          <p className="text-xs text-stone-400">
+          <p className="text-xs text-[var(--text3)]">
             まだ競合は未設定です。おすすめから選ぶか、URLを手入力して追加できます。
           </p>
         )}

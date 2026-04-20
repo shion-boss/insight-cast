@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>記事作成 — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+.article-layout{display:grid;grid-template-columns:320px 1fr;gap:28px;align-items:start}
+.settings-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;position:sticky;top:80px}
+.settings-panel h3{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--text);margin-bottom:20px}
+.opt-group{margin-bottom:20px}
+.opt-label{font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.opt-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 14px;border-radius:100px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid var(--border);background:transparent;color:var(--text2);font-family:var(--sans)}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.article-view{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
+.article-view-header{padding:16px 24px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between;gap:12}
+.article-content{padding:32px;line-height:1.9;font-size:15px;color:var(--text)}
+.article-content h2{font-family:var(--serif);font-size:22px;font-weight:700;margin:28px 0 12px;color:var(--text)}
+.article-content h2:first-child{margin-top:0}
+.article-content p{margin-bottom:16px;color:var(--text)}
+.article-content blockquote{border-left:3px solid var(--accent);padding:12px 20px;margin:20px 0;background:var(--accent-l);border-radius:0 8px 8px 0;font-style:italic;color:var(--text2)}
+.generating{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:20px}
+.gen-spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.theme-select{background:var(--bg2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);border:1px solid var(--border);cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.theme-select.active{background:var(--accent-l);border-color:var(--accent);color:var(--accent);font-weight:600}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="../shared/components.jsx"></script>
+<script type="text/babel">
+const {useState,useEffect}=React;
+const ARTICLE_TEXT=`## 「また頼みたい」と言われる外壁塗装業者のこだわり
+
+外壁塗装というと、見た目を新しくする工事というイメージが強いかもしれません。でも田中建設が大切にしているのは、塗り替えた後に「また長く住める」という気持ちを届けることです。
+
+先月、過去にお世話になった老夫婦から再依頼の連絡がありました。「あの工事の後、家がまた新しくなった気がして、ここに住み続けられる気がしたんです」という言葉とともに。
+
+### 見えないところにこだわる理由
+
+田中建設が特にこだわるのが、施工前の下地処理です。目には見えないこの工程こそが、塗装の耐久性を大きく左右します。
+
+> 「手間がかかるので省く業者も多いと聞きます。でも、うちは絶対に省かないと決めています。見えないところが長持ちを決めるので」
+
+手を抜かないのは、「あとのフォロー」も同じです。施工後もお客様との関係を大切にすることが、再依頼という形で返ってくると話します。
+
+### 「職人の誠実さ」が生む信頼
+
+田中建設のお客様は、口コミや紹介からつながることが多いと言います。技術だけでなく、「この人に頼みたい」という信頼が積み重なっているのです。`;
+
+const THEMES=['「また頼みたい」と言われる外壁塗装業者のこだわり','老夫婦から届いた「住み続けられる気がした」という言葉','塗装業者が選ばれ続ける理由：職人の判断基準とは'];
+
+function App(){
+  const [type,setType]=useState('ブログ記事');
+  const [theme,setTheme]=useState(0);
+  const [volume,setVolume]=useState('標準');
+  const [state,setState]=useState('idle'); // idle | generating | done
+  const [copied,setCopied]=useState(false);
+
+  const generate=()=>{
+    setState('generating');
+    setTimeout(()=>setState('done'),2200);
+  };
+
+  const copy=()=>{
+    setCopied(true);
+    setTimeout(()=>setCopied(false),2000);
+  };
+
+  return(
+    <AppShell active="取材先一覧" title="記事素材を生成する" headerRight={
+      <a className="btn btn-outline btn-sm" href="Summary.html">← 取材メモに戻る</a>
+    }>
+      <div className="breadcrumb">
+        <a href="Projects.html">取材先一覧</a>
+        <span className="breadcrumb-sep">/</span>
+        <a href="Project.html">田中建設株式会社</a>
+        <span className="breadcrumb-sep">/</span>
+        <a href="Summary.html">取材メモ</a>
+        <span className="breadcrumb-sep">/</span>
+        <span>記事素材を生成</span>
+      </div>
+
+      <div className="article-layout">
+        {/* Settings */}
+        <div className="settings-panel">
+          <h3>設定</h3>
+
+          <div className="opt-group">
+            <div className="opt-label">記事の種類</div>
+            <div className="opt-chips">
+              {['ブログ記事','インタビュー形式'].map(t=>(
+                <button key={t} className={`chip${type===t?' active':''}`} onClick={()=>setType(t)}>{t}</button>
+              ))}
+            </div>
+          </div>
+
+          <div className="opt-group">
+            <div className="opt-label">テーマ</div>
+            {THEMES.map((t,i)=>(
+              <div key={i} className={`theme-select${theme===i?' active':''}`} onClick={()=>setTheme(i)}>
+                <span>{t}</span>
+                {theme===i&&<span>✓</span>}
+              </div>
+            ))}
+          </div>
+
+          <div className="opt-group">
+            <div className="opt-label">文字量</div>
+            <div className="opt-chips">
+              {['コンパクト','標準','詳細'].map(v=>(
+                <button key={v} className={`chip${volume===v?' active':''}`} onClick={()=>setVolume(v)}>{v}</button>
+              ))}
+            </div>
+          </div>
+
+          <button className="btn btn-primary w-full" style={{justifyContent:'center',marginTop:8}} onClick={generate} disabled={state==='generating'}>
+            {state==='generating'?'生成中…':'記事素材を生成する →'}
+          </button>
+          {state==='done'&&(
+            <div style={{marginTop:12,fontSize:12,color:'var(--teal)',textAlign:'center',fontWeight:600}}>✓ 生成完了</div>
+          )}
+        </div>
+
+        {/* Output */}
+        <div className="article-view">
+          <div className="article-view-header">
+            <div>
+              <span className="badge badge-amber">{type}</span>
+              <span style={{fontSize:13,color:'var(--text3)',marginLeft:10}}>田中建設株式会社</span>
+            </div>
+            {state==='done'&&(
+              <div className="flex gap-3">
+                <button className="btn btn-outline btn-sm" onClick={copy}>{copied?'✓ コピー済み':'📋 コピー'}</button>
+                <button className="btn btn-ghost btn-sm">↓ ダウンロード</button>
+              </div>
+            )}
+          </div>
+
+          {state==='idle'&&(
+            <div className="generating">
+              <div style={{fontSize:48,opacity:.3}}>📄</div>
+              <div style={{fontSize:14,color:'var(--text3)',textAlign:'center'}}>
+                設定を選んで「記事素材を生成する」をクリックしてください
+              </div>
+            </div>
+          )}
+
+          {state==='generating'&&(
+            <div className="generating">
+              <div className="gen-spinner"/>
+              <div>
+                <div style={{fontFamily:'var(--serif)',fontSize:16,fontWeight:700,color:'var(--text)',textAlign:'center',marginBottom:6}}>取材メモから記事を生成しています…</div>
+                <div style={{fontSize:13,color:'var(--text2)',textAlign:'center'}}>取材内容を整理して、記事の素材を作っています</div>
+              </div>
+            </div>
+          )}
+
+          {state==='done'&&(
+            <div className="article-content" dangerouslySetInnerHTML={{__html:ARTICLE_TEXT.replace(/## (.+)/g,'<h2>$1</h2>').replace(/### (.+)/g,'<h3 style="font-family:var(--serif);font-size:18px;font-weight:700;margin:24px 0 10px">$1</h3>').replace(/> (.+)/g,'<blockquote>$1</blockquote>').replace(/\n\n/g,'</p><p>').replace(/^(?!<)/gm,'').split('\n').filter(Boolean).map(l=>l.startsWith('<')?l:`<p>${l}</p>`).join('')}}/>
+          )}
+        </div>
+      </div>
+    </AppShell>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

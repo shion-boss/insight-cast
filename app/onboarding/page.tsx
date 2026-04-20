@@ -38,7 +38,7 @@ export default async function OnboardingPage() {
           />
         </div>
 
-        <form action={completeOnboarding} className="bg-white rounded-2xl border border-stone-100 p-6 space-y-4">
+        <form action={completeOnboarding} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
           <div>
             <FieldLabel required>お名前</FieldLabel>
             <TextInput type="text" name="name" required placeholder="例: 山田さん" />

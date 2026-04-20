@@ -51,10 +51,10 @@ export default async function ArticleDetailPage({
       <PageHeader title="記事詳細" backHref={`/projects/${id}`} backLabel="← 取材先の管理に戻る" />
 
       <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
-        <section className={getPanelClass('rounded-[2rem] p-6')}>
-          <p className="text-xs text-stone-400">{project.name || project.hp_url}</p>
-          <h1 className="mt-2 text-xl font-semibold text-stone-800">{article.title || '記事'}</h1>
-          <p className="mt-2 text-sm text-stone-400">
+        <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
+          <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
+          <h1 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h1>
+          <p className="mt-2 text-sm text-[var(--text3)]">
             {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
           </p>
           {article.interview_id && (
@@ -83,8 +83,8 @@ export default async function ArticleDetailPage({
             tone="warning"
           />
         ) : (
-          <section className="rounded-2xl border border-stone-100 bg-white p-6">
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-stone-700">
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
               {article.content}
             </pre>
           </section>

@@ -121,6 +121,8 @@ ${themeInstruction}${internalLinkInstruction}
 - Markdown形式で出力`
 
   } else if (articleType === 'interviewer') {
+    const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
+
     prompt = `以下のインタビュー内容をもとに、インタビュアー（${charName}）の視点で${bizName}を紹介する記事を書いてください。
 
 ## 事業者情報
@@ -133,13 +135,15 @@ ${themeInstruction}${internalLinkInstruction}
 ## 執筆ルール
 - インタビュアーが「取材して発見した魅力」を語るスタイル
 - 「〜だということがわかりました」「〜が印象的でした」などの表現を自然に使う
-- 1200〜1600文字程度
+- 文字数: ${volumeLabel}文字程度
 - 見出し（##）を2〜3個つけて構造化する
 - タイトルを最初に書く（# タイトル）
 - Markdown形式で出力`
 
   } else {
     // conversation (Q&A形式)
+    const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
+
     prompt = `以下のインタビュー内容をもとに、Q&A形式のインタビュー記事を書いてください。
 
 ## 事業者情報
@@ -155,6 +159,7 @@ ${themeInstruction}${internalLinkInstruction}
 - インタビュアー紹介（${charName}の紹介を1行）
 - 会話形式で本文: **${charName}**: 発言内容 / **${bizName}**: 発言内容
 - 実際のインタビューから自然な流れで5〜8往復を選んで構成
+- 全体の文字数: ${volumeLabel}文字程度
 - タイトルを最初に書く（# タイトル）
 - Markdown形式で出力`
   }

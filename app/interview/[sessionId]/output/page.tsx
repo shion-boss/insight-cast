@@ -79,7 +79,7 @@ export default function OutputPage() {
               emoji={char?.emoji}
               size={40}
             />
-            <p className="text-sm font-medium text-stone-800">インタビュー結果</p>
+            <p className="text-sm font-medium text-[var(--text)]">インタビュー結果</p>
           </div>
         )}
         backHref="/home"
@@ -108,13 +108,13 @@ export default function OutputPage() {
                 key={type}
                 onClick={() => exists ? setSelectedType(type) : generate(type)}
                 disabled={generating === type}
-                className={`px-3 py-1.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors ${
                   selectedType === type && exists
-                    ? 'bg-stone-800 text-white'
-                    : 'bg-white border border-stone-200 text-stone-600 hover:border-stone-400'
+                    ? 'bg-[var(--text)] text-white'
+                    : 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text2)] hover:border-[var(--border2)]'
                 } disabled:opacity-50`}
               >
-                {generating === type ? '✨ 生成中...' : exists ? label : `✨ ${label}`}
+                {generating === type ? '記事素材を整えています...' : exists ? label : `✨ ${label}`}
               </button>
             )
           })}
@@ -122,17 +122,17 @@ export default function OutputPage() {
 
         {/* 出力内容 */}
         {currentOutput ? (
-          <div className="bg-white rounded-xl border border-stone-100 p-6">
+          <div className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-medium text-stone-800">{currentOutput.title}</h2>
+              <h2 className="font-medium text-[var(--text)]">{currentOutput.title}</h2>
               <button
                 onClick={() => navigator.clipboard.writeText(currentOutput.content)}
-                className="text-xs text-stone-400 hover:text-stone-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 border border-stone-200 px-2 py-1 rounded"
+                className="text-xs text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 border border-[var(--border)] px-2 py-1 rounded"
               >
                 コピー
               </button>
             </div>
-            <div className="text-sm text-stone-700 whitespace-pre-wrap leading-relaxed">
+            <div className="text-sm text-[var(--text2)] whitespace-pre-wrap leading-relaxed">
               {currentOutput.content}
             </div>
           </div>
