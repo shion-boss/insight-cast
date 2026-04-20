@@ -8,6 +8,8 @@ import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagement
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
+import { getStoredClassifications } from '@/lib/content-map'
+import { ContentMapPanel } from './_components/content-map-panel'
 
 type Project = {
   id: string
@@ -229,16 +231,25 @@ export default async function DashboardPage() {
     return null
   })()
 
-  // All interview themes for tag cloud
-  const themeCounts = new Map<string, number>()
-  for (const iv of interviews) {
-    for (const theme of iv.themes ?? []) {
-      themeCounts.set(theme, (themeCounts.get(theme) ?? 0) + 1)
+  // Content map — pick the first project that has an audit
+  const contentMapData = (() => {
+    for (const project of projectList) {
+      const auditRow = (auditRows ?? []).find((row) => row.project_id === project.id)
+      if (!auditRow?.raw_data) continue
+      const rawData = auditRow.raw_data as Record<string, unknown>
+      const blogPosts = getStoredSiteBlogPosts(rawData)
+      if (blogPosts.length === 0) continue
+      return {
+        projectId: project.id,
+        projectName: project.name || project.hp_url,
+        blogPostCount: blogPosts.length,
+        classifications: getStoredClassifications(rawData),
+      }
     }
-  }
-  const topThemes = [...themeCounts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 20)
+    return null
+  })()
+
+  const claus = getCharacter('claus')
 
   // Monthly activity bars
   const monthlyBars = buildMonthlyActivityBars(interviews)
@@ -538,92 +549,62 @@ export default async function DashboardPage() {
             </div>
           ) : null}
 
-          {/* Monthly activity + Theme cloud */}
-          <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
-
-            {/* Monthly activity bar chart */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-5">取材アクティビティ</h2>
-              <div className="flex items-end gap-2 h-[100px]">
-                {monthlyBars.map((bar) => {
-                  const heightPct = bar.count === 0 ? 4 : Math.max(12, Math.round((bar.count / maxBarCount) * 100))
-                  const isCurrentMonth = bar.key === (() => {
-                    const n = new Date()
-                    return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`
-                  })()
-                  return (
-                    <div key={bar.key} className="flex-1 flex flex-col items-center gap-1.5">
-                      <span className="text-[11px] font-semibold text-[var(--text2)]">{bar.count > 0 ? bar.count : ''}</span>
-                      <div
-                        className="w-full rounded-t-[4px] transition-all"
-                        style={{
-                          height: `${heightPct}%`,
-                          background: isCurrentMonth
-                            ? 'var(--accent)'
-                            : bar.count > 0
-                              ? 'color-mix(in srgb, var(--accent) 45%, transparent)'
-                              : 'var(--border)',
-                        }}
-                      />
-                      <span className="text-[11px] text-[var(--text3)]">{bar.label}</span>
-                    </div>
-                  )
-                })}
-              </div>
-              <div className="mt-4 pt-4 border-t border-[var(--border)] flex gap-6">
-                <div>
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{interviews.length}</div>
-                  <div className="text-[11px] text-[var(--text3)] mt-0.5">累計取材回数</div>
-                </div>
-                <div>
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{totalArticles}</div>
-                  <div className="text-[11px] text-[var(--text3)] mt-0.5">累計記事素材</div>
-                </div>
-                <div>
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{monthlyBars.at(-1)?.count ?? 0}</div>
-                  <div className="text-[11px] text-[var(--text3)] mt-0.5">今月の取材</div>
-                </div>
-              </div>
+          {/* Monthly activity bar chart */}
+          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-5">取材アクティビティ</h2>
+            <div className="flex items-end gap-2 h-[100px]">
+              {monthlyBars.map((bar) => {
+                const heightPct = bar.count === 0 ? 4 : Math.max(12, Math.round((bar.count / maxBarCount) * 100))
+                const isCurrentMonth = bar.key === (() => {
+                  const n = new Date()
+                  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}`
+                })()
+                return (
+                  <div key={bar.key} className="flex-1 flex flex-col items-center gap-1.5">
+                    <span className="text-[11px] font-semibold text-[var(--text2)]">{bar.count > 0 ? bar.count : ''}</span>
+                    <div
+                      className="w-full rounded-t-[4px] transition-all"
+                      style={{
+                        height: `${heightPct}%`,
+                        background: isCurrentMonth
+                          ? 'var(--accent)'
+                          : bar.count > 0
+                            ? 'color-mix(in srgb, var(--accent) 45%, transparent)'
+                            : 'var(--border)',
+                      }}
+                    />
+                    <span className="text-[11px] text-[var(--text3)]">{bar.label}</span>
+                  </div>
+                )
+              })}
             </div>
-
-            {/* Theme cloud */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-1">取材テーマの傾向</h2>
-              <p className="text-[12px] text-[var(--text3)] mb-5">過去の取材から見えてきたテーマ</p>
-              {topThemes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-[120px] text-center">
-                  <p className="text-[13px] text-[var(--text3)]">取材を重ねると<br />テーマの傾向が見えてきます</p>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {topThemes.map(([theme, count]) => {
-                    const maxCount = topThemes[0][1]
-                    const weight = count / maxCount
-                    const fontSize = Math.round(11 + weight * 5)
-                    const opacity = 0.5 + weight * 0.5
-                    return (
-                      <span
-                        key={theme}
-                        className="px-2.5 py-1 rounded-full border font-medium"
-                        style={{
-                          fontSize: `${fontSize}px`,
-                          opacity,
-                          background: 'var(--bg2)',
-                          borderColor: 'var(--border)',
-                          color: 'var(--text2)',
-                        }}
-                      >
-                        {theme}
-                        {count > 1 && (
-                          <span className="ml-1 text-[10px] opacity-60">{count}</span>
-                        )}
-                      </span>
-                    )
-                  })}
-                </div>
-              )}
+            <div className="mt-4 pt-4 border-t border-[var(--border)] flex gap-6">
+              <div>
+                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{interviews.length}</div>
+                <div className="text-[11px] text-[var(--text3)] mt-0.5">累計取材回数</div>
+              </div>
+              <div>
+                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{totalArticles}</div>
+                <div className="text-[11px] text-[var(--text3)] mt-0.5">累計記事素材</div>
+              </div>
+              <div>
+                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{monthlyBars.at(-1)?.count ?? 0}</div>
+                <div className="text-[11px] text-[var(--text3)] mt-0.5">今月の取材</div>
+              </div>
             </div>
           </div>
+
+          {/* Content map */}
+          {contentMapData && (
+            <ContentMapPanel
+              projectId={contentMapData.projectId}
+              projectName={contentMapData.projectName}
+              initialClassifications={contentMapData.classifications}
+              blogPostCount={contentMapData.blogPostCount}
+              clausIcon={claus?.icon48 ?? undefined}
+              clausEmoji={claus?.emoji}
+            />
+          )}
 
         </div>
       )}
