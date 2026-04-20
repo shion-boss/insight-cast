@@ -40,6 +40,21 @@ export async function middleware(request: NextRequest) {
     pathname === '/tokushoho' ||
     pathname.startsWith('/auth/')
 
+  // /admin へのアクセス制御: ADMIN_EMAILS に含まれるメールのみ許可
+  if (pathname.startsWith('/admin')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean)
+    if (!adminEmails.includes(user.email ?? '')) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    return supabaseResponse
+  }
+
   if (!user && !isPublicPath) {
     return NextResponse.redirect(new URL('/', request.url))
   }

@@ -65,7 +65,34 @@ const outputExamples = [
   '他社が断った案件を引き受ける判断基準が、専門性として言語化できた',
 ] as const
 
+const comparisonRows = [
+  {
+    label: 'スタート地点',
+    generic: 'キーワード、構成案、ブランドルールを先に用意する',
+    insightCast: 'ホームページのURLと会話から始められる',
+  },
+  {
+    label: '引き出すもの',
+    generic: '検索意図に沿った記事ドラフト',
+    insightCast: '事業者本人の一次情報、判断基準、人柄の魅力',
+  },
+  {
+    label: '向いている人',
+    generic: 'すでに発信体制があり、量産や最適化を回したいチーム',
+    insightCast: '何を書くか以前に、何が価値かを言葉にしたい事業者さん',
+  },
+  {
+    label: '残るもの',
+    generic: '記事本文やSEO向けの草案',
+    insightCast: '記事の芯、FAQ、比較軸、ホームページ改善の材料',
+  },
+] as const
+
 const faqs = [
+  {
+    q: '一般的なAIブログツールと何が違いますか？',
+    a: 'SEO/GEOや記事量産を速くするというより、何を伝えるべきかを会話から見つけるためのサービスです。',
+  },
   {
     q: 'どんな業種でも使えますか？',
     a: 'はい。まずホームページと競合候補を読み、その内容に合わせて取材の切り口を変えていきます。',
@@ -115,7 +142,7 @@ export default async function LandingPage() {
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup" className="py-4 px-7 text-base">無料で試してみる</ButtonLink>
+                <ButtonLink href="/auth/signup" className="px-7 py-4 text-base">無料で取材を始める</ButtonLink>
                 <ButtonLink href="/service" tone="secondary" className="py-4 px-7 text-base">
                   サービスの流れを見る
                 </ButtonLink>
@@ -248,6 +275,50 @@ export default async function LandingPage() {
 
         <section className="px-6 py-14 sm:py-18">
           <div className="mx-auto max-w-6xl">
+            <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+              <div>
+                <SectionIntro
+                  eyebrow="Why It Feels Different"
+                  title={<>AIブログツールとは、<br />役割が少し違います。</>}
+                  description="Jasper、Writesonic、Frase、Copy.ai のようなツールは、SEO・最適化・ブランド運用を速く回すのが得意です。Insight Cast は、その前段にある「何を伝えるべきか」を会話から見つけるほうに寄せています。"
+                />
+              </div>
+
+              <div className="rounded-[2.2rem] border border-stone-200 bg-[rgba(255,253,249,0.96)] p-6">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <div className="rounded-[1.8rem] border border-stone-200 bg-stone-50/80 p-5">
+                    <p className="text-xs font-semibold tracking-[0.18em] text-stone-400 uppercase">一般的な AIブログツール</p>
+                    <p className="mt-3 text-lg font-semibold text-stone-900">書く工程を速くする</p>
+                    <p className="mt-2 text-sm leading-7 text-stone-600">
+                      キーワード調査、SEO/GEO、ブランドボイス、ワークフロー化のような発信運用を加速する設計です。
+                    </p>
+                  </div>
+
+                  <div className="rounded-[1.8rem] border border-amber-200 bg-amber-50/70 p-5">
+                    <p className="text-xs font-semibold tracking-[0.18em] text-amber-800 uppercase">Insight Cast</p>
+                    <p className="mt-3 text-lg font-semibold text-stone-900">話して、価値を見つける</p>
+                    <p className="mt-2 text-sm leading-7 text-stone-700">
+                      そもそも何を書くべきか分からない状態から、ホームページと会話を起点に一次情報を整える設計です。
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-5 divide-y divide-stone-200/80 rounded-[1.8rem] border border-stone-200/80 bg-white/90">
+                  {comparisonRows.map((row) => (
+                    <div key={row.label} className="grid gap-3 px-5 py-4 md:grid-cols-[140px_minmax(0,1fr)_minmax(0,1fr)] md:items-start">
+                      <p className="text-xs font-semibold tracking-[0.16em] text-stone-400 uppercase">{row.label}</p>
+                      <p className="text-sm leading-7 text-stone-500">{row.generic}</p>
+                      <p className="text-sm leading-7 font-medium text-stone-800">{row.insightCast}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 py-14 sm:py-18">
+          <div className="mx-auto max-w-6xl">
             <SectionIntro
               eyebrow="The Cast"
               title={<>役割の違う3人が、<br />最初の取材班です。</>}
@@ -334,7 +405,7 @@ export default async function LandingPage() {
                   )}
                   <p className="text-xs tracking-[0.22em] text-stone-400 uppercase">FAQ — よくある質問</p>
                 </div>
-                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                   {faqs.map((item) => (
                     <div key={item.q} className="rounded-[1.7rem] border border-white/10 bg-white/6 p-5">
                       <p className="text-base font-semibold text-white">{item.q}</p>
@@ -361,7 +432,7 @@ export default async function LandingPage() {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
-                  無料で始める
+                  無料で取材を始める
                 </ButtonLink>
                 <ButtonLink href="/pricing" tone="ghost" className="border-white/60 bg-transparent text-white hover:border-white/40 hover:bg-white/10">
                   料金を見る

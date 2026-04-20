@@ -107,6 +107,47 @@ const options = [
   },
 ]
 
+const planGuides = [
+  {
+    name: 'スターター',
+    fit: 'まずは月1〜2回の更新を無理なく始めたい方向け',
+    points: [
+      '何を書くべきかを会話から見つけたい',
+      'FAQやサービス説明の芯を整理したい',
+      'まずは小さく継続の型をつくりたい',
+    ],
+  },
+  {
+    name: 'スタンダード',
+    fit: '継続発信を毎月の習慣として回したい方向け',
+    points: [
+      '複数テーマを並行して発信したい',
+      '比較軸やテーマ提案まで欲しい',
+      'ホームページ更新を止めない体制にしたい',
+    ],
+  },
+  {
+    name: 'グロース',
+    fit: '記事だけでなく訴求全体まで強くしたい方向け',
+    points: [
+      '記事本文の仕上げも一部任せたい',
+      'LPや特集ページの素材まで広げたい',
+      '発信を事業の成長施策として使いたい',
+    ],
+  },
+] as const
+
+const toolFitNotes = [
+  {
+    title: 'Insight Cast を先に使うケース',
+    body: 'まだ「何を伝えるか」が固まっていないときです。ホームページを見直しながら、取材で一次情報を引き出し、FAQや記事テーマの芯を作るのに向いています。',
+  },
+  {
+    title: '他のAIブログツールと併用するケース',
+    body: 'すでに発信テーマや編集体制があるなら、SEO/GEO最適化、ブランドボイス運用、量産系SaaSを後段で重ねる形が自然です。Insight Cast はその前段整理を担います。',
+  },
+] as const
+
 export default function PricingPage() {
   return (
     <PublicPageFrame>
@@ -125,12 +166,12 @@ export default function PricingPage() {
           actions={(
             <div className="space-y-4">
               <div className="flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup">無料で体験してみる</ButtonLink>
+                <ButtonLink href="/auth/signup">無料で取材を始める</ButtonLink>
                 <ButtonLink href="/service" tone="secondary">サービスの流れを見る</ButtonLink>
               </div>
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                <p className="text-sm text-stone-600">クレジットカード不要。まず無料で体験できます。</p>
+                <p className="text-sm text-stone-600">クレジットカード不要。まず無料で取材を体験できます。</p>
               </div>
             </div>
           )}
@@ -220,6 +261,51 @@ export default function PricingPage() {
             <p className="mt-6 text-center text-xs text-stone-400">
               ※ 表示金額はすべて税抜きです。正式な契約はリリース時にご案内します。
             </p>
+          </div>
+        </section>
+
+        <section className="px-6 py-14 sm:py-18">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+              <div>
+                <p className="text-xs font-medium tracking-[0.22em] text-stone-400 uppercase">Choose The Right Fit</p>
+                <h2 className="mt-3 text-2xl font-semibold text-stone-900">
+                  料金より先に、
+                  <br />
+                  どこまで伴走が必要かで選ぶ。
+                </h2>
+                <p className="mt-4 text-sm leading-7 text-stone-500">
+                  Insight Cast は記事本数の多さより、価値が見える状態をつくるサービスです。
+                  まずは今の発信ペースと、どこまでサポートが必要かでプランを選ぶのが分かりやすいです。
+                </p>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                {planGuides.map((guide) => (
+                  <article key={guide.name} className="rounded-[1.9rem] border border-stone-200 bg-white/92 p-6">
+                    <p className="text-sm font-semibold text-stone-900">{guide.name}</p>
+                    <p className="mt-3 text-sm leading-7 text-stone-600">{guide.fit}</p>
+                    <div className="mt-5 space-y-2">
+                      {guide.points.map((point) => (
+                        <div key={point} className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-stone-50/90 px-4 py-3">
+                          <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
+                          <p className="text-sm leading-6 text-stone-700">{point}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {toolFitNotes.map((note) => (
+                <div key={note.title} className="rounded-[1.9rem] border border-stone-200 bg-[rgba(255,253,249,0.94)] px-6 py-5">
+                  <p className="text-sm font-semibold text-stone-900">{note.title}</p>
+                  <p className="mt-2 text-sm leading-7 text-stone-600">{note.body}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -387,18 +473,19 @@ export default function PricingPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <Link
+                <ButtonLink
                   href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors hover:bg-stone-100"
+                  className="rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 hover:bg-stone-100 border-transparent"
                 >
-                  無料で始める
-                </Link>
-                <Link
+                  無料で取材を始める
+                </ButtonLink>
+                <ButtonLink
                   href="/faq"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/85 bg-white px-6 py-4 text-sm font-medium text-stone-950 transition-colors hover:border-white/45 hover:bg-white/12 hover:text-white"
+                  tone="secondary"
+                  className="rounded-2xl px-6 py-4 text-sm"
                 >
                   よくある質問を見る
-                </Link>
+                </ButtonLink>
               </div>
             </div>
           </div>

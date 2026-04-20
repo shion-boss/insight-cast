@@ -5,8 +5,8 @@ import { notFound } from 'next/navigation'
 import { ButtonLink, CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
-import { POSTS, CATEGORY_LABELS, getPost, getRelatedPosts } from '@/lib/blog-posts'
-import { ARTICLE_BODIES, type NormalSection } from '@/lib/blog-contents'
+import { POSTS, CATEGORY_LABELS, getRelatedPosts, getBlogPostFromDB } from '@/lib/blog-posts'
+import type { NormalSection } from '@/lib/blog-contents'
 
 export async function generateStaticParams() {
   return POSTS.map((post) => ({ slug: post.slug }))
@@ -18,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getBlogPostFromDB(slug)
   if (!post) return {}
   return {
     title: `${post.title} | Insight Cast`,
@@ -60,10 +60,10 @@ export default async function BlogDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getBlogPostFromDB(slug)
   if (!post) notFound()
 
-  const body = ARTICLE_BODIES[slug]
+  const body = post.body ?? null
   const relatedPosts = getRelatedPosts(post, 3)
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
@@ -233,7 +233,7 @@ export default async function BlogDetailPage({
               </p>
               <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
-                  無料ではじめる
+                  無料で取材を始める
                 </ButtonLink>
                 <ButtonLink href="/cast" tone="ghost" className="border-white/70 text-white hover:border-white/40 hover:bg-white/10">
                   キャストを見る

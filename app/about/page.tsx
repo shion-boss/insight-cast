@@ -447,7 +447,7 @@ export default function AboutPage() {
                   href="/auth/signup"
                   className="inline-flex items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-stone-900 transition-colors hover:bg-stone-100"
                 >
-                  無料で始める
+                  無料で取材を始める
                 </Link>
                 <Link
                   href="/auth/login"

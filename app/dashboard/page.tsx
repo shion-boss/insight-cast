@@ -216,7 +216,7 @@ export default async function DashboardPage() {
                     {latestInterviewProject.name || latestInterviewProject.hp_url}
                   </p>
                   <p className="mt-1 text-xs text-stone-500">
-                    {formatDateTime(latestInterview.created_at)}
+                    {formatShortDateTime(latestInterview.created_at)}
                   </p>
                   <div className="mt-3 flex items-center justify-between gap-3">
                     <div className="flex flex-wrap gap-2">
@@ -274,17 +274,18 @@ export default async function DashboardPage() {
               </div>
 
               {interviews.length === 0 ? (
-                <StateCard
-                  icon="📝"
-                  title="まだインタビューは始まっていません。"
-                  description="取材先を選んで、必要なタイミングでインタビューを始められます。"
-                  align="left"
-                  action={(
-                    <ButtonLink href={`/projects/${projectList[0].id}/interviewer`}>
-                      最初のインタビューを始める
-                    </ButtonLink>
-                  )}
-                />
+                <div className="space-y-4">
+                  <InterviewerSpeech
+                    icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
+                    name={mint?.name ?? 'インタビュアー'}
+                    title="まだインタビューは始まっていません。"
+                    description="取材先を選んで、必要なタイミングでインタビューを始められます。"
+                    tone="soft"
+                  />
+                  <ButtonLink href={`/projects/${projectList[0].id}/interviewer`}>
+                    最初のインタビューを始める
+                  </ButtonLink>
+                </div>
               ) : (
                 <ul className="space-y-3">
                   {interviews.map((interview) => {

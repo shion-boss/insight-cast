@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ButtonLink, CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
-import { POSTS, CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
 
 type FilterTab = 'all' | PostCategory
 
@@ -21,11 +21,11 @@ function formatDate(date: string): string {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
-export function BlogClient() {
+export function BlogClient({ posts }: { posts: Post[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
 
   const filteredPosts =
-    activeFilter === 'all' ? POSTS : POSTS.filter((p) => p.category === activeFilter)
+    activeFilter === 'all' ? posts : posts.filter((p) => p.category === activeFilter)
 
   return (
     <>
@@ -119,7 +119,7 @@ export function BlogClient() {
         </p>
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
-            無料ではじめる
+            無料で取材を始める
           </ButtonLink>
           <ButtonLink href="/cast" tone="ghost" className="border-white/70 text-white hover:border-white/40 hover:bg-white/10">
             キャストを見る

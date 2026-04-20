@@ -234,7 +234,7 @@ export default function PhilosophyPage() {
                   href="/auth/signup"
                   className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
                 >
-                  無料で始める
+                  無料で取材を始める
                 </Link>
                 <Link
                   href="/cast"

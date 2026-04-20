@@ -170,7 +170,7 @@ export default function SettingsPage() {
             disabled={saving || !hasUnsavedChanges}
             className="w-full py-3 text-sm"
           >
-            {saving ? '保存中...' : hasUnsavedChanges ? 'この名前で保存する' : saved ? '保存しました' : 'この内容で保存されています'}
+            {saving ? '保存中...' : '保存する'}
           </PrimaryButton>
         </section>
       </div>

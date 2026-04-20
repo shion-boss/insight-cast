@@ -35,6 +35,16 @@ const FAQ_GROUPS: FaqGroup[] = [
         characterId: 'claus',
       },
       {
+        q: '一般的なAIブログツールと何が違いますか？',
+        a: '一般的なAIブログツールは、SEO/GEO最適化、ブランドボイス運用、記事制作の効率化が得意です。Insight Cast はその前段にある「何を伝えるべきか」を、ホームページと会話から見つけることに寄せています。最初からキーワードや構成案を用意しなくても進められるのが違いです。',
+        characterId: 'rain',
+      },
+      {
+        q: '他のAIブログツールやSEOツールと併用できますか？',
+        a: 'はい、相性は良いです。Insight Cast で一次情報や発信テーマの芯を整理し、そのあとにSEO/GEO向けの最適化や量産系のSaaSを使う流れは自然です。置き換えというより、役割分担で併用するイメージです。',
+        characterId: 'claus',
+      },
+      {
         q: 'どんな業種でも使えますか？',
         a: 'はい。特定の業種に絞らず、汎用的に機能するように設計しています。工務店・美容室・士業・飲食店・整体院・EC事業者など、インタビューを重ねてきた業種は多岐にわたります。業種特化の型は、今後の顧客の声をもとに追加していく予定です。',
         characterId: 'rain',
@@ -222,7 +232,7 @@ export default function FaqPage() {
                   href="/auth/signup"
                   className={getButtonClass('primary', 'px-6 py-4 text-sm')}
                 >
-                  無料で始める
+                  無料で取材を始める
                 </Link>
                 <Link
                   href="/cast"

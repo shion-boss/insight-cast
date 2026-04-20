@@ -22,6 +22,16 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
 
 export const POSTS: Post[] = [
   {
+    slug: 'why-interview-before-ai-writing',
+    title: 'AIブログツールで書けるのに、なぜその前に「取材」が必要なのか',
+    excerpt:
+      'AIブログツールがあっても、手が止まる事業者さんは少なくありません。理由は「書く力」が足りないからではなく、「何を伝えるべきか」がまだ固まっていないからです。Insight Cast が書く前の取材を重視する理由と、他のAIツールと競合しない役割の違いを整理します。',
+    category: 'insight-cast',
+    type: 'normal',
+    date: '2026-04-18',
+    coverColor: 'bg-emerald-100',
+  },
+  {
     slug: 'why-ordinary-is-value',
     title: '「当たり前」の中にある価値について',
     excerpt:
@@ -108,6 +118,55 @@ export const POSTS: Post[] = [
 
 export function getPost(slug: string): Post | undefined {
   return POSTS.find((p) => p.slug === slug)
+}
+
+// --- Supabase からの取得関数 ---
+
+import { createClient } from '@/lib/supabase/server'
+import type { ArticleBody } from '@/lib/blog-contents'
+
+export type PostWithBody = Post & { body?: ArticleBody | null }
+
+// DB行をPost型にマップ
+function rowToPost(row: Record<string, unknown>): Post {
+  return {
+    slug: row.slug as string,
+    title: row.title as string,
+    excerpt: row.excerpt as string,
+    category: row.category as PostCategory,
+    type: row.type as PostType,
+    date: row.date as string,
+    interviewer: row.interviewer as InterviewerId | undefined,
+    coverColor: row.cover_color as string,
+  }
+}
+
+export async function getBlogPostsFromDB(): Promise<Post[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('slug, title, excerpt, category, type, interviewer, cover_color, date')
+    .eq('published', true)
+    .order('date', { ascending: false })
+
+  if (error || !data) return []
+  return data.map(rowToPost)
+}
+
+export async function getBlogPostFromDB(slug: string): Promise<PostWithBody | null> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('slug, title, excerpt, category, type, interviewer, cover_color, date, body')
+    .eq('slug', slug)
+    .eq('published', true)
+    .maybeSingle()
+
+  if (error || !data) return null
+  return {
+    ...rowToPost(data as Record<string, unknown>),
+    body: data.body as ArticleBody | null,
+  }
 }
 
 export function getRelatedPosts(post: Post, limit = 3): Post[] {

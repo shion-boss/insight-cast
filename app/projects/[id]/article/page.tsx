@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { DevAiLabel, PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, PrimaryButton, SecondaryButton, StateCard } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
@@ -245,33 +246,42 @@ export default function ArticlePage() {
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-stone-100 p-8 text-center">
-              <div className="text-4xl mb-3">{currentTab.emoji}</div>
-              <p className="text-stone-700 font-medium mb-1">{currentTab.desc}</p>
-              <p className="text-sm text-stone-400 mb-6">インタビューの内容をもとに記事を作ります</p>
-              <PrimaryButton
-                onClick={generate}
-                className="px-6 py-3 text-sm"
-              >
-                <DevAiLabel>この形で記事をまとめる</DevAiLabel>
-              </PrimaryButton>
+            <div className="bg-white rounded-xl border border-stone-100 p-8">
+              <InterviewerSpeech
+                icon={<CharacterAvatar src={getCharacter('mint')?.icon48} alt="ミントのアイコン" emoji={getCharacter('mint')?.emoji} size={48} />}
+                name="ミント"
+                title="どの記事を作りますか？"
+                description="インタビューの内容をもとに整えます。"
+                tone="soft"
+              />
+              <div className="mt-6 flex justify-center">
+                <PrimaryButton
+                  onClick={generate}
+                  className="px-6 py-3 text-sm"
+                >
+                  <DevAiLabel>この形で記事をまとめる</DevAiLabel>
+                </PrimaryButton>
+              </div>
             </div>
           </>
         )}
 
         {/* 生成中 */}
         {generating === tab && (
-          <StateCard
-            icon={<span className="animate-bounce inline-block">{currentTab.emoji}</span>}
-            title="記事のたたき台をまとめています"
-            description="いま見えている文章から、そのまま続きを確認できます。"
-            align="left"
-            action={(
+          <div className="space-y-4">
+            <InterviewerSpeech
+              icon={<span className="animate-pulse"><CharacterAvatar src={getCharacter('mint')?.icon48} alt="ミントのアイコン" emoji={getCharacter('mint')?.emoji} size={48} /></span>}
+              name="ミント"
+              title="記事を整えています"
+              description="少しお待ちください。"
+              tone="soft"
+            />
+            {currentContent && (
               <pre className="mt-2 whitespace-pre-wrap font-sans text-sm leading-relaxed text-stone-700">
-                {currentContent || ' '}
+                {currentContent}
               </pre>
             )}
-          />
+          </div>
         )}
 
         {/* 生成済み */}
@@ -294,7 +304,7 @@ export default function ArticlePage() {
                 onClick={handleDownload}
                 className="flex-1 py-2 text-sm"
               >
-                Markdownでダウンロード
+                テキストでダウンロード
               </SecondaryButton>
             </div>
 

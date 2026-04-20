@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
+import { getBlogPostsFromDB } from '@/lib/blog-posts'
 
 export const metadata: Metadata = {
   title: 'ブログ | Insight Cast',
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
     'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getBlogPostsFromDB()
+
   return (
     <PublicPageFrame>
       <PublicHeader />
@@ -21,7 +24,7 @@ export default function BlogPage() {
         />
 
         <section className="mx-auto flex max-w-6xl flex-col gap-8 px-6 pb-16">
-          <BlogClient />
+          <BlogClient posts={posts} />
         </section>
       </main>
 

@@ -90,6 +90,40 @@ const articleFormats = [
   },
 ] as const
 
+const fitComparisons = [
+  {
+    title: '一般的なAIブログツールが向く場面',
+    body: 'すでに発信テーマが決まっていて、キーワード調査、SEO/GEO最適化、ブランドボイス運用を効率化したいとき。',
+    points: [
+      '記事制作の速度を上げたい',
+      'ブランドルールや編集体制がある',
+      '既存のマーケ運用を自動化したい',
+    ],
+    tone: 'default' as const,
+  },
+  {
+    title: 'Insight Cast が向く場面',
+    body: 'ホームページに価値はあるのに、何を書けばいいかがまだ固まっていないとき。会話から一次情報を引き出したいとき。',
+    points: [
+      '自分たちの強みをうまく言語化できない',
+      'FAQ、事例、サービス説明の芯が足りない',
+      '担当者や社長が答えられる形で進めたい',
+    ],
+    tone: 'warm' as const,
+  },
+] as const
+
+const usageNotes = [
+  {
+    title: 'Insight Cast を先に使うと良いとき',
+    body: '何を書くべきかがまだ固まっていない、FAQや比較軸の材料が足りない、社長や担当者の言葉から価値を拾いたいときに向いています。',
+  },
+  {
+    title: '他のAIブログツールを重ねやすいとき',
+    body: '発信テーマや編集体制が見えてきたら、SEO/GEO最適化、ブランドボイス運用、記事量産のためのSaaSと併用しやすくなります。',
+  },
+] as const
+
 export default function ServicePage() {
   const claus = getCharacter('claus')
   const rain = getCharacter('rain')
@@ -117,7 +151,7 @@ export default function ServicePage() {
                 <StatusPill tone="success">記事の素まで残る</StatusPill>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <ButtonLink href="/auth/signup">無料で試してみる</ButtonLink>
+                <ButtonLink href="/auth/signup">無料で取材を始める</ButtonLink>
                 <ButtonLink href="/cast" tone="secondary">
                   キャストを見る
                 </ButtonLink>
@@ -333,6 +367,46 @@ export default function ServicePage() {
 
         <section className="px-6 py-14 sm:py-18">
           <div className="mx-auto max-w-6xl">
+            <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+              <SectionIntro
+                eyebrow="Where It Fits"
+                title={<>AIブログツールと、<br />置き換える関係ではありません。</>}
+                description="SEO/GEO、ブランドボイス、ワークフロー自動化を強く持つSaaSは、すでに回っている発信を伸ばすのが得意です。Insight Cast は、その前にある『何を伝えるべきか』を整える役割です。"
+              />
+
+              <div>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {fitComparisons.map((item) => (
+                    <SurfaceCard key={item.title} tone={item.tone} className="rounded-[2rem] p-6">
+                      <p className="text-lg font-semibold text-stone-900">{item.title}</p>
+                      <p className="mt-3 text-sm leading-7 text-stone-600">{item.body}</p>
+                      <div className="mt-5 space-y-3">
+                        {item.points.map((point) => (
+                          <div key={point} className="flex items-start gap-3 rounded-2xl border border-white/80 bg-white/84 px-4 py-3">
+                            <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-500" />
+                            <p className="text-sm leading-6 text-stone-700">{point}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </SurfaceCard>
+                  ))}
+                </div>
+
+                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                  {usageNotes.map((note) => (
+                    <div key={note.title} className="rounded-[1.8rem] border border-stone-200 bg-white/92 px-5 py-5">
+                      <p className="text-sm font-semibold text-stone-900">{note.title}</p>
+                      <p className="mt-2 text-sm leading-7 text-stone-600">{note.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 py-14 sm:py-18">
+          <div className="mx-auto max-w-6xl">
             <div className="relative overflow-hidden rounded-[2.4rem] border border-stone-200 bg-stone-900 p-8 text-white sm:p-10">
               <Image
                 src={sceneTeamBreak}
@@ -384,7 +458,7 @@ export default function ServicePage() {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
                 <ButtonLink href="/auth/signup" className="bg-white text-stone-900 hover:bg-stone-100">
-                  無料で始める
+                  無料で取材を始める
                 </ButtonLink>
                 <ButtonLink href="/pricing" tone="ghost" className="border-white/85 bg-white text-stone-950 hover:border-white/45 hover:bg-white/12 hover:text-white">
                   料金を見る

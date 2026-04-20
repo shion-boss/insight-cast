@@ -206,7 +206,7 @@ export function PublicHeader() {
           href="/auth/signup"
           className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
         >
-          無料ではじめる
+          無料で始める
         </Link>
       </div>
     </HeaderSurface>
@@ -251,7 +251,7 @@ export function PublicFooter() {
                 href="/auth/signup"
                 className={getButtonClass('primary', 'px-5 py-3 text-sm')}
               >
-                無料で始める
+                無料で取材を始める
               </Link>
             </div>
           </div>

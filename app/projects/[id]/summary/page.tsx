@@ -107,13 +107,16 @@ export default function SummaryPage() {
   const char = data ? getCharacter(data.interviewerType) : null
 
   if (loading) {
+    const mint = getCharacter('mint')
     return (
       <div className="min-h-screen flex items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <div className="w-full max-w-md px-6">
-          <StateCard
-            icon={<span className="animate-pulse">📝</span>}
+          <InterviewerSpeech
+            icon={<span className="animate-pulse"><CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} /></span>}
+            name="ミント"
             title="取材メモを整理しています"
-            description="まとまり次第、このまま続きを確認できます。"
+            description="少しお待ちください。インタビューの内容をまとめています。"
+            tone="soft"
           />
         </div>
       </div>

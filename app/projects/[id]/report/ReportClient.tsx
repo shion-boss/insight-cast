@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 type Audit = {
   current_content:  string[] | null
@@ -109,11 +110,12 @@ export default function ReportClient({
             </div>
           ) : (
             <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-stone-400')}>
-              <p className="flex items-center gap-2">
-                <span className="animate-spin inline-block">⏳</span>
-                自社HPや競合の情報を整理しています...
-              </p>
-              <p>このページで待たなくて大丈夫です。完了したらトーストでお知らせします。</p>
+              <InterviewerSpeech
+                icon={<span className="animate-pulse"><CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} /></span>}
+                name="クラウス"
+                title="ホームページと競合を調査しています"
+                description="このページで待たなくて大丈夫です。完了したらお知らせします。"
+              />
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Link
                   href={`/projects/${projectId}`}
@@ -158,10 +160,12 @@ export default function ReportClient({
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
-      <div className="flex items-center gap-3">
-        <span className="text-3xl">🦉</span>
-        <p className="text-stone-700 font-medium">調査が完了しました。インタビュー前の準備として結果をご覧ください。</p>
-      </div>
+      <InterviewerSpeech
+        icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
+        name="クラウス"
+        title="クラウスから調査結果が届きました"
+        description="インタビュー前の準備として結果をご覧ください。"
+      />
 
       {/* 自社HP現状 */}
       <section className="bg-white rounded-xl border border-stone-100 p-5 space-y-4">

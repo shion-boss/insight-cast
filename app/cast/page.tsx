@@ -447,14 +447,15 @@ export default function CastPage() {
                   href="/auth/signup"
                   className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
                 >
-                  無料で始める
+                  無料で取材を始める
                 </Link>
-                <Link
+                <ButtonLink
                   href="/auth/login"
-                  className="inline-flex items-center justify-center rounded-2xl border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40"
+                  tone="secondary"
+                  className="rounded-2xl px-6 py-4 text-sm border-white/80 bg-transparent text-white hover:border-white hover:bg-white/10"
                 >
                   ログイン
-                </Link>
+                </ButtonLink>
               </div>
             </div>
           </div>

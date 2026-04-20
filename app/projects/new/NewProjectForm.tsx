@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
 
 type CompetitorSuggestion = {
   name: string
@@ -147,7 +147,7 @@ export default function NewProjectForm() {
             disabled={suggesting || !canSuggest}
             className="shrink-0 rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-600 hover:bg-stone-50 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 transition-colors cursor-pointer"
           >
-            {suggesting ? '候補を探しています...' : '✨ おすすめを見る'}
+            {suggesting ? '候補を探しています...' : <DevAiLabel>おすすめを見る</DevAiLabel>}
           </button>
         </div>
 
