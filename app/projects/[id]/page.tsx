@@ -5,6 +5,7 @@ import { getCharacter } from '@/lib/characters'
 import StartAnalysisButton from '@/components/start-analysis-button'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
+import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
 import { AppShell } from '@/components/app-shell'
 
@@ -123,6 +124,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     current.push(article)
     articlesByInterview.set(article.interview_id, current)
   }
+  const analysisBadge = getProjectAnalysisBadge(project.status, analysisReady)
+  const contentBadge = getProjectContentBadge({
+    status: project.status,
+    interviewCount: interviews.length,
+    articleCount: articles.length,
+  })
   const mint = getCharacter('mint')
 
   return (
@@ -157,12 +164,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
-              {analysisStatus === 'analyzing' ? (
-                <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
-              ) : analysisStatus === 'report_ready' ? (
-                <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
-              ) : (
-                <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
+              <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                {analysisBadge.label}
+              </StatusPill>
+              {contentBadge && (
+                <StatusPill tone={contentBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                  {contentBadge.label}
+                </StatusPill>
               )}
               {competitors && competitors.length > 0 && (
                 <span className="text-[11px] bg-[rgba(255,255,255,0.5)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">競合 {competitors.length}件</span>
@@ -220,6 +228,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
             {interviews.map((interview, i) => {
               const interviewArticles = articlesByInterview.get(interview.id) ?? []
+              const latestInterviewArticle = interviewArticles[0] ?? null
               const char = getCharacter(interview.interviewer_type)
               const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
               const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
@@ -255,6 +264,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     {hasSummary && <StatusPill tone="neutral">メモ</StatusPill>}
                     {hasArticle && <StatusPill tone="success">記事</StatusPill>}
                     {hasUncreatedThemes && <StatusPill tone="warning">未作成</StatusPill>}
+                    {latestInterviewArticle && (
+                      <Link href={`/projects/${id}/articles/${latestInterviewArticle.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                        記事を見る
+                      </Link>
+                    )}
                     <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
                       メモを見る
                     </Link>
@@ -268,7 +282,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* Articles section */}
       {articles.length > 0 && (
-        <div className="mt-8">
+        <div id="articles" className="mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">記事素材</h2>
           </div>
@@ -309,8 +323,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* Analysis / competitors section */}
       <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-2">調査レポート</div>
             <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
             <p className="text-[13px] text-[var(--text2)] leading-relaxed">

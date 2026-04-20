@@ -100,100 +100,123 @@ export function InterviewLoadingScene({
   subtitle?: string
 }) {
   const character = getCharacter(characterId)
-  const [shownMessages, setShownMessages] = useState(0)
-  const script = useMemo(() => ([
-    { role: 'cast', text: '今日はよろしくお願いします。最近いちばん喜ばれた仕事から聞かせてください。' },
-    { role: 'user', text: '先日、塗装工事のお客様から安心して住み続けられると言ってもらえました。' },
-    { role: 'cast', text: 'その言葉、とても大事ですね。どんな配慮が安心につながったのでしょう？' },
-  ]), [])
+  const [tick, setTick] = useState(0)
+  const castRole = useMemo(() => {
+    if (characterId === 'claus') return 'Industry Editor'
+    if (characterId === 'rain') return 'Message Strategist'
+    return 'Story Listener'
+  }, [characterId])
+
+  const steps = useMemo(() => {
+    if (characterId === 'claus') {
+      return [
+        'HP調査レポートを読み込んでいます',
+        '業種の専門知識を確認しています',
+        '技術的な質問リストを作成しています',
+        '取材の準備が整いました',
+      ]
+    }
+    if (characterId === 'rain') {
+      return [
+        'HP調査レポートを読み込んでいます',
+        '競合サイトとの違いを整理しています',
+        'メッセージ戦略の質問を準備しています',
+        '取材の準備が整いました',
+      ]
+    }
+
+    return [
+      'HP調査レポートを読み込んでいます',
+      'お客様目線のテーマを整理しています',
+      'ミントが質問リストを作成しています',
+      '取材の準備が整いました',
+    ]
+  }, [characterId])
 
   useEffect(() => {
-    if (shownMessages >= script.length) return
+    setTick(0)
+  }, [characterId])
+
+  useEffect(() => {
+    const isComplete = tick >= steps.length
     const timeoutId = window.setTimeout(() => {
-      setShownMessages((current) => current + 1)
-    }, shownMessages === 0 ? 700 : 1300)
+      setTick((current) => {
+        if (current >= steps.length) return 0
+        return current + 1
+      })
+    }, isComplete ? 900 : tick === 0 ? 500 : 950)
 
     return () => window.clearTimeout(timeoutId)
-  }, [script.length, shownMessages])
+  }, [steps.length, tick])
+
+  const progress = Math.round((Math.min(tick, steps.length) / steps.length) * 100)
+  const complete = tick >= steps.length
 
   return (
-    <div className="ic-loading-card w-full max-w-[520px]">
-      <div className="ic-loading-card-header">
+    <div className="ic-loading-card ic-prep-card w-full max-w-[480px]">
+      <div className="ic-prep-avatar-stage">
+        <span className="ic-prep-ring ic-prep-ring-1" aria-hidden="true" />
+        <span className="ic-prep-ring ic-prep-ring-2" aria-hidden="true" />
+        <span className="ic-prep-ring ic-prep-ring-3" aria-hidden="true" />
         <CharacterAvatar
-          src={character?.icon48}
+          src={character?.icon96 ?? character?.icon48}
           alt={`${character?.name ?? 'キャスト'}のアイコン`}
           emoji={character?.emoji}
-          size={40}
-          className="border-2 border-[var(--accent)]"
+          size={128}
+          className="ic-prep-avatar border-[3px] border-[var(--accent)]"
         />
-        <div className="min-w-0">
-          <p className="font-serif text-[15px] font-bold text-[var(--text)]">{title}</p>
-          <p className="mt-0.5 text-xs font-semibold text-[var(--teal)]">{subtitle}</p>
-        </div>
-        <div className="ml-auto">
-          <AiBadge label="取材中" />
+      </div>
+
+      <div className="text-center">
+        <p className="font-serif text-[26px] font-bold text-[var(--text)]">{character?.name ?? '取材班'}</p>
+        <div className="mt-1 inline-flex">
+          <AiBadge label={`${castRole} · 準備中`} />
         </div>
       </div>
-      <div className="ic-loading-card-body pb-7">
-        <div className="mb-5">
-          <div className="mb-1.5 flex items-center justify-between text-xs text-[var(--text3)]">
-            <span>取材の進み具合</span>
-            <span>{shownMessages}/7 問</span>
-          </div>
-          <div className="h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
-            <div
-              className="h-full rounded-full bg-[var(--accent)] transition-all duration-500"
-              style={{ width: `${Math.max((shownMessages / 7) * 100, 12)}%` }}
-            />
-          </div>
+
+      <div className="mt-7">
+        <p className="text-center text-sm font-semibold text-[var(--text)]">{title}</p>
+        <p className="mt-1 text-center text-xs text-[var(--text2)]">{subtitle}</p>
+      </div>
+
+      <div className="mt-7">
+        <div className="mb-2 flex items-center justify-between text-[11px] text-[var(--text3)]">
+          <span>取材準備</span>
+          <span className="font-semibold text-[var(--accent)]">{progress}%</span>
         </div>
-
-        <div className="space-y-3">
-          {script.slice(0, shownMessages).map((message, index) => (
-            <div
-              key={`${message.role}-${index}`}
-              className={cx('flex gap-2.5', message.role === 'user' ? 'justify-end' : 'justify-start')}
-            >
-              {message.role === 'cast' && (
-                <CharacterAvatar
-                  src={character?.icon48}
-                  alt={`${character?.name ?? 'キャスト'}のアイコン`}
-                  emoji={character?.emoji}
-                  size={32}
-                  className="mt-1 border-[var(--border)]"
-                />
-              )}
-              <div
-                className={cx(
-                  'max-w-[82%] rounded-2xl px-4 py-3 text-[13px] leading-[1.75]',
-                  message.role === 'cast'
-                    ? 'rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
-                    : 'rounded-tr-sm bg-[var(--accent)] text-white',
-                )}
-              >
-                {message.text}
-              </div>
-            </div>
-          ))}
-
-          <div className="flex gap-2.5">
-            <CharacterAvatar
-              src={character?.icon48}
-              alt={`${character?.name ?? 'キャスト'}のアイコン`}
-              emoji={character?.emoji}
-              size={32}
-              className="mt-1 border-[var(--border)]"
-            />
-            <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-              <div className="ic-typing-dots">
-                <span className="ic-typing-dot" />
-                <span className="ic-typing-dot" />
-                <span className="ic-typing-dot" />
-              </div>
-            </div>
-          </div>
+        <div className="h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
+          <div
+            className="h-full rounded-full bg-[linear-gradient(90deg,var(--accent),#e8943a)] transition-all duration-700"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       </div>
+
+      <div className="mt-5 space-y-2">
+        {steps.map((step, index) => {
+          const state = index < tick ? 'done' : index === tick ? 'active' : 'idle'
+          return (
+            <div key={step} className={cx('ic-prep-step', `ic-prep-step-${state}`)}>
+              <div className={cx('ic-prep-step-icon', `ic-prep-step-icon-${state}`)}>
+                {state === 'done'
+                  ? '✓'
+                  : state === 'active'
+                    ? <span className="ic-progress-spinner" aria-hidden="true">◌</span>
+                    : index + 1}
+              </div>
+              <span>{step}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      {complete && (
+        <div className="ic-prep-complete">
+          <div className="text-[48px]">🎤</div>
+          <p className="mt-3 font-serif text-lg font-bold text-[var(--text)]">取材を開始しています…</p>
+          <p className="mt-2 text-sm text-[var(--text2)]">最初の質問を整えています。</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -50,6 +50,7 @@ export default function SettingsPage() {
   const [saveError, setSaveError] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('アカウント')
   const [notifOn, setNotifOn] = useState(NOTIFICATIONS.map((n) => n.defaultOn))
+  const [interviewCount, setInterviewCount] = useState<number | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -76,6 +77,24 @@ export default function SettingsPage() {
         const nextName = data?.name ?? ''
         setName(nextName)
         setInitialName(nextName)
+      }
+
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const { data: userProjects } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('user_id', user.id)
+      const projectIds = (userProjects ?? []).map((p) => p.id)
+      if (projectIds.length > 0) {
+        const { count } = await supabase
+          .from('interviews')
+          .select('id', { count: 'exact', head: true })
+          .in('project_id', projectIds)
+          .gte('created_at', monthStart)
+        setInterviewCount(count ?? 0)
+      } else {
+        setInterviewCount(0)
       }
 
       setLoading(false)
@@ -195,12 +214,9 @@ export default function SettingsPage() {
                   </div>
                   <div>
                     <p className="font-semibold text-[var(--text)] mb-1">{name.trim() || '名前未設定'}</p>
-                    <button
-                      type="button"
-                      className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-2.5 py-1 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      アイコンを変更
-                    </button>
+                    <span className="border border-[var(--border)] text-[var(--text3)] text-[11px] font-semibold px-2.5 py-1 rounded-[var(--r-sm)] opacity-50 cursor-not-allowed select-none">
+                      アイコンは現在準備中です
+                    </span>
                   </div>
                 </div>
 
@@ -277,11 +293,8 @@ export default function SettingsPage() {
 
               <div>
                 <div className="flex justify-between text-xs text-[var(--text2)] mb-1.5">
-                  <span>今月の取材使用数</span>
-                  <span className="font-semibold">1 / 2 回</span>
-                </div>
-                <div className="h-1 bg-[var(--border)] rounded-full overflow-hidden">
-                  <div className="h-full bg-[var(--accent)] rounded-full" style={{ width: '50%' }} />
+                  <span>今月の取材回数</span>
+                  <span className="font-semibold">{interviewCount === null ? '...' : `${interviewCount} 回`}</span>
                 </div>
               </div>
 
@@ -306,7 +319,8 @@ export default function SettingsPage() {
           {activeSection === '通知' && (
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-7">
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-lg mb-1">通知設定</h2>
-              <p className="text-xs text-[var(--text3)] mb-6">メール通知の受信設定を管理します</p>
+              <p className="text-xs text-[var(--text3)] mb-3">メール通知の受信設定を管理します</p>
+              <div className="text-[12px] text-[var(--text3)] bg-[var(--bg2)] rounded-lg px-3 py-2 mb-5">通知設定の保存機能は現在準備中です</div>
 
               <div className="space-y-0">
                 {NOTIFICATIONS.map((n, i) => (
@@ -331,27 +345,11 @@ export default function SettingsPage() {
           {activeSection === 'セキュリティ' && (
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-7">
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-lg mb-1">セキュリティ</h2>
-              <p className="text-xs text-[var(--text3)] mb-6">パスワードとログインセッションを管理します</p>
+              <p className="text-xs text-[var(--text3)] mb-6">ログインセッションとパスワードの管理</p>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">現在のパスワード</label>
-                  <TextInput type="password" placeholder="••••••••" />
-                </div>
-                <div>
-                  <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">新しいパスワード</label>
-                  <TextInput type="password" placeholder="8文字以上" />
-                </div>
-                <div>
-                  <label className="block text-[13px] font-semibold text-[var(--text)] mb-1.5">新しいパスワード（確認）</label>
-                  <TextInput type="password" placeholder="もう一度入力" />
-                </div>
-                <button
-                  type="button"
-                  className="bg-[var(--accent)] text-white text-sm font-semibold px-4 py-2 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                >
-                  パスワードを変更する
-                </button>
+              <div className="bg-[var(--bg2)] border border-[var(--border)] rounded-xl p-5 text-center">
+                <p className="text-[13px] text-[var(--text2)] mb-1">パスワード変更は現在準備中です</p>
+                <p className="text-[12px] text-[var(--text3)]">ご不便をおかけします。しばらくお待ちください。</p>
               </div>
             </section>
           )}

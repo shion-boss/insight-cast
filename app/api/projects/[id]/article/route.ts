@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
@@ -183,20 +184,34 @@ ${themeInstruction}${internalLinkInstruction}
           controller.enqueue(new TextEncoder().encode(chunk.delta.text))
         }
       }
-      controller.close()
 
       const titleMatch = fullText.match(/^#\s+(.+)/m)
       const title = titleMatch?.[1]?.trim() ?? '記事'
 
-      await supabase.from('articles').insert({
-        project_id:   projectId,
-        interview_id: interviewId,
-        article_type: articleType,
-        title,
-        content: fullText,
-      })
+      const { data: savedArticle } = await supabase
+        .from('articles')
+        .insert({
+          project_id: projectId,
+          interview_id: interviewId,
+          article_type: articleType,
+          title,
+          content: fullText,
+        })
+        .select('id')
+        .single()
 
       await supabase.from('projects').update({ status: 'article_ready' }).eq('id', projectId)
+      revalidatePath('/dashboard')
+      revalidatePath('/projects')
+      revalidatePath('/articles')
+      revalidatePath('/interviews')
+      revalidatePath(`/projects/${projectId}`)
+      revalidatePath(`/projects/${projectId}/summary`)
+      revalidatePath(`/projects/${projectId}/article`)
+      if (savedArticle?.id) {
+        revalidatePath(`/projects/${projectId}/articles/${savedArticle.id}`)
+      }
+      controller.close()
     },
   })
 

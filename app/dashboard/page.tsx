@@ -6,6 +6,7 @@ import { AppShell } from '@/components/app-shell'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
+import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 
 type Project = {
   id: string
@@ -108,8 +109,9 @@ export default async function DashboardPage() {
 
   let interviews: Interview[] = []
   const latestInterviewMap = new Map<string, Interview>()
-  let articleInterviewIds = new Set<string>()
   let articleCountByInterview = new Map<string, number>()
+  const interviewCountByProject = new Map<string, number>()
+  const articleCountByProject = new Map<string, number>()
 
   if (projectList.length > 0) {
     const { data: interviewRows } = await supabase
@@ -124,6 +126,10 @@ export default async function DashboardPage() {
       if (!latestInterviewMap.has(interview.project_id)) {
         latestInterviewMap.set(interview.project_id, interview)
       }
+      interviewCountByProject.set(
+        interview.project_id,
+        (interviewCountByProject.get(interview.project_id) ?? 0) + 1,
+      )
     }
 
     if (interviews.length > 0) {
@@ -133,12 +139,18 @@ export default async function DashboardPage() {
         .in('interview_id', interviews.map((interview) => interview.id))
 
       const built = buildArticleCountByInterview((articles ?? []) as InterviewArticleRef[])
-      articleInterviewIds = built.articleInterviewIds
       articleCountByInterview = built.articleCountByInterview
+
+      for (const interview of interviews) {
+        articleCountByProject.set(
+          interview.project_id,
+          (articleCountByProject.get(interview.project_id) ?? 0) + (articleCountByInterview.get(interview.id) ?? 0),
+        )
+      }
     }
   }
 
-  const totalArticles = articleInterviewIds.size
+  const totalArticles = Array.from(articleCountByInterview.values()).reduce((sum, count) => sum + count, 0)
   const mint = getCharacter('mint')
   const nextProject = projectList[0] ?? null
 
@@ -235,32 +247,44 @@ export default async function DashboardPage() {
             </div>
             <div className="flex flex-col gap-[10px]">
               {projectList.slice(0, 4).map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/projects/${project.id}`}
-                  className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
-                >
-                  <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-[20px] flex-shrink-0">🏢</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
-                      {project.name || project.hp_url}
-                    </div>
-                    <div className="text-[12px] text-[var(--text3)]">
-                      {latestInterviewMap.has(project.id)
-                        ? `最終取材: ${formatShortDateTime(latestInterviewMap.get(project.id)!.created_at)}`
-                        : `更新: ${formatDate(project.updated_at)}`}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
-                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
-                    ) : project.status === 'analyzing' ? (
-                      <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
-                    ) : (
-                      <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
-                    )}
-                  </div>
-                </Link>
+                (() => {
+                  const analysisBadge = getProjectAnalysisBadge(project.status, analysisReadyProjectIds.has(project.id))
+                  const contentBadge = getProjectContentBadge({
+                    status: project.status,
+                    interviewCount: interviewCountByProject.get(project.id) ?? 0,
+                    articleCount: articleCountByProject.get(project.id) ?? 0,
+                  })
+
+                  return (
+                    <Link
+                      key={project.id}
+                      href={`/projects/${project.id}`}
+                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 cursor-pointer transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
+                    >
+                      <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-[20px] flex-shrink-0">🏢</div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
+                          {project.name || project.hp_url}
+                        </div>
+                        <div className="text-[12px] text-[var(--text3)]">
+                          {latestInterviewMap.has(project.id)
+                            ? `最終取材: ${formatShortDateTime(latestInterviewMap.get(project.id)!.created_at)}`
+                            : `更新: ${formatDate(project.updated_at)}`}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                          {analysisBadge.label}
+                        </StatusPill>
+                        {contentBadge && (
+                          <StatusPill tone={contentBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                            {contentBadge.label}
+                          </StatusPill>
+                        )}
+                      </div>
+                    </Link>
+                  )
+                })()
               ))}
             </div>
           </div>

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { NextRequest, NextResponse } from 'next/server'
@@ -76,6 +77,11 @@ ${conversation}
   }).eq('id', interviewId)
 
   await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
+  revalidatePath('/dashboard')
+  revalidatePath('/projects')
+  revalidatePath('/interviews')
+  revalidatePath(`/projects/${projectId}`)
+  revalidatePath(`/projects/${projectId}/summary`)
 
   return NextResponse.json({ summary: parsed.values, themes: parsed.themes })
 }

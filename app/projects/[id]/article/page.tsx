@@ -1,16 +1,20 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { WritingLoadingScene } from '@/components/loading-scenes'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
 type ArticleVolume = 'short' | 'medium' | 'long'
+type SavedArticle = {
+  id: string
+  title: string | null
+}
 
 const TABS: { type: ArticleType; label: string; desc: string }[] = [
   { type: 'client',       label: 'ブログ記事',       desc: '事業者の言葉で語る読み物記事' },
@@ -33,6 +37,7 @@ const VOLUME_OPTIONS: { value: ArticleVolume; label: string }[] = [
 export default function ArticlePage() {
   const { id: projectId } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const interviewId = searchParams.get('interviewId') ?? ''
   const initialTheme = searchParams.get('theme') ?? ''
   const supabase = createClient()
@@ -44,6 +49,7 @@ export default function ArticlePage() {
   const [error, setError] = useState<string | null>(null)
   const [availableThemes, setAvailableThemes] = useState<string[]>([])
   const [loadingThemes, setLoadingThemes] = useState(true)
+  const [savedArticles, setSavedArticles] = useState<Partial<Record<ArticleType, SavedArticle>>>({})
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
@@ -51,6 +57,7 @@ export default function ArticlePage() {
   const [polishAnswers, setPolishAnswers] = useState(true)
 
   const currentContent = contents[tab] ?? ''
+  const currentSavedArticle = savedArticles[tab] ?? null
   const isGenerated = !!currentContent
   const isGenerating = generating === tab
 
@@ -122,7 +129,22 @@ export default function ArticlePage() {
       if (done) break
       setContents(prev => ({ ...prev, [tab]: (prev[tab] ?? '') + decoder.decode(value) }))
     }
+
+    const { data: savedArticle } = await supabase
+      .from('articles')
+      .select('id, title')
+      .eq('interview_id', interviewId)
+      .eq('article_type', tab)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    if (savedArticle) {
+      setSavedArticles(prev => ({ ...prev, [tab]: savedArticle }))
+    }
+
     setGenerating(null)
+    router.refresh()
   }
 
   async function handleCopy() {
@@ -291,7 +313,7 @@ export default function ArticlePage() {
               }
             </button>
             {isGenerated && !isGenerating && (
-              <p className="mt-2.5 text-[12px] text-[var(--teal)] text-center font-semibold">✓ 生成完了</p>
+              <p className="mt-2.5 text-[12px] text-[var(--teal)] text-center font-semibold">✓ 素材が届きました</p>
             )}
           </aside>
 
@@ -370,12 +392,28 @@ export default function ArticlePage() {
                   {currentContent}
                 </pre>
                 <div className="mt-6 pt-5 border-t border-[var(--border)]">
-                  <button
-                    onClick={generate}
-                    className="w-full py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
-                  >
-                    <DevAiLabel>もう一度まとめる</DevAiLabel>
-                  </button>
+                  <div className="flex flex-wrap gap-3">
+                    {currentSavedArticle && (
+                      <Link
+                        href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
+                        className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}
+                      >
+                        保存した記事を確認する
+                      </Link>
+                    )}
+                    <Link
+                      href={`/projects/${projectId}#articles`}
+                      className={getButtonClass('secondary', 'px-4 py-2.5 text-sm')}
+                    >
+                      取材先の管理で確認する
+                    </Link>
+                    <button
+                      onClick={generate}
+                      className="px-4 py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
+                    >
+                      <DevAiLabel>もう一度まとめる</DevAiLabel>
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

@@ -2,9 +2,11 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import StartAnalysisButton from '@/components/start-analysis-button'
-import { getButtonClass } from '@/components/ui'
+import { StatusPill, getButtonClass } from '@/components/ui'
 import { AppShell } from '@/components/app-shell'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
+import { buildArticleCountByInterview, type InterviewArticleRef } from '@/lib/interview-state'
+import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { createClient } from '@/lib/supabase/server'
 
 type Project = {
@@ -20,7 +22,6 @@ type Interview = {
   project_id: string
   created_at: string
 }
-
 
 function formatShortDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
@@ -119,6 +120,22 @@ export default async function ProjectsPage() {
     )
   }
 
+  const { data: articleRows } = interviews.length > 0
+    ? await db
+      .from('articles')
+      .select('interview_id')
+      .in('interview_id', interviews.map((interview) => interview.id))
+    : { data: [] }
+
+  const { articleCountByInterview } = buildArticleCountByInterview((articleRows ?? []) as InterviewArticleRef[])
+  const articleCountByProject = new Map<string, number>()
+  for (const interview of interviews) {
+    articleCountByProject.set(
+      interview.project_id,
+      (articleCountByProject.get(interview.project_id) ?? 0) + (articleCountByInterview.get(interview.id) ?? 0),
+    )
+  }
+
   return (
     <AppShell
       title="取材先一覧"
@@ -159,6 +176,13 @@ export default async function ProjectsPage() {
           {projectList.map((project) => {
             const latestInterview = latestInterviewMap.get(project.id)
             const ivCount = interviewCountByProject.get(project.id) ?? 0
+            const articleCount = articleCountByProject.get(project.id) ?? 0
+            const analysisBadge = getProjectAnalysisBadge(project.status, analysisReadyProjectIds.has(project.id))
+            const contentBadge = getProjectContentBadge({
+              status: project.status,
+              interviewCount: ivCount,
+              articleCount,
+            })
 
             return (
               <div
@@ -175,13 +199,16 @@ export default async function ProjectsPage() {
                     </Link>
                   </div>
                   <div className="flex-shrink-0">
-                    {!analysisReadyProjectIds.has(project.id) || project.status === 'analysis_pending' ? (
-                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">未調査</span>
-                    ) : project.status === 'analyzing' ? (
-                      <span className="text-[11px] bg-[var(--warn-l)] text-[var(--warn)] px-2.5 py-1 rounded-full font-semibold">分析中</span>
-                    ) : (
-                      <span className="text-[11px] bg-[var(--teal-l,#e0f5f3)] text-[var(--teal,#0d9488)] px-2.5 py-1 rounded-full font-semibold">調査済み</span>
-                    )}
+                    <div className="flex flex-wrap justify-end gap-2">
+                      <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                        {analysisBadge.label}
+                      </StatusPill>
+                      {contentBadge && (
+                        <StatusPill tone={contentBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                          {contentBadge.label}
+                        </StatusPill>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -189,7 +216,7 @@ export default async function ProjectsPage() {
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   {[
                     { n: ivCount, l: '取材回数' },
-                    { n: 0, l: '記事素材' },
+                    { n: articleCount, l: '記事素材' },
                     { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
                   ].map((s) => (
                     <div key={s.l} className="bg-[var(--bg2)] rounded-[8px] p-2.5 text-center">
@@ -213,6 +240,14 @@ export default async function ProjectsPage() {
                   >
                     管理
                   </Link>
+                  {articleCount > 0 && (
+                    <Link
+                      href={`/projects/${project.id}#articles`}
+                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                    >
+                      記事を見る
+                    </Link>
+                  )}
                   {analysisReadyProjectIds.has(project.id) && project.status !== 'analyzing' ? (
                     <Link
                       href={`/projects/${project.id}/report`}

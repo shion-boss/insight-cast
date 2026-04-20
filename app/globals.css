@@ -192,6 +192,12 @@ button:disabled,
   padding: 32px;
 }
 
+.ic-prep-card {
+  position: relative;
+  overflow: hidden;
+  padding: 48px 40px 44px;
+}
+
 .ic-loading-badge {
   display: inline-flex;
   align-items: center;
@@ -312,6 +318,107 @@ button:disabled,
   animation: ic-rotate 1s linear infinite;
 }
 
+.ic-prep-avatar-stage {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto 28px;
+}
+
+.ic-prep-ring {
+  position: absolute;
+  border: 1.5px solid rgba(194, 114, 42, 0.18);
+  border-radius: 999px;
+  animation: ic-prep-ripple 2.4s ease-out infinite;
+}
+
+.ic-prep-ring-1 {
+  inset: -12px;
+  animation-delay: 0s;
+}
+
+.ic-prep-ring-2 {
+  inset: -24px;
+  animation-delay: 0.6s;
+}
+
+.ic-prep-ring-3 {
+  inset: -36px;
+  animation-delay: 1.2s;
+}
+
+.ic-prep-avatar {
+  position: relative;
+  z-index: 1;
+}
+
+.ic-prep-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ic-prep-step-done {
+  background: var(--ok-l);
+  color: var(--ok);
+}
+
+.ic-prep-step-active {
+  background: var(--accent-l);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.ic-prep-step-idle {
+  background: var(--bg2);
+  color: var(--text3);
+}
+
+.ic-prep-step-icon {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ic-prep-step-icon-done {
+  background: var(--ok);
+  color: white;
+}
+
+.ic-prep-step-icon-active {
+  background: var(--accent);
+  color: white;
+}
+
+.ic-prep-step-icon-idle {
+  background: var(--border);
+  color: var(--text3);
+}
+
+.ic-prep-complete {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28px;
+  background: var(--surface);
+  padding: 40px;
+  animation: ic-prep-fade-in 0.4s ease;
+}
+
 .ic-typing-dots {
   display: flex;
   align-items: center;
@@ -411,6 +518,28 @@ button:disabled,
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: ic-writing-shimmer 1.5s infinite;
+}
+
+@keyframes ic-prep-ripple {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes ic-prep-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ─── Interactive card lift ───────────────────────────────── */
