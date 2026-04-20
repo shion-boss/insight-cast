@@ -10,6 +10,7 @@ import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 type Message = { role: 'user' | 'interviewer'; content: string }
 
 const MAX_TURNS = 7
+const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 
 function getProgressLabel(turns: number) {
   if (turns < 3) return '話を聞かせてもらっています'
@@ -151,6 +152,17 @@ export default function InterviewPage() {
     if (!result.ok) return
 
     if (newTurns === MAX_TURNS || result.interviewComplete) {
+      setShowComplete(true)
+    }
+  }
+
+  async function handlePassQuestion() {
+    if (loading) return
+
+    const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
+    if (!result.ok) return
+
+    if (result.interviewComplete) {
       setShowComplete(true)
     }
   }
@@ -310,31 +322,44 @@ export default function InterviewPage() {
             />
           </div>
         )}
-        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto flex gap-2 items-end">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault()
-                handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
-              }
-            }}
-            placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
-            disabled={loading}
-            rows={3}
-            autoFocus
-            className="flex-1 px-4 py-3 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 disabled:opacity-50 resize-none leading-relaxed"
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors flex-shrink-0"
-          >
-            {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
-          </button>
-        </form>
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="text-xs text-stone-400">答えづらい質問は、無理せずパスして次へ進めます。</p>
+            <button
+              type="button"
+              onClick={handlePassQuestion}
+              disabled={loading}
+              className="rounded-lg border border-stone-200 px-3 py-2 text-xs text-stone-500 transition-colors hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer"
+            >
+              この質問はパス
+            </button>
+          </div>
+          <form onSubmit={handleSubmit} className="flex gap-2 items-end">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                  e.preventDefault()
+                  handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
+                }
+              }}
+              placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
+              disabled={loading}
+              rows={3}
+              autoFocus
+              className="flex-1 px-4 py-3 border border-stone-200 rounded-xl text-stone-800 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 disabled:opacity-50 resize-none leading-relaxed"
+            />
+            <button
+              type="submit"
+              disabled={loading || !input.trim()}
+              className="px-4 py-3 bg-stone-800 text-white rounded-xl text-sm hover:bg-stone-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600/40 cursor-pointer transition-colors flex-shrink-0"
+            >
+              {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* 完了確認モーダル */}

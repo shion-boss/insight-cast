@@ -5,6 +5,7 @@ import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } fr
 import { NextRequest } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 
 export async function POST(
   req: NextRequest,
@@ -17,6 +18,7 @@ export async function POST(
 
   const { interviewId, userMessage } = await req.json()
   const isGreeting = userMessage === '__GREETING__'
+  const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
 
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
@@ -32,7 +34,7 @@ export async function POST(
   if (projectData?.user_id !== user.id) return new Response('Forbidden', { status: 403 })
 
   // ユーザーメッセージ保存
-  if (!isGreeting) {
+  if (!isGreeting && !isPassQuestion) {
     await supabase.from('interview_messages').insert({
       interview_id: interviewId,
       role: 'user',
@@ -57,10 +59,18 @@ export async function POST(
 
   const messages = isGreeting
     ? [{ role: 'user' as const, content: 'はじめまして。よろしくお願いします。' }]
-    : (history ?? []).map((m) => ({
-        role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-        content: m.content,
-      }))
+    : [
+        ...(history ?? []).map((m) => ({
+          role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+          content: m.content,
+        })),
+        ...(isPassQuestion
+          ? [{
+              role: 'user' as const,
+              content: '今の質問はパスしたいです。無理に同じ問いを続けず、これまでの話を踏まえて別の切り口から短く1つだけ質問してください。',
+            }]
+          : []),
+      ]
 
   // 取材先情報と調査結果をコンテキストに注入
   const { data: profile } = await supabase
