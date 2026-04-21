@@ -7,6 +7,7 @@ type ProjectStatus =
   | 'report_ready'
   | 'interview_ready'
   | 'interview_done'
+  | 'article_generating'
   | 'article_ready'
 
 type ProjectLike = {
@@ -66,7 +67,7 @@ export function isProjectAnalysisReady(input: {
   }
 }
 
-const LOCKED_STATUSES = ['interview_ready', 'interview_done', 'article_ready', 'fetch_failed'] as const
+const LOCKED_STATUSES = ['interview_ready', 'interview_done', 'article_generating', 'article_ready', 'fetch_failed'] as const
 
 export function resolveProjectAnalysisStatus(
   status: ProjectStatus | string,

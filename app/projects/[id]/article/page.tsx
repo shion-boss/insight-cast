@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -8,57 +8,53 @@ import { WritingLoadingScene } from '@/components/loading-scenes'
 import {
   clearPendingArticleGeneration,
   findPendingArticleGeneration,
-  getPendingArticleGeneration,
   trackPendingArticleGeneration,
 } from '@/components/project-analysis-notifier'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader, StateCard, getButtonClass } from '@/components/ui'
+import {
+  CharacterAvatar,
+  DevAiLabel,
+  InterviewerSpeech,
+  PageHeader,
+  StateCard,
+  getButtonClass,
+} from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { showToast } from '@/lib/client/toast'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
 type ArticleVolume = 'short' | 'medium' | 'long'
-type GenerationMode = 'batch' | 'instant'
+type ArticleGenerationStatus = 'idle' | 'generating' | 'ready' | 'failed'
 type SavedArticle = {
   id: string
   title: string | null
 }
-type CompletionModalState = 'idle' | 'checking' | 'ready' | 'error'
+type SavedArticleRow = SavedArticle & {
+  article_type: string | null
+  created_at: string
+}
 
 const TABS: { type: ArticleType; label: string; desc: string }[] = [
-  { type: 'client',       label: 'ブログ記事',       desc: '事業者の言葉で語る読み物記事' },
-  { type: 'interviewer',  label: 'インタビュー形式',  desc: 'インタビュアーが伝える紹介記事' },
-  { type: 'conversation', label: '会話込み',          desc: 'Q&A形式のインタビュー記事' },
+  { type: 'client', label: 'ブログ記事', desc: '事業者の言葉で語る読み物記事' },
+  { type: 'interviewer', label: 'インタビュー形式', desc: 'インタビュアーが伝える紹介記事' },
+  { type: 'conversation', label: '会話込み', desc: 'Q&A形式のインタビュー記事' },
 ]
 
 const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
-  { value: 'desu',   label: 'ですます体' },
+  { value: 'desu', label: 'ですます体' },
   { value: 'de-aru', label: 'である体' },
-  { value: 'da-na',  label: 'だ・な体' },
+  { value: 'da-na', label: 'だ・な体' },
 ]
 
 const VOLUME_OPTIONS: { value: ArticleVolume; label: string }[] = [
-  { value: 'short',  label: 'コンパクト' },
+  { value: 'short', label: 'コンパクト' },
   { value: 'medium', label: '標準' },
-  { value: 'long',   label: '詳細' },
+  { value: 'long', label: '詳細' },
 ]
 
-const GENERATION_MODE_OPTIONS: Array<{
-  value: GenerationMode
-  label: string
-  description: string
-}> = [
-  {
-    value: 'batch',
-    label: 'あとで受け取る',
-    description: 'バックグラウンドで作成します。完了したらお知らせします。',
-  },
-  {
-    value: 'instant',
-    label: 'いま生成して待つ',
-    description: 'この場で素材をまとめます。長めの待ち時間が出ることがあります。',
-  },
-]
+function isFreshEnough(createdAt: string, requestedAt: string) {
+  return new Date(createdAt).getTime() >= new Date(requestedAt).getTime() - 60_000
+}
 
 export default function ArticlePage() {
   const { id: projectId } = useParams<{ id: string }>()
@@ -73,13 +69,9 @@ export default function ArticlePage() {
   const [availableThemes, setAvailableThemes] = useState<string[]>([])
   const [loadingThemes, setLoadingThemes] = useState(true)
   const [savedArticles, setSavedArticles] = useState<Partial<Record<ArticleType, SavedArticle>>>({})
-  const [instantContentByType, setInstantContentByType] = useState<Partial<Record<ArticleType, string>>>({})
   const [pendingArticleJobIdByType, setPendingArticleJobIdByType] = useState<Partial<Record<ArticleType, string>>>({})
-  const [showCompletionModal, setShowCompletionModal] = useState(false)
-  const [completionModalState, setCompletionModalState] = useState<CompletionModalState>('idle')
-  const [completionModalArticle, setCompletionModalArticle] = useState<SavedArticle | null>(null)
-  const [generationMode, setGenerationMode] = useState<GenerationMode>('batch')
-  const [instantGeneratingType, setInstantGeneratingType] = useState<ArticleType | null>(null)
+  const [articleStatus, setArticleStatus] = useState<ArticleGenerationStatus>('idle')
+  const [articleErrorMessage, setArticleErrorMessage] = useState<string | null>(null)
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
@@ -87,94 +79,109 @@ export default function ArticlePage() {
   const [polishAnswers, setPolishAnswers] = useState(true)
 
   const currentSavedArticle = savedArticles[tab] ?? null
-  const currentInstantContent = instantContentByType[tab] ?? ''
-  const pendingArticleJobId = pendingArticleJobIdByType[tab] ?? null
-  const isBatchGenerating = Boolean(pendingArticleJobId)
-  const isInstantGenerating = instantGeneratingType === tab
-  const isGenerating = isBatchGenerating || isInstantGenerating
-  const completionPollTimerRef = useRef<number | null>(null)
-  const completionModalOpenRef = useRef(false)
+  const currentPendingJobId = pendingArticleJobIdByType[tab] ?? null
+  const isGenerating = articleStatus === 'generating'
+  const mint = getCharacter('mint')
 
-  useEffect(() => {
+  const loadPageState = useCallback(async (showLoading = false) => {
     if (!interviewId) {
       setAvailableThemes([])
       setLoadingThemes(false)
+      setArticleStatus('idle')
       return
     }
 
-    async function loadThemes() {
-      const supabase = supabaseRef.current
+    const supabase = supabaseRef.current
+    if (showLoading) {
       setLoadingThemes(true)
-      const [{ data: interview }, { data: articleRows }] = await Promise.all([
-        supabase
-          .from('interviews')
-          .select('themes')
-          .eq('id', interviewId)
-          .single(),
-        supabase
-          .from('articles')
-          .select('id, title, article_type, created_at')
-          .eq('interview_id', interviewId)
-          .order('created_at', { ascending: false }),
-      ])
-
-      const nextSavedArticles: Partial<Record<ArticleType, SavedArticle>> = {}
-      for (const article of (articleRows ?? []) as Array<SavedArticle & { article_type: string | null }>) {
-        if (!article.article_type) continue
-        if (nextSavedArticles[article.article_type as ArticleType]) continue
-        nextSavedArticles[article.article_type as ArticleType] = {
-          id: article.id,
-          title: article.title,
-        }
-      }
-      setSavedArticles(nextSavedArticles)
-
-      const nextPending: Partial<Record<ArticleType, string>> = {}
-      for (const articleType of ['client', 'interviewer', 'conversation'] as ArticleType[]) {
-        const pending = findPendingArticleGeneration(interviewId, articleType)
-        if (pending) {
-          // DBに記事が既にあればpendingをクリア
-          if (nextSavedArticles[articleType]) {
-            clearPendingArticleGeneration(pending[0])
-          } else {
-            nextPending[articleType] = pending[0]
-          }
-        }
-      }
-      setPendingArticleJobIdByType(nextPending)
-
-      const nextThemes = Array.isArray(interview?.themes)
-        ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
-        : []
-      setAvailableThemes(nextThemes)
-
-      if (nextThemes.length > 0) {
-        if (initialTheme && nextThemes.includes(initialTheme)) {
-          setTheme(initialTheme)
-        } else if (!initialTheme) {
-          setTheme(nextThemes[0])
-        }
-      } else {
-        setTheme('')
-      }
-
-      setLoadingThemes(false)
     }
 
-    loadThemes()
+    const [{ data: interview }, { data: articleRows }] = await Promise.all([
+      supabase
+        .from('interviews')
+        .select('themes, article_status, article_error')
+        .eq('id', interviewId)
+        .single(),
+      supabase
+        .from('articles')
+        .select('id, title, article_type, created_at')
+        .eq('interview_id', interviewId)
+        .order('created_at', { ascending: false }),
+    ])
+
+    const nextSavedArticles: Partial<Record<ArticleType, SavedArticle>> = {}
+    const latestArticleByType = new Map<ArticleType, SavedArticleRow>()
+
+    for (const article of (articleRows ?? []) as SavedArticleRow[]) {
+      if (!article.article_type) continue
+      const typedArticle = article.article_type as ArticleType
+      if (latestArticleByType.has(typedArticle)) continue
+
+      latestArticleByType.set(typedArticle, article)
+      nextSavedArticles[typedArticle] = {
+        id: article.id,
+        title: article.title,
+      }
+    }
+
+    const nextPending: Partial<Record<ArticleType, string>> = {}
+    for (const articleType of ['client', 'interviewer', 'conversation'] as ArticleType[]) {
+      const pending = findPendingArticleGeneration(interviewId, articleType)
+      if (!pending) continue
+
+      const [jobId, job] = pending
+      const matchedSavedArticle = latestArticleByType.get(articleType)
+      const isCompleted = matchedSavedArticle && isFreshEnough(matchedSavedArticle.created_at, job.requestedAt)
+
+      if (interview?.article_status === 'failed' || isCompleted) {
+        clearPendingArticleGeneration(jobId)
+        continue
+      }
+
+      nextPending[articleType] = jobId
+    }
+
+    const nextThemes = Array.isArray(interview?.themes)
+      ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+      : []
+
+    setSavedArticles(nextSavedArticles)
+    setPendingArticleJobIdByType(nextPending)
+    setAvailableThemes(nextThemes)
+    setArticleStatus((interview?.article_status as ArticleGenerationStatus | null) ?? (articleRows?.length ? 'ready' : 'idle'))
+    setArticleErrorMessage(typeof interview?.article_error === 'string' ? interview.article_error : null)
+    setTheme((current) => {
+      if (nextThemes.length === 0) return ''
+      if (current && nextThemes.includes(current)) return current
+      if (initialTheme && nextThemes.includes(initialTheme)) return initialTheme
+      return nextThemes[0]
+    })
+
+    if (showLoading) {
+      setLoadingThemes(false)
+    }
   }, [initialTheme, interviewId])
 
   useEffect(() => {
-    return () => {
-      if (completionPollTimerRef.current) {
-        window.clearTimeout(completionPollTimerRef.current)
-      }
-    }
-  }, [])
+    void loadPageState(true).catch(() => {
+      setError('記事素材の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
+      setLoadingThemes(false)
+    })
+  }, [loadPageState])
+
+  useEffect(() => {
+    if (!interviewId) return
+    if (articleStatus !== 'generating' && Object.keys(pendingArticleJobIdByType).length === 0) return
+
+    const intervalId = window.setInterval(() => {
+      void loadPageState().catch(() => null)
+    }, 4000)
+
+    return () => window.clearInterval(intervalId)
+  }, [articleStatus, interviewId, loadPageState, pendingArticleJobIdByType])
 
   async function startBatchGeneration() {
     setError(null)
-    setInstantContentByType((prev) => ({ ...prev, [tab]: '' }))
     const jobId = `${interviewId}:${tab}:${Date.now()}`
     const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事素材'
     const requestedAt = new Date().toISOString()
@@ -193,47 +200,9 @@ export default function ArticlePage() {
       requestedAt,
     })
     setPendingArticleJobIdByType((prev) => ({ ...prev, [tab]: jobId }))
-    showToast({
-      id: `article-started-${jobId}`,
-      title: `${articleLabel}の作成を開始しました`,
-      description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
-    })
-
-    void fetch(`/api/projects/${projectId}/article`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        interviewId,
-        articleType: tab,
-        style: tab === 'client' ? style : undefined,
-        volume,
-        theme: theme.trim() || undefined,
-        polishAnswers,
-        background: true,
-      }),
-    }).catch(() => {
-      showToast({
-        id: `article-error-${jobId}`,
-        title: '記事の作成に失敗しました',
-        description: 'もう一度お試しください。',
-        tone: 'warning',
-      })
-      clearPendingArticleGeneration(jobId)
-      setPendingArticleJobIdByType((prev) => {
-        const next = { ...prev }
-        delete next[tab]
-        return next
-      })
-    })
-  }
-
-  async function startInstantGeneration() {
-    setError(null)
-    setInstantGeneratingType(tab)
-    setInstantContentByType((prev) => ({ ...prev, [tab]: '' }))
 
     try {
-      const res = await fetch(`/api/projects/${projectId}/article`, {
+      const response = await fetch(`/api/projects/${projectId}/article`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -243,196 +212,102 @@ export default function ArticlePage() {
           volume,
           theme: theme.trim() || undefined,
           polishAnswers,
-          background: false,
+          background: true,
         }),
       })
 
-      if (!res.ok || !res.body) {
-        throw new Error('failed to generate')
+      if (!response.ok) {
+        throw new Error('failed to start article generation')
       }
 
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let text = ''
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        text += decoder.decode(value)
-        setInstantContentByType((prev) => ({ ...prev, [tab]: text }))
-      }
-
-      const supabase = supabaseRef.current
-      const { data: article } = await supabase
-        .from('articles')
-        .select('id, title')
-        .eq('interview_id', interviewId)
-        .eq('article_type', tab)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-
-      if (article) {
-        setSavedArticles((prev) => ({
-          ...prev,
-          [tab]: {
-            id: article.id,
-            title: article.title,
-          },
-        }))
-      }
+      setArticleStatus('generating')
+      setArticleErrorMessage(null)
+      showToast({
+        id: `article-started-${jobId}`,
+        title: `${articleLabel}の作成を開始しました`,
+        description: 'バッチで作成しています。別の作業を進めながら待てます。',
+      })
+      void loadPageState().catch(() => null)
     } catch {
-      setError('記事をまだ用意できませんでした。少し待ってから、もう一度お試しください。')
-      setInstantContentByType((prev) => ({ ...prev, [tab]: '' }))
-    } finally {
-      setInstantGeneratingType(null)
-    }
-  }
-
-  async function generate() {
-    if (generationMode === 'instant') {
-      await startInstantGeneration()
-      return
-    }
-
-    await startBatchGeneration()
-  }
-
-  function closeCompletionModal() {
-    if (completionPollTimerRef.current) {
-      window.clearTimeout(completionPollTimerRef.current)
-      completionPollTimerRef.current = null
-    }
-    completionModalOpenRef.current = false
-    setShowCompletionModal(false)
-    setCompletionModalState('idle')
-    setCompletionModalArticle(null)
-  }
-
-  async function pollForCompletedArticle(jobId: string, articleType: ArticleType) {
-    const supabase = supabaseRef.current
-    const pendingJob = getPendingArticleGeneration(jobId)
-
-    if (!pendingJob) {
-      setCompletionModalState('error')
-      return
-    }
-
-    const requestedAt = new Date(pendingJob.requestedAt).getTime() - 60_000
-    let article: { id: string; title: string | null; created_at: string } | null = null
-    try {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('id, title, created_at')
-        .eq('interview_id', interviewId)
-        .eq('article_type', articleType)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      if (error) throw error
-      article = data
-    } catch {
-      setCompletionModalState('error')
-      return
-    }
-
-    if (article && new Date(article.created_at).getTime() >= requestedAt) {
       clearPendingArticleGeneration(jobId)
       setPendingArticleJobIdByType((prev) => {
         const next = { ...prev }
-        delete next[articleType]
+        delete next[tab]
         return next
       })
-      setSavedArticles((prev) => ({
-        ...prev,
-        [articleType]: {
-          id: article.id,
-          title: article.title,
-        },
-      }))
-      setCompletionModalArticle({
-        id: article.id,
-        title: article.title,
+      setArticleStatus('failed')
+      setArticleErrorMessage('記事素材の作成を開始できませんでした。少し待ってから、もう一度お試しください。')
+      showToast({
+        id: `article-error-${jobId}`,
+        title: '記事素材の作成を開始できませんでした',
+        description: '少し待ってから、もう一度お試しください。',
+        tone: 'warning',
       })
-      setCompletionModalState('ready')
-      return
     }
-
-    if (!completionModalOpenRef.current) return
-
-    completionPollTimerRef.current = window.setTimeout(() => {
-      void pollForCompletedArticle(jobId, articleType)
-    }, 2000)
   }
 
-  function handleCheckCompletion() {
-    if (!pendingArticleJobId) return
-
-    if (completionPollTimerRef.current) {
-      window.clearTimeout(completionPollTimerRef.current)
-      completionPollTimerRef.current = null
+  const statusDescription = (() => {
+    if (articleStatus === 'generating') {
+      return 'バッチで作成中です。数秒おきに状態を確認しています。'
     }
-
-    setShowCompletionModal(true)
-    completionModalOpenRef.current = true
-    setCompletionModalState('checking')
-    setCompletionModalArticle(null)
-    void pollForCompletedArticle(pendingArticleJobId, tab)
-  }
-
-  const mint = getCharacter('mint')
+    if (articleStatus === 'ready') {
+      return '最新の記事素材を確認できます。必要なら別の種類でも続けて作成できます。'
+    }
+    if (articleStatus === 'failed') {
+      return articleErrorMessage ?? '記事素材を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
+    }
+    return '作成を開始するとバックグラウンドで進みます。このページを閉じても処理は続きます。'
+  })()
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
       <PageHeader title="記事を作る" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
-          <Link href="/projects" className="hover:text-[var(--text2)] transition-colors">取材先一覧</Link>
+      <div className="mx-auto max-w-6xl px-6 py-8">
+        <nav className="mb-6 flex items-center gap-1.5 text-xs text-[var(--text3)]">
+          <Link href="/projects" className="transition-colors hover:text-[var(--text2)]">取材先一覧</Link>
           <span>/</span>
-          <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors">取材先の管理</Link>
+          <Link href={`/projects/${projectId}`} className="transition-colors hover:text-[var(--text2)]">取材先の管理</Link>
           <span>/</span>
           <Link
             href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
-            className="hover:text-[var(--text2)] transition-colors"
+            className="transition-colors hover:text-[var(--text2)]"
           >
             取材メモ
           </Link>
           <span>/</span>
-          <span className="text-[var(--text2)]">記事素材を生成</span>
+          <span className="text-[var(--text2)]">記事素材を作成</span>
         </nav>
 
-        {/* 2カラムレイアウト */}
-        <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-7 items-start">
+        <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[320px_1fr]">
+          <aside className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-20">
+            <p className="mb-5 font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)]">記事の仕上げ方</p>
 
-          {/* 設定パネル */}
-          <aside className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 lg:sticky lg:top-20">
-            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base mb-5">記事の仕上げ方</p>
-
-            {/* 記事の種類 */}
             <div className="mb-5">
-              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">記事の種類</p>
+              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
               <div className="flex flex-wrap gap-2">
                 {TABS.map((t) => (
                   <button
                     key={t.type}
+                    type="button"
                     onClick={() => setTab(t.type)}
-                    className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       tab === t.type
-                        ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
-                        : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                        : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                     }`}
                   >
                     {t.label}
                   </button>
                 ))}
               </div>
+              <p className="mt-2 text-[12px] leading-[1.6] text-[var(--text3)]">
+                {TABS.find((item) => item.type === tab)?.desc}
+              </p>
             </div>
 
-            {/* テーマ */}
             <div className="mb-5">
-              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">テーマ</p>
+              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">テーマ</p>
               {loadingThemes ? (
                 <p className="text-sm text-[var(--text3)]">テーマを確認しています...</p>
               ) : availableThemes.length > 0 ? (
@@ -442,37 +317,39 @@ export default function ArticlePage() {
                       key={item}
                       type="button"
                       onClick={() => setTheme(item)}
-                      className={`w-full text-left flex items-center justify-between px-3.5 py-2.5 rounded-[var(--r-sm)] text-[13px] cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-[13px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         theme === item
-                          ? 'bg-[var(--accent-l)] border border-[var(--accent)] text-[var(--accent)] font-semibold'
-                          : 'bg-[var(--bg2)] border border-[var(--border)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                          ? 'border border-[var(--accent)] bg-[var(--accent-l)] font-semibold text-[var(--accent)]'
+                          : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                       }`}
                     >
-                      <span className="leading-[1.5]">{item}</span>
-                      {theme === item && <span className="flex-shrink-0 ml-2">✓</span>}
+                      <div className="flex items-center justify-between">
+                        <span className="leading-[1.5]">{item}</span>
+                        {theme === item && <span className="ml-2 flex-shrink-0">✓</span>}
+                      </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <p className="text-[13px] text-[var(--text3)] leading-[1.7]">
-                  まだ選べるテーマがありません。取材メモからテーマを整理できます。
+                <p className="text-[13px] leading-[1.7] text-[var(--text3)]">
+                  まだ選べるテーマがありません。先に取材メモからテーマを整理してください。
                 </p>
               )}
             </div>
 
-            {/* ブログ記事のみ: 語尾スタイル */}
             {tab === 'client' && (
               <div className="mb-5">
-                <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">語尾スタイル</p>
+                <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">語尾スタイル</p>
                 <div className="flex flex-wrap gap-2">
                   {STYLE_OPTIONS.map((opt) => (
                     <button
                       key={opt.value}
+                      type="button"
                       onClick={() => setStyle(opt.value)}
-                      className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         style === opt.value
-                          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
-                          : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                          ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                          : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                       }`}
                     >
                       {opt.label}
@@ -482,18 +359,18 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {/* 全タイプ共通: 文字量 */}
             <div className="mb-5">
-              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">文字量</p>
+              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">文字量</p>
               <div className="flex flex-wrap gap-2">
                 {VOLUME_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
+                    type="button"
                     onClick={() => setVolume(opt.value)}
-                    className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold cursor-pointer transition-all border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       volume === opt.value
-                        ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
-                        : 'bg-transparent text-[var(--text2)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                        : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                     }`}
                   >
                     {opt.label}
@@ -502,72 +379,75 @@ export default function ArticlePage() {
               </div>
             </div>
 
-            {/* 回答の整頓 */}
             <div className="mb-5">
               <button
                 type="button"
-                onClick={() => setPolishAnswers(v => !v)}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+                onClick={() => setPolishAnswers((value) => !value)}
+                className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <div className="text-left">
                   <p className="text-[13px] font-semibold text-[var(--text)]">回答を整える</p>
-                  <p className="text-[11px] text-[var(--text3)] mt-0.5">誤字・話し言葉を自動修正する</p>
+                  <p className="mt-0.5 text-[11px] text-[var(--text3)]">誤字や話し言葉を自然に整えます</p>
                 </div>
-                <div className={`w-10 h-6 rounded-full flex-shrink-0 transition-colors relative overflow-hidden ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
+                <div className={`relative h-6 w-10 flex-shrink-0 overflow-hidden rounded-full transition-colors ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </button>
             </div>
 
-            <div className="mb-5">
-              <p className="text-[11px] font-bold text-[var(--text2)] tracking-[0.08em] uppercase mb-2.5">作成方法</p>
-              <div className="grid gap-2">
-                {GENERATION_MODE_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setGenerationMode(option.value)}
-                    className={`w-full rounded-[var(--r-sm)] border px-3.5 py-3 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
-                      generationMode === option.value
-                        ? 'border-[var(--accent)] bg-[var(--accent-l)]'
-                        : 'border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)]'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-[13px] font-semibold text-[var(--text)]">{option.label}</p>
-                      {generationMode === option.value && <span className="text-[var(--accent)]">✓</span>}
-                    </div>
-                    <p className="mt-1 text-[11px] leading-[1.6] text-[var(--text3)]">{option.description}</p>
-                  </button>
-                ))}
+            <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">作成方法</p>
+              <p className="mt-2 text-[13px] font-semibold text-[var(--text)]">バッチ処理のみ</p>
+              <p className="mt-1 text-[11px] leading-[1.7] text-[var(--text3)]">
+                作成を始めるとバックグラウンドで進みます。待ち続けなくて大丈夫です。
+              </p>
+            </div>
+
+            <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">進行状況</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'generating' || articleStatus === 'ready' || articleStatus === 'failed' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                  受付済み
+                </span>
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'generating' ? 'bg-[var(--warn-l)] text-[var(--warn)]' : articleStatus === 'ready' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : articleStatus === 'failed' ? 'bg-[var(--err-l)] text-[var(--err)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                  {articleStatus === 'failed' ? '要確認' : '作成中'}
+                </span>
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'ready' ? 'bg-[var(--ok-l)] text-[var(--ok)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                  作成済み
+                </span>
               </div>
+              <p className="mt-3 text-[12px] leading-[1.7] text-[var(--text3)]">{statusDescription}</p>
             </div>
 
             <button
-              onClick={generate}
-              disabled={isGenerating}
-              className="w-full flex items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer mt-2"
+              type="button"
+              onClick={() => void startBatchGeneration()}
+              disabled={isGenerating || availableThemes.length === 0}
+              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {isGenerating ? (
-                <DevAiLabel>{isInstantGenerating ? '生成しています...' : '作成を手配しています...'}</DevAiLabel>
-              ) : generationMode === 'instant' ? (
-                <DevAiLabel>その場で生成する →</DevAiLabel>
-              ) : (
-                <DevAiLabel>バックグラウンドで作成する →</DevAiLabel>
-              )}
+              {isGenerating ? <DevAiLabel>バッチで作成中...</DevAiLabel> : <DevAiLabel>バッチで作成を始める →</DevAiLabel>}
             </button>
-            {currentSavedArticle && !isGenerating && (
-              <p className="mt-2.5 text-[12px] text-[var(--teal)] text-center font-semibold">✓ 素材が届きました</p>
-            )}
+            <p className="mt-2.5 text-center text-[12px] leading-[1.6] text-[var(--text3)]">
+              完了すると通知が届きます。{currentPendingJobId ? 'このタブでも自動で状態を更新しています。' : '別の作業へ移って大丈夫です。'}
+            </p>
           </aside>
 
-          {/* プレビューパネル */}
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
-            {/* プレビューヘッダー */}
-            <div className="px-6 py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center justify-between gap-3">
+          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+            <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-4">
               <div className="flex items-center gap-2.5">
-                <span className="bg-[var(--accent-l)] text-[var(--accent)] text-[10px] font-semibold px-2.5 py-0.5 rounded-full">
-                  {TABS.find(t => t.type === tab)?.label ?? tab}
+                <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+                  {TABS.find((item) => item.type === tab)?.label ?? tab}
+                </span>
+                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                  articleStatus === 'generating'
+                    ? 'bg-[var(--warn-l)] text-[var(--warn)]'
+                    : articleStatus === 'ready'
+                      ? 'bg-[var(--ok-l)] text-[var(--ok)]'
+                      : articleStatus === 'failed'
+                        ? 'bg-[var(--err-l)] text-[var(--err)]'
+                        : 'bg-[var(--border)] text-[var(--text3)]'
+                }`}>
+                  {articleStatus === 'generating' ? '作成中' : articleStatus === 'ready' ? '作成済み' : articleStatus === 'failed' ? '要確認' : '未作成'}
                 </span>
               </div>
               {currentSavedArticle && !isGenerating && (
@@ -580,61 +460,64 @@ export default function ArticlePage() {
               )}
             </div>
 
-            {/* コンテンツ */}
-            {!isGenerating && !currentSavedArticle && !currentInstantContent && (
-              <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
+            {!isGenerating && !currentSavedArticle && articleStatus !== 'failed' && (
+              <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 {error ? (
                   <StateCard
                     icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
-                    title="いまは記事を用意できません。"
+                    title="いまは記事素材の状態を確認できません。"
                     description={error}
                     tone="warning"
                     align="left"
                   />
                 ) : (
-                  <>
-                    <InterviewerSpeech
-                      icon={
-                        <CharacterAvatar
-                          src={mint?.icon48}
-                          alt="ミントのアイコン"
-                          emoji={mint?.emoji}
-                          size={48}
-                        />
-                      }
-                      name="ミント"
-                      title="設定を選んで「記事素材を生成する」を押してください"
-                      description="取材の内容をもとに、記事の素材を整えます。"
-                      tone="soft"
-                    />
-                  </>
+                  <InterviewerSpeech
+                    icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+                    name="ミント"
+                    title="設定を選んでバッチ作成を始めてください"
+                    description="このページで待たなくても、記事素材ができたら確認できます。"
+                    tone="soft"
+                  />
                 )}
               </div>
             )}
 
-            {isBatchGenerating && (
-              <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
-                <InterviewerSpeech
-                  icon={
-                    <CharacterAvatar
-                      src={mint?.icon48}
-                      alt="ミントのアイコン"
-                      emoji={mint?.emoji}
-                      size={48}
-                    />
-                  }
-                  name="ミント"
+            {isGenerating && (
+              <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
+                <WritingLoadingScene
                   title="記事素材を作成しています"
-                  description="このページで待たなくて大丈夫です。完了したらお知らせします。"
-                  tone="soft"
+                  description="バッチ処理で進めています。数秒おきに状態を確認しています。"
+                />
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
+                    取材先の管理に戻る
+                  </Link>
+                  <Link
+                    href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
+                    className={getButtonClass('secondary')}
+                  >
+                    取材メモに戻る
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {articleStatus === 'failed' && !isGenerating && (
+              <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
+                <StateCard
+                  icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+                  title="記事素材を仕上げきれませんでした"
+                  description={articleErrorMessage ?? '少し時間をおいて、もう一度お試しください。'}
+                  tone="warning"
+                  align="left"
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
                   <button
                     type="button"
-                    onClick={handleCheckCompletion}
+                    onClick={() => void startBatchGeneration()}
                     className={getButtonClass('primary')}
                   >
-                    完了を確認する
+                    もう一度作成する
                   </button>
                   <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
                     取材先の管理に戻る
@@ -643,63 +526,16 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {isInstantGenerating && (
-              <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
-                <WritingLoadingScene
-                  title="記事素材を整えています"
-                  description="取材内容を整理しています。"
-                  previewText={currentInstantContent}
-                />
-              </div>
-            )}
-
-            {currentInstantContent && currentSavedArticle && !isGenerating && (
-              <div className="p-8">
-                <pre className="max-h-[60vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm leading-[1.9] text-[var(--text)]">
-                  {currentInstantContent}
-                </pre>
-                <div className="mt-6 border-t border-[var(--border)] pt-5">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                    <Link
-                      href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
-                      className={getButtonClass('primary')}
-                    >
-                      保存した記事を確認する
-                    </Link>
-                    <Link
-                      href={`/projects/${projectId}#articles`}
-                      className={getButtonClass('secondary')}
-                    >
-                      取材先の管理で確認する
-                    </Link>
-                    <button
-                      onClick={generate}
-                      className="px-4 py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
-                    >
-                      <DevAiLabel>もう一度まとめる</DevAiLabel>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentSavedArticle && !currentInstantContent && !isGenerating && (
+            {currentSavedArticle && !isGenerating && (
               <div className="p-8">
                 <InterviewerSpeech
-                  icon={
-                    <CharacterAvatar
-                      src={mint?.icon48}
-                      alt="ミントのアイコン"
-                      emoji={mint?.emoji}
-                      size={48}
-                    />
-                  }
+                  icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                   name="ミント"
                   title={currentSavedArticle.title || '記事素材が用意できています'}
-                  description="保存済みの記事を開くか、同じ条件でもう一度作り直せます。"
+                  description="保存済みの記事を開くか、条件を少し変えてもう一度作り直せます。"
                   tone="soft"
                 />
-                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
                   <Link
                     href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
                     className={getButtonClass('primary')}
@@ -713,8 +549,10 @@ export default function ArticlePage() {
                     取材先の管理で確認する
                   </Link>
                   <button
-                    onClick={generate}
-                    className="px-4 py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
+                    type="button"
+                    onClick={() => void startBatchGeneration()}
+                    disabled={isGenerating}
+                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <DevAiLabel>もう一度まとめる</DevAiLabel>
                   </button>
@@ -724,130 +562,21 @@ export default function ArticlePage() {
           </div>
         </div>
 
-        {/* 下部リンク */}
-        <div className="mt-6 flex flex-wrap gap-4 justify-center">
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
+            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             取材に戻って話を足す
           </Link>
           <Link
             href={`/projects/${projectId}`}
-            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
+            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             取材先の管理に戻る
           </Link>
         </div>
       </div>
-
-      {showCompletionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(20,18,15,0.55)] px-6">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="article-completion-modal-title"
-            className="w-full max-w-lg rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.18)]"
-          >
-            {completionModalState === 'ready' ? (
-              <div className="space-y-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold tracking-[0.14em] uppercase text-[var(--teal)]">Ready</p>
-                    <h2 id="article-completion-modal-title" className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
-                      記事素材の作成が完了しました
-                    </h2>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={closeCompletionModal}
-                    className="rounded-[var(--r-sm)] px-2 py-1 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)]"
-                  >
-                    閉じる
-                  </button>
-                </div>
-                <div className="rounded-[18px] border border-[var(--ok)]/20 bg-[var(--ok-l)] px-5 py-4">
-                  <p className="text-sm font-semibold text-[var(--text)]">{completionModalArticle?.title || '記事素材ができました'}</p>
-                  <p className="mt-1 text-sm text-[var(--text2)]">そのまま記事詳細へ進めます。</p>
-                </div>
-                {completionModalArticle && (
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      href={`/projects/${projectId}/articles/${completionModalArticle.id}`}
-                      className={getButtonClass('primary', 'flex-1 justify-center')}
-                    >
-                      この記事を見る
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={closeCompletionModal}
-                      className={getButtonClass('secondary', 'flex-1 justify-center')}
-                    >
-                      あとで確認する
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Checking</p>
-                    <h2 id="article-completion-modal-title" className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
-                      {completionModalState === 'error' ? '完了状態を確認できませんでした' : '記事素材を確認しています'}
-                    </h2>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={closeCompletionModal}
-                    className="rounded-[var(--r-sm)] px-2 py-1 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)]"
-                  >
-                    閉じる
-                  </button>
-                </div>
-                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] px-5 py-5">
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-l)] text-[var(--accent)]">
-                      {completionModalState === 'error' ? '!' : '…'}
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text)]">
-                        {completionModalState === 'error' ? 'もう一度お試しください' : '素材を仕上げています'}
-                      </p>
-                      <p className="mt-1 text-sm text-[var(--text2)]">
-                        {completionModalState === 'error'
-                          ? 'ネットワーク状況などで確認できないことがあります。'
-                          : 'このモーダルを開いたままでも、完成したらそのまま記事へ進めます。'}
-                      </p>
-                    </div>
-                  </div>
-                  {completionModalState === 'checking' && (
-                    <div className="mt-4 overflow-hidden rounded-full bg-[var(--border)]">
-                      <div className="h-2 w-1/3 animate-pulse rounded-full bg-[var(--accent)]" />
-                    </div>
-                  )}
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button
-                    type="button"
-                    onClick={handleCheckCompletion}
-                    className={getButtonClass('primary', 'flex-1 justify-center')}
-                  >
-                    もう一度確認する
-                  </button>
-                  <button
-                    type="button"
-                    onClick={closeCompletionModal}
-                    className={getButtonClass('secondary', 'flex-1 justify-center')}
-                  >
-                    閉じる
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

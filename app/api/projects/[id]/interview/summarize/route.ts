@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { NextRequest, NextResponse } from 'next/server'
+import { syncProjectContentStatus } from '@/lib/project-content-status'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -123,7 +124,7 @@ ${conversation}
     themes: nextThemes,
   }).eq('id', interviewId)
 
-  await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
+  await syncProjectContentStatus(supabase, projectId)
   revalidatePath('/dashboard')
   revalidatePath('/projects')
   revalidatePath('/interviews')

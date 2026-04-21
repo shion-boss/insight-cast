@@ -167,7 +167,6 @@ export default function ProjectAnalysisNotifier() {
   const supabaseRef = useRef(createClient())
   const startingAnalysisRef = useRef<Set<string>>(new Set())
   const startingSummaryRef = useRef<Set<string>>(new Set())
-  const startingArticleRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
@@ -290,15 +289,22 @@ export default function ProjectAnalysisNotifier() {
       if (jobs.length === 0) return
 
       const interviewIds = Array.from(new Set(jobs.map(([, job]) => job.interviewId)))
-      const { data: articles } = await supabase
-        .from('articles')
-        .select('id, interview_id, article_type, created_at')
-        .in('interview_id', interviewIds)
-        .order('created_at', { ascending: false })
+      const [{ data: interviews }, { data: articles }] = await Promise.all([
+        supabase
+          .from('interviews')
+          .select('id, article_status, article_error')
+          .in('id', interviewIds),
+        supabase
+          .from('articles')
+          .select('id, interview_id, article_type, created_at')
+          .in('interview_id', interviewIds)
+          .order('created_at', { ascending: false }),
+      ])
 
       const nextPendingArticles = { ...pendingArticles }
 
       for (const [jobId, job] of jobs) {
+        const interview = (interviews ?? []).find((item) => item.id === job.interviewId)
         const requestedAt = new Date(job.requestedAt).getTime() - 60_000
         const matchedArticle = (articles ?? []).find((article) => (
           article.interview_id === job.interviewId
@@ -320,40 +326,17 @@ export default function ProjectAnalysisNotifier() {
           continue
         }
 
-        if (startingArticleRef.current.has(jobId)) continue
-
-        startingArticleRef.current.add(jobId)
-        void fetch(`/api/projects/${job.projectId}/article`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            interviewId: job.interviewId,
-            articleType: job.articleType,
-            style: job.style,
-            volume: job.volume,
-            theme: job.theme,
-            polishAnswers: job.polishAnswers,
-            background: true,
-          }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error('failed to generate article')
-            }
+        if (interview?.article_status === 'failed') {
+          clearPendingArticleGeneration(jobId)
+          showToast({
+            id: `article-error-${jobId}`,
+            title: '記事素材を作成できませんでした',
+            description: interview.article_error || '少し待ってから、もう一度お試しください。',
+            tone: 'warning',
           })
-          .catch(() => {
-            clearPendingArticleGeneration(jobId)
-            showToast({
-              id: `article-error-${jobId}`,
-              title: '記事素材を作成できませんでした',
-              description: '少し待ってから、もう一度お試しください。',
-              tone: 'warning',
-            })
-            router.refresh()
-          })
-          .finally(() => {
-            startingArticleRef.current.delete(jobId)
-          })
+          router.refresh()
+          delete nextPendingArticles[jobId]
+        }
       }
 
       writePendingArticles(nextPendingArticles)

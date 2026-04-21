@@ -4,13 +4,72 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
+import { syncProjectContentStatus } from '@/lib/project-content-status'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
 const VOLUME_MAP = { short: '600〜800', medium: '1200〜1500', long: '2000〜2500' }
-const STYLE_MAP  = { desu: 'ですます体', 'de-aru': 'である体', 'da-na': 'だ・な体（口語的）' }
+const STYLE_MAP = { desu: 'ですます体', 'de-aru': 'である体', 'da-na': 'だ・な体（口語的）' }
+
+function revalidateArticlePaths(projectId: string, articleId?: string | null) {
+  revalidatePath('/dashboard')
+  revalidatePath('/projects')
+  revalidatePath('/articles')
+  revalidatePath('/interviews')
+  revalidatePath(`/projects/${projectId}`)
+  revalidatePath(`/projects/${projectId}/summary`)
+  revalidatePath(`/projects/${projectId}/article`)
+  if (articleId) {
+    revalidatePath(`/projects/${projectId}/articles/${articleId}`)
+  }
+}
+
+async function markArticleGenerationStarted(input: {
+  supabase: Awaited<ReturnType<typeof createClient>>
+  projectId: string
+  interviewId: string
+}) {
+  const now = new Date().toISOString()
+
+  await Promise.all([
+    input.supabase
+      .from('interviews')
+      .update({
+        article_status: 'generating',
+        article_requested_at: now,
+        article_completed_at: null,
+        article_error: null,
+      })
+      .eq('id', input.interviewId),
+    input.supabase
+      .from('projects')
+      .update({ status: 'article_generating' })
+      .eq('id', input.projectId),
+  ])
+
+  revalidateArticlePaths(input.projectId)
+}
+
+async function markArticleGenerationFailed(input: {
+  supabase: Awaited<ReturnType<typeof createClient>>
+  projectId: string
+  interviewId: string
+  message?: string
+}) {
+  await input.supabase
+    .from('interviews')
+    .update({
+      article_status: 'failed',
+      article_error: input.message ?? '記事素材を作成できませんでした。',
+      article_completed_at: null,
+    })
+    .eq('id', input.interviewId)
+
+  await syncProjectContentStatus(input.supabase, input.projectId)
+  revalidateArticlePaths(input.projectId)
+}
 
 async function saveArticle(input: {
   supabase: Awaited<ReturnType<typeof createClient>>
@@ -39,17 +98,17 @@ async function saveArticle(input: {
     return null
   }
 
-  await input.supabase.from('projects').update({ status: 'article_ready' }).eq('id', input.projectId)
-  revalidatePath('/dashboard')
-  revalidatePath('/projects')
-  revalidatePath('/articles')
-  revalidatePath('/interviews')
-  revalidatePath(`/projects/${input.projectId}`)
-  revalidatePath(`/projects/${input.projectId}/summary`)
-  revalidatePath(`/projects/${input.projectId}/article`)
-  if (savedArticle?.id) {
-    revalidatePath(`/projects/${input.projectId}/articles/${savedArticle.id}`)
-  }
+  await input.supabase
+    .from('interviews')
+    .update({
+      article_status: 'ready',
+      article_completed_at: new Date().toISOString(),
+      article_error: null,
+    })
+    .eq('id', input.interviewId)
+
+  await syncProjectContentStatus(input.supabase, input.projectId)
+  revalidateArticlePaths(input.projectId, savedArticle.id)
 
   return savedArticle
 }
@@ -70,17 +129,20 @@ export async function POST(
     volume,
     theme,
     polishAnswers,
-    background,
   } = await req.json()
 
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, summary, themes, project_id')
+    .select('id, interviewer_type, summary, themes, project_id, article_status')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .single()
 
   if (!interview) return new Response('Not found', { status: 404 })
+
+  if (interview.article_status === 'generating') {
+    return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
+  }
 
   const { data: project } = await supabase
     .from('projects')
@@ -182,7 +244,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
   let prompt: string
 
   if (articleType === 'client') {
-    const styleLabel  = STYLE_MAP[style as keyof typeof STYLE_MAP]   ?? 'ですます体'
+    const styleLabel = STYLE_MAP[style as keyof typeof STYLE_MAP] ?? 'ですます体'
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
     prompt = `以下のインタビュー内容をもとに、事業者（${bizName}）の視点・言葉で語る読み物記事を書いてください。
@@ -201,7 +263,6 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - お客様に読んでもらう想定で、温かみのある文体で
 - タイトルを最初に書く（# タイトル）
 - Markdown形式で出力${polishInstruction}`
-
   } else if (articleType === 'interviewer') {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
@@ -220,9 +281,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - 見出し（##）を2〜3個つけて構造化する
 - タイトルを最初に書く（# タイトル）
 - Markdown形式で出力${polishInstruction}`
-
   } else {
-    // conversation (Q&A形式)
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
     prompt = `以下のインタビュー内容をもとに、Q&A形式のインタビュー記事を書いてください。
@@ -244,72 +303,56 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - Markdown形式で出力${polishInstruction}`
   }
 
-  let stream: Awaited<ReturnType<typeof anthropic.messages.stream>>
-  try {
-    stream = await anthropic.messages.stream({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 2048,
-      system: editorialGuardrail,
-      messages: [{ role: 'user', content: prompt }],
-    })
-  } catch (err) {
-    const isTimeout = err instanceof Error && (err.message.includes('timeout') || err.constructor.name === 'APIConnectionTimeoutError')
-    console.error('[article] Anthropic API error:', err)
-    return Response.json(
-      { code: isTimeout ? 'TIMEOUT' : 'AI_ERROR', message: 'もう一度お試しください。' },
-      { status: 503 },
-    )
-  }
+  await markArticleGenerationStarted({ supabase, projectId, interviewId })
 
-  if (background) {
-    async function generateAndSave() {
-      let fullText = ''
-      try {
-        for await (const chunk of stream) {
-          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-            fullText += chunk.delta.text
-          }
+  async function generateAndSave() {
+    let fullText = ''
+
+    try {
+      const stream = await anthropic.messages.stream({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2048,
+        system: editorialGuardrail,
+        messages: [{ role: 'user', content: prompt }],
+      })
+
+      for await (const chunk of stream) {
+        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+          fullText += chunk.delta.text
         }
-      } catch (err) {
-        console.error('[article] background stream error:', err)
-        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
-        return
       }
-      const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
-      if (!saved) {
-        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
-      }
+    } catch (err) {
+      console.error('[article] background stream error:', err)
+      await markArticleGenerationFailed({
+        supabase,
+        projectId,
+        interviewId,
+        message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
+      })
+      return
     }
 
-    waitUntil(generateAndSave())
-    return Response.json({ ok: true })
+    if (!fullText.trim()) {
+      await markArticleGenerationFailed({
+        supabase,
+        projectId,
+        interviewId,
+        message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
+      })
+      return
+    }
+
+    const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
+    if (!saved) {
+      await markArticleGenerationFailed({
+        supabase,
+        projectId,
+        interviewId,
+        message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。',
+      })
+    }
   }
 
-  let fullText = ''
-  const readable = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const chunk of stream) {
-          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-            fullText += chunk.delta.text
-            controller.enqueue(new TextEncoder().encode(chunk.delta.text))
-          }
-        }
-      } catch (err) {
-        console.error('[article] stream error:', err)
-        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
-        controller.error(err)
-        return
-      }
-      const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
-      if (!saved) {
-        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
-      }
-      controller.close()
-    },
-  })
-
-  return new Response(readable, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  })
+  waitUntil(generateAndSave())
+  return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
 }
