@@ -5,6 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 // 固定費（月額・USD換算）
 const FIXED_COSTS = [
+  { label: 'Claude Max', plan: '$100/月プラン（社内AI用）', usd: 100 },
   { label: 'Vercel', plan: 'Hobby（無料）', usd: 0 },
   { label: 'Supabase', plan: 'Free（無料）', usd: 0 },
   { label: 'Resend', plan: 'Free（無料）', usd: 0 },
@@ -124,6 +125,20 @@ export default async function AdminCostsPage() {
         </div>
       </section>
 
+      {/* 月額合計 */}
+      <section className="rounded-[var(--r-lg)] border-2 border-[var(--accent)]/30 bg-[var(--accent-l)] p-5">
+        <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">今月の総コスト（概算）</p>
+        <div className="mt-3 flex items-end gap-4">
+          <div>
+            <p className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]">
+              {usd(currentCost + 100)}
+            </p>
+            <p className="mt-0.5 text-sm text-[var(--text2)]">{jpy(currentCost + 100)}</p>
+          </div>
+          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100 + API {usd(currentCost)}</p>
+        </div>
+      </section>
+
       {/* ルート別 */}
       <section>
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">機能別内訳（今月）</h2>
@@ -169,8 +184,11 @@ export default async function AdminCostsPage() {
             </div>
           ))}
           <div className="flex items-center gap-4 border-t border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
-            <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計</p>
-            <p className="text-sm font-bold text-[var(--text)]">$0 / 月</p>
+            <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計（概算）</p>
+            <div className="text-right">
+              <p className="text-sm font-bold text-[var(--text)]">$100 / 月</p>
+              <p className="text-xs text-[var(--text3)]">¥{(100 * EXCHANGE_RATE).toLocaleString()}</p>
+            </div>
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
