@@ -327,7 +327,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
               const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
               const articleHref = interviewArticles.length > 1
-                ? `/projects/${id}/summary?interviewId=${interview.id}#related-articles`
+                ? `/projects/${id}/articles?interviewId=${interview.id}`
                 : latestInterviewArticle
                   ? `/projects/${id}/articles/${latestInterviewArticle.id}`
                   : null

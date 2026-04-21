@@ -196,6 +196,8 @@ export async function POST(
 
   if (!interview) return new Response('Not found', { status: 404 })
 
+  const interviewerType = interview.interviewer_type
+
   if (interview.article_status === 'generating') {
     return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
   }
@@ -226,7 +228,7 @@ export async function POST(
     .limit(1)
     .maybeSingle()
 
-  const char = getCharacter(interview.interviewer_type)
+  const char = getCharacter(interviewerType)
   const charName = char?.name ?? 'インタビュアー'
   const bizName = project?.name ?? project?.hp_url ?? '取材先'
   const clientName = profile?.name ?? '事業者'
@@ -402,7 +404,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType: interview?.interviewer_type, content: fullText, userEmail: user?.email })
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
     }
