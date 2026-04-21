@@ -12,13 +12,16 @@ const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'all', label: 'すべて' },
   { id: 'howto', label: 'ノウハウ' },
   { id: 'service', label: 'サービス' },
+  { id: 'interview', label: 'インタビュー' },
   { id: 'case', label: '事例' },
   { id: 'philosophy', label: '思想' },
+  { id: 'news', label: 'お知らせ' },
 ]
 
 const CATEGORY_CHARACTER: Record<PostCategory, string> = {
   howto: 'mint',
   service: 'claus',
+  interview: 'rain',
   case: 'rain',
   philosophy: 'claus',
   news: 'mint',

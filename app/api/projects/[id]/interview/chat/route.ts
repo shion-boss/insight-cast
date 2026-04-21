@@ -3,6 +3,7 @@ import { buildInterviewQualityContext } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
+import { logApiUsage } from '@/lib/api-usage'
 import { NextRequest } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
@@ -218,6 +219,19 @@ export async function POST(
         console.error('[interview/chat] stream error:', err)
         controller.error(err)
         return
+      }
+
+      // トークン使用量をログ
+      const finalMsg = await stream.finalMessage().catch(() => null)
+      if (finalMsg) {
+        logApiUsage({
+          userId: (await supabase.auth.getUser()).data.user?.id,
+          projectId,
+          route: 'interview/chat',
+          model: 'claude-sonnet-4-6',
+          inputTokens: finalMsg.usage.input_tokens,
+          outputTokens: finalMsg.usage.output_tokens,
+        }).catch(() => {})
       }
 
       // AIメッセージ保存（[INTERVIEW_COMPLETE]マーカーは除いて保存）

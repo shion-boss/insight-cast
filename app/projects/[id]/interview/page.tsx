@@ -52,6 +52,7 @@ export default function InterviewPage() {
     loading: false,
     error: null,
   })
+  const [isSupportPanelOpen, setIsSupportPanelOpen] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
@@ -245,6 +246,8 @@ export default function InterviewPage() {
   }
 
   const char = getCharacter(characterId)
+  const supportPostCount = supportPosts.ownPosts.length + supportPosts.competitorPosts.length
+  const showSupportPanel = supportPosts.loading || !!supportPosts.error || supportPostCount > 0
 
   if (initializing) {
     return (
@@ -362,21 +365,41 @@ export default function InterviewPage() {
 
       {/* 入力エリア */}
       <div className="bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex-shrink-0">
-        {(supportPosts.loading || supportPosts.error || supportPosts.ownPosts.length > 0 || supportPosts.competitorPosts.length > 0) && (
+        {showSupportPanel && (
           <div className="max-w-2xl mx-auto mb-3 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--bg2)] p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-medium text-[var(--text2)]">この質問と似たテーマを扱う記事</p>
-                <p className="mt-1 text-xs text-[var(--text3)]">自社HPの記事は内部リンク候補、競合記事は読み比べ用の参考です。</p>
+                <p className="mt-1 text-xs text-[var(--text3)]">
+                  {supportPosts.loading
+                    ? '自社HPと競合の記事から、近いテーマのものを探しています。'
+                    : supportPosts.error
+                      ? '必要ならあとで開いて確認できます。'
+                      : supportPostCount > 0
+                        ? `自社HP ${supportPosts.ownPosts.length}件・競合 ${supportPosts.competitorPosts.length}件。必要なときだけ開けます。`
+                        : 'いま開ける関連記事はありません。'}
+                </p>
               </div>
-              {supportPosts.loading && <p className="text-xs text-[var(--text3)]">探しています...</p>}
+              <div className="flex items-center gap-2">
+                {supportPosts.loading && <p className="text-xs text-[var(--text3)]">探しています...</p>}
+                {(supportPostCount > 0 || supportPosts.error) && (
+                  <button
+                    type="button"
+                    onClick={() => setIsSupportPanelOpen((prev) => !prev)}
+                    aria-expanded={isSupportPanelOpen}
+                    className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--text2)] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    {isSupportPanelOpen ? '閉じる' : '開く'}
+                  </button>
+                )}
+              </div>
             </div>
 
-            {supportPosts.error && (
+            {isSupportPanelOpen && supportPosts.error && (
               <p className="mt-3 text-xs text-[var(--text3)]">{supportPosts.error}</p>
             )}
 
-            {supportPosts.ownPosts.length > 0 && (
+            {isSupportPanelOpen && supportPosts.ownPosts.length > 0 && (
               <div className="mt-4">
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">自社HPで似たテーマを扱う記事</p>
                 <div className="mt-2 grid gap-3">
@@ -397,7 +420,7 @@ export default function InterviewPage() {
               </div>
             )}
 
-            {supportPosts.competitorPosts.length > 0 && (
+            {isSupportPanelOpen && supportPosts.competitorPosts.length > 0 && (
               <div className="mt-4">
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal)]">競合で似たテーマを扱う記事</p>
                 <div className="mt-2 grid gap-3">

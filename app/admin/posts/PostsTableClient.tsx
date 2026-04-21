@@ -16,9 +16,12 @@ type PostRow = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  'insight-cast': 'ブログ',
+  'insight-cast': 'サービス',
+  service: 'サービス',
   interview: 'インタビュー',
   case: '事例',
+  philosophy: '思想',
+  howto: 'ノウハウ',
   news: 'お知らせ',
 }
 

@@ -1,4 +1,4 @@
-export type PostCategory = 'howto' | 'service' | 'case' | 'philosophy' | 'news'
+export type PostCategory = 'howto' | 'service' | 'interview' | 'case' | 'philosophy' | 'news'
 export type PostType = 'normal' | 'interview'
 export type InterviewerId = 'mint' | 'claus' | 'rain'
 
@@ -18,6 +18,7 @@ export type Post = {
 export const CATEGORY_LABELS: Record<PostCategory, string> = {
   howto: 'ノウハウ',
   service: 'サービス',
+  interview: 'インタビュー',
   case: '事例',
   philosophy: '思想',
   news: 'お知らせ',
@@ -25,11 +26,17 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
 
 const LEGACY_CATEGORY_MAP = {
   'insight-cast': 'service',
-  interview: 'case',
 } as const
 
 export function normalizePostCategory(value: unknown): PostCategory {
-  if (value === 'howto' || value === 'service' || value === 'case' || value === 'philosophy' || value === 'news') {
+  if (
+    value === 'howto'
+    || value === 'service'
+    || value === 'interview'
+    || value === 'case'
+    || value === 'philosophy'
+    || value === 'news'
+  ) {
     return value
   }
 

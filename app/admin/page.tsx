@@ -1,12 +1,10 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ButtonLink } from '@/components/ui'
 
 async function getStats() {
-  const supabase = await createClient()
   const adminClient = createAdminClient()
 
   const [
@@ -21,19 +19,19 @@ async function getStats() {
     { count: recentInterviews },
     { data: usersData },
   ] = await Promise.all([
-    supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
-    supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('published', true),
-    supabase
+    adminClient.from('blog_posts').select('*', { count: 'exact', head: true }),
+    adminClient.from('blog_posts').select('*', { count: 'exact', head: true }).eq('published', true),
+    adminClient
       .from('blog_posts')
       .select('id, slug, title, published, date, category')
       .order('created_at', { ascending: false })
       .limit(5),
-    supabase.from('projects').select('*', { count: 'exact', head: true }),
-    supabase.from('projects').select('*', { count: 'exact', head: true }).eq('analysis_status', 'pending'),
-    supabase.from('projects').select('*', { count: 'exact', head: true }).eq('analysis_status', 'analyzing'),
-    supabase.from('projects').select('*', { count: 'exact', head: true }).eq('analysis_status', 'report_ready'),
-    supabase.from('projects').select('*', { count: 'exact', head: true }).eq('analysis_status', 'fetch_failed'),
-    supabase
+    adminClient.from('projects').select('*', { count: 'exact', head: true }),
+    adminClient.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'analysis_pending'),
+    adminClient.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'analyzing'),
+    adminClient.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'report_ready'),
+    adminClient.from('projects').select('*', { count: 'exact', head: true }).eq('status', 'fetch_failed'),
+    adminClient
       .from('interviews')
       .select('*', { count: 'exact', head: true })
       .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
@@ -79,7 +77,7 @@ export default async function AdminDashboardPage() {
   ]
 
   const analysisStatuses = [
-    { key: 'pending',      label: '分析待ち',   n: stats.projects.pending },
+    { key: 'analysis_pending', label: '分析待ち', n: stats.projects.pending },
     { key: 'analyzing',    label: '分析中',     n: stats.projects.analyzing },
     { key: 'report_ready', label: 'レポート完了', n: stats.projects.report_ready },
     { key: 'fetch_failed', label: '取得失敗',   n: stats.projects.fetch_failed },
@@ -202,6 +200,12 @@ export default async function AdminDashboardPage() {
               className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               ユーザー一覧を見る
+            </Link>
+            <Link
+              href="/admin/costs"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+            >
+              コスト管理
             </Link>
             <Link
               href="/"

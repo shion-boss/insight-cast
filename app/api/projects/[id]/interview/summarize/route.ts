@@ -3,6 +3,7 @@ import { extractJsonBlock, formatConversationForPrompt, normalizeUniqueStringLis
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
+import { logApiUsage } from '@/lib/api-usage'
 import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 
@@ -94,6 +95,15 @@ ${conversation}
 }`,
     }],
   })
+
+  logApiUsage({
+    userId: user.id,
+    projectId,
+    route: 'interview/summarize',
+    model: 'claude-sonnet-4-6',
+    inputTokens: response.usage.input_tokens,
+    outputTokens: response.usage.output_tokens,
+  }).catch(() => {})
 
   const textBlock = response.content.find((block) => block.type === 'text')
   const text = textBlock?.type === 'text' ? textBlock.text : ''

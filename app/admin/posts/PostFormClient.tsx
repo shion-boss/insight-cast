@@ -12,8 +12,8 @@ type PostFormProps = {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'insight-cast', label: 'Insight Castブログ' },
-  { value: 'interview', label: 'インタビュー記事' },
+  { value: 'insight-cast', label: 'サービス紹介' },
+  { value: 'interview', label: 'インタビュー' },
   { value: 'case', label: '事例' },
   { value: 'news', label: 'お知らせ' },
 ]

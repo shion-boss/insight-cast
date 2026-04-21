@@ -11,7 +11,8 @@ import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
 import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
 import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
-import { POSTS, CATEGORY_LABELS } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
+import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 
 const freeCast = CHARACTERS.filter((char) => char.available)
@@ -86,9 +87,10 @@ const FAQS = [
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
 ] as const
 
-const BLOG_PREVIEW_CHARACTER: Record<(typeof POSTS)[number]['category'], string> = {
+const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
   howto: 'mint',
   service: 'claus',
+  interview: 'rain',
   case: 'rain',
   philosophy: 'claus',
   news: 'mint',
@@ -102,6 +104,8 @@ export default async function LandingPage() {
   } catch {
     // 公開トップは認証失敗時も表示する
   }
+
+  const latestPosts = (await getBlogPostsFromDB()).slice(0, 3)
 
   return (
     <PublicPageFrame>
@@ -559,7 +563,7 @@ export default async function LandingPage() {
               最新の記事
             </h2>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
-              {POSTS.slice(0, 3).map((post) => (
+              {latestPosts.map((post) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}

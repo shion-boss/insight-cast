@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
+import { logApiUsage } from '@/lib/api-usage'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -126,28 +127,29 @@ async function saveArticle(input: {
   // blog_posts に下書き保存（管理者のみ）
   const adminEmails = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
   const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
-  if (!isAdmin) return savedArticle
+  if (isAdmin) {
+    const today = new Date().toISOString().slice(0, 10)
+    const suffix = Math.random().toString(36).slice(2, 7)
+    const slug = `${today}-${suffix}`
+    const blogCategory = input.articleType === 'interviewer' ? 'interview' : 'insight-cast'
 
-  const today = new Date().toISOString().slice(0, 10)
-  const suffix = Math.random().toString(36).slice(2, 7)
-  const slug = `${today}-${suffix}`
-  const blogCategory = input.articleType === 'interviewer' ? 'interview' : 'insight-cast'
-  await input.supabase
-    .from('blog_posts')
-    .insert({
-      slug,
-      title,
-      excerpt,
-      category: blogCategory,
-      type: input.articleType === 'interviewer' ? 'interview' : 'normal',
-      cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
-      date: today,
-      published: false,
-      body: { kind: 'markdown', content: cleanContent },
-    })
-    .then(({ error }) => {
-      if (error) console.warn('[article/saveArticle] blog_posts 下書き保存失敗:', error.message)
-    })
+    await input.supabase
+      .from('blog_posts')
+      .insert({
+        slug,
+        title,
+        excerpt,
+        category: blogCategory,
+        type: input.articleType === 'interviewer' ? 'interview' : 'normal',
+        cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
+        date: today,
+        published: false,
+        body: { kind: 'markdown', content: cleanContent },
+      })
+      .then(({ error }) => {
+        if (error) console.warn('[article/saveArticle] blog_posts 下書き保存失敗:', error.message)
+      })
+  }
 
   await input.supabase
     .from('interviews')
@@ -376,6 +378,17 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
         if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
           fullText += chunk.delta.text
         }
+      }
+      const finalMsg = await stream.finalMessage().catch(() => null)
+      if (finalMsg) {
+        logApiUsage({
+          userId: user?.id,
+          projectId,
+          route: 'article',
+          model: 'claude-sonnet-4-6',
+          inputTokens: finalMsg.usage.input_tokens,
+          outputTokens: finalMsg.usage.output_tokens,
+        }).catch(() => {})
       }
     } catch (err) {
       console.error('[article] background stream error:', err)
