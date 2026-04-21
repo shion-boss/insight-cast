@@ -193,6 +193,33 @@ export default function ArticlePage() {
       title: `${articleLabel}の作成を開始しました`,
       description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
     })
+
+    void fetch(`/api/projects/${projectId}/article`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        interviewId,
+        articleType: tab,
+        style: tab === 'client' ? style : undefined,
+        volume,
+        theme: theme.trim() || undefined,
+        polishAnswers,
+        background: true,
+      }),
+    }).catch(() => {
+      showToast({
+        id: `article-error-${jobId}`,
+        title: '記事の作成に失敗しました',
+        description: 'もう一度お試しください。',
+        tone: 'warning',
+      })
+      clearPendingArticleGeneration(jobId)
+      setPendingArticleJobIdByType((prev) => {
+        const next = { ...prev }
+        delete next[tab]
+        return next
+      })
+    })
   }
 
   async function startInstantGeneration() {
