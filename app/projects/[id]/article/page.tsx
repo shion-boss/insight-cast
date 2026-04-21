@@ -133,7 +133,12 @@ export default function ArticlePage() {
       for (const articleType of ['client', 'interviewer', 'conversation'] as ArticleType[]) {
         const pending = findPendingArticleGeneration(interviewId, articleType)
         if (pending) {
-          nextPending[articleType] = pending[0]
+          // DBに記事が既にあればpendingをクリア
+          if (nextSavedArticles[articleType]) {
+            clearPendingArticleGeneration(pending[0])
+          } else {
+            nextPending[articleType] = pending[0]
+          }
         }
       }
       setPendingArticleJobIdByType(nextPending)
