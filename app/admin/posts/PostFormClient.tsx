@@ -55,9 +55,10 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const [hasChanges, setHasChanges] = useState(false)
 
   const today = new Date().toISOString().split('T')[0]
+  const defaultSlug = defaultValues?.slug ?? (mode === 'new' ? slugify('') : '')
 
   const [form, setForm] = useState<PostFormData>({
-    slug: defaultValues?.slug ?? '',
+    slug: defaultSlug,
     title: defaultValues?.title ?? '',
     excerpt: defaultValues?.excerpt ?? '',
     category: defaultValues?.category ?? 'insight-cast',
@@ -77,10 +78,6 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
 
   function handleTitleChange(title: string) {
     handleChange('title', title)
-    // 新規作成時のみスラッグを自動生成
-    if (mode === 'new') {
-      handleChange('slug', slugify(title))
-    }
   }
 
   function handleSave() {
