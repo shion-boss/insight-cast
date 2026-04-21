@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { PostFormClient } from '../../PostFormClient'
 import type { PostFormData } from '@/lib/actions/admin-posts'
 
 async function getPost(id: string) {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')

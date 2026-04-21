@@ -375,7 +375,7 @@ export default function SummaryPage() {
             </div>
 
             {/* このインタビューから作った記事 */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
+            <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
               <div className="flex items-center justify-between gap-2 mb-4">
                 <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">関連する記事素材</p>
                 <Link href="/articles" className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors">一覧へ</Link>

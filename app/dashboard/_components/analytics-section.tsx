@@ -140,7 +140,7 @@ function Heatmap({ data }: { data: HeatmapEntry[] }) {
                   transition: 'transform .15s',
                 }}
                 onMouseEnter={(e) => {
-                  if (cell) setTooltip({ x: e.clientX, y: e.clientY, text: `${cell.label} · ${cell.count === 0 ? '更新なし' : cell.count + '本更新'}` })
+                  if (cell) setTooltip({ x: e.clientX, y: e.clientY, text: `${cell.label} · ${cell.count === 0 ? '作成なし' : cell.count + '本作成'}` })
                 }}
                 onMouseLeave={() => setTooltip(null)}
               />
@@ -196,18 +196,18 @@ function ScoreRing({ score }: { score: number }) {
 /* ─── Analytics section (exported) ───────────── */
 export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore, nextProjectId }: Props) {
   const scoreDesc = continuityScore >= 80
-    ? '月4本以上のペースで更新できています。この調子で続けましょう！'
+    ? '月4本以上のペースで記事素材を積み上げられています。この調子で続けましょう。'
     : continuityScore >= 50
-      ? '月2〜3本のペースで更新できています。月4本以上を目指すとスコアが上がります。'
-      : '更新頻度を上げると継続スコアが伸びます。まずは月2本を目標にしましょう。'
+      ? '月2〜3本のペースで記事素材を作れています。月4本以上を目指すとスコアが上がります。'
+      : '記事づくりの頻度を上げると継続スコアが伸びます。まずは月2本を目標にしましょう。'
 
   return (
     <div className="mb-6">
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-1">ホームページの更新状況</div>
-            <div className="text-[12px]" style={{ color: 'var(--text3)' }}>記事の作成・投稿の継続ペース</div>
+            <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-1">記事素材づくりの進み具合</div>
+            <div className="text-[12px]" style={{ color: 'var(--text3)' }}>取材から作った記事素材の継続ペース</div>
           </div>
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
         </div>
@@ -217,14 +217,14 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-4">
-          <div className="text-[12px] font-semibold mb-3" style={{ color: 'var(--text2)' }}>週次更新カレンダー（過去25週）</div>
+          <div className="text-[12px] font-semibold mb-3" style={{ color: 'var(--text2)' }}>週次作成カレンダー（過去25週）</div>
           <Heatmap data={heatmapData} />
         </div>
 
         <div className="flex items-center gap-5 pt-4 border-t border-[var(--border)]">
           <ScoreRing score={continuityScore} />
           <div className="flex-1">
-            <div className="text-[13px] font-bold mb-1" style={{ color: 'var(--text)' }}>継続スコア：{continuityScore} / 100</div>
+            <div className="text-[13px] font-bold mb-1" style={{ color: 'var(--text)' }}>記事づくり継続スコア：{continuityScore} / 100</div>
             <div className="text-[12px] leading-relaxed" style={{ color: 'var(--text2)' }}>{scoreDesc}</div>
           </div>
           <Link

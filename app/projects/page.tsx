@@ -171,7 +171,7 @@ export default async function ProjectsPage() {
           >
             <div className="text-[36px] text-[var(--text3)]">＋</div>
             <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
-            <div className="text-[12px] text-[var(--text3)]">URLを入れるだけで分析開始</div>
+            <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
           </Link>
         </div>
       ) : (
@@ -281,7 +281,7 @@ export default async function ProjectsPage() {
           >
             <div className="text-[36px] text-[var(--text3)]">＋</div>
             <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
-            <div className="text-[12px] text-[var(--text3)]">URLを入れるだけで分析開始</div>
+            <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
           </Link>
         </div>
       )}

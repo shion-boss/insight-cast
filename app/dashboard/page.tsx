@@ -230,7 +230,7 @@ export default async function DashboardPage() {
             href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
             className={getButtonClass('primary', 'text-[13px] px-4 py-2')}
           >
-            今すぐ取材する →
+            次の取材を開く →
           </Link>
         </div>
       </div>
@@ -287,7 +287,7 @@ export default async function DashboardPage() {
               className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
             >
               <div className="text-[28px]">🎤</div>
-              <div className="text-[13px] font-semibold text-[var(--text2)]">取材を続ける</div>
+              <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
             </Link>
             <Link
               href="/articles"

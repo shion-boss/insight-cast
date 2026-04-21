@@ -49,8 +49,8 @@ function DashboardTab() {
         </div>
         <div className="mb-2 text-[11px] font-semibold text-[var(--text2)]">最近の取材先</div>
         {[
-          { name: '田中建設株式会社', sub: '最終更新 2日前', badge: '取材済み', color: 'bg-teal-50 text-teal-700' },
-          { name: 'やまと整骨院', sub: '最終更新 1週間前', badge: '分析中', color: 'bg-amber-50 text-amber-700' },
+          { name: '田中建設株式会社', sub: '最終取材 2日前', badge: '取材済み', color: 'bg-teal-50 text-teal-700' },
+          { name: 'やまと整骨院', sub: '調査依頼 1週間前', badge: '分析中', color: 'bg-amber-50 text-amber-700' },
         ].map((item) => (
           <div key={item.name} className="mb-2 flex items-center gap-2 rounded-lg border border-[var(--border)] bg-white px-3 py-2">
             <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-amber-50 text-sm">🏢</div>

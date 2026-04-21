@@ -1,11 +1,11 @@
 export const dynamic = 'force-dynamic'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { ButtonLink } from '@/components/ui'
 import { PostsTableClient } from './PostsTableClient'
 
 async function getAllPosts() {
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('blog_posts')
     .select('id, slug, title, category, published, date, created_at')

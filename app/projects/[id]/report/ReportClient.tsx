@@ -253,7 +253,7 @@ export default function ReportClient({
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-sm font-medium text-[var(--text2)]">HPの評価サマリー</h2>
-              <p className="mt-1 text-xs text-[var(--text3)]">深掘り分析と、日々の更新状況をまとめて確認できます。</p>
+              <p className="mt-1 text-xs text-[var(--text3)]">深掘り分析と、ホームページ上の更新傾向をまとめて確認できます。</p>
             </div>
             {freshnessBadge && (
               <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${freshnessBadge.className}`}>

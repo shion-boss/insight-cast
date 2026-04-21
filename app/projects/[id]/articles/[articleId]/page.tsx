@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { PageHeader, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
+import { StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'クライアント視点',
@@ -29,6 +30,12 @@ export default async function ArticleDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('name')
+    .eq('id', user.id)
+    .maybeSingle()
+
   const { data: article } = await supabase
     .from('articles')
     .select('id, title, content, article_type, created_at, project_id, interview_id')
@@ -47,10 +54,19 @@ export default async function ArticleDetailPage({
   if (!project || project.user_id !== user.id) redirect('/dashboard')
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="記事詳細" backHref={`/projects/${id}`} backLabel="← 取材先の管理に戻る" />
-
-      <main className="mx-auto max-w-3xl px-6 py-8 space-y-6">
+    <AppShell
+      title="記事詳細"
+      active="articles"
+      accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
+      contentClassName="max-w-3xl space-y-6"
+      headerRight={(
+        <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-3 py-2 text-sm')}>
+          ← 取材先の管理に戻る
+        </Link>
+      )}
+    >
+      <div className="space-y-6">
         <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
           <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
           <h1 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h1>
@@ -89,7 +105,7 @@ export default async function ArticleDetailPage({
             </pre>
           </section>
         )}
-      </main>
-    </div>
+      </div>
+    </AppShell>
   )
 }

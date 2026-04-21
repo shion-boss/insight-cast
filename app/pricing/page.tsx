@@ -7,7 +7,7 @@ import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: 'まず無料で試して、必要に応じて個人向け・法人向けのプランを選べます。',
+  description: '現在は無料で体験でき、個人向け・法人向けの課金機能は準備中です。',
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)
@@ -27,7 +27,7 @@ const PLANS = [
       { ok: true, label: '競合調査：1社' },
       { ok: true, label: '取材メモ生成' },
       { ok: true, label: '記事素材生成' },
-      { ok: true, label: '追加キャスト：買い切りで追加可' },
+      { ok: true, label: '追加キャスト：準備中' },
       { ok: false, label: '優先サポート' },
     ],
     cta: '無料で始める',
@@ -37,7 +37,7 @@ const PLANS = [
     id: 'personal',
     name: '個人向け',
     price: 4980,
-    note: '月払い・いつでも解約可',
+    note: '予定価格 / 課金機能は準備中',
     catch: '週1〜2本ペースでHPを育てたい方へ',
     featured: true,
     features: [
@@ -47,17 +47,17 @@ const PLANS = [
       { ok: true, label: '競合調査：3社' },
       { ok: true, label: '取材メモ生成' },
       { ok: true, label: '記事素材生成' },
-      { ok: true, label: '追加キャスト：買い切りで追加可' },
+      { ok: true, label: '追加キャスト：準備中' },
       { ok: false, label: '優先サポート' },
     ],
-    cta: '個人向けで始める',
+    cta: '無料登録して案内を待つ',
     href: '/auth/signup',
   },
   {
     id: 'business',
     name: '法人向け',
     price: 14800,
-    note: '月払い・いつでも解約可',
+    note: '予定価格 / 課金機能は準備中',
     catch: '複数の取材先や担当者でHPを強化したい方へ',
     featured: false,
     features: [
@@ -67,10 +67,10 @@ const PLANS = [
       { ok: true, label: '競合調査：各取材先3社' },
       { ok: true, label: '取材メモ生成' },
       { ok: true, label: '記事素材生成' },
-      { ok: true, label: '追加キャスト：買い切りで追加可（全取材先共用）' },
+      { ok: true, label: '追加キャスト：準備中' },
       { ok: true, label: '優先サポート' },
     ],
-    cta: '法人向けで始める',
+    cta: '無料登録して案内を待つ',
     href: '/auth/signup',
   },
 ] as const
@@ -82,7 +82,7 @@ const TABLE_ROWS = [
   { label: '競合調査', free: '1社', personal: '3社', business: '各取材先3社' },
   { label: '取材メモ生成', free: '○', personal: '○', business: '○' },
   { label: '記事素材生成', free: '○', personal: '○', business: '○' },
-  { label: '追加キャスト', free: '買い切りで追加可', personal: '買い切りで追加可', business: '買い切りで追加可（全取材先共用）' },
+  { label: '追加キャスト', free: '準備中', personal: '準備中', business: '準備中' },
   { label: '優先サポート', free: '—', personal: '—', business: '○' },
 ] as const
 
@@ -115,10 +115,10 @@ const SELECTION_GUIDE = [
 
 const FAQS = [
   { q: '無料プランにクレジットカードは必要ですか？', a: '不要です。メールアドレスのみで登録できます。' },
-  { q: '追加キャストはどのプランで使えますか？', a: 'お試し・個人向け・法人向けすべてのプランでお使いいただけます。一度購入すれば、プランを変更しても引き続きお使いいただけます。' },
+  { q: '追加キャストはどのプランで使えますか？', a: '追加キャストは現在準備中です。正式提供後は、お試し・個人向け・法人向けの各プランで使える形を予定しています。' },
   { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
-  { q: 'プランはいつでも変更できますか？', a: 'はい、いつでも変更・停止・解約できます。有料プランは翌月から課金が発生しなくなります。' },
-  { q: '解約するとデータはどうなりますか？', a: '取材メモ・記事素材はエクスポートしていただければ保持できます。解約後30日以内はデータにアクセス可能です。' },
+  { q: 'プランはいつでも変更できますか？', a: 'プラン変更・課金機能は現在準備中です。正式提供時の切り替え条件はこのページでご案内します。' },
+  { q: '解約するとデータはどうなりますか？', a: '有料プランの解約フローとデータ保持期間は、正式提供時にあわせてご案内します。' },
 ] as const
 
 export default function PricingPage() {
@@ -135,7 +135,7 @@ export default function PricingPage() {
               シンプルな料金体系
             </h1>
             <p className="mx-auto mt-4 max-w-[480px] text-base text-[var(--text2)] leading-relaxed">
-              まず無料で試して、必要になったタイミングで合うプランを選べます。
+              現在は無料で体験できます。個人向け・法人向けの課金機能は準備中です。
             </p>
           </div>
         </section>
@@ -248,9 +248,9 @@ export default function PricingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              専門キャストを追加する（買い切り）
+              専門キャスト（提供予定）
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">一度追加すれば、プランを変えても継続してお使いいただけます。</p>
+            <p className="text-base text-[var(--text2)] mt-3">追加キャストは現在準備中です。以下は正式提供時の予定価格です。</p>
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)
@@ -267,7 +267,7 @@ export default function PricingPage() {
                     <div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)] mb-0.5">{addon?.name ?? char.name}</div>
                       <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mb-2">{addon?.specialty ?? char.specialty}</div>
-                      <div className="text-[15px] font-bold text-[var(--text)] mt-2">{addon?.price ?? '—'}（買い切り）</div>
+                      <div className="text-[15px] font-bold text-[var(--text)] mt-2">{addon?.price ?? '—'}（買い切り予定）</div>
                       <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--text3)] border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 rounded-full">準備中</span>
                     </div>
                   </div>

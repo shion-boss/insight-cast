@@ -326,6 +326,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               const char = getCharacter(interview.interviewer_type)
               const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
               const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
+              const articleHref = interviewArticles.length > 1
+                ? `/projects/${id}/summary?interviewId=${interview.id}#related-articles`
+                : latestInterviewArticle
+                  ? `/projects/${id}/articles/${latestInterviewArticle.id}`
+                  : null
+              const articleLabel = interviewArticles.length > 1 ? '記事一覧を見る' : '記事を見る'
 
               return (
                 <div
@@ -362,9 +368,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       hasUncreatedThemes={hasUncreatedThemes}
                       articleStatus={interview.article_status}
                     />
-                    {latestInterviewArticle && (
-                      <Link href={`/projects/${id}/articles/${latestInterviewArticle.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
-                        記事を見る
+                    {articleHref && (
+                      <Link href={articleHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                        {articleLabel}
                       </Link>
                     )}
                     <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>

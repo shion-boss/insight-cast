@@ -39,7 +39,7 @@ export default function AnalysisStatusPanel({
             {competitorCount > 0
               ? `${competitorCount}件の競合HPを設定中。`
               : 'まだ競合HPは設定していません。競合なしでも調査は始められます。'}
-            調査結果から取材テーマが自動提案されます。
+            調査結果をもとに、取材で深掘りしたい観点を整理しやすくなります。
           </p>
         </div>
         <div className="flex flex-col gap-2 lg:min-w-[240px] lg:flex-shrink-0">

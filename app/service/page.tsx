@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 const STEP_SUMMARY = [
-  { step: 'STEP 01', title: 'HPを分析する', body: 'URLを入れるだけで、AIが現状と競合の情報を整理。' },
+  { step: 'STEP 01', title: 'HPを分析する', body: '取材先を登録すると、AIが現状と競合の情報を整理。' },
   { step: 'STEP 02', title: 'AIが取材する', body: 'キャストがチャットで質問。ふだん通りに答えるだけ。' },
   { step: 'STEP 03', title: '記事素材を届ける', body: '取材メモをもとに、記事に使える材料を整えます。' },
 ] as const
@@ -19,10 +19,10 @@ const STEP_DETAILS = [
     step: '01',
     title: 'ホームページを分析する',
     paragraphs: [
-      '取材先のURLを登録するだけで、AIが現状のホームページを解析。現在の情報量・訴求の強さ・不足しているコンテンツを可視化します。',
+      '取材先のURLを登録すると、AIが現状のホームページを解析。現在の情報量・訴求の強さ・不足しているコンテンツを可視化します。',
       'さらに、主要な競合サイトと比較して「何が差別化になるか」「どこを掘り下げると差がつくか」を提案。取材の方向性を最初に固めます。',
     ],
-    badges: ['自動収集', '競合比較', '取材テーマ提案'],
+    badges: ['HP分析', '競合比較', '取材テーマのヒント'],
     visual: 'analysis' as const,
   },
   {
@@ -39,10 +39,10 @@ const STEP_DETAILS = [
     step: '03',
     title: '記事素材として届ける',
     paragraphs: [
-      '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が自動生成されます。',
+      '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が生成されます。',
       '記事のタイプ（インタビュー形式・通常記事）や文字量も選べます。生成後は下書きとして整った状態で受け取れるので、少し手を加えるだけで掲載に進めます。',
     ],
-    badges: ['取材メモ', '記事素材', 'すぐ使える下書き'],
+    badges: ['取材メモ', '記事素材', '使いやすい下書き'],
     visual: 'article' as const,
   },
 ] as const
@@ -122,7 +122,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
       </div>
       <div className="flex gap-2">
         <button className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold">📋 コピー</button>
-        <button className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold">↓ ダウンロード</button>
+        <button className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold">記事画面で確認</button>
       </div>
     </div>
   )
