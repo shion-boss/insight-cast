@@ -127,6 +127,7 @@ async function saveArticle(input: {
   // blog_posts に下書き保存（管理者のみ）
   const adminEmails = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
   const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
+  console.log('[article/saveArticle] isAdmin:', isAdmin, 'userEmail:', input.userEmail, 'adminEmails count:', adminEmails.length)
   if (isAdmin) {
     const today = new Date().toISOString().slice(0, 10)
     const suffix = Math.random().toString(36).slice(2, 7)
