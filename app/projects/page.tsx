@@ -44,10 +44,10 @@ export default async function ProjectsPage() {
     redirect('/')
   }
 
-  if (!user || !supabase) redirect('/')
-  const db = supabase!
+  if (!supabase) redirect('/')
+  if (!user) redirect('/')
 
-  const { data: profile } = await db
+  const { data: profile } = await supabase
     .from('profiles')
     .select('name, onboarded')
     .eq('id', user.id)
@@ -55,7 +55,7 @@ export default async function ProjectsPage() {
 
   if (!profile?.onboarded) redirect('/onboarding')
 
-  const { data: projects } = await db
+  const { data: projects } = await supabase
     .from('projects')
     .select('id, name, hp_url, status, updated_at')
     .eq('user_id', user.id)
@@ -64,21 +64,21 @@ export default async function ProjectsPage() {
   const projectList = (projects ?? []) as Project[]
 
   const { data: auditRows } = projectList.length > 0
-    ? await db
+    ? await supabase
       .from('hp_audits')
       .select('id, project_id, raw_data, created_at')
       .in('project_id', projectList.map((project) => project.id))
     : { data: [] }
 
   const { data: competitorRows } = projectList.length > 0
-    ? await db
+    ? await supabase
       .from('competitors')
       .select('id, project_id, url')
       .in('project_id', projectList.map((project) => project.id))
     : { data: [] }
 
   const { data: competitorAnalysisRows } = projectList.length > 0
-    ? await db
+    ? await supabase
       .from('competitor_analyses')
       .select('project_id, competitor_id, raw_data')
       .in('project_id', projectList.map((project) => project.id))
@@ -96,7 +96,7 @@ export default async function ProjectsPage() {
   )
 
   const { data: interviewRows } = projectList.length > 0
-    ? await db
+    ? await supabase
       .from('interviews')
       .select('id, project_id, created_at')
       .in('project_id', projectList.map((project) => project.id))
@@ -121,7 +121,7 @@ export default async function ProjectsPage() {
   }
 
   const { data: articleRows } = interviews.length > 0
-    ? await db
+    ? await supabase
       .from('articles')
       .select('interview_id')
       .in('interview_id', interviews.map((interview) => interview.id))
@@ -248,7 +248,11 @@ export default async function ProjectsPage() {
                       記事を見る
                     </Link>
                   )}
-                  {analysisReadyProjectIds.has(project.id) && project.status !== 'analyzing' ? (
+                  {project.status === 'analyzing' ? (
+                    <span className="inline-flex items-center rounded-lg border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 py-1.5 text-xs text-[var(--warn)]">
+                      調査中
+                    </span>
+                  ) : analysisReadyProjectIds.has(project.id) ? (
                     <Link
                       href={`/projects/${project.id}/report`}
                       className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}

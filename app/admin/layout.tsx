@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   // ミドルウェアで弾いているが、サーバーコンポーネントでも念のため確認
   if (!user) {
-    redirect('/')
+    redirect('/dashboard')
   }
 
   const adminEmails = (process.env.ADMIN_EMAILS ?? '')
@@ -28,7 +28,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     .filter(Boolean)
 
   if (!adminEmails.includes(user.email ?? '')) {
-    redirect('/')
+    redirect('/dashboard')
   }
 
   return (

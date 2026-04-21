@@ -64,7 +64,7 @@ export default async function InterviewerPage({
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title={selectedCharacter ? 'テーマを決める' : '取材班を選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <div className="mb-8">
@@ -72,16 +72,16 @@ export default async function InterviewerPage({
             icon={(
               <CharacterAvatar
                 src={selectedCharacter?.icon48 ?? CHARACTERS[0]?.icon48}
-                alt={selectedCharacter ? `${selectedCharacter.name}のアイコン` : '取材班のアイコン'}
+                alt={selectedCharacter ? `${selectedCharacter.name}のアイコン` : 'キャストのアイコン'}
                 emoji={selectedCharacter?.emoji ?? CHARACTERS[0]?.emoji}
                 size={48}
               />
             )}
             name={selectedCharacter?.name ?? 'Insight Cast'}
-            title={selectedCharacter ? '今回は、どんなテーマから話しましょうか？' : '今日は、どの取材班に来てもらいましょうか？'}
+            title={selectedCharacter ? '今回は、どんなテーマから話しましょうか？' : '今日は、どのキャストと話しましょうか？'}
             description={selectedCharacter
               ? '自由に書いても、AIのおすすめから選んでも、まだ決めずに始めても大丈夫です。'
-              : '得意な聞き方がそれぞれ違います。気になる相手を選ぶだけで大丈夫です。'}
+              : '得意な引き出し方がそれぞれ違います。いま聞きたいテーマに近い相手を選べば大丈夫です。'}
             tone="soft"
           />
         </div>
@@ -107,9 +107,9 @@ export default async function InterviewerPage({
                   <div className="text-xs text-amber-600 mt-1 font-medium">{char.label}</div>
                 )}
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
-                <div className="text-xs text-[var(--text3)] mt-3 font-medium">得意: {char.specialty}</div>
+                <div className="text-xs text-[var(--text3)] mt-3 font-medium">引き出すこと: {char.specialty}</div>
                 <div className="mt-4 text-xs text-center py-2 bg-[var(--text)] text-white rounded-lg">
-                  <DevAiLabel>このキャストで進む</DevAiLabel>
+                  <DevAiLabel>このキャストを選ぶ</DevAiLabel>
                 </div>
               </Link>
             ))}
@@ -130,7 +130,7 @@ export default async function InterviewerPage({
                     <p className="text-sm font-medium text-[var(--text)]">{selectedCharacter.name}</p>
                     <p className="mt-1 text-xs text-[var(--text3)]">{selectedCharacter.species}</p>
                     <p className="mt-3 text-sm text-[var(--text2)] leading-relaxed">{selectedCharacter.description}</p>
-                    <p className="mt-2 text-xs font-medium text-[var(--text3)]">得意: {selectedCharacter.specialty}</p>
+                    <p className="mt-2 text-xs font-medium text-[var(--text3)]">引き出すこと: {selectedCharacter.specialty}</p>
                   </div>
                 </div>
                 <Link
@@ -246,7 +246,7 @@ export default async function InterviewerPage({
                   type="submit"
                   className="w-full cursor-pointer rounded-xl bg-[var(--text)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
-                  このテーマで始める
+                  このテーマでインタビューを始める
                 </button>
               </form>
             </section>
@@ -275,7 +275,7 @@ export default async function InterviewerPage({
 
         {/* coming soon */}
         <div>
-          <p className="text-xs text-[var(--text3)] mb-3">これから来てもらえる取材班</p>
+          <p className="text-xs text-[var(--text3)] mb-3">これから選べるキャスト</p>
           <div className="grid grid-cols-3 gap-3">
             {CHARACTERS.filter(c => !c.available).map((char) => (
               <div key={char.id} className="p-4 bg-white rounded-xl border border-[var(--border)] opacity-40">

@@ -32,10 +32,17 @@ export default function CompetitorsForm({
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
+  const [canSubmit, setCanSubmit] = useState(true)
 
   function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+
+    if (!canSubmit) {
+      setError(competitorIssue ?? '参考HPの入力内容を確認してから保存してください。')
+      return
+    }
 
     const formData = new FormData(event.currentTarget)
     const urls = formData.getAll('competitor_urls').map((value) => String(value))
@@ -49,6 +56,14 @@ export default function CompetitorsForm({
         location,
       })
       if (result.error) {
+        if (result.error === 'competitor_limit') {
+          setError('参考HPは最大3件までです。1件以上外してから保存してください。')
+          return
+        }
+        if (result.error === 'competitor_self') {
+          setError('自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。')
+          return
+        }
         setError('うまく保存できませんでした。少し待ってから、もう一度お試しください。')
         return
       }
@@ -88,11 +103,11 @@ export default function CompetitorsForm({
           <p className="mt-1 break-all text-sm font-medium text-[var(--text2)]">{siteUrl}</p>
         </div>
         <p className="text-xs leading-relaxed text-[var(--text3)]">
-          いま設定している競合URLは下の入力欄に入っています。空にして保存すると、競合なしで再調査します。
+          いま設定している参考HPは下の入力欄に入っています。空にして保存すると、比較なしで再調査します。
         </p>
         {initialCompetitorUrls.length === 0 && (
           <p className="text-xs text-[var(--text3)]">
-            まだ競合は未設定です。おすすめから選ぶか、URLを手入力して追加できます。
+            まだ参考HPは登録されていません。おすすめから選ぶか、URLを入力して追加できます。
           </p>
         )}
       </section>
@@ -103,13 +118,20 @@ export default function CompetitorsForm({
         initialIndustryMemo={initialIndustryMemo}
         initialLocation={initialLocation}
         helperText="おすすめと手入力を合わせて最大3件までです。空にして保存すると、競合なしで再調査できます。"
+        onSelectionStateChange={(state) => {
+          setCanSubmit(state.canSubmit)
+          setCompetitorIssue(state.issue)
+        }}
       />
 
+      {competitorIssue && !error && (
+        <p className="text-sm text-[var(--err)]">{competitorIssue}</p>
+      )}
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <PrimaryButton
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !canSubmit}
         className="w-full py-3 text-sm"
       >
         {isPending ? <DevAiLabel>保存して再調査しています...</DevAiLabel> : <DevAiLabel>この内容で保存して再調査する</DevAiLabel>}

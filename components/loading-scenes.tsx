@@ -92,7 +92,7 @@ export function AnalysisLoadingScene({
 
 export function InterviewLoadingScene({
   characterId = 'mint',
-  title = '取材班を呼んでいます',
+  title = 'AIキャストを呼んでいます',
   subtitle = '席につけたら、そのまま聞き取りを始めます。',
 }: {
   characterId?: string
@@ -168,7 +168,7 @@ export function InterviewLoadingScene({
       </div>
 
       <div className="text-center">
-        <p className="font-serif text-[26px] font-bold text-[var(--text)]">{character?.name ?? '取材班'}</p>
+        <p className="font-serif text-[26px] font-bold text-[var(--text)]">{character?.name ?? 'AIキャスト'}</p>
         <div className="mt-1 inline-flex">
           <AiBadge label={`${castRole} · 準備中`} />
         </div>

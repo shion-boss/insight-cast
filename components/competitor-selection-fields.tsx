@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getCharacter } from '@/lib/characters'
 import { CharacterAvatar, DevAiLabel, FieldLabel, InterviewerSpeech, TextInput } from '@/components/ui'
 
@@ -17,6 +17,11 @@ type Props = {
   initialLocation?: string
   inputName?: string
   helperText?: string
+  onSelectionStateChange?: (state: {
+    urls: string[]
+    canSubmit: boolean
+    issue: string | null
+  }) => void
 }
 
 const MAX_COMPETITORS = 3
@@ -27,6 +32,23 @@ function normalizeUrl(raw: string) {
   if (!trimmed) return ''
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   return `https://${trimmed}`
+}
+
+function normalizeComparableUrl(raw: string) {
+  const normalized = normalizeUrl(raw)
+  if (!normalized) return ''
+
+  try {
+    const url = new URL(normalized)
+    url.hash = ''
+    url.search = ''
+    if (url.pathname !== '/') {
+      url.pathname = url.pathname.replace(/\/+$/, '')
+    }
+    return url.toString().replace(/\/+$/, '').toLowerCase()
+  } catch {
+    return normalized.replace(/\/+$/, '').toLowerCase()
+  }
 }
 
 function buildInitialManualUrls(initialUrls: string[]) {
@@ -40,6 +62,7 @@ export default function CompetitorSelectionFields({
   initialLocation = '',
   inputName = 'competitor_urls',
   helperText = 'おすすめと手入力を合わせて最大3件までです。あとから取材先の管理画面でも見直せます。',
+  onSelectionStateChange,
 }: Props) {
   const claus = getCharacter('claus')
   const [industryMemo, setIndustryMemo] = useState(initialIndustryMemo)
@@ -54,10 +77,29 @@ export default function CompetitorSelectionFields({
   const normalizedManualUrls = manualUrls.map(normalizeUrl).filter(Boolean)
   const chosenUrls = [...selectedUrls, ...normalizedManualUrls]
     .filter((value, index, array) => array.indexOf(value) === index)
-    .slice(0, MAX_COMPETITORS)
+
+  const normalizedSiteUrl = normalizeComparableUrl(siteUrl)
+  const includesOwnSite = normalizedSiteUrl
+    ? chosenUrls.some((urlValue) => normalizeComparableUrl(urlValue) === normalizedSiteUrl)
+    : false
+  const overLimit = chosenUrls.length > MAX_COMPETITORS
+  const validationIssue = includesOwnSite
+    ? '自社HPと同じURLは参考HPに入れられません。別の参考HPに差し替えてください。'
+    : overLimit
+      ? `参考HPは最大${MAX_COMPETITORS}件までです。${chosenUrls.length}件入っているので、1件以上外してください。`
+      : null
+  const canSubmit = validationIssue === null
 
   const canSuggest = Boolean(siteUrl.trim() && industryMemo.trim())
   const reachedMax = chosenUrls.length >= MAX_COMPETITORS
+
+  useEffect(() => {
+    onSelectionStateChange?.({
+      urls: chosenUrls,
+      canSubmit,
+      issue: validationIssue,
+    })
+  }, [canSubmit, chosenUrls, onSelectionStateChange, validationIssue])
 
   async function handleSuggestCompetitors() {
     if (!canSuggest) return
@@ -105,6 +147,19 @@ export default function CompetitorSelectionFields({
     setManualUrls((prev) => prev.map((item, itemIndex) => itemIndex === index ? value : item))
   }
 
+  function removeChosenUrl(targetUrl: string) {
+    const comparable = normalizeComparableUrl(targetUrl)
+
+    setSelectedUrls((prev) =>
+      prev.filter((value) => normalizeComparableUrl(value) !== comparable),
+    )
+    setManualUrls((prev) =>
+      prev.map((value) =>
+        normalizeComparableUrl(value) === comparable ? '' : value,
+      ),
+    )
+  }
+
   return (
     <section className="bg-white rounded-2xl border border-[var(--border)] p-6 space-y-4">
       <div className="space-y-4">
@@ -133,9 +188,9 @@ export default function CompetitorSelectionFields({
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-medium text-[var(--text2)]">競合HPのおすすめ</h2>
+          <h2 className="text-sm font-medium text-[var(--text2)]">参考にするHPのおすすめ</h2>
           <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">
-            自社HPと業界情報をもとに、似た相手を5件ほど探します。気になる相手だけ選べば大丈夫です。
+            自社HPと業界情報をもとに、似た相手のHPを5件ほど探します。比較することで、テーマの提案に役立てます。
           </p>
         </div>
         <button
@@ -155,9 +210,15 @@ export default function CompetitorSelectionFields({
         </div>
       </div>
 
-      {reachedMax && (
+      {reachedMax && !overLimit && (
         <p className="text-xs text-amber-700">
           競合は3件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
+        </p>
+      )}
+
+      {validationIssue && (
+        <p className="rounded-lg bg-[var(--err-l)] px-3 py-2 text-xs leading-relaxed text-[var(--err)]">
+          {validationIssue}
         </p>
       )}
 
@@ -244,8 +305,8 @@ export default function CompetitorSelectionFields({
 
       <div className="space-y-3 pt-2">
         <div>
-          <h3 className="text-xs font-medium text-[var(--text3)]">自分で追加する競合HP</h3>
-          <p className="mt-1 text-xs text-[var(--text3)]">おすすめを使わず、手入力だけで3件まで登録しても大丈夫です。</p>
+          <h3 className="text-xs font-medium text-[var(--text3)]">URLを直接入力する</h3>
+          <p className="mt-1 text-xs text-[var(--text3)]">参考にしたいHPのURLを知っていれば、そのまま入力できます。3件まで登録できます。</p>
         </div>
         {Array.from({ length: MANUAL_INPUT_COUNT }).map((_, index) => (
           <TextInput
@@ -261,22 +322,30 @@ export default function CompetitorSelectionFields({
 
       {chosenUrls.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-[var(--text3)]">いま登録される競合URL</p>
+          <p className="text-xs font-medium text-[var(--text3)]">いま登録されるHP</p>
           <div className="flex flex-wrap gap-2">
             {chosenUrls.map((urlValue) => (
-              <span
+              <button
+                type="button"
                 key={urlValue}
-                className="inline-flex max-w-full items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)]"
+                onClick={() => removeChosenUrl(urlValue)}
+                className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs ${
+                  normalizeComparableUrl(urlValue) === normalizedSiteUrl
+                    ? 'border-[var(--err)]/30 bg-[var(--err-l)] text-[var(--err)]'
+                    : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]'
+                }`}
                 title={urlValue}
               >
                 <span className="truncate">{urlValue}</span>
-              </span>
+                <span className="font-semibold">×</span>
+              </button>
             ))}
           </div>
+          <p className="text-xs text-[var(--text3)]">チップを押すと、そのURLを外せます。</p>
         </div>
       )}
 
-      {chosenUrls.map((urlValue) => (
+      {canSubmit && chosenUrls.map((urlValue) => (
         <input key={urlValue} type="hidden" name={inputName} value={urlValue} />
       ))}
     </section>

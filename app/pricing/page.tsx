@@ -7,7 +7,7 @@ import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: 'まず無料で体験して、必要に応じてプランをアップグレードしてください。',
+  description: 'まず無料で試して、必要に応じて個人向け・法人向けのプランを選べます。',
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)
@@ -110,7 +110,7 @@ const ADDON_CASTS = [
 const SELECTION_GUIDE = [
   { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方' },
   { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方' },
-  { plan: '法人向け', desc: 'スタッフがいる職場で、複数のHPや店舗をまとめて更新したい方' },
+  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方' },
 ] as const
 
 const FAQS = [
@@ -135,7 +135,7 @@ export default function PricingPage() {
               シンプルな料金体系
             </h1>
             <p className="mx-auto mt-4 max-w-[480px] text-base text-[var(--text2)] leading-relaxed">
-              まず無料で体験して、必要に応じてプランをアップグレードしてください。
+              まず無料で試して、必要になったタイミングで合うプランを選べます。
             </p>
           </div>
         </section>
@@ -250,7 +250,7 @@ export default function PricingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               専門キャストを追加する（買い切り）
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">一度お求めいただければ、プランに関わらずずっとお使いいただけます。</p>
+            <p className="text-base text-[var(--text2)] mt-3">一度追加すれば、プランを変えても継続してお使いいただけます。</p>
             <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)

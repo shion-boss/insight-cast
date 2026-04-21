@@ -1,5 +1,6 @@
 'use client'
 
+import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
@@ -10,16 +11,36 @@ type Props = {
   errorMessage?: string | null
 }
 
+function SubmitProjectButton({
+  disabled,
+}: {
+  disabled: boolean
+}) {
+  const { pending } = useFormStatus()
+
+  return (
+    <PrimaryButton
+      type="submit"
+      disabled={pending || disabled}
+      className="w-full py-3 text-sm"
+    >
+      {pending ? '取材先を登録しています...' : '取材先を登録する'}
+    </PrimaryButton>
+  )
+}
+
 export default function NewProjectForm({ errorMessage }: Props) {
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
+  const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
+  const [canSubmit, setCanSubmit] = useState(true)
   const mint = getCharacter('mint')
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">Single Step</p>
-        <p className="mt-1 text-sm text-[var(--text2)]">この画面で取材先情報と競合候補をまとめて登録できます。</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">まとめて登録</p>
+        <p className="mt-1 text-sm text-[var(--text2)]">この画面だけで、取材先の基本情報と参考HPをまとめて登録できます。</p>
       </div>
 
       <div className="mb-7">
@@ -34,7 +55,7 @@ export default function NewProjectForm({ errorMessage }: Props) {
           }
           name="ミント"
           title="取材先の基本情報を教えてください。"
-          description="URLを入力すると、AIが現状のホームページを分析してテーマを提案できるようになります。"
+          description="URLを入れておくと、あとでホームページを分析して取材テーマを提案しやすくなります。"
           tone="soft"
         />
       </div>
@@ -72,14 +93,21 @@ export default function NewProjectForm({ errorMessage }: Props) {
           </div>
         </section>
 
-        <CompetitorSelectionFields siteUrl={url} />
+        <CompetitorSelectionFields
+          siteUrl={url}
+          onSelectionStateChange={(state) => {
+            setCanSubmit(state.canSubmit)
+            setCompetitorIssue(state.issue)
+          }}
+        />
 
-        <PrimaryButton
-          type="submit"
-          className="w-full py-3 text-sm"
-        >
-          取材先を登録する
-        </PrimaryButton>
+        {competitorIssue && (
+          <p className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+            {competitorIssue}
+          </p>
+        )}
+
+        <SubmitProjectButton disabled={!canSubmit} />
       </form>
     </div>
   )

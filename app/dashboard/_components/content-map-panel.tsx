@@ -46,7 +46,6 @@ export function ContentMapPanel({
   if (blogPostCount === 0) return null
 
   const matrix = classifications ? buildContentMatrix(classifications) : null
-  const totalClassified = classifications?.length ?? 0
   const existingCount = classifications?.filter((p) => p.source === 'existing').length ?? 0
   const insightCastCount = classifications?.filter((p) => p.source === 'insight_cast').length ?? 0
 
@@ -183,7 +182,6 @@ export function ContentMapPanel({
                   </div>
                   {EFFECTS.map((e) => {
                     const posts = matrix[g.key][e.key]
-                    const existing = posts.filter((p) => p.source === 'existing')
                     const insightCast = posts.filter((p) => p.source === 'insight_cast')
                     const isEmpty = posts.length === 0
                     const fillPct = Math.min(1, posts.length / maxCellCount)

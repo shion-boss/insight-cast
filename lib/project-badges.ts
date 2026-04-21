@@ -9,7 +9,7 @@ export function getProjectAnalysisBadge(status: string, analysisReady: boolean):
   const resolvedStatus = resolveProjectAnalysisStatus(status, analysisReady)
 
   if (resolvedStatus === 'analyzing') {
-    return { label: '分析中', tone: 'warning' }
+    return { label: '調査中', tone: 'warning' }
   }
 
   if (resolvedStatus === 'report_ready') {

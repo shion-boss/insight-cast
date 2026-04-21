@@ -1,3 +1,5 @@
+// NOTE: 課金機能（Stripe連携・プラン変更）は未実装。
+// Phase 3 で実装予定。現在はプラン表示・上限チェックのみに使用。
 export type PlanKey = 'individual' | 'business'
 
 export const PLANS = {

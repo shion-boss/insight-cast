@@ -4,7 +4,7 @@ import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { NextRequest } from 'next/server'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 
 export async function POST(
@@ -81,29 +81,60 @@ export async function POST(
 
   const { data: auditRow } = await supabase
     .from('hp_audits')
-    .select('gaps, suggested_themes')
+    .select('raw_data')
     .eq('project_id', projectId)
     .order('created_at', { ascending: false })
     .limit(1)
     .maybeSingle()
 
-  const auditResult = auditRow as { gaps?: string[]; suggested_themes?: string[] } | null
-  const audit = auditResult ?? null
+  const auditRawData = (auditRow?.raw_data ?? null) as Record<string, unknown> | null
 
-  const { data: competitorThemeRows } = interview.focus_theme
-    ? await supabase
-      .from('competitor_analyses')
-      .select('raw_data, competitors(url)')
-      .eq('project_id', projectId)
-    : { data: null }
+  const toStringArray = (v: unknown): string[] =>
+    Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
+
+  const audit = auditRawData
+    ? {
+        gaps: toStringArray(auditRawData.gaps),
+        suggested_themes: toStringArray(auditRawData.suggested_themes),
+        strengths: toStringArray(auditRawData.strengths),
+        priority_actions: toStringArray(auditRawData.priority_actions),
+        conversion_obstacles: toStringArray(auditRawData.conversion_obstacles),
+        blog_posts: toStringArray(
+          Array.isArray(auditRawData.blog_posts)
+            ? auditRawData.blog_posts.map((p: unknown) => (p && typeof p === 'object' && 'title' in p ? (p as { title: string }).title : null)).filter(Boolean)
+            : [],
+        ),
+        blog_classification_summary: (auditRawData.blog_classification_summary ?? null) as {
+          byGenre?: Array<{ key: string; label: string; count: number }>
+          byEffect?: Array<{ key: string; label: string; count: number }>
+          total?: number
+        } | null,
+      }
+    : null
+
+  const { data: competitorThemeRows } = await supabase
+    .from('competitor_analyses')
+    .select('raw_data, competitors(url)')
+    .eq('project_id', projectId)
+
+  const competitorRows = (competitorThemeRows ?? []) as Array<{
+    raw_data: Record<string, unknown> | null
+    competitors: { url: string } | { url: string }[] | null
+  }>
 
   const matchingCompetitorSources = getCompetitorThemeSourcesForTheme(
-    ((competitorThemeRows ?? []) as Array<{
-      raw_data: Record<string, unknown> | null
-      competitors: { url: string } | { url: string }[] | null
-    }>),
+    competitorRows,
     interview.focus_theme,
   )
+
+  // 競合が書いていて自社にないテーマ（全競合分を統合）
+  const allCompetitorGaps: string[] = []
+  for (const row of competitorRows) {
+    const gaps = toStringArray(row.raw_data?.gaps)
+    for (const gap of gaps) {
+      if (!allCompetitorGaps.includes(gap)) allCompetitorGaps.push(gap)
+    }
+  }
 
   const contextParts: string[] = []
   if (projectData) {
@@ -120,9 +151,20 @@ export async function POST(
     contextParts.push(`【競合がこのテーマで伝えていること】\n${matchingCompetitorSources.map((source) => `・${source.url ?? '競合サイト'}: ${source.summary}`).join('\n')}`)
   }
   if (audit) {
-    if (audit.gaps?.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${(audit.gaps as string[]).map((g: string) => `・${g}`).join('\n')}`)
-    if (audit.suggested_themes?.length) contextParts.push(`【インタビューで深めたいテーマ（調査結果）】\n${(audit.suggested_themes as string[]).map((t: string) => `・${t}`).join('\n')}`)
+    if (audit.gaps.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${audit.gaps.map((g) => `・${g}`).join('\n')}`)
+    if (audit.suggested_themes.length) contextParts.push(`【インタビューで深めたいテーマ（調査結果）】\n${audit.suggested_themes.map((t) => `・${t}`).join('\n')}`)
   }
+
+  // キャラ別コンテキスト注入
+  const characterContext = buildCharacterSpecificContext(
+    interview.interviewer_type,
+    audit,
+    allCompetitorGaps,
+  )
+  if (characterContext) {
+    contextParts.push(characterContext)
+  }
+
   if (userTurnCount >= 7) {
     contextParts.push(`【現在の状況】ユーザーは${userTurnCount}回返答しました。`)
   }
@@ -130,31 +172,48 @@ export async function POST(
   const systemPrompt = (SYSTEM_PROMPTS[interview.interviewer_type] ?? SYSTEM_PROMPTS['mint'])
     + (contextParts.length ? '\n\n' + contextParts.join('\n\n') : '')
 
-  const stream = await anthropic.messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 512,
-    system: systemPrompt,
-    messages,
-  })
+  let stream: Awaited<ReturnType<typeof anthropic.messages.stream>>
+  try {
+    stream = await anthropic.messages.stream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 512,
+      system: systemPrompt,
+      messages,
+    })
+  } catch (err) {
+    const isTimeout = err instanceof Error && (err.message.includes('timeout') || err.constructor.name === 'APIConnectionTimeoutError')
+    console.error('[interview/chat] Anthropic API error:', err)
+    return Response.json(
+      { code: isTimeout ? 'TIMEOUT' : 'AI_ERROR', message: 'もう一度お試しください。' },
+      { status: 503 },
+    )
+  }
 
   let fullText = ''
   const readable = new ReadableStream({
     async start(controller) {
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-          fullText += chunk.delta.text
-          controller.enqueue(new TextEncoder().encode(chunk.delta.text))
+      try {
+        for await (const chunk of stream) {
+          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+            fullText += chunk.delta.text
+            controller.enqueue(new TextEncoder().encode(chunk.delta.text))
+          }
         }
+      } catch (err) {
+        console.error('[interview/chat] stream error:', err)
+        controller.error(err)
+        return
       }
 
       // AIメッセージ保存（[INTERVIEW_COMPLETE]マーカーは除いて保存）
       const cleanText = fullText.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
       if (cleanText) {
-        await supabase.from('interview_messages').insert({
+        const { error } = await supabase.from('interview_messages').insert({
           interview_id: interviewId,
           role: 'interviewer',
           content: cleanText,
         })
+        if (error) console.error('[interview/chat] failed to save message:', error.message)
       }
 
       controller.close()
@@ -163,5 +222,103 @@ export async function POST(
 
   return new Response(readable, {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  })
+}
+
+// ---- キャラ別コンテキストビルダー ----
+
+type AuditContext = {
+  gaps: string[]
+  suggested_themes: string[]
+  strengths: string[]
+  priority_actions: string[]
+  conversion_obstacles: string[]
+  blog_posts: string[]
+  blog_classification_summary: {
+    byGenre?: Array<{ key: string; label: string; count: number }>
+    byEffect?: Array<{ key: string; label: string; count: number }>
+    total?: number
+  } | null
+} | null
+
+function buildCharacterSpecificContext(
+  characterId: string,
+  audit: AuditContext,
+  competitorGaps: string[],
+): string {
+  if (!audit) return ''
+
+  const parts: string[] = []
+
+  // ブログの効果別カバレッジ（全キャラ共通の下地）
+  const effectCoverage = buildEffectCoverage(audit.blog_classification_summary)
+
+  if (characterId === 'mint') {
+    // ミント: お客様目線で伝わっていないことを掘る
+    // 信頼・共感系のブログが薄い場合に注目させる
+    const thinEffects = effectCoverage.filter((e) => e.key === 'trust' || e.key === 'empathy').filter((e) => e.count === 0)
+    if (thinEffects.length > 0) {
+      parts.push(`【お客様目線で不足しているコンテンツ（調査結果）】\n以下のタイプの記事がブログにほとんどありません。お客様から見て「信頼できそう」「この人に頼んでみたい」と思える話が届いていない可能性があります。\n${thinEffects.map((e) => `・${e.label}`).join('\n')}`)
+    }
+
+    if (audit.blog_posts.length > 0) {
+      parts.push(`【既存ブログ記事タイトル一覧（重複を避けるための参考）】\n${audit.blog_posts.slice(0, 15).map((t) => `・${t}`).join('\n')}`)
+    }
+  }
+
+  if (characterId === 'claus') {
+    // クラウス: 競合との差分と、業界・発見系の不足を深掘り
+    if (competitorGaps.length > 0) {
+      parts.push(`【競合が書いていて自社にないテーマ（競合調査結果）】\n以下のテーマは競合のHPやブログにあって、自社では扱えていません。ここに業種の専門性を絡めた深掘りの余地があります。\n${competitorGaps.slice(0, 4).map((g) => `・${g}`).join('\n')}`)
+    }
+
+    const thinEffects = effectCoverage.filter((e) => e.key === 'discovery' || e.key === 'trust').filter((e) => e.count === 0)
+    if (thinEffects.length > 0) {
+      parts.push(`【専門性で補強できるコンテンツの不足（調査結果）】\n${thinEffects.map((e) => `・${e.label}（${e.desc}）が0件`).join('\n')}\n業種ならではの知識や判断基準を語ることで補強できる余地です。`)
+    }
+
+    if (audit.strengths.length > 0) {
+      parts.push(`【HPで見えている強み（参照用）】\n${audit.strengths.map((s) => `・${s}`).join('\n')}\nインタビューでは、ここに挙がっていない・HPで語られていない強みを引き出してください。`)
+    }
+  }
+
+  if (characterId === 'rain') {
+    // レイン: 問い合わせ転換につながっていない理由と競合差分を訴求として引き出す
+    if (audit.conversion_obstacles.length > 0) {
+      parts.push(`【問い合わせを妨げていそうな要因（調査結果）】\n${audit.conversion_obstacles.map((o) => `・${o}`).join('\n')}\nこれらを解消するエピソードや言葉を引き出すことが、このインタビューの勝負所です。`)
+    }
+
+    const thinConversion = effectCoverage.filter((e) => e.key === 'conversion').filter((e) => e.count === 0)
+    if (thinConversion.length > 0) {
+      parts.push(`【問い合わせにつながるコンテンツが不足（調査結果）】\n「読んで行動したくなる」記事がブログにほとんどありません。なぜ選ばれるのか・他と何が違うのかを、お客様目線の言葉で引き出してください。`)
+    }
+
+    if (competitorGaps.length > 0) {
+      parts.push(`【競合が積極的に発信していて自社にないテーマ（競合調査結果）】\n${competitorGaps.slice(0, 3).map((g) => `・${g}`).join('\n')}\nこれらのテーマで自社独自の訴求を引き出せると、差別化の核になります。`)
+    }
+
+    if (audit.priority_actions.length > 0) {
+      parts.push(`【次の発信で優先したいこと（調査結果）】\n${audit.priority_actions.map((a) => `・${a}`).join('\n')}`)
+    }
+  }
+
+  return parts.join('\n\n')
+}
+
+function buildEffectCoverage(
+  summary: { byEffect?: Array<{ key: string; label: string; count: number }> } | null | undefined,
+): Array<{ key: string; label: string; desc: string; count: number }> {
+  const EFFECT_META: Array<{ key: string; label: string; desc: string }> = [
+    { key: 'discovery',  label: '集客・発見',    desc: 'SEOや紹介で新しい人に届く' },
+    { key: 'trust',      label: '信頼・実績',    desc: '専門性や実績を証明する' },
+    { key: 'empathy',    label: '共感・ファン化', desc: '人柄や思想を伝える' },
+    { key: 'conversion', label: '問い合わせ促進', desc: '読んで行動につながる' },
+  ]
+
+  const byEffect = summary?.byEffect ?? []
+
+  return EFFECT_META.map((meta) => {
+    const found = byEffect.find((e) => e.key === meta.key)
+    return { ...meta, count: found?.count ?? 0 }
   })
 }

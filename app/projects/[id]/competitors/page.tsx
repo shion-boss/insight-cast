@@ -37,7 +37,7 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="競合候補を見直す" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title="参考にするHPを見直す" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
         <div className="mb-8">
@@ -51,8 +51,8 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
               />
             )}
             name={claus?.name ?? 'インタビュアー'}
-            title="競合候補は、あとから何度でも見直せます。"
-            description="登録時と同じように、おすすめから選ぶことも、URLを手入力することもできます。"
+            title="参考にするHPは、あとから何度でも見直せます。"
+            description="おすすめから選ぶこともできますし、URLを直接入力することもできます。"
             tone="soft"
           />
         </div>

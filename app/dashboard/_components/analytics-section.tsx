@@ -3,82 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-export type ThemeDataPoint = { label: string; count: number; color: string }
 export type MonthlyPoint   = { m: string; n: number }
 export type HeatmapEntry   = { date: string; count: number }
 
 type Props = {
-  themeDistribution: ThemeDataPoint[]
   monthlyArticles:   MonthlyPoint[]
   heatmapData:       HeatmapEntry[]
   continuityScore:   number
   nextProjectId:     string | null
-}
-
-/* ─── Donut chart ─────────────────────────────── */
-function DonutChart({ data }: { data: ThemeDataPoint[] }) {
-  const [hovered, setHovered] = useState<number | null>(null)
-  const total = data.reduce((s, d) => s + d.count, 0)
-  if (total === 0) return (
-    <div className="flex items-center justify-center h-[140px] text-[13px]" style={{ color: 'var(--text3)' }}>
-      テーマデータがありません
-    </div>
-  )
-
-  const R = 60, cx = 70, cy = 70, sw = 22
-  const circ = 2 * Math.PI * R
-  let offset = 0
-  const slices = data.map((d) => {
-    const dash = (d.count / total) * circ
-    const s = { ...d, dash, offset }
-    offset += dash
-    return s
-  })
-  const active = hovered !== null ? data[hovered] : null
-
-  return (
-    <div className="flex items-center gap-6">
-      <div style={{ position: 'relative', flexShrink: 0 }}>
-        <svg width={140} height={140}>
-          <circle cx={cx} cy={cy} r={R} fill="none" stroke="var(--bg2)" strokeWidth={sw} />
-          {slices.map((s, i) => (
-            <circle key={i} cx={cx} cy={cy} r={R} fill="none"
-              stroke={s.color}
-              strokeWidth={hovered === i ? sw + 4 : sw}
-              strokeDasharray={`${s.dash} ${circ - s.dash}`}
-              strokeDashoffset={circ / 4 - s.offset}
-              style={{ cursor: 'pointer', transition: 'stroke-width .15s' }}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-            />
-          ))}
-          <text x={cx} y={cy - 8} textAnchor="middle"
-            style={{ fontFamily: 'var(--font-noto-serif-jp,serif)', fontSize: 22, fontWeight: 700, fill: 'var(--text)' }}>
-            {active ? active.count : total}
-          </text>
-          <text x={cx} y={cy + 11} textAnchor="middle"
-            style={{ fontFamily: 'sans-serif', fontSize: 10, fill: 'var(--text3)' }}>
-            {active ? '件' : '記事合計'}
-          </text>
-        </svg>
-      </div>
-      <div className="flex flex-col gap-2 flex-1">
-        {data.map((d, i) => (
-          <div key={d.label}
-            className="flex items-center gap-2 text-[12px] cursor-default"
-            style={{ color: 'var(--text2)', opacity: hovered !== null && hovered !== i ? 0.45 : 1, transition: 'opacity .15s' }}
-            onMouseEnter={() => setHovered(i)}
-            onMouseLeave={() => setHovered(null)}
-          >
-            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: d.color }} />
-            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{d.label}</span>
-            <span className="font-bold text-[13px]" style={{ color: 'var(--text)' }}>{d.count}</span>
-            <span className="text-[11px]" style={{ color: 'var(--text3)' }}>{Math.round(d.count / total * 100)}%</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
 }
 
 /* ─── Bar chart ───────────────────────────────── */
@@ -262,7 +194,7 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 /* ─── Analytics section (exported) ───────────── */
-export function AnalyticsSection({ themeDistribution, monthlyArticles, heatmapData, continuityScore, nextProjectId }: Props) {
+export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore, nextProjectId }: Props) {
   const scoreDesc = continuityScore >= 80
     ? '月4本以上のペースで更新できています。この調子で続けましょう！'
     : continuityScore >= 50
@@ -270,15 +202,7 @@ export function AnalyticsSection({ themeDistribution, monthlyArticles, heatmapDa
       : '更新頻度を上げると継続スコアが伸びます。まずは月2本を目標にしましょう。'
 
   return (
-    <div className="grid gap-5 mb-6" style={{ gridTemplateColumns: '320px 1fr' }}>
-      {/* Left: Donut */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-1">記事テーマの分布</div>
-        <div className="text-[12px] mb-5" style={{ color: 'var(--text3)' }}>取材で引き出されたテーマの内訳</div>
-        <DonutChart data={themeDistribution} />
-      </div>
-
-      {/* Right: Bar + Heatmap + Score */}
+    <div className="mb-6">
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
         <div className="flex items-start justify-between mb-4">
           <div>

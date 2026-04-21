@@ -56,7 +56,7 @@ const GENERATION_MODE_OPTIONS: Array<{
   {
     value: 'instant',
     label: 'いま生成して待つ',
-    description: 'この場でAIに生成させます。長めの待ち時間が出ることがあります。',
+    description: 'この場で素材をまとめます。長めの待ち時間が出ることがあります。',
   },
 ]
 
@@ -287,14 +287,22 @@ export default function ArticlePage() {
     }
 
     const requestedAt = new Date(pendingJob.requestedAt).getTime() - 60_000
-    const { data: article } = await supabase
-      .from('articles')
-      .select('id, title, created_at')
-      .eq('interview_id', interviewId)
-      .eq('article_type', articleType)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
+    let article: { id: string; title: string | null; created_at: string } | null = null
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('id, title, created_at')
+        .eq('interview_id', interviewId)
+        .eq('article_type', articleType)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (error) throw error
+      article = data
+    } catch {
+      setCompletionModalState('error')
+      return
+    }
 
     if (article && new Date(article.created_at).getTime() >= requestedAt) {
       clearPendingArticleGeneration(jobId)
@@ -368,7 +376,7 @@ export default function ArticlePage() {
 
           {/* 設定パネル */}
           <aside className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 lg:sticky lg:top-20">
-            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base mb-5">設定</p>
+            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base mb-5">記事の仕上げ方</p>
 
             {/* 記事の種類 */}
             <div className="mb-5">
@@ -545,7 +553,7 @@ export default function ArticlePage() {
               <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
                 {error ? (
                   <StateCard
-                    icon="✍️"
+                    icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                     title="いまは記事を用意できません。"
                     description={error}
                     tone="warning"
@@ -574,34 +582,40 @@ export default function ArticlePage() {
 
             {isBatchGenerating && (
               <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
-                <StateCard
-                  icon="✍️"
+                <InterviewerSpeech
+                  icon={
+                    <CharacterAvatar
+                      src={mint?.icon48}
+                      alt="ミントのアイコン"
+                      emoji={mint?.emoji}
+                      size={48}
+                    />
+                  }
+                  name="ミント"
                   title="記事素材を作成しています"
-                  description="AIで文章化しているので、このページで待たなくて大丈夫です。完了したらお知らせします。"
+                  description="このページで待たなくて大丈夫です。完了したらお知らせします。"
                   tone="soft"
-                  action={(
-                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                      <button
-                        type="button"
-                        onClick={handleCheckCompletion}
-                        className={getButtonClass('primary')}
-                      >
-                        完了を確認する
-                      </button>
-                      <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
-                        取材先の管理に戻る
-                      </Link>
-                    </div>
-                  )}
                 />
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <button
+                    type="button"
+                    onClick={handleCheckCompletion}
+                    className={getButtonClass('primary')}
+                  >
+                    完了を確認する
+                  </button>
+                  <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
+                    取材先の管理に戻る
+                  </Link>
+                </div>
               </div>
             )}
 
             {isInstantGenerating && (
               <div className="flex flex-col items-center justify-center min-h-[400px] gap-5 p-8">
                 <WritingLoadingScene
-                  title="記事素材を生成しています"
-                  description="この場でAIが記事をまとめています。"
+                  title="記事素材を整えています"
+                  description="取材内容を整理しています。"
                   previewText={currentInstantContent}
                 />
               </div>
@@ -639,34 +653,40 @@ export default function ArticlePage() {
 
             {currentSavedArticle && !currentInstantContent && !isGenerating && (
               <div className="p-8">
-                <StateCard
-                  icon="📄"
+                <InterviewerSpeech
+                  icon={
+                    <CharacterAvatar
+                      src={mint?.icon48}
+                      alt="ミントのアイコン"
+                      emoji={mint?.emoji}
+                      size={48}
+                    />
+                  }
+                  name="ミント"
                   title={currentSavedArticle.title || '記事素材が用意できています'}
                   description="保存済みの記事を開くか、同じ条件でもう一度作り直せます。"
                   tone="soft"
-                  action={(
-                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                      <Link
-                        href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
-                        className={getButtonClass('primary')}
-                      >
-                        保存した記事を確認する
-                      </Link>
-                      <Link
-                        href={`/projects/${projectId}#articles`}
-                        className={getButtonClass('secondary')}
-                      >
-                        取材先の管理で確認する
-                      </Link>
-                      <button
-                        onClick={generate}
-                        className="px-4 py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
-                      >
-                        <DevAiLabel>もう一度まとめる</DevAiLabel>
-                      </button>
-                    </div>
-                  )}
                 />
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                  <Link
+                    href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
+                    className={getButtonClass('primary')}
+                  >
+                    保存した記事を確認する
+                  </Link>
+                  <Link
+                    href={`/projects/${projectId}#articles`}
+                    className={getButtonClass('secondary')}
+                  >
+                    取材先の管理で確認する
+                  </Link>
+                  <button
+                    onClick={generate}
+                    className="px-4 py-2.5 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors border border-[var(--border)] rounded-[var(--r-sm)]"
+                  >
+                    <DevAiLabel>もう一度まとめる</DevAiLabel>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -760,7 +780,7 @@ export default function ArticlePage() {
                     </span>
                     <div>
                       <p className="text-sm font-semibold text-[var(--text)]">
-                        {completionModalState === 'error' ? 'もう一度お試しください' : 'AIが記事素材を仕上げています'}
+                        {completionModalState === 'error' ? 'もう一度お試しください' : '素材を仕上げています'}
                       </p>
                       <p className="mt-1 text-sm text-[var(--text2)]">
                         {completionModalState === 'error'

@@ -4,6 +4,7 @@ import ReportClient from './ReportClient'
 import { PageHeader } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
+import { buildBlogFreshnessMetrics, getStoredBlogMetrics, getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -57,41 +58,29 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     redirect(resolvedStatus === 'report_ready' ? `/projects/${id}/report` : `/projects/${id}`)
   }
 
-  // 投稿頻度集計
-  type BlogPost = { url?: unknown; title?: unknown }
-  const blogPosts: BlogPost[] = Array.isArray(
-    (audit?.raw_data as Record<string, unknown> | null | undefined)?.blog_posts
-  )
-    ? ((audit!.raw_data as Record<string, unknown>).blog_posts as BlogPost[])
+  const rawData = (audit?.raw_data as Record<string, unknown> | null | undefined) ?? null
+  const blogPosts = getStoredSiteBlogPosts(rawData)
+  const blogMetrics = getStoredBlogMetrics(rawData) ?? buildBlogFreshnessMetrics(blogPosts)
+  const postFrequency = blogMetrics.recentMonthlyCounts
+  const siteEvaluation = Array.isArray(rawData?.site_evaluation)
+    ? rawData.site_evaluation.flatMap((entry) => {
+        if (!entry || typeof entry !== 'object') return []
+        const key = typeof (entry as { key?: unknown }).key === 'string' ? (entry as { key: string }).key : ''
+        const label = typeof (entry as { label?: unknown }).label === 'string' ? (entry as { label: string }).label : ''
+        const score = typeof (entry as { score?: unknown }).score === 'number' ? (entry as { score: number }).score : null
+        const summary = typeof (entry as { summary?: unknown }).summary === 'string' ? (entry as { summary: string }).summary : ''
+        if (!key || !label || score === null || !summary) return []
+        return [{ key, label, score, summary }]
+      })
     : []
-
-  function extractYearMonth(post: BlogPost): string | null {
-    const url = typeof post.url === 'string' ? post.url : ''
-    const title = typeof post.title === 'string' ? post.title : ''
-
-    // 優先度1: /2024/03 または /2024-03
-    const m1 = url.match(/[/_-](\d{4})[/_-](0[1-9]|1[0-2])(?:[/_-]|$)/)
-    if (m1) return `${m1[1]}-${m1[2]}`
-
-    // 優先度2: 8桁数字 20240315
-    const m2 = url.match(/(\d{4})(0[1-9]|1[0-2])\d{2}/)
-    if (m2) return `${m2[1]}-${m2[2]}`
-
-    // 優先度3: タイトル内 2024年3月
-    const m3 = title.match(/(\d{4})年(\d{1,2})月/)
-    if (m3) return `${m3[1]}-${m3[2].padStart(2, '0')}`
-
-    return null
-  }
-
-  const freqMap = new Map<string, number>()
-  for (const post of blogPosts) {
-    const ym = extractYearMonth(post)
-    if (ym) freqMap.set(ym, (freqMap.get(ym) ?? 0) + 1)
-  }
-  const postFrequency = Array.from(freqMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([month, count]) => ({ month, count }))
+  const toStringList = (value: unknown) =>
+    Array.isArray(value) ? value.filter((entry): entry is string => typeof entry === 'string') : []
+  const trustSignals = toStringList(rawData?.trust_signals)
+  const conversionObstacles = toStringList(rawData?.conversion_obstacles)
+  const priorityActions = toStringList(rawData?.priority_actions)
+  const classificationSummary = rawData && typeof rawData === 'object' && rawData.blog_classification_summary
+    ? rawData.blog_classification_summary as Record<string, unknown>
+    : null
 
   type CompetitorAnalysisRow = {
     gaps: string[] | null
@@ -118,6 +107,12 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         competitorAnalyses={competitorAnalyses ?? []}
         interviewerPath={`/projects/${id}/interviewer`}
         postFrequency={postFrequency}
+        blogMetrics={blogMetrics}
+        siteEvaluation={siteEvaluation}
+        trustSignals={trustSignals}
+        conversionObstacles={conversionObstacles}
+        priorityActions={priorityActions}
+        classificationSummary={classificationSummary}
       />
     </div>
   )

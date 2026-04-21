@@ -4,7 +4,10 @@ import NewProjectForm from './NewProjectForm'
 
 function getErrorMessage(error: string) {
   if (error === 'name') return '取材先名を入力してから、もう一度登録してください。'
-  if (error === 'url') return '自社HP URL を入力してから、もう一度登録してください。'
+  if (error === 'url') return '自社HPのURLを入力してから、もう一度登録してください。'
+  if (error === 'competitor_limit') return '参考HPは最大3件までです。件数を減らしてから、もう一度登録してください。'
+  if (error === 'competitor_self') return '自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。'
+  if (error === 'plan_limit') return '現在のプランで登録できる取材先の上限に達しています。追加したい場合はお問い合わせください。'
   if (error === '1') return '登録中に問題が起きました。少し待ってから、もう一度お試しください。'
   return ''
 }
@@ -36,7 +39,7 @@ export default async function NewProjectPage({
             )}
             name={claus?.name ?? 'インタビュアー'}
             title="まずは、取材先のホームページを教えてください。"
-            description="取材先を登録しながら、似た競合候補もここで一緒に選べます。"
+            description="取材先を登録しながら、参考にしたい競合候補もここで一緒に選べます。"
             tone="soft"
           />
         </div>

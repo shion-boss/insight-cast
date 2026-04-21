@@ -26,7 +26,33 @@ export async function POST(
     return NextResponse.json({ status: 'report_ready' })
   }
 
-  if (force) {
+  // fetch_failed は force なしで再試行可能にする（audit が存在しないため削除不要）
+  const isFetchFailed = project.status === 'fetch_failed'
+
+  // force 再調査の月1回制限（analyzing に書く前に弾く）
+  if (force && !isFetchFailed) {
+    const { data: auditRow } = await supabase
+      .from('hp_audits')
+      .select('raw_data')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+
+    const analyzedAt = typeof (auditRow?.raw_data as Record<string, unknown> | null)?.analyzed_at === 'string'
+      ? new Date((auditRow!.raw_data as Record<string, unknown>).analyzed_at as string)
+      : null
+
+    if (analyzedAt && process.env.NODE_ENV !== 'development') {
+      const daysSinceLast = (Date.now() - analyzedAt.getTime()) / (1000 * 60 * 60 * 24)
+      if (daysSinceLast < 30) {
+        const nextAvailableAt = new Date(analyzedAt.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        return NextResponse.json({ error: 'reanalysis_too_soon', next_available_at: nextAvailableAt }, { status: 429 })
+      }
+    }
+  }
+
+  if (force && !isFetchFailed) {
     const { error: deleteAuditError } = await supabase
       .from('hp_audits')
       .delete()

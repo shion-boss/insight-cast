@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 }
 
 const STEP_SUMMARY = [
-  { step: 'STEP 01', title: 'HPを分析する', body: 'URL入力だけ。AI が現状と競合を即座に調査。' },
-  { step: 'STEP 02', title: 'AIが取材する', body: 'キャストがチャットで丁寧に取材。話すだけで OK。' },
-  { step: 'STEP 03', title: '記事素材を届ける', body: '取材メモから記事の材料を自動生成。' },
+  { step: 'STEP 01', title: 'HPを分析する', body: 'URLを入れるだけで、AIが現状と競合の情報を整理。' },
+  { step: 'STEP 02', title: 'AIが取材する', body: 'キャストがチャットで質問。ふだん通りに答えるだけ。' },
+  { step: 'STEP 03', title: '記事素材を届ける', body: '取材メモをもとに、記事に使える材料を整えます。' },
 ] as const
 
 const STEP_DETAILS = [
@@ -40,9 +40,9 @@ const STEP_DETAILS = [
     title: '記事素材として届ける',
     paragraphs: [
       '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が自動生成されます。',
-      '記事のタイプ（インタビュー形式・通常記事）や文字量も選択可能。生成後はコピー・ダウンロードしてすぐに使えます。',
+      '記事のタイプ（インタビュー形式・通常記事）や文字量も選べます。生成後は下書きとして整った状態で受け取れるので、少し手を加えるだけで掲載に進めます。',
     ],
-    badges: ['取材メモ', '記事素材', 'コピー即使用'],
+    badges: ['取材メモ', '記事素材', 'すぐ使える下書き'],
     visual: 'article' as const,
   },
 ] as const
@@ -141,7 +141,7 @@ export default function ServicePage() {
               AIが取材して、<br />記事の素材を届けるまで
             </h1>
             <p className="text-base text-[var(--text2)] mt-4 leading-relaxed mx-auto" style={{ maxWidth: 520 }}>
-              Insight Castは、HP分析・競合調査・AI取材・記事素材化の流れをひとつのサービスとして提供します。
+              Insight Cast では、HP分析からインタビュー、記事の土台づくりまでをひとつの流れで進められます。
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <ButtonLink href="/auth/signup" className="px-7 py-4">無料で始める →</ButtonLink>

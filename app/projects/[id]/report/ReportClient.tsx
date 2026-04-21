@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AnalysisLoadingScene } from '@/components/loading-scenes'
-import { CharacterAvatar, InterviewerSpeech, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, getButtonClass, getPanelClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 type Audit = {
@@ -23,6 +23,18 @@ type CompetitorAnalysis = {
 }
 
 type PostFrequencyEntry = { month: string; count: number }
+type SiteEvaluationEntry = { key: string; label: string; score: number; summary: string }
+type BlogMetrics = {
+  trackedPostCount: number
+  datedPostCount: number
+  latestPublishedAt: string | null
+  daysSinceLatestPost: number | null
+  postsLast30Days: number
+  postsLast90Days: number
+  averagePostsPerMonth: number | null
+  freshnessStatus: 'fresh' | 'watch' | 'stale' | 'unknown'
+}
+type ClassificationSummaryEntry = { label: string; count: number }
 
 type Props = {
   projectId:          string
@@ -31,15 +43,47 @@ type Props = {
   competitorAnalyses: CompetitorAnalysis[]
   interviewerPath:    string
   postFrequency:      PostFrequencyEntry[]
+  blogMetrics:        BlogMetrics | null
+  siteEvaluation:     SiteEvaluationEntry[]
+  trustSignals:       string[]
+  conversionObstacles:string[]
+  priorityActions:    string[]
+  classificationSummary: { byEffect?: Array<{ label: string; count: number }> } | null
 }
 
 export default function ReportClient({
-  projectId, initialStatus, audit, competitorAnalyses, interviewerPath, postFrequency,
+  projectId,
+  initialStatus,
+  audit,
+  competitorAnalyses,
+  interviewerPath,
+  postFrequency,
+  blogMetrics,
+  siteEvaluation,
+  trustSignals,
+  conversionObstacles,
+  priorityActions,
+  classificationSummary,
 }: Props) {
   const [analysisError, setAnalysisError] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const router = useRouter()
   const [status, setStatus] = useState(initialStatus)
+  const effectSummary: ClassificationSummaryEntry[] = classificationSummary?.byEffect ?? []
+
+  function getFreshnessBadge() {
+    if (!blogMetrics) return null
+    switch (blogMetrics.freshnessStatus) {
+      case 'fresh':
+        return { label: '更新感あり', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+      case 'watch':
+        return { label: '少し静か', className: 'border-amber-200 bg-amber-50 text-amber-700' }
+      case 'stale':
+        return { label: '更新停滞', className: 'border-rose-200 bg-rose-50 text-rose-700' }
+      default:
+        return { label: '日付推定中', className: 'border-slate-200 bg-slate-50 text-slate-700' }
+    }
+  }
 
   useEffect(() => {
     if (status !== 'analyzing') return
@@ -67,21 +111,22 @@ export default function ReportClient({
 
   if (status === 'analysis_pending') {
     return (
-      <div className="max-w-lg mx-auto px-6 py-16 text-center">
-        <StateCard
-          icon={<span>📝</span>}
+      <div className="max-w-lg mx-auto px-6 py-16 space-y-5">
+        <InterviewerSpeech
+          icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
+          name="クラウス"
           title="まだ調査は始まっていません。"
           description="取材先の管理画面に戻って「調査を開始する」を押すと、バックグラウンドで進みます。"
           tone="soft"
-          action={(
-            <Link
-              href={`/projects/${projectId}`}
-              className={getButtonClass('primary')}
-            >
-              取材先の管理へ戻る
-            </Link>
-          )}
         />
+        <div className="flex justify-center">
+          <Link
+            href={`/projects/${projectId}`}
+            className={getButtonClass('primary')}
+          >
+            取材先の管理へ戻る
+          </Link>
+        </div>
       </div>
     )
   }
@@ -90,29 +135,29 @@ export default function ReportClient({
     return (
       <div className="mx-auto max-w-[560px] px-6 py-16">
         {analysisError ? (
-          <StateCard
-            icon={<span>🦉</span>}
-            title="いまは調査を続けられていません。"
-            description="少し待ってからページを開き直すと、続きから確認できることがあります。"
-            tone="warning"
-            action={(
-              <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                <button
-                  type="button"
-                  onClick={() => window.location.reload()}
-                  className={getButtonClass('primary')}
-                >
-                  もう一度確認する
-                </button>
-                <Link
-                  href={`/projects/${projectId}`}
-                  className={getButtonClass('secondary')}
-                >
-                  取材先の管理へ戻る
-                </Link>
-              </div>
-            )}
-          />
+          <div className="space-y-4">
+            <InterviewerSpeech
+              icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
+              name="クラウス"
+              title="いまは調査を続けられていません。"
+              description="少し待ってからページを開き直すと、続きから確認できることがあります。"
+            />
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className={getButtonClass('primary')}
+              >
+                もう一度確認する
+              </button>
+              <Link
+                href={`/projects/${projectId}`}
+                className={getButtonClass('secondary')}
+              >
+                取材先の管理へ戻る
+              </Link>
+            </div>
+          </div>
         ) : (
           <div className="space-y-4">
             <AnalysisLoadingScene projectName="ホームページと競合を調査中" />
@@ -146,24 +191,27 @@ export default function ReportClient({
 
   if (!audit) {
     return (
-      <div className="max-w-lg mx-auto px-6 py-16 text-center">
-        <StateCard
-          icon={<span>📄</span>}
+      <div className="max-w-lg mx-auto px-6 py-16 space-y-5">
+        <InterviewerSpeech
+          icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
+          name="クラウス"
           title="まだ表示できる調査結果がありません。"
           description="この取材先では、まだ確認できる調査データがありません。取材先の管理画面から必要に応じて調査を開始してください。"
           tone="soft"
-          action={(
-            <Link
-              href={`/projects/${projectId}`}
-              className={getButtonClass('primary')}
-            >
-              取材先の管理へ戻る
-            </Link>
-          )}
         />
+        <div className="flex justify-center">
+          <Link
+            href={`/projects/${projectId}`}
+            className={getButtonClass('primary')}
+          >
+            取材先の管理へ戻る
+          </Link>
+        </div>
       </div>
     )
   }
+
+  const freshnessBadge = getFreshnessBadge()
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
@@ -174,6 +222,52 @@ export default function ReportClient({
         description="インタビュー前の準備として結果をご覧ください。"
       />
 
+      {(siteEvaluation.length > 0 || blogMetrics) && (
+        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-medium text-[var(--text2)]">HPの評価サマリー</h2>
+              <p className="mt-1 text-xs text-[var(--text3)]">深掘り分析と、日々の更新状況をまとめて確認できます。</p>
+            </div>
+            {freshnessBadge && (
+              <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${freshnessBadge.className}`}>
+                {freshnessBadge.label}
+              </span>
+            )}
+          </div>
+
+          {siteEvaluation.length > 0 && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {siteEvaluation.map((entry) => (
+                <div key={entry.key} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <p className="text-sm font-medium text-[var(--text2)]">{entry.label}</p>
+                    <p className="text-lg font-semibold text-[var(--accent)]">{entry.score}<span className="text-xs text-[var(--text3)]">/10</span></p>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--text3)]">{entry.summary}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {blogMetrics && (
+            <div className="grid gap-3 sm:grid-cols-4">
+              {[
+                { label: '直近30日', value: `${blogMetrics.postsLast30Days}件` },
+                { label: '直近90日', value: `${blogMetrics.postsLast90Days}件` },
+                { label: '平均更新', value: blogMetrics.averagePostsPerMonth !== null ? `${blogMetrics.averagePostsPerMonth}/月` : '不明' },
+                { label: '最終更新', value: blogMetrics.daysSinceLatestPost !== null ? `${blogMetrics.daysSinceLatestPost}日前` : '不明' },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
+                  <p className="text-xs text-[var(--text3)]">{item.label}</p>
+                  <p className="mt-1 text-base font-semibold text-[var(--text)]">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
       {/* 投稿頻度グラフ */}
       {postFrequency.length >= 2 && (() => {
         const maxCount = Math.max(...postFrequency.map(e => e.count))
@@ -182,7 +276,7 @@ export default function ReportClient({
           <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
             <div>
               <h2 className="text-sm font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
-              <p className="text-xs text-[var(--text3)] mt-1">URLから確認できた投稿日を月別に集計しています。</p>
+              <p className="text-xs text-[var(--text3)] mt-1">URLやタイトルから推定できた投稿日を月別に集計しています。</p>
             </div>
             <div className={scrollable ? 'overflow-x-auto' : ''}>
               <div
@@ -222,6 +316,67 @@ export default function ReportClient({
           </section>
         )
       })()}
+
+      {(effectSummary.length > 0 || trustSignals.length > 0 || conversionObstacles.length > 0 || priorityActions.length > 0) && (
+        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+          <h2 className="text-sm font-medium text-[var(--text2)]">改善とコンテンツの観点</h2>
+
+          {effectSummary.length > 0 && (
+            <div>
+              <p className="mb-2 text-xs text-[var(--text3)]">既存ブログが担っている効果</p>
+              <div className="flex flex-wrap gap-2">
+                {effectSummary.map((entry) => (
+                  <span
+                    key={entry.label}
+                    className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-3 py-1 text-xs font-medium text-[var(--text2)]"
+                  >
+                    {entry.label} {entry.count}件
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {trustSignals.length > 0 && (
+            <div>
+              <p className="text-xs text-[var(--text3)] mb-2">信頼材料として使えている要素</p>
+              <ul className="space-y-1">
+                {trustSignals.map((item, i) => (
+                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                    <span className="text-emerald-500 flex-shrink-0">●</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {conversionObstacles.length > 0 && (
+            <div>
+              <p className="text-xs text-[var(--text3)] mb-2">問い合わせを止めていそうな要因</p>
+              <ul className="space-y-1">
+                {conversionObstacles.map((item, i) => (
+                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                    <span className="text-amber-500 flex-shrink-0">▲</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {priorityActions.length > 0 && (
+            <div>
+              <p className="text-xs text-[var(--text3)] mb-2">次回改善で優先したいこと</p>
+              <ul className="space-y-1">
+                {priorityActions.map((item, i) => (
+                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                    <span className="text-[var(--accent)] flex-shrink-0">{i + 1}.</span>{item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* 自社HP現状 */}
       <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
@@ -271,10 +426,15 @@ export default function ReportClient({
       {competitorAnalyses.length > 0 && (
         <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
           <h2 className="text-sm font-medium text-[var(--text2)]">競合との比較</h2>
-          {competitorAnalyses.map((ca, i) => (
+          {competitorAnalyses.map((ca, i) => {
+            const hasData = (ca.gaps?.length ?? 0) > 0 || (ca.advantages?.length ?? 0) > 0 || ca.influentialTopics.length > 0
+            return (
             <div key={i} className="space-y-3">
               {ca.competitors?.url && (
                 <p className="text-xs text-[var(--text3)] truncate">{ca.competitors.url}</p>
+              )}
+              {!hasData && (
+                <p className="text-sm text-[var(--text3)]">このサイトのコンテンツを取得できませんでした。</p>
               )}
               {ca.gaps && ca.gaps.length > 0 && (
                 <div>
@@ -314,7 +474,7 @@ export default function ReportClient({
                 </div>
               )}
             </div>
-          ))}
+          )})}
         </section>
       )}
 

@@ -3,6 +3,7 @@ import { buildProjectAnalysisSignature } from '@/lib/analysis/cache'
 type ProjectStatus =
   | 'analysis_pending'
   | 'analyzing'
+  | 'fetch_failed'
   | 'report_ready'
   | 'interview_ready'
   | 'interview_done'
@@ -65,10 +66,14 @@ export function isProjectAnalysisReady(input: {
   }
 }
 
+const LOCKED_STATUSES = ['interview_ready', 'interview_done', 'article_ready', 'fetch_failed'] as const
+
 export function resolveProjectAnalysisStatus(
   status: ProjectStatus | string,
   isReady: boolean,
 ) {
+  // インタビュー以降のステータスと fetch_failed はダウングレードしない
+  if ((LOCKED_STATUSES as readonly string[]).includes(status)) return status
   if (status === 'report_ready' && !isReady) return 'analysis_pending'
   if (status === 'analysis_pending' && isReady) return 'report_ready'
   return status

@@ -15,6 +15,8 @@ type Props = {
   className: string
   compact?: boolean
   force?: boolean
+  nextAvailableAt?: string | null
+  onStarted?: () => void
 }
 
 export default function StartAnalysisButton({
@@ -23,9 +25,16 @@ export default function StartAnalysisButton({
   className,
   compact = false,
   force = false,
+  nextAvailableAt = null,
+  onStarted,
 }: Props) {
   const router = useRouter()
   const [starting, setStarting] = useState(false)
+
+  const isLimited = force && nextAvailableAt !== null && new Date(nextAvailableAt) > new Date()
+  const nextAvailableLabel = isLimited
+    ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(nextAvailableAt!))
+    : null
 
   async function startAnalysis() {
     if (starting) return
@@ -59,6 +68,7 @@ export default function StartAnalysisButton({
         return
       }
 
+      onStarted?.()
       trackPendingProjectAnalysis(projectId, projectName)
       showToast({
         id: `analysis-started-${projectId}`,
@@ -69,7 +79,21 @@ export default function StartAnalysisButton({
       })
 
       void fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
-        .then((response) => {
+        .then(async (response) => {
+          if (response.status === 429) {
+            const json = await response.json().catch(() => null)
+            clearPendingProjectAnalysis(projectId)
+            showToast({
+              id: `analysis-limited-${projectId}`,
+              title: '再調査は月1回までです',
+              description: json?.next_available_at
+                ? `次回は ${new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(json.next_available_at))} 以降に調査できます。`
+                : '前回の調査から30日経過後に再調査できます。',
+              tone: 'warning',
+            })
+            router.refresh()
+            return
+          }
           if (!response.ok) {
             throw new Error('failed to analyze')
           }
@@ -95,6 +119,22 @@ export default function StartAnalysisButton({
     } finally {
       setStarting(false)
     }
+  }
+
+  if (isLimited) {
+    return (
+      <button
+        type="button"
+        disabled
+        className={className}
+        title={`次回の再調査は ${nextAvailableLabel} 以降に可能です`}
+      >
+        <span className="opacity-50">
+          {compact ? '再調査する' : 'この取材先を再調査する'}
+        </span>
+        <span className="ml-2 text-[11px] opacity-60">{nextAvailableLabel}〜</span>
+      </button>
+    )
   }
 
   return (

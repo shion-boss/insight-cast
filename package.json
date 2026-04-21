@@ -17,6 +17,7 @@
     "@anthropic-ai/sdk": "^0.90.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
+    "@vercel/functions": "^3.4.3",
     "next": "15.5.15",
     "react": "19.1.0",
     "react-dom": "19.1.0"

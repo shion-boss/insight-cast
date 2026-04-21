@@ -8,7 +8,7 @@ import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public
 
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',
-  description: '6人のAI取材班それぞれの得意分野・入力方式・無料/有料の違いを紹介します。',
+  description: '6人のAIキャストそれぞれの得意分野・入力方式・無料/有料の違いを紹介します。',
 }
 
 const freeCasts = CHARACTERS.filter((c) => c.available)
@@ -66,10 +66,10 @@ export default function CastPage() {
               <div className="flex-1">
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
-                  取材を担当する<br />キャストたち
+                  あなたの話を聞く<br />キャストたち
                 </h1>
                 <p className="text-base text-[var(--text2)] mt-4 leading-relaxed">
-                  6名のキャストが、それぞれ異なる切り口でインタビューを行います。得意分野に合わせて選んでください。
+                  6名のキャストが、それぞれ違う角度から話を聞きます。いま深めたいテーマに合わせて選べます。
                 </p>
               </div>
               <div className="w-full max-w-[320px] flex-shrink-0 self-center lg:self-auto">
@@ -190,7 +190,7 @@ export default function CastPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               追加キャスト（近日公開）
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">Proプランで利用可能になる予定のキャストです。</p>
+            <p className="text-base text-[var(--text2)] mt-3">今後、追加購入で選べるようになる予定のキャストです。</p>
             <div className="mt-10 space-y-4">
               {addonCasts.map((char) => {
                 const detail = castDetails[char.id]

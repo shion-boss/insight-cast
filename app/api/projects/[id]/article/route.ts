@@ -5,7 +5,7 @@ import { getCharacter } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest } from 'next/server'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 60_000 })
 
 const VOLUME_MAP = { short: '600〜800', medium: '1200〜1500', long: '2000〜2500' }
 const STYLE_MAP  = { desu: 'ですます体', 'de-aru': 'である体', 'da-na': 'だ・な体（口語的）' }
@@ -20,7 +20,7 @@ async function saveArticle(input: {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
   const title = titleMatch?.[1]?.trim() ?? '記事'
 
-  const { data: savedArticle } = await input.supabase
+  const { data: savedArticle, error: articleInsertError } = await input.supabase
     .from('articles')
     .insert({
       project_id: input.projectId,
@@ -31,6 +31,10 @@ async function saveArticle(input: {
     })
     .select('id')
     .single()
+
+  if (articleInsertError) {
+    console.error('[article/saveArticle] failed to insert article:', articleInsertError.message)
+  }
 
   await input.supabase.from('projects').update({ status: 'article_ready' }).eq('id', input.projectId)
   revalidatePath('/dashboard')
@@ -214,19 +218,33 @@ ${themeInstruction}${internalLinkInstruction}
 - Markdown形式で出力${polishInstruction}`
   }
 
-  const stream = await anthropic.messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
-    messages: [{ role: 'user', content: prompt }],
-  })
+  let stream: Awaited<ReturnType<typeof anthropic.messages.stream>>
+  try {
+    stream = await anthropic.messages.stream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }],
+    })
+  } catch (err) {
+    const isTimeout = err instanceof Error && (err.message.includes('timeout') || err.constructor.name === 'APIConnectionTimeoutError')
+    console.error('[article] Anthropic API error:', err)
+    return Response.json(
+      { code: isTimeout ? 'TIMEOUT' : 'AI_ERROR', message: 'もう一度お試しください。' },
+      { status: 503 },
+    )
+  }
 
   if (background) {
     let fullText = ''
-
-    for await (const chunk of stream) {
-      if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-        fullText += chunk.delta.text
+    try {
+      for await (const chunk of stream) {
+        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+          fullText += chunk.delta.text
+        }
       }
+    } catch (err) {
+      console.error('[article] background stream error:', err)
+      return Response.json({ code: 'STREAM_ERROR', message: 'もう一度お試しください。' }, { status: 503 })
     }
 
     const savedArticle = await saveArticle({
@@ -243,11 +261,17 @@ ${themeInstruction}${internalLinkInstruction}
   let fullText = ''
   const readable = new ReadableStream({
     async start(controller) {
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-          fullText += chunk.delta.text
-          controller.enqueue(new TextEncoder().encode(chunk.delta.text))
+      try {
+        for await (const chunk of stream) {
+          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+            fullText += chunk.delta.text
+            controller.enqueue(new TextEncoder().encode(chunk.delta.text))
+          }
         }
+      } catch (err) {
+        console.error('[article] stream error:', err)
+        controller.error(err)
+        return
       }
       await saveArticle({
         supabase,

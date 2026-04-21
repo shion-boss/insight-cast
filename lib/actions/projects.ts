@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { rememberProjectCompetitorContext } from '@/lib/project-competitor-context'
+import { getPlanLimits, type PlanKey } from '@/lib/plans'
 import { redirect } from 'next/navigation'
 
 function normalizeUrl(raw: string): string {
@@ -9,6 +10,30 @@ function normalizeUrl(raw: string): string {
   if (!trimmed) return trimmed
   if (/^https?:\/\//i.test(trimmed)) return trimmed
   return 'https://' + trimmed
+}
+
+function normalizeComparableUrl(raw: string): string {
+  const normalized = normalizeUrl(raw)
+  if (!normalized) return ''
+
+  try {
+    const url = new URL(normalized)
+    url.hash = ''
+    url.search = ''
+    if (url.pathname !== '/') {
+      url.pathname = url.pathname.replace(/\/+$/, '')
+    }
+    return url.toString().replace(/\/+$/, '').toLowerCase()
+  } catch {
+    return normalized.replace(/\/+$/, '').toLowerCase()
+  }
+}
+
+function collectUniqueUrls(values: string[]) {
+  return values
+    .map(normalizeUrl)
+    .filter(Boolean)
+    .filter((value, index, array) => array.indexOf(value) === index)
 }
 
 export async function createProject(formData: FormData) {
@@ -20,15 +45,39 @@ export async function createProject(formData: FormData) {
   const name   = (formData.get('name') as string)?.trim() || null
   const industryMemo = (formData.get('industry_memo') as string)?.trim() || null
   const location = (formData.get('location') as string)?.trim() || null
-  const competitorUrls = formData
+  const rawCompetitorUrls = formData
     .getAll('competitor_urls')
-    .map((value) => normalizeUrl(String(value)))
-    .filter(Boolean)
-    .filter((value, index, array) => array.indexOf(value) === index)
-    .slice(0, 3)
+    .map((value) => String(value))
 
   if (!name) redirect('/projects/new?error=name')
   if (!hp_url) redirect('/projects/new?error=url')
+
+  // プラン上限チェック
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single()
+
+  const planLimits = getPlanLimits((profile?.plan ?? 'individual') as PlanKey)
+  const competitorUrls = collectUniqueUrls(rawCompetitorUrls)
+
+  if (competitorUrls.length > planLimits.maxCompetitorsPerProject) {
+    redirect('/projects/new?error=competitor_limit')
+  }
+
+  if (competitorUrls.some((url) => normalizeComparableUrl(url) === normalizeComparableUrl(hp_url))) {
+    redirect('/projects/new?error=competitor_self')
+  }
+
+  const { count: projectCount } = await supabase
+    .from('projects')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  if ((projectCount ?? 0) >= planLimits.maxProjects) {
+    redirect('/projects/new?error=plan_limit')
+  }
 
   const { data, error } = await supabase
     .from('projects')
@@ -84,11 +133,23 @@ export async function saveCompetitors(
 
   if (!project) return { error: 'auth' }
 
-  const valid = input.urls
-    .map(normalizeUrl)
-    .filter(Boolean)
-    .filter((value, index, array) => array.indexOf(value) === index)
-    .slice(0, 3)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  const planLimits = getPlanLimits((profile?.plan ?? 'individual') as PlanKey)
+  const valid = collectUniqueUrls(input.urls)
+
+  if (valid.length > planLimits.maxCompetitorsPerProject) {
+    return { error: 'competitor_limit' }
+  }
+
+  if (valid.some((url) => normalizeComparableUrl(url) === normalizeComparableUrl(project.hp_url))) {
+    return { error: 'competitor_self' }
+  }
+
   const industryMemo = input.industryMemo?.trim() || null
   const location = input.location?.trim() || null
 

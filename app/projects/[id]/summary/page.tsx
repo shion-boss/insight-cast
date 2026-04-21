@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
 import { hasPendingInterviewSummary, trackPendingInterviewSummary } from '@/components/project-analysis-notifier'
-import { CharacterAvatar, InterviewerSpeech, PageHeader, StateCard, getButtonClass } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader, getButtonClass } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
 
 type SummaryData = {
@@ -131,11 +131,13 @@ export default function SummaryPage() {
   const char = data ? getCharacter(data.interviewerType) : null
 
   if (loading) {
+    const mintChar = getCharacter('mint')
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] px-6">
         <div className="w-full max-w-md">
-          <StateCard
-            icon="📝"
+          <InterviewerSpeech
+            icon={<CharacterAvatar src={mintChar?.icon48} alt="ミントのアイコン" emoji={mintChar?.emoji} size={48} />}
+            name="ミント"
             title="取材メモの状態を確認しています"
             description="保存済みのメモがあればすぐ開きます。"
             tone="soft"
@@ -159,26 +161,25 @@ export default function SummaryPage() {
             description="AIで整理しているので、このページで待たなくて大丈夫です。完了したらお知らせします。"
             tone="soft"
           />
-          <div className="mt-6">
-            <StateCard
-              icon="⏳"
+          <div className="mt-6 space-y-4">
+            <InterviewerSpeech
+              icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={48} />}
+              name={mint?.name ?? 'ミント'}
               title="バックグラウンドで処理中です"
               description="数分かかることがあります。通知が来たら、取材メモや記事づくりに進めます。"
-              action={(
-                <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                  <button
-                    type="button"
-                    onClick={() => window.location.reload()}
-                    className={getButtonClass('primary')}
-                  >
-                    完了を確認する
-                  </button>
-                  <Link href={backHref} className={getButtonClass('secondary')}>
-                    {backLabel}
-                  </Link>
-                </div>
-              )}
             />
+            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className={getButtonClass('primary')}
+              >
+                完了を確認する
+              </button>
+              <Link href={backHref} className={getButtonClass('secondary')}>
+                {backLabel}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -200,22 +201,20 @@ export default function SummaryPage() {
         </nav>
 
         {loadError && (
-          <div className="mb-6">
-            <StateCard
-              icon="📝"
+          <div className="mb-6 space-y-4">
+            <InterviewerSpeech
+              icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? 'ミント'}のアイコン`} emoji={char?.emoji ?? '📝'} size={48} />}
+              name={char?.name ?? 'ミント'}
               title="取材メモをまだ開けません。"
-              description={loadError}
-              tone="warning"
-              action={(
-                <button
-                  type="button"
-                  onClick={() => window.location.reload()}
-                  className={getButtonClass('primary')}
-                >
-                  もう一度開く
-                </button>
-              )}
+              description={loadError ?? ''}
             />
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className={getButtonClass('primary')}
+            >
+              もう一度開く
+            </button>
           </div>
         )}
 

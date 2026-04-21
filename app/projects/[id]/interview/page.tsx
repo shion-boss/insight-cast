@@ -251,8 +251,8 @@ export default function InterviewPage() {
       <div className="h-screen flex items-center justify-center bg-[var(--bg)] px-6">
         <div className="w-full max-w-[520px] space-y-4">
           <InterviewerSpeech
-            icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? '取材班'}のアイコン`} emoji={char?.emoji} size={48} />}
-            name={char?.name ?? '取材班'}
+            icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? 'インタビュアー'}のアイコン`} emoji={char?.emoji} size={48} />}
+            name={char?.name ?? 'インタビュアー'}
             title="取材画面を開いています"
             description="会話履歴と設定を読み込んでいます。通常はすぐに始まります。"
             tone="soft"
@@ -352,7 +352,7 @@ export default function InterviewPage() {
             />
             <div className="bg-[var(--surface)] border border-[var(--border)] px-4 py-3 rounded-2xl rounded-tl-sm">
               <span className="text-[var(--text2)] text-sm whitespace-pre-wrap leading-[1.75]">
-                {streamingMessage || '考えをまとめています...'}
+                {streamingMessage || '少し待ってください...'}
               </span>
             </div>
           </div>

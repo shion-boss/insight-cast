@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
-import { classifyBlogPosts } from '@/lib/content-map'
+import { buildClassificationSummary } from '@/lib/content-map'
+import { classifyBlogPosts } from '@/lib/content-map.server'
 
 export async function POST(
   _req: NextRequest,
@@ -44,6 +45,7 @@ export async function POST(
     ...(rawData ?? {}),
     blog_classifications: classifications,
     blog_classifications_at: new Date().toISOString(),
+    blog_classification_summary: buildClassificationSummary(classifications),
   }
 
   await supabase

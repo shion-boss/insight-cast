@@ -79,7 +79,7 @@ const PLANS = [
 const FAQS = [
   { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を月2回ご利用いただけます。取材メモと記事素材の生成まで無料で体験できます。' },
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
-  { q: '届いた記事素材はそのまま使えますか？', a: 'そのままホームページやブログに貼って使えます。少し手を加えるとより自然な文体になりますが、時間がなければそのままでも十分です。' },
+  { q: '届いた記事素材はそのまま使えますか？', a: 'ホームページやブログに載せるための下書きとして、そのまま活用できます。少し整えるとより自然になりますが、たたき台としては十分に使えます。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種の専門知識を背景に取材します。専門用語を使わずに話していただければ、価値を分かりやすく言語化します。' },
   { q: '途中でキャンセルできますか？', a: '有料プランは月次のサブスクリプションです。いつでもキャンセル可能で、翌月から課金は発生しません。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
@@ -141,7 +141,7 @@ export default async function LandingPage() {
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.14)]">
                   <Image
                     src={sceneCastTeam}
-                    alt="Insight Castの取材班6名が集合している様子"
+                    alt="Insight CastのAIキャスト6名が集合している様子"
                     width={520}
                     height={520}
                     className="w-full h-auto object-cover"
@@ -150,7 +150,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
                   <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
-                  <div className="text-[12px] font-bold text-[var(--text)]">取材班、全員集合</div>
+                  <div className="text-[12px] font-bold text-[var(--text)]">AIキャストがそろっています</div>
                 </div>
                 <div className="absolute -top-3 -right-3 bg-[var(--teal-l)] border border-[var(--teal)]/30 rounded-[12px] px-3.5 py-2 shadow-[0_4px_16px_rgba(0,0,0,.08)]">
                   <div className="text-[11px] font-bold text-[var(--teal)]">6名のキャスト</div>
@@ -267,20 +267,20 @@ export default async function LandingPage() {
             <div className="grid items-center gap-10 lg:grid-cols-[520px_minmax(0,1fr)] lg:gap-16">
               <div className="relative">
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
-                  <Image src={scenePlanning} alt="取材班が机で取材の準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" />
+                  <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" />
                 </div>
                 <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
                   <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
-                  <div className="text-[12px] font-bold text-[var(--text)]">今日の取材準備中</div>
+                  <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
                 </div>
               </div>
               <div>
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 02 — Interview</div>
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
-                  今日も取材班が、<br />あなたの話を聞きにいきます。
+                  今日もAIキャストが、<br />あなたの話を聞きます。
                 </h2>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
-                  動物モチーフのインタビュアーたちが、毎回真剣に準備してあなたのもとへ向かいます。専門知識も、整った言葉も必要ありません。ただ話してください。
+                  動物モチーフのインタビュアーたちが、毎回あなたの話を聞く準備を整えます。専門知識も、整った言葉も必要ありません。ふだん通りに話すだけで大丈夫です。
                 </p>
                 <ul className="mt-7 space-y-3.5">
                   {[
@@ -465,8 +465,8 @@ export default async function LandingPage() {
                 <thead>
                   <tr>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[38%]"></th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">ChatGPTで自分で書く</th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">社員・自分で書く</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">生成AIで下書きする</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社内で書く</th>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
                   </tr>
                 </thead>

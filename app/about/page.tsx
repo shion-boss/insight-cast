@@ -6,7 +6,7 @@ import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public
 
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
-  description: 'Insight Cast の考え方、AI取材班の役割、ホームページ改善につながるチームの進め方を紹介します。',
+  description: 'Insight Cast の考え方、AIキャストの役割、ホームページ改善につながるチームの進め方を紹介します。',
 }
 
 const PRINCIPLES = [
@@ -40,7 +40,7 @@ export default function AboutPage() {
                   一次情報に、<br />価値を宿らせる
                 </h1>
                 <p className="text-base text-[var(--text2)] mt-4 leading-relaxed">
-                  私たちは、小規模事業者が自分の言葉で情報を発信できる世界を目指しています。AIが取材し、あなたの話から言葉の資産を生み出す。それがInsight Castです。
+                  私たちは、小規模事業者が自分の言葉で発信を続けられる世界を目指しています。AIキャストが話を聞き、あなたの経験から発信の土台を育てていく。それが Insight Cast です。
                 </p>
               </div>
               <div>
@@ -74,7 +74,7 @@ export default function AboutPage() {
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Mission</div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.6] mt-5" style={{ fontSize: 'clamp(22px,3vw,34px)' }}>
               <span className="text-[var(--accent)]">一次情報こそが、</span>小規模事業者の唯一の差別化である。<br />
-              AIが生成した文章に価値はなく、<br />
+              価値の中心は、AIが整えた文章そのものではなく、<br />
               取材で引き出した<span className="text-[var(--accent)]">事実と体験</span>に価値がある。
             </div>
             <div className="w-10 h-0.5 bg-[var(--accent)] mt-8" />
@@ -127,7 +127,7 @@ export default function AboutPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Our Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              取材チームを紹介します
+              AIキャストを紹介します
             </h2>
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
               {allCasts.map((char, i) => (

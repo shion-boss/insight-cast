@@ -7,10 +7,6 @@ import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
-import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
-import { getStoredClassifications } from '@/lib/content-map'
-import { ContentMapPanel } from './_components/content-map-panel'
-import { AnalyticsSection, type ThemeDataPoint, type MonthlyPoint, type HeatmapEntry } from './_components/analytics-section'
 
 type Project = {
   id: string
@@ -37,7 +33,15 @@ type ArticleRow = {
   created_at: string
 }
 
-const THEME_COLORS = ['#c2722a', '#0d9488', '#7c3aed', '#d97706', '#16a34a', '#2563eb', '#db2777', '#059669']
+function getProjectContinueHref(project: { id: string; status: string | null }) {
+  switch (project.status) {
+    case 'analyzing':
+    case 'report_ready':
+      return `/projects/${project.id}/report`
+    default:
+      return `/projects/${project.id}`
+  }
+}
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
@@ -60,97 +64,6 @@ function monthKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
 }
 
-function buildMonthlyArticlePoints(articles: ArticleRow[]): MonthlyPoint[] {
-  const now = new Date()
-  const points: MonthlyPoint[] = []
-  for (let i = 5; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const key = monthKey(d)
-    const label = new Intl.DateTimeFormat('ja-JP', { month: 'short' }).format(d)
-    const n = articles.filter((a) => a.created_at.slice(0, 7) === key).length
-    points.push({ m: label, n })
-  }
-  return points
-}
-
-function toLocalDateKey(isoString: string): string {
-  // Use local date to avoid UTC-vs-JST off-by-one near midnight
-  const d = new Date(isoString)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
-
-function buildHeatmapEntries(articles: ArticleRow[]): HeatmapEntry[] {
-  const countMap = new Map<string, number>()
-  for (const a of articles) {
-    const key = toLocalDateKey(a.created_at)
-    countMap.set(key, (countMap.get(key) ?? 0) + 1)
-  }
-  return [...countMap.entries()].map(([date, count]) => ({ date, count }))
-}
-
-function computeContinuityScore(articles: ArticleRow[]): number {
-  // Split past 12 calendar weeks (Sun–Sat) and count weeks with ≥1 article.
-  // w=0 = current week (Sun of this week to now), w=11 = oldest week.
-  const now = new Date()
-  const thisSunday = new Date(now)
-  thisSunday.setDate(now.getDate() - now.getDay()) // rewind to Sunday
-  thisSunday.setHours(0, 0, 0, 0)
-
-  let activeWeeks = 0
-  for (let w = 0; w < 12; w++) {
-    const weekStart = new Date(thisSunday)
-    weekStart.setDate(thisSunday.getDate() - w * 7)
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekStart.getDate() + 7)
-
-    const hasArticle = articles.some((a) => {
-      const d = new Date(a.created_at)
-      return d >= weekStart && d < weekEnd
-    })
-    if (hasArticle) activeWeeks++
-  }
-  return Math.min(100, Math.round((activeWeeks / 12) * 100))
-}
-
-function buildThemeDistribution(interviews: Interview[]): ThemeDataPoint[] {
-  const counts = new Map<string, number>()
-  for (const iv of interviews) {
-    for (const theme of iv.themes ?? []) {
-      counts.set(theme, (counts.get(theme) ?? 0) + 1)
-    }
-  }
-  return [...counts.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 7)
-    .map(([label, count], i) => ({ label, count, color: THEME_COLORS[i % THEME_COLORS.length] }))
-}
-
-function extractAuditInsight(
-  projectId: string,
-  projectName: string,
-  rawData: Record<string, unknown> | null,
-) {
-  if (!rawData) return null
-  const toStringArray = (v: unknown): string[] =>
-    Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []
-  const strengths = toStringArray(rawData.strengths)
-  const gaps = toStringArray(rawData.gaps)
-  const suggestedThemes = toStringArray(rawData.suggested_themes)
-  const blogPosts = getStoredSiteBlogPosts(rawData)
-  if (strengths.length === 0 && gaps.length === 0 && suggestedThemes.length === 0) return null
-  return {
-    projectId,
-    projectName,
-    strengths,
-    gaps,
-    suggestedThemes,
-    blogPostCount: blogPosts.length,
-    analyzedAt: typeof rawData.analyzed_at === 'string' ? rawData.analyzed_at : null,
-  }
-}
 
 export default async function DashboardPage() {
   let supabase
@@ -164,6 +77,7 @@ export default async function DashboardPage() {
     redirect('/')
   }
 
+  if (!supabase) redirect('/')
   if (!user) redirect('/')
 
   const { data: profile } = await supabase
@@ -277,43 +191,7 @@ export default async function DashboardPage() {
   const lastMonthProjectCount = projectList.filter((p) => p.created_at.slice(0, 7) === lastMonthKey).length
   const projectDelta = thisMonthProjects - lastMonthProjectCount
 
-  // Analytics data
-  const themeDistribution = buildThemeDistribution(interviews)
-  const monthlyArticles = buildMonthlyArticlePoints(allArticles)
-  const heatmapData = buildHeatmapEntries(allArticles)
-  const continuityScore = computeContinuityScore(allArticles)
-
-  // HP analysis insight
-  const auditInsight = (() => {
-    for (const p of projectList) {
-      const row = (auditRows ?? []).find((r) => r.project_id === p.id)
-      if (!row?.raw_data) continue
-      const insight = extractAuditInsight(p.id, p.name || p.hp_url, row.raw_data as Record<string, unknown>)
-      if (insight) return insight
-    }
-    return null
-  })()
-
-  // Content map
-  const contentMapData = (() => {
-    for (const p of projectList) {
-      const row = (auditRows ?? []).find((r) => r.project_id === p.id)
-      if (!row?.raw_data) continue
-      const rawData = row.raw_data as Record<string, unknown>
-      const blogPosts = getStoredSiteBlogPosts(rawData)
-      if (blogPosts.length === 0) continue
-      return {
-        projectId: p.id,
-        projectName: p.name || p.hp_url,
-        blogPostCount: blogPosts.length,
-        classifications: getStoredClassifications(rawData),
-      }
-    }
-    return null
-  })()
-
   const mint = getCharacter('mint')
-  const claus = getCharacter('claus')
   const nextProject = projectList[0] ?? null
 
   const deltaLabel = (n: number) =>
@@ -345,19 +223,9 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div className="flex items-center gap-4 flex-shrink-0">
-          {continuityScore > 0 && (
-            <div className="text-right hidden lg:block">
-              <div className="text-[11px] text-[var(--text3)] mb-1">継続スコア</div>
-              <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold" style={{ color: 'var(--accent)' }}>
-                {continuityScore}
-                <span className="text-[12px] font-normal text-[var(--text3)]"> / 100</span>
-              </div>
-            </div>
-          )}
           <Link
             href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-            className="text-[13px] font-semibold text-white px-4 py-2 rounded-[var(--r-sm)] transition-colors"
-            style={{ background: 'var(--accent)' }}
+            className={getButtonClass('primary', 'text-[13px] px-4 py-2')}
           >
             今すぐ取材する →
           </Link>
@@ -365,12 +233,11 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-2 gap-4 mb-6 lg:grid-cols-4">
+      <div className="grid grid-cols-3 gap-4 mb-6">
         {[
           { n: projectList.length,  l: '取材先',      delta: deltaLabel(projectDelta) },
           { n: interviews.length,   l: '完了した取材', delta: deltaLabel(interviewDelta) },
           { n: totalArticles,       l: '記事素材',    delta: deltaLabel(articleDelta) },
-          { n: continuityScore,     l: '継続スコア',   delta: '目標: 80以上' },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
             <div className="font-[family-name:var(--font-noto-serif-jp)] text-[34px] font-bold text-[var(--text)] leading-none">{stat.n}</div>
@@ -402,15 +269,6 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-6">
-
-          {/* ── Analytics section ── */}
-          <AnalyticsSection
-            themeDistribution={themeDistribution}
-            monthlyArticles={monthlyArticles}
-            heatmapData={heatmapData}
-            continuityScore={continuityScore}
-            nextProjectId={nextProject?.id ?? null}
-          />
 
           {/* ── Quick actions ── */}
           <div className="grid grid-cols-3 gap-3">
@@ -455,7 +313,7 @@ export default async function DashboardPage() {
                   return (
                     <Link
                       key={project.id}
-                      href={`/projects/${project.id}`}
+                      href={getProjectContinueHref(project)}
                       className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
                     >
                       <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-[20px] flex-shrink-0">🏢</div>
@@ -541,87 +399,6 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
-
-          {/* ── HP Analysis Insight ── */}
-          {auditInsight && (
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-7">
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">HPの現状分析</h2>
-                  <p className="text-[12px] text-[var(--text3)] mt-0.5">
-                    {auditInsight.projectName}
-                    {auditInsight.analyzedAt && <> · 分析日: {formatDate(auditInsight.analyzedAt)}</>}
-                  </p>
-                </div>
-                <Link href={`/projects/${auditInsight.projectId}/report`} className="text-[13px] text-[var(--accent)] font-semibold hover:underline">
-                  詳細レポート →
-                </Link>
-              </div>
-              <div className="grid gap-5" style={{ gridTemplateColumns: '1fr 1fr' }}>
-                {auditInsight.strengths.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0" style={{ background: 'var(--teal-l)', color: 'var(--teal)' }}>✓</span>
-                      <span className="text-[13px] font-semibold text-[var(--text)]">現在の強み</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {auditInsight.strengths.map((item) => (
-                        <li key={item} className="flex gap-2.5 items-start">
-                          <span className="mt-[3px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--teal)' }} />
-                          <span className="text-[13px] text-[var(--text2)] leading-relaxed">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {auditInsight.gaps.length > 0 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0" style={{ background: '#fff3e0', color: '#e65100' }}>!</span>
-                      <span className="text-[13px] font-semibold text-[var(--text)]">まだ伝わっていないこと</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {auditInsight.gaps.map((item) => (
-                        <li key={item} className="flex gap-2.5 items-start">
-                          <span className="mt-[3px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: '#fb923c' }} />
-                          <span className="text-[13px] text-[var(--text2)] leading-relaxed">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              {auditInsight.suggestedThemes.length > 0 && (
-                <div className="mt-5 pt-5 border-t border-[var(--border)]">
-                  <p className="text-[13px] font-semibold text-[var(--text)] mb-3">取材で深めたいテーマ</p>
-                  <div className="flex flex-wrap gap-2">
-                    {auditInsight.suggestedThemes.map((theme) => (
-                      <span key={theme} className="px-3 py-1 rounded-full text-[12px] font-medium border" style={{ background: 'var(--accent-l)', borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)', color: 'var(--accent)' }}>
-                        {theme}
-                      </span>
-                    ))}
-                  </div>
-                  {auditInsight.blogPostCount > 0 && (
-                    <p className="text-[12px] text-[var(--text3)] mt-3">
-                      既存ブログ記事 {auditInsight.blogPostCount} 件を検出済み — 記事作成時に内部リンクとして活用できます
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── Content map ── */}
-          {contentMapData && (
-            <ContentMapPanel
-              projectId={contentMapData.projectId}
-              projectName={contentMapData.projectName}
-              initialClassifications={contentMapData.classifications}
-              blogPostCount={contentMapData.blogPostCount}
-              clausIcon={claus?.icon48 ?? undefined}
-              clausEmoji={claus?.emoji}
-            />
-          )}
 
         </div>
       )}

@@ -411,6 +411,15 @@ export default function SettingsPage() {
             description={loadError}
             tone="soft"
           />
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+            >
+              もう一度読み込む
+            </button>
+          </div>
         </div>
       </AppShell>
     )
@@ -618,18 +627,23 @@ export default function SettingsPage() {
                   {nextPlan ? `${nextPlan.label}にすると` : '現在ご利用中のプランです'}
                 </p>
                 {nextPlan ? (
-                  <div className="space-y-2">
-                    {[
-                      `取材先を最大 ${nextPlan.maxProjects} 件まで登録`,
-                      `月 ${nextPlan.monthlyInterviewLimit} 回まで取材`,
-                      `${nextPlan.supportLabel}が利用可能`,
-                    ].map((feature) => (
-                      <div key={feature} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
-                        <span className="font-bold text-[var(--teal)]">✓</span>
-                        {feature}
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <div className="space-y-2">
+                      {[
+                        `取材先を最大 ${nextPlan.maxProjects} 件まで登録`,
+                        `月 ${nextPlan.monthlyInterviewLimit} 回まで取材`,
+                        `${nextPlan.supportLabel}が利用可能`,
+                      ].map((feature) => (
+                        <div key={feature} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                          <span className="font-bold text-[var(--teal)]">✓</span>
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                    <p className="mt-4 text-[12px] text-[var(--text3)]">
+                      プラン変更・課金機能は近日公開予定です。
+                    </p>
+                  </>
                 ) : (
                   <p className="text-[13px] leading-[1.75] text-[var(--text2)]">
                     法人向けプランをご利用中です。最新の料金や内容は料金ページで確認できます。
