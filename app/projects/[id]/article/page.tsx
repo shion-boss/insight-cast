@@ -83,7 +83,7 @@ export default function ArticlePage() {
   const isGenerating = articleStatus === 'generating'
   const mint = getCharacter('mint')
 
-  const loadPageState = useCallback(async (showLoading = false) => {
+  const loadPageState = useCallback(async (showLoading = false, initTheme = false) => {
     if (!interviewId) {
       setAvailableThemes([])
       setLoadingThemes(false)
@@ -150,12 +150,14 @@ export default function ArticlePage() {
     setAvailableThemes(nextThemes)
     setArticleStatus((interview?.article_status as ArticleGenerationStatus | null) ?? (articleRows?.length ? 'ready' : 'idle'))
     setArticleErrorMessage(typeof interview?.article_error === 'string' ? interview.article_error : null)
-    setTheme((current) => {
-      if (nextThemes.length === 0) return ''
-      if (current && nextThemes.includes(current)) return current
-      if (initialTheme && nextThemes.includes(initialTheme)) return initialTheme
-      return nextThemes[0]
-    })
+    if (initTheme) {
+      setTheme((current) => {
+        if (nextThemes.length === 0) return ''
+        if (current && nextThemes.includes(current)) return current
+        if (initialTheme && nextThemes.includes(initialTheme)) return initialTheme
+        return nextThemes[0]
+      })
+    }
 
     if (showLoading) {
       setLoadingThemes(false)
@@ -163,7 +165,7 @@ export default function ArticlePage() {
   }, [initialTheme, interviewId])
 
   useEffect(() => {
-    void loadPageState(true).catch(() => {
+    void loadPageState(true, true).catch(() => {
       setError('記事素材の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
       setLoadingThemes(false)
     })
