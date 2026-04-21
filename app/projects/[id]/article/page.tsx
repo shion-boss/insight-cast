@@ -78,9 +78,10 @@ export default function ArticlePage() {
   const [theme, setTheme] = useState(initialTheme)
   const [polishAnswers, setPolishAnswers] = useState(true)
 
+  const [isStarting, setIsStarting] = useState(false)
   const currentSavedArticle = savedArticles[tab] ?? null
   const currentPendingJobId = pendingArticleJobIdByType[tab] ?? null
-  const isGenerating = articleStatus === 'generating'
+  const isGenerating = articleStatus === 'generating' || isStarting
   const mint = getCharacter('mint')
 
   const loadPageState = useCallback(async (showLoading = false, initTheme = false) => {
@@ -183,6 +184,7 @@ export default function ArticlePage() {
   }, [articleStatus, interviewId, loadPageState, pendingArticleJobIdByType])
 
   async function startBatchGeneration() {
+    setIsStarting(true)
     setError(null)
     const jobId = `${interviewId}:${tab}:${Date.now()}`
     const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事素材'
@@ -222,6 +224,7 @@ export default function ArticlePage() {
         throw new Error('failed to start article generation')
       }
 
+      setIsStarting(false)
       setArticleStatus('generating')
       setArticleErrorMessage(null)
       showToast({
@@ -237,6 +240,7 @@ export default function ArticlePage() {
         delete next[tab]
         return next
       })
+      setIsStarting(false)
       setArticleStatus('failed')
       setArticleErrorMessage('記事素材の作成を開始できませんでした。少し待ってから、もう一度お試しください。')
       showToast({
