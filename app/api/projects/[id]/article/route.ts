@@ -34,8 +34,9 @@ async function saveArticle(input: {
     .select('id')
     .single()
 
-  if (articleInsertError) {
-    console.error('[article/saveArticle] failed to insert article:', articleInsertError.message)
+  if (articleInsertError || !savedArticle) {
+    console.error('[article/saveArticle] failed to insert article:', articleInsertError?.message)
+    return null
   }
 
   await input.supabase.from('projects').update({ status: 'article_ready' }).eq('id', input.projectId)
@@ -271,9 +272,13 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
         }
       } catch (err) {
         console.error('[article] background stream error:', err)
+        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
         return
       }
-      await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
+      const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
+      if (!saved) {
+        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
+      }
     }
 
     waitUntil(generateAndSave())
