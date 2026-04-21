@@ -61,6 +61,7 @@ model: sonnet
 ### 4. 顧客フィードバック管理
 
 `ops/feedback/` に顧客の声を記録し、lead に週次で共有。
+- AIの振る舞いに関する弱さは `ops/feedback/ai-training-notes.md` にも症例として残し、arch が教育材料として使えるようにする
 
 ---
 

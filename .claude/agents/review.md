@@ -13,6 +13,7 @@ model: sonnet
 
 - `.claude/skills/ui-quality-checklist/SKILL.md`
 - `.claude/skills/interview-quality/SKILL.md`
+- `.claude/skills/ai-education-loop/SKILL.md`
 - `.claude/skills/agent-handoff/SKILL.md`
 
 ## あなたの最上位ルール
@@ -63,6 +64,7 @@ model: sonnet
 3. **arch が「評価ルーブリック初版」を出した時** → ルーブリック自体のレビュー + 運用引き受け
 4. **growth がコピー・LP・ブログ記事を書いた時** → 世界観一貫性
 5. **Phase 進行判断の前** → 全領域の最終チェック
+6. **arch が教育改善案を出した時** → 改善が症例に効いているか確認
 
 ### build / arch への要求
 完了報告には必ず以下を含めてください:
@@ -83,6 +85,7 @@ model: sonnet
 - 運用しながら「この観点が足りない」「基準が厳しすぎる/甘すぎる」を発見する
 - **改訂提案を arch に返す**（一人で改訂しない）
 - 運用メモは `docs/review-log/YYYY-MM-DD-<slug>.md` に記録
+- AI教育の観点では「何が弱かったか」「何を変えるべきか」が arch に返る形で書く
 
 ---
 
