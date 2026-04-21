@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { CostValue } from './CostValue'
 
 // 固定費（月額・USD換算）
 const FIXED_COSTS = [
@@ -111,17 +112,21 @@ export default async function AdminCostsPage() {
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">今月のAI API費用</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {[
-            { label: '今月累計', value: usd(currentCost), sub: jpy(currentCost) },
-            { label: '月末予測', value: usd(projectedCost), sub: jpy(projectedCost) },
-            { label: '先月合計', value: usd(lastCost), sub: jpy(lastCost) },
-            { label: '今月トークン数', value: currentTokens.toLocaleString(), sub: 'tokens' },
+            { label: '今月累計', cost: currentCost },
+            { label: '月末予測', cost: projectedCost },
+            { label: '先月合計', cost: lastCost },
           ].map((card) => (
             <div key={card.label} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">{card.label}</p>
-              <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">{card.value}</p>
-              <p className="mt-0.5 text-xs text-[var(--text3)]">{card.sub}</p>
+              <CostValue usd={card.cost} className="mt-2 block font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]" />
+              <p className="mt-0.5 text-xs text-[var(--text3)]">ホバーで円換算</p>
             </div>
           ))}
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">今月トークン数</p>
+            <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
+            <p className="mt-0.5 text-xs text-[var(--text3)]">tokens</p>
+          </div>
         </div>
       </section>
 
@@ -129,13 +134,8 @@ export default async function AdminCostsPage() {
       <section className="rounded-[var(--r-lg)] border-2 border-[var(--accent)]/30 bg-[var(--accent-l)] p-5">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">今月の総コスト（概算）</p>
         <div className="mt-3 flex items-end gap-4">
-          <div>
-            <p className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]">
-              {usd(currentCost + 100)}
-            </p>
-            <p className="mt-0.5 text-sm text-[var(--text2)]">{jpy(currentCost + 100)}</p>
-          </div>
-          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100 + API {usd(currentCost)}</p>
+          <CostValue usd={currentCost + 100} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
+          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100 + API <CostValue usd={currentCost} /></p>
         </div>
       </section>
 
@@ -155,10 +155,7 @@ export default async function AdminCostsPage() {
                   <p className="text-sm font-medium text-[var(--text)]">{ROUTE_LABELS[row.route] ?? row.route}</p>
                   <p className="text-xs text-[var(--text3)]">{row.calls}回</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-[var(--text)]">{usd(row.cost)}</p>
-                  <p className="text-xs text-[var(--text3)]">{jpy(row.cost)}</p>
-                </div>
+                <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
               </div>
             ))}
           </div>
@@ -178,17 +175,17 @@ export default async function AdminCostsPage() {
                 <p className="text-sm font-medium text-[var(--text)]">{row.label}</p>
                 <p className="text-xs text-[var(--text3)]">{row.plan}</p>
               </div>
-              <p className="text-sm font-semibold text-[var(--text)]">
-                {row.usd === null ? '要確認' : row.usd === 0 ? '無料' : usd(row.usd)}
-              </p>
+              {row.usd === null
+                ? <p className="text-sm font-semibold text-[var(--text)]">要確認</p>
+                : row.usd === 0
+                  ? <p className="text-sm font-semibold text-[var(--ok)]">無料</p>
+                  : <CostValue usd={row.usd} className="text-sm font-semibold text-[var(--text)]" />
+              }
             </div>
           ))}
           <div className="flex items-center gap-4 border-t border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計（概算）</p>
-            <div className="text-right">
-              <p className="text-sm font-bold text-[var(--text)]">$100 / 月</p>
-              <p className="text-xs text-[var(--text3)]">¥{(100 * EXCHANGE_RATE).toLocaleString()}</p>
-            </div>
+            <CostValue usd={100} className="text-sm font-bold text-[var(--text)]" />
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
@@ -207,12 +204,9 @@ export default async function AdminCostsPage() {
                   <div key={d.day} className="flex items-center gap-3">
                     <span className="w-24 shrink-0 text-xs text-[var(--text3)]">{d.day}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[var(--accent)]"
-                        style={{ width: `${pct}%` }}
-                      />
+                      <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
-                    <span className="w-16 text-right text-xs font-medium text-[var(--text)]">{usd(d.cost)}</span>
+                    <CostValue usd={d.cost} className="w-16 text-right text-xs font-medium text-[var(--text)]" />
                   </div>
                 )
               })}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AnalysisLoadingScene } from '@/components/loading-scenes'
@@ -51,6 +51,14 @@ type Props = {
   classificationSummary: { byEffect?: Array<{ label: string; count: number }> } | null
 }
 
+function formatCheckTime(date: Date) {
+  return new Intl.DateTimeFormat('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(date)
+}
+
 export default function ReportClient({
   projectId,
   initialStatus,
@@ -69,6 +77,8 @@ export default function ReportClient({
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const router = useRouter()
   const [status, setStatus] = useState(initialStatus)
+  const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null)
+  const [isCheckingNow, setIsCheckingNow] = useState(false)
   const effectSummary: ClassificationSummaryEntry[] = classificationSummary?.byEffect ?? []
 
   function getFreshnessBadge() {
@@ -85,29 +95,45 @@ export default function ReportClient({
     }
   }
 
+  const checkStatus = useCallback(async (options?: { manual?: boolean }) => {
+    if (options?.manual) {
+      setIsCheckingNow(true)
+    }
+
+    const res = await fetch(`/api/projects/${projectId}/analyze`).catch(() => null)
+    setLastCheckedAt(formatCheckTime(new Date()))
+
+    if (res?.ok) {
+      const json = await res.json()
+      setAnalysisError(false)
+      if (typeof json.status === 'string') {
+        setStatus(json.status)
+      }
+      if (json.status === 'report_ready') {
+        if (pollRef.current) clearInterval(pollRef.current)
+        router.refresh()
+      }
+    } else {
+      setAnalysisError(true)
+    }
+
+    if (options?.manual) {
+      setIsCheckingNow(false)
+    }
+  }, [projectId, router])
+
   useEffect(() => {
     if (status !== 'analyzing') return
 
-    pollRef.current = setInterval(async () => {
-      const res = await fetch(`/api/projects/${projectId}/analyze`)
-      if (res.ok) {
-        const json = await res.json()
-        if (typeof json.status === 'string') {
-          setStatus(json.status)
-        }
-        if (json.status === 'report_ready') {
-          clearInterval(pollRef.current!)
-          router.refresh()
-        }
-      } else {
-        setAnalysisError(true)
-      }
+    void checkStatus()
+    pollRef.current = setInterval(() => {
+      void checkStatus()
     }, 5000)
 
     return () => {
       if (pollRef.current) clearInterval(pollRef.current)
     }
-  }, [projectId, router, status])
+  }, [checkStatus, status])
 
   if (status === 'analysis_pending') {
     return (
@@ -140,15 +166,15 @@ export default function ReportClient({
               icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
               name="クラウス"
               title="いまは調査を続けられていません。"
-              description="少し待ってからページを開き直すと、続きから確認できることがあります。"
+              description={`接続が少し不安定です。約5秒ごとに自動で再確認しています${lastCheckedAt ? `。最終確認 ${lastCheckedAt}` : '。'}`}
             />
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
               <button
                 type="button"
-                onClick={() => window.location.reload()}
+                onClick={() => void checkStatus({ manual: true })}
                 className={getButtonClass('primary')}
               >
-                もう一度確認する
+                {isCheckingNow ? '確認しています...' : '今すぐ再確認する'}
               </button>
               <Link
                 href={`/projects/${projectId}`}
@@ -166,7 +192,7 @@ export default function ReportClient({
                 icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
                 name="クラウス"
                 title="このページで待たなくて大丈夫です"
-                description="完了したらトーストでお知らせします。"
+                description={`完了したらトーストでお知らせします。約5秒ごとに状態を確認しています${lastCheckedAt ? `。最終確認 ${lastCheckedAt}` : '。'}`}
               />
               <div className="flex flex-col gap-2 pt-2 sm:flex-row">
                 <Link

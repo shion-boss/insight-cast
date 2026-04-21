@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -32,6 +32,14 @@ function parseSummaryValues(summary: string | null) {
     .filter(Boolean)
 }
 
+function formatCheckTime(date: Date) {
+  return new Intl.DateTimeFormat('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(date)
+}
+
 export default function SummaryPage() {
   const { id: projectId } = useParams<{ id: string }>()
   const searchParams = useSearchParams()
@@ -48,85 +56,110 @@ export default function SummaryPage() {
   const [showMessages, setShowMessages] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [articles, setArticles] = useState<ArticleRow[]>([])
+  const [isCheckingNow, setIsCheckingNow] = useState(false)
+  const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
+  const loadSummary = useCallback(async (options?: { manual?: boolean }) => {
+    if (!interviewId) {
+      router.push(`/projects/${projectId}/interviewer`)
+      return
+    }
 
-    async function load() {
-      const supabase = supabaseRef.current
-      try {
-        setLoadError(null)
-        const { data: interview } = await supabase
-          .from('interviews')
-          .select('interviewer_type, summary, themes')
-          .eq('id', interviewId)
-          .single()
+    const supabase = supabaseRef.current
+    if (options?.manual) {
+      setIsCheckingNow(true)
+    }
 
-        if (!interview) {
-          throw new Error('interview not found')
-        }
+    try {
+      setLoadError(null)
+      const { data: interview } = await supabase
+        .from('interviews')
+        .select('interviewer_type, summary, themes')
+        .eq('id', interviewId)
+        .single()
 
-        if (!interview.summary) {
-          const { data: project } = await supabase
-            .from('projects')
-            .select('name, hp_url')
-            .eq('id', projectId)
-            .maybeSingle()
+      setLastCheckedAt(formatCheckTime(new Date()))
 
-          const projectName = project?.name ?? project?.hp_url ?? 'この取材先'
+      if (!interview) {
+        throw new Error('interview not found')
+      }
 
-          if (!hasPendingInterviewSummary(interviewId)) {
-            trackPendingInterviewSummary({
-              interviewId,
-              projectId,
-              projectName,
-            })
-            showToast({
-              id: `summary-started-${interviewId}`,
-              title: '取材メモの作成を開始しました',
-              description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
-            })
-          }
+      if (!interview.summary) {
+        const { data: project } = await supabase
+          .from('projects')
+          .select('name, hp_url')
+          .eq('id', projectId)
+          .maybeSingle()
 
-          setData({
-            values: [],
-            themes: Array.isArray(interview.themes) ? interview.themes : [],
-            messages: [],
-            interviewerType: interview.interviewer_type ?? 'mint',
+        const projectName = project?.name ?? project?.hp_url ?? 'この取材先'
+
+        if (!hasPendingInterviewSummary(interviewId)) {
+          trackPendingInterviewSummary({
+            interviewId,
+            projectId,
+            projectName,
           })
-          setArticles([])
-          setPendingSummary(true)
-          return
+          showToast({
+            id: `summary-started-${interviewId}`,
+            title: '取材メモの作成を開始しました',
+            description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+          })
         }
-
-        const { data: messages } = await supabase
-          .from('interview_messages')
-          .select('role, content')
-          .eq('interview_id', interviewId)
-          .order('created_at', { ascending: true })
-
-        const { data: articleRows } = await supabase
-          .from('articles')
-          .select('id, title, article_type, created_at')
-          .eq('interview_id', interviewId)
-          .order('created_at', { ascending: false })
 
         setData({
-          values: parseSummaryValues(interview.summary),
+          values: [],
           themes: Array.isArray(interview.themes) ? interview.themes : [],
-          messages: messages ?? [],
-          interviewerType: interview?.interviewer_type ?? 'mint',
+          messages: [],
+          interviewerType: interview.interviewer_type ?? 'mint',
         })
-        setArticles((articleRows ?? []) as ArticleRow[])
-        setPendingSummary(false)
-      } catch {
-        setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
-      } finally {
-        setLoading(false)
+        setArticles([])
+        setPendingSummary(true)
+        return
+      }
+
+      const { data: messages } = await supabase
+        .from('interview_messages')
+        .select('role, content')
+        .eq('interview_id', interviewId)
+        .order('created_at', { ascending: true })
+
+      const { data: articleRows } = await supabase
+        .from('articles')
+        .select('id, title, article_type, created_at')
+        .eq('interview_id', interviewId)
+        .order('created_at', { ascending: false })
+
+      setData({
+        values: parseSummaryValues(interview.summary),
+        themes: Array.isArray(interview.themes) ? interview.themes : [],
+        messages: messages ?? [],
+        interviewerType: interview.interviewer_type ?? 'mint',
+      })
+      setArticles((articleRows ?? []) as ArticleRow[])
+      setPendingSummary(false)
+    } catch {
+      setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
+    } finally {
+      setLoading(false)
+      if (options?.manual) {
+        setIsCheckingNow(false)
       }
     }
-    load()
   }, [interviewId, projectId, router])
+
+  useEffect(() => {
+    void loadSummary()
+  }, [loadSummary])
+
+  useEffect(() => {
+    if (!pendingSummary) return
+
+    const intervalId = window.setInterval(() => {
+      void loadSummary()
+    }, 5000)
+
+    return () => window.clearInterval(intervalId)
+  }, [loadSummary, pendingSummary])
 
   const char = data ? getCharacter(data.interviewerType) : null
 
@@ -166,15 +199,15 @@ export default function SummaryPage() {
               icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={48} />}
               name={mint?.name ?? 'ミント'}
               title="バックグラウンドで処理中です"
-              description="数分かかることがあります。通知が来たら、取材メモや記事づくりに進めます。"
+              description={`数分かかることがあります。約5秒ごとに自動で確認しています${lastCheckedAt ? `。最終確認 ${lastCheckedAt}` : '。'}`}
             />
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
               <button
                 type="button"
-                onClick={() => window.location.reload()}
+                onClick={() => void loadSummary({ manual: true })}
                 className={getButtonClass('primary')}
               >
-                完了を確認する
+                {isCheckingNow ? '確認しています...' : '今すぐ確認する'}
               </button>
               <Link href={backHref} className={getButtonClass('secondary')}>
                 {backLabel}
@@ -210,10 +243,10 @@ export default function SummaryPage() {
             />
             <button
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={() => void loadSummary({ manual: true })}
               className={getButtonClass('primary')}
             >
-              もう一度開く
+              {isCheckingNow ? '確認しています...' : 'もう一度確認する'}
             </button>
           </div>
         )}
