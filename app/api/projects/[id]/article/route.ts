@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
@@ -110,15 +111,32 @@ export async function POST(
   const bizName = project?.name ?? project?.hp_url ?? '取材先'
   const clientName = profile?.name ?? '事業者'
 
-  const conversation = (messages ?? [])
-    .map(m => `${m.role === 'user' ? clientName : charName}: ${m.content}`)
-    .join('\n\n')
+  const conversation = formatConversationForPrompt(
+    (messages ?? []).map((message) => ({
+      role: message.role === 'user' ? 'user' : 'interviewer',
+      content: message.content,
+    })),
+    {
+      userLabel: clientName,
+      assistantLabel: charName,
+      maxMessageLength: 1100,
+    },
+  )
 
   const bizContext = [
     project?.name ? `取材先名: ${project.name}` : null,
     project?.hp_url ? `HP URL: ${project.hp_url}` : null,
     profile?.name ? `話し手: ${profile.name}` : null,
   ].filter(Boolean).join('\n')
+
+  const summaryValues = normalizeUniqueStringList(interview.summary, { maxItems: 5, maxLength: 120 })
+  const extractedThemes = normalizeUniqueStringList(interview.themes, { maxItems: 5, maxLength: 120 })
+  const summaryContext = summaryValues.length > 0
+    ? `\n\n## インタビュー要約\n${summaryValues.map((value) => `- ${value}`).join('\n')}`
+    : ''
+  const extractedThemesContext = extractedThemes.length > 0
+    ? `\n\n## 抽出済みテーマ\n${extractedThemes.map((value) => `- ${value}`).join('\n')}`
+    : ''
 
   const themeInstruction = theme ? `\n\n## テーマ\n特に「${theme}」という観点で書いてください。` : ''
   const ownBlogPosts = getStoredSiteBlogPosts((auditRow?.raw_data as Record<string, unknown> | null | undefined) ?? null)
@@ -150,6 +168,15 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
     ? `\n\n## 回答の整頓について\n事業者の回答に含まれる誤字・脱字・言い間違い・話し言葉の崩れは自然な表現に直してください。ただし意味・ニュアンス・その人らしい言い回しは変えないでください。`
     : ''
 
+  const editorialGuardrail = `あなたは、一次情報をもとにホームページ向けの記事を書く編集者です。
+
+- 会話や要約にない事実・数字・価格・実績・地名・肩書きは足さない
+- 断定しすぎず、根拠が会話にある内容だけを書く
+- もっともらしい言い換えで事実を膨らませない
+- 抽象的な美辞麗句だけで終わらせず、行動・判断・お客様の反応が見える形で書く
+- 情報が足りない点は無理に埋めず、省くか控えめに表現する
+- 読みやすく整えてよいが、事業者の温度感や言い回しはできるだけ残す`
+
   let prompt: string
 
   if (articleType === 'client') {
@@ -162,8 +189,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 ${bizContext}
 
 ## インタビュー記録
-${conversation}
-${themeInstruction}${internalLinkInstruction}
+${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 一人称は「私」または「弊社」
@@ -183,8 +209,7 @@ ${themeInstruction}${internalLinkInstruction}
 ${bizContext}
 
 ## インタビュー記録
-${conversation}
-${themeInstruction}${internalLinkInstruction}
+${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - インタビュアーが「取材して発見した魅力」を語るスタイル
@@ -204,8 +229,7 @@ ${themeInstruction}${internalLinkInstruction}
 ${bizContext}
 
 ## インタビュー記録
-${conversation}
-${themeInstruction}${internalLinkInstruction}
+${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 最初に導入文（2〜3行）
@@ -223,6 +247,7 @@ ${themeInstruction}${internalLinkInstruction}
     stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: 2048,
+      system: editorialGuardrail,
       messages: [{ role: 'user', content: prompt }],
     })
   } catch (err) {

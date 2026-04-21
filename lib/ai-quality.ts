@@ -1,0 +1,171 @@
+export type PromptConversationMessage = {
+  role: 'user' | 'assistant' | 'interviewer'
+  content: string
+}
+
+type FormatConversationOptions = {
+  userLabel?: string
+  assistantLabel?: string
+  maxMessageLength?: number
+}
+
+type NormalizeListOptions = {
+  maxItems?: number
+  maxLength?: number
+}
+
+const DEFAULT_LIST_MAX_ITEMS = 5
+const DEFAULT_LIST_MAX_LENGTH = 120
+
+const CONCRETE_SIGNAL_PATTERN = /(\d+|先月|先週|去年|今年|最近|お客様|現場|相談|見積|施工|来店|予約|問い合わせ|再依頼|写真|電話|メール|そのとき|この前|スタッフ|家族|具体)/u
+const CUSTOMER_REACTION_PATTERN = /(喜|安心|助か|選ば|頼|また|ありがとう|反応|驚|うれし|再依頼|問い合わせ)/u
+const ABSTRACT_HINT_PATTERN = /(丁寧|安心|信頼|品質|対応|こだわり|親切|誠実|まじめ|真面目|がんば|頑張|経験)/u
+
+export function normalizePromptText(value: unknown, maxLength = 160) {
+  if (typeof value !== 'string') return ''
+  return value.replace(/\s+/g, ' ').trim().slice(0, maxLength)
+}
+
+export function formatConversationForPrompt(
+  messages: PromptConversationMessage[],
+  options: FormatConversationOptions = {},
+) {
+  const userLabel = options.userLabel ?? '事業者'
+  const assistantLabel = options.assistantLabel ?? 'インタビュアー'
+  const maxMessageLength = options.maxMessageLength ?? 1200
+
+  return messages
+    .map((message) => {
+      const content = normalizePromptText(message.content, maxMessageLength)
+      if (!content) return null
+      const label = message.role === 'user' ? userLabel : assistantLabel
+      return `${label}: ${content}`
+    })
+    .filter((line): line is string => Boolean(line))
+    .join('\n\n')
+}
+
+export function extractJsonBlock(text: string) {
+  const match = text.match(/\{[\s\S]*\}/)
+  return match?.[0] ?? null
+}
+
+function toCandidateStrings(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => (typeof item === 'string' ? [item] : []))
+  }
+  if (typeof value === 'string') {
+    return value.split(/\n+/)
+  }
+  return [] as string[]
+}
+
+export function normalizeUniqueStringList(value: unknown, options: NormalizeListOptions = {}) {
+  const maxItems = options.maxItems ?? DEFAULT_LIST_MAX_ITEMS
+  const maxLength = options.maxLength ?? DEFAULT_LIST_MAX_LENGTH
+  const seen = new Set<string>()
+  const normalizedValues: string[] = []
+
+  for (const item of toCandidateStrings(value)) {
+    const normalized = item
+      .replace(/^[\s・*•\-0-9.]+/u, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, maxLength)
+
+    if (!normalized) continue
+
+    const dedupeKey = normalized.toLowerCase()
+    if (seen.has(dedupeKey)) continue
+    seen.add(dedupeKey)
+    normalizedValues.push(normalized)
+
+    if (normalizedValues.length >= maxItems) break
+  }
+
+  return normalizedValues
+}
+
+function hasConcreteSignal(text: string) {
+  return CONCRETE_SIGNAL_PATTERN.test(text) || /「[^」]+」/u.test(text)
+}
+
+function hasCustomerReactionSignal(text: string) {
+  return CUSTOMER_REACTION_PATTERN.test(text)
+}
+
+function looksAbstractResponse(text: string) {
+  const normalized = normalizePromptText(text, 220)
+  if (!normalized) return false
+  if (hasConcreteSignal(normalized)) return false
+  if (normalized.length <= 32) return true
+  return ABSTRACT_HINT_PATTERN.test(normalized)
+}
+
+export function buildInterviewQualityContext(input: {
+  messages: PromptConversationMessage[]
+  userTurnCount: number
+  isGreeting?: boolean
+  isPassQuestion?: boolean
+  focusTheme?: string | null
+}) {
+  const userMessages = input.messages.filter((message) => message.role === 'user')
+  const latestUserMessage = userMessages.at(-1)?.content ?? ''
+  const recentUserFacts = userMessages
+    .slice(-3)
+    .map((message) => normalizePromptText(message.content, 120))
+    .filter(Boolean)
+
+  const parts = [
+    `【会話品質ガイド】
+- 同じ質問や言い換えを繰り返さない
+- 次の発言では質問は1つだけにする
+- 抽象的な答えには、具体例・場面・やり取りを聞く
+- 具体例が出たら、次は理由・判断基準・相手の反応のどれか1つを掘る
+- 調査結果や競合情報はヒントとして使い、そのまま読み上げない`,
+  ]
+
+  if (recentUserFacts.length > 0) {
+    parts.push(`【直近で聞けたこと】
+${recentUserFacts.map((fact) => `・${fact}`).join('\n')}
+上の内容と重複しないよう、次は一段深い質問に進んでください。`)
+  }
+
+  if (input.focusTheme) {
+    parts.push(`【テーマの扱い方】
+「${normalizePromptText(input.focusTheme, 80)}」を意識しつつも、テーマ名を繰り返すのではなく、事業者の実話や判断から自然に深掘りしてください。`)
+  }
+
+  if (input.isGreeting) {
+    parts.push(`【最初の質問】
+最初は答えやすくて具体的な話が出やすい入口から入ってください。いきなり結論や強みを聞かず、「最近の出来事」「印象に残ったお客様」「いつもの仕事の流れ」のどれかを選ぶと自然です。`)
+  }
+
+  if (input.isPassQuestion) {
+    parts.push(`【パス後の対応】
+直前と同じ角度の質問はやめて、切り口を変えた短い質問を1つだけ返してください。`)
+  } else if (latestUserMessage) {
+    if (looksAbstractResponse(latestUserMessage)) {
+      parts.push(`【次に聞くべきこと】
+直近の回答はまだ抽象的です。次は「いつ・誰に・何をしたか」が出る具体例を1つだけ聞いてください。`)
+    } else if (hasConcreteSignal(latestUserMessage)) {
+      if (hasCustomerReactionSignal(latestUserMessage)) {
+        parts.push(`【次に聞くべきこと】
+具体例と相手の反応が出ています。次は「なぜそうしたか」「その判断を続けている理由」「他との違い」のどれか1つを掘ってください。`)
+      } else {
+        parts.push(`【次に聞くべきこと】
+具体例は出ています。次は「相手がどう感じたか」「なぜその対応をしたのか」「その後どうなったか」のどれか1つを聞いてください。`)
+      }
+    }
+  }
+
+  if (input.userTurnCount >= 6) {
+    parts.push(`【終盤の進め方】
+新しい話題を広げすぎず、選ばれる理由や再現性が見える締めの質問を優先してください。十分な情報が揃ったら、自然にまとめへ向かって構いません。`)
+  } else if (input.userTurnCount >= 3) {
+    parts.push(`【中盤の進め方】
+すでに出た話から、判断基準・こだわり・お客様の反応のどれかを1つだけ掘ってください。`)
+  }
+
+  return parts.join('\n\n')
+}

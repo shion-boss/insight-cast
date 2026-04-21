@@ -43,14 +43,14 @@ export async function middleware(request: NextRequest) {
   // /admin へのアクセス制御: ADMIN_EMAILS に含まれるメールのみ許可
   if (pathname.startsWith('/admin')) {
     if (!user) {
-      return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/auth/login', request.url))
     }
     const adminEmails = (process.env.ADMIN_EMAILS ?? '')
       .split(',')
       .map((e) => e.trim())
       .filter(Boolean)
     if (!adminEmails.includes(user.email ?? '')) {
-      return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     return supabaseResponse
   }

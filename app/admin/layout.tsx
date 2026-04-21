@@ -12,6 +12,7 @@ async function getAdminUser() {
 const NAV_LINKS = [
   { href: '/admin', label: 'ダッシュボード' },
   { href: '/admin/posts', label: '記事管理' },
+  { href: '/admin/users', label: 'ユーザー管理' },
 ]
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {

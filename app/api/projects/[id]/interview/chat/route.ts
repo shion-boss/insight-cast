@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { buildInterviewQualityContext } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
@@ -163,6 +164,20 @@ export async function POST(
   )
   if (characterContext) {
     contextParts.push(characterContext)
+  }
+
+  const interviewQualityContext = buildInterviewQualityContext({
+    messages: (history ?? []).map((message) => ({
+      role: message.role === 'user' ? 'user' : 'interviewer',
+      content: message.content,
+    })),
+    userTurnCount,
+    isGreeting,
+    isPassQuestion,
+    focusTheme: interview.focus_theme,
+  })
+  if (interviewQualityContext) {
+    contextParts.push(interviewQualityContext)
   }
 
   if (userTurnCount >= 7) {

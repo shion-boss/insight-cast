@@ -1,6 +1,6 @@
 # 技術スタック詳細規約
 
-> 対象読者: builder / ai-architect / reviewer
+> 対象読者: build / arch / review
 > Phase 1 MVP 構築開始時点の合意事項。変更する場合は `docs/decisions/` に記録してから更新する。
 
 ---
@@ -273,21 +273,21 @@ const anthropic = new Anthropic({
 
 export async function chat(messages: Anthropic.MessageParam[]) {
   return anthropic.messages.create({
-    model: "claude-opus-4-5",    // モデルは ai-architect が決める。ここを直接書かない
+    model: "claude-opus-4-5",    // モデルは arch が決める。ここを直接書かない
     max_tokens: 1024,
     messages,
   });
 }
 ```
 
-- モデル選定は ai-architect が担当。builder は `lib/ai/` の関数を呼ぶだけにする
+- モデル選定は arch が担当。build は `lib/ai/` の関数を呼ぶだけにする
 - API Key はサーバーサイドのみで使う（`NEXT_PUBLIC_` を付けない）
 - ストリーミングは Vercel AI SDK（`ai` パッケージ）を使って実装する
 
 ### OpenAI
 
 - 用途: 将来的な音声入力（ウサギキャラ）等、Claude が苦手な領域で補完利用
-- Phase 1 では基本不使用。ai-architect の判断で追加する
+- Phase 1 では基本不使用。arch の判断で追加する
 
 ### レート制限・エラー処理
 
@@ -348,7 +348,7 @@ main              # 常にデプロイ可能な状態。直 push 禁止
 
 - `main` への直 push は禁止（CLAUDE.md 記載済み）
 - 全ての変更は Pull Request 経由でマージする
-- PR マージ前に `reviewer` エージェントによるレビューを行う（Phase 1 では簡略可）
+- PR マージ前に `review` エージェントによるレビューを行う（Phase 1 では簡略可）
 - マージ方法は Squash Merge を基本とする（コミット履歴をきれいに保つ）
 
 ### ブランチ命名規則
