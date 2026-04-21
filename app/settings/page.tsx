@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { AppShell } from '@/components/app-shell'
@@ -54,14 +54,23 @@ const NOTIFICATIONS: Array<{
   },
 ] as const
 
-function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+function Toggle({
+  on,
+  onToggle,
+  disabled = false,
+}: {
+  on: boolean
+  onToggle: () => void
+  disabled?: boolean
+}) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={on}
+      disabled={disabled}
       onClick={onToggle}
-      className="relative h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+      className="relative h-6 w-11 flex-shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-60"
       style={{ background: on ? 'var(--accent)' : 'var(--border)' }}
     >
       <span
@@ -125,75 +134,75 @@ export default function SettingsPage() {
   const [deletePending, setDeletePending] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function load() {
-      setLoading(true)
-      setLoadError(null)
+  const loadSettings = useCallback(async () => {
+    setLoading(true)
+    setLoadError(null)
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-      if (!user) {
-        router.push('/')
-        return
-      }
-
-      setUserId(user.id)
-      setEmail(user.email ?? '')
-      getIsAdmin().then(setIsAdmin).catch((err) => { console.warn('[settings] getIsAdmin failed:', err) })
-
-      const [{ data: profile, error: profileError }, { data: userProjects }] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('name, plan, avatar_url, notification_preferences')
-          .eq('id', user.id)
-          .single(),
-        supabase
-          .from('projects')
-          .select('id')
-          .eq('user_id', user.id),
-      ])
-
-      if (profileError) {
-        setLoadError('設定を読み込めませんでした。少し待ってからもう一度お試しください。')
-        setLoading(false)
-        return
-      }
-
-      const nextName = profile?.name ?? ''
-      const nextNotifications = normalizeNotificationPreferences(profile?.notification_preferences)
-      const nextPlan = profile?.plan === 'business' ? 'business' : 'individual'
-
-      setName(nextName)
-      setInitialName(nextName)
-      setPlanKey(nextPlan)
-      setAvatarUrl(profile?.avatar_url ?? null)
-      setInitialNotifications(nextNotifications)
-      setNotifications(nextNotifications)
-
-      const projectIds = (userProjects ?? []).map((project) => project.id)
-      setProjectCount(projectIds.length)
-
-      if (projectIds.length > 0) {
-        const now = new Date()
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-        const { count } = await supabase
-          .from('interviews')
-          .select('id', { count: 'exact', head: true })
-          .in('project_id', projectIds)
-          .gte('created_at', monthStart)
-
-        setInterviewCount(count ?? 0)
-      } else {
-        setInterviewCount(0)
-      }
-
-      setLoading(false)
+    if (!user) {
+      router.push('/')
+      return
     }
 
-    load()
+    setUserId(user.id)
+    setEmail(user.email ?? '')
+    getIsAdmin().then(setIsAdmin).catch((err) => { console.warn('[settings] getIsAdmin failed:', err) })
+
+    const [{ data: profile, error: profileError }, { data: userProjects }] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('name, plan, avatar_url, notification_preferences')
+        .eq('id', user.id)
+        .single(),
+      supabase
+        .from('projects')
+        .select('id')
+        .eq('user_id', user.id),
+    ])
+
+    if (profileError) {
+      setLoadError('設定を読み込めませんでした。少し待ってからもう一度お試しください。')
+      setLoading(false)
+      return
+    }
+
+    const nextName = profile?.name ?? ''
+    const nextNotifications = normalizeNotificationPreferences(profile?.notification_preferences)
+    const nextPlan = profile?.plan === 'business' ? 'business' : 'individual'
+
+    setName(nextName)
+    setInitialName(nextName)
+    setPlanKey(nextPlan)
+    setAvatarUrl(profile?.avatar_url ?? null)
+    setInitialNotifications(nextNotifications)
+    setNotifications(nextNotifications)
+
+    const projectIds = (userProjects ?? []).map((project) => project.id)
+    setProjectCount(projectIds.length)
+
+    if (projectIds.length > 0) {
+      const now = new Date()
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+      const { count } = await supabase
+        .from('interviews')
+        .select('id', { count: 'exact', head: true })
+        .in('project_id', projectIds)
+        .gte('created_at', monthStart)
+
+      setInterviewCount(count ?? 0)
+    } else {
+      setInterviewCount(0)
+    }
+
+    setLoading(false)
   }, [router, supabase])
+
+  useEffect(() => {
+    void loadSettings()
+  }, [loadSettings])
 
   async function handleProfileSave() {
     setProfileError(null)
@@ -369,6 +378,9 @@ export default function SettingsPage() {
     notifications,
     initialNotifications,
   )
+  const profileInputsDisabled = profileSaving
+  const notificationInputsDisabled = notificationSaving
+  const passwordInputsDisabled = passwordSaving
   const accountInitial = (name.trim() || email || '設').charAt(0).toUpperCase()
   const plan = getPlanLimits(planKey)
   const nextPlan = planKey === 'individual' ? getPlanLimits('business') : null
@@ -417,10 +429,11 @@ export default function SettingsPage() {
           <div className="mt-4">
             <button
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={() => { void loadSettings() }}
+              disabled={loading}
               className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
             >
-              もう一度読み込む
+              {loading ? '読み込み中...' : 'もう一度読み込む'}
             </button>
           </div>
         </div>
@@ -506,6 +519,7 @@ export default function SettingsPage() {
                       value={name}
                       onChange={(event) => setName(event.target.value)}
                       placeholder="例: 山田 太郎"
+                      disabled={profileInputsDisabled}
                     />
                   </div>
                 </div>
@@ -549,6 +563,7 @@ export default function SettingsPage() {
                     onChange={(event) => setDeleteConfirmation(event.target.value)}
                     placeholder="削除"
                     className="max-w-xs"
+                    disabled={deletePending}
                   />
 
                   {deleteError && (
@@ -677,6 +692,7 @@ export default function SettingsPage() {
                     </div>
                     <Toggle
                       on={notifications[notification.key]}
+                      disabled={notificationInputsDisabled}
                       onToggle={() =>
                         setNotifications((current) => ({
                           ...current,
@@ -727,6 +743,7 @@ export default function SettingsPage() {
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder="8文字以上"
+                      disabled={passwordInputsDisabled}
                     />
                   </div>
                   <div>
@@ -737,6 +754,7 @@ export default function SettingsPage() {
                       value={passwordConfirm}
                       onChange={(event) => setPasswordConfirm(event.target.value)}
                       placeholder="もう一度入力"
+                      disabled={passwordInputsDisabled}
                     />
                   </div>
                 </div>

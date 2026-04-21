@@ -15,6 +15,11 @@ const FIXED_COSTS = [
 
 const EXCHANGE_RATE = 150 // 1 USD = 150 JPY（概算）
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
+
+// ブログ投稿に使う機能（管理者の自社運用）
+const BLOG_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article'])
+
 async function getCostData() {
   const supabase = createAdminClient()
   const now = new Date()
@@ -22,25 +27,24 @@ async function getCostData() {
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString()
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).toISOString()
 
-  const [currentMonth, lastMonth, byRoute, daily] = await Promise.all([
-    supabase
-      .from('api_usage_logs')
-      .select('cost_usd, input_tokens, output_tokens, route')
-      .gte('created_at', monthStart),
-    supabase
-      .from('api_usage_logs')
-      .select('cost_usd, input_tokens, output_tokens')
-      .gte('created_at', lastMonthStart)
-      .lte('created_at', lastMonthEnd),
-    supabase
-      .from('api_usage_logs')
-      .select('route, cost_usd, input_tokens, output_tokens')
-      .gte('created_at', monthStart),
-    supabase
-      .from('api_usage_logs')
-      .select('created_at, cost_usd')
-      .gte('created_at', monthStart)
-      .order('created_at', { ascending: true }),
+  // 管理者のuser_idを取得
+  const { data: adminProfiles } = await supabase
+    .from('profiles')
+    .select('id, email')
+    .in('email', ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : ['__none__'])
+  const adminUserIds = (adminProfiles ?? []).map((p) => p.id as string)
+
+  const [currentMonth, lastMonth, byRoute, daily, byUser, adminLogs] = await Promise.all([
+    supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', monthStart),
+    supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', lastMonthStart).lte('created_at', lastMonthEnd),
+    supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart),
+    supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', monthStart).order('created_at', { ascending: true }),
+    // ユーザー別 × プラン別
+    supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null),
+    // 管理者自身のブログ運用コスト
+    adminUserIds.length > 0
+      ? supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart).in('user_id', adminUserIds)
+      : Promise.resolve({ data: [] }),
   ])
 
   const sumCost = (rows: Array<{ cost_usd: number }> | null) =>
@@ -59,11 +63,9 @@ async function getCostData() {
     routeMap[row.route].cost += row.cost_usd ?? 0
     routeMap[row.route].calls += 1
   }
-  const byRouteList = Object.entries(routeMap)
-    .map(([route, v]) => ({ route, ...v }))
-    .sort((a, b) => b.cost - a.cost)
+  const byRouteList = Object.entries(routeMap).map(([route, v]) => ({ route, ...v })).sort((a, b) => b.cost - a.cost)
 
-  // 日別集計（今月）
+  // 日別集計
   const dayMap: Record<string, number> = {}
   for (const row of (daily.data ?? [])) {
     const day = row.created_at.slice(0, 10)
@@ -71,7 +73,41 @@ async function getCostData() {
   }
   const dailyList = Object.entries(dayMap).map(([day, cost]) => ({ day, cost }))
 
-  return { currentCost, lastCost, currentTokens, byRouteList, dailyList }
+  // ユーザー別コスト集計（user_idごと）
+  const userCostMap: Record<string, number> = {}
+  for (const row of (byUser.data ?? [])) {
+    const uid = row.user_id as string
+    userCostMap[uid] = (userCostMap[uid] ?? 0) + (row.cost_usd ?? 0)
+  }
+
+  // プラン情報を取得
+  const userIds = Object.keys(userCostMap)
+  const { data: profiles } = userIds.length > 0
+    ? await supabase.from('profiles').select('id, email, plan').in('id', userIds)
+    : { data: [] }
+
+  const byPlan: Record<string, { cost: number; userCount: number }> = {}
+  for (const profile of (profiles ?? [])) {
+    const plan = (profile.plan as string) ?? 'individual'
+    const cost = userCostMap[profile.id as string] ?? 0
+    if (!byPlan[plan]) byPlan[plan] = { cost: 0, userCount: 0 }
+    byPlan[plan].cost += cost
+    byPlan[plan].userCount += 1
+  }
+  const byPlanList = Object.entries(byPlan).map(([plan, v]) => ({ plan, ...v })).sort((a, b) => b.cost - a.cost)
+
+  // 管理者のブログ運用コスト
+  const blogCost = (adminLogs.data ?? [])
+    .filter((r) => BLOG_ROUTES.has(r.route))
+    .reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
+  const blogCallsByRoute: Record<string, number> = {}
+  for (const row of (adminLogs.data ?? [])) {
+    if (BLOG_ROUTES.has(row.route)) {
+      blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
+    }
+  }
+
+  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogCallsByRoute }
 }
 
 function usd(v: number) {
@@ -91,7 +127,7 @@ const ROUTE_LABELS: Record<string, string> = {
 }
 
 export default async function AdminCostsPage() {
-  const { currentCost, lastCost, currentTokens, byRouteList, dailyList } = await getCostData()
+  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogCallsByRoute } = await getCostData()
 
   const now = new Date()
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
@@ -189,6 +225,56 @@ export default async function AdminCostsPage() {
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
+      </section>
+
+      {/* プラン別コスト */}
+      <section>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">プラン別コスト（今月・ユーザーAPI使用分）</h2>
+        {byPlanList.length === 0 ? (
+          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
+        ) : (
+          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+            {byPlanList.map((row, i) => (
+              <div key={row.plan} className={`flex items-center gap-4 px-5 py-3.5 ${i < byPlanList.length - 1 ? 'border-b border-[var(--border)]' : ''}`}>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[var(--text)]">
+                    {row.plan === 'individual' ? '個人プラン' : row.plan === 'business' ? 'ビジネスプラン' : row.plan}
+                  </p>
+                  <p className="text-xs text-[var(--text3)]">{row.userCount}ユーザー</p>
+                </div>
+                <div className="text-right">
+                  <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
+                  {row.userCount > 0 && (
+                    <p className="text-xs text-[var(--text3)]">
+                      平均 <CostValue usd={row.cost / row.userCount} className="text-xs" /> /人
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ブログ運用コスト（管理者） */}
+      <section>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ブログ投稿コスト（今月・管理者自身）</h2>
+        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+          <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
+            <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
+            <CostValue usd={blogCost} className="text-sm font-bold text-[var(--text)]" />
+          </div>
+          {Object.entries(blogCallsByRoute).map(([route, calls]) => (
+            <div key={route} className="flex items-center gap-4 border-b border-[var(--border)] px-5 py-3 last:border-0">
+              <p className="flex-1 text-sm text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
+              <p className="text-xs text-[var(--text3)]">{calls}回</p>
+            </div>
+          ))}
+          {Object.keys(blogCallsByRoute).length === 0 && (
+            <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
+          )}
+        </div>
+        <p className="mt-2 text-xs text-[var(--text3)]">インタビュー（会話・まとめ）と記事生成の合計。HP分析は取材先ごとの費用なのでここには含みません。</p>
       </section>
 
       {/* 日別推移 */}

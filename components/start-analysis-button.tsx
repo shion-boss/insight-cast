@@ -9,6 +9,8 @@ import {
   trackPendingProjectAnalysis,
 } from '@/components/project-analysis-notifier'
 
+type StartPhase = 'idle' | 'preparing' | 'requesting'
+
 type Props = {
   projectId: string
   projectName: string
@@ -29,17 +31,34 @@ export default function StartAnalysisButton({
   onStarted,
 }: Props) {
   const router = useRouter()
-  const [starting, setStarting] = useState(false)
+  const [phase, setPhase] = useState<StartPhase>('idle')
 
   const isLimited = force && nextAvailableAt !== null && new Date(nextAvailableAt) > new Date()
   const nextAvailableLabel = isLimited
     ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(nextAvailableAt!))
     : null
+  const isBusy = phase !== 'idle'
+
+  function showReanalysisLimitToast(rawNextAvailableAt?: string | null) {
+    const formatted = rawNextAvailableAt
+      ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(rawNextAvailableAt))
+      : null
+
+    clearPendingProjectAnalysis(projectId)
+    showToast({
+      id: `analysis-limited-${projectId}`,
+      title: '再調査は月1回までです',
+      description: formatted
+        ? `次回は ${formatted} 以降に再調査できます。`
+        : '前回の調査から30日経過後に再調査できます。',
+      tone: 'warning',
+    })
+  }
 
   async function startAnalysis() {
-    if (starting) return
+    if (isBusy) return
 
-    setStarting(true)
+    setPhase('preparing')
 
     try {
       const res = await fetch(`/api/projects/${projectId}/analysis-start`, {
@@ -47,6 +66,13 @@ export default function StartAnalysisButton({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(force ? { force: true } : {}),
       })
+
+      if (res.status === 429) {
+        const json = await res.json().catch(() => null)
+        showReanalysisLimitToast(json?.next_available_at)
+        router.refresh()
+        return
+      }
 
       if (!res.ok) {
         throw new Error('failed to start')
@@ -68,46 +94,30 @@ export default function StartAnalysisButton({
         return
       }
 
+      setPhase('requesting')
+
+      const analyzeResponse = await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
+      if (analyzeResponse.status === 429) {
+        const analyzeJson = await analyzeResponse.json().catch(() => null)
+        showReanalysisLimitToast(analyzeJson?.next_available_at)
+        router.refresh()
+        return
+      }
+
+      if (!analyzeResponse.ok) {
+        throw new Error('failed to analyze')
+      }
+
       onStarted?.()
       trackPendingProjectAnalysis(projectId, projectName)
       showToast({
         id: `analysis-started-${projectId}`,
-        title: force ? '再調査を開始しました' : '調査を開始しました',
+        title: force ? '再調査を受け付けました' : '調査を受け付けました',
         description: force
           ? '最新の内容で結果を作り直します。完了したらお知らせします。'
-          : 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+          : 'バックグラウンドで進めます。完了したらお知らせします。',
       })
-
-      void fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
-        .then(async (response) => {
-          if (response.status === 429) {
-            const json = await response.json().catch(() => null)
-            clearPendingProjectAnalysis(projectId)
-            showToast({
-              id: `analysis-limited-${projectId}`,
-              title: '再調査は月1回までです',
-              description: json?.next_available_at
-                ? `次回は ${new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(json.next_available_at))} 以降に調査できます。`
-                : '前回の調査から30日経過後に再調査できます。',
-              tone: 'warning',
-            })
-            router.refresh()
-            return
-          }
-          if (!response.ok) {
-            throw new Error('failed to analyze')
-          }
-        })
-        .catch(() => {
-          clearPendingProjectAnalysis(projectId)
-          showToast({
-            id: `analysis-error-${projectId}`,
-            title: '調査を開始できませんでした',
-            description: '少し待ってから、もう一度お試しください。',
-            tone: 'warning',
-          })
-          router.refresh()
-        })
+      router.refresh()
     } catch {
       clearPendingProjectAnalysis(projectId)
       showToast({
@@ -117,7 +127,7 @@ export default function StartAnalysisButton({
         tone: 'warning',
       })
     } finally {
-      setStarting(false)
+      setPhase('idle')
     }
   }
 
@@ -138,15 +148,17 @@ export default function StartAnalysisButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={startAnalysis}
-      disabled={starting}
-      className={className}
-    >
+      <button
+        type="button"
+        onClick={startAnalysis}
+        disabled={isBusy}
+        className={className}
+      >
       <DevAiLabel>
-        {starting
-          ? (force ? '再調査を開始しています...' : '調査を開始しています...')
+        {phase === 'preparing'
+          ? (force ? '再調査の準備をしています...' : '調査の準備をしています...')
+          : phase === 'requesting'
+            ? (force ? '再調査を依頼しています...' : '調査を依頼しています...')
           : force
             ? (compact ? '再調査する' : 'この取材先を再調査する')
             : (compact ? '調査を開始する' : 'この取材先の調査を開始する')}
