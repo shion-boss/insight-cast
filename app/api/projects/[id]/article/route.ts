@@ -122,6 +122,28 @@ async function saveArticle(input: {
     return null
   }
 
+  // blog_posts に下書き保存
+  const today = new Date().toISOString().slice(0, 10)
+  const suffix = Math.random().toString(36).slice(2, 7)
+  const slug = `${today}-${suffix}`
+  const blogCategory = input.articleType === 'interviewer' ? 'interview' : 'insight-cast'
+  await input.supabase
+    .from('blog_posts')
+    .insert({
+      slug,
+      title,
+      excerpt,
+      category: blogCategory,
+      type: input.articleType === 'interviewer' ? 'interview' : 'normal',
+      cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
+      date: today,
+      published: false,
+      body: { kind: 'markdown', content: cleanContent },
+    })
+    .then(({ error }) => {
+      if (error) console.warn('[article/saveArticle] blog_posts 下書き保存失敗:', error.message)
+    })
+
   await input.supabase
     .from('interviews')
     .update({
