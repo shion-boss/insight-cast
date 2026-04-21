@@ -23,6 +23,7 @@ type Interview = {
   status: string | null
   summary: string | null
   themes: string[] | null
+  article_status: string | null
   created_at: string
 }
 
@@ -56,9 +57,9 @@ export default async function InterviewsPage() {
   const projectMap = new Map(projects.map((project) => [project.id, project]))
 
   const { data: interviewRows } = projects.length > 0
-    ? await supabase
+      ? await supabase
       .from('interviews')
-      .select('id, project_id, interviewer_type, status, summary, themes, created_at')
+      .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
       .in('project_id', projects.map((project) => project.id))
       .order('created_at', { ascending: false })
     : { data: [] }
@@ -156,6 +157,7 @@ export default async function InterviewsPage() {
                       hasSummary={hasSummary}
                       hasArticle={hasArticle}
                       hasUncreatedThemes={hasUncreatedThemes}
+                      articleStatus={interview.article_status}
                       summaryLabel="取材メモあり"
                       articleLabel="記事あり"
                       creatingLabel="作成中"

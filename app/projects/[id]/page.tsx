@@ -23,6 +23,7 @@ type InterviewRow = {
   status: string | null
   summary: string | null
   themes: string[] | null
+  article_status: string | null
   created_at: string
 }
 
@@ -81,7 +82,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const { data: interviewRows } = await supabase
     .from('interviews')
-    .select('id, project_id, interviewer_type, status, summary, themes, created_at')
+    .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
     .eq('project_id', id)
     .order('created_at', { ascending: false })
 
@@ -359,6 +360,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       hasSummary={hasSummary}
                       hasArticle={hasArticle}
                       hasUncreatedThemes={hasUncreatedThemes}
+                      articleStatus={interview.article_status}
                     />
                     {latestInterviewArticle && (
                       <Link href={`/projects/${id}/articles/${latestInterviewArticle.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>

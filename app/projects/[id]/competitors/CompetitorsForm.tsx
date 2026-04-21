@@ -1,13 +1,9 @@
 'use client'
 
-import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useState, type FormEvent } from 'react'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
-import {
-  clearPendingProjectAnalysis,
-  trackPendingProjectAnalysis,
-} from '@/components/project-analysis-notifier'
+import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
 import { DevAiLabel, PrimaryButton } from '@/components/ui'
 import { saveCompetitors } from '@/lib/actions/projects'
 import { showToast } from '@/lib/client/toast'
@@ -30,12 +26,27 @@ export default function CompetitorsForm({
   initialLocation,
 }: Props) {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
   const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
   const [canSubmit, setCanSubmit] = useState(true)
+  const [submitState, setSubmitState] = useState<'idle' | 'saving' | 'requesting'>('idle')
 
-  function handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+  const isBusy = submitState !== 'idle'
+
+  function getLimitMessage(rawNextAvailableAt?: string | null) {
+    if (!rawNextAvailableAt) {
+      return '前回の調査から30日経過後に再調査できます。'
+    }
+
+    const label = new Intl.DateTimeFormat('ja-JP', {
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(rawNextAvailableAt))
+
+    return `次回は ${label} 以降に再調査できます。`
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
 
@@ -49,50 +60,67 @@ export default function CompetitorsForm({
     const industryMemo = String(formData.get('industry_memo') ?? '')
     const location = String(formData.get('location') ?? '')
 
-    startTransition(async () => {
-      const result = await saveCompetitors(projectId, {
-        urls,
-        industryMemo,
-        location,
-      })
-      if (result.error) {
-        if (result.error === 'competitor_limit') {
-          setError('参考HPは最大3件までです。1件以上外してから保存してください。')
-          return
-        }
-        if (result.error === 'competitor_self') {
-          setError('自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。')
-          return
-        }
-        setError('うまく保存できませんでした。少し待ってから、もう一度お試しください。')
+    setSubmitState('saving')
+
+    const result = await saveCompetitors(projectId, {
+      urls,
+      industryMemo,
+      location,
+    })
+    if (result.error) {
+      setSubmitState('idle')
+      if (result.error === 'competitor_limit') {
+        setError('参考HPは最大3件までです。1件以上外してから保存してください。')
         return
+      }
+      if (result.error === 'competitor_self') {
+        setError('自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。')
+        return
+      }
+      setError('うまく保存できませんでした。少し待ってから、もう一度お試しください。')
+      return
+    }
+
+    setSubmitState('requesting')
+
+    try {
+      const response = await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
+
+      if (response.status === 429) {
+        const json = await response.json().catch(() => null)
+        const message = getLimitMessage(json?.next_available_at)
+        setError(`保存は完了しましたが、${message}`)
+        showToast({
+          id: `analysis-limited-${projectId}`,
+          title: '再調査は月1回までです',
+          description: message,
+          tone: 'warning',
+        })
+        return
+      }
+
+      if (!response.ok) {
+        throw new Error('failed to analyze')
       }
 
       trackPendingProjectAnalysis(projectId, projectName)
       showToast({
         id: `analysis-started-${projectId}`,
-        title: '再調査を開始しました',
-        description: '競合設定を更新したので、最新の内容で結果を作り直します。',
+        title: '再調査を受け付けました',
+        description: '競合設定を反映して、バックグラウンドで結果を作り直します。',
       })
-
-      void fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('failed to analyze')
-          }
-        })
-        .catch(() => {
-          clearPendingProjectAnalysis(projectId)
-          showToast({
-            id: `analysis-error-${projectId}`,
-            title: '調査を開始できませんでした',
-            description: '少し待ってから、もう一度お試しください。',
-            tone: 'warning',
-          })
-        })
-
       router.push(`/projects/${projectId}`)
-    })
+    } catch {
+      setError('保存は完了しましたが、再調査を受け付けられませんでした。少し待ってから、もう一度お試しください。')
+      showToast({
+        id: `analysis-error-${projectId}`,
+        title: '再調査を開始できませんでした',
+        description: '保存内容は反映されています。少し待ってから、もう一度お試しください。',
+        tone: 'warning',
+      })
+    } finally {
+      setSubmitState('idle')
+    }
   }
 
   return (
@@ -131,10 +159,16 @@ export default function CompetitorsForm({
 
       <PrimaryButton
         type="submit"
-        disabled={isPending || !canSubmit}
+        disabled={isBusy || !canSubmit}
         className="w-full py-3 text-sm"
       >
-        {isPending ? <DevAiLabel>保存して再調査しています...</DevAiLabel> : <DevAiLabel>この内容で保存して再調査する</DevAiLabel>}
+        {submitState === 'saving' ? (
+          <DevAiLabel>保存しています...</DevAiLabel>
+        ) : submitState === 'requesting' ? (
+          <DevAiLabel>再調査を依頼しています...</DevAiLabel>
+        ) : (
+          <DevAiLabel>この内容で保存して再調査する</DevAiLabel>
+        )}
       </PrimaryButton>
     </form>
   )

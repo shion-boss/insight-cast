@@ -170,7 +170,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus:ring-3 focus:ring-[var(--accent-l)]',
+        'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus:ring-3 focus:ring-[var(--accent-l)] disabled:cursor-not-allowed disabled:bg-[var(--bg2)] disabled:text-[var(--text3)] disabled:hover:border-[var(--border)]',
         className,
       )}
     />

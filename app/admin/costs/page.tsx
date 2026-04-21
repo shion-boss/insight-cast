@@ -17,8 +17,8 @@ const EXCHANGE_RATE = 150 // 1 USD = 150 JPY（概算）
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
 
-// ブログ投稿に使う機能（管理者の自社運用）
-const BLOG_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article'])
+// ホームページ運用に使う機能（管理者の自社運用）
+const SITE_OPS_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article', 'analyze', 'account/analyze'])
 
 async function getCostData() {
   const supabase = createAdminClient()
@@ -98,11 +98,11 @@ async function getCostData() {
 
   // 管理者のブログ運用コスト
   const blogCost = (adminLogs.data ?? [])
-    .filter((r) => BLOG_ROUTES.has(r.route))
+    .filter((r) => SITE_OPS_ROUTES.has(r.route))
     .reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
   const blogCallsByRoute: Record<string, number> = {}
   for (const row of (adminLogs.data ?? [])) {
-    if (BLOG_ROUTES.has(row.route)) {
+    if (SITE_OPS_ROUTES.has(row.route)) {
       blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
     }
   }
@@ -256,9 +256,9 @@ export default async function AdminCostsPage() {
         )}
       </section>
 
-      {/* ブログ運用コスト（管理者） */}
+      {/* HP運用コスト（管理者） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ブログ投稿コスト（今月・管理者自身）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ホームページ運用費（今月・管理者自身）</h2>
         <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
@@ -274,7 +274,7 @@ export default async function AdminCostsPage() {
             <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
           )}
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">インタビュー（会話・まとめ）と記事生成の合計。HP分析は取材先ごとの費用なのでここには含みません。</p>
+        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
       </section>
 
       {/* 日別推移 */}

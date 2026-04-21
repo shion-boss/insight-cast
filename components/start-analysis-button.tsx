@@ -148,12 +148,12 @@ export default function StartAnalysisButton({
   }
 
   return (
-      <button
-        type="button"
-        onClick={startAnalysis}
-        disabled={isBusy}
-        className={className}
-      >
+    <button
+      type="button"
+      onClick={startAnalysis}
+      disabled={isBusy}
+      className={className}
+    >
       <DevAiLabel>
         {phase === 'preparing'
           ? (force ? '再調査の準備をしています...' : '調査の準備をしています...')

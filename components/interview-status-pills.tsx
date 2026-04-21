@@ -12,6 +12,7 @@ type Props = {
   hasSummary: boolean
   hasArticle: boolean
   hasUncreatedThemes: boolean
+  articleStatus?: string | null
   summaryLabel?: string
   articleLabel?: string
   creatingLabel?: string
@@ -23,6 +24,7 @@ export default function InterviewStatusPills({
   hasSummary,
   hasArticle,
   hasUncreatedThemes,
+  articleStatus = null,
   summaryLabel = 'メモ',
   articleLabel = '記事',
   creatingLabel = '作成中',
@@ -45,7 +47,8 @@ export default function InterviewStatusPills({
     }
   }, [interviewId])
 
-  const isCreating = pendingCount > 0
+  const hasTerminalServerStatus = articleStatus === 'ready' || articleStatus === 'failed'
+  const isCreating = articleStatus === 'generating' || (!hasTerminalServerStatus && pendingCount > 0)
 
   return (
     <>
