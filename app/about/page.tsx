@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 
 import { CHARACTERS } from '@/lib/characters'
-import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
 
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
@@ -30,43 +30,38 @@ export default function AboutPage() {
       <PublicHeader />
 
       <main className="relative z-10">
-        {/* Hero */}
-        <section style={{ padding: '112px 0 80px', background: 'linear-gradient(135deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-              <div>
-                <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">About</div>
-                <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
-                  一次情報に、<br />価値を宿らせる
-                </h1>
-                <p className="text-base text-[var(--text2)] mt-4 leading-relaxed">
-                  私たちは、小規模事業者が自分の言葉で発信を続けられる世界を目指しています。AIキャストが話を聞き、あなたの経験から発信の土台を育てていく。それが Insight Cast です。
-                </p>
-              </div>
-              <div>
-                <div className="bg-[var(--bg2)] rounded-[24px] overflow-hidden border border-[var(--border)]">
-                  <div className="grid grid-cols-3 gap-3 p-4 sm:p-6">
-                    {allCasts.map((char, i) => (
-                      <div key={char.id} className={`text-center ${i > 2 ? 'opacity-70' : ''}`}>
-                        <div className="rounded-[16px] overflow-hidden border-[1.5px] border-[var(--border)] mb-2.5 bg-[var(--bg2)]">
-                          <Image
-                            src={char.portrait}
-                            alt={`${char.name}のポートレート`}
-                            width={80}
-                            height={80}
-                            className="w-full object-contain"
-                          />
-                        </div>
-                        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-0.5">{char.name}</div>
-                        <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</div>
-                      </div>
-                    ))}
+        <PublicHero
+          eyebrow="About"
+          title={<>一次情報に、<br />価値を宿らせる</>}
+          description={(
+            <>
+              私たちは、小規模事業者が自分の言葉で発信を続けられる世界を目指しています。
+              AIキャストが話を聞き、あなたの経験から発信の土台を育てていく。それが Insight Cast です。
+            </>
+          )}
+          aside={(
+            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg2)] p-4 sm:p-6">
+              <div className="grid grid-cols-3 gap-3">
+                {allCasts.map((char, i) => (
+                  <div key={char.id} className={`text-center ${i > 2 ? 'opacity-70' : ''}`}>
+                    <div className="mb-2.5 overflow-hidden rounded-[16px] border-[1.5px] border-[var(--border)] bg-[var(--surface)]">
+                      <Image
+                        src={char.portrait}
+                        alt={`${char.name}のポートレート`}
+                        width={80}
+                        height={80}
+                        className="w-full object-contain"
+                      />
+                    </div>
+                    <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</div>
+                    <div className="mt-0.5 text-[11px] font-semibold tracking-[.06em] text-[var(--accent)]">{char.label}</div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
-          </div>
-        </section>
+          )}
+          asideClassName="self-stretch border-none bg-transparent p-0 shadow-none"
+        />
 
         {/* Mission */}
         <section className="py-[88px]">

@@ -3,6 +3,59 @@ import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
 
+async function sendAdminNotification({
+  name,
+  email,
+  business,
+  message,
+}: {
+  name: string
+  email: string
+  business: string | null
+  message: string
+}) {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) {
+    console.warn('[contact] RESEND_API_KEY が未設定のためメール通知をスキップします')
+    return
+  }
+
+  const adminEmail =
+    process.env.ADMIN_EMAIL ??
+    process.env.ADMIN_EMAILS?.split(',')[0]?.trim()
+
+  if (!adminEmail) {
+    console.warn('[contact] ADMIN_EMAIL / ADMIN_EMAILS が未設定のためメール通知をスキップします')
+    return
+  }
+
+  const { Resend } = await import('resend')
+  const resend = new Resend(apiKey)
+
+  const businessLine = business ? `\n事業者名: ${business}` : ''
+  const text = [
+    'Insight Cast にお問い合わせが届きました。',
+    '',
+    `お名前: ${name}`,
+    `メールアドレス: ${email}`,
+    businessLine,
+    '',
+    '【ご相談内容】',
+    message,
+  ].join('\n')
+
+  try {
+    await resend.emails.send({
+      from: 'Insight Cast <noreply@insightcast.jp>',
+      to: adminEmail,
+      subject: '【Insight Cast】お問い合わせが届きました',
+      text,
+    })
+  } catch (err) {
+    console.error('[contact] メール通知の送信に失敗しました', err)
+  }
+}
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
@@ -131,6 +184,14 @@ export async function POST(req: Request) {
       { status: 500 },
     )
   }
+
+  // メール通知は失敗してもユーザーにエラーを返さない
+  await sendAdminNotification({
+    name: name.trim(),
+    email: normalizedEmail,
+    business: businessValue,
+    message: message.trim(),
+  })
 
   return NextResponse.json({ ok: true })
 }

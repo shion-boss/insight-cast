@@ -2,16 +2,12 @@ import 'server-only'
 
 import type { ArticleBody } from '@/lib/blog-contents'
 import { ARTICLE_BODIES } from '@/lib/blog-contents'
-import { type InterviewerId, type Post, type PostCategory, POSTS, type PostType, getPost } from '@/lib/blog-posts'
+import { type InterviewerId, type Post, POSTS, type PostType, getPost, normalizePostCategory } from '@/lib/blog-posts'
 import { createClient } from '@/lib/supabase/server'
 
 export type PostWithBody = Post & { body?: ArticleBody | null }
 
 const FALLBACK_COVER_COLOR = 'bg-stone-100'
-
-function isPostCategory(value: unknown): value is PostCategory {
-  return value === 'howto' || value === 'service' || value === 'case' || value === 'philosophy' || value === 'news'
-}
 
 function isPostType(value: unknown): value is PostType {
   return value === 'normal' || value === 'interview'
@@ -26,7 +22,7 @@ function rowToPost(row: Record<string, unknown>): Post {
     slug: String(row.slug ?? ''),
     title: String(row.title ?? ''),
     excerpt: String(row.excerpt ?? ''),
-    category: isPostCategory(row.category) ? row.category : 'howto',
+    category: normalizePostCategory(row.category),
     type: isPostType(row.type) ? row.type : 'normal',
     date: String(row.date ?? ''),
     interviewer: isInterviewerId(row.interviewer) ? row.interviewer : undefined,

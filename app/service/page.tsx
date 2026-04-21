@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { ButtonLink } from '@/components/ui'
-import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
+import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
@@ -134,21 +134,41 @@ export default function ServicePage() {
       <PublicHeader />
 
       <main className="relative z-10">
-        <section style={{ padding: '112px 0 80px', background: 'linear-gradient(135deg,#fdf8f2 0%,#f0e5d0 100%)' }} className="text-center">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Service</div>
-            <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] mx-auto" style={{ fontSize: 'clamp(28px,3.5vw,44px)', maxWidth: 680 }}>
-              AIが取材して、<br />記事の素材を届けるまで
-            </h1>
-            <p className="text-base text-[var(--text2)] mt-4 leading-relaxed mx-auto" style={{ maxWidth: 520 }}>
-              Insight Cast では、HP分析からインタビュー、記事の土台づくりまでをひとつの流れで進められます。
-            </p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+        <PublicHero
+          eyebrow="Service"
+          title={<>AIが取材して、<br />記事の素材を届けるまで</>}
+          description={(
+            <>
+              Insight Cast では、HP分析からインタビュー、記事の土台づくりまでを
+              ひとつの流れで進められます。
+            </>
+          )}
+          actions={(
+            <div className="flex flex-col gap-3 sm:flex-row">
               <ButtonLink href="/auth/signup" className="px-7 py-4">無料で始める →</ButtonLink>
               <ButtonLink href="/pricing" tone="secondary" className="px-7 py-4">料金を見る</ButtonLink>
             </div>
-          </div>
-        </section>
+          )}
+          aside={(
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">Flow</p>
+                <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+                  HP分析、AI取材、記事素材化までを一気通貫で進めます。
+                </p>
+              </div>
+              <div className="space-y-3">
+                {STEP_SUMMARY.map((item) => (
+                  <div key={item.step} className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--accent)]">{item.step}</p>
+                    <p className="mt-1 text-sm font-semibold text-[var(--text)]">{item.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          asideClassName="self-stretch"
+        />
 
         <section className="py-14 bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">

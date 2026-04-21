@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 
@@ -17,26 +17,47 @@ export default async function BlogPage() {
       <PublicHeader />
 
       <main className="relative z-10">
-        {/* Hero: pub-hero-sm */}
-        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-12 pb-14 pt-20">
-          <div className="mx-auto max-w-[1160px]">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">Blog</p>
-            <h1 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-[clamp(32px,4vw,52px)] font-bold leading-[1.18] text-[var(--text)]">
-              記事一覧
-            </h1>
-            <p className="mt-3 text-[16px] leading-[1.85] text-[var(--text2)]">
-              ホームページ更新・コンテンツ制作・一次情報の活かし方など、事業者の発信を支えるノウハウをお届けします。
-            </p>
-          </div>
-        </section>
+        <PublicHero
+          compact
+          eyebrow="Blog"
+          title={<>記事一覧</>}
+          description={(
+            <>
+              ホームページ更新・コンテンツ制作・一次情報の活かし方など、
+              事業者の発信を支えるノウハウをお届けします。
+            </>
+          )}
+          aside={(
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">Library</p>
+                <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+                  ノウハウ、事例、思想、サービスの考え方をテーマ別に読めます。
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: '公開中', value: `${posts.length}本` },
+                  { label: '主なテーマ', value: '一次情報' },
+                ].map((item) => (
+                  <div key={item.label} className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text3)]">{item.label}</p>
+                    <p className="mt-2 text-sm font-semibold text-[var(--text)]">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          asideClassName="self-stretch"
+        />
 
-        <section className="mx-auto max-w-[1160px] px-12 pb-20">
+        <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12">
           <BlogClient posts={posts} />
         </section>
 
       </main>
 
-      <PublicFooter />
+      <PublicFooter showPromo={false} />
     </PublicPageFrame>
   )
 }

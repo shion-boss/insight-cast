@@ -198,31 +198,33 @@ export function PublicHeader() {
   )
 }
 
-export function PublicFooter() {
+export function PublicFooter({ showPromo = true }: { showPromo?: boolean }) {
   return (
     <footer className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
-      <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
-          <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
-            登録はメールアドレスだけ。3名のキャストが今日から使えます。
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              href="/auth/signup"
-              className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
-            >
-              無料で取材を始める →
-            </Link>
-            <Link
-              href="/cast"
-              className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-            >
-              キャストを見る
-            </Link>
+      {showPromo && (
+        <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
+            <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+              登録はメールアドレスだけ。3名のキャストが今日から使えます。
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                href="/auth/signup"
+                className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+              >
+                無料で取材を始める →
+              </Link>
+              <Link
+                href="/cast"
+                className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                キャストを見る
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">

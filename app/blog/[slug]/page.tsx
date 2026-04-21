@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { ButtonLink, CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar } from '@/components/ui'
+import { BlogCoverArt } from '@/components/blog-cover-art'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
-import { POSTS, CATEGORY_LABELS, getRelatedPosts } from '@/lib/blog-posts'
-import { getBlogPostFromDB } from '@/lib/blog-posts.server'
+import { POSTS, CATEGORY_LABELS, getRelatedPostsFromList } from '@/lib/blog-posts'
+import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
+import { MarkdownArticleBody } from '@/lib/blog-markdown'
 
 export async function generateStaticParams() {
   return POSTS.map((post) => ({ slug: post.slug }))
@@ -65,7 +67,8 @@ export default async function BlogDetailPage({
   if (!post) notFound()
 
   const body = post.body ?? null
-  const relatedPosts = getRelatedPosts(post, 3)
+  const allPosts = await getBlogPostsFromDB()
+  const relatedPosts = getRelatedPostsFromList(allPosts, post, 3)
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
   return (
@@ -117,8 +120,14 @@ export default async function BlogDetailPage({
           </div>
         </div>
 
+        <div className="mx-auto mb-10 max-w-4xl overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface)]">
+          <BlogCoverArt post={post} char={interviewer ?? CHARACTERS[0]} variant="detail" />
+        </div>
+
         {/* 本文エリア */}
         <div className="mx-auto max-w-2xl">
+          {body?.kind === 'markdown' && <MarkdownArticleBody markdown={body.content} />}
+
           {body?.kind === 'normal' && (
             <div>
               {body.sections.map((section, i) => (
@@ -223,22 +232,43 @@ export default async function BlogDetailPage({
               ← ブログ一覧へ
             </Link>
 
-            {/* CTA */}
-            <div className="overflow-hidden rounded-[var(--r-xl)] border border-[var(--border)] bg-[linear-gradient(135deg,_#1f2937_0%,_#292524_58%,_#7c5a31_100%)] px-7 py-10 text-center text-white">
-              <p className="text-xs font-medium tracking-[0.22em] text-amber-200 uppercase">Start Free</p>
-              <p className="mt-4 text-xl font-semibold tracking-tight sm:text-2xl">
-                あなたのホームページでも試してみませんか
+            <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[rgba(255,253,249,0.94)] px-6 py-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text3)]">
+                Continue Reading
               </p>
-              <p className="mt-3 text-sm leading-7 text-[rgba(255,255,255,0.7)]">
-                登録無料。クレジットカード不要でインタビューを体験できます。
+              <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
+                このテーマをもう少し見る
               </p>
-              <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <ButtonLink href="/auth/signup" className="bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg2)]">
-                  無料で取材を始める
-                </ButtonLink>
-                <ButtonLink href="/cast" tone="ghost" className="border-white/70 text-white hover:border-white/40 hover:bg-white/10">
-                  キャストを見る
-                </ButtonLink>
+              <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+                関連する記事やサービス紹介から、次に気になる内容へ進めます。
+              </p>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                {[
+                  {
+                    href: '/blog',
+                    title: 'ブログ一覧へ',
+                    description: '他の記事を続けて読む',
+                  },
+                  {
+                    href: '/service',
+                    title: 'サービスを見る',
+                    description: '取材から記事化までの流れを見る',
+                  },
+                  {
+                    href: '/cast',
+                    title: 'キャストを見る',
+                    description: '誰がどんな取材をするか知る',
+                  },
+                ].map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    <p className="text-sm font-semibold text-[var(--text)]">{item.title}</p>
+                    <p className="mt-1 text-xs leading-6 text-[var(--text3)]">{item.description}</p>
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -259,10 +289,13 @@ export default async function BlogDetailPage({
                     href={`/blog/${related.slug}`}
                     className="card-interactive flex items-start gap-4 rounded-[var(--r-lg)] border border-[var(--border)]/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    <div
-                      className={`h-14 w-14 flex-shrink-0 rounded-xl ${related.coverColor}`}
-                      aria-hidden="true"
-                    />
+                    <div className="overflow-hidden rounded-xl">
+                      <BlogCoverArt
+                        post={related}
+                        char={relatedInterviewer ?? CHARACTERS[0]}
+                        variant="mini"
+                      />
+                    </div>
                     <div className="min-w-0">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
                         {related.type === 'interview' && relatedInterviewer && (
@@ -292,7 +325,7 @@ export default async function BlogDetailPage({
         )}
       </main>
 
-      <PublicFooter />
+      <PublicFooter showPromo={false} />
     </PublicPageFrame>
   )
 }

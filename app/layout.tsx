@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
+import GoogleAnalytics from "@/app/components/google-analytics";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -44,6 +45,7 @@ export default function RootLayout({
         <ProjectAnalysisNotifier />
         <ToastViewport />
         {children}
+        <GoogleAnalytics />
       </body>
     </html>
   );

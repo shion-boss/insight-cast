@@ -28,13 +28,18 @@ export type NormalBody = {
   sections: NormalSection[]
 }
 
+export type MarkdownBody = {
+  kind: 'markdown'
+  content: string
+}
+
 export type NormalSection =
   | { type: 'h2'; text: string }
   | { type: 'h3'; text: string }
   | { type: 'p'; text: string }
   | { type: 'ul'; items: string[] }
 
-export type ArticleBody = NormalBody | InterviewBody
+export type ArticleBody = NormalBody | InterviewBody | MarkdownBody
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   'why-interview-before-ai-writing': {

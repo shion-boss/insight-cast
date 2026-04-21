@@ -5,7 +5,8 @@ import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 import AppPreviewSection from '@/components/app-preview-section'
-import { CHARACTERS } from '@/lib/characters'
+import { BlogCoverArt } from '@/components/blog-cover-art'
+import { CHARACTERS, getCharacter } from '@/lib/characters'
 import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
 import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
@@ -85,6 +86,14 @@ const FAQS = [
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
 ] as const
 
+const BLOG_PREVIEW_CHARACTER: Record<(typeof POSTS)[number]['category'], string> = {
+  howto: 'mint',
+  service: 'claus',
+  case: 'rain',
+  philosophy: 'claus',
+  news: 'mint',
+}
+
 export default async function LandingPage() {
   try {
     const supabase = await createClient()
@@ -120,6 +129,9 @@ export default async function LandingPage() {
                   </Link>
                   <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
                     キャストを見る
+                  </Link>
+                  <Link href="/contact" className="border-[1.5px] border-[var(--border)] text-[var(--text2)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+                    まず相談してみる
                   </Link>
                 </div>
                 <div className="mt-9 flex flex-wrap gap-6 border-t border-[var(--border)]/70 pt-8 sm:gap-9">
@@ -553,9 +565,11 @@ export default async function LandingPage() {
                   href={`/blog/${post.slug}`}
                   className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden transition-transform duration-[220ms] hover:-translate-y-1 hover:shadow-[0_16px_48px_var(--shadow)] block"
                 >
-                  <div className="h-[160px] flex items-center justify-center text-[32px]" style={{ background: post.coverColor }}>
-                    <span>📝</span>
-                  </div>
+                  <BlogCoverArt
+                    post={post}
+                    char={getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!}
+                    variant="card"
+                  />
                   <div className="px-[22px] py-5">
                     <div className="text-[11px] font-semibold text-[var(--accent)] tracking-[.08em] uppercase mb-2">{CATEGORY_LABELS[post.category]}</div>
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] leading-[1.5] mb-2.5">{post.title}</div>
@@ -597,6 +611,40 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* ⑮ Contact CTA */}
+        {(() => {
+          const mint = getCharacter('mint')
+          return (
+            <section style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)', padding: '80px 0' }}>
+              <div className="mx-auto max-w-[720px] px-6 sm:px-8 text-center">
+                <div className="flex justify-center mb-6">
+                  <CharacterAvatar
+                    src={mint?.icon96}
+                    alt={`${mint?.name ?? 'ミント'}のアイコン`}
+                    emoji={mint?.emoji}
+                    size={72}
+                    className="shadow-[0_4px_16px_rgba(0,0,0,.08)]"
+                  />
+                </div>
+                <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.3]" style={{ fontSize: 'clamp(22px,2.8vw,34px)' }}>
+                  迷ったらまず聞いてください
+                </h2>
+                <p className="text-[15px] text-[var(--text2)] leading-[1.9] mt-4 max-w-[480px] mx-auto">
+                  「自社に使えるか分からない」「何から始めればいいか」──どんな些細なことでも、お気軽にどうぞ。
+                </p>
+                <div className="mt-8">
+                  <Link
+                    href="/contact"
+                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+                  >
+                    お問い合わせはこちら →
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )
+        })()}
 
       </main>
 

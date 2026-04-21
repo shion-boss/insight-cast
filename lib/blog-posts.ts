@@ -23,6 +23,23 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
   news: 'お知らせ',
 }
 
+const LEGACY_CATEGORY_MAP = {
+  'insight-cast': 'service',
+  interview: 'case',
+} as const
+
+export function normalizePostCategory(value: unknown): PostCategory {
+  if (value === 'howto' || value === 'service' || value === 'case' || value === 'philosophy' || value === 'news') {
+    return value
+  }
+
+  if (typeof value === 'string' && value in LEGACY_CATEGORY_MAP) {
+    return LEGACY_CATEGORY_MAP[value as keyof typeof LEGACY_CATEGORY_MAP]
+  }
+
+  return 'howto'
+}
+
 export const POSTS: Post[] = [
   {
     slug: 'why-interview-before-ai-writing',
@@ -99,4 +116,10 @@ export function getPost(slug: string): Post | undefined {
 
 export function getRelatedPosts(post: Post, limit = 3): Post[] {
   return POSTS.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, limit)
+}
+
+export function getRelatedPostsFromList(posts: Post[], post: Post, limit = 3): Post[] {
+  return posts
+    .filter((candidate) => candidate.slug !== post.slug && candidate.category === post.category)
+    .slice(0, limit)
 }
