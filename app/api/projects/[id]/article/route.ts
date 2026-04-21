@@ -78,6 +78,7 @@ async function saveArticle(input: {
   interviewId: string
   articleType: string
   content: string
+  userEmail?: string | null
 }) {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
   const title = titleMatch?.[1]?.trim() ?? '記事'
@@ -122,7 +123,11 @@ async function saveArticle(input: {
     return null
   }
 
-  // blog_posts に下書き保存
+  // blog_posts に下書き保存（管理者のみ）
+  const adminEmails = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
+  const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
+  if (!isAdmin) return savedArticle
+
   const today = new Date().toISOString().slice(0, 10)
   const suffix = Math.random().toString(36).slice(2, 7)
   const slug = `${today}-${suffix}`
@@ -381,7 +386,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, content: fullText })
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, content: fullText, userEmail: user?.email})
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
     }
