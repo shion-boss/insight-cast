@@ -84,10 +84,15 @@ export function AppShell({
             {showAdmin && (
               <Link
                 href="/admin"
-                className="mb-3 flex items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)]/30 bg-[var(--accent-l)] px-3 py-2.5 text-xs font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+                className="mb-3 flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[#1c1410] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[#2a1f18] hover:text-white"
               >
-                <span aria-hidden="true">⚙</span>
-                管理画面
+                <span className="flex items-center gap-2">
+                  <span aria-hidden="true">⚙</span>
+                  管理画面
+                </span>
+                <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold tracking-widest text-stone-400 uppercase">
+                  Admin
+                </span>
               </Link>
             )}
             <div className="mb-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-3">
