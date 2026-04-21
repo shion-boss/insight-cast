@@ -34,6 +34,8 @@ type SavedArticleRow = SavedArticle & {
   created_at: string
 }
 
+type ArticleFailureMap = Partial<Record<ArticleType, string>>
+
 const TABS: { type: ArticleType; label: string; desc: string }[] = [
   { type: 'client', label: 'ブログ記事', desc: '事業者の言葉で語る読み物記事' },
   { type: 'interviewer', label: 'インタビュー形式', desc: 'インタビュアーが伝える紹介記事' },
@@ -72,16 +74,31 @@ export default function ArticlePage() {
   const [pendingArticleJobIdByType, setPendingArticleJobIdByType] = useState<Partial<Record<ArticleType, string>>>({})
   const [articleStatus, setArticleStatus] = useState<ArticleGenerationStatus>('idle')
   const [articleErrorMessage, setArticleErrorMessage] = useState<string | null>(null)
+  const [failedArticleMessages, setFailedArticleMessages] = useState<ArticleFailureMap>({})
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
   const [theme, setTheme] = useState(initialTheme)
   const [polishAnswers, setPolishAnswers] = useState(true)
 
-  const [isStarting, setIsStarting] = useState(false)
+  const [startingArticleType, setStartingArticleType] = useState<ArticleType | null>(null)
   const currentSavedArticle = savedArticles[tab] ?? null
   const currentPendingJobId = pendingArticleJobIdByType[tab] ?? null
-  const isGenerating = articleStatus === 'generating' || isStarting
+  const pendingArticleTypes = Object.keys(pendingArticleJobIdByType) as ArticleType[]
+  const activeGenerationType = startingArticleType ?? pendingArticleTypes[0] ?? null
+  const activeGenerationLabel = activeGenerationType
+    ? (TABS.find((item) => item.type === activeGenerationType)?.label ?? '別の形式')
+    : null
+  const currentFailureMessage = failedArticleMessages[tab] ?? null
+  const currentTabStatus: ArticleGenerationStatus = (() => {
+    if (startingArticleType === tab || currentPendingJobId) return 'generating'
+    if (currentFailureMessage) return 'failed'
+    if (currentSavedArticle) return 'ready'
+    return 'idle'
+  })()
+  const isCurrentTabGenerating = currentTabStatus === 'generating'
+  const isGenerating = articleStatus === 'generating' || pendingArticleTypes.length > 0 || startingArticleType !== null
+  const isBusyWithAnotherTab = isGenerating && !isCurrentTabGenerating
   const mint = getCharacter('mint')
 
   const loadPageState = useCallback(async (showLoading = false, initTheme = false) => {
@@ -112,6 +129,7 @@ export default function ArticlePage() {
 
     const nextSavedArticles: Partial<Record<ArticleType, SavedArticle>> = {}
     const latestArticleByType = new Map<ArticleType, SavedArticleRow>()
+    const failedMessages: ArticleFailureMap = {}
 
     for (const article of (articleRows ?? []) as SavedArticleRow[]) {
       if (!article.article_type) continue
@@ -134,7 +152,15 @@ export default function ArticlePage() {
       const matchedSavedArticle = latestArticleByType.get(articleType)
       const isCompleted = matchedSavedArticle && isFreshEnough(matchedSavedArticle.created_at, job.requestedAt)
 
-      if (interview?.article_status === 'failed' || isCompleted) {
+      if (interview?.article_status === 'failed') {
+        failedMessages[articleType] = typeof interview.article_error === 'string'
+          ? interview.article_error
+          : '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。'
+        clearPendingArticleGeneration(jobId)
+        continue
+      }
+
+      if (isCompleted) {
         clearPendingArticleGeneration(jobId)
         continue
       }
@@ -148,9 +174,25 @@ export default function ArticlePage() {
 
     setSavedArticles(nextSavedArticles)
     setPendingArticleJobIdByType(nextPending)
+    setFailedArticleMessages((prev) => {
+      const next = { ...prev }
+
+      for (const articleType of ['client', 'interviewer', 'conversation'] as ArticleType[]) {
+        if (nextSavedArticles[articleType]) {
+          delete next[articleType]
+        }
+      }
+
+      for (const [articleType, message] of Object.entries(failedMessages) as [ArticleType, string][]) {
+        next[articleType] = message
+      }
+
+      return next
+    })
     setAvailableThemes(nextThemes)
     setArticleStatus((interview?.article_status as ArticleGenerationStatus | null) ?? (articleRows?.length ? 'ready' : 'idle'))
     setArticleErrorMessage(typeof interview?.article_error === 'string' ? interview.article_error : null)
+    setError(null)
     if (initTheme) {
       setTheme((current) => {
         if (nextThemes.length === 0) return ''
@@ -174,18 +216,23 @@ export default function ArticlePage() {
 
   useEffect(() => {
     if (!interviewId) return
-    if (articleStatus !== 'generating' && Object.keys(pendingArticleJobIdByType).length === 0) return
+    if (articleStatus !== 'generating' && Object.keys(pendingArticleJobIdByType).length === 0 && !startingArticleType) return
 
     const intervalId = window.setInterval(() => {
       void loadPageState().catch(() => null)
     }, 4000)
 
     return () => window.clearInterval(intervalId)
-  }, [articleStatus, interviewId, loadPageState, pendingArticleJobIdByType])
+  }, [articleStatus, interviewId, loadPageState, pendingArticleJobIdByType, startingArticleType])
 
   async function startBatchGeneration() {
-    setIsStarting(true)
+    setStartingArticleType(tab)
     setError(null)
+    setFailedArticleMessages((prev) => {
+      const next = { ...prev }
+      delete next[tab]
+      return next
+    })
     const jobId = `${interviewId}:${tab}:${Date.now()}`
     const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事素材'
     const requestedAt = new Date().toISOString()
@@ -224,7 +271,7 @@ export default function ArticlePage() {
         throw new Error('failed to start article generation')
       }
 
-      setIsStarting(false)
+      setStartingArticleType(null)
       setArticleStatus('generating')
       setArticleErrorMessage(null)
       showToast({
@@ -240,9 +287,11 @@ export default function ArticlePage() {
         delete next[tab]
         return next
       })
-      setIsStarting(false)
+      setStartingArticleType(null)
       setArticleStatus('failed')
-      setArticleErrorMessage('記事素材の作成を開始できませんでした。少し待ってから、もう一度お試しください。')
+      const failureMessage = '記事素材の作成を開始できませんでした。少し待ってから、もう一度お試しください。'
+      setArticleErrorMessage(failureMessage)
+      setFailedArticleMessages((prev) => ({ ...prev, [tab]: failureMessage }))
       showToast({
         id: `article-error-${jobId}`,
         title: '記事素材の作成を開始できませんでした',
@@ -253,16 +302,19 @@ export default function ArticlePage() {
   }
 
   const statusDescription = (() => {
-    if (articleStatus === 'generating') {
-      return 'バッチで作成中です。数秒おきに状態を確認しています。'
+    if (currentTabStatus === 'generating') {
+      return 'この形式をバッチで作成中です。数秒おきに状態を確認しています。'
     }
-    if (articleStatus === 'ready') {
-      return '最新の記事素材を確認できます。必要なら別の種類でも続けて作成できます。'
+    if (currentTabStatus === 'ready') {
+      return 'この形式の最新の記事素材を確認できます。必要なら条件を変えて作り直せます。'
     }
-    if (articleStatus === 'failed') {
-      return articleErrorMessage ?? '記事素材を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
+    if (currentTabStatus === 'failed') {
+      return currentFailureMessage ?? articleErrorMessage ?? '記事素材を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
     }
-    return '作成を開始するとバックグラウンドで進みます。このページを閉じても処理は続きます。'
+    if (isBusyWithAnotherTab && activeGenerationLabel) {
+      return `いまは「${activeGenerationLabel}」を作成中です。完了したらこの形式も続けて作れます。`
+    }
+    return 'この形式はまだ作っていません。作成を始めるとバックグラウンドで進みます。このページを閉じても処理は続きます。'
   })()
 
   return (
@@ -337,9 +389,25 @@ export default function ArticlePage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-[13px] leading-[1.7] text-[var(--text3)]">
-                  まだ選べるテーマがありません。先に取材メモからテーマを整理してください。
-                </p>
+                <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+                  <p className="text-[13px] leading-[1.7] text-[var(--text3)]">
+                    まだ選べるテーマがありません。先に取材メモを確認するか、取材に戻って話を足すと作りやすくなります。
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Link
+                      href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
+                      className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+                    >
+                      取材メモを開く
+                    </Link>
+                    <Link
+                      href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
+                      className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+                    >
+                      取材に戻る
+                    </Link>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -412,13 +480,13 @@ export default function ArticlePage() {
             <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
               <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">進行状況</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'generating' || articleStatus === 'ready' || articleStatus === 'failed' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${currentTabStatus === 'generating' || currentTabStatus === 'ready' || currentTabStatus === 'failed' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
                   受付済み
                 </span>
-                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'generating' ? 'bg-[var(--warn-l)] text-[var(--warn)]' : articleStatus === 'ready' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : articleStatus === 'failed' ? 'bg-[var(--err-l)] text-[var(--err)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
-                  {articleStatus === 'failed' ? '要確認' : '作成中'}
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${currentTabStatus === 'generating' ? 'bg-[var(--warn-l)] text-[var(--warn)]' : currentTabStatus === 'ready' ? 'bg-[var(--accent-l)] text-[var(--accent)]' : currentTabStatus === 'failed' ? 'bg-[var(--err-l)] text-[var(--err)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                  {currentTabStatus === 'failed' ? '要確認' : '作成中'}
                 </span>
-                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${articleStatus === 'ready' ? 'bg-[var(--ok-l)] text-[var(--ok)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
+                <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${currentTabStatus === 'ready' ? 'bg-[var(--ok-l)] text-[var(--ok)]' : 'bg-[var(--border)] text-[var(--text3)]'}`}>
                   作成済み
                 </span>
               </div>
@@ -431,10 +499,16 @@ export default function ArticlePage() {
               disabled={isGenerating || availableThemes.length === 0}
               className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {isGenerating ? <DevAiLabel>バッチで作成中...</DevAiLabel> : <DevAiLabel>バッチで作成を始める →</DevAiLabel>}
+              {isCurrentTabGenerating ? (
+                <DevAiLabel>この形式を作成中...</DevAiLabel>
+              ) : isBusyWithAnotherTab && activeGenerationLabel ? (
+                <DevAiLabel>{activeGenerationLabel}を作成中...</DevAiLabel>
+              ) : (
+                <DevAiLabel>バッチで作成を始める →</DevAiLabel>
+              )}
             </button>
             <p className="mt-2.5 text-center text-[12px] leading-[1.6] text-[var(--text3)]">
-              完了すると通知が届きます。{currentPendingJobId ? 'このタブでも自動で状態を更新しています。' : '別の作業へ移って大丈夫です。'}
+              完了すると通知が届きます。{currentPendingJobId ? 'このタブでも自動で状態を更新しています。' : isBusyWithAnotherTab ? 'いまは別の形式を作成中です。完了後にこの形式も始められます。' : '別の作業へ移って大丈夫です。'}
             </p>
           </aside>
 
@@ -445,18 +519,18 @@ export default function ArticlePage() {
                   {TABS.find((item) => item.type === tab)?.label ?? tab}
                 </span>
                 <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
-                  articleStatus === 'generating'
+                  currentTabStatus === 'generating'
                     ? 'bg-[var(--warn-l)] text-[var(--warn)]'
-                    : articleStatus === 'ready'
+                    : currentTabStatus === 'ready'
                       ? 'bg-[var(--ok-l)] text-[var(--ok)]'
-                      : articleStatus === 'failed'
+                      : currentTabStatus === 'failed'
                         ? 'bg-[var(--err-l)] text-[var(--err)]'
                         : 'bg-[var(--border)] text-[var(--text3)]'
                 }`}>
-                  {articleStatus === 'generating' ? '作成中' : articleStatus === 'ready' ? '作成済み' : articleStatus === 'failed' ? '要確認' : '未作成'}
+                  {currentTabStatus === 'generating' ? '作成中' : currentTabStatus === 'ready' ? '作成済み' : currentTabStatus === 'failed' ? '要確認' : '未作成'}
                 </span>
               </div>
-              {currentSavedArticle && !isGenerating && (
+              {currentSavedArticle && !isCurrentTabGenerating && (
                 <Link
                   href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
                   className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
@@ -466,7 +540,7 @@ export default function ArticlePage() {
               )}
             </div>
 
-            {!isGenerating && !currentSavedArticle && articleStatus !== 'failed' && (
+            {!isCurrentTabGenerating && !currentSavedArticle && currentTabStatus !== 'failed' && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 {error ? (
                   <StateCard
@@ -475,6 +549,38 @@ export default function ArticlePage() {
                     description={error}
                     tone="warning"
                     align="left"
+                  />
+                ) : availableThemes.length === 0 ? (
+                  <>
+                    <InterviewerSpeech
+                      icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+                      name="ミント"
+                      title="先にテーマを整えると記事を作りやすくなります"
+                      description="取材メモのテーマ候補を確認するか、取材に戻って話を足すと、この形式の記事を始めやすくなります。"
+                      tone="soft"
+                    />
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                      <Link
+                        href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
+                        className={getButtonClass('primary')}
+                      >
+                        取材メモを開く
+                      </Link>
+                      <Link
+                        href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
+                        className={getButtonClass('secondary')}
+                      >
+                        取材に戻る
+                      </Link>
+                    </div>
+                  </>
+                ) : isBusyWithAnotherTab && activeGenerationLabel ? (
+                  <InterviewerSpeech
+                    icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+                    name="ミント"
+                    title={`いまは「${activeGenerationLabel}」を作成しています`}
+                    description="完了したら、この形式も続けて作れます。通知とこの画面の両方で状態を確認できます。"
+                    tone="soft"
                   />
                 ) : (
                   <InterviewerSpeech
@@ -488,7 +594,7 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {isGenerating && (
+            {isCurrentTabGenerating && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <WritingLoadingScene
                   title="記事素材を作成しています"
@@ -508,12 +614,12 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {articleStatus === 'failed' && !isGenerating && (
+            {currentTabStatus === 'failed' && !isCurrentTabGenerating && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <StateCard
                   icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                   title="記事素材を仕上げきれませんでした"
-                  description={articleErrorMessage ?? '少し時間をおいて、もう一度お試しください。'}
+                  description={currentFailureMessage ?? articleErrorMessage ?? '少し時間をおいて、もう一度お試しください。'}
                   tone="warning"
                   align="left"
                 />
@@ -532,7 +638,7 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {currentSavedArticle && !isGenerating && (
+            {currentSavedArticle && !isCurrentTabGenerating && (
               <div className="p-8">
                 <InterviewerSpeech
                   icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}

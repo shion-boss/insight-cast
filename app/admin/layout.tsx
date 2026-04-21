@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: '/admin/posts', label: '記事管理' },
   { href: '/admin/users', label: 'ユーザー管理' },
   { href: '/admin/costs', label: 'コスト管理' },
+  { href: '/admin/services', label: '関連サービス' },
 ]
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
