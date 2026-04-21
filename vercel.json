@@ -4,7 +4,7 @@
       "maxDuration": 300
     },
     "app/api/projects/[id]/article/route.ts": {
-      "maxDuration": 120
+      "maxDuration": 300
     },
     "app/api/projects/[id]/interview/chat/route.ts": {
       "maxDuration": 60
