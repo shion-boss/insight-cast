@@ -78,6 +78,7 @@ async function saveArticle(input: {
   projectId: string
   interviewId: string
   articleType: string
+  interviewerType?: string | null
   content: string
   userEmail?: string | null
 }) {
@@ -127,12 +128,12 @@ async function saveArticle(input: {
   // blog_posts に下書き保存（管理者のみ）
   const adminEmails = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
   const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
-  console.log('[article/saveArticle] isAdmin:', isAdmin, 'userEmail:', input.userEmail, 'adminEmails count:', adminEmails.length)
   if (isAdmin) {
     const today = new Date().toISOString().slice(0, 10)
     const suffix = Math.random().toString(36).slice(2, 7)
     const slug = `${today}-${suffix}`
-    const blogCategory = input.articleType === 'interviewer' ? 'interview' : 'insight-cast'
+    const isInterviewStyle = input.articleType === 'interviewer'
+    const blogCategory = isInterviewStyle ? 'interview' : 'insight-cast'
 
     await input.supabase
       .from('blog_posts')
@@ -141,7 +142,8 @@ async function saveArticle(input: {
         title,
         excerpt,
         category: blogCategory,
-        type: input.articleType === 'interviewer' ? 'interview' : 'normal',
+        type: isInterviewStyle ? 'interview' : 'normal',
+        interviewer: isInterviewStyle ? (input.interviewerType ?? null) : null,
         cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
         date: today,
         published: false,
@@ -400,7 +402,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, content: fullText, userEmail: user?.email})
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType: interview?.interviewer_type, content: fullText, userEmail: user?.email })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
     }
