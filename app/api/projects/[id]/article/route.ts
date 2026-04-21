@@ -82,6 +82,28 @@ async function saveArticle(input: {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
   const title = titleMatch?.[1]?.trim() ?? '記事'
 
+  const lines = input.content.split('\n')
+  const lastExcerptIdx = (() => {
+    for (let i = lines.length - 1; i >= 0; i--) {
+      if (/^抜粋[:：]\s*.+$/.test(lines[i])) return i
+    }
+    return -1
+  })()
+  const excerptLineMatch = lastExcerptIdx >= 0 ? lines[lastExcerptIdx].match(/^抜粋[:：]\s*(.+)$/) : null
+  const cleanContent = excerptLineMatch
+    ? lines.slice(0, lastExcerptIdx).join('\n').trimEnd()
+    : input.content
+
+  const excerpt = excerptLineMatch
+    ? excerptLineMatch[1].trim().slice(0, 150)
+    : cleanContent
+        .replace(/^#{1,6}\s+.+$/gm, '')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        .replace(/[*_`~>#-]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 150)
+
   const { data: savedArticle, error: articleInsertError } = await input.supabase
     .from('articles')
     .insert({
@@ -89,7 +111,8 @@ async function saveArticle(input: {
       interview_id: input.interviewId,
       article_type: input.articleType,
       title,
-      content: input.content,
+      excerpt,
+      content: cleanContent,
     })
     .select('id')
     .single()
@@ -263,7 +286,10 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - 見出し（##）を2〜3個つけて構造化する
 - お客様に読んでもらう想定で、温かみのある文体で
 - タイトルを最初に書く（# タイトル）
-- Markdown形式で出力${polishInstruction}`
+- 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
+- Markdown形式で出力
+- 【視点の一貫性】「〜というのです」「〜と話してくれました」「〜とのこと」「〜だそうです」など、第三者が伝える語尾・表現は使わない。事業者本人の言葉として一貫して書く
+- 【エピソードの一人称化】インタビューで語られたエピソードや発言も、「〜しました」「〜と思いました」「〜と感じました」のように事業者本人が一人称で語る形に書き直す${polishInstruction}`
   } else if (articleType === 'interviewer') {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
@@ -281,6 +307,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - 文字数: ${volumeLabel}文字程度
 - 見出し（##）を2〜3個つけて構造化する
 - タイトルを最初に書く（# タイトル）
+- 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
 - Markdown形式で出力${polishInstruction}`
   } else {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
@@ -301,6 +328,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - 実際のインタビューから自然な流れで5〜8往復を選んで構成
 - 全体の文字数: ${volumeLabel}文字程度
 - タイトルを最初に書く（# タイトル）
+- 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
 - Markdown形式で出力${polishInstruction}`
   }
 
@@ -313,7 +341,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
     try {
       const stream = await anthropic.messages.stream({
         model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
+        max_tokens: 4096,
         system: editorialGuardrail,
         messages: [{ role: 'user', content: prompt }],
       })

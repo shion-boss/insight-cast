@@ -23,7 +23,9 @@ const ABSTRACT_HINT_PATTERN = /(丁寧|安心|信頼|品質|対応|こだわり|
 
 export function normalizePromptText(value: unknown, maxLength = 160) {
   if (typeof value !== 'string') return ''
-  return value.replace(/\s+/g, ' ').trim().slice(0, maxLength)
+  const normalized = value.replace(/\s+/g, ' ').trim()
+  // Use Array.from to split by Unicode codepoint (handles emoji surrogate pairs)
+  return Array.from(normalized).slice(0, maxLength).join('')
 }
 
 export function formatConversationForPrompt(
@@ -67,11 +69,9 @@ export function normalizeUniqueStringList(value: unknown, options: NormalizeList
   const normalizedValues: string[] = []
 
   for (const item of toCandidateStrings(value)) {
-    const normalized = item
-      .replace(/^[\s・*•\-0-9.]+/u, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, maxLength)
+    const normalized = Array.from(
+      item.replace(/^[\s・*•\-0-9.]+/u, '').replace(/\s+/g, ' ').trim()
+    ).slice(0, maxLength).join('')
 
     if (!normalized) continue
 

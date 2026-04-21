@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { AppShell } from '@/components/app-shell'
+import { getIsAdmin } from '@/lib/actions/auth'
 import {
   CharacterAvatar,
   InterviewerSpeech,
@@ -102,6 +103,7 @@ export default function SettingsPage() {
     DEFAULT_NOTIFICATION_PREFERENCES,
   )
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<Section>('アカウント')
   const [interviewCount, setInterviewCount] = useState<number | null>(null)
@@ -139,6 +141,7 @@ export default function SettingsPage() {
 
       setUserId(user.id)
       setEmail(user.email ?? '')
+      getIsAdmin().then(setIsAdmin).catch((err) => { console.warn('[settings] getIsAdmin failed:', err) })
 
       const [{ data: profile, error: profileError }, { data: userProjects }] = await Promise.all([
         supabase
@@ -372,7 +375,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <AppShell title="設定" active="settings" accountLabel={name || '設定'}>
+      <AppShell title="設定" active="settings" accountLabel={name || '設定'} isAdmin={isAdmin}>
         <div className="max-w-lg py-2">
           <InterviewerSpeech
             icon={(
@@ -395,7 +398,7 @@ export default function SettingsPage() {
 
   if (loadError) {
     return (
-      <AppShell title="設定" active="settings" accountLabel={name || '設定'}>
+      <AppShell title="設定" active="settings" accountLabel={name || '設定'} isAdmin={isAdmin}>
         <div className="max-w-lg py-2">
           <InterviewerSpeech
             icon={(
@@ -426,7 +429,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <AppShell title="設定" active="settings" accountLabel={name.trim() || email || '設定'}>
+    <AppShell title="設定" active="settings" accountLabel={name.trim() || email || '設定'} isAdmin={isAdmin}>
       <div className="grid items-start gap-8 lg:grid-cols-[200px_1fr]">
         <nav className="flex flex-row gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:sticky lg:top-20 lg:flex-col">
           {SECTIONS.map((section) => (

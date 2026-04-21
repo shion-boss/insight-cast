@@ -31,11 +31,16 @@ const INTERVIEWER_OPTIONS = [
 ]
 
 function slugify(text: string): string {
-  return text
+  const ascii = text
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
+  if (ascii) return ascii
+  // 日本語など非ASCII タイトルは日付+ランダムsuffixにフォールバック
+  const date = new Date().toISOString().slice(0, 10)
+  const suffix = Math.random().toString(36).slice(2, 7)
+  return `${date}-${suffix}`
 }
 
 const selectClass =
@@ -145,7 +150,16 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div>
-            <FieldLabel required>スラッグ（URL）</FieldLabel>
+            <div className="flex items-center justify-between mb-1">
+              <FieldLabel required>スラッグ（URL）</FieldLabel>
+              <button
+                type="button"
+                onClick={() => handleChange('slug', slugify(form.title || ''))}
+                className="text-xs text-[var(--accent)] hover:underline"
+              >
+                タイトルから生成
+              </button>
+            </div>
             <TextInput
               value={form.slug}
               onChange={(e) => handleChange('slug', e.target.value)}

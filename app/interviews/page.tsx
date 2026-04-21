@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { ButtonLink, CharacterAvatar, StateCard } from '@/components/ui'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import InterviewStatusPills from '@/components/interview-status-pills'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
@@ -79,6 +79,7 @@ export default async function InterviewsPage() {
       title="取材メモ一覧"
       active="interviews"
       accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
     >
       <div className="mb-6 flex items-center justify-between">
         <div>

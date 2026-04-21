@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 import StartAnalysisButton from '@/components/start-analysis-button'
 import { StatusPill, getButtonClass } from '@/components/ui'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
@@ -143,6 +143,7 @@ export default async function ProjectsPage() {
       title="取材先一覧"
       active="projects"
       accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
       headerRight={(
         <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
           + 取材先を追加

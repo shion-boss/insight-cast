@@ -265,7 +265,14 @@ export default function SummaryPage() {
             {/* 記事テーマ候補 */}
             {data?.themes && data.themes.length > 0 && (
               <div>
-                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base mb-4">記事テーマ候補</p>
+                <div className="flex items-center gap-3 mb-4">
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base">記事テーマ候補</p>
+                  {articles.length > 0 && (
+                    <span className="text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2.5 py-0.5 rounded-full">
+                      {articles.length}件作成済み
+                    </span>
+                  )}
+                </div>
                 <div className="space-y-2.5">
                   {data.themes.map((t, i) => (
                     <div

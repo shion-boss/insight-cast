@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
@@ -204,6 +204,7 @@ export default async function DashboardPage() {
       title="ダッシュボード"
       active="dashboard"
       accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
       headerRight={(
         <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
           + 取材先を追加

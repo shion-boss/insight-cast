@@ -9,7 +9,7 @@ import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/anal
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { ContentMapPanel } from '@/app/dashboard/_components/content-map-panel'
@@ -195,6 +195,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       title={project.name || project.hp_url}
       active="projects"
       accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
       headerRight={(
         <div className="flex flex-wrap items-center justify-end gap-2">
           <Link href="/projects" className={getButtonClass('secondary', 'px-4 py-2.5 text-sm')}>

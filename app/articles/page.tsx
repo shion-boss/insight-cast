@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { ButtonLink, StateCard } from '@/components/ui'
-import { AppShell } from '@/components/app-shell'
+import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { createClient } from '@/lib/supabase/server'
 
 type ArticleRow = {
@@ -93,6 +93,7 @@ export default async function ArticlesPage() {
       title="記事一覧"
       active="articles"
       accountLabel={profile?.name ?? user.email ?? '設定'}
+      isAdmin={checkIsAdmin(user.email)}
     >
       <div className="mb-6 flex items-center justify-between">
         <div>
