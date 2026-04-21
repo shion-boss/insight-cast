@@ -297,16 +297,14 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
         }
       } catch (err) {
         console.error('[article] stream error:', err)
+        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
         controller.error(err)
         return
       }
-      await saveArticle({
-        supabase,
-        projectId,
-        interviewId,
-        articleType,
-        content: fullText,
-      })
+      const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
+      if (!saved) {
+        await supabase.from('projects').update({ status: 'interview_done' }).eq('id', projectId)
+      }
       controller.close()
     },
   })
