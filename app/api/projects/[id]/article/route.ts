@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest } from 'next/server'
+import { waitUntil } from '@vercel/functions'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 60_000 })
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
 const VOLUME_MAP = { short: '600〜800', medium: '1200〜1500', long: '2000〜2500' }
 const STYLE_MAP  = { desu: 'ですます体', 'de-aru': 'である体', 'da-na': 'だ・な体（口語的）' }
@@ -260,27 +261,23 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
   }
 
   if (background) {
-    let fullText = ''
-    try {
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
-          fullText += chunk.delta.text
+    async function generateAndSave() {
+      let fullText = ''
+      try {
+        for await (const chunk of stream) {
+          if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+            fullText += chunk.delta.text
+          }
         }
+      } catch (err) {
+        console.error('[article] background stream error:', err)
+        return
       }
-    } catch (err) {
-      console.error('[article] background stream error:', err)
-      return Response.json({ code: 'STREAM_ERROR', message: 'もう一度お試しください。' }, { status: 503 })
+      await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
     }
 
-    const savedArticle = await saveArticle({
-      supabase,
-      projectId,
-      interviewId,
-      articleType,
-      content: fullText,
-    })
-
-    return Response.json({ ok: true, articleId: savedArticle?.id ?? null })
+    waitUntil(generateAndSave())
+    return Response.json({ ok: true })
   }
 
   let fullText = ''
