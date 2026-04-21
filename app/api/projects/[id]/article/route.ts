@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getCharacter } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest, NextResponse } from 'next/server'
@@ -305,9 +306,10 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 
   await markArticleGenerationStarted({ supabase, projectId, interviewId })
 
-  async function generateAndSave() {
-    let fullText = ''
+  const adminSupabase = createAdminClient()
 
+  async function generateAndSaveWithAdmin() {
+    let fullText = ''
     try {
       const stream = await anthropic.messages.stream({
         model: 'claude-sonnet-4-6',
@@ -315,7 +317,6 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
         system: editorialGuardrail,
         messages: [{ role: 'user', content: prompt }],
       })
-
       for await (const chunk of stream) {
         if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
           fullText += chunk.delta.text
@@ -323,36 +324,27 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
       }
     } catch (err) {
       console.error('[article] background stream error:', err)
-      await markArticleGenerationFailed({
-        supabase,
-        projectId,
-        interviewId,
-        message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
-      })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-
     if (!fullText.trim()) {
-      await markArticleGenerationFailed({
-        supabase,
-        projectId,
-        interviewId,
-        message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
-      })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-
-    const saved = await saveArticle({ supabase, projectId, interviewId, articleType, content: fullText })
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, content: fullText })
     if (!saved) {
-      await markArticleGenerationFailed({
-        supabase,
-        projectId,
-        interviewId,
-        message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。',
-      })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
     }
   }
 
-  waitUntil(generateAndSave())
+  waitUntil(generateAndSaveWithAdmin().catch(async (err) => {
+    console.error('[article] unexpected error in generateAndSave:', err)
+    await markArticleGenerationFailed({
+      supabase: adminSupabase,
+      projectId,
+      interviewId,
+      message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
+    })
+  }))
   return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
 }
