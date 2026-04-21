@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export type PostFormData = {
   slug: string
@@ -41,7 +41,7 @@ export async function createPost(data: PostFormData): Promise<CreateResult> {
   const validationError = validatePost(data)
   if (validationError) return { error: validationError }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const bodyJson = data.body ? { kind: 'markdown', content: data.body } : null
 
@@ -75,7 +75,7 @@ export async function createPost(data: PostFormData): Promise<CreateResult> {
 export async function updatePost(id: string, data: Partial<PostFormData>): Promise<MutateResult> {
   if (!id) return { error: 'IDが不正です' }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
 
   const updateData: Record<string, unknown> = {}
   if (data.title !== undefined) updateData.title = data.title
@@ -103,7 +103,7 @@ export async function updatePost(id: string, data: Partial<PostFormData>): Promi
 export async function togglePublished(id: string, published: boolean): Promise<MutateResult> {
   if (!id) return { error: 'IDが不正です' }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { error } = await supabase
     .from('blog_posts')
     .update({ published })
@@ -116,7 +116,7 @@ export async function togglePublished(id: string, published: boolean): Promise<M
 export async function deletePost(id: string): Promise<MutateResult> {
   if (!id) return { error: 'IDが不正です' }
 
-  const supabase = await createClient()
+  const supabase = createAdminClient()
   const { error } = await supabase
     .from('blog_posts')
     .delete()
