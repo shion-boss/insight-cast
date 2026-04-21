@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { getCharacter } from '@/lib/characters'
 import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
