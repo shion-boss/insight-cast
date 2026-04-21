@@ -46,7 +46,7 @@ async function sendAdminNotification({
 
   try {
     await resend.emails.send({
-      from: 'Insight Cast <noreply@insightcast.jp>',
+      from: 'Insight Cast <onboarding@resend.dev>',
       to: adminEmail,
       subject: '【Insight Cast】お問い合わせが届きました',
       text,
