@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { CostValue } from './CostValue'
+import { CostValue, CostCard, CostTotal } from './CostValue'
 
 // 固定費（月額・USD換算）
 const FIXED_COSTS = [
@@ -151,17 +151,9 @@ export default async function AdminCostsPage() {
       <section>
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">今月のAI API費用</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {[
-            { label: '今月累計', cost: currentCost },
-            { label: '月末予測', cost: projectedCost },
-            { label: '先月合計', cost: lastCost },
-          ].map((card) => (
-            <div key={card.label} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
-              <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">{card.label}</p>
-              <CostValue usd={card.cost} className="mt-2 block font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]" />
-              <p className="mt-0.5 text-xs text-[var(--text3)]">ホバーで円換算</p>
-            </div>
-          ))}
+          <CostCard label="今月累計" usd={currentCost} />
+          <CostCard label="月末予測" usd={projectedCost} />
+          <CostCard label="先月合計" usd={lastCost} />
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">今月トークン数</p>
             <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
@@ -171,13 +163,7 @@ export default async function AdminCostsPage() {
       </section>
 
       {/* 月額合計 */}
-      <section className="rounded-[var(--r-lg)] border-2 border-[var(--accent)]/30 bg-[var(--accent-l)] p-5">
-        <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">今月の総コスト（概算）</p>
-        <div className="mt-3 flex items-end gap-4">
-          <CostValue usd={currentCost + FIXED_COST_TOTAL} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
-          <p className="mb-1 text-xs text-[var(--text3)]">固定費 <CostValue usd={FIXED_COST_TOTAL} /> + API <CostValue usd={currentCost} /></p>
-        </div>
-      </section>
+      <CostTotal usd={currentCost + FIXED_COST_TOTAL} fixedUsd={FIXED_COST_TOTAL} apiUsd={currentCost} />
 
       {/* ルート別 */}
       <section>
