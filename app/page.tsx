@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
 import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
+import { CopyButton } from '@/components/CopyButton'
+import { CheckoutButton } from '@/app/pricing/CheckoutButton'
 import AppPreviewSection from '@/components/app-preview-section'
 import { BlogCoverArt } from '@/components/blog-cover-art'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
@@ -47,6 +48,7 @@ const COMPARE_ROWS = [
 
 const PLANS = [
   {
+    id: 'free',
     name: 'お試し',
     price: '¥0',
     period: '',
@@ -57,23 +59,25 @@ const PLANS = [
     highlight: false,
   },
   {
+    id: 'personal',
     name: '個人向け',
     price: '¥4,980',
-    period: '/ 月予定',
+    period: '/ 月',
     desc: '週1〜2本ペースでHPを育てたい方へ',
     features: ['取材回数：月10回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材の生成', '追加キャスト：準備中'],
-    cta: '無料登録して案内を待つ',
-    href: '/auth/signup',
+    cta: '申し込む',
+    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',
     highlight: true,
   },
   {
+    id: 'business',
     name: '法人向け',
     price: '¥14,800',
-    period: '/ 月予定',
+    period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
     features: ['取材回数：月20回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材の生成', '追加キャスト：準備中', '優先サポート'],
-    cta: '無料登録して案内を待つ',
-    href: '/auth/signup',
+    cta: '申し込む',
+    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=business',
     highlight: false,
   },
 ] as const
@@ -83,7 +87,7 @@ const FAQS = [
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
   { q: '届いた記事素材はそのまま使えますか？', a: 'ホームページやブログに載せるための下書きとして、そのまま活用できます。少し整えるとより自然になりますが、たたき台としては十分に使えます。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種の専門知識を背景に取材します。専門用語を使わずに話していただければ、価値を分かりやすく言語化します。' },
-  { q: '途中でキャンセルできますか？', a: '個人向け・法人向けの課金機能は現在準備中です。正式提供時の解約条件は料金ページでご案内します。' },
+  { q: '途中でキャンセルできますか？', a: 'マイページの「プラン・請求」からいつでも解約できます。解約後もデータは保持されます。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
 ] as const
 
@@ -97,12 +101,18 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
 }
 
 export default async function LandingPage() {
+  let isLoggedIn = false
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (user) redirect('/dashboard')
+    isLoggedIn = Boolean(user)
   } catch {
-    // 公開トップは認証失敗時も表示する
+    // 認証失敗時も表示する
+  }
+
+  const priceIds = {
+    personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
+    business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
 
   const latestPosts = (await getBlogPostsFromDB()).slice(0, 3)
@@ -128,8 +138,8 @@ export default async function LandingPage() {
                   AIキャストが丁寧に取材して、あなたの話を「ホームページに載せられる文章」に整えます。ホームページを更新し続けるための、一番やさしい方法です。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
-                  <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
-                    無料で取材を体験する →
+                  <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
+                    {isLoggedIn ? 'ダッシュボードへ →' : '無料で取材を体験する →'}
                   </Link>
                   <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
                     キャストを見る
@@ -142,7 +152,7 @@ export default async function LandingPage() {
                   {[
                     { n: '3名', l: '無料キャスト' },
                     { n: '20分', l: '平均取材時間' },
-                    { n: '無料', l: 'まず始められる' },
+                    { n: '無料', l: 'カード不要で始められる' },
                   ].map((item) => (
                     <div key={item.l}>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)] leading-none">{item.n}</div>
@@ -389,9 +399,7 @@ export default async function LandingPage() {
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
                   <span className="text-[18px]">📄</span>
                   <span className="text-[13px] font-bold text-[var(--text)]">届いた記事素材</span>
-                  <button className="ml-auto border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-3 py-1 text-xs font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors">
-                    コピー
-                  </button>
+                  <CopyButton text={`「ここに住み続けられる気がした」── 外壁塗装が届けた安心感の話\n\n外壁塗装というと、見た目を新しくする工事というイメージが強いかもしれません。でも田中建設が大切にしているのは、塗り替えた後に「また長く住める」という気持ちを届けることです。\n\n同社が特にこだわるのが、施工前の下地処理。目には見えないこの工程こそが、塗装の耐久性を大きく左右します。手間がかかるため省略する業者もある中、同社は一切妥協しません。`} />
                 </div>
                 <div className="p-[22px]">
                   <h4 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">「ここに住み続けられる気がした」── 外壁塗装が届けた安心感の話</h4>
@@ -481,8 +489,8 @@ export default async function LandingPage() {
                 <thead>
                   <tr>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[38%]"></th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">生成AIで下書きする</th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社内で書く</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">ChatGPTなどで下書きする</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
                   </tr>
                 </thead>
@@ -517,7 +525,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               まず無料で、気軽に始められます
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで始められます。クレジットカード不要。個人向け・法人向けの課金機能は現在準備中です。</p>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで始められます。クレジットカード不要。有料プランはクレジットカードで簡単にお申し込みいただけます。</p>
             <div className="mt-11 grid gap-6 lg:grid-cols-3">
               {PLANS.map((plan) => (
                 <div
@@ -538,12 +546,27 @@ export default async function LandingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    href={plan.href}
-                    className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
-                  >
-                    {plan.cta}
-                  </Link>
+                  {plan.id === 'free' ? (
+                    <Link
+                      href={plan.href}
+                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : isLoggedIn ? (
+                    <CheckoutButton
+                      priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
+                      label={plan.cta}
+                      featured={plan.highlight}
+                    />
+                  ) : (
+                    <Link
+                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
+                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>

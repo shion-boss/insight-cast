@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { ArticleListTable } from '@/components/article-list-table'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { ButtonLink, StateCard, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
@@ -96,6 +97,13 @@ export default async function ProjectArticlesPage({
   const { data: articleRows } = await articlesQuery
   const articles = (articleRows ?? []) as ArticleRow[]
   const interviewer = interview ? getCharacter(interview.interviewer_type) : null
+  const articleItems = articles.map((article) => ({
+    id: article.id,
+    title: article.title || '記事',
+    articleTypeLabel: ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事',
+    createdAtLabel: formatDate(article.created_at),
+    detailHref: `/projects/${id}/articles/${article.id}`,
+  }))
 
   return (
     <AppShell
@@ -149,50 +157,12 @@ export default async function ProjectArticlesPage({
           )}
         />
       ) : (
-        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                  <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {articles.map((article, index) => (
-                  <tr
-                    key={article.id}
-                    className={index < articles.length - 1 ? 'border-b border-[var(--border)] transition-colors hover:bg-[var(--bg2)]' : 'transition-colors hover:bg-[var(--bg2)]'}
-                  >
-                    <td className="max-w-[420px] px-5 py-4">
-                      <p className="overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">
-                        {article.title || '記事'}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text3)]">
-                        {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text3)]">
-                      {formatDate(article.created_at)}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <Link
-                        href={`/projects/${id}/articles/${article.id}`}
-                        className="text-xs font-medium text-[var(--text3)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
-                      >
-                        詳細
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ArticleListTable
+          items={articleItems}
+          searchPlaceholder="タイトルで検索"
+          noResultsTitle="条件に合う記事が見つかりません。"
+          noResultsDescription="キーワードや種別を変えると、この記事一覧を絞り込めます。"
+        />
       )}
     </AppShell>
   )

@@ -6,8 +6,10 @@ import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
 import { hasPendingInterviewSummary, trackPendingInterviewSummary } from '@/components/project-analysis-notifier'
-import { CharacterAvatar, InterviewerSpeech, PageHeader, getButtonClass } from '@/components/ui'
+import { AppShell } from '@/components/app-shell'
+import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
+import { getIsAdmin } from '@/lib/actions/auth'
 
 type SummaryData = {
   values: string[]
@@ -58,6 +60,52 @@ export default function SummaryPage() {
   const [articles, setArticles] = useState<ArticleRow[]>([])
   const [isCheckingNow, setIsCheckingNow] = useState(false)
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null)
+  const [accountLabel, setAccountLabel] = useState('設定')
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    void (async () => {
+      const supabase = supabaseRef.current
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
+      if (!user) {
+        router.push('/')
+        return
+      }
+
+      if (!cancelled) {
+        setAccountLabel(user.email ?? '設定')
+      }
+
+      getIsAdmin()
+        .then((value) => {
+          if (!cancelled) {
+            setIsAdmin(value)
+          }
+        })
+        .catch((error) => {
+          console.warn('[summary] getIsAdmin failed:', error)
+        })
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('name')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!cancelled) {
+        setAccountLabel(profile?.name ?? user.email ?? '設定')
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [router])
 
   const loadSummary = useCallback(async (options?: { manual?: boolean }) => {
     if (!interviewId) {
@@ -162,12 +210,33 @@ export default function SummaryPage() {
   }, [loadSummary, pendingSummary])
 
   const char = data ? getCharacter(data.interviewerType) : null
+  const headerRight = (
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      {interviewId && (
+        <Link
+          href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
+          className={getButtonClass('secondary', 'px-3 py-2 text-sm')}
+        >
+          この取材の記事一覧
+        </Link>
+      )}
+      <Link href={backHref} className={getButtonClass('secondary', 'px-3 py-2 text-sm')}>
+        {backLabel}
+      </Link>
+    </div>
+  )
 
   if (loading) {
     const mintChar = getCharacter('mint')
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] px-6">
-        <div className="w-full max-w-md">
+      <AppShell
+        title="取材メモ"
+        active="interviews"
+        accountLabel={accountLabel}
+        isAdmin={isAdmin}
+        headerRight={headerRight}
+      >
+        <div className="mx-auto flex w-full max-w-md items-center justify-center py-10">
           <InterviewerSpeech
             icon={<CharacterAvatar src={mintChar?.icon48} alt="ミントのアイコン" emoji={mintChar?.emoji} size={48} />}
             name="ミント"
@@ -176,17 +245,21 @@ export default function SummaryPage() {
             tone="soft"
           />
         </div>
-      </div>
+      </AppShell>
     )
   }
 
   if (pendingSummary) {
     const mint = getCharacter(data?.interviewerType ?? 'mint')
     return (
-      <div className="min-h-screen bg-[var(--bg)]">
-        <PageHeader title="取材メモ" backHref={backHref} backLabel={backLabel} />
-
-        <div className="max-w-2xl mx-auto px-6 py-12">
+      <AppShell
+        title="取材メモ"
+        active="interviews"
+        accountLabel={accountLabel}
+        isAdmin={isAdmin}
+        headerRight={headerRight}
+      >
+        <div className="mx-auto max-w-2xl py-4">
           <InterviewerSpeech
             icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
             name={mint?.name ?? 'ミント'}
@@ -209,21 +282,22 @@ export default function SummaryPage() {
               >
                 {isCheckingNow ? '確認しています...' : '今すぐ確認する'}
               </button>
-              <Link href={backHref} className={getButtonClass('secondary')}>
-                {backLabel}
-              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </AppShell>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
-      <PageHeader title="取材メモ" backHref={backHref} backLabel={backLabel} />
-
-      <div className="max-w-6xl mx-auto px-6 py-8">
+    <AppShell
+      title="取材メモ"
+      active="interviews"
+      accountLabel={accountLabel}
+      isAdmin={isAdmin}
+      headerRight={headerRight}
+    >
+      <div>
         {/* breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
           <Link href="/projects" className="hover:text-[var(--text2)] transition-colors">取材先一覧</Link>
@@ -377,11 +451,16 @@ export default function SummaryPage() {
             {/* このインタビューから作った記事 */}
             <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
               <div className="flex items-center justify-between gap-2 mb-4">
-                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">関連する記事素材</p>
-                <Link href="/articles" className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors">一覧へ</Link>
+                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
+                <Link
+                  href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
+                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
+                >
+                  この取材の一覧へ
+                </Link>
               </div>
               {articles.length === 0 ? (
-                <p className="text-[13px] text-[var(--text3)]">まだ記事はありません。</p>
+                <p className="text-[13px] text-[var(--text3)]">この取材から作成した記事はまだありません。</p>
               ) : (
                 <div className="space-y-0">
                   {articles.map((article) => (
@@ -418,6 +497,6 @@ export default function SummaryPage() {
           </aside>
         </div>
       </div>
-    </div>
+    </AppShell>
   )
 }

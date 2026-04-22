@@ -1,8 +1,8 @@
 export const dynamic = 'force-dynamic'
 
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
+import { ArticleListTable } from '@/components/article-list-table'
 import { ButtonLink, StateCard } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { createClient } from '@/lib/supabase/server'
@@ -87,6 +87,22 @@ export default async function ArticlesPage() {
 
   const projects = new Map((projectRows ?? []).map((project) => [project.id, project as ProjectRow]))
   const interviews = new Map((interviewRows ?? []).map((interview) => [interview.id, interview as InterviewRow]))
+  const articleItems = articles.map((article) => {
+    const project = projects.get(article.project_id)
+    const interview = article.interview_id ? interviews.get(article.interview_id) : null
+    const excerpt = article.content.replace(/^#\s+.+$/m, '').trim().slice(0, 80)
+
+    return {
+      id: article.id,
+      title: article.title || '記事',
+      excerpt,
+      articleTypeLabel: ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事',
+      createdAtLabel: formatDate(article.created_at),
+      detailHref: `/projects/${article.project_id}/articles/${article.id}`,
+      projectLabel: project?.name || project?.hp_url || '—',
+      interviewerLabel: interview ? (CHAR_LABEL[interview.interviewer_type] ?? interview.interviewer_type) : '—',
+    }
+  })
 
   return (
     <AppShell
@@ -112,65 +128,14 @@ export default async function ArticlesPage() {
           action={<ButtonLink href="/dashboard">ダッシュボードへ戻る</ButtonLink>}
         />
       ) : (
-        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                  <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">取材先</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">担当</th>
-                  <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {articles.map((article, i) => {
-                  const project = projects.get(article.project_id)
-                  const interview = article.interview_id ? interviews.get(article.interview_id) : null
-                  const excerpt = article.content.replace(/^#\s+.+$/m, '').trim().slice(0, 80)
-
-                  return (
-                    <tr
-                      key={article.id}
-                      className={`transition-colors hover:bg-[var(--bg2)] ${i < articles.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
-                    >
-                      <td className="max-w-xs px-5 py-4">
-                        <p className="font-semibold text-[var(--text)] overflow-hidden text-ellipsis whitespace-nowrap mb-1">
-                          {article.title || '記事'}
-                        </p>
-                        <p className="text-xs text-[var(--text3)] overflow-hidden text-ellipsis whitespace-nowrap">{excerpt}</p>
-                      </td>
-                      <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
-                        {project?.name || project?.hp_url || '—'}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <span className="bg-[var(--bg2)] text-[var(--text3)] text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-[var(--border)]">
-                          {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
-                        {interview ? (CHAR_LABEL[interview.interviewer_type] ?? interview.interviewer_type) : '—'}
-                      </td>
-                      <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
-                        {formatDate(article.created_at)}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        <Link
-                          href={`/projects/${article.project_id}/articles/${article.id}`}
-                          className="text-xs font-medium text-[var(--text3)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
-                        >
-                          詳細
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ArticleListTable
+          items={articleItems}
+          showProjectColumn
+          showInterviewerColumn
+          searchPlaceholder="タイトル・取材先・本文で検索"
+          noResultsTitle="条件に合う記事が見つかりません。"
+          noResultsDescription="キーワードや絞り込み条件を変えると、記事が表示されます。"
+        />
       )}
     </AppShell>
   )

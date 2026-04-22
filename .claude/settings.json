@@ -4,5 +4,29 @@
       "Edit",
       "Write"
     ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '=== AGENT STARTUP: CLAUDE.md must be read before acting ===' && head -5 /home/ohtsuki/projects/insight-cast/CLAUDE.md"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/ohtsuki/projects/insight-cast && npx tsc --noEmit 2>&1 | grep -v node_modules | head -5 || true"
+          }
+        ]
+      }
+    ]
   }
 }

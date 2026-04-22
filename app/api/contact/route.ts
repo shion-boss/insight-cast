@@ -6,12 +6,10 @@ import { createAdminClient } from '@/lib/supabase/admin'
 async function sendAdminNotification({
   name,
   email,
-  business,
   message,
 }: {
   name: string
   email: string
-  business: string | null
   message: string
 }) {
   const apiKey = process.env.RESEND_API_KEY
@@ -32,13 +30,11 @@ async function sendAdminNotification({
   const { Resend } = await import('resend')
   const resend = new Resend(apiKey)
 
-  const businessLine = business ? `\n事業者名: ${business}` : ''
   const text = [
     'Insight Cast にお問い合わせが届きました。',
     '',
     `お名前: ${name}`,
     `メールアドレス: ${email}`,
-    businessLine,
     '',
     '【ご相談内容】',
     message,
@@ -101,7 +97,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const { name, email, business, message, website, startedAt } = body as Record<string, unknown>
+  const { name, email, message, website, startedAt } = body as Record<string, unknown>
 
   if (typeof website === 'string' && website.trim()) {
     return NextResponse.json({ ok: true })
@@ -133,7 +129,6 @@ export async function POST(req: Request) {
   }
 
   const normalizedEmail = email.trim().toLowerCase()
-  const businessValue = typeof business === 'string' && business.trim() ? business.trim() : null
   const ip = getClientIp(req)
   const ipHash = ip ? hashIp(ip) : null
   const windowStart = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString()
@@ -172,7 +167,6 @@ export async function POST(req: Request) {
   const { error } = await supabase.from('contact_messages').insert({
     name: name.trim(),
     email: normalizedEmail,
-    business: businessValue,
     message: message.trim(),
     ip_hash: ipHash,
     user_agent: userAgent,
@@ -189,7 +183,6 @@ export async function POST(req: Request) {
   await sendAdminNotification({
     name: name.trim(),
     email: normalizedEmail,
-    business: businessValue,
     message: message.trim(),
   })
 

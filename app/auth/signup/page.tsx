@@ -5,11 +5,25 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { FieldLabel, TextInput } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
-export default function SignupPage() {
+function SignupForm() {
+  const searchParams = useSearchParams()
+  const plan = searchParams.get('plan')
+  const nextParam = searchParams.get('next')
+  // next パラメータ内に plan が埋め込まれているケース（ログイン→サインアップ経由）も検出
+  const effectivePlan = plan ?? (() => {
+    if (!nextParam) return null
+    try {
+      const inner = new URLSearchParams(new URL(nextParam, 'http://x').search)
+      const p = inner.get('plan')
+      return p === 'personal' || p === 'business' ? p : null
+    } catch { return null }
+  })()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -32,7 +46,13 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signUp({ email, password })
+    const origin = window.location.origin
+    const afterNext = plan
+      ? `/api/stripe/checkout-redirect?plan=${plan}`
+      : nextParam ?? '/dashboard'
+    const emailRedirectTo = `${origin}/auth/callback?next=${encodeURIComponent(afterNext)}`
+
+    const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
     if (error) {
       setError('登録に失敗しました。もう一度お試しください')
       setLoading(false)
@@ -50,7 +70,7 @@ export default function SignupPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=/dashboard`,
+        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(effectivePlan ? `/api/stripe/checkout-redirect?plan=${effectivePlan}` : nextParam ?? '/dashboard')}`,
       },
     })
 
@@ -63,10 +83,8 @@ export default function SignupPage() {
   if (sent) {
     return (
       <div className="grid min-h-screen lg:grid-cols-2">
-        {/* 左パネル */}
         <LeftPanel mint={mint} claus={claus} rain={rain} />
 
-        {/* 右パネル */}
         <div className="bg-white flex items-center justify-center p-[60px]">
           <div className="max-w-[420px] w-full text-center">
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] ring-1 ring-[var(--border)]">
@@ -76,13 +94,15 @@ export default function SignupPage() {
             <p className="text-[14px] text-[var(--text2)] leading-[1.85] mb-8">
               <strong className="font-semibold text-[var(--text)]">{email}</strong> にメールを送りました。
               <br />
-              リンクを開くとそのままログインできます。
+              {plan
+                ? 'リンクを開くと、そのままお申し込み画面に進めます。'
+                : 'リンクを開くとそのままログインできます。'}
             </p>
             <Link
-              href="/dashboard"
-              className="inline-block bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-[13px] font-semibold text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              href="/auth/login"
+              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)]"
             >
-              ダッシュボードへ
+              ログイン画面へ
             </Link>
           </div>
         </div>
@@ -92,17 +112,18 @@ export default function SignupPage() {
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      {/* 左パネル */}
       <LeftPanel mint={mint} claus={claus} rain={rain} />
 
-      {/* 右パネル */}
       <div className="bg-white flex items-center justify-center p-[60px]">
         <div className="max-w-[420px] w-full">
-          <h1 className="font-serif text-[28px] font-bold text-[var(--text)] mb-2">無料で始める</h1>
+          <h1 className="font-serif text-[28px] font-bold text-[var(--text)] mb-2">
+            {effectivePlan === 'personal' ? '個人向けプランに申し込む' : effectivePlan === 'business' ? '法人向けプランに申し込む' : '無料で始める'}
+          </h1>
           <p className="text-[14px] text-[var(--text2)] mb-8">
+            {effectivePlan && <span className="block mb-2 text-[var(--accent)] font-semibold">アカウント登録後、そのままお申し込み画面に進みます。</span>}
             すでにアカウントをお持ちの方は{' '}
             <Link
-              href="/auth/login"
+              href={`/auth/login${nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''}`}
               className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
             >
               ログイン
@@ -116,7 +137,7 @@ export default function SignupPage() {
               disabled={loading || googleLoading}
               className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {googleLoading ? 'Googleに移動中...' : 'Googleで新規登録'}
+              {googleLoading ? 'Googleに移動中...' : effectivePlan ? 'Googleアカウントで申し込む' : 'Googleで新規登録'}
             </button>
 
             <div className="flex items-center gap-3">
@@ -168,7 +189,7 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {loading ? '登録中...' : '無料で始める'}
+              {loading ? '登録中...' : effectivePlan ? 'アカウントを作成して申し込む' : '無料で始める'}
             </button>
           </form>
 
@@ -182,6 +203,14 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupForm />
+    </Suspense>
   )
 }
 
@@ -200,28 +229,23 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
 
   return (
     <div className="bg-[var(--accent)] flex-col p-[60px] relative overflow-hidden hidden lg:flex">
-      {/* 背景デコレーション */}
       <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-white/5 pointer-events-none" />
       <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full bg-white/5 pointer-events-none" />
 
       <div className="relative z-10 flex flex-col h-full">
-        {/* ロゴ */}
         <span className="font-serif text-[22px] text-white font-bold mb-12">
           Insight Cast
         </span>
 
-        {/* 見出し */}
         <h2 className="font-serif text-[32px] font-bold text-white leading-[1.35] mb-5">
           あなたの当たり前が、<br />まだ伝わっていない<br />価値かもしれません。
         </h2>
 
-        {/* 説明 */}
         <p className="text-[15px] text-white/80 leading-[1.85] mb-8">
           AIインタビュアーが話を聞き出し、<br />
           ホームページを少しずつ強くします。
         </p>
 
-        {/* 特典リスト */}
         <ul className="space-y-3 mb-auto">
           {perks.map((perk) => (
             <li key={perk} className="flex items-center gap-3">
@@ -233,7 +257,6 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
           ))}
         </ul>
 
-        {/* キャスト紹介 */}
         <div className="mt-10 flex items-center gap-3">
           <div className="flex -space-x-2">
             {[mint, claus, rain].map((char, i) => (

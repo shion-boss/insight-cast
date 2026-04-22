@@ -5,8 +5,10 @@ import { useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import { FieldLabel, TextInput } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -17,6 +19,10 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
+  const nextPath = searchParams.get('next') ?? '/dashboard'
+  const isPaidFlow = nextPath.includes('checkout-redirect')
+  const paidPlan = nextPath.includes('plan=business') ? '法人向け' : nextPath.includes('plan=personal') ? '個人向け' : null
+  const mint = getCharacter('mint')
   const oauthErrorMessage = searchParams.get('message')
   const oauthError = searchParams.get('error') === 'oauth_callback'
     ? oauthErrorMessage ?? 'Googleログインに失敗しました。Supabase の Google Provider 設定をご確認ください'
@@ -34,7 +40,7 @@ function LoginForm() {
       return
     }
 
-    router.push('/dashboard')
+    router.push(nextPath)
     router.refresh()
   }
 
@@ -46,7 +52,7 @@ function LoginForm() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=/dashboard`,
+        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
       },
     })
 
@@ -65,6 +71,20 @@ function LoginForm() {
             Insight <span className="text-[var(--accent)]">Cast</span>
           </span>
         </div>
+
+        {/* 有料プラン文脈の案内 */}
+        {isPaidFlow && paidPlan && (
+          <div className="mb-5 flex items-start gap-3 rounded-[14px] border border-[var(--accent)]/30 bg-[var(--accent-l)] px-4 py-4">
+            {mint?.icon48 && (
+              <Image src={mint.icon48} alt={mint.name} width={36} height={36} className="rounded-full flex-shrink-0 mt-0.5" />
+            )}
+            <p className="text-[13px] text-[var(--text2)] leading-[1.7]">
+              <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />
+              ログイン後、そのままお支払い画面に進みます。<br />
+              アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>
+            </p>
+          </div>
+        )}
 
         {/* カード */}
         <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-12 w-full shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
@@ -97,7 +117,15 @@ function LoginForm() {
               />
             </div>
             <div>
-              <FieldLabel>パスワード</FieldLabel>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-[var(--text2)]">パスワード</label>
+                <Link
+                  href="/auth/reset-password"
+                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors"
+                >
+                  パスワードを忘れた場合
+                </Link>
+              </div>
               <TextInput
                 type="password"
                 value={password}
@@ -126,7 +154,7 @@ function LoginForm() {
         <p className="mt-5 text-center text-sm text-[var(--text3)]">
           アカウントをお持ちでない方は{' '}
           <Link
-            href="/auth/signup"
+            href={`/auth/signup${nextPath !== '/dashboard' ? `?next=${encodeURIComponent(nextPath)}` : ''}`}
             className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
           >
             新規登録

@@ -19,7 +19,6 @@ export function ContactForm() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [business, setBusiness] = useState('')
   const [message, setMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -58,7 +57,6 @@ export function ContactForm() {
         body: JSON.stringify({
           name,
           email,
-          business: business || undefined,
           message,
           website,
           startedAt,
@@ -140,18 +138,6 @@ export function ContactForm() {
         {fieldErrors.email && (
           <p id="err-email" className="mt-xs text-xs text-[var(--err)] mt-1">{fieldErrors.email}</p>
         )}
-      </div>
-
-      {/* 業種・事業内容 */}
-      <div>
-        <FieldLabel>業種・事業内容（任意）</FieldLabel>
-        <TextInput
-          type="text"
-          value={business}
-          onChange={(e) => setBusiness(e.target.value)}
-          placeholder="例: 整体院、工務店、ネイルサロン"
-          autoComplete="organization"
-        />
       </div>
 
       {/* ご相談内容 */}

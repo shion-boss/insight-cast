@@ -51,11 +51,10 @@ export default async function ProjectsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, onboarded')
+    .select('name')
     .eq('id', user.id)
     .maybeSingle()
 
-  if (!profile?.onboarded) redirect('/onboarding')
 
   const { data: projects } = await supabase
     .from('projects')

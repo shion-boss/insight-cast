@@ -11,13 +11,14 @@ import { CharacterAvatar, DevAiLabel, InterviewerSpeech, StateCard } from '@/com
 type Message = { role: 'user' | 'interviewer'; content: string }
 type SupportPost = { url: string; title: string; summary: string }
 
-const MAX_TURNS = 7
+const MAX_TURNS = 15
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 
 function getProgressLabel(turns: number) {
-  if (turns < 3) return '話を聞かせてもらっています'
-  if (turns < 5) return 'もう少し教えてもらえますか'
-  if (turns < 7) return 'いい話が集まってきました'
+  if (turns < 5) return '話を聞かせてもらっています'
+  if (turns < 10) return 'もう少し教えてもらえますか'
+  if (turns < 13) return 'いい話が集まってきました'
+  if (turns < MAX_TURNS) return 'そろそろまとまりそうです'
   return 'まとめに入ります'
 }
 
@@ -208,6 +209,10 @@ export default function InterviewPage() {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!input.trim() || loading) return
+    if (hasReachedTurnLimit) {
+      setShowComplete(true)
+      return
+    }
     const text = input.trim()
     setInput('')
 
@@ -216,13 +221,17 @@ export default function InterviewPage() {
     const result = await sendMessageToAI(text)
     if (!result.ok) return
 
-    if (newTurns === MAX_TURNS || result.interviewComplete) {
+    if (newTurns >= MAX_TURNS || result.interviewComplete) {
       setShowComplete(true)
     }
   }
 
   async function handlePassQuestion() {
     if (loading) return
+    if (hasReachedTurnLimit) {
+      setShowComplete(true)
+      return
+    }
 
     const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
     if (!result.ok) return
@@ -237,6 +246,7 @@ export default function InterviewPage() {
   }
 
   function handleContinue() {
+    if (hasReachedTurnLimit) return
     setShowComplete(false)
     setTimeout(() => textareaRef.current?.focus(), 50)
   }
@@ -246,8 +256,15 @@ export default function InterviewPage() {
   }
 
   const char = getCharacter(characterId)
+  const hasReachedTurnLimit = userTurns >= MAX_TURNS
   const supportPostCount = supportPosts.ownPosts.length + supportPosts.competitorPosts.length
   const showSupportPanel = supportPosts.loading || !!supportPosts.error || supportPostCount > 0
+
+  useEffect(() => {
+    if (!initializing && hasReachedTurnLimit) {
+      setShowComplete(true)
+    }
+  }, [hasReachedTurnLimit, initializing])
 
   if (initializing) {
     return (
@@ -466,7 +483,7 @@ export default function InterviewPage() {
             <button
               type="button"
               onClick={handlePassQuestion}
-              disabled={loading}
+              disabled={loading || hasReachedTurnLimit}
               className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-4 py-2.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
             >
               この質問はパス
@@ -483,15 +500,15 @@ export default function InterviewPage() {
                   handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
-              placeholder="メッセージを入力... (Enterで改行、Ctrl+Enterで送信)"
-              disabled={loading}
+              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'メッセージを入力... (Enterで改行、Ctrl+Enterで送信)'}
+              disabled={loading || hasReachedTurnLimit}
               rows={3}
               autoFocus
               className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50"
             />
             <button
               type="submit"
-              disabled={loading || !input.trim()}
+              disabled={loading || !input.trim() || hasReachedTurnLimit}
               className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-5 py-2.5 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
             >
               {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
@@ -514,10 +531,10 @@ export default function InterviewPage() {
               />
             </div>
             <p className="text-[var(--text)] font-semibold text-center mb-2">
-              いいお話がたくさん聞けました。
+              {hasReachedTurnLimit ? `上限の${MAX_TURNS}回まで質問しました。` : 'いいお話がたくさん聞けました。'}
             </p>
             <p className="text-sm text-[var(--text2)] text-center mb-6">
-              これを記事の素材にまとめてもいいですか？
+              {hasReachedTurnLimit ? 'ここまでの内容を記事の素材にまとめてもいいですか？' : 'これを記事の素材にまとめてもいいですか？'}
             </p>
             <div className="space-y-2">
               <button
@@ -526,12 +543,14 @@ export default function InterviewPage() {
               >
                 <DevAiLabel>はい、まとめてください</DevAiLabel>
               </button>
-              <button
-                onClick={handleContinue}
-                className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
-              >
-                もう少し話す
-              </button>
+              {!hasReachedTurnLimit && (
+                <button
+                  onClick={handleContinue}
+                  className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                >
+                  もう少し話す
+                </button>
+              )}
             </div>
           </div>
         </div>

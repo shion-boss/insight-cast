@@ -84,11 +84,10 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, onboarded')
+    .select('name')
     .eq('id', user.id)
     .maybeSingle()
 
-  if (!profile?.onboarded) redirect('/onboarding')
 
   const { data: projects } = await supabase
     .from('projects')
@@ -274,29 +273,36 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-6">
 
           {/* ── Quick actions ── */}
-          <div className="grid grid-cols-3 gap-3">
-            <Link
-              href="/projects/new"
-              className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
-            >
-              <div className="text-[28px]">🏢</div>
-              <div className="text-[13px] font-semibold text-[var(--text2)]">取材先を追加する</div>
-            </Link>
-            <Link
-              href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-              className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
-            >
-              <div className="text-[28px]">🎤</div>
-              <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
-            </Link>
-            <Link
-              href="/articles"
-              className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
-            >
-              <div className="text-[28px]">📄</div>
-              <div className="text-[13px] font-semibold text-[var(--text2)]">記事素材を確認する</div>
-            </Link>
-          </div>
+          {(() => {
+            const mint = getCharacter('mint')
+            const claus = getCharacter('claus')
+            const rain = getCharacter('rain')
+            return (
+              <div className="grid grid-cols-3 gap-3">
+                <Link
+                  href="/projects/new"
+                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                >
+                  <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} />
+                  <div className="text-[13px] font-semibold text-[var(--text2)]">取材先を追加する</div>
+                </Link>
+                <Link
+                  href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                >
+                  <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
+                  <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
+                </Link>
+                <Link
+                  href="/articles"
+                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                >
+                  <CharacterAvatar src={rain?.icon48} alt={rain?.name ?? 'レイン'} emoji={rain?.emoji} size={40} />
+                  <div className="text-[13px] font-semibold text-[var(--text2)]">記事素材を確認する</div>
+                </Link>
+              </div>
+            )
+          })()}
 
           {/* ── Projects + Interviews ── */}
           <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>

@@ -1,10 +1,17 @@
-// NOTE: 課金機能（Stripe連携・プラン変更）は未実装。
-// Phase 3 で実装予定。現在はプラン表示・上限チェックのみに使用。
-export type PlanKey = 'individual' | 'business'
+export type PlanKey = 'free' | 'personal' | 'business'
 
 export const PLANS = {
-  individual: {
-    key: 'individual' as const,
+  free: {
+    key: 'free' as const,
+    label: '無料',
+    maxProjects: 1,
+    additionalProjectAllowed: false,
+    monthlyInterviewLimit: 1,
+    maxCompetitorsPerProject: 1,
+    supportLabel: 'コミュニティサポート',
+  },
+  personal: {
+    key: 'personal' as const,
     label: '個人向け',
     maxProjects: 1,
     additionalProjectAllowed: false,
@@ -32,5 +39,5 @@ export const PLANS = {
 }>
 
 export function getPlanLimits(planKey: PlanKey | null | undefined) {
-  return PLANS[planKey ?? 'individual']
+  return PLANS[planKey ?? 'free']
 }

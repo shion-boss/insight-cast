@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { createClient } from '@/lib/supabase/server'
+import { CheckoutButton } from './CheckoutButton'
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
@@ -37,7 +39,7 @@ const PLANS = [
     id: 'personal',
     name: '個人向け',
     price: 4980,
-    note: '予定価格 / 課金機能は準備中',
+    note: 'クレジットカードで簡単お申し込み',
     catch: '週1〜2本ペースでHPを育てたい方へ',
     featured: true,
     features: [
@@ -50,14 +52,14 @@ const PLANS = [
       { ok: true, label: '追加キャスト：準備中' },
       { ok: false, label: '優先サポート' },
     ],
-    cta: '無料登録して案内を待つ',
+    cta: '申し込む',
     href: '/auth/signup',
   },
   {
     id: 'business',
     name: '法人向け',
     price: 14800,
-    note: '予定価格 / 課金機能は準備中',
+    note: 'クレジットカードで簡単お申し込み',
     catch: '複数の取材先や担当者でHPを強化したい方へ',
     featured: false,
     features: [
@@ -70,7 +72,7 @@ const PLANS = [
       { ok: true, label: '追加キャスト：準備中' },
       { ok: true, label: '優先サポート' },
     ],
-    cta: '無料登録して案内を待つ',
+    cta: '申し込む',
     href: '/auth/signup',
   },
 ] as const
@@ -117,11 +119,22 @@ const FAQS = [
   { q: '無料プランにクレジットカードは必要ですか？', a: '不要です。メールアドレスのみで登録できます。' },
   { q: '追加キャストはどのプランで使えますか？', a: '追加キャストは現在準備中です。正式提供後は、お試し・個人向け・法人向けの各プランで使える形を予定しています。' },
   { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
-  { q: 'プランはいつでも変更できますか？', a: 'プラン変更・課金機能は現在準備中です。正式提供時の切り替え条件はこのページでご案内します。' },
-  { q: '解約するとデータはどうなりますか？', a: '有料プランの解約フローとデータ保持期間は、正式提供時にあわせてご案内します。' },
+  { q: 'プランはいつでも変更できますか？', a: 'マイページの「プラン・請求」からいつでも変更・解約できます。' },
+  { q: '解約するとデータはどうなりますか？', a: '解約後もデータは保持されます。再契約時にそのままご利用いただけます。' },
 ] as const
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  const isLoggedIn = Boolean(user)
+
+  const priceIds = {
+    personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
+    business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
+  }
+
   return (
     <PublicPageFrame>
       <PublicHeader />
@@ -132,10 +145,10 @@ export default function PricingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
-              シンプルな料金体系
+              まず無料で試せます
             </h1>
             <p className="mx-auto mt-4 max-w-[480px] text-base text-[var(--text2)] leading-relaxed">
-              現在は無料で体験できます。個人向け・法人向けの課金機能は準備中です。
+              AIキャストによる取材を無料で体験できます。続けたい方向けに、月額プランをご用意しています。
             </p>
           </div>
         </section>
@@ -195,16 +208,31 @@ export default function PricingPage() {
                       </div>
                     ))}
                   </div>
-                  <Link
-                    href={plan.href}
-                    className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center ${
-                      plan.featured
-                        ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
-                        : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                    }`}
-                  >
-                    {plan.cta}
-                  </Link>
+                  {plan.id === 'free' ? (
+                    <Link
+                      href="/auth/signup"
+                      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  ) : isLoggedIn ? (
+                    <CheckoutButton
+                      priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
+                      label={plan.cta}
+                      featured={plan.featured}
+                    />
+                  ) : (
+                    <Link
+                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
+                      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center ${
+                        plan.featured
+                          ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
+                          : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                      }`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
@@ -294,6 +322,26 @@ export default function PricingPage() {
                   <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 締めのCTA */}
+        <section className="py-[88px] bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0]">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              まず、無料で試してみませんか？
+            </h2>
+            <p className="mt-4 text-[15px] text-[var(--text2)] leading-relaxed">
+              クレジットカード不要。メールアドレスだけで始められます。
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3 justify-center">
+              <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
+                無料で始める →
+              </Link>
+              <Link href="/contact" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors">
+                まず相談してみる
+              </Link>
             </div>
           </div>
         </section>

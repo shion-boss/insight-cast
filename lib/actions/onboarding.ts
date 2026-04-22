@@ -16,7 +16,10 @@ export async function completeOnboarding(formData: FormData) {
       onboarded: true,
     })
 
-  if (error) redirect('/onboarding?error=1')
+  const rawNext = formData.get('next')
+  const next = typeof rawNext === 'string' && rawNext.startsWith('/') ? rawNext : '/dashboard'
 
-  redirect('/dashboard')
+  if (error) redirect(`/onboarding?error=1&next=${encodeURIComponent(next)}`)
+
+  redirect(next)
 }

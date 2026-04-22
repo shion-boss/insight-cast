@@ -103,7 +103,7 @@ export default function SettingsPage() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [initialName, setInitialName] = useState('')
-  const [planKey, setPlanKey] = useState<PlanKey>('individual')
+  const [planKey, setPlanKey] = useState<PlanKey>('free')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [initialNotifications, setInitialNotifications] = useState<NotificationPreferences>(
     DEFAULT_NOTIFICATION_PREFERENCES,
@@ -151,16 +151,21 @@ export default function SettingsPage() {
     setEmail(user.email ?? '')
     getIsAdmin().then(setIsAdmin).catch((err) => { console.warn('[settings] getIsAdmin failed:', err) })
 
-    const [{ data: profile, error: profileError }, { data: userProjects }] = await Promise.all([
+    const [{ data: profile, error: profileError }, { data: userProjects }, { data: subscription }] = await Promise.all([
       supabase
         .from('profiles')
-        .select('name, plan, avatar_url, notification_preferences')
+        .select('name, avatar_url, notification_preferences')
         .eq('id', user.id)
         .single(),
       supabase
         .from('projects')
         .select('id')
         .eq('user_id', user.id),
+      supabase
+        .from('subscriptions')
+        .select('plan')
+        .eq('user_id', user.id)
+        .single(),
     ])
 
     if (profileError) {
@@ -171,7 +176,10 @@ export default function SettingsPage() {
 
     const nextName = profile?.name ?? ''
     const nextNotifications = normalizeNotificationPreferences(profile?.notification_preferences)
-    const nextPlan = profile?.plan === 'business' ? 'business' : 'individual'
+    const nextPlan: PlanKey =
+      subscription?.plan === 'business' ? 'business'
+      : subscription?.plan === 'personal' ? 'personal'
+      : 'free'
 
     setName(nextName)
     setInitialName(nextName)
@@ -383,7 +391,7 @@ export default function SettingsPage() {
   const passwordInputsDisabled = passwordSaving
   const accountInitial = (name.trim() || email || '設').charAt(0).toUpperCase()
   const plan = getPlanLimits(planKey)
-  const nextPlan = planKey === 'individual' ? getPlanLimits('business') : null
+  const nextPlan = planKey === 'personal' ? getPlanLimits('business') : null
 
   if (loading) {
     return (
@@ -603,8 +611,8 @@ export default function SettingsPage() {
                     {plan.label}
                   </p>
                 </div>
-                <Link href="/pricing" className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
-                  料金ページを見る
+                <Link href="/settings/billing" className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
+                  お支払い・解約の管理
                 </Link>
               </div>
 

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     const errorUrl = new URL('/auth/login', origin)
     errorUrl.searchParams.set('error', 'oauth_callback')
-    errorUrl.searchParams.set('message', error.message)
+    errorUrl.searchParams.set('message', 'ログインに失敗しました。もう一度お試しください。')
     return NextResponse.redirect(errorUrl)
   }
 

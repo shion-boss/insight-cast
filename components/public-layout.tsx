@@ -2,6 +2,8 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 import { EyebrowBadge, HeaderSurface, getButtonClass, getPanelClass } from '@/components/ui'
+import { createClient } from '@/lib/supabase/server'
+import { signOut } from '@/lib/actions/auth'
 
 const NAV_LINKS = [
   { href: '/service', label: 'サービス' },
@@ -151,7 +153,10 @@ export function LegalPageTemplate({
   )
 }
 
-export function PublicHeader() {
+export async function PublicHeader() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isLoggedIn = Boolean(user)
   return (
     <HeaderSurface
       bottom={(
@@ -181,24 +186,51 @@ export function PublicHeader() {
         Insight <span className="text-[var(--accent)]">Cast</span>
       </Link>
       <div className="flex items-center gap-2 sm:gap-3">
-        <Link
-          href="/auth/login"
-          className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
-        >
-          ログイン
-        </Link>
-        <Link
-          href="/auth/signup"
-          className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
-        >
-          無料で試す →
-        </Link>
+        {isLoggedIn ? (
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/dashboard"
+              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
+            >
+              ダッシュボード
+            </Link>
+            <form action={signOut}>
+              <button
+                type="submit"
+                className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
+              >
+                ログアウト
+              </button>
+            </form>
+          </div>
+        ) : (
+          <>
+            <Link
+              href="/auth/login"
+              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
+            >
+              ログイン
+            </Link>
+            <Link
+              href="/auth/signup"
+              className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
+            >
+              無料で試す →
+            </Link>
+          </>
+        )}
       </div>
     </HeaderSurface>
   )
 }
 
-export function PublicFooter({ showPromo = true }: { showPromo?: boolean }) {
+export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }) {
+  let isLoggedIn = false
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    isLoggedIn = Boolean(user)
+  } catch { /* ignore */ }
   return (
     <footer className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
       {showPromo && (
@@ -237,7 +269,7 @@ export function PublicFooter({ showPromo = true }: { showPromo?: boolean }) {
               { heading: 'サービス', links: [{ href: '/service', label: 'サービス内容' }, { href: '/pricing', label: '料金プラン' }, { href: '/cast', label: 'キャスト紹介' }] },
               { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/about', label: 'Insight Castについて' }, { href: '/faq', label: 'よくある質問' }] },
               { heading: 'サポート', links: [{ href: '/contact', label: 'お問い合わせ' }, { href: '/privacy', label: 'プライバシーポリシー' }, { href: '/terms', label: '利用規約' }] },
-              { heading: 'アカウント', links: [{ href: '/auth/signup', label: '無料で始める' }, { href: '/auth/login', label: 'ログイン' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }] },
+              { heading: 'アカウント', links: isLoggedIn ? [{ href: '/dashboard', label: 'ダッシュボード' }, { href: '/settings', label: '設定' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }] : [{ href: '/auth/signup', label: '無料で始める' }, { href: '/auth/login', label: 'ログイン' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }] },
             ].map((col) => (
               <div key={col.heading}>
                 <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mb-3">{col.heading}</p>

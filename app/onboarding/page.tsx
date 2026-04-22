@@ -6,7 +6,11 @@ import { completeOnboarding } from '@/lib/actions/onboarding'
 import { getCharacter } from '@/lib/characters'
 import { CharacterAvatar, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
@@ -17,7 +21,10 @@ export default async function OnboardingPage() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.onboarded) redirect('/dashboard')
+  const params = await searchParams
+  const next = params.next?.startsWith('/') ? params.next : '/dashboard'
+
+  if (profile?.onboarded) redirect(next)
   const mint = getCharacter('mint')
 
   return (
@@ -41,6 +48,7 @@ export default async function OnboardingPage() {
         </div>
 
         <form action={completeOnboarding} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
+          <input type="hidden" name="next" value={next} />
           <div>
             <FieldLabel required>お名前</FieldLabel>
             <TextInput type="text" name="name" required placeholder="例: 山田さん" />

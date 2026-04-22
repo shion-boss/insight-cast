@@ -42,11 +42,10 @@ export default async function InterviewsPage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name, onboarded')
+    .select('name')
     .eq('id', user.id)
     .maybeSingle()
 
-  if (!profile?.onboarded) redirect('/onboarding')
 
   const { data: projectRows } = await supabase
     .from('projects')
