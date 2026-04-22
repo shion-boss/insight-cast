@@ -21,7 +21,7 @@ const FIXED_COST_TOTAL = FIXED_COSTS.reduce((acc, r) => acc + (r.usd ?? 0), 0)
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
 
 // ホームページ運用に使う機能（管理者の自社運用）
-const SITE_OPS_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article', 'analyze', 'account/analyze'])
+const SITE_OPS_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article', 'analyze', 'account/analyze', 'cast-talk/generate'])
 
 async function getCostData() {
   const supabase = createAdminClient()
@@ -171,7 +171,7 @@ export default async function AdminCostsPage() {
         {byRouteList.length === 0 ? (
           <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
         ) : (
-          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+          <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             {byRouteList.map((row, i) => (
               <div
                 key={row.route}
@@ -191,7 +191,7 @@ export default async function AdminCostsPage() {
       {/* 固定費 */}
       <section>
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">固定費（月額）</h2>
-        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+        <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           {FIXED_COSTS.map((row, i) => (
             <div
               key={row.label}
@@ -223,7 +223,7 @@ export default async function AdminCostsPage() {
         {byPlanList.length === 0 ? (
           <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
         ) : (
-          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+          <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             {byPlanList.map((row, i) => (
               <div key={row.plan} className={`flex items-center gap-4 px-5 py-3.5 ${i < byPlanList.length - 1 ? 'border-b border-[var(--border)]' : ''}`}>
                 <div className="flex-1">
@@ -249,7 +249,7 @@ export default async function AdminCostsPage() {
       {/* HP運用コスト（管理者） */}
       <section>
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ホームページ運用費（今月・管理者自身）</h2>
-        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
+        <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
             <CostValue usd={blogCost} className="text-sm font-bold text-[var(--text)]" />
@@ -264,14 +264,14 @@ export default async function AdminCostsPage() {
             <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
           )}
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
+        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成・Cast Talk自動生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
       </section>
 
       {/* 日別推移 */}
       {dailyList.length > 0 && (
         <section>
           <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">日別推移（今月）</h2>
-          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
+          <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
             <div className="space-y-1.5">
               {dailyList.map((d) => {
                 const maxCost = Math.max(...dailyList.map((x) => x.cost), 0.001)
