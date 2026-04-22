@@ -207,13 +207,10 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       <button
                         onClick={() => handleToggleStatus(item)}
                         disabled={togglingId === item.id}
-                        className="rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] disabled:pointer-events-none disabled:opacity-50"
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
+                        title={item.status === 'published' ? '下書きに戻す' : '公開する'}
                       >
-                        {togglingId === item.id
-                          ? '更新中...'
-                          : item.status === 'published'
-                          ? '下書きに戻す'
-                          : '公開する'}
+                        <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
