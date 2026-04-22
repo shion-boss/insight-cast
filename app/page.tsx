@@ -49,7 +49,7 @@ const COMPARE_ROWS = [
   { label: '専門知識がなくても使える',          ai: true,  none: false },
   { label: '継続しやすい（止まりにくい）',      ai: false, none: false },
   { label: 'ホームページの現状分析つき',        ai: false, none: false },
-  { label: '費用がかかる',                      ai: false, none: false },
+  { label: '無料から始められる',                 ai: false, none: false },
 ] as const
 
 const PLANS = [
@@ -150,15 +150,12 @@ export default async function LandingPage() {
                   <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
                     キャストを見る
                   </Link>
-                  <Link href="/contact" className="border-[1.5px] border-[var(--border)] text-[var(--text2)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
-                    まず相談してみる
-                  </Link>
                 </div>
                 <div className="mt-9 flex flex-wrap gap-6 border-t border-[var(--border)]/70 pt-8 sm:gap-9">
                   {[
                     { n: '3名', l: '無料キャスト' },
                     { n: '20分', l: '平均取材時間' },
-                    { n: '無料', l: 'カード不要で始められる' },
+                    { n: '¥0', l: 'カード不要で始められる' },
                   ].map((item) => (
                     <div key={item.l}>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)] leading-none">{item.n}</div>
@@ -216,7 +213,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">What You Get</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              Insight Cast を使うと
+              Insight Cast を使うと、こう変わる
             </h2>
             <div className="mt-11 grid gap-5 md:grid-cols-3">
               {OUTCOME_ITEMS.map((item) => (
@@ -262,7 +259,7 @@ export default async function LandingPage() {
                   まず、あなたのHPと<br />競合を調べます。
                 </h2>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
-                  取材先を登録すると、AIで現状のホームページを分析し、競合との違いを整理できます。「何が足りないか」「どこを強化すべきか」が、取材の前に見えやすくなります。
+                  取材先を登録すると、今のホームページで何が足りないかを分析し、競合との違いを整理できます。「何が足りないか」「どこを強化すべきか」が、取材の前に見えやすくなります。
                 </p>
                 <div className="mt-7 space-y-3.5">
                   {[
@@ -403,7 +400,7 @@ export default async function LandingPage() {
               </div>
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
-                  <span className="text-[18px]">📄</span>
+                  <span className="text-[11px] font-semibold text-[var(--text3)] uppercase tracking-[.08em]">Article</span>
                   <span className="text-[13px] font-bold text-[var(--text)]">届いた記事素材</span>
                   <CopyButton text={`「ここに住み続けられる気がした」── 外壁塗装が届けた安心感の話\n\n外壁塗装というと、見た目を新しくする工事というイメージが強いかもしれません。でも田中建設が大切にしているのは、塗り替えた後に「また長く住める」という気持ちを届けることです。\n\n同社が特にこだわるのが、施工前の下地処理。目には見えないこの工程こそが、塗装の耐久性を大きく左右します。手間がかかるため省略する業者もある中、同社は一切妥協しません。`} />
                 </div>
@@ -511,10 +508,7 @@ export default async function LandingPage() {
                         {row.none === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
                       </td>
                       <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
-                        {row.label === '費用がかかる'
-                          ? <span className="text-[var(--accent)] text-[13px] font-semibold">有料</span>
-                          : <span className="text-[var(--teal)] text-lg font-bold">✓</span>
-                        }
+                        <span className="text-[var(--teal)] text-lg font-bold">✓</span>
                       </td>
                     </tr>
                   ))}
@@ -531,7 +525,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               まず無料で、気軽に始められます
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで始められます。クレジットカード不要。有料プランはクレジットカードで簡単にお申し込みいただけます。</p>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで今日から始められます。</p>
             <div className="mt-11 grid gap-6 lg:grid-cols-3">
               {PLANS.map((plan) => (
                 <div
@@ -591,6 +585,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               最新の記事
             </h2>
+            <p className="text-base text-[var(--text2)] mt-3">AIと発信、ホームページ更新のヒントをお届けしています。</p>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {latestPosts.map((post) => (
                 <Link
