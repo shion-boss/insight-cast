@@ -147,10 +147,10 @@ export default async function LandingPage() {
                   ✦ AI取材サービス
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
-                  ホームページ更新は、<br /><em className="text-[var(--accent)] not-italic">答えるだけで</em><br />進む。
+                  ホームページの更新、<br /><em className="text-[var(--accent)] not-italic">手伝います。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  Insight Cast は、AIキャストの取材に答えるだけ。伝わっていない強みが、記事やFAQの材料になります。
+                  AIキャストが取材に来て、あなたの話から記事の素材を作ります。答えるだけで、ホームページが少しずつ育っていきます。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
