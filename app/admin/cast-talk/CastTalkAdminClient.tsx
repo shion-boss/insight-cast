@@ -201,7 +201,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         <Link
                           href={`/cast-talk/${item.slug}`}
                           target="_blank"
-                          className="inline-block w-24 rounded-[var(--r-sm)] px-3 py-1.5 text-center text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)]"
+                          className="inline-block w-24 rounded-[var(--r-sm)] px-3 py-1.5 text-center text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                         >
                           公開ページ ↗
                         </Link>
