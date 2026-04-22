@@ -190,7 +190,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     </div>
                   </td>
                   <td className="px-4 py-4 text-right">
-                    <div className="inline-flex flex-col items-stretch gap-1.5">
+                    <div className="inline-flex items-center gap-1.5">
                       <Link
                         href={`/admin/cast-talk/${item.id}`}
                         className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
