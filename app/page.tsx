@@ -601,12 +601,21 @@ export default async function LandingPage() {
                     ))}
                   </ul>
                   {plan.id === 'free' ? (
-                    <Link
-                      href={plan.href}
-                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
-                    >
-                      {plan.cta}
-                    </Link>
+                    isLoggedIn ? (
+                      <Link
+                        href="/dashboard"
+                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
+                      >
+                        ダッシュボードへ
+                      </Link>
+                    ) : (
+                      <Link
+                        href={plan.href}
+                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                      >
+                        {plan.cta}
+                      </Link>
+                    )
                   ) : isLoggedIn ? (
                     <CheckoutButton
                       priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
