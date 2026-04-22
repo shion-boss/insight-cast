@@ -238,12 +238,12 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
         </span>
 
         <h2 className="font-serif text-[32px] font-bold text-white leading-[1.35] mb-5">
-          あなたの当たり前が、<br />まだ伝わっていない<br />価値かもしれません。
+          答えるだけで、<br />まだ伝わっていない<br />強みが見えてくる。
         </h2>
 
         <p className="text-[15px] text-white/80 leading-[1.85] mb-8">
-          AIインタビュアーが話を聞き出し、<br />
-          ホームページを少しずつ強くします。
+          AIキャストが順番に質問するので、<br />
+          何を書くかを先に考えなくて大丈夫です。
         </p>
 
         <ul className="space-y-3 mb-auto">
