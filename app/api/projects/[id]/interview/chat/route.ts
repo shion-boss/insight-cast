@@ -34,7 +34,9 @@ export async function POST(
 
   if (!interview) return new Response('Not found', { status: 404 })
 
-  const projectData = interview.interviews_project as unknown as { user_id: string; name: string | null; hp_url: string } | null
+  const projectData = !interview.interviews_project || Array.isArray(interview.interviews_project)
+    ? null
+    : interview.interviews_project as { user_id: string; name: string | null; hp_url: string }
   if (projectData?.user_id !== user.id) return new Response('Forbidden', { status: 403 })
 
   // ユーザーメッセージ保存

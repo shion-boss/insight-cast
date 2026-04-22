@@ -38,18 +38,8 @@ function formatShortDateTime(value: string) {
 export default async function ProjectsPage() {
   const mint = getCharacter('mint')
 
-  let supabase
-  let user
-
-  try {
-    supabase = await createClient()
-    const authResult = await supabase.auth.getUser()
-    user = authResult.data.user
-  } catch {
-    redirect('/')
-  }
-
-  if (!supabase) redirect('/')
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
   const { data: profile } = await supabase
