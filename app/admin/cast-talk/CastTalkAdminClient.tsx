@@ -1,9 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 import { DevAiLabel } from '@/components/ui'
+import { getCastName } from '@/lib/characters'
 
 type CastTalk = {
   id: string
@@ -14,12 +14,6 @@ type CastTalk = {
   guest_id: string
   status: 'draft' | 'published'
   created_at: string
-}
-
-const CAST_NAMES: Record<string, string> = {
-  mint: 'ミント',
-  claus: 'クラウス',
-  rain: 'レイン',
 }
 
 const FORMAT_LABELS: Record<string, string> = {
@@ -33,7 +27,6 @@ function formatDate(iso: string): string {
 }
 
 export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[] }) {
-  const router = useRouter()
   const [items, setItems] = useState<CastTalk[]>(initialItems)
   const [generating, setGenerating] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -46,11 +39,17 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       const res = await fetch('/api/cast-talk/generate', {
         method: 'POST',
       })
+      const data = await res.json() as {
+        id: string; title: string; slug: string
+        format: 'interview' | 'dialogue'
+        interviewer_id: string; guest_id: string
+        status: 'draft' | 'published'; created_at: string
+        message?: string
+      }
       if (!res.ok) {
-        const data = (await res.json()) as { message?: string }
         throw new Error(data.message ?? '生成に失敗しました')
       }
-      router.refresh()
+      setItems((prev) => [data, ...prev])
     } catch (e) {
       setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
     } finally {
@@ -150,8 +149,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     </span>
                   </td>
                   <td className="hidden px-4 py-4 text-[var(--text2)] md:table-cell">
-                    {CAST_NAMES[item.interviewer_id] ?? item.interviewer_id} ×{' '}
-                    {CAST_NAMES[item.guest_id] ?? item.guest_id}
+                    {getCastName(item.interviewer_id)} × {getCastName(item.guest_id)}
                   </td>
                   <td className="hidden px-4 py-4 text-[var(--text3)] lg:table-cell">
                     {formatDate(item.created_at)}

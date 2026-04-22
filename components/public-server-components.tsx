@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { href: '/pricing', label: '料金' },
   { href: '/cast', label: 'キャスト' },
   { href: '/blog', label: 'ブログ' },
+  { href: '/cast-talk', label: 'Cast Talk' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'お問い合わせ' },
 ]

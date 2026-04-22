@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Insight Cast — AIキャストがホームページを育てるサービス',
-  description: 'HP更新が止まっている中小企業に、動物AIキャストが取材に訪れ、まだ伝わっていない価値を引き出してホームページを継続的に強化します。カード不要で無料体験できます。',
+  description: 'ホームページ更新が止まっている事業者に。AIキャストの取材に答えるだけで、伝わっていない強みが記事やFAQの材料になります。カード不要で無料体験できます。',
 }
 import { CharacterAvatar } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
@@ -21,6 +21,7 @@ import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
 import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
@@ -123,6 +124,14 @@ export default async function LandingPage() {
 
   const latestPosts = (await getBlogPostsFromDB()).slice(0, 3)
 
+  const supabaseAdmin = createAdminClient()
+  const { data: latestTalks } = await supabaseAdmin
+    .from('cast_talks')
+    .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(3)
+
   return (
     <PublicPageFrame>
       <PublicHeader />
@@ -138,10 +147,10 @@ export default async function LandingPage() {
                   ✦ AI取材サービス
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
-                  あなたの「当たり前」に、<br /><em className="text-[var(--accent)] not-italic">まだ伝わっていない</em><br />価値がある。
+                  ホームページ更新は、<br /><em className="text-[var(--accent)] not-italic">答えるだけで</em><br />進む。
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  AIキャストが丁寧に取材して、あなたの話を「ホームページに載せられる文章」に整えます。ホームページを更新し続けるための、一番やさしい方法です。
+                  Insight Cast は、AIキャストの取材に答えるだけ。伝わっていない強みが、記事やFAQの材料になります。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
@@ -614,7 +623,62 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑭ FAQ */}
+        {/* ⑭ Cast Talk Preview */}
+        {latestTalks && latestTalks.length > 0 && (
+          <section className="py-[88px] bg-[var(--bg)]">
+            <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
+              <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+                キャストの対話
+              </h2>
+              <p className="text-base text-[var(--text2)] mt-3">ミント・クラウス・レインが語り合う対話記事。ホームページを育てるヒントをキャスト視点でお届けします。</p>
+              <div className="mt-11 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {latestTalks.map((talk) => {
+                  const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
+                  const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+                  return (
+                    <Link
+                      key={talk.id}
+                      href={`/cast-talk/${talk.slug}`}
+                      className="group flex flex-col gap-4 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 transition-all duration-150 hover:border-[var(--border2)] hover:shadow-[0_16px_48px_var(--shadow)] hover:-translate-y-1"
+                    >
+                      <div className="flex items-center gap-2">
+                        {[interviewer, guest].map((c, i) =>
+                          c ? (
+                            <Image
+                              key={i}
+                              src={c.icon48}
+                              alt={c.name}
+                              width={36}
+                              height={36}
+                              className="rounded-full border border-[var(--border)]"
+                            />
+                          ) : null,
+                        )}
+                        <span className="text-xs text-[var(--text3)]">
+                          {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
+                        </span>
+                      </div>
+                      <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-semibold leading-snug text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
+                        {talk.title}
+                      </h3>
+                      {talk.summary && (
+                        <p className="line-clamp-2 text-sm leading-6 text-[var(--text2)]">{talk.summary}</p>
+                      )}
+                    </Link>
+                  )
+                })}
+              </div>
+              <div className="text-center mt-8">
+                <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+                  Cast Talk をもっと読む →
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ⑮ FAQ */}
         <section className="py-[88px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">FAQ</div>

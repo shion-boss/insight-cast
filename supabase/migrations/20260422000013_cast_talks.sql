@@ -14,7 +14,10 @@ create table public.cast_talks (
   updated_at timestamptz not null default now()
 );
 
--- RLS: 公開済みは誰でも読める、draft はservice_roleのみ
+-- RLS:
+--   SELECT: status='published' の行のみ anon/authenticated が読める
+--   INSERT/UPDATE/DELETE: ポリシーなし = anon/authenticated は拒否
+--   service_role は RLS をバイパスするため管理クライアント経由の書き込みは常に許可される
 alter table public.cast_talks enable row level security;
 
 create policy "cast_talks: published are public"

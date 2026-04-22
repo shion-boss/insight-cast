@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
+import { getCastName } from '@/lib/characters'
 
 export const maxDuration = 120
 
@@ -91,7 +92,12 @@ async function isAdminSession(): Promise<boolean> {
 }
 
 async function isAuthorized(req: NextRequest): Promise<boolean> {
-  if (req.headers.get('x-vercel-cron') === '1') return true
+  // Vercel Cron: Authorization: Bearer <CRON_SECRET>
+  const cronSecret = process.env.CRON_SECRET
+  if (cronSecret) {
+    const auth = req.headers.get('authorization')
+    if (auth === `Bearer ${cronSecret}`) return true
+  }
   const adminSecret = process.env.ADMIN_SECRET
   if (adminSecret && req.headers.get('x-admin-key') === adminSecret) return true
   return isAdminSession()
@@ -179,12 +185,6 @@ ${pastList}
 
 // ---------- 会話生成 ----------
 
-const CAST_NAMES: Record<string, string> = {
-  mint: 'ミント',
-  claus: 'クラウス',
-  rain: 'レイン',
-}
-
 const DEFAULT_CONVERSATION_SYSTEM = `あなたはInsight CastのAIキャストたちが行う対話記事を生成します。
 
 Insight Castのキャストは本当に会社で働いている仲間として振る舞います。
@@ -210,8 +210,8 @@ async function generateConversation(
     systemPrompt = DEFAULT_CONVERSATION_SYSTEM
   }
 
-  const interviewerName = CAST_NAMES[theme.interviewer] ?? theme.interviewer
-  const guestName = CAST_NAMES[theme.guest] ?? theme.guest
+  const interviewerName = getCastName(theme.interviewer)
+  const guestName = getCastName(theme.guest)
 
   const formatDesc =
     theme.format === 'interview'
@@ -234,7 +234,9 @@ async function generateConversation(
     ...
   ],
   "summary": "記事の要約（SNS投稿に使える・80〜120文字）"
-}`
+}
+
+※ messages の最後は必ずインタビュアー側（interviewer_id）の締めのひとことで終わらせてください。`
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
@@ -324,7 +326,7 @@ export async function POST(req: NextRequest) {
         slug,
         status: 'draft',
       })
-      .select('id, title, slug')
+      .select('id, title, slug, format, interviewer_id, guest_id, status, created_at')
       .single()
 
     if (error) {
@@ -335,7 +337,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    return NextResponse.json({ id: data.id, title: data.title, slug: data.slug, traceId })
+    return NextResponse.json({ ...data, traceId })
   } catch (err) {
     const message = err instanceof Error ? err.message : '不明なエラー'
     console.error('[cast-talk/generate] error', { traceId, message })

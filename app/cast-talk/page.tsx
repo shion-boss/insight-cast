@@ -3,18 +3,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { CHARACTERS } from '@/lib/characters'
+import { CHARACTERS, getCastName } from '@/lib/characters'
 
 export const metadata: Metadata = {
   title: 'Cast Talk | Insight Cast',
   description:
     'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントを、キャストの視点でお届けします。',
-}
-
-const CAST_NAMES: Record<string, string> = {
-  mint: 'ミント',
-  claus: 'クラウス',
-  rain: 'レイン',
 }
 
 async function getPublishedTalks() {
@@ -107,8 +101,8 @@ export default async function CastTalkPage() {
                         ) : null,
                       )}
                       <span className="text-xs text-[var(--text3)]">
-                        {CAST_NAMES[talk.interviewer_id] ?? talk.interviewer_id} &amp;{' '}
-                        {CAST_NAMES[talk.guest_id] ?? talk.guest_id}
+                        {getCastName(talk.interviewer_id)} &amp;{' '}
+                        {getCastName(talk.guest_id)}
                       </span>
                     </div>
 

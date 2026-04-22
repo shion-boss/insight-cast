@@ -118,6 +118,10 @@ export function getCharacter(id: string): Character | undefined {
   return CHARACTERS.find((c) => c.id === id)
 }
 
+export function getCastName(id: string): string {
+  return getCharacter(id)?.name ?? id
+}
+
 const SUFFICIENCY_INSTRUCTION = `
 
 【インタビュー終了の判断】

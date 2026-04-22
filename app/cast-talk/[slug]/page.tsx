@@ -62,7 +62,14 @@ export default async function CastTalkDetailPage({
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
 
-  const messages = (talk.messages as unknown as Message[]) ?? []
+  const raw = Array.isArray(talk.messages) ? talk.messages : []
+  const messages: Message[] = raw.filter(
+    (m): m is Message =>
+      m !== null &&
+      typeof m === 'object' &&
+      typeof (m as Record<string, unknown>).castId === 'string' &&
+      typeof (m as Record<string, unknown>).text === 'string',
+  )
 
   return (
     <PublicPageFrame>
@@ -76,22 +83,18 @@ export default async function CastTalkDetailPage({
 
             {/* キャストアイコン */}
             <div className="mt-6 flex items-center gap-3">
-              {[interviewer, guest].map((c, i) =>
-                c ? (
-                  <div key={i} className="flex items-center gap-2">
-                    <Image
-                      src={c.icon96}
-                      alt={c.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full border-2 border-white shadow-sm"
-                    />
-                    <span className="text-sm font-medium text-[var(--text2)]">{c.name}</span>
-                  </div>
-                ) : null,
+              {interviewer && (
+                <div className="flex items-center gap-2">
+                  <Image src={interviewer.icon96} alt={interviewer.name} width={48} height={48} className="rounded-full border-2 border-white shadow-sm" />
+                  <span className="text-sm font-medium text-[var(--text2)]">{interviewer.name}</span>
+                </div>
               )}
-              {interviewer && guest && (
-                <span className="text-[var(--text3)]">×</span>
+              {interviewer && guest && <span className="text-[var(--text3)]">×</span>}
+              {guest && (
+                <div className="flex items-center gap-2">
+                  <Image src={guest.icon96} alt={guest.name} width={48} height={48} className="rounded-full border-2 border-white shadow-sm" />
+                  <span className="text-sm font-medium text-[var(--text2)]">{guest.name}</span>
+                </div>
               )}
             </div>
 
@@ -111,7 +114,7 @@ export default async function CastTalkDetailPage({
 
         {/* 会話コンテンツ */}
         <section className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
-          <CastTalkContent messages={messages} characterMap={characterMap} />
+          <CastTalkContent messages={messages} characterMap={characterMap} interviewerId={talk.interviewer_id} />
         </section>
 
         {/* CTA */}
