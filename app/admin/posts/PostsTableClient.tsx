@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { togglePublished } from '@/lib/actions/admin-posts'
+import { togglePublished, deletePost } from '@/lib/actions/admin-posts'
 
 type PostRow = {
   id: string
@@ -52,6 +52,7 @@ function ToggleSwitch({ on, onToggle, disabled }: { on: boolean; onToggle: () =>
 export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   const [rows, setRows] = useState(posts)
   const [isPending, startTransition] = useTransition()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const router = useRouter()
 
@@ -68,6 +69,20 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
       )
       router.refresh()
     })
+  }
+
+  async function handleDelete(post: PostRow) {
+    if (!confirm(`「${post.title}」を削除しますか？この操作は取り消せません。`)) return
+    setDeletingId(post.id)
+    setErrorMsg(null)
+    const result = await deletePost(post.id)
+    if ('error' in result) {
+      setErrorMsg(result.error)
+    } else {
+      setRows((prev) => prev.filter((p) => p.id !== post.id))
+      router.refresh()
+    }
+    setDeletingId(null)
   }
 
   return (
@@ -133,6 +148,13 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                       ) : (
                         <span className="inline-block w-24 px-2.5 py-1.5 text-xs" />
                       )}
+                      <button
+                        onClick={() => handleDelete(post)}
+                        disabled={deletingId === post.id}
+                        className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        {deletingId === post.id ? '削除中...' : '削除'}
+                      </button>
                     </div>
                   </td>
                 </tr>
