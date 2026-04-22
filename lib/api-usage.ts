@@ -19,6 +19,7 @@ export async function logApiUsage({
   model,
   inputTokens,
   outputTokens,
+  costOverride,
 }: {
   userId?: string | null
   projectId?: string | null
@@ -26,9 +27,10 @@ export async function logApiUsage({
   model: string
   inputTokens: number
   outputTokens: number
+  costOverride?: number
 }) {
   const pricing = MODEL_PRICING[model] ?? { input: 0, output: 0 }
-  const costUsd = inputTokens * pricing.input + outputTokens * pricing.output
+  const costUsd = costOverride ?? (inputTokens * pricing.input + outputTokens * pricing.output)
 
   const supabase = createAdminClient()
   const { error } = await supabase.from('api_usage_logs').insert({

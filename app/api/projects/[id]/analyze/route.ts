@@ -400,6 +400,7 @@ export async function POST(
   const analysisArgs = {
     supabase,
     projectId: id,
+    userId: project.user_id as string,
     hpUrl: project.hp_url,
     existingAuditId: existingAudit?.id ?? null,
     existingRawData,
@@ -421,6 +422,7 @@ export async function POST(
 async function runAnalysis({
   supabase,
   projectId,
+  userId,
   hpUrl,
   existingAuditId,
   existingRawData,
@@ -430,6 +432,7 @@ async function runAnalysis({
 }: {
   supabase: Awaited<ReturnType<typeof createClient>>
   projectId: string
+  userId: string
   hpUrl: string
   existingAuditId: string | null
   existingRawData: Record<string, unknown> | null
@@ -438,7 +441,7 @@ async function runAnalysis({
   inputSignature: string
 }) {
   try {
-    const mainMarkdown = await fetchMarkdown(hpUrl)
+    const mainMarkdown = await fetchMarkdown(hpUrl, { userId, projectId, route: 'analyze/scrape' })
     const normalizedHpUrl = normalizeAnalysisUrl(hpUrl)
 
     if (!mainMarkdown) {
@@ -518,7 +521,7 @@ async function runAnalysis({
 
         try {
           const [markdown, blogPosts] = await Promise.all([
-            fetchMarkdown(comp.url),
+            fetchMarkdown(comp.url, { userId, projectId, route: 'analyze/scrape' }),
             discoverSiteBlogPosts(comp.url, COMPETITOR_BLOG_POST_LIMIT),
           ])
           compMarkdown = markdown

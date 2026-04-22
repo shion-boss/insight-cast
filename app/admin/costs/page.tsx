@@ -10,7 +10,6 @@ const FIXED_COSTS = [
   { label: 'Vercel', plan: 'Hobby（無料）', usd: 0 },
   { label: 'Supabase', plan: 'Free（無料）', usd: 0 },
   { label: 'Resend', plan: 'Free（無料）', usd: 0 },
-  { label: 'Firecrawl', plan: '従量課金', usd: null },
   { label: 'Cast Talk 自動生成', plan: '毎日1記事（Haiku + Sonnet）・月約$0.78', usd: 0.78 },
 ]
 
@@ -126,8 +125,11 @@ const ROUTE_LABELS: Record<string, string> = {
   'interview/summarize': 'インタビュー（まとめ）',
   'article': '記事生成',
   'analyze': 'HP分析',
+  'analyze/scrape': 'HP分析（Firecrawl）',
   'account/analyze': 'アカウント分析',
+  'account/analyze/scrape': 'アカウント分析（Firecrawl）',
   'cast-talk/generate': 'Cast Talk 生成',
+  'firecrawl/scrape': 'Firecrawl スクレイプ',
 }
 
 export default async function AdminCostsPage() {
@@ -214,7 +216,7 @@ export default async function AdminCostsPage() {
             <CostValue usd={FIXED_COST_TOTAL} className="text-sm font-bold text-[var(--text)]" />
           </div>
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
+        <p className="mt-2 text-xs text-[var(--text3)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
       </section>
 
       {/* プラン別コスト */}

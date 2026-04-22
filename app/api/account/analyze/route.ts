@@ -3,22 +3,9 @@ import Anthropic from '@anthropic-ai/sdk'
 import { NextResponse } from 'next/server'
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 import { discoverSiteBlogPosts } from '@/lib/site-blog-support'
+import { fetchMarkdown } from '@/lib/firecrawl'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-async function fetchMarkdown(url: string): Promise<string> {
-  const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.FIRECRAWL_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url, formats: ['markdown'] }),
-  })
-  if (!res.ok) return ''
-  const json = await res.json()
-  return (json.data?.markdown as string) ?? ''
-}
 
 async function analyzeHp(markdown: string) {
   const msg = await anthropic.messages.create({
@@ -122,7 +109,7 @@ export async function POST() {
   if (!profile?.url) return NextResponse.json({ error: 'no hp_url' }, { status: 400 })
 
   try {
-    const mainMarkdown = await fetchMarkdown(profile.url)
+    const mainMarkdown = await fetchMarkdown(profile.url, { userId: user.id, route: 'account/analyze/scrape' })
     if (!mainMarkdown) return NextResponse.json({ error: 'fetch failed' }, { status: 400 })
 
     const audit = await analyzeHp(mainMarkdown)
@@ -132,7 +119,7 @@ export async function POST() {
     const competitorUrls: string[] = profile.competitor_urls ?? []
 
     for (const compUrl of competitorUrls.filter(Boolean).slice(0, 3)) {
-      const compMarkdown = await fetchMarkdown(compUrl)
+      const compMarkdown = await fetchMarkdown(compUrl, { userId: user.id, route: 'account/analyze/scrape' })
       if (!compMarkdown) continue
       const result = await compareCompetitor(mainMarkdown, compMarkdown)
       competitorResults.push({ url: compUrl, ...result })
