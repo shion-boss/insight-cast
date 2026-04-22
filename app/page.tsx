@@ -185,7 +185,7 @@ export default async function LandingPage() {
                   ✦ AI取材サービス
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
-                  会話から、<br /><em className="text-[var(--accent)] not-italic">記事へ。</em>
+                  会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
                   動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。「何を書けばいいか分からない」を解消します。
