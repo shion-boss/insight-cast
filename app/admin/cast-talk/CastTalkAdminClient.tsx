@@ -39,17 +39,18 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       const res = await fetch('/api/cast-talk/generate', {
         method: 'POST',
       })
-      const data = await res.json() as {
+      const json = await res.json() as {
         id: string; title: string; slug: string
         format: 'interview' | 'dialogue'
         interviewer_id: string; guest_id: string
         status: 'draft' | 'published'; created_at: string
-        message?: string
+        message?: string; traceId?: string
       }
       if (!res.ok) {
-        throw new Error(data.message ?? '生成に失敗しました')
+        throw new Error(json.message ?? '生成に失敗しました')
       }
-      setItems((prev) => [data, ...prev])
+      const { traceId: _, message: __, ...newItem } = json
+      setItems((prev) => [newItem, ...prev])
     } catch (e) {
       setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
     } finally {
