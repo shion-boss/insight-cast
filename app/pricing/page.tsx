@@ -9,7 +9,7 @@ import { CheckoutButton } from './CheckoutButton'
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: 'カード不要の無料プランから始められます。続けたい方向けに個人向け・法人向けの月額プランをご用意しています。',
+  description: 'まずカード不要の無料プランで体験できます。ホームページを継続的に更新したい方向けに、個人向け（¥4,980/月）・法人向け（¥14,800/月）のプランもご用意しています。',
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)

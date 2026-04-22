@@ -6,7 +6,7 @@ import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/compo
 
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
-  description: 'Insight Cast の考え方、AIキャストの役割、ホームページ改善につながるチームの進め方を紹介します。',
+  description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。「当たり前」の中に価値があるという考え方で、ホームページを継続的に育てます。',
 }
 
 const PRINCIPLES = [
@@ -32,7 +32,7 @@ export default function AboutPage() {
       <main className="relative z-10">
         <PublicHero
           eyebrow="About"
-          title={<>一次情報に、<br />価値を宿らせる</>}
+          title={<>眠っている一次情報を、<br />誰かのために言葉にする</>}
           description={(
             <>
               私たちは、小規模事業者が自分の言葉で発信を続けられる世界を目指しています。
@@ -68,9 +68,9 @@ export default function AboutPage() {
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Mission</div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.6] mt-5" style={{ fontSize: 'clamp(22px,3vw,34px)' }}>
-              <span className="text-[var(--accent)]">一次情報こそが、</span>小規模事業者の唯一の差別化である。<br />
-              価値の中心は、きれいに整えられた文章そのものではなく、<br />
-              取材で引き出した<span className="text-[var(--accent)]">事実と体験</span>に価値がある。
+              <span className="text-[var(--accent)]">一次情報こそが、</span>誰にも真似できない差別化の源泉である。<br />
+              価値の中心は、きれいに整えられた文章ではなく、<br />
+              取材で引き出した<span className="text-[var(--accent)]">事実と体験</span>そのものにある。
             </div>
             <div className="w-10 h-0.5 bg-[var(--accent)] mt-8" />
             <p className="text-base text-[var(--text2)] mt-8 leading-[1.9]">

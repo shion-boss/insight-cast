@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',
-  description: '6人のAIキャストそれぞれの得意分野・入力方式・無料/有料の違いを紹介します。',
+  description: '6名のAIキャストを紹介。ミント・クラウス・レインの3名は無料で使えます。それぞれ引き出せる価値と取材スタイルが違うので、深めたいテーマに合わせて選んでください。',
 }
 
 const freeCasts = CHARACTERS.filter((c) => c.available)

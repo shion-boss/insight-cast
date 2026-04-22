@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
-  description: 'AI取材、HP分析、競合比較、記事素材化までの流れを紹介します。',
+  description: 'Insight Cast の使い方を3ステップで紹介。ホームページを登録するだけで競合を比較し、AIキャストが取材して記事の素材を届けます。カード不要で無料体験できます。',
 }
 
 const STEP_SUMMARY = [
@@ -123,8 +123,8 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
         </div>
       </div>
       <div className="flex gap-2">
-        <button className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold">📋 コピー</button>
-        <button className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold">記事画面で確認</button>
+        <div className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold text-center select-none opacity-60">📋 コピー</div>
+        <div className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold text-center select-none opacity-60">記事画面で確認</div>
       </div>
     </div>
   )
