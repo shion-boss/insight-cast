@@ -7,7 +7,7 @@ async function getCastTalks() {
   const supabase = createAdminClient()
   const { data, error } = await supabase
     .from('cast_talks')
-    .select('id, title, format, interviewer_id, guest_id, status, created_at')
+    .select('id, title, slug, format, interviewer_id, guest_id, status, created_at')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -25,6 +25,7 @@ export default async function AdminCastTalkPage() {
       initialItems={items as Array<{
         id: string
         title: string
+        slug: string
         format: 'interview' | 'dialogue'
         interviewer_id: string
         guest_id: string

@@ -8,6 +8,7 @@ import { DevAiLabel } from '@/components/ui'
 type CastTalk = {
   id: string
   title: string
+  slug: string
   format: 'interview' | 'dialogue'
   interviewer_id: string
   guest_id: string
@@ -174,6 +175,15 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       >
                         プレビュー
                       </Link>
+                      {item.status === 'published' && (
+                        <Link
+                          href={`/cast-talk/${item.slug}`}
+                          target="_blank"
+                          className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)]"
+                        >
+                          公開ページ ↗
+                        </Link>
+                      )}
                       <button
                         onClick={() => handleToggleStatus(item)}
                         disabled={togglingId === item.id}
