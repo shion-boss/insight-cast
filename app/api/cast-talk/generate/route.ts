@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { getCastName } from '@/lib/characters'
+import { logApiUsage } from '@/lib/api-usage'
 
 export const maxDuration = 120
 
@@ -109,7 +110,7 @@ async function selectTheme(
   client: Anthropic,
   existingBlogTitles: string[],
   pastCastTalkTitles: string[],
-): Promise<ThemeSelection> {
+): Promise<{ theme: ThemeSelection; usage: { inputTokens: number; outputTokens: number } }> {
   const promptFile = loadPromptFile('.claude/skills/cast-talk/theme-selection-prompt.md')
 
   let systemPrompt = ''
@@ -180,7 +181,10 @@ ${pastList}
     throw new Error(`テーマ選定の出力形式が不正です: ${JSON.stringify(parsed).slice(0, 200)}`)
   }
 
-  return parsed
+  return {
+    theme: parsed,
+    usage: { inputTokens: response.usage.input_tokens, outputTokens: response.usage.output_tokens },
+  }
 }
 
 // ---------- 会話生成 ----------
@@ -222,7 +226,7 @@ Insight Castのキャストは本当に会社で働いている仲間として�
 async function generateConversation(
   client: Anthropic,
   theme: ThemeSelection,
-): Promise<ConversationOutput> {
+): Promise<{ conversation: ConversationOutput; usage: { inputTokens: number; outputTokens: number } }> {
   const promptFile = loadPromptFile('.claude/skills/cast-talk/conversation-prompt.md')
 
   let systemPrompt = ''
@@ -288,7 +292,10 @@ async function generateConversation(
     throw new Error(`会話生成の出力形式が不正です: ${JSON.stringify(parsed).slice(0, 200)}`)
   }
 
-  return parsed
+  return {
+    conversation: parsed,
+    usage: { inputTokens: response.usage.input_tokens, outputTokens: response.usage.output_tokens },
+  }
 }
 
 // ---------- slug 生成 ----------
@@ -332,8 +339,8 @@ export async function POST(req: NextRequest) {
     const existingBlogTitles = (blogPosts ?? []).map((p: { title: string }) => p.title)
     const pastCastTalkTitles = (pastTalks ?? []).map((p: { title: string }) => p.title)
 
-    const theme = await selectTheme(client, existingBlogTitles, pastCastTalkTitles)
-    const conversation = await generateConversation(client, theme)
+    const { theme, usage: themeUsage } = await selectTheme(client, existingBlogTitles, pastCastTalkTitles)
+    const { conversation, usage: convUsage } = await generateConversation(client, theme)
 
     const slug = generateSlug()
 
@@ -360,6 +367,11 @@ export async function POST(req: NextRequest) {
         { status: 500 },
       )
     }
+
+    await Promise.all([
+      logApiUsage({ route: 'cast-talk/generate', model: 'claude-haiku-4-5-20251001', inputTokens: themeUsage.inputTokens, outputTokens: themeUsage.outputTokens }),
+      logApiUsage({ route: 'cast-talk/generate', model: 'claude-sonnet-4-6', inputTokens: convUsage.inputTokens, outputTokens: convUsage.outputTokens }),
+    ])
 
     return NextResponse.json({ ...data, traceId })
   } catch (err) {

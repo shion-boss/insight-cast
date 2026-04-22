@@ -5,6 +5,7 @@ const MODEL_PRICING: Record<string, { input: number; output: number }> = {
   // Claude API (Anthropic)
   'claude-sonnet-4-6': { input: 3 / 1_000_000, output: 15 / 1_000_000 },
   'claude-haiku-4-5': { input: 0.8 / 1_000_000, output: 4 / 1_000_000 },
+  'claude-haiku-4-5-20251001': { input: 0.8 / 1_000_000, output: 4 / 1_000_000 },
   'claude-opus-4-7': { input: 15 / 1_000_000, output: 75 / 1_000_000 },
   // Claude Max (月額サブスク $100/200 — API費用は0として記録、別途固定費で管理)
   'claude-max-sonnet': { input: 0, output: 0 },

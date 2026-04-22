@@ -125,6 +125,7 @@ const ROUTE_LABELS: Record<string, string> = {
   'article': '記事生成',
   'analyze': 'HP分析',
   'account/analyze': 'アカウント分析',
+  'cast-talk/generate': 'Cast Talk 生成',
 }
 
 export default async function AdminCostsPage() {
