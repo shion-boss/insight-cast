@@ -225,7 +225,7 @@ export default function PhilosophyPage() {
                   まず一度、AIキャストに話しかけてみてください。
                 </h2>
                 <p className="mt-4 text-sm leading-7 text-[rgba(255,255,255,0.72)]">
-                  理論を読んでいただけたら、次は体験です。
+                  ここまで読んでくださった方は、ぜひ一度試してみてください。
                   登録無料で、ミント・クラウス・レインの取材を試せます。
                 </p>
               </div>

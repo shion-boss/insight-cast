@@ -99,9 +99,9 @@ export default function CastPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">どのキャストを選べばいいですか？</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {[
-                { q: '自社の雰囲気や人柄を伝えたい', a: '→ ミント（Story Listener）' },
-                { q: '技術・専門性の違いを言語化したい', a: '→ クラウス（Industry Editor）' },
-                { q: '選ばれる理由・差別化を整理したい', a: '→ レイン（Message Strategist）' },
+                { q: '自社の雰囲気や人柄を伝えたい', a: '→ ミント' },
+                { q: '技術・専門性の違いを言語化したい', a: '→ クラウス' },
+                { q: '選ばれる理由・差別化を整理したい', a: '→ レイン' },
               ].map((item) => (
                 <div key={item.q} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5">
                   <div className="text-sm text-[var(--text2)] mb-2">{item.q}</div>
@@ -151,7 +151,13 @@ export default function CastPage() {
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold text-[var(--text)] mb-1.5">{char.name}</div>
                       <div className="text-[13px] text-[var(--accent)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-semibold text-[var(--text)] leading-[1.45] mb-5 pl-4 border-l-[3px] border-[var(--accent)]">
-                        {detail.input.includes('テキスト') ? 'お客様目線で、やさしく引き出します' : char.specialty || detail.specialty}
+                        {char.id === 'mint'
+                          ? 'お客様目線で、やさしく引き出します'
+                          : char.id === 'claus'
+                          ? '専門知識をやさしい言葉に変えます'
+                          : char.id === 'rain'
+                          ? '選ばれる理由を一緒に見つけます'
+                          : char.specialty || detail.specialty}
                       </div>
                       <p className="text-[15px] text-[var(--text2)] leading-[1.9] mb-3">{detail.desc}</p>
                       <div className="bg-[var(--bg2)] rounded-[14px] px-6 py-5 mt-5">

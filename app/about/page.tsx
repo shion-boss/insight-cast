@@ -10,14 +10,14 @@ export const metadata: Metadata = {
 }
 
 const PRINCIPLES = [
-  { n: '01', title: '取材なしにコンテンツを語らない', desc: '情報の素材は取材から。AIだけで生成した文章を、あなたの言葉として届けません。' },
+  { n: '01', title: '取材なしにコンテンツを語らない', desc: '情報の素材は取材から。AIだけで作った文章を、あなたの言葉として届けません。' },
   { n: '02', title: '一歩ずつ、確実に前進する', desc: '完璧を目指して止まるより、小さく始めて継続することに価値があります。' },
   { n: '03', title: '技術ではなく、価値に焦点を当てる', desc: 'どんなに高度な技術も、伝えるべき価値のために使います。技術が目的になりません。' },
-  { n: '04', title: '事業者の言葉を大切にする', desc: '生成した文章に過度に依存せず、あなた自身の言葉で整えることを推奨します。' },
+  { n: '04', title: '事業者の言葉を大切にする', desc: '届いた素材に過度に依存せず、あなた自身の言葉で整えることを推奨します。' },
 ] as const
 
 const TRUST_POINTS = [
-  { icon: '🎤', title: '取材から始める', desc: '情報を「生成」するのではなく、まず「引き出す」。あなたの経験・言葉・判断が素材です。' },
+  { icon: '🎤', title: '取材から始める', desc: '情報をいきなり書くのではなく、まず「引き出す」。あなたの経験・言葉・判断が素材です。' },
   { icon: '📖', title: '一次情報の尊重', desc: 'あなた自身の体験にしか語れないことがある。その固有性こそが、信頼につながります。' },
   { icon: '🌱', title: '継続的に育てる', desc: '一度作って終わりではなく、取材を重ねることでホームページが育っていく仕組みをつくります。' },
 ] as const
@@ -69,7 +69,7 @@ export default function AboutPage() {
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Mission</div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.6] mt-5" style={{ fontSize: 'clamp(22px,3vw,34px)' }}>
               <span className="text-[var(--accent)]">一次情報こそが、</span>小規模事業者の唯一の差別化である。<br />
-              価値の中心は、AIが整えた文章そのものではなく、<br />
+              価値の中心は、きれいに整えられた文章そのものではなく、<br />
               取材で引き出した<span className="text-[var(--accent)]">事実と体験</span>に価値がある。
             </div>
             <div className="w-10 h-0.5 bg-[var(--accent)] mt-8" />
@@ -103,7 +103,7 @@ export default function AboutPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Principles</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              行動指針
+              私たちが守っていること
             </h2>
             <div className="mt-11 grid gap-6 lg:grid-cols-2">
               {PRINCIPLES.map((item) => (

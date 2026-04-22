@@ -37,6 +37,34 @@ const CHARACTER_SIZE: Record<Variant, number> = {
   mini: 36,
 }
 
+const CHARACTER_FRAME_CLASS: Record<Variant, string> = {
+  featured: 'relative isolate shrink-0',
+  card: 'relative isolate shrink-0',
+  detail: 'relative isolate shrink-0',
+  mini: '',
+}
+
+const CHARACTER_AURA_CLASS: Record<Variant, string> = {
+  featured: 'absolute inset-x-3 top-4 bottom-5 rounded-full bg-white/38 blur-2xl',
+  card: 'absolute inset-x-2 top-3 bottom-4 rounded-full bg-white/34 blur-xl',
+  detail: 'absolute inset-x-4 top-5 bottom-6 rounded-full bg-white/34 blur-2xl',
+  mini: 'hidden',
+}
+
+const CHARACTER_SHADOW_CLASS: Record<Variant, string> = {
+  featured: 'absolute bottom-1 left-1/2 h-4 w-[70%] -translate-x-1/2 rounded-full bg-[rgba(47,35,24,0.16)] blur-xl',
+  card: 'absolute bottom-0 left-1/2 h-3.5 w-[68%] -translate-x-1/2 rounded-full bg-[rgba(47,35,24,0.14)] blur-lg',
+  detail: 'absolute bottom-1 left-1/2 h-5 w-[72%] -translate-x-1/2 rounded-full bg-[rgba(47,35,24,0.16)] blur-xl',
+  mini: 'hidden',
+}
+
+const CHARACTER_IMAGE_CLASS: Record<Variant, string> = {
+  featured: 'relative z-10 object-contain drop-shadow-[0_16px_24px_rgba(60,44,28,0.18)]',
+  card: 'relative z-10 object-contain drop-shadow-[0_12px_18px_rgba(60,44,28,0.16)]',
+  detail: 'relative z-10 object-contain drop-shadow-[0_18px_28px_rgba(60,44,28,0.18)]',
+  mini: 'object-contain',
+}
+
 export function BlogCoverArt({
   post,
   char,
@@ -108,13 +136,19 @@ export function BlogCoverArt({
             </div>
           )}
 
-          <div className={isMini ? '' : 'shrink-0 rounded-[24px] border border-white/40 bg-white/35 p-2 shadow-[0_18px_40px_rgba(60,44,28,0.12)] backdrop-blur-sm'}>
+          <div className={CHARACTER_FRAME_CLASS[variant]}>
+            {!isMini && (
+              <>
+                <div aria-hidden="true" className={CHARACTER_AURA_CLASS[variant]} />
+                <div aria-hidden="true" className={CHARACTER_SHADOW_CLASS[variant]} />
+              </>
+            )}
             <Image
               src={variant === 'mini' ? char.icon48 : char.icon96}
               alt={char.name}
               width={CHARACTER_SIZE[variant]}
               height={CHARACTER_SIZE[variant]}
-              className="object-contain drop-shadow-md"
+              className={CHARACTER_IMAGE_CLASS[variant]}
             />
           </div>
         </div>
