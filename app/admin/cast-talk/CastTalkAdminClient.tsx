@@ -178,7 +178,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleToggleStatus(item)}
-                        disabled={togglingId === item.id}
+                        disabled={togglingId === item.id || deletingId === item.id}
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
                         title={item.status === 'published' ? '下書きに戻す' : '公開する'}
                       >

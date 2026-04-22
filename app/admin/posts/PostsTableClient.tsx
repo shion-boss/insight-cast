@@ -75,14 +75,17 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
     if (!confirm(`「${post.title}」を削除しますか？この操作は取り消せません。`)) return
     setDeletingId(post.id)
     setErrorMsg(null)
-    const result = await deletePost(post.id)
-    if ('error' in result) {
-      setErrorMsg(result.error)
-    } else {
-      setRows((prev) => prev.filter((p) => p.id !== post.id))
-      router.refresh()
+    try {
+      const result = await deletePost(post.id)
+      if ('error' in result) {
+        setErrorMsg(result.error)
+      } else {
+        setRows((prev) => prev.filter((p) => p.id !== post.id))
+        router.refresh()
+      }
+    } finally {
+      setDeletingId(null)
     }
-    setDeletingId(null)
   }
 
   return (

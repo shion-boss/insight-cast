@@ -13,9 +13,16 @@ function isUpdateBody(v: unknown): v is UpdateBody {
   if (!v || typeof v !== 'object') return false
   const o = v as Record<string, unknown>
   if (o.status !== undefined && o.status !== 'draft' && o.status !== 'published') return false
-  if (o.title !== undefined && typeof o.title !== 'string') return false
+  if (o.title !== undefined && (typeof o.title !== 'string' || o.title.trim().length === 0)) return false
   if (o.summary !== undefined && o.summary !== null && typeof o.summary !== 'string') return false
-  if (o.messages !== undefined && !Array.isArray(o.messages)) return false
+  if (o.messages !== undefined) {
+    if (!Array.isArray(o.messages)) return false
+    if (!o.messages.every(
+      (m) => m && typeof m === 'object' &&
+        typeof (m as Record<string, unknown>).castId === 'string' &&
+        typeof (m as Record<string, unknown>).text === 'string'
+    )) return false
+  }
   return true
 }
 

@@ -179,10 +179,10 @@ export function CastTalkPreviewClient({
       <div className="flex items-center gap-3 flex-wrap">
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || saved}
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
         >
-          {saving ? '保存中...' : saved ? '保存済み ✓' : '保存する'}
+          {saving ? '保存中...' : saved ? '保存済み ✓' : '保存する（未保存）'}
         </button>
         <button
           onClick={() => handleStatusChange(status === 'published' ? 'draft' : 'published')}

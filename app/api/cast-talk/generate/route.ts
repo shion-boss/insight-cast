@@ -64,7 +64,8 @@ function loadPromptFile(relativePath: string): string {
   try {
     const fullPath = join(process.cwd(), relativePath)
     return readFileSync(fullPath, 'utf-8')
-  } catch {
+  } catch (e) {
+    console.warn('[cast-talk] プロンプトファイルの読み込みに失敗:', relativePath, e)
     return ''
   }
 }
