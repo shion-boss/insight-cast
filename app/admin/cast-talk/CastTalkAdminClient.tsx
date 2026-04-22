@@ -193,7 +193,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     <div className="inline-flex items-center gap-1.5">
                       <Link
                         href={`/admin/cast-talk/${item.id}`}
-                        className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                        className="inline-block w-24 rounded-[var(--r-sm)] px-3 py-1.5 text-center text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                       >
                         編集
                       </Link>
@@ -201,12 +201,12 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         <Link
                           href={`/cast-talk/${item.slug}`}
                           target="_blank"
-                          className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)]"
+                          className="inline-block w-24 rounded-[var(--r-sm)] px-3 py-1.5 text-center text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)]"
                         >
                           公開ページ ↗
                         </Link>
                       ) : (
-                        <span className="px-3 py-1.5 text-xs" />
+                        <span className="inline-block w-24 px-3 py-1.5 text-xs" />
                       )}
                       <button
                         onClick={() => handleDelete(item)}
