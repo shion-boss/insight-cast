@@ -108,7 +108,7 @@ const PLANS = [
     name: '個人向け',
     price: '¥4,980',
     period: '/ 月',
-    desc: '週1〜2本ペースでHPを育てたい方へ',
+    desc: '週2〜3本ペースでHPを育てたい方へ',
     features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
     cta: '申し込む',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',
@@ -120,7 +120,7 @@ const PLANS = [
     price: '¥14,800',
     period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
-    features: ['取材回数：月20回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中', '優先サポート'],
+    features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中', '優先サポート'],
     cta: '申し込む',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=business',
     highlight: false,
@@ -185,7 +185,7 @@ export default async function LandingPage() {
                   ✦ AI取材サービス
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
-                  ホームページが止まっているなら、<br /><em className="text-[var(--accent)] not-italic">AIキャストが取材に来ます。</em>
+                  取材に答えるだけで、<br /><em className="text-[var(--accent)] not-italic">ホームページが育っていく。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
                   動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。「何を書けばいいか分からない」を解消します。
