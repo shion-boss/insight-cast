@@ -204,6 +204,7 @@ export default function InterviewPage() {
 
     return () => {
       cancelled = true
+      setSupportPosts((prev) => prev.loading ? { ...prev, loading: false } : prev)
     }
   }, [interviewId, latestInterviewerMessage, projectId])
 
