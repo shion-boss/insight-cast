@@ -19,7 +19,17 @@ const FIXED_COST_TOTAL = FIXED_COSTS.reduce((acc, r) => acc + (r.usd ?? 0), 0)
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
 
-// SITE_OPS_ROUTES は不要になったため削除（管理者の全操作をHP運用費とする）
+const ROUTE_LABELS: Record<string, string> = {
+  'interview/chat': 'インタビュー（会話）',
+  'interview/summarize': 'インタビュー（まとめ）',
+  'article': '記事生成',
+  'analyze': 'HP分析',
+  'analyze/scrape': 'HP分析（Firecrawl）',
+  'account/analyze': 'アカウント分析（Claude）',
+  'account/analyze/scrape': 'アカウント分析（Firecrawl）',
+  'cast-talk/generate': 'Cast Talk 生成',
+  'firecrawl/scrape': 'Firecrawl スクレイプ',
+}
 
 async function getCostData() {
   const supabase = createAdminClient()
@@ -61,8 +71,11 @@ async function getCostData() {
   const lastCost = sumCost(lastMonth.data)
   const currentTokens = sumTokens(currentMonth.data)
 
-  // ルート別集計
+  // ルート別集計（ROUTE_LABELSの全ルートを0で初期化してから実績を上書き）
   const routeMap: Record<string, { cost: number; calls: number }> = {}
+  for (const route of Object.keys(ROUTE_LABELS)) {
+    routeMap[route] = { cost: 0, calls: 0 }
+  }
   for (const row of (byRoute.data ?? [])) {
     if (!routeMap[row.route]) routeMap[row.route] = { cost: 0, calls: 0 }
     routeMap[row.route].cost += row.cost_usd ?? 0
@@ -118,18 +131,6 @@ function usd(v: number) {
 
 function jpy(usdAmount: number) {
   return `¥${Math.round(usdAmount * EXCHANGE_RATE).toLocaleString()}`
-}
-
-const ROUTE_LABELS: Record<string, string> = {
-  'interview/chat': 'インタビュー（会話）',
-  'interview/summarize': 'インタビュー（まとめ）',
-  'article': '記事生成',
-  'analyze': 'HP分析',
-  'analyze/scrape': 'HP分析（Firecrawl）',
-  'account/analyze': 'アカウント分析（Claude）',
-  'account/analyze/scrape': 'アカウント分析（Firecrawl）',
-  'cast-talk/generate': 'Cast Talk 生成',
-  'firecrawl/scrape': 'Firecrawl スクレイプ',
 }
 
 export default async function AdminCostsPage() {
