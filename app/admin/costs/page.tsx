@@ -11,6 +11,7 @@ const FIXED_COSTS = [
   { label: 'Supabase', plan: 'Free（無料）', usd: 0 },
   { label: 'Resend', plan: 'Free（無料）', usd: 0 },
   { label: 'Firecrawl', plan: '従量課金', usd: null },
+  { label: 'Cast Talk 自動生成', plan: '毎日1記事（Haiku + Sonnet）・月約$0.78', usd: 0.78 },
 ]
 
 const EXCHANGE_RATE = 150 // 1 USD = 150 JPY（概算）
@@ -170,8 +171,8 @@ export default async function AdminCostsPage() {
       <section className="rounded-[var(--r-lg)] border-2 border-[var(--accent)]/30 bg-[var(--accent-l)] p-5">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">今月の総コスト（概算）</p>
         <div className="mt-3 flex items-end gap-4">
-          <CostValue usd={currentCost + 100} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
-          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100 + API <CostValue usd={currentCost} /></p>
+          <CostValue usd={currentCost + 100.78} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
+          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100.78 + API <CostValue usd={currentCost} /></p>
         </div>
       </section>
 
@@ -221,7 +222,7 @@ export default async function AdminCostsPage() {
           ))}
           <div className="flex items-center gap-4 border-t border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計（概算）</p>
-            <CostValue usd={100} className="text-sm font-bold text-[var(--text)]" />
+            <CostValue usd={100.78} className="text-sm font-bold text-[var(--text)]" />
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
