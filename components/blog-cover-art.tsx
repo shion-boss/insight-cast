@@ -44,6 +44,13 @@ const CHARACTER_FRAME_CLASS: Record<Variant, string> = {
   mini: '',
 }
 
+const CHARACTER_CLIP_CLASS: Record<Variant, string> = {
+  featured: 'relative z-10 overflow-hidden rounded-[24px]',
+  card: 'relative z-10 overflow-hidden rounded-[20px]',
+  detail: 'relative z-10 overflow-hidden rounded-[26px]',
+  mini: '',
+}
+
 const CHARACTER_AURA_CLASS: Record<Variant, string> = {
   featured: 'absolute inset-x-3 top-4 bottom-5 rounded-full bg-white/38 blur-2xl',
   card: 'absolute inset-x-2 top-3 bottom-4 rounded-full bg-white/34 blur-xl',
@@ -143,13 +150,15 @@ export function BlogCoverArt({
                 <div aria-hidden="true" className={CHARACTER_SHADOW_CLASS[variant]} />
               </>
             )}
-            <Image
-              src={variant === 'mini' ? char.icon48 : char.icon96}
-              alt={char.name}
-              width={CHARACTER_SIZE[variant]}
-              height={CHARACTER_SIZE[variant]}
-              className={CHARACTER_IMAGE_CLASS[variant]}
-            />
+            <div className={CHARACTER_CLIP_CLASS[variant]}>
+              <Image
+                src={variant === 'mini' ? char.icon48 : char.icon96}
+                alt={char.name}
+                width={CHARACTER_SIZE[variant]}
+                height={CHARACTER_SIZE[variant]}
+                className={CHARACTER_IMAGE_CLASS[variant]}
+              />
+            </div>
           </div>
         </div>
       </div>

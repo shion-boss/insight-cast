@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import Image from 'next/image'
+
+export const metadata: Metadata = {
+  title: 'Insight Cast — AIキャストがホームページを育てるサービス',
+  description: 'HP更新が止まっている中小企業に、動物AIキャストが取材に訪れ、まだ伝わっていない価値を引き出してホームページを継続的に強化します。カード不要で無料体験できます。',
+}
 import { CharacterAvatar } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 import { CopyButton } from '@/components/CopyButton'

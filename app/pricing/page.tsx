@@ -9,7 +9,7 @@ import { CheckoutButton } from './CheckoutButton'
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: '現在は無料で体験でき、個人向け・法人向けの課金機能は準備中です。',
+  description: 'カード不要の無料プランから始められます。続けたい方向けに個人向け・法人向けの月額プランをご用意しています。',
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)

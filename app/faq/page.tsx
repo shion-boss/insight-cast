@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
 import { FaqContent } from './faq-client'
+
+export const metadata: Metadata = {
+  title: 'よくある質問 | Insight Cast',
+  description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+}
 
 const FAQ_GROUPS = [
   {

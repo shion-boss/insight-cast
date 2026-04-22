@@ -24,7 +24,7 @@ export function CheckoutButton({
     if (data.url) {
       window.location.href = data.url
     } else {
-      alert(data.message ?? 'エラーが発生しました。もう一度お試しください。')
+      alert(data.message ?? 'うまくいきませんでした。もう一度お試しください。')
       setLoading(false)
     }
   }

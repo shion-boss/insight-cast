@@ -39,8 +39,8 @@ const NOTIFICATIONS: Array<{
   },
   {
     key: 'articleReady',
-    label: '記事素材生成完了',
-    desc: '記事素材が生成されたときにメールを受け取る',
+    label: '記事素材のお知らせ',
+    desc: '記事素材が届いたときにメールを受け取る',
   },
   {
     key: 'monthlyReport',
