@@ -147,7 +147,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {[
               { heading: 'サービス', links: [{ href: '/service', label: 'サービス内容' }, { href: '/pricing', label: '料金プラン' }, { href: '/cast', label: 'キャスト紹介' }] },
-              { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/cast-talk', label: 'Cast Talk' }, { href: '/about', label: 'Insight Castについて' }, { href: '/philosophy', label: 'AI時代の発信について' }, { href: '/faq', label: 'よくある質問' }] },
+              { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/cast-talk', label: 'Cast Talk（対話録）' }, { href: '/about', label: 'Insight Castについて' }, { href: '/philosophy', label: 'AI時代の発信について' }, { href: '/faq', label: 'よくある質問' }] },
               { heading: 'サポート', links: [{ href: '/contact', label: 'お問い合わせ' }, { href: '/privacy', label: 'プライバシーポリシー' }, { href: '/terms', label: '利用規約' }] },
               {
                 heading: 'アカウント',
