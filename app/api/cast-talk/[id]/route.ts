@@ -80,3 +80,32 @@ export async function PATCH(
 
   return NextResponse.json({ ok: true, traceId })
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const traceId = crypto.randomUUID()
+
+  if (!(await isAdmin())) {
+    return NextResponse.json(
+      { code: 'UNAUTHORIZED', message: '権限がありません', traceId },
+      { status: 401 },
+    )
+  }
+
+  const { id } = await params
+  const supabase = createAdminClient()
+
+  const { error } = await supabase.from('cast_talks').delete().eq('id', id)
+
+  if (error) {
+    console.error('[cast-talk/[id]] DELETE error', { traceId, error: error.message })
+    return NextResponse.json(
+      { code: 'DB_ERROR', message: '削除に失敗しました', traceId },
+      { status: 500 },
+    )
+  }
+
+  return NextResponse.json({ ok: true, traceId })
+}

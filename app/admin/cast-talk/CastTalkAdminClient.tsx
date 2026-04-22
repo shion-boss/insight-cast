@@ -30,6 +30,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
   const [items, setItems] = useState<CastTalk[]>(initialItems)
   const [generating, setGenerating] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleGenerate() {
@@ -79,6 +80,24 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
     } finally {
       setTogglingId(null)
+    }
+  }
+
+  async function handleDelete(item: CastTalk) {
+    if (!confirm(`「${item.title}」を削除しますか？この操作は取り消せません。`)) return
+    setDeletingId(item.id)
+    setError(null)
+    try {
+      const res = await fetch(`/api/cast-talk/${item.id}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = (await res.json()) as { message?: string }
+        throw new Error(data.message ?? '削除に失敗しました')
+      }
+      setItems((prev) => prev.filter((t) => t.id !== item.id))
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -193,6 +212,13 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                           : item.status === 'published'
                           ? '下書きに戻す'
                           : '公開する'}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        disabled={deletingId === item.id}
+                        className="rounded-[var(--r-sm)] border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                      >
+                        {deletingId === item.id ? '削除中...' : '削除'}
                       </button>
                     </div>
                   </td>
