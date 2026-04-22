@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',
@@ -53,7 +54,16 @@ const castDetails: Record<string, { desc: string; specialty: string; strengths: 
   },
 }
 
-export default function CastPage() {
+export default async function CastPage() {
+  let isLoggedIn = false
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    isLoggedIn = Boolean(user)
+  } catch {
+    // 認証失敗時も表示する
+  }
+
   return (
     <PublicPageFrame>
       <PublicHeader />
@@ -177,8 +187,11 @@ export default function CastPage() {
                         </div>
                       </div>
                       <div className="mt-6">
-                        <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center">
-                          このキャストで取材を始める →
+                        <Link
+                          href={isLoggedIn ? '/dashboard' : '/auth/signup'}
+                          className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center"
+                        >
+                          {isLoggedIn ? 'ダッシュボードへ →' : 'このキャストで取材を始める →'}
                         </Link>
                       </div>
                     </div>
