@@ -118,6 +118,9 @@ async function getCostData() {
   const siteOpsLogs = [...(adminLogs.data ?? []), ...(nullUserLogs.data ?? [])]
   const blogCost = siteOpsLogs.reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
   const blogCallsByRoute: Record<string, number> = {}
+  for (const route of Object.keys(ROUTE_LABELS)) {
+    blogCallsByRoute[route] = 0
+  }
   for (const row of siteOpsLogs) {
     blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
   }
