@@ -126,7 +126,7 @@ const ROUTE_LABELS: Record<string, string> = {
   'article': '記事生成',
   'analyze': 'HP分析',
   'analyze/scrape': 'HP分析（Firecrawl）',
-  'account/analyze': 'アカウント分析',
+  'account/analyze': 'アカウント分析（Claude）',
   'account/analyze/scrape': 'アカウント分析（Firecrawl）',
   'cast-talk/generate': 'Cast Talk 生成',
   'firecrawl/scrape': 'Firecrawl スクレイプ',

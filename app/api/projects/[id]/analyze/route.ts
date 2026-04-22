@@ -9,6 +9,7 @@ import { buildClassificationSummary } from '@/lib/content-map'
 import { classifyBlogPosts } from '@/lib/content-map.server'
 import { buildBlogFreshnessMetrics, discoverNewBlogPosts, discoverSiteBlogPosts, getStoredSiteBlogPosts, COMPETITOR_BLOG_POST_LIMIT } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
+import { logApiUsage } from '@/lib/api-usage'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -22,6 +23,7 @@ function throwIfError(error: PostgrestError | null, context: string) {
 async function analyzeHp(
   markdown: string,
   blogPosts: Array<{ title: string; summary: string }>,
+  logCtx?: { userId?: string; projectId?: string },
 ): Promise<{
   current_content: string[]
   strengths: string[]
@@ -98,6 +100,8 @@ ${blogSection}
 }`,
     }],
   })
+
+  logApiUsage({ userId: logCtx?.userId, projectId: logCtx?.projectId, route: 'analyze', model: 'claude-sonnet-4-6', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
 
   const empty = { current_content: [], strengths: [], gaps: [], suggested_themes: [], site_evaluation: [], trust_signals: [], conversion_obstacles: [], priority_actions: [] }
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
@@ -181,6 +185,7 @@ async function compareCompetitor(
   competitorMarkdown: string,
   ownBlogPosts: Array<{ title: string }>,
   compBlogPosts: Array<{ title: string }>,
+  logCtx?: { userId?: string; projectId?: string },
 ): Promise<{
   gaps: string[]
   advantages: string[]
@@ -225,6 +230,8 @@ ${compBlogSection}
 }`,
     }],
   })
+
+  logApiUsage({ userId: logCtx?.userId, projectId: logCtx?.projectId, route: 'analyze', model: 'claude-sonnet-4-6', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
 
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const jsonMatch = text.match(/\{[\s\S]*\}/)
@@ -462,7 +469,7 @@ async function runAnalysis({
     )
 
     const [audit, ownBlogMetrics, blogClassifications] = await Promise.all([
-      analyzeHp(mainMarkdown, ownBlogPosts),
+      analyzeHp(mainMarkdown, ownBlogPosts, { userId, projectId }),
       Promise.resolve(buildBlogFreshnessMetrics(ownBlogPosts)),
       classifyBlogPosts(ownBlogPosts).catch(() => []),
     ])
@@ -528,7 +535,7 @@ async function runAnalysis({
           competitorBlogPosts = blogPosts
           // 200文字未満は JS レンダリング失敗や空ページとみなしてスキップ
           if (compMarkdown && compMarkdown.length >= 200) {
-            result = await compareCompetitor(mainMarkdown, compMarkdown, ownBlogPosts, blogPosts)
+            result = await compareCompetitor(mainMarkdown, compMarkdown, ownBlogPosts, blogPosts, { userId, projectId })
           } else if (compMarkdown) {
             console.warn('[analyze:competitor] too short, skipping analysis', comp.url, compMarkdown.length)
           }

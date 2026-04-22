@@ -4,10 +4,11 @@ import { NextResponse } from 'next/server'
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 import { discoverSiteBlogPosts } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
+import { logApiUsage } from '@/lib/api-usage'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-async function analyzeHp(markdown: string) {
+async function analyzeHp(markdown: string, logCtx?: { userId?: string }) {
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 1024,
@@ -27,13 +28,15 @@ ${markdown.slice(0, 8000)}
 }`,
     }],
   })
+  logApiUsage({ userId: logCtx?.userId, route: 'account/analyze', model: 'claude-sonnet-4-6', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
+
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const m = text.match(/\{[\s\S]*\}/)
   if (!m) throw new Error('JSON parse failed')
   return JSON.parse(m[0])
 }
 
-async function compareCompetitor(mainMarkdown: string, competitorMarkdown: string) {
+async function compareCompetitor(mainMarkdown: string, competitorMarkdown: string, logCtx?: { userId?: string }) {
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 512,
@@ -60,6 +63,8 @@ ${competitorMarkdown.slice(0, 4000)}
 }`,
     }],
   })
+  logApiUsage({ userId: logCtx?.userId, route: 'account/analyze', model: 'claude-sonnet-4-6', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
+
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const m = text.match(/\{[\s\S]*\}/)
   if (!m) return { gaps: [], advantages: [], influential_topics: [] }
@@ -112,7 +117,7 @@ export async function POST() {
     const mainMarkdown = await fetchMarkdown(profile.url, { userId: user.id, route: 'account/analyze/scrape' })
     if (!mainMarkdown) return NextResponse.json({ error: 'fetch failed' }, { status: 400 })
 
-    const audit = await analyzeHp(mainMarkdown)
+    const audit = await analyzeHp(mainMarkdown, { userId: user.id })
     const ownBlogPosts = await discoverSiteBlogPosts(profile.url)
 
     const competitorResults: { url: string; gaps: string[]; advantages: string[] }[] = []
@@ -121,7 +126,7 @@ export async function POST() {
     for (const compUrl of competitorUrls.filter(Boolean).slice(0, 3)) {
       const compMarkdown = await fetchMarkdown(compUrl, { userId: user.id, route: 'account/analyze/scrape' })
       if (!compMarkdown) continue
-      const result = await compareCompetitor(mainMarkdown, compMarkdown)
+      const result = await compareCompetitor(mainMarkdown, compMarkdown, { userId: user.id })
       competitorResults.push({ url: compUrl, ...result })
     }
 
