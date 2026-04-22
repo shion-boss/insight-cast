@@ -20,8 +20,7 @@ const FIXED_COST_TOTAL = FIXED_COSTS.reduce((acc, r) => acc + (r.usd ?? 0), 0)
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
 
-// ホームページ運用に使う機能（管理者の自社運用）
-const SITE_OPS_ROUTES = new Set(['interview/chat', 'interview/summarize', 'article', 'analyze', 'account/analyze', 'cast-talk/generate'])
+// SITE_OPS_ROUTES は不要になったため削除（管理者の全操作をHP運用費とする）
 
 async function getCostData() {
   const supabase = createAdminClient()
@@ -37,17 +36,21 @@ async function getCostData() {
     .in('email', ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : ['__none__'])
   const adminUserIds = (adminProfiles ?? []).map((p) => p.id as string)
 
-  const [currentMonth, lastMonth, byRoute, daily, byUser, adminLogs] = await Promise.all([
+  const [currentMonth, lastMonth, byRoute, daily, byUser, adminLogs, nullUserLogs] = await Promise.all([
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', lastMonthStart).lte('created_at', lastMonthEnd),
     supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', monthStart).order('created_at', { ascending: true }),
-    // ユーザー別 × プラン別
-    supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null),
-    // 管理者自身のブログ運用コスト
+    // ユーザー別 × プラン別（管理者・nullを除いた純粋なユーザー分）
+    adminUserIds.length > 0
+      ? supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null).not('user_id', 'in', `(${adminUserIds.join(',')})`)
+      : supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null),
+    // 管理者操作のHP運用コスト（全ルート対象）
     adminUserIds.length > 0
       ? supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart).in('user_id', adminUserIds)
       : Promise.resolve({ data: [] }),
+    // user_id=null（cron自動生成など）もHP運用費扱い
+    supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart).is('user_id', null),
   ])
 
   const sumCost = (rows: Array<{ cost_usd: number }> | null) =>
@@ -99,15 +102,12 @@ async function getCostData() {
   }
   const byPlanList = Object.entries(byPlan).map(([plan, v]) => ({ plan, ...v })).sort((a, b) => b.cost - a.cost)
 
-  // 管理者のブログ運用コスト
-  const blogCost = (adminLogs.data ?? [])
-    .filter((r) => SITE_OPS_ROUTES.has(r.route))
-    .reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
+  // HP運用費: 管理者の全操作 + user_id=null（cron等）を合算
+  const siteOpsLogs = [...(adminLogs.data ?? []), ...(nullUserLogs.data ?? [])]
+  const blogCost = siteOpsLogs.reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
   const blogCallsByRoute: Record<string, number> = {}
-  for (const row of (adminLogs.data ?? [])) {
-    if (SITE_OPS_ROUTES.has(row.route)) {
-      blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
-    }
+  for (const row of siteOpsLogs) {
+    blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
   }
 
   return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogCallsByRoute }
@@ -248,7 +248,7 @@ export default async function AdminCostsPage() {
 
       {/* HP運用コスト（管理者） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ホームページ運用費（今月・管理者自身）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ホームページ運用費（今月・管理者操作 + 自動実行）</h2>
         <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
