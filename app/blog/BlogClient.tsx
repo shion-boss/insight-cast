@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { getCharacter } from '@/lib/characters'
@@ -25,6 +26,15 @@ const CATEGORY_CHARACTER: Record<PostCategory, string> = {
   case: 'rain',
   philosophy: 'claus',
   news: 'mint',
+}
+
+const CATEGORY_COLOR: Record<PostCategory, string> = {
+  howto:       '#c2722a',
+  service:     '#0f766e',
+  interview:   '#7c3aed',
+  case:        '#1d4ed8',
+  philosophy:  '#065f46',
+  news:        '#be185d',
 }
 
 function formatDate(date: string): string {
@@ -102,28 +112,46 @@ export function BlogClient({ posts }: { posts: Post[] }) {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {gridPosts.map((post) => {
           const char = resolveChar(post)
+          const themeColor = CATEGORY_COLOR[post.category]
           return (
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group flex flex-col overflow-hidden rounded-[18px] border border-[var(--border)] bg-[var(--surface)] transition-[transform,box-shadow] duration-[220ms] hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(0,0,0,0.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              <BlogCoverArt post={post} char={char} variant="card" />
+              {/* 画像エリア */}
+              <div className="relative h-[200px] overflow-hidden">
+                <BlogCoverArt post={post} char={char} variant="card" />
+                {/* テーマカラーバー */}
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: themeColor }} />
+                {/* フロストキャストバッジ */}
+                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full border border-white/30 bg-white/18 px-3 py-1 backdrop-blur-[10px]">
+                  <div className="h-[22px] w-[22px] overflow-hidden rounded-full border-[1.5px] border-white/60 flex-shrink-0">
+                    {/* 仮置き: キャラアイコンで代用 */}
+                    <Image src={char.icon48} alt={char.name} width={22} height={22} className="h-full w-full object-cover" />
+                  </div>
+                  <span className="text-[11px] font-bold tracking-[0.04em] text-white">{char.name}</span>
+                </div>
+              </div>
 
               {/* コンテンツ */}
-              <div className="flex flex-1 flex-col px-6 py-[22px]">
-                <div className="mb-2 flex items-center gap-2">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[var(--accent)]">
+              <div className="flex flex-1 flex-col px-5 py-[18px] bg-white">
+                <div className="mb-2.5 flex items-center gap-1.5">
+                  <span className="h-[6px] w-[6px] rounded-full flex-shrink-0" style={{ background: themeColor }} />
+                  <p className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ color: themeColor }}>
                     {CATEGORY_LABELS[post.category]}
                   </p>
                 </div>
-                <h2 className="mb-2.5 font-[family-name:var(--font-noto-serif-jp)] text-[17px] font-bold leading-[1.5] text-[var(--text)]">
+                <h2 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410]">
                   {post.title}
                 </h2>
-                <p className="mb-3.5 flex-1 text-[13px] leading-[1.75] text-[var(--text2)] line-clamp-3">
+                <p className="mb-3 flex-1 text-[12px] leading-[1.75] text-[#7a6555] line-clamp-3">
                   {post.excerpt}
                 </p>
-                <p className="text-[12px] text-[var(--text3)]">{formatDate(post.date)}</p>
+                <div className="flex items-center justify-between border-t border-[#e8ddd0] pt-2.5">
+                  <span className="text-[11px] text-[#b8a898]">{formatDate(post.date)}</span>
+                  <span className="text-[11px] font-bold" style={{ color: themeColor }}>続きを読む →</span>
+                </div>
               </div>
             </Link>
           )

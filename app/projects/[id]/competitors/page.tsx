@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { loadProjectCompetitorContext } from '@/lib/project-competitor-context'
 import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
 
 export default async function CompetitorsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -32,6 +33,9 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
     .select('url')
     .eq('project_id', id)
     .order('created_at', { ascending: true })
+
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
 
   const claus = getCharacter('claus')
 
@@ -64,6 +68,7 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
           initialCompetitorUrls={(competitors ?? []).map((competitor) => competitor.url)}
           initialIndustryMemo={rememberedContext.industryMemo}
           initialLocation={rememberedContext.location}
+          maxCompetitors={planLimits.maxCompetitorsPerProject}
         />
       </div>
     </div>

@@ -9,6 +9,7 @@ import { getCharacter } from '@/lib/characters'
 
 type Props = {
   errorMessage?: string | null
+  maxCompetitors?: number
 }
 
 function SubmitProjectButton({
@@ -29,7 +30,7 @@ function SubmitProjectButton({
   )
 }
 
-export default function NewProjectForm({ errorMessage }: Props) {
+export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Props) {
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
   const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
@@ -95,6 +96,7 @@ export default function NewProjectForm({ errorMessage }: Props) {
 
         <CompetitorSelectionFields
           siteUrl={url}
+          maxCompetitors={maxCompetitors}
           onSelectionStateChange={(state) => {
             setCanSubmit(state.canSubmit)
             setCompetitorIssue(state.issue)

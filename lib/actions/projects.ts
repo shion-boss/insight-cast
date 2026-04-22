@@ -55,15 +55,6 @@ export async function createProject(formData: FormData) {
   // プラン上限チェック
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
-  const competitorUrls = collectUniqueUrls(rawCompetitorUrls)
-
-  if (competitorUrls.length > planLimits.maxCompetitorsPerProject) {
-    redirect('/projects/new?error=competitor_limit')
-  }
-
-  if (competitorUrls.some((url) => normalizeComparableUrl(url) === normalizeComparableUrl(hp_url))) {
-    redirect('/projects/new?error=competitor_self')
-  }
 
   const { count: projectCount } = await supabase
     .from('projects')
@@ -72,6 +63,16 @@ export async function createProject(formData: FormData) {
 
   if ((projectCount ?? 0) >= planLimits.maxProjects) {
     redirect('/projects/new?error=plan_limit')
+  }
+
+  const competitorUrls = collectUniqueUrls(rawCompetitorUrls)
+
+  if (competitorUrls.length > planLimits.maxCompetitorsPerProject) {
+    redirect('/projects/new?error=competitor_limit')
+  }
+
+  if (competitorUrls.some((url) => normalizeComparableUrl(url) === normalizeComparableUrl(hp_url))) {
+    redirect('/projects/new?error=competitor_self')
   }
 
   const { data, error } = await supabase

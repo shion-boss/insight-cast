@@ -11,6 +11,7 @@ import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { createClient } from '@/lib/supabase/server'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
 
 type Project = {
   id: string
@@ -24,6 +25,34 @@ type Interview = {
   id: string
   project_id: string
   created_at: string
+}
+
+function AddProjectCard({ isLocked }: { isLocked: boolean }) {
+  return (
+    <Link
+      href={isLocked ? '/pricing?reason=project_limit' : '/projects/new'}
+      className="relative bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
+    >
+      {isLocked ? (
+        <>
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--text3)]/20">
+            <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text3)]">
+              <rect x="2" y="9" width="14" height="13" rx="3" fill="currentColor"/>
+              <path d="M5 9V6.5a4 4 0 0 1 8 0V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div className="text-[14px] font-semibold text-[var(--text3)]">新しい取材先を追加する</div>
+          <div className="text-[12px] text-[var(--accent)] font-semibold">プランをアップグレードする →</div>
+        </>
+      ) : (
+        <>
+          <div className="text-[36px] text-[var(--text3)]">＋</div>
+          <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
+          <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
+        </>
+      )}
+    </Link>
+  )
 }
 
 function formatShortDateTime(value: string) {
@@ -56,6 +85,10 @@ export default async function ProjectsPage() {
     .order('updated_at', { ascending: false })
 
   const projectList = (projects ?? []) as Project[]
+
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
+  const isProjectLimitReached = projectList.length >= planLimits.maxProjects
 
   const { data: auditRows } = projectList.length > 0
     ? await supabase
@@ -137,8 +170,19 @@ export default async function ProjectsPage() {
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
       headerRight={(
-        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
-          + 取材先を追加
+        <Link
+          href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
+          className={getButtonClass('primary', `px-4 py-2.5 text-sm${isProjectLimitReached ? ' opacity-60' : ''}`)}
+        >
+          {isProjectLimitReached ? (
+            <span className="flex items-center gap-1.5">
+              <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="6" width="10" height="8" rx="2" fill="currentColor"/>
+                <path d="M3 6V4a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+              </svg>
+              取材先を追加
+            </span>
+          ) : '+ 取材先を追加'}
         </Link>
       )}
     >
@@ -157,14 +201,7 @@ export default async function ProjectsPage() {
 
       {projectList.length === 0 ? (
         <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
-          <Link
-            href="/projects/new"
-            className="bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
-          >
-            <div className="text-[36px] text-[var(--text3)]">＋</div>
-            <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
-            <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
-          </Link>
+          <AddProjectCard isLocked={isProjectLimitReached} />
         </div>
       ) : (
         <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
@@ -269,14 +306,7 @@ export default async function ProjectsPage() {
             )
           })}
 
-          <Link
-            href="/projects/new"
-            className="bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
-          >
-            <div className="text-[36px] text-[var(--text3)]">＋</div>
-            <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
-            <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
-          </Link>
+          <AddProjectCard isLocked={isProjectLimitReached} />
         </div>
       )}
     </AppShell>

@@ -17,6 +17,7 @@ type Props = {
   initialLocation?: string
   inputName?: string
   helperText?: string
+  maxCompetitors?: number
   onSelectionStateChange?: (state: {
     urls: string[]
     canSubmit: boolean
@@ -24,7 +25,6 @@ type Props = {
   }) => void
 }
 
-const MAX_COMPETITORS = 3
 const MANUAL_INPUT_COUNT = 3
 
 function normalizeUrl(raw: string) {
@@ -61,9 +61,13 @@ export default function CompetitorSelectionFields({
   initialIndustryMemo = '',
   initialLocation = '',
   inputName = 'competitor_urls',
-  helperText = 'おすすめと手入力を合わせて最大3件までです。あとから取材先の管理画面でも見直せます。',
+  helperText,
+  maxCompetitors = 3,
   onSelectionStateChange,
 }: Props) {
+  const MAX_COMPETITORS = maxCompetitors
+  const defaultHelperText = `おすすめと手入力を合わせて最大${MAX_COMPETITORS}件までです。あとから取材先の管理画面でも見直せます。`
+  const resolvedHelperText = helperText ?? defaultHelperText
   const claus = getCharacter('claus')
   const [industryMemo, setIndustryMemo] = useState(initialIndustryMemo)
   const [location, setLocation] = useState(initialLocation)
@@ -205,7 +209,7 @@ export default function CompetitorSelectionFields({
 
       <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-xs text-[var(--text3)]">
         <div className="flex items-center justify-between gap-3">
-          <span>{helperText}</span>
+          <span>{resolvedHelperText}</span>
           <span className="whitespace-nowrap font-medium text-[var(--text2)]">{chosenUrls.length}/{MAX_COMPETITORS}件</span>
         </div>
       </div>
@@ -306,7 +310,7 @@ export default function CompetitorSelectionFields({
       <div className="space-y-3 pt-2">
         <div>
           <h3 className="text-xs font-medium text-[var(--text3)]">URLを直接入力する</h3>
-          <p className="mt-1 text-xs text-[var(--text3)]">参考にしたいHPのURLを知っていれば、そのまま入力できます。3件まで登録できます。</p>
+          <p className="mt-1 text-xs text-[var(--text3)]">参考にしたいHPのURLを知っていれば、そのまま入力できます。{MAX_COMPETITORS}件まで登録できます。</p>
         </div>
         {Array.from({ length: MANUAL_INPUT_COUNT }).map((_, index) => (
           <TextInput

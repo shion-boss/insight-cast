@@ -15,6 +15,7 @@ type Props = {
   initialCompetitorUrls: string[]
   initialIndustryMemo: string
   initialLocation: string
+  maxCompetitors?: number
 }
 
 export default function CompetitorsForm({
@@ -24,6 +25,7 @@ export default function CompetitorsForm({
   initialCompetitorUrls,
   initialIndustryMemo,
   initialLocation,
+  maxCompetitors = 3,
 }: Props) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
@@ -70,7 +72,7 @@ export default function CompetitorsForm({
     if (result.error) {
       setSubmitState('idle')
       if (result.error === 'competitor_limit') {
-        setError('参考HPは最大3件までです。1件以上外してから保存してください。')
+        setError(`参考HPは最大${maxCompetitors}件までです。1件以上外してから保存してください。`)
         return
       }
       if (result.error === 'competitor_self') {
@@ -145,7 +147,8 @@ export default function CompetitorsForm({
         initialUrls={initialCompetitorUrls}
         initialIndustryMemo={initialIndustryMemo}
         initialLocation={initialLocation}
-        helperText="おすすめと手入力を合わせて最大3件までです。空にして保存すると、競合なしで再調査できます。"
+        maxCompetitors={maxCompetitors}
+        helperText={`おすすめと手入力を合わせて最大${maxCompetitors}件までです。空にして保存すると、競合なしで再調査できます。`}
         onSelectionStateChange={(state) => {
           setCanSubmit(state.canSubmit)
           setCompetitorIssue(state.issue)

@@ -130,6 +130,10 @@ export default function SettingsPage() {
   const [passwordSaving, setPasswordSaving] = useState(false)
   const [passwordSaved, setPasswordSaved] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [newEmail, setNewEmail] = useState('')
+  const [emailSaving, setEmailSaving] = useState(false)
+  const [emailSaved, setEmailSaved] = useState(false)
+  const [emailError, setEmailError] = useState<string | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [deletePending, setDeletePending] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -347,6 +351,38 @@ export default function SettingsPage() {
     window.setTimeout(() => setPasswordSaved(false), 2000)
   }
 
+  async function handleEmailSave() {
+    setEmailError(null)
+
+    const trimmed = newEmail.trim()
+    if (!trimmed) {
+      setEmailError('新しいメールアドレスを入力してください。')
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError('メールアドレスの形式が正しくありません。')
+      return
+    }
+    if (trimmed === email) {
+      setEmailError('現在と同じメールアドレスです。')
+      return
+    }
+
+    setEmailSaving(true)
+
+    const { error } = await supabase.auth.updateUser({ email: trimmed })
+
+    if (error) {
+      setEmailError('メールアドレスを変更できませんでした。もう一度お試しください。')
+      setEmailSaving(false)
+      return
+    }
+
+    setEmailSaving(false)
+    setEmailSaved(true)
+    setNewEmail('')
+  }
+
   async function handleDeleteAccount() {
     setDeleteError(null)
 
@@ -391,7 +427,7 @@ export default function SettingsPage() {
   const passwordInputsDisabled = passwordSaving
   const accountInitial = (name.trim() || email || '設').charAt(0).toUpperCase()
   const plan = getPlanLimits(planKey)
-  const nextPlan = planKey === 'personal' ? getPlanLimits('business') : null
+  const nextPlan = planKey === 'free' ? getPlanLimits('personal') : planKey === 'personal' ? getPlanLimits('business') : null
 
   if (loading) {
     return (
@@ -555,6 +591,52 @@ export default function SettingsPage() {
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+                  メールアドレスの変更
+                </h2>
+                <p className="mb-5 text-xs text-[var(--text3)]">現在: {email || '未設定'}</p>
+
+                {emailSaved ? (
+                  <div className="rounded-xl bg-[var(--accent-l)] border border-[rgba(194,114,42,0.25)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
+                    <p className="font-semibold text-[var(--accent)] mb-1">確認メールを送りました</p>
+                    <p>新しいメールアドレス宛に確認リンクを送りました。リンクをクリックすると変更が完了します。</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="mb-1.5 block text-[13px] font-semibold text-[var(--text)]">新しいメールアドレス</label>
+                        <TextInput
+                          type="email"
+                          value={newEmail}
+                          onChange={(event) => setNewEmail(event.target.value)}
+                          placeholder="new@example.com"
+                          disabled={emailSaving}
+                        />
+                      </div>
+                    </div>
+
+                    {emailError && (
+                      <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+                        {emailError}
+                      </p>
+                    )}
+
+                    <div className="mt-5 flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={handleEmailSave}
+                        disabled={emailSaving || !newEmail.trim()}
+                        className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                      >
+                        {emailSaving ? '送信中...' : '確認メールを送る'}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </section>
+
+              <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
                   アカウントを削除
                 </h2>
                 <p className="mb-5 text-xs text-[var(--text3)]">この操作は取り消せません</p>
@@ -619,7 +701,7 @@ export default function SettingsPage() {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
                   { label: '今月の取材回数', value: interviewCount === null ? '...' : `${interviewCount} 回` },
-                  { label: '月間上限', value: `${plan.monthlyInterviewLimit} 回` },
+                  { label: '月間取材上限', value: `${plan.monthlyInterviewLimit} 回` },
                   { label: '取材先上限', value: `${plan.maxProjects} 件` },
                   { label: '競合調査', value: `各取材先 ${plan.maxCompetitorsPerProject} 社` },
                 ].map((item) => (
@@ -656,19 +738,25 @@ export default function SettingsPage() {
                   <>
                     <div className="space-y-2">
                       {[
-                        `取材先を最大 ${nextPlan.maxProjects} 件まで登録`,
-                        `月 ${nextPlan.monthlyInterviewLimit} 回まで取材`,
-                        `${nextPlan.supportLabel}が利用可能`,
-                      ].map((feature) => (
-                        <div key={feature} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                        nextPlan.maxProjects !== plan.maxProjects && `取材先を最大 ${nextPlan.maxProjects} 件まで登録`,
+                        nextPlan.monthlyInterviewLimit !== plan.monthlyInterviewLimit && `月 ${nextPlan.monthlyInterviewLimit} 回まで取材`,
+                        nextPlan.maxCompetitorsPerProject !== plan.maxCompetitorsPerProject && `競合調査を各取材先 ${nextPlan.maxCompetitorsPerProject} 社まで`,
+                        nextPlan.supportLabel !== plan.supportLabel && `${nextPlan.supportLabel}が利用可能`,
+                      ].filter(Boolean).map((feature) => (
+                        <div key={String(feature)} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
                           <span className="font-bold text-[var(--teal)]">✓</span>
                           {feature}
                         </div>
                       ))}
                     </div>
-                    <p className="mt-4 text-[12px] text-[var(--text3)]">
-                      プラン変更・課金機能は近日公開予定です。
-                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <Link
+                        href={`/pricing?reason=upgrade`}
+                        className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                      >
+                        {nextPlan.label}にアップグレード →
+                      </Link>
+                    </div>
                   </>
                 ) : (
                   <p className="text-[13px] leading-[1.75] text-[var(--text2)]">

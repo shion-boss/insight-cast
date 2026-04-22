@@ -9,6 +9,7 @@ import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
 
 type Project = {
   id: string
@@ -63,7 +64,7 @@ function formatShortDateTime(value: string) {
 }
 
 function monthKey(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`
 }
 
 
@@ -195,6 +196,11 @@ export default async function DashboardPage() {
   const mint = getCharacter('mint')
   const nextProject = projectList[0] ?? null
 
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
+  const isProjectLimitReached = projectList.length >= planLimits.maxProjects
+  const isInterviewLimitReached = thisMonthInterviews >= planLimits.monthlyInterviewLimit
+
   const deltaLabel = (n: number) =>
     n === 0 ? '先月と同じ' : n > 0 ? `先月比 +${n}` : `先月比 ${n}`
 
@@ -205,9 +211,18 @@ export default async function DashboardPage() {
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
       headerRight={(
-        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
-          + 取材先を追加
-        </Link>
+        isProjectLimitReached ? (
+          <Link
+            href="/pricing?reason=project_limit"
+            className={getButtonClass('secondary', 'px-4 py-2.5 text-sm opacity-60 flex items-center gap-1.5')}
+          >
+            <span>🔒</span> 取材先を追加（上限）
+          </Link>
+        ) : (
+          <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+            + 取材先を追加
+          </Link>
+        )
       )}
     >
       {/* ── Greeting bar ── */}
@@ -225,12 +240,21 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div className="flex items-center gap-4 flex-shrink-0">
-          <Link
-            href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-            className={getButtonClass('primary', 'text-[13px] px-4 py-2')}
-          >
-            次の取材を開く →
-          </Link>
+          {isInterviewLimitReached ? (
+            <Link
+              href="/pricing?reason=interview_limit"
+              className={getButtonClass('secondary', 'text-[13px] px-4 py-2 opacity-60 flex items-center gap-1.5')}
+            >
+              <span>🔒</span> 今月の取材上限です
+            </Link>
+          ) : (
+            <Link
+              href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+              className={getButtonClass('primary', 'text-[13px] px-4 py-2')}
+            >
+              次の取材を開く →
+            </Link>
+          )}
         </div>
       </div>
 
@@ -274,25 +298,44 @@ export default async function DashboardPage() {
 
           {/* ── Quick actions ── */}
           {(() => {
-            const mint = getCharacter('mint')
             const claus = getCharacter('claus')
             const rain = getCharacter('rain')
             return (
               <div className="grid grid-cols-3 gap-3">
                 <Link
-                  href="/projects/new"
-                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                  href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
+                  className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                 >
-                  <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} />
-                  <div className="text-[13px] font-semibold text-[var(--text2)]">取材先を追加する</div>
+                  {isProjectLimitReached && (
+                    <div className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-[var(--text3)] text-white">
+                      <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="1" y="5" width="8" height="7" rx="1.5" fill="currentColor"/>
+                        <path d="M3 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                      </svg>
+                    </div>
+                  )}
+                  <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} className={isProjectLimitReached ? 'opacity-40' : undefined} />
+                  <div className={`text-[13px] font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>取材先を追加する</div>
                 </Link>
-                <Link
-                  href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
-                >
-                  <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
-                  <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
-                </Link>
+                {isInterviewLimitReached ? (
+                  <Link
+                    href="/pricing?reason=interview_limit"
+                    className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity"
+                  >
+                    <div className="absolute top-2 right-2 text-[10px] font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
+                    <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
+                    <div className="text-[13px] font-semibold text-[var(--text3)]">取材画面を開く</div>
+                    <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る →</div>
+                  </Link>
+                ) : (
+                  <Link
+                    href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+                    className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                  >
+                    <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
+                    <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
+                  </Link>
+                )}
                 <Link
                   href="/articles"
                   className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"

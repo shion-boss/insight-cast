@@ -5,10 +5,49 @@ import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/compo
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS, getCastName } from '@/lib/characters'
 
+import mintXClaus from '@/assets/story/mint-x-claus.png'
+import mintXRain from '@/assets/story/mint-x-rain.jpg'
+import clausXRain from '@/assets/story/claus-x-rain.jpg'
+import halXCocco from '@/assets/story/hal-x-cocco.png'
+import halXMogro from '@/assets/story/hal-x-mogro.png'
+import mogroXRain from '@/assets/story/mogro-x-rain.png'
+import rainXCocco from '@/assets/story/rain-x-cocco.png'
+
 export const metadata: Metadata = {
   title: 'Cast Talk | Insight Cast',
   description:
     'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントを、キャストの視点でお届けします。',
+}
+
+type StoryKey = string
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const STORY_IMAGE_MAP: Record<StoryKey, any> = {
+  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
+  'mint-rain': mintXRain,   'rain-mint': mintXRain,
+  'claus-rain': clausXRain, 'rain-claus': clausXRain,
+  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
+  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
+  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
+  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
+}
+
+function getStoryImage(id1: string, id2: string) {
+  return STORY_IMAGE_MAP[`${id1}-${id2}`] ?? null
+}
+
+const THEME_PALETTE: Record<string, { color: string; label: string }> = {
+  mint:  { color: '#c2722a', label: 'Customer Perspective' },
+  claus: { color: '#0f766e', label: 'Industry Insight' },
+  rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
+  hal:   { color: '#1d4ed8', label: 'Story & People' },
+  mogro: { color: '#065f46', label: 'Deep Dive' },
+  cocco: { color: '#be185d', label: 'Promotion' },
+}
+
+function formatDate(iso: string | null): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
 
 async function getPublishedTalks() {
@@ -19,12 +58,6 @@ async function getPublishedTalks() {
     .eq('status', 'published')
     .order('published_at', { ascending: false })
   return data ?? []
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return ''
-  const d = new Date(iso)
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
 export default async function CastTalkPage() {
@@ -80,47 +113,73 @@ export default async function CastTalkPage() {
               {talks.map((talk) => {
                 const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
                 const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+                const storyImg = getStoryImage(talk.interviewer_id ?? '', talk.guest_id ?? '')
+                const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+
                 return (
                   <Link
                     key={talk.id}
                     href={`/cast-talk/${talk.slug}`}
-                    className="group flex flex-col gap-4 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 transition-all duration-150 hover:border-[var(--border2)] hover:shadow-[0_16px_48px_var(--shadow)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[5px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    {/* キャストアイコン */}
-                    <div className="flex items-center gap-2">
-                      {[interviewer, guest].map((c, i) =>
-                        c ? (
-                          <Image
-                            key={i}
-                            src={c.icon48}
-                            alt={c.name}
-                            width={36}
-                            height={36}
-                            className="rounded-full border border-[var(--border)]"
-                          />
-                        ) : null,
+                    {/* 画像エリア */}
+                    <div className="relative h-[180px] overflow-hidden">
+                      {storyImg ? (
+                        <Image
+                          src={storyImg}
+                          alt={`${getCastName(talk.interviewer_id)} × ${getCastName(talk.guest_id)}`}
+                          fill
+                          className="object-cover brightness-95 saturate-90 transition-transform duration-300 group-hover:scale-[1.03]"
+                        />
+                      ) : (
+                        <div className="h-full bg-[var(--accent-l)]" />
                       )}
-                      <span className="text-xs text-[var(--text3)]">
-                        {getCastName(talk.interviewer_id)} &amp;{' '}
-                        {getCastName(talk.guest_id)}
-                      </span>
+                      {/* 下フェード */}
+                      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#fffdf9] to-transparent" />
+                      {/* テーマタグ */}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-[#fffdf9] px-2.5 py-[5px]">
+                        <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
+                        <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+                      </div>
                     </div>
 
-                    <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-semibold leading-snug text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
-                      {talk.title}
-                    </h2>
+                    {/* ボディ */}
+                    <div className="flex flex-1 flex-col px-5 pb-[22px] pt-1">
+                      {/* キャストアイコン＋名前 */}
+                      <div className="mb-3 flex items-center gap-1.5">
+                        {[interviewer, guest].map((c, i) =>
+                          c ? (
+                            <div key={i} className="h-6 w-6 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                              <Image src={c.icon48} alt={c.name} width={24} height={24} className="h-full w-full object-cover" />
+                            </div>
+                          ) : null,
+                        )}
+                        <span className="text-[11px] font-semibold text-[#7a6555]">
+                          {getCastName(talk.interviewer_id)} &amp; {getCastName(talk.guest_id)}
+                        </span>
+                      </div>
 
-                    {talk.summary && (
-                      <p className="line-clamp-2 text-sm leading-6 text-[var(--text2)]">
-                        {talk.summary}
-                      </p>
-                    )}
+                      {/* タイトル */}
+                      <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410] mb-2.5">
+                        {talk.title}
+                      </h2>
 
-                    {talk.published_at && (
-                      <p className="mt-auto text-xs text-[var(--text3)]">
-                        {formatDate(talk.published_at)}
-                      </p>
-                    )}
+                      {/* 区切り線 */}
+                      <div className="h-px bg-[#e8ddd0] my-2.5" />
+
+                      {/* 要約（引用スタイル） */}
+                      {talk.summary && (
+                        <p className="flex-1 border-l-2 pl-3 text-[12px] italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+                          「{talk.summary}」
+                        </p>
+                      )}
+
+                      {/* フッター */}
+                      <div className="mt-3.5 flex items-center justify-between">
+                        <span className="text-[11px] text-[#b8a898]">{formatDate(talk.published_at)}</span>
+                        <span className="text-[11px] font-bold" style={{ color: theme.color }}>続きを読む →</span>
+                      </div>
+                    </div>
                   </Link>
                 )
               })}

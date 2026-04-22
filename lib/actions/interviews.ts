@@ -40,7 +40,7 @@ export async function createInterview(projectId: string, formData: FormData) {
 
   // 月間取材回数チェック
   const now = new Date()
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString()
   const { data: userProjects } = await supabase
     .from('projects')
     .select('id')
@@ -55,7 +55,7 @@ export async function createInterview(projectId: string, formData: FormData) {
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
   if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
-    redirect(`/projects/${projectId}/interviewer?error=monthly_limit`)
+    redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=monthly_limit`)
   }
 
   const { data: interview, error } = await supabase

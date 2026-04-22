@@ -43,7 +43,7 @@ const PLANS = [
     catch: '週1〜2本ペースでHPを育てたい方へ',
     featured: true,
     features: [
-      { ok: true, label: '取材回数：月10回まで' },
+      { ok: true, label: '取材回数：月15回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: true, label: '競合調査：3社' },
@@ -78,7 +78,7 @@ const PLANS = [
 ] as const
 
 const TABLE_ROWS = [
-  { label: '取材回数（月）', free: '2回', personal: '10回', business: '20回' },
+  { label: '取材回数（月）', free: '2回', personal: '15回', business: '20回' },
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
   { label: '競合調査', free: '1社', personal: '3社', business: '各取材先3社' },
@@ -123,12 +123,19 @@ const FAQS = [
   { q: '解約するとデータはどうなりますか？', a: '解約後もデータは保持されます。再契約時にそのままご利用いただけます。' },
 ] as const
 
-export default async function PricingPage() {
+export default async function PricingPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   const isLoggedIn = Boolean(user)
+
+  const query = await searchParams
+  const reason = Array.isArray(query.reason) ? query.reason[0] : query.reason
 
   const priceIds = {
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
@@ -140,6 +147,18 @@ export default async function PricingPage() {
       <PublicHeader />
 
       <main className="relative z-10">
+        {/* Limit banners */}
+        {reason === 'project_limit' && (
+          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+            現在のプランでは取材先を追加できません。プランをアップグレードすると、複数の取材先を管理できます。
+          </div>
+        )}
+        {reason === 'interview_limit' && (
+          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+            今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。
+          </div>
+        )}
+
         {/* Hero */}
         <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px] text-center">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
@@ -339,15 +358,21 @@ export default async function PricingPage() {
         <section className="py-[88px] bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              まず、無料で試してみませんか？
+              {isLoggedIn ? 'ダッシュボードから始めましょう' : 'まず、無料で試してみませんか？'}
             </h2>
             <p className="mt-4 text-[15px] text-[var(--text2)] leading-relaxed">
-              クレジットカード不要。メールアドレスだけで始められます。
+              {isLoggedIn ? 'ご登録ありがとうございます。ダッシュボードから取材を始めてください。' : 'クレジットカード不要。メールアドレスだけで始められます。'}
             </p>
             <div className="mt-8 flex flex-wrap gap-3 justify-center">
-              <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
-                無料で始める →
-              </Link>
+              {isLoggedIn ? (
+                <Link href="/dashboard" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
+                  ダッシュボードへ →
+                </Link>
+              ) : (
+                <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
+                  無料で始める →
+                </Link>
+              )}
               <Link href="/contact" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors">
                 まず相談してみる
               </Link>
