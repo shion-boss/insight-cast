@@ -191,7 +191,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         href={`/admin/cast-talk/${item.id}`}
                         className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                       >
-                        プレビュー
+                        編集
                       </Link>
                       {item.status === 'published' && (
                         <Link
