@@ -186,14 +186,14 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     </span>
                   </td>
                   <td className="px-4 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="inline-flex flex-col items-stretch gap-1.5">
                       <Link
                         href={`/admin/cast-talk/${item.id}`}
                         className="rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                       >
                         編集
                       </Link>
-                      {item.status === 'published' && (
+                      {item.status === 'published' ? (
                         <Link
                           href={`/cast-talk/${item.slug}`}
                           target="_blank"
@@ -201,6 +201,8 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         >
                           公開ページ ↗
                         </Link>
+                      ) : (
+                        <span className="px-3 py-1.5 text-xs" />
                       )}
                       <button
                         onClick={() => handleToggleStatus(item)}
