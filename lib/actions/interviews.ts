@@ -6,6 +6,7 @@ import {
   isInterviewFocusThemeMode,
   normalizeInterviewFocusTheme,
 } from '@/lib/interview-focus-theme'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -36,6 +37,26 @@ export async function createInterview(projectId: string, formData: FormData) {
     .single()
 
   if (!project) redirect('/dashboard')
+
+  // 月間取材回数チェック
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const { data: userProjects } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('user_id', user.id)
+  const projectIds = (userProjects ?? []).map((p) => p.id as string)
+  const { count: monthlyCount } = await supabase
+    .from('interviews')
+    .select('id', { count: 'exact', head: true })
+    .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+    .gte('created_at', monthStart)
+
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
+  if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
+    redirect(`/projects/${projectId}/interviewer?error=monthly_limit`)
+  }
 
   const { data: interview, error } = await supabase
     .from('interviews')

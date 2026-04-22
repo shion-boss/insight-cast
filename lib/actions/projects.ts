@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { rememberProjectCompetitorContext } from '@/lib/project-competitor-context'
-import { getPlanLimits, type PlanKey } from '@/lib/plans'
+import { getPlanLimits, getUserPlan } from '@/lib/plans'
 import { redirect } from 'next/navigation'
 
 function normalizeUrl(raw: string): string {
@@ -53,13 +53,8 @@ export async function createProject(formData: FormData) {
   if (!hp_url) redirect('/projects/new?error=url')
 
   // プラン上限チェック
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('plan')
-    .eq('id', user.id)
-    .single()
-
-  const planLimits = getPlanLimits((profile?.plan ?? 'individual') as PlanKey)
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
   const competitorUrls = collectUniqueUrls(rawCompetitorUrls)
 
   if (competitorUrls.length > planLimits.maxCompetitorsPerProject) {
@@ -133,13 +128,8 @@ export async function saveCompetitors(
 
   if (!project) return { error: 'auth' }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('plan')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const planLimits = getPlanLimits((profile?.plan ?? 'individual') as PlanKey)
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
   const valid = collectUniqueUrls(input.urls)
 
   if (valid.length > planLimits.maxCompetitorsPerProject) {

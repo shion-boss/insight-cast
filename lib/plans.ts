@@ -41,3 +41,19 @@ export const PLANS = {
 export function getPlanLimits(planKey: PlanKey | null | undefined) {
   return PLANS[planKey ?? 'free']
 }
+
+// subscriptions テーブルからユーザーのプランを取得する
+// profiles.plan ではなくこちらを正として使う
+export async function getUserPlan(
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
+  userId: string,
+): Promise<PlanKey> {
+  const { data } = await supabase
+    .from('subscriptions')
+    .select('plan')
+    .eq('user_id', userId)
+    .maybeSingle()
+  const plan = data?.plan as string | undefined
+  if (plan === 'personal' || plan === 'business') return plan
+  return 'free'
+}

@@ -142,6 +142,12 @@ export default async function InterviewerPage({
               </div>
             </section>
 
+            {error === 'monthly_limit' && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。
+              </div>
+            )}
+
             {error === 'theme-required' && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
                 テーマを自由入力する場合は内容を入れてください。決まっていなければ「テーマはお任せ」でも始められます。
