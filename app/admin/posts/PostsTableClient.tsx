@@ -122,6 +122,15 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                       >
                         編集
                       </Link>
+                      {post.published && (
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          target="_blank"
+                          className="text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
+                        >
+                          公開ページ ↗
+                        </Link>
+                      )}
                     </div>
                   </td>
                 </tr>
