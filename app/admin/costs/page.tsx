@@ -16,6 +16,8 @@ const FIXED_COSTS = [
 
 const EXCHANGE_RATE = 150 // 1 USD = 150 JPY（概算）
 
+const FIXED_COST_TOTAL = FIXED_COSTS.reduce((acc, r) => acc + (r.usd ?? 0), 0)
+
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim()).filter(Boolean)
 
 // ホームページ運用に使う機能（管理者の自社運用）
@@ -172,8 +174,8 @@ export default async function AdminCostsPage() {
       <section className="rounded-[var(--r-lg)] border-2 border-[var(--accent)]/30 bg-[var(--accent-l)] p-5">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-[var(--accent)]">今月の総コスト（概算）</p>
         <div className="mt-3 flex items-end gap-4">
-          <CostValue usd={currentCost + 100.78} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
-          <p className="mb-1 text-xs text-[var(--text3)]">固定費 $100.78 + API <CostValue usd={currentCost} /></p>
+          <CostValue usd={currentCost + FIXED_COST_TOTAL} className="font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]" />
+          <p className="mb-1 text-xs text-[var(--text3)]">固定費 <CostValue usd={FIXED_COST_TOTAL} /> + API <CostValue usd={currentCost} /></p>
         </div>
       </section>
 
@@ -223,7 +225,7 @@ export default async function AdminCostsPage() {
           ))}
           <div className="flex items-center gap-4 border-t border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計（概算）</p>
-            <CostValue usd={100.78} className="text-sm font-bold text-[var(--text)]" />
+            <CostValue usd={FIXED_COST_TOTAL} className="text-sm font-bold text-[var(--text)]" />
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Firecrawlは利用量に応じて変動。Supabase/Vercelは無料枠を超えると課金が発生します。</p>
