@@ -117,15 +117,17 @@ async function getCostData() {
   // HP運用費: 管理者の全操作 + user_id=null（cron等）を合算
   const siteOpsLogs = [...(adminLogs.data ?? []), ...(nullUserLogs.data ?? [])]
   const blogCost = siteOpsLogs.reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
-  const blogCallsByRoute: Record<string, number> = {}
+  const blogByRoute: Record<string, { calls: number; cost: number }> = {}
   for (const route of Object.keys(ROUTE_LABELS)) {
-    blogCallsByRoute[route] = 0
+    blogByRoute[route] = { calls: 0, cost: 0 }
   }
   for (const row of siteOpsLogs) {
-    blogCallsByRoute[row.route] = (blogCallsByRoute[row.route] ?? 0) + 1
+    if (!blogByRoute[row.route]) blogByRoute[row.route] = { calls: 0, cost: 0 }
+    blogByRoute[row.route].calls += 1
+    blogByRoute[row.route].cost += row.cost_usd ?? 0
   }
 
-  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogCallsByRoute }
+  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute }
 }
 
 function usd(v: number) {
@@ -137,7 +139,7 @@ function jpy(usdAmount: number) {
 }
 
 export default async function AdminCostsPage() {
-  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogCallsByRoute } = await getCostData()
+  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute } = await getCostData()
 
   const now = new Date()
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
@@ -260,13 +262,16 @@ export default async function AdminCostsPage() {
             <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
             <CostValue usd={blogCost} className="text-sm font-bold text-[var(--text)]" />
           </div>
-          {Object.entries(blogCallsByRoute).map(([route, calls]) => (
+          {Object.entries(blogByRoute).map(([route, { calls, cost }]) => (
             <div key={route} className="flex items-center gap-4 border-b border-[var(--border)] px-5 py-3 last:border-0">
-              <p className="flex-1 text-sm text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
-              <p className="text-xs text-[var(--text3)]">{calls}回</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
+                <p className="text-xs text-[var(--text3)]">{calls}回</p>
+              </div>
+              <CostValue usd={cost} className="text-sm font-semibold text-[var(--text)]" />
             </div>
           ))}
-          {Object.keys(blogCallsByRoute).length === 0 && (
+          {Object.keys(blogByRoute).length === 0 && (
             <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
           )}
         </div>
