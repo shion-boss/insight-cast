@@ -154,7 +154,7 @@ export default async function LandingPage() {
                 <div className="mt-9 flex flex-wrap gap-6 border-t border-[var(--border)]/70 pt-8 sm:gap-9">
                   {[
                     { n: '3名', l: '無料キャスト' },
-                    { n: '20分', l: '平均取材時間' },
+                    { n: '約20分', l: '平均取材時間' },
                     { n: '¥0', l: 'カード不要で始められる' },
                   ].map((item) => (
                     <div key={item.l}>
