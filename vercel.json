@@ -8,6 +8,15 @@
     },
     "app/api/projects/[id]/interview/chat/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/cast-talk/generate/route.ts": {
+      "maxDuration": 120
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cast-talk/generate",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }

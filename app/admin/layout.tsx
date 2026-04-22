@@ -12,6 +12,7 @@ async function getAdminUser() {
 const NAV_LINKS = [
   { href: '/admin', label: 'ダッシュボード' },
   { href: '/admin/posts', label: '記事管理' },
+  { href: '/admin/cast-talk', label: 'Cast Talk' },
   { href: '/admin/users', label: 'ユーザー管理' },
   { href: '/admin/costs', label: 'コスト管理' },
   { href: '/admin/services', label: '関連サービス' },
