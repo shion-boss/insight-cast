@@ -4,8 +4,8 @@ import Link from 'next/link'
 import Image, { type StaticImageData } from 'next/image'
 
 export const metadata: Metadata = {
-  title: 'Insight Cast — AIキャストがホームページを育てるサービス',
-  description: 'ホームページ更新が止まっている事業者に。AIキャストの取材に答えるだけで、伝わっていない強みが記事やFAQの材料になります。カード不要で無料体験できます。',
+  title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
+  description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。ホームページを会話で少しずつ育てるサービス。カード不要で無料体験できます。',
 }
 import { CharacterAvatar } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
@@ -672,7 +672,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               最新の記事
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">AIと発信、ホームページ更新のヒントをお届けしています。</p>
+            <p className="text-base text-[var(--text2)] mt-3">会話から言葉にした経験や、発信のヒントをお届けしています。</p>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {latestPosts.map((post) => {
                 const char = getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!

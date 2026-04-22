@@ -114,9 +114,9 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
               </>
             ) : (
               <>
-                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
+                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まず話してみてください。記事の素材は、そこから生まれます。</h2>
                 <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
-                  登録はメールアドレスだけ。3名のキャストが今日から使えます。
+                  登録はメールアドレスだけ。3名のキャストが今日から無料で使えます。
                 </p>
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
@@ -142,7 +142,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
         <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
           <div>
             <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
-            <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">AIキャストによる取材で、<br />あなたのHPを継続的に育てます。</p>
+            <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
           </div>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {[

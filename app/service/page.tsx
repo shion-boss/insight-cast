@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
-  description: 'Insight Cast の使い方を3ステップで紹介。ホームページを登録するだけで競合を比較し、AIキャストが取材して記事の素材を届けます。カード不要で無料体験できます。',
+  description: 'Insight Cast の3ステップを紹介。取材先を登録し、AIキャストが話を聞き、記事の素材が届きます。書くより先に話す。会話から記事が生まれる流れをご紹介します。',
 }
 
 const STEP_SUMMARY = [

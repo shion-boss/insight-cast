@@ -6,7 +6,7 @@ import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/compo
 
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
-  description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。「当たり前」の中に価値があるという考え方で、ホームページを継続的に育てます。',
+  description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。会話から記事へ。あなたの当たり前を言葉にするために存在するサービスです。',
 }
 
 const PRINCIPLES = [

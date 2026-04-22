@@ -9,7 +9,7 @@ import { CheckoutButton } from './CheckoutButton'
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: 'まずカード不要の無料プランで体験できます。ホームページを継続的に更新したい方向けに、個人向け（¥4,980/月）・法人向け（¥14,800/月）のプランもご用意しています。',
+  description: 'まずカード不要の無料プランで取材を体験できます。会話で記事の素材を作り続けたい方向けに、個人向け（¥4,980/月）・法人向け（¥14,800/月）のプランもご用意しています。',
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)
@@ -40,7 +40,7 @@ const PLANS = [
     name: '個人向け',
     price: 4980,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '週1〜2本ペースでHPを育てたい方へ',
+    catch: '週2〜3本ペースでHPを育てたい方へ',
     featured: true,
     features: [
       { ok: true, label: '取材回数：月15回まで' },
@@ -63,7 +63,7 @@ const PLANS = [
     catch: '複数の取材先や担当者でHPを強化したい方へ',
     featured: false,
     features: [
-      { ok: true, label: '取材回数：月20回まで' },
+      { ok: true, label: '取材回数：月60回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：最大3件' },
       { ok: true, label: '競合調査：各取材先3社' },
@@ -78,7 +78,7 @@ const PLANS = [
 ] as const
 
 const TABLE_ROWS = [
-  { label: '取材回数（月）', free: '2回', personal: '15回', business: '20回' },
+  { label: '取材回数（月）', free: '2回', personal: '15回', business: '60回' },
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
   { label: '競合調査', free: '1社', personal: '3社', business: '各取材先3社' },
