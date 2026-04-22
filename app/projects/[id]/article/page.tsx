@@ -211,6 +211,9 @@ export default function ArticlePage() {
     void loadPageState(true, true).catch(() => {
       setError('記事素材の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
       setLoadingThemes(false)
+      setSavedArticles({})
+      setAvailableThemes([])
+      setPendingArticleJobIdByType({})
     })
   }, [loadPageState])
 
@@ -470,10 +473,8 @@ export default function ArticlePage() {
             </div>
 
             <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">作成方法</p>
-              <p className="mt-2 text-[13px] font-semibold text-[var(--text)]">バッチ処理のみ</p>
-              <p className="mt-1 text-[11px] leading-[1.7] text-[var(--text3)]">
-                作成を始めるとバックグラウンドで進みます。待ち続けなくて大丈夫です。
+              <p className="text-[11px] leading-[1.7] text-[var(--text3)]">
+                作成を始めるとバックグラウンドで進みます。このページを閉じても作成は続きます。
               </p>
             </div>
 

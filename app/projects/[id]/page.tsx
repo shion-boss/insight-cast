@@ -217,7 +217,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="text-[32px]">🏢</div>
+              <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
+              </div>
               <div>
                 <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
                 <div className="text-[13px] text-[var(--text2)]">🔗 {project.hp_url}</div>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import { ButtonLink } from '@/components/ui'
 import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
@@ -243,6 +244,31 @@ export default function ServicePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-[88px]">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(22px,2.5vw,32px)' }}>
+              まず、取材を体験してみませんか
+            </h2>
+            <p className="mt-4 text-sm text-[var(--text2)] leading-[1.8]">
+              カード登録不要。無料で3名のキャストによる取材を体験できます。
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/auth/signup"
+                className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+              >
+                無料で体験する
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-8 py-3.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                まず相談してみる
+              </Link>
             </div>
           </div>
         </section>

@@ -209,12 +209,21 @@ export default async function PricingPage() {
                     ))}
                   </div>
                   {plan.id === 'free' ? (
-                    <Link
-                      href="/auth/signup"
-                      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]`}
-                    >
-                      {plan.cta}
-                    </Link>
+                    isLoggedIn ? (
+                      <Link
+                        href="/dashboard"
+                        className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      >
+                        ダッシュボードへ
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/auth/signup"
+                        className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                      >
+                        {plan.cta}
+                      </Link>
+                    )
                   ) : isLoggedIn ? (
                     <CheckoutButton
                       priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}

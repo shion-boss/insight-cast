@@ -18,7 +18,9 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const { interviewId, userMessage } = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body) return new Response('Bad Request', { status: 400 })
+  const { interviewId, userMessage } = body as { interviewId?: string; userMessage?: string }
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
 

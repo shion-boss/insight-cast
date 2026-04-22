@@ -261,7 +261,7 @@ export default function SummaryPage() {
       >
         <div className="mx-auto max-w-2xl py-4">
           <InterviewerSpeech
-            icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+            icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
             name={mint?.name ?? 'ミント'}
             title="取材メモを作成しています"
             description="AIで整理しているので、このページで待たなくて大丈夫です。完了したらお知らせします。"
@@ -406,6 +406,7 @@ export default function SummaryPage() {
               <div className="flex items-center justify-between mb-0">
                 <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">取材ログ</p>
                 <button
+                  type="button"
                   onClick={() => setShowMessages(!showMessages)}
                   className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors cursor-pointer"
                 >

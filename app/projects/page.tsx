@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import StartAnalysisButton from '@/components/start-analysis-button'
-import { StatusPill, getButtonClass } from '@/components/ui'
+import { StatusPill, getButtonClass, CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, type InterviewArticleRef } from '@/lib/interview-state'
@@ -35,6 +36,8 @@ function formatShortDateTime(value: string) {
 }
 
 export default async function ProjectsPage() {
+  const mint = getCharacter('mint')
+
   let supabase
   let user
 
@@ -193,7 +196,9 @@ export default async function ProjectsPage() {
               >
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-[12px] bg-[var(--accent-l)] flex items-center justify-center text-[22px] flex-shrink-0">🏢</div>
+                  <div className="w-12 h-12 rounded-[12px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                    <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={36} />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <Link href={`/projects/${project.id}`} className="block">
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>

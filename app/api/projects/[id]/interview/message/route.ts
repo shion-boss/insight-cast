@@ -10,7 +10,9 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
-  const { interviewId, content } = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
+  const { interviewId, content } = body as { interviewId?: string; content?: string }
   if (!interviewId || !content) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
 
   // ownership check

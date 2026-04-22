@@ -316,6 +316,7 @@ export default function InterviewPage() {
           </div>
         </div>
         <button
+          type="button"
           onClick={handleManualFinish}
           className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
         >
@@ -538,6 +539,7 @@ export default function InterviewPage() {
             </p>
             <div className="space-y-2">
               <button
+                type="button"
                 onClick={handleFinish}
                 className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
               >
@@ -545,6 +547,7 @@ export default function InterviewPage() {
               </button>
               {!hasReachedTurnLimit && (
                 <button
+                  type="button"
                   onClick={handleContinue}
                   className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
                 >
