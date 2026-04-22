@@ -175,15 +175,19 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     {formatDate(item.created_at)}
                   </td>
                   <td className="px-4 py-4">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                        item.status === 'published'
-                          ? 'bg-[var(--ok-l)] text-[var(--ok)]'
-                          : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]'
-                      }`}
-                    >
-                      {item.status === 'published' ? '公開中' : '下書き'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleToggleStatus(item)}
+                        disabled={togglingId === item.id}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
+                        title={item.status === 'published' ? '下書きに戻す' : '公開する'}
+                      >
+                        <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                      </button>
+                      <span className={`text-[11px] font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                        {item.status === 'published' ? '公開中' : '下書き'}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-4 text-right">
                     <div className="inline-flex flex-col items-stretch gap-1.5">
@@ -204,14 +208,6 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       ) : (
                         <span className="px-3 py-1.5 text-xs" />
                       )}
-                      <button
-                        onClick={() => handleToggleStatus(item)}
-                        disabled={togglingId === item.id}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
-                        title={item.status === 'published' ? '下書きに戻す' : '公開する'}
-                      >
-                        <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
-                      </button>
                       <button
                         onClick={() => handleDelete(item)}
                         disabled={deletingId === item.id}
