@@ -22,9 +22,48 @@ import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import mintXClaus from '@/assets/story/mint-x-claus.png'
+import mintXRain from '@/assets/story/mint-x-rain.jpg'
+import clausXRain from '@/assets/story/claus-x-rain.jpg'
+import halXCocco from '@/assets/story/hal-x-cocco.png'
+import halXMogro from '@/assets/story/hal-x-mogro.png'
+import mogroXRain from '@/assets/story/mogro-x-rain.png'
+import rainXCocco from '@/assets/story/rain-x-cocco.png'
 
 const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const STORY_IMAGE_MAP: Record<string, any> = {
+  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
+  'mint-rain': mintXRain,   'rain-mint': mintXRain,
+  'claus-rain': clausXRain, 'rain-claus': clausXRain,
+  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
+  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
+  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
+  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
+}
+function getStoryImage(id1: string, id2: string) {
+  return STORY_IMAGE_MAP[`${id1}-${id2}`] ?? null
+}
+
+const CAST_TALK_THEME: Record<string, { color: string; label: string }> = {
+  mint:  { color: '#c2722a', label: 'Customer Perspective' },
+  claus: { color: '#0f766e', label: 'Industry Insight' },
+  rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
+  hal:   { color: '#1d4ed8', label: 'Story & People' },
+  mogro: { color: '#065f46', label: 'Deep Dive' },
+  cocco: { color: '#be185d', label: 'Promotion' },
+}
+
+const BLOG_CATEGORY_COLOR: Record<PostCategory, string> = {
+  howto:      '#c2722a',
+  service:    '#0f766e',
+  interview:  '#7c3aed',
+  case:       '#1d4ed8',
+  philosophy: '#065f46',
+  news:       '#be185d',
+}
 
 const PAIN_ITEMS = [
   { n: '01', title: '「何を書けばいいか分からない」', body: 'ブログを書こうと思うたびに、「今さら何を？」と手が止まる。ネタがないのではなく、ネタの見つけ方が分からないのです。' },
@@ -71,7 +110,7 @@ const PLANS = [
     price: '¥4,980',
     period: '/ 月',
     desc: '週1〜2本ペースでHPを育てたい方へ',
-    features: ['取材回数：月10回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
+    features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
     cta: '申し込む',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',
     highlight: true,
@@ -627,24 +666,40 @@ export default async function LandingPage() {
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">AIと発信、ホームページ更新のヒントをお届けしています。</p>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
-              {latestPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden transition-transform duration-[220ms] hover:-translate-y-1 hover:shadow-[0_16px_48px_var(--shadow)] block"
-                >
-                  <BlogCoverArt
-                    post={post}
-                    char={getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!}
-                    variant="card"
-                  />
-                  <div className="px-[22px] py-5">
-                    <div className="text-[11px] font-semibold text-[var(--accent)] tracking-[.08em] uppercase mb-2">{CATEGORY_LABELS[post.category]}</div>
-                    <div className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] leading-[1.5] mb-2.5">{post.title}</div>
-                    <div className="text-[12px] text-[var(--text3)]">{post.date}</div>
-                  </div>
-                </Link>
-              ))}
+              {latestPosts.map((post) => {
+                const char = getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!
+                const themeColor = BLOG_CATEGORY_COLOR[post.category]
+                return (
+                  <Link
+                    key={post.slug}
+                    href={`/blog/${post.slug}`}
+                    className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    <div className="relative h-[200px] overflow-hidden">
+                      <BlogCoverArt post={post} char={char} variant="card" />
+                      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: themeColor }} />
+                      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full border border-white/30 bg-white/18 px-3 py-1 backdrop-blur-[10px]">
+                        <div className="h-[22px] w-[22px] overflow-hidden rounded-full border-[1.5px] border-white/60 flex-shrink-0">
+                          <Image src={char.icon48} alt={char.name} width={22} height={22} className="h-full w-full object-cover" />
+                        </div>
+                        <span className="text-[11px] font-bold tracking-[0.04em] text-white">{char.name}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-1 flex-col px-5 py-[18px] bg-white">
+                      <div className="mb-2.5 flex items-center gap-1.5">
+                        <span className="h-[6px] w-[6px] rounded-full flex-shrink-0" style={{ background: themeColor }} />
+                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ color: themeColor }}>{CATEGORY_LABELS[post.category]}</p>
+                      </div>
+                      <h3 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410]">{post.title}</h3>
+                      <p className="mb-3 flex-1 text-[12px] leading-[1.75] text-[#7a6555] line-clamp-3">{post.excerpt}</p>
+                      <div className="flex items-center justify-between border-t border-[#e8ddd0] pt-2.5">
+                        <span className="text-[11px] text-[#b8a898]">{post.date}</span>
+                        <span className="text-[11px] font-bold" style={{ color: themeColor }}>続きを読む →</span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
             </div>
             <div className="text-center mt-8">
               <Link href="/blog" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
@@ -667,35 +722,57 @@ export default async function LandingPage() {
                 {latestTalks.map((talk) => {
                   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
                   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+                  const storyImg = getStoryImage(talk.interviewer_id ?? '', talk.guest_id ?? '')
+                  const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
                   return (
                     <Link
                       key={talk.id}
                       href={`/cast-talk/${talk.slug}`}
-                      className="group flex flex-col gap-4 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 transition-all duration-150 hover:border-[var(--border2)] hover:shadow-[0_16px_48px_var(--shadow)] hover:-translate-y-1"
+                      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[5px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                     >
-                      <div className="flex items-center gap-2">
-                        {[interviewer, guest].map((c, i) =>
-                          c ? (
-                            <Image
-                              key={i}
-                              src={c.icon48}
-                              alt={c.name}
-                              width={36}
-                              height={36}
-                              className="rounded-full border border-[var(--border)]"
-                            />
-                          ) : null,
+                      <div className="relative h-[180px] overflow-hidden">
+                        {storyImg ? (
+                          <Image
+                            src={storyImg}
+                            alt={`${interviewer?.name ?? talk.interviewer_id} × ${guest?.name ?? talk.guest_id}`}
+                            fill
+                            className="object-cover brightness-95 saturate-90 transition-transform duration-300 group-hover:scale-[1.03]"
+                          />
+                        ) : (
+                          <div className="h-full bg-[var(--accent-l)]" />
                         )}
-                        <span className="text-xs text-[var(--text3)]">
-                          {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
-                        </span>
+                        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#fffdf9] to-transparent" />
+                        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-[#fffdf9] px-2.5 py-[5px]">
+                          <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
+                          <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+                        </div>
                       </div>
-                      <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-semibold leading-snug text-[var(--text)] group-hover:text-[var(--accent)] transition-colors">
-                        {talk.title}
-                      </h3>
-                      {talk.summary && (
-                        <p className="line-clamp-2 text-sm leading-6 text-[var(--text2)]">{talk.summary}</p>
-                      )}
+                      <div className="flex flex-1 flex-col px-5 pb-[22px] pt-1">
+                        <div className="mb-3 flex items-center gap-1.5">
+                          {[interviewer, guest].map((c, i) =>
+                            c ? (
+                              <div key={i} className="h-6 w-6 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                                <Image src={c.icon48} alt={c.name} width={24} height={24} className="h-full w-full object-cover" />
+                              </div>
+                            ) : null,
+                          )}
+                          <span className="text-[11px] font-semibold text-[#7a6555]">
+                            {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
+                          </span>
+                        </div>
+                        <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410] mb-2.5">
+                          {talk.title}
+                        </h3>
+                        <div className="h-px bg-[#e8ddd0] my-2.5" />
+                        {talk.summary && (
+                          <p className="flex-1 border-l-2 pl-3 text-[12px] italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+                            「{talk.summary}」
+                          </p>
+                        )}
+                        <div className="mt-3.5 flex items-center justify-end">
+                          <span className="text-[11px] font-bold" style={{ color: theme.color }}>続きを読む →</span>
+                        </div>
+                      </div>
                     </Link>
                   )
                 })}
