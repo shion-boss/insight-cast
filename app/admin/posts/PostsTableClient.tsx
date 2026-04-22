@@ -103,7 +103,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                 <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
                 <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
                 <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
-                <th className="px-4 py-3 text-center text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">ステータス</th>
                 <th className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">操作</th>
               </tr>
             </thead>
@@ -125,12 +125,17 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                   <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
                     {formatDate(post.date)}
                   </td>
-                  <td className="px-4 py-4 text-center">
-                    <ToggleSwitch
-                      on={post.published}
-                      onToggle={() => handleToggle(post.id, post.published)}
-                      disabled={isPending}
-                    />
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-2">
+                      <ToggleSwitch
+                        on={post.published}
+                        onToggle={() => handleToggle(post.id, post.published)}
+                        disabled={isPending}
+                      />
+                      <span className={`text-[11px] font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                        {post.published ? '公開中' : '下書き'}
+                      </span>
+                    </div>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-right">
                     <div className="inline-flex items-center justify-end gap-2">
