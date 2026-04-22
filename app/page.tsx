@@ -108,7 +108,7 @@ const PLANS = [
     name: '個人向け',
     price: '¥4,980',
     period: '/ 月',
-    desc: '週2〜3本ペースでHPを育てたい方へ',
+    desc: '週1〜2本ペースでHPを育てたい方へ',
     features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
     cta: '申し込む',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',

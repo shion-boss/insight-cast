@@ -40,7 +40,7 @@ const PLANS = [
     name: '個人向け',
     price: 4980,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '週2〜3本ペースでHPを育てたい方へ',
+    catch: '週1〜2本ペースでHPを育てたい方へ',
     featured: true,
     features: [
       { ok: true, label: '取材回数：月15回まで' },
