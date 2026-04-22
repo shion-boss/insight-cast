@@ -101,7 +101,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                 <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
                 <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
                 <th className="px-4 py-3 text-center text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase"></th>
+                <th className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -129,8 +129,8 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                       disabled={isPending}
                     />
                   </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
+                  <td className="px-4 py-4 whitespace-nowrap text-right">
+                    <div className="inline-flex items-center justify-end gap-2">
                       <Link
                         href={`/admin/posts/${post.id}/edit`}
                         className="inline-block w-24 text-center text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
