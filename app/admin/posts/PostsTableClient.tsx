@@ -118,18 +118,20 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/admin/posts/${post.id}/edit`}
-                        className="text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="inline-block w-24 text-center text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         編集
                       </Link>
-                      {post.published && (
+                      {post.published ? (
                         <Link
                           href={`/blog/${post.slug}`}
                           target="_blank"
-                          className="text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
+                          className="inline-block w-24 text-center text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
                         >
                           公開ページ ↗
                         </Link>
+                      ) : (
+                        <span className="inline-block w-24 px-2.5 py-1.5 text-xs" />
                       )}
                     </div>
                   </td>
