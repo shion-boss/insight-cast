@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { type ClassifiedPost, type GenreKey, type EffectKey, GENRES, EFFECTS } from './content-map'
+import { logApiUsage } from '@/lib/api-usage'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -23,6 +24,7 @@ function parseJsonObject(text: string) {
 
 export async function classifyBlogPosts(
   posts: Array<{ url: string; title: string; summary: string }>,
+  logCtx?: { userId?: string; projectId?: string },
 ): Promise<ClassifiedPost[]> {
   if (posts.length === 0) return []
 
@@ -57,6 +59,8 @@ ${posts.map((p, i) => `${i + 1}. title: ${p.title}\n   summary: ${p.summary}\n  
     max_tokens: Math.min(4096, posts.length * 150 + 512),
     messages: [{ role: 'user', content: prompt }],
   })
+
+  logApiUsage({ userId: logCtx?.userId, projectId: logCtx?.projectId, route: 'analyze/classify-blogs', model: 'claude-sonnet-4-6', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
 
   const text = msg.content[0]?.type === 'text' ? msg.content[0].text : ''
   const parsed = parseJsonObject(text)

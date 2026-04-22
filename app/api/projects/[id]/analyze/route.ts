@@ -471,7 +471,7 @@ async function runAnalysis({
     const [audit, ownBlogMetrics, blogClassifications] = await Promise.all([
       analyzeHp(mainMarkdown, ownBlogPosts, { userId, projectId }),
       Promise.resolve(buildBlogFreshnessMetrics(ownBlogPosts)),
-      classifyBlogPosts(ownBlogPosts).catch(() => []),
+      classifyBlogPosts(ownBlogPosts, { userId, projectId }).catch(() => []),
     ])
     const blogClassificationSummary = buildClassificationSummary(blogClassifications)
     const analyzedAt = new Date().toISOString()

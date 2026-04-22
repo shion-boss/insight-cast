@@ -27,6 +27,8 @@ const ROUTE_LABELS: Record<string, string> = {
   'analyze/scrape': 'HP分析（Firecrawl）',
   'account/analyze': 'アカウント分析（Claude）',
   'account/analyze/scrape': 'アカウント分析（Firecrawl）',
+  'analyze/classify-blogs': 'ブログ分類（Claude）',
+  'competitor-suggestions': '競合提案（Claude）',
   'cast-talk/generate': 'Cast Talk 生成',
   'firecrawl/scrape': 'Firecrawl スクレイプ',
 }

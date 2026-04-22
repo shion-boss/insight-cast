@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest } from 'next/server'
 import { buildCompetitorSuggestionSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
+import { logApiUsage } from '@/lib/api-usage'
 
 const anthropic = new Anthropic()
 
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
 ]`,
     }],
   })
+
+  logApiUsage({ userId: user.id, route: 'competitor-suggestions', model: 'claude-sonnet-4-6', inputTokens: response.usage.input_tokens, outputTokens: response.usage.output_tokens }).catch(() => {})
 
   const text = response.content[0].type === 'text' ? response.content[0].text.trim() : '[]'
 
