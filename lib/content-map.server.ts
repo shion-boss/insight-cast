@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { type ClassifiedPost, type GenreKey, type EffectKey, GENRES, EFFECTS } from './content-map'
 import { logApiUsage } from '@/lib/api-usage'
+import { isRecord, parseJsonObject } from '@/lib/utils'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -10,16 +11,6 @@ function isGenreKey(v: unknown): v is GenreKey {
 
 function isEffectKey(v: unknown): v is EffectKey {
   return typeof v === 'string' && EFFECTS.some((e) => e.key === v)
-}
-
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null
-}
-
-function parseJsonObject(text: string) {
-  const m = text.match(/\{[\s\S]*\}/)
-  if (!m) return null
-  try { return JSON.parse(m[0]) as Record<string, unknown> } catch { return null }
 }
 
 export async function classifyBlogPosts(

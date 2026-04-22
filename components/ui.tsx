@@ -29,14 +29,6 @@ export function getPanelClass(className?: string) {
   return cx(panelBaseClass, className)
 }
 
-export function getInteractivePanelClass(className?: string) {
-  return cx(
-    panelBaseClass,
-    'transition-all duration-150 hover:border-[var(--border2)] hover:shadow-[0_16px_48px_var(--shadow)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40',
-    className,
-  )
-}
-
 export function DevAiLabel({
   children,
   className,
@@ -222,36 +214,6 @@ export function ButtonLink({
   )
 }
 
-export function SurfaceCard({
-  children,
-  className,
-  tone = 'default',
-  interactive = false,
-}: {
-  children: ReactNode
-  className?: string
-  tone?: 'default' | 'warm' | 'dark' | 'soft'
-  interactive?: boolean
-}) {
-  const toneClass = {
-    default: 'border-[var(--border)] bg-[var(--surface)]',
-    warm: 'border-[var(--border)] bg-[var(--accent-l)]',
-    dark: 'border-[var(--text)] bg-[var(--text)] text-white',
-    soft: 'border-[var(--border)] bg-[var(--bg2)]',
-  }[tone]
-
-  return (
-    <div className={cx(
-      'rounded-[var(--r-xl)] border p-6',
-      toneClass,
-      interactive && 'card-interactive',
-      className,
-    )}>
-      {children}
-    </div>
-  )
-}
-
 export function EyebrowBadge({
   children,
   className,
@@ -265,28 +227,6 @@ export function EyebrowBadge({
       className,
     )}>
       {children}
-    </div>
-  )
-}
-
-export function SectionIntro({
-  eyebrow,
-  title,
-  description,
-  align = 'left',
-  className,
-}: {
-  eyebrow: ReactNode
-  title: ReactNode
-  description?: ReactNode
-  align?: 'left' | 'center'
-  className?: string
-}) {
-  return (
-    <div className={cx(align === 'center' ? 'mx-auto text-center' : '', className)}>
-      <p className="text-xs font-semibold tracking-[0.22em] text-[var(--accent)] uppercase">{eyebrow}</p>
-      <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-[var(--text)] sm:text-4xl">{title}</h2>
-      {description && <p className="mt-4 text-sm leading-7 text-[var(--text2)] sm:text-base">{description}</p>}
     </div>
   )
 }
@@ -377,29 +317,6 @@ export function CharacterAvatar({
       ) : (
         <span className="text-lg" aria-hidden="true">{emoji ?? '🙂'}</span>
       )}
-    </div>
-  )
-}
-
-export function EmptyState({
-  icon,
-  title,
-  description,
-  action,
-}: {
-  icon: ReactNode
-  title: ReactNode
-  description?: ReactNode
-  action?: ReactNode
-}) {
-  return (
-    <div className="rounded-[var(--r-xl)] border border-dashed border-[var(--border2)] bg-[var(--bg2)] p-10 text-center">
-      <div className="flex justify-center">{icon}</div>
-      <p className="mt-4 text-base font-semibold text-[var(--text)]">{title}</p>
-      {description && (
-        <p className="mt-2 text-sm leading-7 text-[var(--text2)]">{description}</p>
-      )}
-      {action && <div className="mt-6 flex justify-center">{action}</div>}
     </div>
   )
 }

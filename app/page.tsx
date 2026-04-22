@@ -27,9 +27,9 @@ const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
 
 const PAIN_ITEMS = [
-  { n: '01', title: '「何を書けばいいか分からない」', body: 'ブログを書こうと思っても、「今さら何を書くの？」と手が止まる。' },
-  { n: '02', title: '「取材・撮影が大変で後回しになる」', body: '更新しようと思うたびに写真を撮ったり文章を考えたり。疲れて結局後回し。' },
-  { n: '03', title: '「自社の強みを言葉にできない」', body: '自分の仕事には特別なことなんてない、と思ってしまう。でも、それが一番伝わっていない価値かもしれない。' },
+  { n: '01', title: '「何を書けばいいか分からない」', body: 'ブログを書こうと思うたびに、「今さら何を？」と手が止まる。ネタがないのではなく、ネタの見つけ方が分からないのです。' },
+  { n: '02', title: '「取材・撮影が大変で後回しになる」', body: '更新のたびに写真を撮って文章を考えて。それだけで半日かかる。本業が忙しいのに、続くわけがない。' },
+  { n: '03', title: '「自社の強みを言葉にできない」', body: '「特別なことなんて何もない」——そう感じていませんか。でも、それが一番伝わっていない価値かもしれません。' },
 ] as const
 
 const OUTCOME_ITEMS = [
@@ -39,9 +39,9 @@ const OUTCOME_ITEMS = [
 ] as const
 
 const WORKFLOW_ITEMS = [
-  { n: '01', title: 'HPを分析する', body: '取材先を登録すると、今のホームページで何が足りないかを整理してお知らせします。競合との違いも確認できます。' },
-  { n: '02', title: 'AIが取材する', body: 'キャストがチャット形式で丁寧に質問。専門知識なしで話すだけで、隠れた価値を引き出します。' },
-  { n: '03', title: '記事素材を届ける', body: '取材メモをもとに記事の素材を整えてお届けします。下書きとして使え、掲載前のたたき台にできます。' },
+  { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいかが、最初から見えた状態で始められます。' },
+  { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分のチャットで、一次情報が引き出されます。' },
+  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材を作ります。「何を書くか」に迷う前に、素材がある状態を作ります。' },
 ] as const
 
 const COMPARE_ROWS = [
@@ -147,14 +147,17 @@ export default async function LandingPage() {
                   ✦ AI取材サービス
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
-                  ホームページの更新、<br /><em className="text-[var(--accent)] not-italic">手伝います。</em>
+                  ホームページが止まっているなら、<br /><em className="text-[var(--accent)] not-italic">AIキャストが取材に来ます。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  AIキャストが取材に来て、あなたの話から記事の素材を作ります。答えるだけで、ホームページが少しずつ育っていきます。
+                  動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。「何を書けばいいか分からない」を解消します。
+                </p>
+                <p className="text-[13px] text-[var(--text3)] leading-[1.75] mt-3 max-w-[420px]">
+                  あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
-                    {isLoggedIn ? 'ダッシュボードへ →' : '無料で取材を体験する →'}
+                    {isLoggedIn ? 'ダッシュボードへ →' : 'カード不要・無料で体験する →'}
                   </Link>
                   <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
                     キャストを見る
@@ -203,8 +206,9 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pain Points</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              ホームページが止まっている、<br />よくある理由
+              HPが止まっているのは、<br />意欲がないからじゃない。
             </h2>
+            <p className="text-base text-[var(--text2)] mt-3">更新が後回しになるのには、理由があります。</p>
             <div className="mt-11 grid gap-5 md:grid-cols-3">
               {PAIN_ITEMS.map((item) => (
                 <div key={item.n} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8">
@@ -241,8 +245,9 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">How It Works</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              たった3ステップで、<br />記事の素材が届く
+              やることは、ただ「答えるだけ」。
             </h2>
+            <p className="text-base text-[var(--text2)] mt-3">ネタ出しも、文章作りも、Insight Cast が引き受けます。</p>
             <div className="relative mt-14 grid gap-8 md:grid-cols-3">
               <div className="absolute left-[calc(16.67%+8px)] right-[calc(16.67%+8px)] top-[44px] hidden h-px bg-[var(--border)] md:block" aria-hidden="true" />
               {WORKFLOW_ITEMS.map((item) => (
@@ -384,9 +389,11 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              こんな記事素材が届きます
+              こんな取材をして、こんな素材が届きます
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">実際の取材の流れと、そこから届く記事素材の例です。</p>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">
+              実際の取材の流れを再現した例です。専門的な準備は何もいりません。このように会話するだけです。
+            </p>
             <div className="mt-11 grid gap-8 xl:grid-cols-2">
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
@@ -396,9 +403,9 @@ export default async function LandingPage() {
                 </div>
                 <div className="p-[22px]">
                   {[
-                    { q: 'Q. お客様に一番喜んでもらえた仕事を、一つ思い出してもらえますか？', a: '去年、外壁塗装した老夫婦に「ここに住み続けられる気がした」と言ってもらえたのがうれしかったです。' },
-                    { q: 'Q. その工事でこだわったことは何かありましたか？', a: '下地処理を丁寧にやりました。見えないところですが、そこが長持ちするかどうかを決めるので。' },
-                    { q: 'Q. 他の業者と比べて、そのこだわりは珍しいですか？', a: '手間がかかるので省く業者も多いと聞きます。うちは絶対に省かないと決めています。' },
+                    { q: 'Q. 仕事の時間帯って、どのくらいで動いてることが多いですか？', a: 'うちは戸建てがメインなので、朝8時ごろから15時ごろくらいですかね。早すぎても遅すぎてもお客様に迷惑かかるので、メリハリよく働いてくようにしています。' },
+                    { q: 'Q. 8時〜15時って意識してその時間に収めてるんですね。最初からそうしてたんですか？', a: '父親の代からそうしているので、特にきっかけはないですね。塗り替えは、お客様はもちろん、近所の方の理解があってこそいい仕事ができると思うので、そういう配慮は必要だなとは思っています。' },
+                    { q: 'Q. 近所の方への配慮まで考えてって、なかなかそこまで意識してる業者さんって多くないと思うんですが…', a: '当たり前のことだと思ってましたけど、言われてみるとそうかもしれないですね。父からそう教わってきたので。' },
                   ].map((item, i) => (
                     <div key={i}>
                       <div className="text-[13px] font-semibold text-[var(--accent)] mb-1.5">{item.q}</div>
@@ -411,12 +418,12 @@ export default async function LandingPage() {
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
                   <span className="text-[11px] font-semibold text-[var(--text3)] uppercase tracking-[.08em]">Article</span>
                   <span className="text-[13px] font-bold text-[var(--text)]">届いた記事素材</span>
-                  <CopyButton text={`「ここに住み続けられる気がした」── 外壁塗装が届けた安心感の話\n\n外壁塗装というと、見た目を新しくする工事というイメージが強いかもしれません。でも田中建設が大切にしているのは、塗り替えた後に「また長く住める」という気持ちを届けることです。\n\n同社が特にこだわるのが、施工前の下地処理。目には見えないこの工程こそが、塗装の耐久性を大きく左右します。手間がかかるため省略する業者もある中、同社は一切妥協しません。`} />
+                  <CopyButton text={`朝8時〜15時、この時間帯を、父の代から守り続けている理由。\n\nうちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。\n\n塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。施工中は騒音もあるし、養生シートで通路が狭くなることもある。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。`} />
                 </div>
                 <div className="p-[22px]">
-                  <h4 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">「ここに住み続けられる気がした」── 外壁塗装が届けた安心感の話</h4>
-                  <p className="text-sm text-[var(--text)] leading-[1.85] mb-3">外壁塗装というと、見た目を新しくする工事というイメージが強いかもしれません。でも田中建設が大切にしているのは、塗り替えた後に「また長く住める」という気持ちを届けることです。</p>
-                  <p className="text-sm text-[var(--text)] leading-[1.85]">同社が特にこだわるのが、施工前の下地処理。目には見えないこの工程こそが、塗装の耐久性を大きく左右します。手間がかかるため省略する業者もある中、同社は一切妥協しません。</p>
+                  <h4 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">朝8時〜15時、この時間帯を、父の代から守り続けている理由。</h4>
+                  <p className="text-sm text-[var(--text)] leading-[1.85] mb-3">うちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。</p>
+                  <p className="text-sm text-[var(--text)] leading-[1.85]">塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。</p>
                 </div>
               </div>
             </div>
@@ -430,7 +437,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               あなたを担当するキャスト
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">目的に合わせて選べる3名のキャストが無料でご利用いただけます。</p>
+            <p className="text-base text-[var(--text2)] mt-3">3名の無料キャストがいます。「誰に頼もうか迷う」場合は、ミントから始めてください。</p>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {freeCast.map((char) => (
                 <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)]">
@@ -532,9 +539,9 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              まず無料で、気軽に始められます
+              まず無料で体験してください。<br />月2回まで、カード不要で使えます。
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">メールアドレスだけで今日から始められます。</p>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
             <div className="mt-11 grid gap-6 lg:grid-cols-3">
               {PLANS.map((plan) => (
                 <div
@@ -587,7 +594,31 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑬ Blog Preview */}
+        {/* ⑬ From the Team — ドッグフーディング開示 */}
+        <section className="py-[88px]" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">From the Team</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              私たち自身が、Insight Cast を使っています。
+            </h2>
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[560px] mx-auto">
+              Insight Cast は今、自社のホームページ更新を Insight Cast 自体で進めています。このブログもその過程から生まれています。
+            </p>
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-4 max-w-[560px] mx-auto">
+              自分たちが「ホームページ更新が止まっている状態」を経験し、それを解決するためにこのサービスを作りました。実際に使いながら改善してきた過程をブログで公開しています。
+            </p>
+            <div className="mt-8">
+              <Link
+                href="/blog"
+                className="border-[1.5px] border-[var(--accent)] text-[var(--accent)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold hover:bg-[var(--accent)] hover:text-white transition-colors inline-flex items-center"
+              >
+                運営ブログを読む →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ⑭ Blog Preview */}
         <section className="py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Blog</div>
@@ -720,17 +751,17 @@ export default async function LandingPage() {
                   />
                 </div>
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.3]" style={{ fontSize: 'clamp(22px,2.8vw,34px)' }}>
-                  迷ったらまず聞いてください
+                  「自社に使えるか」から聞いてください。
                 </h2>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.9] mt-4 max-w-[480px] mx-auto">
-                  「自社に使えるか分からない」「何から始めればいいか」──どんな些細なことでも、お気軽にどうぞ。
+                  業種のことも、ホームページの状況も、何も準備しなくて大丈夫です。「こんな使い方はできますか？」「まず何から始めればいいですか？」そんなところから始めましょう。
                 </p>
                 <div className="mt-8">
                   <Link
                     href="/contact"
                     className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]"
                   >
-                    まず相談してみる →
+                    問い合わせる（無料・返信は1営業日以内） →
                   </Link>
                 </div>
               </div>

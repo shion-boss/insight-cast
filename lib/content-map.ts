@@ -1,3 +1,5 @@
+import { isRecord } from '@/lib/utils'
+
 export const GENRES = [
   { key: 'case_study',   label: '実績・事例' },
   { key: 'howto',        label: 'ノウハウ・解説' },
@@ -37,10 +39,6 @@ function isGenreKey(v: unknown): v is GenreKey {
 
 function isEffectKey(v: unknown): v is EffectKey {
   return typeof v === 'string' && EFFECTS.some((e) => e.key === v)
-}
-
-function isRecord(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null
 }
 
 export function getStoredClassifications(

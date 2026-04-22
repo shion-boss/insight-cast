@@ -145,6 +145,9 @@ export async function POST(
   const contextParts: string[] = []
   if (projectData) {
     contextParts.push(`【取材先】\n取材先名: ${projectData.name ?? '未設定'}\nHP URL: ${projectData.hp_url ?? '未設定'}`)
+    contextParts.push(
+      `【このインタビューのスコープ】\n以下の情報はすべて今日の取材先「${projectData.name ?? '未設定'}」のものです。他社・他の取材先の情報は含まれていません。このセッションの外の情報には言及しないでください。`
+    )
   }
   const focusThemeContext = buildInterviewFocusThemeContext(interview.focus_theme_mode, interview.focus_theme)
   if (focusThemeContext) {

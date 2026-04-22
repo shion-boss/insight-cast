@@ -121,10 +121,6 @@ export function getPost(slug: string): Post | undefined {
   return POSTS.find((p) => p.slug === slug)
 }
 
-export function getRelatedPosts(post: Post, limit = 3): Post[] {
-  return POSTS.filter((p) => p.slug !== post.slug && p.category === post.category).slice(0, limit)
-}
-
 export function getRelatedPostsFromList(posts: Post[], post: Post, limit = 3): Post[] {
   return posts
     .filter((candidate) => candidate.slug !== post.slug && candidate.category === post.category)

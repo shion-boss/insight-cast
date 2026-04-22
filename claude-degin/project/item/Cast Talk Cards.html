@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cast Talk カードデザイン — Insight Cast</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script>
+// Wait for design-canvas to expose globals
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',sans-serif;background:#f0ebe3}
+
+/* ── TOKEN ── */
+:root{
+  --serif:'Noto Serif JP',serif;
+  --sans:'Noto Sans JP',sans-serif;
+}
+
+/* ══════════════════════════════════
+   VARIANT A — ボトムグラデーション
+   シネマティック・雑誌風
+══════════════════════════════════ */
+.card-a{
+  width:340px;border-radius:20px;overflow:hidden;
+  position:relative;cursor:pointer;
+  box-shadow:0 12px 40px rgba(0,0,0,.18);
+  transition:transform .25s,box-shadow .25s;
+}
+.card-a:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.card-a-img{width:100%;height:220px;object-fit:cover;display:block}
+.card-a-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,
+    transparent 30%,
+    rgba(10,8,6,.45) 60%,
+    rgba(10,8,6,.88) 100%);
+}
+.card-a-theme{
+  position:absolute;top:16px;left:16px;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 13px;border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;
+  backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25);
+  text-transform:uppercase;
+}
+.card-a-casts{
+  position:absolute;top:14px;right:14px;
+  display:flex;gap:-4px;
+}
+.cast-icon{
+  width:28px;height:28px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.6);
+  overflow:hidden;flex-shrink:0;
+  margin-left:-6px;
+}
+.cast-icon:first-child{margin-left:0}
+.cast-icon img{width:100%;height:100%;object-fit:cover;object-position:top}
+.card-a-body{position:absolute;bottom:0;left:0;right:0;padding:16px 20px 20px}
+.card-a-title{
+  font-family:var(--serif);font-size:17px;font-weight:700;
+  color:#fff;line-height:1.45;margin-bottom:10px;
+  text-shadow:0 1px 6px rgba(0,0,0,.4);
+}
+.card-a-meta{display:flex;align-items:center;justify-content:space-between}
+.card-a-cast-names{font-size:11px;color:rgba(255,255,255,.7);font-weight:600}
+.card-a-date{font-size:11px;color:rgba(255,255,255,.5)}
+
+/* ══════════════════════════════════
+   VARIANT B — フロストグラスパネル
+   クリーン・読みやすい
+══════════════════════════════════ */
+.card-b{
+  width:340px;border-radius:20px;overflow:hidden;
+  position:relative;cursor:pointer;
+  box-shadow:0 12px 40px rgba(0,0,0,.15);
+  transition:transform .25s,box-shadow .25s;
+  background:#fff;
+}
+.card-b:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.22)}
+.card-b-img-wrap{position:relative;height:200px;overflow:hidden}
+.card-b-img{width:100%;height:100%;object-fit:cover;display:block}
+.card-b-img-overlay{position:absolute;inset:0}
+.card-b-theme-bar{
+  position:absolute;top:0;left:0;right:0;height:4px;
+}
+.card-b-cast-badge{
+  position:absolute;bottom:12px;left:14px;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:100px;padding:4px 12px 4px 6px;
+}
+.cast-mini{width:22px;height:22px;border-radius:50%;overflow:hidden;border:1.5px solid rgba(255,255,255,.6)}
+.cast-mini img{width:100%;height:100%;object-fit:cover;object-position:top}
+.cast-mini-names{font-size:11px;color:#fff;font-weight:700;letter-spacing:.04em}
+.card-b-body{padding:18px 20px 20px;background:#fff}
+.card-b-theme-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.card-b-title{
+  font-family:var(--serif);font-size:16px;font-weight:700;
+  color:#1c1410;line-height:1.5;margin-bottom:12px;
+}
+.card-b-excerpt{font-size:12px;color:#7a6555;line-height:1.75;margin-bottom:12px}
+.card-b-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #e8ddd0}
+.card-b-date{font-size:11px;color:#b8a898}
+.card-b-read{font-size:11px;font-weight:700;color:#c2722a}
+
+/* ══════════════════════════════════
+   VARIANT C — カラーティント + 大見出し
+   ビジュアル強め・SNS映え
+══════════════════════════════════ */
+.card-c{
+  width:340px;border-radius:20px;overflow:hidden;
+  position:relative;cursor:pointer;aspect-ratio:4/3;
+  box-shadow:0 12px 40px rgba(0,0,0,.2);
+  transition:transform .25s,box-shadow .25s;
+}
+.card-c:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,0,0,.32)}
+.card-c-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card-c-tint{position:absolute;inset:0}
+.card-c-noise{
+  position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;pointer-events:none;
+}
+.card-c-top{position:absolute;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:flex-start}
+.card-c-keyword{
+  font-family:var(--serif);font-size:12px;font-weight:700;
+  color:rgba(255,255,255,.9);letter-spacing:.14em;text-transform:uppercase;
+  padding:5px 12px;border-radius:6px;
+  border:1.5px solid rgba(255,255,255,.4);
+  backdrop-filter:blur(6px);
+  background:rgba(255,255,255,.12);
+}
+.card-c-casts{display:flex;gap:-6px}
+.card-c-cast{width:30px;height:30px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.5);margin-left:-8px}
+.card-c-cast:first-child{margin-left:0}
+.card-c-cast img{width:100%;height:100%;object-fit:cover;object-position:top}
+.card-c-center{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:0 24px;
+}
+.card-c-title-big{
+  font-family:var(--serif);font-size:22px;font-weight:700;
+  color:#fff;text-align:center;line-height:1.4;
+  text-shadow:0 2px 16px rgba(0,0,0,.5);
+}
+.card-c-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:16px 18px;
+  background:linear-gradient(transparent,rgba(0,0,0,.55));
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-c-names{font-size:11px;color:rgba(255,255,255,.8);font-weight:600}
+.card-c-btn{
+  font-size:11px;font-weight:700;
+  padding:5px 12px;border-radius:100px;
+  background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.4);
+  color:#fff;backdrop-filter:blur(6px);
+  cursor:pointer;
+}
+
+/* ══════════════════════════════════
+   VARIANT D — ノート風 / アカデミック
+   知的・温かみ
+══════════════════════════════════ */
+.card-d{
+  width:340px;border-radius:20px;overflow:hidden;
+  position:relative;cursor:pointer;
+  box-shadow:0 8px 32px rgba(0,0,0,.12);
+  transition:transform .25s,box-shadow .25s;
+  background:#fffdf9;border:1px solid #e2d5c3;
+}
+.card-d:hover{transform:translateY(-5px);box-shadow:0 20px 56px rgba(0,0,0,.18)}
+.card-d-img-wrap{position:relative;height:180px;overflow:hidden}
+.card-d-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.95) saturate(.9)}
+.card-d-img-fade{
+  position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,#fffdf9);
+}
+.card-d-tag{
+  position:absolute;top:12px;left:12px;
+  display:flex;align-items:center;gap:6px;
+  background:#fffdf9;border:1px solid #e2d5c3;border-radius:6px;
+  padding:5px 10px;
+}
+.card-d-tag-dot{width:8px;height:8px;border-radius:50%}
+.card-d-tag-text{font-size:11px;font-weight:700;color:#1c1410;letter-spacing:.08em}
+.card-d-body{padding:4px 20px 22px}
+.card-d-cast-row{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.card-d-cast-img{width:24px;height:24px;border-radius:50%;overflow:hidden;border:1.5px solid #e2d5c3}
+.card-d-cast-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+.card-d-cast-label{font-size:11px;color:#7a6555;font-weight:600}
+.card-d-title{
+  font-family:var(--serif);font-size:16px;font-weight:700;
+  color:#1c1410;line-height:1.5;margin-bottom:10px;
+}
+.card-d-rule{height:1px;background:#e8ddd0;margin:10px 0}
+.card-d-quote{
+  font-size:12px;color:#7a6555;line-height:1.75;
+  padding-left:12px;border-left:2px solid #c2722a;
+  font-style:italic;
+}
+.card-d-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.card-d-date{font-size:11px;color:#b8a898}
+.card-d-read{font-size:11px;font-weight:700;color:#c2722a}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const IMGS={
+  mintRain:'uploads/ミント×レイン.jpg',
+  clausRain:'uploads/クラウス×レイン.jpg',
+  mintClaus:'uploads/ミント×クラウス.png',
+  mint:'uploads/portrait-half-e56f0f59.png',
+  claus:'uploads/portrait-half.png',
+  rain:'uploads/portrait-half-c748dc68.png',
+};
+
+const THEME_PALETTE={
+  'Story & People':  {bg:'#c2722a',light:'rgba(194,114,42,.18)',text:'#fff',tint:'rgba(120,55,10,.52)'},
+  'Industry Insight':{bg:'#1d4ed8',light:'rgba(29,78,216,.18)',text:'#fff',tint:'rgba(15,40,120,.52)'},
+  'Marketing':       {bg:'#7c3aed',light:'rgba(124,58,237,.18)',text:'#fff',tint:'rgba(70,20,160,.52)'},
+  'Promotion':       {bg:'#0d9488',light:'rgba(13,148,136,.18)',text:'#fff',tint:'rgba(5,80,74,.52)'},
+};
+
+const ARTICLES=[
+  {
+    theme:'Story & People',img:IMGS.mintRain,
+    casts:[{name:'ミント',img:IMGS.mint},{name:'レイン',img:IMGS.rain}],
+    title:'「また頼みたい」を生む、気づかいの積み重ね',
+    excerpt:'お客様との関係は、施工が終わった後も続きます。ミントとレインが語る「選ばれ続ける理由」とは。',
+    quote:'小さな気づかいが、大きな信頼になっていく。',
+    date:'2026.04.10',keyword:'Story',
+  },
+  {
+    theme:'Industry Insight',img:IMGS.clausRain,
+    casts:[{name:'クラウス',img:IMGS.claus},{name:'レイン',img:IMGS.rain}],
+    title:'専門家が語る、下地処理が塗装品質を決める理由',
+    excerpt:'見えない部分にこだわるのはなぜか。クラウスとレインが業界の常識と独自基準を深掘りします。',
+    quote:'プロの差は、お客様に見えないところで生まれる。',
+    date:'2026.04.03',keyword:'Insight',
+  },
+  {
+    theme:'Marketing',img:IMGS.mintClaus,
+    casts:[{name:'ミント',img:IMGS.mint},{name:'クラウス',img:IMGS.claus}],
+    title:'口コミだけで仕事が来る事業者の共通点',
+    excerpt:'なぜ広告なしでリピーターが増えるのか。ミントとクラウスがその背景にある「伝え方」を解説。',
+    quote:'選ばれる理由は、すでにあなたの中にある。',
+    date:'2026.03.28',keyword:'Strategy',
+  },
+];
+
+/* ── Variant A ── */
+function CardA({art}){
+  const p=THEME_PALETTE[art.theme];
+  return(
+    <div className="card-a">
+      <img className="card-a-img" src={art.img} alt=""/>
+      <div className="card-a-overlay"/>
+      <div className="card-a-theme" style={{background:p.light,color:p.bg,borderColor:p.bg+'55'}}>
+        <span style={{width:6,height:6,borderRadius:'50%',background:p.bg,flexShrink:0,display:'inline-block'}}/>
+        {art.theme}
+      </div>
+      <div className="card-a-casts">
+        {art.casts.map(c=>(
+          <div key={c.name} className="cast-icon"><img src={c.img} alt={c.name}/></div>
+        ))}
+      </div>
+      <div className="card-a-body">
+        <div className="card-a-title">{art.title}</div>
+        <div className="card-a-meta">
+          <div className="card-a-cast-names">{art.casts.map(c=>c.name).join(' × ')}</div>
+          <div className="card-a-date">{art.date}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Variant B ── */
+function CardB({art}){
+  const p=THEME_PALETTE[art.theme];
+  return(
+    <div className="card-b">
+      <div className="card-b-img-wrap">
+        <img className="card-b-img" src={art.img} alt=""/>
+        <div className="card-b-img-overlay" style={{background:`linear-gradient(to bottom, transparent 40%, ${p.tint} 100%)`}}/>
+        <div className="card-b-theme-bar" style={{background:p.bg}}/>
+        <div className="card-b-cast-badge">
+          {art.casts.map(c=>(
+            <div key={c.name} className="cast-mini"><img src={c.img} alt={c.name}/></div>
+          ))}
+          <span className="cast-mini-names">{art.casts.map(c=>c.name).join(' × ')}</span>
+        </div>
+      </div>
+      <div className="card-b-body">
+        <div className="card-b-theme-label" style={{color:p.bg}}>
+          <span style={{width:6,height:6,borderRadius:'50%',background:p.bg,flexShrink:0,display:'inline-block'}}/>
+          {art.theme}
+        </div>
+        <div className="card-b-title">{art.title}</div>
+        <div className="card-b-excerpt">{art.excerpt}</div>
+        <div className="card-b-footer">
+          <span className="card-b-date">{art.date}</span>
+          <span className="card-b-read">続きを読む →</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Variant C ── */
+function CardC({art}){
+  const p=THEME_PALETTE[art.theme];
+  return(
+    <div className="card-c">
+      <img className="card-c-img" src={art.img} alt=""/>
+      <div className="card-c-tint" style={{background:p.tint}}/>
+      <div className="card-c-noise"/>
+      <div className="card-c-top">
+        <div className="card-c-keyword">{art.keyword}</div>
+        <div className="card-c-casts">
+          {art.casts.map(c=>(
+            <div key={c.name} className="card-c-cast"><img src={c.img} alt={c.name}/></div>
+          ))}
+        </div>
+      </div>
+      <div className="card-c-center">
+        <div className="card-c-title-big">{art.title}</div>
+      </div>
+      <div className="card-c-bottom">
+        <span className="card-c-names">{art.casts.map(c=>c.name).join(' × ')}</span>
+        <span className="card-c-btn">読む →</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Variant D ── */
+function CardD({art}){
+  const p=THEME_PALETTE[art.theme];
+  return(
+    <div className="card-d">
+      <div className="card-d-img-wrap">
+        <img className="card-d-img" src={art.img} alt=""/>
+        <div className="card-d-img-fade"/>
+        <div className="card-d-tag">
+          <div className="card-d-tag-dot" style={{background:p.bg}}/>
+          <span className="card-d-tag-text">{art.theme}</span>
+        </div>
+      </div>
+      <div className="card-d-body">
+        <div className="card-d-cast-row">
+          {art.casts.map(c=>(
+            <div key={c.name} className="card-d-cast-img"><img src={c.img} alt={c.name}/></div>
+          ))}
+          <span className="card-d-cast-label">{art.casts.map(c=>c.name).join(' & ')}</span>
+        </div>
+        <div className="card-d-title">{art.title}</div>
+        <div className="card-d-rule"/>
+        <div className="card-d-quote">「{art.quote}」</div>
+        <div className="card-d-footer">
+          <span className="card-d-date">{art.date}</span>
+          <span className="card-d-read">続きを読む →</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Canvas ── */
+function App(){
+  return(
+    <DesignCanvas>
+
+      <DCSection id="a" title="A — ボトムグラデーション（シネマティック）">
+        {ARTICLES.map((art,i)=>(
+          <DCArtboard key={i} id={`a${i}`} label={art.theme} width={340} height={310}>
+            <CardA art={art}/>
+          </DCArtboard>
+        ))}
+      </DCSection>
+
+      <DCSection id="b" title="B — フロストバッジ＋本文パネル（読みやすい）">
+        {ARTICLES.map((art,i)=>(
+          <DCArtboard key={i} id={`b${i}`} label={art.theme} width={340} height={420}>
+            <CardB art={art}/>
+          </DCArtboard>
+        ))}
+      </DCSection>
+
+      <DCSection id="c" title="C — フルブリードティント（ビジュアル強め）">
+        {ARTICLES.map((art,i)=>(
+          <DCArtboard key={i} id={`c${i}`} label={art.theme} width={340} height={255}>
+            <CardC art={art}/>
+          </DCArtboard>
+        ))}
+      </DCSection>
+
+      <DCSection id="d" title="D — ノート風（知的・温かみ）">
+        {ARTICLES.map((art,i)=>(
+          <DCArtboard key={i} id={`d${i}`} label={art.theme} width={340} height={390}>
+            <CardD art={art}/>
+          </DCArtboard>
+        ))}
+      </DCSection>
+
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

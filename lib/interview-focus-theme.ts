@@ -1,3 +1,5 @@
+import { isRecord } from '@/lib/utils'
+
 export const INTERVIEW_FOCUS_THEME_MAX_LENGTH = 120
 export const COMPETITOR_THEME_SUMMARY_MAX_LENGTH = 180
 
@@ -26,10 +28,6 @@ export function normalizeInterviewFocusTheme(value: unknown) {
 export function normalizeCompetitorThemeSummary(value: unknown) {
   if (typeof value !== 'string') return ''
   return value.replace(/\s+/g, ' ').trim().slice(0, COMPETITOR_THEME_SUMMARY_MAX_LENGTH)
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
 }
 
 export function getInterviewSuggestedThemes(themes: string[] | null | undefined, limit = 5) {

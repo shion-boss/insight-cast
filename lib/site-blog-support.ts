@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { fetchMarkdown as firecrawlFetchMarkdown } from '@/lib/firecrawl'
+import { isRecord, parseJsonObject } from '@/lib/utils'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -121,26 +122,11 @@ function normalizeBlogUrl(value: unknown) {
   }
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
 function decodeSafe(value: string) {
   try {
     return decodeURIComponent(value)
   } catch {
     return value
-  }
-}
-
-function parseJsonObject(text: string) {
-  const match = text.match(/\{[\s\S]*\}/)
-  if (!match) return null
-
-  try {
-    return JSON.parse(match[0]) as Record<string, unknown>
-  } catch {
-    return null
   }
 }
 

@@ -5,10 +5,7 @@ import {
   getStoredBlogMetrics,
   getStoredSiteBlogPosts,
 } from '@/lib/site-blog-support'
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
+import { isRecord } from '@/lib/utils'
 
 type RefreshSiteMetricsInput = {
   siteUrl: string
