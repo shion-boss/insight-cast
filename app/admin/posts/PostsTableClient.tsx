@@ -38,13 +38,9 @@ function ToggleSwitch({ on, onToggle, disabled }: { on: boolean; onToggle: () =>
       aria-checked={on}
       onClick={onToggle}
       disabled={disabled}
-      className="w-9 h-5 rounded-full relative transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50 disabled:pointer-events-none flex-shrink-0 cursor-pointer"
-      style={{ background: on ? 'var(--teal)' : 'var(--border)' }}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:pointer-events-none disabled:opacity-50 ${on ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
     >
-      <span
-        className="block w-3.5 h-3.5 rounded-full bg-white absolute top-[3px] transition-[left] duration-200 shadow-[0_1px_3px_rgba(0,0,0,0.25)]"
-        style={{ left: on ? '19px' : '3px' }}
-      />
+      <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
     </button>
   )
 }
