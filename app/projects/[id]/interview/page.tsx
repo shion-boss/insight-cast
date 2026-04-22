@@ -162,7 +162,8 @@ export default function InterviewPage() {
     if (!interviewId || !latestInterviewerMessage.trim()) return
 
     let cancelled = false
-    setSupportPosts((prev) => ({ ...prev, loading: true, error: null }))
+    setSupportPosts({ ownPosts: [], competitorPosts: [], loading: true, error: null })
+    setIsSupportPanelOpen(false)
 
     async function loadSupport() {
       try {
