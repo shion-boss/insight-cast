@@ -30,11 +30,43 @@ export function CastTalkPreviewClient({
   characterMap: Record<string, Character>
 }) {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
+  const [title, setTitle] = useState(talk.title)
+  const [summary, setSummary] = useState(talk.summary ?? '')
+  const [messages, setMessages] = useState<Message[]>(talk.messages)
+  const [status, setStatus] = useState(talk.status)
+  const [saving, setSaving] = useState(false)
+  const [statusChanging, setStatusChanging] = useState(false)
+  const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  function updateMessage(index: number, text: string) {
+    setMessages((prev) => prev.map((m, i) => (i === index ? { ...m, text } : m)))
+    setSaved(false)
+  }
+
+  async function handleSave() {
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await fetch(`/api/cast-talk/${talk.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, summary: summary || null, messages }),
+      })
+      if (!res.ok) {
+        const data = (await res.json()) as { message?: string }
+        throw new Error(data.message ?? '保存に失敗しました')
+      }
+      setSaved(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '不明なエラー')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function handleStatusChange(newStatus: 'draft' | 'published') {
-    setLoading(true)
+    setStatusChanging(true)
     setError(null)
     try {
       const res = await fetch(`/api/cast-talk/${talk.id}`, {
@@ -46,12 +78,11 @@ export function CastTalkPreviewClient({
         const data = (await res.json()) as { message?: string }
         throw new Error(data.message ?? '更新に失敗しました')
       }
-      router.push('/admin/cast-talk')
-      router.refresh()
+      setStatus(newStatus)
     } catch (e) {
       setError(e instanceof Error ? e.message : '不明なエラー')
     } finally {
-      setLoading(false)
+      setStatusChanging(false)
     }
   }
 
@@ -59,21 +90,18 @@ export function CastTalkPreviewClient({
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-sm text-[var(--text3)]">プレビュー</p>
-          <h1 className="mt-1 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
-            {talk.title}
-          </h1>
-          <p className="mt-1 text-sm text-[var(--text2)]">{talk.theme}</p>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm text-[var(--text3)]">編集</p>
+          <p className="mt-1 text-xs text-[var(--text3)]">{talk.theme}</p>
         </div>
         <span
           className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-            talk.status === 'published'
+            status === 'published'
               ? 'bg-[var(--ok-l)] text-[var(--ok)]'
               : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]'
           }`}
         >
-          {talk.status === 'published' ? '公開中' : '下書き'}
+          {status === 'published' ? '公開中' : '下書き'}
         </span>
       </div>
 
@@ -83,62 +111,89 @@ export function CastTalkPreviewClient({
         </div>
       )}
 
-      {/* 会話プレビュー */}
-      <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 space-y-5">
-        {talk.messages.map((msg, i) => {
-          const char = characterMap[msg.castId]
-          return (
-            <div key={i} className="flex items-start gap-3">
-              {char ? (
-                <Image
-                  src={char.icon48}
-                  alt={char.name}
-                  width={40}
-                  height={40}
-                  className="shrink-0 rounded-full border border-[var(--border)]"
-                />
-              ) : (
-                <div className="h-10 w-10 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-xs text-[var(--text3)]">
-                  {msg.castId.slice(0, 1).toUpperCase()}
+      {/* タイトル */}
+      <div>
+        <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
+          タイトル
+        </label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => { setTitle(e.target.value); setSaved(false) }}
+          className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+        />
+      </div>
+
+      {/* 会話メッセージ */}
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-3">会話</p>
+        <div className="space-y-4">
+          {messages.map((msg, i) => {
+            const char = characterMap[msg.castId]
+            return (
+              <div key={i} className="flex items-start gap-3">
+                {char ? (
+                  <Image
+                    src={char.icon48}
+                    alt={char.name}
+                    width={36}
+                    height={36}
+                    className="mt-1 shrink-0 rounded-full border border-[var(--border)]"
+                  />
+                ) : (
+                  <div className="mt-1 h-9 w-9 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-xs text-[var(--text3)]">
+                    {msg.castId.slice(0, 1).toUpperCase()}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="mb-1 text-xs font-semibold text-[var(--text3)]">
+                    {char?.name ?? msg.castId}
+                  </p>
+                  <textarea
+                    value={msg.text}
+                    onChange={(e) => updateMessage(i, e.target.value)}
+                    rows={3}
+                    className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-relaxed text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                  />
                 </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-[var(--text3)]">
-                  {char?.name ?? msg.castId}
-                </p>
-                <p className="mt-1 text-sm leading-7 text-[var(--text)]">{msg.text}</p>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
 
       {/* サマリー */}
-      {talk.summary && (
-        <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text3)]">Summary</p>
-          <p className="mt-1 text-sm text-[var(--text2)]">{talk.summary}</p>
-        </div>
-      )}
+      <div>
+        <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
+          サマリー
+        </label>
+        <textarea
+          value={summary}
+          onChange={(e) => { setSummary(e.target.value); setSaved(false) }}
+          rows={3}
+          className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm leading-relaxed text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+        />
+      </div>
 
       {/* アクション */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <button
-          onClick={() =>
-            handleStatusChange(talk.status === 'published' ? 'draft' : 'published')
-          }
-          disabled={loading}
+          onClick={handleSave}
+          disabled={saving}
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
         >
-          {loading
-            ? '更新中...'
-            : talk.status === 'published'
-            ? '下書きに戻す'
-            : '公開する'}
+          {saving ? '保存中...' : saved ? '保存済み ✓' : '保存する'}
+        </button>
+        <button
+          onClick={() => handleStatusChange(status === 'published' ? 'draft' : 'published')}
+          disabled={statusChanging}
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
+        >
+          {statusChanging ? '更新中...' : status === 'published' ? '下書きに戻す' : '公開する'}
         </button>
         <button
           onClick={() => router.push('/admin/cast-talk')}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]"
         >
           一覧に戻る
         </button>

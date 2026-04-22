@@ -3,13 +3,20 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
 type UpdateBody = {
-  status: 'draft' | 'published'
+  status?: 'draft' | 'published'
+  title?: string
+  summary?: string | null
+  messages?: Array<{ castId: string; text: string }>
 }
 
 function isUpdateBody(v: unknown): v is UpdateBody {
   if (!v || typeof v !== 'object') return false
   const o = v as Record<string, unknown>
-  return o.status === 'draft' || o.status === 'published'
+  if (o.status !== undefined && o.status !== 'draft' && o.status !== 'published') return false
+  if (o.title !== undefined && typeof o.title !== 'string') return false
+  if (o.summary !== undefined && o.summary !== null && typeof o.summary !== 'string') return false
+  if (o.messages !== undefined && !Array.isArray(o.messages)) return false
+  return true
 }
 
 async function isAdmin(): Promise<boolean> {
@@ -57,12 +64,20 @@ export async function PATCH(
     )
   }
 
-  const { status } = body
+  const { status, title, summary, messages } = body
   const supabase = createAdminClient()
 
-  const updateData: Record<string, unknown> = { status }
-  if (status === 'published') {
-    updateData.published_at = new Date().toISOString()
+  const updateData: Record<string, unknown> = {}
+  if (status !== undefined) {
+    updateData.status = status
+    if (status === 'published') updateData.published_at = new Date().toISOString()
+  }
+  if (title !== undefined) updateData.title = title
+  if (summary !== undefined) updateData.summary = summary
+  if (messages !== undefined) updateData.messages = messages
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ code: 'VALIDATION_ERROR', message: '更新内容がありません', traceId }, { status: 400 })
   }
 
   const { error } = await supabase
