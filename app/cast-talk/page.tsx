@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
+import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -20,8 +20,7 @@ export const metadata: Metadata = {
 }
 
 type StoryKey = string
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const STORY_IMAGE_MAP: Record<StoryKey, any> = {
+const STORY_IMAGE_MAP: Record<StoryKey, StaticImageData> = {
   'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
   'mint-rain': mintXRain,   'rain-mint': mintXRain,
   'claus-rain': clausXRain, 'rain-claus': clausXRain,

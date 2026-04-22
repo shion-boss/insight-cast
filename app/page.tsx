@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import Image from 'next/image'
+import Image, { type StaticImageData } from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Insight Cast — AIキャストがホームページを育てるサービス',
@@ -33,8 +33,7 @@ import rainXCocco from '@/assets/story/rain-x-cocco.png'
 const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const STORY_IMAGE_MAP: Record<string, any> = {
+const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
   'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
   'mint-rain': mintXRain,   'rain-mint': mintXRain,
   'claus-rain': clausXRain, 'rain-claus': clausXRain,

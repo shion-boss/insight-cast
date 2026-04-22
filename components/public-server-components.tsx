@@ -97,24 +97,43 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
       {showPromo && (
         <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
           <div className="mx-auto max-w-3xl">
-            <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
-            <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
-              登録はメールアドレスだけ。3名のキャストが今日から使えます。
-            </p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link
-                href="/auth/signup"
-                className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
-              >
-                無料で取材を始める →
-              </Link>
-              <Link
-                href="/cast"
-                className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-              >
-                キャストを見る
-              </Link>
-            </div>
+            {isLoggedIn ? (
+              <>
+                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">取材を続けましょう</h2>
+                <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+                  ダッシュボードから取材を始められます。
+                </p>
+                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+                  >
+                    ダッシュボードへ →
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まずは無料で、取材を体験してみる</h2>
+                <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+                  登録はメールアドレスだけ。3名のキャストが今日から使えます。
+                </p>
+                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                  <Link
+                    href="/auth/signup"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+                  >
+                    無料で取材を始める →
+                  </Link>
+                  <Link
+                    href="/cast"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                  >
+                    キャストを見る
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
