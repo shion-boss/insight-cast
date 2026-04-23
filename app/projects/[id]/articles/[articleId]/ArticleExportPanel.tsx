@@ -73,7 +73,7 @@ function initial(name: string | null): string {
   return name ? name.slice(0, 1) : '?'
 }
 
-const FOOTER_HTML = `<div style="margin-top:40px;padding-top:16px;border-top:1px solid #e2d5c3;text-align:right;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
+const FOOTER_HTML = `<div style="margin-top:40px;padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
 
 function buildClientHtml(opts: { title: string; date: string; content: string }): string {
   const { title, date, content } = opts
