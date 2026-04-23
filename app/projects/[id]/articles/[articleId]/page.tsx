@@ -112,11 +112,6 @@ export default async function ArticleDetailPage({
           />
         ) : (
           <>
-            <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-              <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
-                {article.content}
-              </pre>
-            </section>
             <ArticleExportPanel
               content={article.content}
               title={article.title ?? '記事'}
