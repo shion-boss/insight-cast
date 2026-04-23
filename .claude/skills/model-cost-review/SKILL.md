@@ -1,6 +1,6 @@
 ---
 name: model-cost-review
-description: arch と finance が、モデル選定の品質要件とコスト影響を同じ型で評価する shared skill。新しいモデル採用や構成変更の前に使う。
+description: AIデザイナー と finance が、モデル選定の品質要件とコスト影響を同じ型で評価する shared skill。新しいモデル採用や構成変更の前に使う。
 ---
 
 # Model Cost Review

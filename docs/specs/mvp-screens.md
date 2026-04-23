@@ -617,7 +617,7 @@ articles
 ---
 
 ### Step 3: 調査・比較 AI + レポート画面
-- HP調査 AI 実装（arch と協働）
+- HP調査 AI 実装（AIデザイナー と協働）
 - 競合比較 AI 実装
 - Supabase Edge Functions でバックグラウンド処理
 - `hp_audits` `competitor_analyses` テーブル作成
@@ -631,8 +631,8 @@ articles
 
 ### Step 4: インタビュアー選択 + インタビュー画面
 - インタビュアー選択画面
-- インタビュー AI 実装（3キャラのプロンプト設計・arch 主導）
-- 「充分な回答が得られたか」の AI 判断ロジック（arch）
+- インタビュー AI 実装（3キャラのプロンプト設計・AIデザイナー 主導）
+- 「充分な回答が得られたか」の AI 判断ロジック（AIデザイナー）
 - チャット UI 実装（リアルタイム表示）
 - `interviews` `interview_messages` テーブル作成
 
@@ -674,7 +674,7 @@ articles
 
 ## この仕様書の扱い
 
-- 実装着手前に build と arch が読む
+- 実装着手前に build と AIデザイナー が読む
 - build: Step 1 から順に実装。各 Step 完了時に review にレビュー依頼
-- arch: Step 3 の調査AI設計、Step 4 のインタビューAI設計（充分判断ロジック含む）、Step 5 の整理・記事生成AI設計を担当
+- AIデザイナー: Step 3 の調査AI設計、Step 4 のインタビューAI設計（充分判断ロジック含む）、Step 5 の整理・記事生成AI設計を担当
 - 変更があれば lead が `docs/decisions/` に記録してからこの仕様書を更新
