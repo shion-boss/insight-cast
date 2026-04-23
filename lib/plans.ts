@@ -6,7 +6,7 @@ export const PLANS = {
     label: '無料',
     maxProjects: 1,
     additionalProjectAllowed: false,
-    monthlyInterviewLimit: 999,
+    monthlyInterviewLimit: 999, // lifetimeInterviewLimit が有効なため実質未使用
     lifetimeInterviewLimit: 1,
     lifetimeArticleLimit: 3,
     maxCompetitorsPerProject: 0,
