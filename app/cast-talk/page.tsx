@@ -20,12 +20,8 @@ export const metadata: Metadata = {
 }
 
 type StoryKey = string
-<<<<<<< HEAD
-const STORY_IMAGE_MAP: Record<StoryKey, StaticImageData> = {
-=======
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const STORY_IMAGE_MAP: Record<StoryKey, any> = {
->>>>>>> b7bcb55 (feat: プラン制限UI・設定改善・Cast Talk/ブログカードデザイン刷新)
   'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
   'mint-rain': mintXRain,   'rain-mint': mintXRain,
   'claus-rain': clausXRain, 'rain-claus': clausXRain,
@@ -124,11 +120,7 @@ export default async function CastTalkPage() {
                   <Link
                     key={talk.id}
                     href={`/cast-talk/${talk.slug}`}
-<<<<<<< HEAD
-                    className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_14px_36px_rgba(0,0,0,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-=======
                     className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[5px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
->>>>>>> b7bcb55 (feat: プラン制限UI・設定改善・Cast Talk/ブログカードデザイン刷新)
                   >
                     {/* 画像エリア */}
                     <div className="relative h-[180px] overflow-hidden">
