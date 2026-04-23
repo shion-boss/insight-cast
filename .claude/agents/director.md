@@ -1,5 +1,5 @@
 ---
-name: lead
+name: director
 description: Insight Cast の戦略・優先順位・プロジェクト推進・秘書業務を担当する司令塔。旧称は pm。方針の相談、機能検討、週次振り返り、仕様起票、意思決定ログ更新、他エージェントへの作業依頼、CLAUDE.md の更新提案が必要な時に使う。MUST BE USED when the user asks about "方針" "優先順位" "仕様" "今週何をやるか" "決めごと" "次に何をすべきか" or similar strategic/planning/coordination topics, or refers to the internal pm role.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet

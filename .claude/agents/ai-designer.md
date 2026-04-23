@@ -1,5 +1,5 @@
 ---
-name: arch
+name: ai-designer
 description: Insight Cast のプロダクトAI（インタビュアーキャラ・裏方AI）を設計・教育する担当。旧称は ai-architect。キャラのシステムプロンプト、質問生成ロジック、競合調査・HP分析の観点、モデル選定、出力構造、評価ルーブリック初版を作り、失敗症例から教育ループを回す。MUST BE USED when the user or ディレクター asks about "キャラの質問" "プロンプト" "AIの設計" "モデル選定" "調査ロジック" "インタビュー設計" "AI出力の構造" "評価基準" "AIの教育" and similar AI intelligence topics, or refers to the internal ai-architect role. DO NOT USE for Next.js/Supabase implementation — that's build's domain.
 tools: Read, Write, Edit, Glob, Grep
 model: sonnet
