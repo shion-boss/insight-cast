@@ -544,7 +544,7 @@ export default function ArticlePage() {
                   href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
                   className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
                 >
-                  最新の記事を見る
+                  {tab === 'conversation' ? '記事を確認・書き出す' : '最新の記事を見る'}
                 </Link>
               )}
             </div>
@@ -661,7 +661,7 @@ export default function ArticlePage() {
                     href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
                     className={getButtonClass('primary')}
                   >
-                    保存した記事を確認する
+                    {tab === 'conversation' ? '記事を確認・書き出す' : '保存した記事を確認する'}
                   </Link>
                   <Link
                     href={`/projects/${projectId}#articles`}
