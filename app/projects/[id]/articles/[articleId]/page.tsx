@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
+import { getCharacter } from '@/lib/characters'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'クライアント視点',
@@ -53,6 +54,16 @@ export default async function ArticleDetailPage({
     .single()
 
   if (!project || project.user_id !== user.id) redirect('/dashboard')
+
+  const { data: interview } = article.interview_id
+    ? await supabase
+        .from('interviews')
+        .select('interviewer_type')
+        .eq('id', article.interview_id)
+        .single()
+    : { data: null }
+
+  const interviewer = interview?.interviewer_type ? getCharacter(interview.interviewer_type) : null
 
   return (
     <AppShell
@@ -106,7 +117,16 @@ export default async function ArticleDetailPage({
                 {article.content}
               </pre>
             </section>
-            <ArticleExportPanel content={article.content} title={article.title ?? '記事'} />
+            <ArticleExportPanel
+              content={article.content}
+              title={article.title ?? '記事'}
+              articleType={article.article_type ?? 'client'}
+              date={article.created_at}
+              interviewerId={interview?.interviewer_type ?? null}
+              interviewerName={interviewer?.name ?? null}
+              interviewerLabel={interviewer?.label ?? null}
+              clientName={project.name ?? project.hp_url ?? null}
+            />
           </>
         )}
       </div>
