@@ -2,6 +2,39 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
+type CastTalkEdit = {
+  cast_talk_id: string
+  cast_id: string
+  original_text: string
+  edited_text: string
+}
+
+/**
+ * 元メッセージ配列と編集後メッセージ配列を同インデックスで比較し、
+ * テキストが変更されたターンだけ CastTalkEdit レコードを返す。
+ */
+function buildEdits(
+  castTalkId: string,
+  original: Array<{ castId: string; text: string }>,
+  edited: Array<{ castId: string; text: string }>,
+): CastTalkEdit[] {
+  const len = Math.min(original.length, edited.length)
+  const result: CastTalkEdit[] = []
+  for (let i = 0; i < len; i++) {
+    const orig = original[i]
+    const edit = edited[i]
+    if (orig.castId === edit.castId && orig.text !== edit.text) {
+      result.push({
+        cast_talk_id: castTalkId,
+        cast_id: orig.castId,
+        original_text: orig.text,
+        edited_text: edit.text,
+      })
+    }
+  }
+  return result
+}
+
 type UpdateBody = {
   status?: 'draft' | 'published'
   title?: string
@@ -87,6 +120,22 @@ export async function PATCH(
     return NextResponse.json({ code: 'VALIDATION_ERROR', message: '更新内容がありません', traceId }, { status: 400 })
   }
 
+  // messages が更新される場合、編集差分を cast_talk_edits に記録する
+  let originalMessages: Array<{ castId: string; text: string }> | null = null
+  if (messages !== undefined) {
+    const { data: current, error: fetchError } = await supabase
+      .from('cast_talks')
+      .select('messages')
+      .eq('id', id)
+      .single()
+
+    if (fetchError) {
+      console.error('[cast-talk/[id]] PATCH fetch original error', { traceId, error: fetchError.message })
+    } else if (current?.messages && Array.isArray(current.messages)) {
+      originalMessages = current.messages as Array<{ castId: string; text: string }>
+    }
+  }
+
   const { error } = await supabase
     .from('cast_talks')
     .update(updateData)
@@ -98,6 +147,18 @@ export async function PATCH(
       { code: 'DB_ERROR', message: '更新に失敗しました', traceId },
       { status: 500 },
     )
+  }
+
+  // 編集差分を cast_talk_edits に保存する（メイン保存が成功した後）
+  if (messages !== undefined && originalMessages !== null) {
+    const edits = buildEdits(id, originalMessages, messages)
+    if (edits.length > 0) {
+      const { error: editError } = await supabase.from('cast_talk_edits').insert(edits)
+      if (editError) {
+        // 差分保存の失敗はメインの更新には影響させない（ログのみ）
+        console.error('[cast-talk/[id]] cast_talk_edits insert error', { traceId, error: editError.message })
+      }
+    }
   }
 
   return NextResponse.json({ ok: true, traceId })

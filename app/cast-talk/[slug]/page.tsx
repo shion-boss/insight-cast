@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import type { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
@@ -8,6 +9,23 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
 import { CastTalkContent } from './CastTalkContent'
+import mintXClaus from '@/assets/story/mint-x-claus.png'
+import mintXRain from '@/assets/story/mint-x-rain.jpg'
+import clausXRain from '@/assets/story/claus-x-rain.jpg'
+import halXCocco from '@/assets/story/hal-x-cocco.png'
+import halXMogro from '@/assets/story/hal-x-mogro.png'
+import mogroXRain from '@/assets/story/mogro-x-rain.png'
+import rainXCocco from '@/assets/story/rain-x-cocco.png'
+
+const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
+  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
+  'mint-rain': mintXRain,   'rain-mint': mintXRain,
+  'claus-rain': clausXRain, 'rain-claus': clausXRain,
+  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
+  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
+  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
+  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
+}
 
 type Message = {
   castId: string
@@ -61,6 +79,7 @@ export default async function CastTalkDetailPage({
 
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+  const storyImage = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
 
   const raw = Array.isArray(talk.messages) ? talk.messages : []
   const messages: Message[] = raw.filter(
@@ -77,37 +96,58 @@ export default async function CastTalkDetailPage({
 
       <main className="relative z-10">
         {/* ヒーロー */}
-        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-12 pt-12 sm:pt-16">
+        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
           <div className="mx-auto max-w-3xl">
             <EyebrowBadge>Cast Talk</EyebrowBadge>
 
-            {/* キャストアイコン */}
-            <div className="mt-6 flex items-center gap-3">
-              {interviewer && (
-                <div className="flex items-center gap-2">
-                  <Image src={interviewer.icon96} alt={interviewer.name} width={48} height={48} className="rounded-full border-2 border-white shadow-sm" />
-                  <span className="text-sm font-medium text-[var(--text2)]">{interviewer.name}</span>
-                </div>
-              )}
-              {interviewer && guest && <span className="text-[var(--text3)]">×</span>}
-              {guest && (
-                <div className="flex items-center gap-2">
-                  <Image src={guest.icon96} alt={guest.name} width={48} height={48} className="rounded-full border-2 border-white shadow-sm" />
-                  <span className="text-sm font-medium text-[var(--text2)]">{guest.name}</span>
-                </div>
-              )}
-            </div>
-
-            <h1 className="mt-4 text-balance text-3xl font-semibold leading-snug tracking-[-0.03em] text-[var(--text)] sm:text-4xl">
+            <h1 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.03em] text-[var(--text)] sm:text-3xl lg:text-4xl">
               {talk.title}
             </h1>
 
             {talk.summary && (
-              <p className="mt-4 text-base leading-8 text-[var(--text2)]">{talk.summary}</p>
+              <p className="mt-3 text-sm leading-7 text-[var(--text2)] sm:mt-4 sm:text-base sm:leading-8">{talk.summary}</p>
             )}
 
             {talk.published_at && (
               <p className="mt-3 text-sm text-[var(--text3)]">{formatDate(talk.published_at)}</p>
+            )}
+
+            {/* ストーリー画像 */}
+            {storyImage && (
+              <div className="mt-6 overflow-hidden rounded-xl sm:mt-8 sm:rounded-2xl">
+                <Image
+                  src={storyImage}
+                  alt={`${interviewer?.name ?? ''}と${guest?.name ?? ''}の対話`}
+                  className="w-full object-cover"
+                  placeholder="blur"
+                />
+              </div>
+            )}
+
+            {/* プロフィールカード */}
+            {(interviewer ?? guest) && (
+              <div className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
+                {[interviewer, guest].filter(Boolean).map((char) => (
+                  <div key={char!.id} className="flex gap-3 rounded-xl border border-[var(--border)] bg-white/60 p-3 backdrop-blur-sm sm:p-4">
+                    <Image
+                      src={char!.icon96}
+                      alt={char!.name}
+                      width={96}
+                      height={96}
+                      className="h-10 w-10 shrink-0 rounded-full border-2 border-white object-cover shadow-sm sm:h-12 sm:w-12"
+                    />
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span className="font-semibold text-[var(--text)]">{char!.name}</span>
+                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--accent)]">
+                          {char!.label}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[var(--text2)] sm:text-[13px]">{char!.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </section>

@@ -30,23 +30,23 @@ export function CastTalkContent({
                 <Image
                   src={char.icon96}
                   alt={char.name}
-                  width={48}
-                  height={48}
-                  className="rounded-full border-2 border-[var(--border)]"
+                  width={96}
+                  height={96}
+                  className="h-9 w-9 rounded-full border-2 border-[var(--border)] object-cover sm:h-12 sm:w-12"
                 />
               ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[var(--border)] bg-[var(--bg2)] text-sm font-semibold text-[var(--text3)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[var(--border)] bg-[var(--bg2)] text-sm font-semibold text-[var(--text3)] sm:h-12 sm:w-12">
                   {msg.castId.slice(0, 1).toUpperCase()}
                 </div>
               )}
             </div>
 
-            <div className="min-w-0 max-w-[75%]">
+            <div className="min-w-0 max-w-[82%] sm:max-w-[75%]">
               <p className={`mb-1.5 text-xs font-semibold text-[var(--text3)] ${isInterviewer ? 'text-right' : ''}`}>
                 {char?.name ?? msg.castId}
               </p>
-              <div className={`relative rounded-[var(--r-lg)] border border-[var(--border)] px-5 py-4 shadow-sm ${isInterviewer ? 'rounded-tr-none bg-[var(--accent-l)]' : 'rounded-tl-none bg-[var(--surface)]'}`}>
-                <p className="text-[0.9375rem] leading-8 text-[var(--text)]">{msg.text}</p>
+              <div className={`relative rounded-[var(--r-lg)] border border-[var(--border)] px-4 py-3 shadow-sm sm:px-5 sm:py-4 ${isInterviewer ? 'rounded-tr-none bg-[var(--accent-l)]' : 'rounded-tl-none bg-[var(--surface)]'}`}>
+                <p className="text-sm leading-7 text-[var(--text)] sm:text-[0.9375rem] sm:leading-8">{msg.text}</p>
               </div>
             </div>
           </div>
