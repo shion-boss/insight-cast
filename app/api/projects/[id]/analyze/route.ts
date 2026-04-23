@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
+import { isFreePlanLocked } from '@/lib/plans'
 import { waitUntil } from '@vercel/functions'
 import { buildProjectAnalysisSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
@@ -335,6 +336,9 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
 
   const { data: project } = await supabase
     .from('projects')

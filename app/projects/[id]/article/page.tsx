@@ -270,6 +270,14 @@ export default function ArticlePage() {
         }),
       })
 
+      if (response.status === 403) {
+        const body = await response.json().catch(() => ({}))
+        if (body.error === 'lifetime_article_limit' || body.error === 'free_plan_locked') {
+          window.location.href = '/pricing?reason=free_plan_locked'
+          return
+        }
+        throw new Error('failed to start article generation')
+      }
       if (!response.ok) {
         throw new Error('failed to start article generation')
       }

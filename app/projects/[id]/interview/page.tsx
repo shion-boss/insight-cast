@@ -81,6 +81,14 @@ export default function InterviewPage() {
         body: JSON.stringify({ interviewId, userMessage: userText ?? '__GREETING__' }),
       })
 
+      if (res.status === 403) {
+        const body = await res.json().catch(() => ({}))
+        if (body.error === 'free_plan_locked') {
+          window.location.href = '/pricing?reason=free_plan_locked'
+          return { ok: false as const, interviewComplete: false }
+        }
+        throw new Error('request failed')
+      }
       if (!res.ok || !res.body) {
         throw new Error('request failed')
       }

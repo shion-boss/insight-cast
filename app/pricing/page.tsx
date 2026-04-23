@@ -158,6 +158,11 @@ export default async function PricingPage({
             今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。
           </div>
         )}
+        {reason === 'free_plan_locked' && (
+          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+            無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。
+          </div>
+        )}
 
         {/* Hero */}
         <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px] text-center">

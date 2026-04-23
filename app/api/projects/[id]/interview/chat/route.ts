@@ -4,7 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { logApiUsage } from '@/lib/api-usage'
-import { NextRequest } from 'next/server'
+import { isFreePlanLocked } from '@/lib/plans'
+import { NextRequest, NextResponse } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
@@ -17,6 +18,9 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
 
   const body = await req.json().catch(() => null)
   if (!body) return new Response('Bad Request', { status: 400 })

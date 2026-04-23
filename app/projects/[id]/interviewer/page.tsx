@@ -9,7 +9,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
-import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
 
 function getSearchParamValue(value: string | string[] | undefined) {
@@ -44,6 +44,7 @@ export default async function InterviewerPage({
 
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
+  const freeLocked = await isFreePlanLocked(supabase, user.id)
 
   const userProjectIds = (await supabase.from('projects').select('id').eq('user_id', user.id)).data?.map((p) => p.id) ?? []
 
@@ -94,7 +95,40 @@ export default async function InterviewerPage({
       <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
-        {isInterviewLimitReached && (
+        {freeLocked && (
+          <div className="mb-6">
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={mint?.icon48}
+                  alt={`${mint?.name ?? 'ミント'}のアイコン`}
+                  emoji={mint?.emoji}
+                  size={48}
+                />
+              )}
+              name={mint?.name ?? 'ミント'}
+              title="無料体験が終了しました。"
+              description="記事を3本作成していただけましたか？お役に立てていれば嬉しいです。引き続きご利用いただくには、プランへのアップグレードが必要です。これまでのデータはすべて残っています。"
+              tone="soft"
+            />
+            <div className="mt-4 flex gap-3">
+              <Link
+                href="/pricing"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+              >
+                プランを見る →
+              </Link>
+              <Link
+                href={`/projects/${id}`}
+                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+              >
+                取材先に戻る
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {!freeLocked && isInterviewLimitReached && (
           <div className="mb-6">
             <InterviewerSpeech
               icon={(

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { logApiUsage } from '@/lib/api-usage'
+import { isFreePlanLocked } from '@/lib/plans'
 import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 
@@ -17,6 +18,9 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
 
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
