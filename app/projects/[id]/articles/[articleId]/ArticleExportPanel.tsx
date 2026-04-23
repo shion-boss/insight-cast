@@ -352,7 +352,7 @@ export function ArticleExportPanel({
             onClick={handleDownload}
             className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
           >
-            DL
+            ファイル保存
           </button>
         </div>
       </div>
