@@ -13,10 +13,5 @@
       "maxDuration": 120
     }
   },
-  "crons": [
-    {
-      "path": "/api/cast-talk/generate",
-      "schedule": "0 0 * * *"
-    }
-  ]
+  "crons": []
 }
