@@ -169,14 +169,11 @@ function buildConversationHtml(opts: {
   }
   flushProse()
 
-  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
-<div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">インタビュー</div>
-<h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 16px;">${escapeHtml(title)}</h1>
-<div style="font-size:13px;font-weight:600;color:#1c1410;margin-bottom:6px;">${escapeHtml(clientName)}</div>
-<div style="font-size:12px;color:#b8a898;margin-bottom:28px;">${escapeHtml(date)}</div>
+  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
 ${bubblesHtml.join('\n')}
-${FOOTER_HTML}
+<div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
+<div style="height:1px;background:#e2d5c3;"></div>
 </div>`
 }
 
