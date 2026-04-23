@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useTransition } from 'react'
 import { marked } from 'marked'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
+import { saveArticleContent } from './actions'
 
 type Format = 'text' | 'markdown' | 'html'
 
@@ -226,6 +227,8 @@ export function ArticleExportPanel({
   interviewerName,
   interviewerLabel,
   clientName,
+  articleId,
+  projectId,
 }: {
   content: string
   title: string
@@ -235,6 +238,8 @@ export function ArticleExportPanel({
   interviewerName: string | null
   interviewerLabel: string | null
   clientName: string | null
+  articleId: string
+  projectId: string
 }) {
   const availableFormats = Object.keys(FORMAT_LABELS) as Format[]
   const [format, setFormat] = useState<Format>('markdown')
@@ -242,10 +247,28 @@ export function ArticleExportPanel({
   const [copyError, setCopyError] = useState(false)
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
   const [htmlPreview, setHtmlPreview] = useState(false)
+  const [editedContent, setEditedContent] = useState(content)
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [, startTransition] = useTransition()
+
+  const isDirty = editedContent !== content
 
   const char = getCharacter(interviewerId ?? 'mint')
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
-  const output = getContent({ format: safeFormat, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, themeColor })
+  const output = getContent({ format: safeFormat, articleType, title, date, content: editedContent, interviewerName, interviewerLabel, interviewerId, clientName, themeColor })
+
+  const handleSave = useCallback(() => {
+    setSaveState('saving')
+    startTransition(async () => {
+      try {
+        await saveArticleContent(articleId, projectId, content, editedContent)
+        setSaveState('saved')
+        setTimeout(() => setSaveState('idle'), 2000)
+      } catch {
+        setSaveState('idle')
+      }
+    })
+  }, [articleId, projectId, content, editedContent])
 
   const handleCopy = useCallback(async () => {
     try {
@@ -310,6 +333,15 @@ export function ArticleExportPanel({
           </button>
         ))}
         <div className="ml-auto flex items-center gap-2 px-4">
+          {isDirty && (
+            <button
+              onClick={handleSave}
+              disabled={saveState === 'saving'}
+              className="w-24 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none"
+            >
+              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : '保存する'}
+            </button>
+          )}
           <button
             onClick={handleCopy}
             className="w-32 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
@@ -367,11 +399,13 @@ export function ArticleExportPanel({
           </pre>
         </div>
       ) : (
-        <div className="p-5">
-          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
-            {output}
-          </pre>
-        </div>
+        <textarea
+          value={safeFormat === 'markdown' ? editedContent : output}
+          onChange={safeFormat === 'markdown' ? (e) => setEditedContent(e.target.value) : undefined}
+          readOnly={safeFormat !== 'markdown'}
+          className="w-full resize-none bg-transparent p-5 text-sm leading-relaxed text-[var(--text2)] focus:outline-none"
+          style={{ minHeight: '200px', height: 'auto', fieldSizing: 'content' } as React.CSSProperties}
+        />
       )}
       {copyError && (
         <p className="px-5 pb-3 text-xs text-[var(--text3)]">コピーできませんでした。手動でお試しください。</p>

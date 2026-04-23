@@ -121,6 +121,8 @@ export default async function ArticleDetailPage({
               interviewerName={interviewer?.name ?? null}
               interviewerLabel={interviewer?.label ?? null}
               clientName={project.name ?? project.hp_url ?? null}
+              articleId={article.id}
+              projectId={id}
             />
           </>
         )}
