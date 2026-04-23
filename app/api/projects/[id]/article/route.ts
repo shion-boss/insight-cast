@@ -368,7 +368,17 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
 - 全体の文字数: ${volumeLabel}文字程度
 - タイトルを最初に書く（# タイトル）
 - 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
-- Markdown形式で出力${polishInstruction}`
+- Markdown形式で出力${polishInstruction}
+
+## 【重要】会話の最初のインタビュアー発言について
+会話バブルとして表示されるとき、インタビュアーの1コメント目は読者にとって最初の接触になります。唐突に質問から入ると文脈がないため、**最初のインタビュアー発言だけ**以下の構造にしてください。
+
+- 記事冒頭の導入文（事業者の背景・特徴）を1〜2文で要約したコメント
+- そのまま自然につながる質問
+
+例: **${charName}**: ${bizName}さんは[導入文から引き出した特徴を1文で]。そのきっかけを教えていただけますか？
+
+2回目以降のインタビュアー発言は通常どおりの質問形式で構いません。`
   }
 
   await markArticleGenerationStarted({ supabase, projectId, interviewId })
