@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { marked } from 'marked'
+import Image from 'next/image'
+import { getCharacter } from '@/lib/characters'
 
 type Format = 'text' | 'markdown' | 'html'
 
@@ -259,6 +261,7 @@ export function ArticleExportPanel({
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
 
+  const char = getCharacter(interviewerId ?? 'mint')
   const output = getContent({ format, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName })
 
   const handleCopy = useCallback(async () => {
@@ -287,6 +290,28 @@ export function ArticleExportPanel({
 
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+      {/* キャラ吹き出しヘッダー */}
+      <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+        <div className="relative flex-shrink-0">
+          {char?.icon48 ? (
+            <Image
+              src={char.icon48}
+              alt={`${char.name ?? 'インタビュアー'}のアイコン`}
+              width={40}
+              height={40}
+              className="rounded-full border border-[var(--border)] object-cover"
+            />
+          ) : (
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-lg">
+              {char?.emoji ?? '🐱'}
+            </div>
+          )}
+        </div>
+        <div className="relative rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-sm text-[var(--text2)]">
+          記事をまとめました。好きな形式でお使いください。
+        </div>
+      </div>
+
       <div className="flex border-b border-[var(--border)]">
         {(Object.keys(FORMAT_LABELS) as Format[]).map((f) => (
           <button
