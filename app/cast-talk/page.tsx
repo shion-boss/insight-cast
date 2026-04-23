@@ -120,7 +120,7 @@ export default async function CastTalkPage() {
                   <Link
                     key={talk.id}
                     href={`/cast-talk/${talk.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[5px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_14px_36px_rgba(0,0,0,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     {/* 画像エリア */}
                     <div className="relative aspect-video overflow-hidden">
@@ -129,7 +129,7 @@ export default async function CastTalkPage() {
                           src={storyImg}
                           alt={`${getCastName(talk.interviewer_id)} × ${getCastName(talk.guest_id)}`}
                           fill
-                          className="object-cover brightness-95 saturate-90 transition-transform duration-300 group-hover:scale-[1.03]"
+                          className="object-cover brightness-95 saturate-90"
                         />
                       ) : (
                         <div className="h-full bg-[var(--accent-l)]" />
