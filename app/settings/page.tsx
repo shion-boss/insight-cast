@@ -100,6 +100,7 @@ export default function SettingsPage() {
   const mint = getCharacter('mint')
 
   const [userId, setUserId] = useState('')
+  const [isEmailUser, setIsEmailUser] = useState(false)
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [initialName, setInitialName] = useState('')
@@ -153,6 +154,7 @@ export default function SettingsPage() {
 
     setUserId(user.id)
     setEmail(user.email ?? '')
+    setIsEmailUser(user.app_metadata?.provider === 'email')
     getIsAdmin().then(setIsAdmin).catch((err) => { console.warn('[settings] getIsAdmin failed:', err) })
 
     const [{ data: profile, error: profileError }, { data: userProjects }, { data: subscription }] = await Promise.all([
@@ -829,6 +831,11 @@ export default function SettingsPage() {
               </h2>
               <p className="mb-6 text-xs text-[var(--text3)]">ログイン中のアカウントのパスワードを更新できます</p>
 
+              {!isEmailUser ? (
+                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5 text-sm text-[var(--text3)]">
+                  Googleアカウントでログイン中のため、パスワードの設定はありません。
+                </p>
+              ) : (
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5">
                 <div className="space-y-4">
                   <div>
@@ -879,6 +886,7 @@ export default function SettingsPage() {
                   )}
                 </div>
               </div>
+              )}
             </section>
           )}
         </div>
