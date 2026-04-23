@@ -40,6 +40,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/privacy' ||
     pathname === '/terms' ||
     pathname === '/tokushoho' ||
+    pathname === '/contact' ||
     pathname.startsWith('/auth/')
 
   // /admin へのアクセス制御: ADMIN_EMAILS に含まれるメールのみ許可
