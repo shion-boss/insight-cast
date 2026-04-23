@@ -147,18 +147,18 @@ function buildConversationHtml(opts: {
     if (match) {
       flushProse()
       const speaker = match[1]
-      const text = escapeHtml(match[2])
+      const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
       const isCast = speaker === interviewerName
       if (isCast) {
         // インタビュアー: 右寄せ・アイコンなし
         bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-  <div style="background:#ede8e0;border-radius:16px 4px 16px 16px;padding:14px 18px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${text}</div>
+  <div style="background:#ede8e0;border-radius:16px 4px 16px 16px;padding:14px 18px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
 </div>`)
       } else {
         // 回答者: 左寄せ・イニシャルアイコンあり
-        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;">
-  <div style="width:32px;height:32px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(clientInitial)}</div>
-  <div style="background:#e8eeff;border-radius:4px 16px 16px 16px;padding:14px 18px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${text}</div>
+        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:24px;">
+  <div style="width:32px;height:32px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>
+  <div style="background:#e8eeff;border-radius:4px 16px 16px 16px;padding:14px 18px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
 </div>`)
       }
     } else if (line.trim()) {
