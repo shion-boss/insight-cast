@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insight Cast — 記事埋め込みHTML 3パターン</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #e8e0d8; padding: 32px 16px; margin: 0; }
+  .pattern-label { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #7a6555; text-transform: uppercase; margin: 48px 0 12px; }
+  .pattern-label:first-child { margin-top: 0; }
+  h2.section { font-family: system-ui, sans-serif; font-size: 13px; color: #b8a898; margin: 0 0 16px; font-weight: 400; }
+</style>
+</head>
+<body>
+
+<p class="pattern-label">Pattern 1 — Client / 取材記事</p>
+
+<!-- ============================================================
+     PATTERN 1: CLIENT
+     Template placeholders: {{title}}, {{date}}, {{content}}
+     ============================================================ -->
+<div style="
+  box-sizing: border-box;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fdf7f0;
+  padding: 40px 32px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1c1410;
+  border-radius: 4px;
+">
+
+  <!-- Eyebrow -->
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #c2722a; text-transform: uppercase; margin-bottom: 14px;">
+    取材記事
+  </div>
+
+  <!-- Title -->
+  <h1 style="font-size: 24px; font-weight: 700; color: #1c1410; line-height: 1.4; margin: 0 0 12px;">
+    {{title}}
+  </h1>
+  <!-- DEMO: -->
+  <h1 style="font-size: 24px; font-weight: 700; color: #1c1410; line-height: 1.4; margin: 0 0 12px; display: none;">
+    地元の素材を生かした手しごとで、暮らしに温もりを届けたい
+  </h1>
+
+  <!-- Date -->
+  <div style="font-size: 12px; color: #b8a898; margin-bottom: 24px;">
+    {{date}}
+  </div>
+
+  <!-- Divider -->
+  <div style="height: 2px; background: #c2722a; opacity: 0.3; margin-bottom: 32px; border-radius: 1px;"></div>
+
+  <!-- Content -->
+  <div style="font-size: 15px; line-height: 1.8; color: #7a6555;">
+    {{content}}
+  </div>
+
+  <!-- DEMO CONTENT (remove in production, replace with {{content}}) -->
+  <div>
+    <h2 style="font-size: 18px; font-weight: 700; border-left: 3px solid #c2722a; padding-left: 12px; color: #1c1410; margin: 32px 0 16px;">工房を始めたきっかけ</h2>
+    <p style="font-size: 15px; line-height: 1.8; color: #7a6555; margin: 0 0 16px;">もともと都市部でデザイン事務所に勤めていましたが、30代の半ばに体を壊したことで、ものの見方が変わりました。回復する中で自然と手を動かすようになり、地元の山から採取した木材でカトラリーを作り始めたのが最初です。</p>
+    <p style="font-size: 15px; line-height: 1.8; color: #7a6555; margin: 0 0 16px;">最初は趣味の延長でしたが、マルシェに出品すると予想以上の反響があって。「これで生きていけるかもしれない」と思ったのは、あの日が初めてでした。</p>
+    <h2 style="font-size: 18px; font-weight: 700; border-left: 3px solid #c2722a; padding-left: 12px; color: #1c1410; margin: 32px 0 16px;">素材へのこだわり</h2>
+    <p style="font-size: 15px; line-height: 1.8; color: #7a6555; margin: 0 0 16px;">使う木材はすべて地元の間伐材か、倒木として出たものだけです。山の整備に関わる人たちと連携しながら、捨てられるはずだった木に新しい命を吹き込む感覚が好きで。合板や輸入材は一切使いません。</p>
+    <ul style="font-size: 15px; line-height: 1.8; color: #7a6555; margin: 0 0 16px; padding-left: 20px;">
+      <li>栗材：硬さと木目の美しさのバランスが最高</li>
+      <li>桜材：色味が温かく、食器に向いている</li>
+      <li>楠（クスノキ）：香りがあり、虫除け効果も</li>
+    </ul>
+    <p style="font-size: 15px; line-height: 1.8; color: #7a6555; margin: 0;">素材に向き合う時間は、私にとって瞑想のようなもの。木が持つ個性を壊さず、引き出すことだけを考えています。</p>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2d5c3; text-align: right;">
+    <a href="https://insight-cast.jp" target="_blank" style="font-size: 11px; color: #b8a898; text-decoration: none; letter-spacing: 0.05em;">
+      Powered by Insight Cast ↗
+    </a>
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     PATTERN 2: INTERVIEWER
+     Template placeholders: {{title}}, {{date}}, {{interviewer_name}},
+     {{interviewer_label}}, {{interviewer_color}}, {{content}}
+     ============================================================ -->
+
+<p class="pattern-label" style="margin-top: 56px;">Pattern 2 — Interviewer / 取材レポート</p>
+
+<div style="
+  box-sizing: border-box;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fdf7f0;
+  padding: 40px 32px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1c1410;
+  border-radius: 4px;
+">
+
+  <!-- Eyebrow -->
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #c2722a; text-transform: uppercase; margin-bottom: 14px;">
+    取材レポート
+  </div>
+
+  <!-- Title -->
+  <h1 style="font-size: 24px; font-weight: 700; color: #1c1410; line-height: 1.4; margin: 0 0 20px;">
+    {{title}}
+  </h1>
+
+  <!-- Byline -->
+  <div style="background: #f5e8d8; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 32px; box-sizing: border-box;">
+    <!-- Cast color dot: color = {{interviewer_color}} -->
+    <div style="width: 10px; height: 10px; border-radius: 50%; background: {{interviewer_color}}; flex-shrink: 0;"></div>
+    <div style="flex: 1; min-width: 0;">
+      <div style="font-size: 13px; font-weight: 700; color: #1c1410; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        {{interviewer_name}}
+        <span style="font-size: 11px; font-weight: 400; color: #7a6555; margin-left: 8px;">{{interviewer_label}}</span>
+      </div>
+      <div style="font-size: 11px; color: #b8a898; margin-top: 2px;">{{date}} 取材</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div>{{content}}</div>
+
+  <!-- DEMO CONTENT -->
+  <div>
+    <p style="font-size: 15px; line-height: 1.8; color: #3d2b1f; margin: 0 0 16px;">取材に伺ったのは、山の麓にある小さな工房。扉を開けた瞬間、木の香りと静けさが同時に押し寄せてきました。オーナーの田中さんは、都会での仕事を手放してこの地に移り住み、今では全国にファンを持つ木工作家です。</p>
+    <h2 style="font-size: 17px; font-weight: 700; border-top: 1px solid #e2d5c3; padding-top: 20px; margin-top: 28px; margin-bottom: 14px; color: #1c1410;">「失敗作」が生み出した代表作</h2>
+    <p style="font-size: 15px; line-height: 1.8; color: #3d2b1f; margin: 0 0 16px;">田中さんの代名詞ともいえる「波紋スプーン」は、実は削りすぎた失敗作から生まれたそうです。捨てようとした瞬間に光が当たり、偶然生まれた曲線の美しさに気づいた。その感覚を意図的に再現しようと試行錯誤した末に、現在のフォルムが完成しました。</p>
+    <p style="font-size: 15px; line-height: 1.8; color: #3d2b1f; margin: 0 0 16px;">「完璧を目指すより、素材と対話することの方が大事」という言葉が印象的でした。計画通りにいかないことを恐れず、そこに可能性を見出す姿勢が、田中さんの作品の温かみにつながっているのだと感じました。</p>
+    <h2 style="font-size: 17px; font-weight: 700; border-top: 1px solid #e2d5c3; padding-top: 20px; margin-top: 28px; margin-bottom: 14px; color: #1c1410;">地域との深いつながり</h2>
+    <p style="font-size: 15px; line-height: 1.8; color: #3d2b1f; margin: 0;">工房の近くには、田中さんが定期的に木材を仕入れる山林があります。地元の林業家との信頼関係が、素材の質を担保しているといいます。「いい木を分けてもらうためには、その人の仕事を理解して、リスペクトすることが先」。ものづくりは、人と人のつながりの上に成り立っていることを改めて教わりました。</p>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2d5c3; text-align: right;">
+    <a href="https://insight-cast.jp" target="_blank" style="font-size: 11px; color: #b8a898; text-decoration: none; letter-spacing: 0.05em;">
+      Powered by Insight Cast ↗
+    </a>
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     PATTERN 3: CONVERSATION
+     Template placeholders: {{title}}, {{date}}, {{interviewer_name}},
+     {{interviewer_color}}, {{interviewer_initial}},
+     {{client_name}}, {{client_initial}}, {{content}}
+
+     NOTE: {{content}} should be pre-processed server-side:
+     Parse lines matching /^\*\*(.+?)\*\*: (.+)$/ and emit
+     cast-bubble or client-bubble divs as shown below.
+     ============================================================ -->
+
+<p class="pattern-label" style="margin-top: 56px;">Pattern 3 — Conversation / インタビュー</p>
+
+<div style="
+  box-sizing: border-box;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fdf7f0;
+  padding: 40px 32px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #1c1410;
+  border-radius: 4px;
+">
+
+  <!-- Eyebrow -->
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #c2722a; text-transform: uppercase; margin-bottom: 14px;">
+    インタビュー
+  </div>
+
+  <!-- Title -->
+  <h1 style="font-size: 24px; font-weight: 700; color: #1c1410; line-height: 1.4; margin: 0 0 16px;">
+    {{title}}
+  </h1>
+
+  <!-- Participants row -->
+  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+    <!-- Cast badge: bg = {{interviewer_color}} -->
+    <div style="width: 24px; height: 24px; border-radius: 50%; background: {{interviewer_color}}; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;">{{interviewer_initial}}</div>
+    <span style="font-size: 13px; font-weight: 600; color: #1c1410;">{{interviewer_name}}</span>
+    <span style="font-size: 12px; color: #b8a898;">×</span>
+    <span style="font-size: 13px; font-weight: 600; color: #1c1410;">{{client_name}}</span>
+  </div>
+  <div style="font-size: 12px; color: #b8a898; margin-bottom: 28px;">{{date}}</div>
+
+  <!-- Divider -->
+  <div style="height: 1px; background: #e2d5c3; margin-bottom: 28px;"></div>
+
+  <!-- ---- CONVERSATION BUBBLES ---- -->
+  <!-- Each exchange: cast asks (left), client answers (right) -->
+  <!-- Repeat this block for each Q&A pair from parsed content -->
+
+  <!-- intro prose (non-dialogue paragraphs, if any) -->
+  <p style="font-size: 14px; line-height: 1.8; color: #7a6555; margin: 0 0 24px;">田中さんの工房を訪ねたのは、春の穏やかな午後。木の香りが漂う静かな空間で、ものづくりへの想いを伺いました。</p>
+
+  <!-- Exchange 1 -->
+  <!-- Cast bubble (left) -->
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;">
+    <!-- Badge: bg={{interviewer_color}} -->
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: {{interviewer_color}}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{interviewer_initial}}</div>
+    <div style="background: #fff8f0; border: 1px solid #e2d5c3; border-radius: 4px 16px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      木工を始めようと思ったきっかけを教えてもらえますか？
+    </div>
+  </div>
+  <!-- Client bubble (right) -->
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 28px; flex-direction: row-reverse;">
+    <!-- Client badge -->
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: #d4a26a; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{client_initial}}</div>
+    <div style="background: #f0f4ff; border: 1px solid #d4d9f0; border-radius: 16px 4px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      30代で体を壊して、初めてゆっくり手を動かす時間ができたんです。地元の木で何か作ってみたら、それが思った以上に楽しくて。
+    </div>
+  </div>
+
+  <!-- Exchange 2 -->
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;">
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: {{interviewer_color}}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{interviewer_initial}}</div>
+    <div style="background: #fff8f0; border: 1px solid #e2d5c3; border-radius: 4px 16px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      素材選びでこだわっていることはありますか？
+    </div>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 28px; flex-direction: row-reverse;">
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: #d4a26a; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{client_initial}}</div>
+    <div style="background: #f0f4ff; border: 1px solid #d4d9f0; border-radius: 16px 4px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      全部、地元の間伐材か倒木です。山の人たちと連携しながら、捨てられるはずだった木に命を吹き込む感覚が好きで。輸入材は一切使いません。
+    </div>
+  </div>
+
+  <!-- Exchange 3 -->
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px;">
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: {{interviewer_color}}; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{interviewer_initial}}</div>
+    <div style="background: #fff8f0; border: 1px solid #e2d5c3; border-radius: 4px 16px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      これから挑戦したいことはありますか？
+    </div>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 28px; flex-direction: row-reverse;">
+    <div style="width: 32px; height: 32px; border-radius: 50%; background: #d4a26a; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 2px;">{{client_initial}}</div>
+    <div style="background: #f0f4ff; border: 1px solid #d4d9f0; border-radius: 16px 4px 16px 16px; padding: 12px 16px; max-width: 75%; font-size: 14px; line-height: 1.7; color: #3d2b1f; box-sizing: border-box;">
+      子どもたちに木のことを伝えるワークショップをやりたいです。道具の使い方より、素材と向き合う時間の豊かさを知ってほしい。
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top: 40px; padding-top: 16px; border-top: 1px solid #e2d5c3; text-align: right;">
+    <a href="https://insight-cast.jp" target="_blank" style="font-size: 11px; color: #b8a898; text-decoration: none; letter-spacing: 0.05em;">
+      Powered by Insight Cast ↗
+    </a>
+  </div>
+
+</div>
+
+<div style="height: 48px;"></div>
+
+</body>
+</html>
