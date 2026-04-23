@@ -156,7 +156,10 @@ export default function InterviewPage() {
         setMessages(history as Message[])
         setUserTurns(history.filter(m => m.role === 'user').length)
       } else {
-        await sendMessageToAI(null)
+        const result = await sendMessageToAI(null)
+        if (!result.ok) {
+          setSubmitError('取材を始められませんでした。ページを再読み込みしてもう一度お試しください。')
+        }
       }
       setInitializing(false)
       setTimeout(() => textareaRef.current?.focus(), 50)

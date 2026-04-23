@@ -113,7 +113,7 @@ export default async function InterviewerPage({
             />
             <div className="mt-4 flex gap-3">
               <Link
-                href="/pricing"
+                href="/pricing?reason=free_plan_locked"
                 className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る →

@@ -9,7 +9,7 @@ import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
-import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { isFreePlanLocked } from '@/lib/plans'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -203,19 +203,8 @@ export async function POST(
     return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
   }
 
-  // 無料プランの生涯記事生成回数チェック
-  const userPlan = await getUserPlan(supabase, user.id)
-  const planLimits = getPlanLimits(userPlan)
-  if (planLimits.lifetimeArticleLimit !== null) {
-    const { data: userProjects } = await supabase.from('projects').select('id').eq('user_id', user.id)
-    const userProjectIds = (userProjects ?? []).map((p) => p.id as string)
-    const { count: articleCount } = await supabase
-      .from('articles')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
-    if ((articleCount ?? 0) >= planLimits.lifetimeArticleLimit) {
-      return NextResponse.json({ error: 'lifetime_article_limit' }, { status: 403 })
-    }
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
   const { data: project } = await supabase
