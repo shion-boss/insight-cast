@@ -249,12 +249,16 @@ export function ArticleExportPanel({
   interviewerLabel: string | null
   clientName: string | null
 }) {
+  const availableFormats = (Object.keys(FORMAT_LABELS) as Format[]).filter(
+    (f) => f !== 'html' || articleType === 'conversation'
+  )
   const [format, setFormat] = useState<Format>('markdown')
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
 
   const char = getCharacter(interviewerId ?? 'mint')
-  const output = getContent({ format, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName })
+  const safeFormat = availableFormats.includes(format) ? format : 'markdown'
+  const output = getContent({ format: safeFormat, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName })
 
   const handleCopy = useCallback(async () => {
     try {
@@ -271,11 +275,11 @@ export function ArticleExportPanel({
   const handleDownload = useCallback(() => {
     const mimeMap: Record<Format, string> = { text: 'text/plain', markdown: 'text/markdown', html: 'text/html' }
     const extMap: Record<Format, string> = { text: 'txt', markdown: 'md', html: 'html' }
-    const blob = new Blob([output], { type: mimeMap[format] })
+    const blob = new Blob([output], { type: mimeMap[safeFormat] })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[format]}`
+    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[safeFormat]}`
     a.click()
     URL.revokeObjectURL(url)
   }, [output, format, title])
@@ -305,12 +309,12 @@ export function ArticleExportPanel({
       </div>
 
       <div className="flex border-b border-[var(--border)]">
-        {(Object.keys(FORMAT_LABELS) as Format[]).map((f) => (
+        {availableFormats.map((f) => (
           <button
             key={f}
             onClick={() => setFormat(f)}
             className={`flex-1 px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
-              format === f
+              safeFormat === f
                 ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
                 : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
             }`}
