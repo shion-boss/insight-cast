@@ -368,17 +368,17 @@ export default function InterviewPage() {
       {/* 会話ログ */}
       <div className="flex-1 overflow-y-auto p-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
         {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={i} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
               <CharacterAvatar
                 src={char?.icon48}
                 alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
                 emoji={char?.emoji}
                 size={32}
-                className="mt-1 border-[var(--border)] bg-[var(--accent-l)]"
+                className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
               />
             )}
-            <div className={`max-w-[68%] px-4 py-3 text-sm whitespace-pre-wrap leading-[1.75] ${
+            <div className={`max-w-[60%] px-3 py-1 text-[15px] whitespace-pre-wrap leading-[1.85] ${
               msg.role === 'interviewer'
                 ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
                 : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
@@ -388,16 +388,16 @@ export default function InterviewPage() {
           </div>
         ))}
         {(loading || streamingMessage) && (
-          <div className="flex gap-3">
+          <div className="flex gap-1">
             <CharacterAvatar
               src={char?.icon48}
               alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
               emoji={char?.emoji}
               size={32}
-              className="border-[var(--border)] bg-[var(--accent-l)]"
+              className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
             />
-            <div className="bg-[var(--surface)] border border-[var(--border)] px-4 py-3 rounded-2xl rounded-tl-sm">
-              <span className="text-[var(--text2)] text-sm whitespace-pre-wrap leading-[1.75]">
+            <div className="bg-[var(--surface)] border border-[var(--border)] px-3 py-1 rounded-2xl rounded-tl-sm">
+              <span className="text-[var(--text2)] text-[15px] whitespace-pre-wrap leading-[1.85]">
                 {streamingMessage || '少し待ってください...'}
               </span>
             </div>
