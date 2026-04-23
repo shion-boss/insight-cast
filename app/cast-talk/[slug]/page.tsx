@@ -114,11 +114,12 @@ export default async function CastTalkDetailPage({
 
             {/* ストーリー画像 */}
             {storyImage && (
-              <div className="mt-6 overflow-hidden rounded-xl sm:mt-8 sm:rounded-2xl">
+              <div className="relative mt-6 aspect-video overflow-hidden rounded-xl sm:mt-8 sm:rounded-2xl">
                 <Image
                   src={storyImage}
                   alt={`${interviewer?.name ?? ''}と${guest?.name ?? ''}の対話`}
-                  className="w-full object-cover"
+                  fill
+                  className="object-cover"
                   placeholder="blur"
                 />
               </div>

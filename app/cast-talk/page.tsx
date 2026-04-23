@@ -123,7 +123,7 @@ export default async function CastTalkPage() {
                     className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[5px] hover:shadow-[0_20px_56px_rgba(0,0,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     {/* 画像エリア */}
-                    <div className="relative h-[180px] overflow-hidden">
+                    <div className="relative aspect-video overflow-hidden">
                       {storyImg ? (
                         <Image
                           src={storyImg}
