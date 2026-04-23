@@ -131,12 +131,17 @@ function buildConversationHtml(opts: {
   interviewerName: string
   clientName: string
   clientInitial: string
+  userAvatarUrl: string | null
   themeColor: string
 }): string {
-  const { content, interviewerName, clientName, clientInitial, themeColor } = opts
+  const { content, interviewerName, clientName, clientInitial, userAvatarUrl, themeColor } = opts
   const questionBg = lighten(themeColor, 0.88)
-  const answerBg   = lighten(themeColor, 0.94)
+  const answerBg   = lighten(themeColor, 0.82)
   const badgeBg    = themeColor
+
+  const badgeHtml = userAvatarUrl
+    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:-8px;" />`
+    : `<div style="width:32px;height:32px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>`
 
   const bubblesHtml: string[] = []
 
@@ -150,7 +155,7 @@ function buildConversationHtml(opts: {
 </div>`)
     } else {
       bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:16px;">
-  <div style="width:32px;height:32px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>
+  ${badgeHtml}
   <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
 </div>`)
     }
@@ -173,9 +178,10 @@ function buildHtml(opts: {
   interviewerLabel: string | null
   interviewerId: string | null
   clientName: string | null
+  userAvatarUrl: string | null
   themeColor: string
 }): string {
-  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, themeColor } = opts
+  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, userAvatarUrl, themeColor } = opts
   const interviewerColor = CAST_COLORS[interviewerId ?? ''] ?? '#c2722a'
   const dateStr = formatDateShort(date)
 
@@ -185,6 +191,7 @@ function buildHtml(opts: {
       interviewerName,
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
+      userAvatarUrl,
       themeColor,
     })
   }
@@ -209,6 +216,7 @@ function getContent(opts: {
   interviewerLabel: string | null
   interviewerId: string | null
   clientName: string | null
+  userAvatarUrl: string | null
   themeColor: string
 }): string {
   const { format, ...rest } = opts
@@ -226,6 +234,7 @@ export function ArticleExportPanel({
   interviewerName,
   interviewerLabel,
   clientName,
+  userAvatarUrl,
   articleId,
   projectId,
 }: {
@@ -237,6 +246,7 @@ export function ArticleExportPanel({
   interviewerName: string | null
   interviewerLabel: string | null
   clientName: string | null
+  userAvatarUrl: string | null
   articleId: string
   projectId: string
 }) {
@@ -254,7 +264,7 @@ export function ArticleExportPanel({
 
   const char = getCharacter(interviewerId ?? 'mint')
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
-  const output = getContent({ format: safeFormat, articleType, title, date, content: editedContent, interviewerName, interviewerLabel, interviewerId, clientName, themeColor })
+  const output = getContent({ format: safeFormat, articleType, title, date, content: editedContent, interviewerName, interviewerLabel, interviewerId, clientName, userAvatarUrl, themeColor })
 
   const handleSave = useCallback(() => {
     setSaveState('saving')

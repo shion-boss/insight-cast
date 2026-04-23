@@ -34,7 +34,7 @@ export default async function ArticleDetailPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name')
+    .select('name, avatar_url')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -121,6 +121,7 @@ export default async function ArticleDetailPage({
               interviewerName={interviewer?.name ?? null}
               interviewerLabel={interviewer?.label ?? null}
               clientName={project.name ?? project.hp_url ?? null}
+              userAvatarUrl={profile?.avatar_url ?? null}
               articleId={article.id}
               projectId={id}
             />
