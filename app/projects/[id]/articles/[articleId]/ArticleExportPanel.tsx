@@ -157,7 +157,7 @@ function buildConversationHtml(opts: {
       } else {
         // 回答者: 左寄せ・イニシャルアイコンあり
         bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:24px;">
-  <div style="width:44px;height:44px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(clientInitial)}</div>
+  <div style="width:32px;height:32px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(clientInitial)}</div>
   <div style="background:#e8eeff;border-radius:4px 16px 16px 16px;padding:14px 18px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${text}</div>
 </div>`)
       }
