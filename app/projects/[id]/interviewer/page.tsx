@@ -8,7 +8,7 @@ import {
 } from '@/lib/interview-focus-theme'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] ?? '' : value ?? ''
@@ -109,7 +109,7 @@ export default async function InterviewerPage({
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text3)] mt-3 font-medium">引き出すこと: {char.specialty}</div>
                 <div className="mt-4 text-xs text-center py-2 bg-[var(--text)] text-white rounded-lg">
-                  <DevAiLabel>このキャストを選ぶ</DevAiLabel>
+                  このキャストを選ぶ
                 </div>
               </Link>
             ))}
