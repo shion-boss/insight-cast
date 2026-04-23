@@ -247,14 +247,20 @@ async function fetchRecentEdits(supabase: ReturnType<typeof createAdminClient>):
   return (data ?? []) as EditRecord[]
 }
 
+const MAX_EDITS_PER_CAST = 5
+
 function buildEditFewShot(edits: EditRecord[]): string {
   if (edits.length === 0) return ''
 
-  // キャストごとにまとめる
+  // キャストごとにまとめ、重複除去してMAX_EDITS_PER_CAST件に絞る
   const grouped: Record<string, EditRecord[]> = {}
   for (const e of edits) {
     if (!grouped[e.cast_id]) grouped[e.cast_id] = []
-    grouped[e.cast_id].push(e)
+    const seen = grouped[e.cast_id]
+    const isDuplicate = seen.some((s) => s.original_text === e.original_text)
+    if (!isDuplicate && seen.length < MAX_EDITS_PER_CAST) {
+      seen.push(e)
+    }
   }
 
   const castNameMap: Record<string, string> = {
@@ -265,6 +271,7 @@ function buildEditFewShot(edits: EditRecord[]): string {
 
   const lines: string[] = ['【過去の修正例（参考にして同じ言い回しを避けてください）】']
   for (const [castId, records] of Object.entries(grouped)) {
+    if (records.length === 0) continue
     const displayName = castNameMap[castId] ?? castId
     lines.push(`${displayName}:`)
     for (const r of records) {
