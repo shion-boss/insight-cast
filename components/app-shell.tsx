@@ -95,16 +95,7 @@ export function AppShell({
                 </span>
               </Link>
             )}
-            <div className="mb-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-3">
-              <p className="text-[11px] font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Account</p>
-              <Link
-                href="/settings"
-                className="mt-2 block rounded text-sm font-medium text-[var(--text)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {accountLabel}
-              </Link>
-            </div>
-            <div className="flex flex-col gap-2">
+<div className="flex flex-col gap-2">
               <Link href="/" className={getButtonClass('secondary', 'justify-center px-4 py-2.5 text-sm')}>
                 ← 公開サイトへ
               </Link>
