@@ -120,12 +120,10 @@ function buildConversationHtml(opts: {
   date: string
   content: string
   interviewerName: string
-  interviewerColor: string
-  interviewerInitial: string
   clientName: string
   clientInitial: string
 }): string {
-  const { title, date, content, interviewerName, interviewerColor, interviewerInitial, clientName, clientInitial } = opts
+  const { title, date, content, interviewerName, clientName, clientInitial } = opts
 
   const lines = content.split('\n')
   const bubblesHtml: string[] = []
@@ -152,14 +150,15 @@ function buildConversationHtml(opts: {
       const text = escapeHtml(match[2])
       const isCast = speaker === interviewerName
       if (isCast) {
-        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;">
-  <div style="width:32px;height:32px;border-radius:50%;background:${escapeHtml(interviewerColor)};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(interviewerInitial)}</div>
-  <div style="background:#fff8f0;border:1px solid #e2d5c3;border-radius:4px 16px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
+        // インタビュアー: 右寄せ・アイコンなし
+        bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+  <div style="background:#fff8f0;border:1px solid #e2d5c3;border-radius:16px 4px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
 </div>`)
       } else {
-        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:28px;flex-direction:row-reverse;">
+        // 回答者: 左寄せ・イニシャルアイコンあり
+        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:28px;">
   <div style="width:32px;height:32px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(clientInitial)}</div>
-  <div style="background:#f0f4ff;border:1px solid #d4d9f0;border-radius:16px 4px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
+  <div style="background:#f0f4ff;border:1px solid #d4d9f0;border-radius:4px 16px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
 </div>`)
       }
     } else if (line.trim()) {
@@ -173,12 +172,7 @@ function buildConversationHtml(opts: {
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
 <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">インタビュー</div>
 <h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 16px;">${escapeHtml(title)}</h1>
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
-  <div style="width:24px;height:24px;border-radius:50%;background:${escapeHtml(interviewerColor)};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(interviewerInitial)}</div>
-  <span style="font-size:13px;font-weight:600;color:#1c1410;">${escapeHtml(interviewerName)}</span>
-  <span style="font-size:12px;color:#b8a898;">×</span>
-  <span style="font-size:13px;font-weight:600;color:#1c1410;">${escapeHtml(clientName)}</span>
-</div>
+<div style="font-size:13px;font-weight:600;color:#1c1410;margin-bottom:6px;">${escapeHtml(clientName)}</div>
 <div style="font-size:12px;color:#b8a898;margin-bottom:28px;">${escapeHtml(date)}</div>
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
 ${bubblesHtml.join('\n')}
@@ -204,8 +198,6 @@ function buildHtml(opts: {
     return buildConversationHtml({
       title, date: dateStr, content,
       interviewerName,
-      interviewerColor,
-      interviewerInitial: initial(interviewerName),
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
     })
