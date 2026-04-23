@@ -271,7 +271,6 @@ export function ArticleExportPanel({
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
-  const [htmlPreview, setHtmlPreview] = useState(false)
 
   const char = getCharacter(interviewerId ?? 'mint')
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
@@ -353,39 +352,18 @@ export function ArticleExportPanel({
           <span className="font-mono text-xs text-[var(--text3)]">{themeColor}</span>
           <button
             onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
-            className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
+            className="ml-auto text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
           >
             リセット
           </button>
-          <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden text-xs font-semibold">
-            <button
-              onClick={() => setHtmlPreview(false)}
-              className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
-            >
-              コード
-            </button>
-            <button
-              onClick={() => setHtmlPreview(true)}
-              className={`px-3 py-1.5 transition-colors ${htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
-            >
-              プレビュー
-            </button>
-          </div>
         </div>
       )}
 
-      {safeFormat === 'html' && htmlPreview ? (
-        <div
-          className="min-h-[200px] p-5"
-          dangerouslySetInnerHTML={{ __html: output }}
-        />
-      ) : safeFormat === 'html' ? (
-        <div className="max-h-[320px] overflow-y-auto p-5">
-          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
-            {output}
-          </pre>
-        </div>
-      ) : null}
+      <div className="max-h-[320px] overflow-y-auto p-5">
+        <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
+          {output}
+        </pre>
+      </div>
 
       <div className="flex items-center gap-2 border-t border-[var(--border)] px-5 py-3">
         <button
