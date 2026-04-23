@@ -216,7 +216,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Cast team visual */}
-              <div className="relative">
+              <div className="relative overflow-visible py-3 px-3 sm:py-0 sm:px-0">
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.14)]">
                   <Image
                     src={sceneCastTeam}
@@ -227,11 +227,11 @@ export default async function LandingPage() {
                     priority
                   />
                 </div>
-                <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
+                <div className="hidden sm:block absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
                   <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
                   <div className="text-[12px] font-bold text-[var(--text)]">AIキャストがそろっています</div>
                 </div>
-                <div className="absolute -top-3 -right-3 bg-[var(--teal-l)] border border-[var(--teal)]/30 rounded-[12px] px-3.5 py-2 shadow-[0_4px_16px_rgba(0,0,0,.08)]">
+                <div className="hidden sm:block absolute -top-3 -right-3 bg-[var(--teal-l)] border border-[var(--teal)]/30 rounded-[12px] px-3.5 py-2 shadow-[0_4px_16px_rgba(0,0,0,.08)]">
                   <div className="text-[11px] font-bold text-[var(--teal)]">6名のキャスト</div>
                 </div>
               </div>
@@ -546,27 +546,29 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               「自分で書く」との違い
             </h2>
-            <div className="mt-11 overflow-x-auto rounded-[20px] border border-[var(--border)]">
-              <table className="min-w-[720px] w-full border-collapse">
+            {/* モバイルではスクロールヒントを表示 */}
+            <p className="mt-4 mb-3 text-xs text-[var(--text3)] text-center sm:hidden" aria-hidden="true">← スクロールして比較 →</p>
+            <div className="mt-4 sm:mt-11 overflow-x-auto rounded-[20px] border border-[var(--border)]">
+              <table className="min-w-[580px] w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[38%]"></th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで記事を書いてもらう</th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
+                    <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"></th>
+                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで書いてもらう</th>
+                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
+                    <th className="sticky right-0 z-10 px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white shadow-[-4px_0_8px_rgba(0,0,0,0.06)]">Insight Cast</th>
                   </tr>
                 </thead>
                 <tbody>
                   {COMPARE_ROWS.map((row) => (
                     <tr key={row.label}>
                       <td className="px-[22px] py-[15px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
+                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
                         {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
                       </td>
-                      <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
+                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
                         {row.none === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
                       </td>
-                      <td className="px-[22px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
+                      <td className="sticky right-0 z-10 px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] shadow-[-4px_0_8px_rgba(0,0,0,0.06)]">
                         <span className="text-[var(--teal)] text-lg font-bold">✓</span>
                       </td>
                     </tr>

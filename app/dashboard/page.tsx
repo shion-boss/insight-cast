@@ -259,7 +259,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { n: projectList.length,  l: '取材先',      delta: deltaLabel(projectDelta) },
           { n: interviews.length,   l: '完了した取材', delta: deltaLabel(interviewDelta) },
@@ -301,7 +301,7 @@ export default async function DashboardPage() {
             const claus = getCharacter('claus')
             const rain = getCharacter('rain')
             return (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Link
                   href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
                   className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
@@ -348,7 +348,7 @@ export default async function DashboardPage() {
           })()}
 
           {/* ── Projects + Interviews ── */}
-          <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>

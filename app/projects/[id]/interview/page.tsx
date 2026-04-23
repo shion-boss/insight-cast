@@ -301,26 +301,38 @@ export default function InterviewPage() {
         >
           {backLabel}
         </button>
-        <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <CharacterAvatar
             src={char?.icon48}
             alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
             emoji={char?.emoji}
             size={40}
-            className="border-2 border-[var(--accent)]"
+            className="border-2 border-[var(--accent)] flex-shrink-0"
           />
-          <div>
-            <p className="font-serif font-bold text-[var(--text)] text-sm">{char?.name}</p>
-            <p className="text-xs text-[var(--teal)]">{char?.specialty}</p>
+          <div className="min-w-0">
+            <p className="font-serif font-bold text-[var(--text)] text-sm truncate">{char?.name}</p>
+            <p className="text-xs text-[var(--teal)] hidden md:block">{char?.specialty}</p>
             {focusThemeLabel && (
-              <p className="mt-0.5 text-xs text-[var(--text3)]">{focusThemeLabel}</p>
+              <p className="mt-0.5 text-xs text-[var(--text3)] hidden md:block">{focusThemeLabel}</p>
             )}
           </div>
         </div>
+        {/* モバイル: アイコンのみ表示 */}
         <button
           type="button"
           onClick={handleManualFinish}
-          className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+          aria-label="インタビューを終わらせる"
+          className="md:hidden bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] p-2 transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          </svg>
+        </button>
+        {/* PC: テキストボタン */}
+        <button
+          type="button"
+          onClick={handleManualFinish}
+          className="hidden md:block bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
         >
           インタビューを終わらせる
         </button>
