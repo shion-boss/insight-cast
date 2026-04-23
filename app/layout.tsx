@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
+import { Geist_Mono, Noto_Sans_JP, Shippori_Mincho } from "next/font/google";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
 import GoogleAnalytics from "@/app/components/google-analytics";
@@ -18,10 +18,10 @@ const notoSansJP = Noto_Sans_JP({
   display: "swap",
 });
 
-const notoSerifJP = Noto_Serif_JP({
+const shipporiMincho = Shippori_Mincho({
   variable: "--font-noto-serif-jp",
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "600", "700", "800"],
   display: "swap",
 });
 
@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${geistMono.variable} ${notoSerifJP.variable} antialiased`}
+        className={`${notoSansJP.variable} ${geistMono.variable} ${shipporiMincho.variable} antialiased`}
       >
         <ProjectAnalysisNotifier />
         <ToastViewport />
