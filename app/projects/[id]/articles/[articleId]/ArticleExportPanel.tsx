@@ -73,7 +73,7 @@ function initial(name: string | null): string {
   return name ? name.slice(0, 1) : '?'
 }
 
-const FOOTER_HTML = `<div style="margin-top:40px;padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
+const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
 
 function buildClientHtml(opts: { title: string; date: string; content: string }): string {
   const { title, date, content } = opts
@@ -88,8 +88,7 @@ function buildClientHtml(opts: { title: string; date: string; content: string })
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
 <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材記事</div>
 <h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 12px;">${escapeHtml(title)}</h1>
-<div style="font-size:12px;color:#b8a898;margin-bottom:24px;">${escapeHtml(date)}</div>
-<div style="height:2px;background:#c2722a;opacity:0.3;margin-bottom:32px;border-radius:1px;"></div>
+<div style="font-size:12px;color:#b8a898;margin-bottom:32px;">${escapeHtml(date)}</div>
 <div>${styledBody}</div>
 ${FOOTER_HTML}
 </div>`
@@ -106,7 +105,7 @@ function buildInterviewerHtml(opts: {
   const { title, date, content, interviewerName, interviewerLabel, interviewerColor } = opts
   const bodyHtml = String(marked.parse(content, { async: false }))
   const styledBody = bodyHtml
-    .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;border-top:1px solid #e2d5c3;padding-top:20px;margin-top:28px;margin-bottom:14px;color:#1c1410;">')
+    .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;margin-top:32px;margin-bottom:14px;color:#1c1410;">')
     .replace(/<h3>/g, '<h3 style="font-size:15px;font-weight:700;color:#1c1410;margin:20px 0 10px;">')
     .replace(/<p>/g, '<p style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 16px;">')
     .replace(/<ul>/g, '<ul style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 16px;padding-left:20px;">')
