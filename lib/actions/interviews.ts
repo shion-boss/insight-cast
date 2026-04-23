@@ -38,24 +38,36 @@ export async function createInterview(projectId: string, formData: FormData) {
 
   if (!project) redirect('/dashboard')
 
-  // 月間取材回数チェック
-  const now = new Date()
-  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString()
   const { data: userProjects } = await supabase
     .from('projects')
     .select('id')
     .eq('user_id', user.id)
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
-  const { count: monthlyCount } = await supabase
-    .from('interviews')
-    .select('id', { count: 'exact', head: true })
-    .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-    .gte('created_at', monthStart)
 
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
-  if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
-    redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=monthly_limit`)
+
+  if (planLimits.lifetimeInterviewLimit !== null) {
+    // 無料プラン: 生涯インタビュー回数チェック
+    const { count: lifetimeCount } = await supabase
+      .from('interviews')
+      .select('id', { count: 'exact', head: true })
+      .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+    if ((lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit) {
+      redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=lifetime_limit`)
+    }
+  } else {
+    // 有料プラン: 月間インタビュー回数チェック
+    const now = new Date()
+    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString()
+    const { count: monthlyCount } = await supabase
+      .from('interviews')
+      .select('id', { count: 'exact', head: true })
+      .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+      .gte('created_at', monthStart)
+    if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
+      redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=monthly_limit`)
+    }
   }
 
   const { data: interview, error } = await supabase

@@ -45,15 +45,25 @@ export default async function InterviewerPage({
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
 
-  const now = new Date()
-  const thisMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
-  const { count: thisMonthInterviewCount } = await supabase
-    .from('interviews')
-    .select('id', { count: 'exact', head: true })
-    .in('project_id', (await supabase.from('projects').select('id').eq('user_id', user.id)).data?.map((p) => p.id) ?? [])
-    .gte('created_at', `${thisMonthKey}-01`)
+  const userProjectIds = (await supabase.from('projects').select('id').eq('user_id', user.id)).data?.map((p) => p.id) ?? []
 
-  const isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
+  let isInterviewLimitReached = false
+  if (planLimits.lifetimeInterviewLimit !== null) {
+    const { count: lifetimeCount } = await supabase
+      .from('interviews')
+      .select('id', { count: 'exact', head: true })
+      .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+    isInterviewLimitReached = (lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit
+  } else {
+    const now = new Date()
+    const thisMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
+    const { count: thisMonthInterviewCount } = await supabase
+      .from('interviews')
+      .select('id', { count: 'exact', head: true })
+      .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+      .gte('created_at', `${thisMonthKey}-01`)
+    isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
+  }
 
   const mint = getCharacter('mint')
 
@@ -96,8 +106,10 @@ export default async function InterviewerPage({
                 />
               )}
               name={mint?.name ?? 'ミント'}
-              title="今月の取材回数の上限に達しています。"
-              description="引き続き取材するには、プランをアップグレードするか、来月をお待ちください。"
+              title={planLimits.lifetimeInterviewLimit !== null ? '無料体験の取材回数を使い切りました。' : '今月の取材回数の上限に達しています。'}
+              description={planLimits.lifetimeInterviewLimit !== null
+                ? '引き続き取材するには、プランへのアップグレードが必要です。これまでのデータはすべて残っています。'
+                : '引き続き取材するには、プランをアップグレードするか、来月をお待ちください。'}
               tone="soft"
             />
             <div className="mt-4">
@@ -186,9 +198,11 @@ export default async function InterviewerPage({
               </div>
             </section>
 
-            {error === 'monthly_limit' && (
+            {(error === 'monthly_limit' || error === 'lifetime_limit') && (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-                今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。
+                {error === 'lifetime_limit'
+                  ? '無料体験の取材回数を使い切りました。プランへのアップグレードが必要です。'
+                  : '今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。'}
               </div>
             )}
 

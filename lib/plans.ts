@@ -6,8 +6,10 @@ export const PLANS = {
     label: '無料',
     maxProjects: 1,
     additionalProjectAllowed: false,
-    monthlyInterviewLimit: 2,
-    maxCompetitorsPerProject: 1,
+    monthlyInterviewLimit: 999,
+    lifetimeInterviewLimit: 1,
+    lifetimeArticleLimit: 3,
+    maxCompetitorsPerProject: 0,
     supportLabel: 'コミュニティサポート',
   },
   personal: {
@@ -16,6 +18,8 @@ export const PLANS = {
     maxProjects: 1,
     additionalProjectAllowed: false,
     monthlyInterviewLimit: 15,
+    lifetimeInterviewLimit: null,
+    lifetimeArticleLimit: null,
     maxCompetitorsPerProject: 3,
     supportLabel: '通常サポート',
   },
@@ -25,6 +29,8 @@ export const PLANS = {
     maxProjects: 3,
     additionalProjectAllowed: true,
     monthlyInterviewLimit: 60,
+    lifetimeInterviewLimit: null,
+    lifetimeArticleLimit: null,
     maxCompetitorsPerProject: 3,
     supportLabel: '優先サポート',
   },
@@ -34,6 +40,8 @@ export const PLANS = {
   maxProjects: number
   additionalProjectAllowed: boolean
   monthlyInterviewLimit: number
+  lifetimeInterviewLimit: number | null
+  lifetimeArticleLimit: number | null
   maxCompetitorsPerProject: number
   supportLabel: string
 }>
