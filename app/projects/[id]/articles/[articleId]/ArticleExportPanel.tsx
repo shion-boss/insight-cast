@@ -169,7 +169,7 @@ function buildConversationHtml(opts: {
   }
   flushProse()
 
-  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 0;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
+  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 4px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
 ${bubblesHtml.join('\n')}
 <div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
