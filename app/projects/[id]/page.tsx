@@ -214,7 +214,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               </div>
               <div>
                 <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
-                <div className="text-[13px] text-[var(--text2)]">🔗 {project.hp_url}</div>
+                <div className="text-[13px] text-[var(--text2)] flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text3)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  {project.hp_url}
+                </div>
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">

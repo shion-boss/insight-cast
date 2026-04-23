@@ -397,8 +397,8 @@ export async function POST(req: NextRequest) {
 
   try {
     const [{ data: blogPosts }, { data: pastTalks }] = await Promise.all([
-      supabase.from('blog_posts').select('title').eq('published', true).limit(50),
-      supabase.from('cast_talks').select('title').limit(50),
+      supabase.from('blog_posts').select('title').eq('published', true).limit(30),
+      supabase.from('cast_talks').select('title').order('published_at', { ascending: false }).limit(30),
     ])
 
     const existingBlogTitles = (blogPosts ?? []).map((p: { title: string }) => p.title)

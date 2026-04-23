@@ -71,9 +71,9 @@ const PAIN_ITEMS = [
 ] as const
 
 const OUTCOME_ITEMS = [
-  { icon: '💬', title: '当たり前の中に眠る価値が言葉になる', body: 'AIキャストが丁寧に取材することで、気づかなかった自社の強みが見えてきます。' },
-  { icon: '📄', title: '記事の素材が手元に届く', body: '取材で引き出した話をもとに、記事の素材が手元に届きます。何を書くか悩む前に、素材がある状態を作ります。' },
-  { icon: '📈', title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ね、問い合わせにつながるコンテンツ資産になります。' },
+  { charId: 'mint',  title: '当たり前の中に眠る価値が言葉になる', body: 'AIキャストが丁寧に取材することで、気づかなかった自社の強みが見えてきます。' },
+  { charId: 'claus', title: '記事の素材が手元に届く', body: '取材で引き出した話をもとに、記事の素材が手元に届きます。何を書くか悩む前に、素材がある状態を作ります。' },
+  { charId: 'rain',  title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ね、問い合わせにつながるコンテンツ資産になります。' },
 ] as const
 
 const WORKFLOW_ITEMS = [
@@ -130,7 +130,7 @@ const PLANS = [
 const FAQS = [
   { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を月2回ご利用いただけます。取材メモと記事素材を受け取るところまで無料で体験できます。' },
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
-  { q: '届いた記事素材はそのまま使えますか？', a: 'そのままブログに貼り付けられる品質です。気になる表現があれば少し手を加えていただく程度です。' },
+  { q: '届いた記事素材はそのまま使えますか？', a: '少し手を加えることで使える素材が届きます。そのままでも読める状態ですが、ご自身の言葉で調整していただくとより自然な仕上がりになります。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種にとらわれない客観的な視点で、あなたの仕事の論理的な価値を引き出します。専門用語を使わずに話していただければ、分かりやすく言語化します。' },
   { q: '途中でキャンセルできますか？', a: 'マイページの「プラン・請求」からいつでも解約できます。解約後もデータは保持されます。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
@@ -267,13 +267,18 @@ export default async function LandingPage() {
               Insight Cast を使うと、こう変わる
             </h2>
             <div className="mt-11 grid gap-5 md:grid-cols-3">
-              {OUTCOME_ITEMS.map((item) => (
-                <div key={item.title} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[var(--accent)]">
-                  <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center text-xl mb-5">{item.icon}</div>
-                  <h3 className="text-[17px] font-bold text-[var(--text)] mb-2.5 leading-[1.45]">{item.title}</h3>
-                  <p className="text-sm text-[var(--text2)] leading-[1.8]">{item.body}</p>
-                </div>
-              ))}
+              {OUTCOME_ITEMS.map((item) => {
+                const char = getCharacter(item.charId)
+                return (
+                  <div key={item.title} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[var(--accent)]">
+                    <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center mb-5">
+                      <CharacterAvatar src={char?.icon48} alt={char?.name ?? item.charId} emoji={char?.emoji} size={32} />
+                    </div>
+                    <h3 className="text-[17px] font-bold text-[var(--text)] mb-2.5 leading-[1.45]">{item.title}</h3>
+                    <p className="text-sm text-[var(--text2)] leading-[1.8]">{item.body}</p>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>

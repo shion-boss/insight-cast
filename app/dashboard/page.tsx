@@ -216,7 +216,7 @@ export default async function DashboardPage() {
             href="/pricing?reason=project_limit"
             className={getButtonClass('secondary', 'px-4 py-2.5 text-sm opacity-60 flex items-center gap-1.5')}
           >
-            <span>🔒</span> 取材先を追加（上限）
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 取材先を追加（上限）
           </Link>
         ) : (
           <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
@@ -232,7 +232,7 @@ export default async function DashboardPage() {
       >
         <div>
           <div className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold text-[var(--text)] mb-1.5">
-            こんにちは、{profile?.name ?? 'ゲスト'}さん 👋
+            こんにちは、{profile?.name ?? 'ゲスト'}さん
           </div>
           <div className="text-[13px] text-[var(--text2)]">
             今月の取材: <strong>{thisMonthInterviews} 回</strong>
@@ -245,7 +245,7 @@ export default async function DashboardPage() {
               href="/pricing?reason=interview_limit"
               className={getButtonClass('secondary', 'text-[13px] px-4 py-2 opacity-60 flex items-center gap-1.5')}
             >
-              <span>🔒</span> 今月の取材上限です
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 今月の取材上限です
             </Link>
           ) : (
             <Link
@@ -368,9 +368,15 @@ export default async function DashboardPage() {
                       href={getProjectContinueHref(project)}
                       className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
                     >
-                      <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
-                        <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
-                      </div>
+                      {(() => {
+                        const latestIv = latestInterviewMap.get(project.id)
+                        const cardChar = latestIv ? (getCharacter(latestIv.interviewer_type) ?? mint) : mint
+                        return (
+                          <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                            <CharacterAvatar src={cardChar?.icon48} alt={cardChar?.name ?? 'インタビュアー'} emoji={cardChar?.emoji} size={32} />
+                          </div>
+                        )
+                      })()}
                       <div className="flex-1 min-w-0">
                         <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                           {project.name || project.hp_url}
