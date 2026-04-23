@@ -295,12 +295,12 @@ export function ArticleExportPanel({
         </div>
       </div>
 
-      <div className="flex border-b border-[var(--border)]">
+      <div className="flex items-center border-b border-[var(--border)]">
         {availableFormats.map((f) => (
           <button
             key={f}
             onClick={() => setFormat(f)}
-            className={`flex-1 px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
+            className={`px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
               safeFormat === f
                 ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
                 : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
@@ -309,6 +309,20 @@ export function ArticleExportPanel({
             {FORMAT_LABELS[f]}
           </button>
         ))}
+        <div className="ml-auto flex items-center gap-2 px-4">
+          <button
+            onClick={handleCopy}
+            className="w-32 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+          >
+            {copied ? '✓ コピーしました' : 'コピー'}
+          </button>
+          <button
+            onClick={handleDownload}
+            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+          >
+            DL
+          </button>
+        </div>
       </div>
 
       {safeFormat === 'html' && (
@@ -345,32 +359,23 @@ export function ArticleExportPanel({
       )}
 
       {safeFormat === 'html' && htmlPreview ? (
-        <div className="min-h-[200px] p-5" dangerouslySetInnerHTML={{ __html: output }} />
+        <div className="p-5" dangerouslySetInnerHTML={{ __html: output }} />
       ) : safeFormat === 'html' ? (
-        <div className="max-h-[320px] overflow-y-auto p-5">
+        <div className="p-5">
           <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
             {output}
           </pre>
         </div>
-      ) : null}
-
-      <div className="flex items-center gap-2 border-t border-[var(--border)] px-5 py-3">
-        <button
-          onClick={handleCopy}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          {copied ? '✓ コピーしました' : 'コピー'}
-        </button>
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          ダウンロード
-        </button>
-        {copyError && (
-          <span className="text-xs text-[var(--text3)]">コピーできませんでした。手動でお試しください。</span>
-        )}
-      </div>
+      ) : (
+        <div className="p-5">
+          <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
+            {output}
+          </pre>
+        </div>
+      )}
+      {copyError && (
+        <p className="px-5 pb-3 text-xs text-[var(--text3)]">コピーできませんでした。手動でお試しください。</p>
+      )}
     </section>
   )
 }
