@@ -78,11 +78,7 @@ const PLANS = [
 ] as const
 
 const TABLE_ROWS = [
-<<<<<<< HEAD
   { label: '取材回数（月）', free: '2回', personal: '15回', business: '60回' },
-=======
-  { label: '取材回数（月）', free: '2回', personal: '15回', business: '20回' },
->>>>>>> b7bcb55 (feat: プラン制限UI・設定改善・Cast Talk/ブログカードデザイン刷新)
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
   { label: '競合調査', free: '1社', personal: '3社', business: '各取材先3社' },
