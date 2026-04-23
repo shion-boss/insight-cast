@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  webpack: (config) => {
+    // WasmHash bug workaround for Node.js 22.x + webpack
+    config.output.hashFunction = "xxhash64";
+    return config;
+  },
   async headers() {
     return [
       {
