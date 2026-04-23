@@ -127,62 +127,34 @@ ${FOOTER_HTML}
 }
 
 function buildConversationHtml(opts: {
-  title: string
-  date: string
   content: string
   interviewerName: string
   clientName: string
   clientInitial: string
   themeColor: string
 }): string {
-  const { title, date, content, interviewerName, clientName, clientInitial, themeColor } = opts
+  const { content, interviewerName, clientName, clientInitial, themeColor } = opts
   const questionBg = lighten(themeColor, 0.88)
   const answerBg   = lighten(themeColor, 0.94)
   const badgeBg    = themeColor
 
-  const lines = content.split('\n')
   const bubblesHtml: string[] = []
-  const proseParts: string[] = []
 
-  const flushProse = () => {
-    if (proseParts.length === 0) return
-    const paragraphs = proseParts
-      .join('\n')
-      .split(/\n{2,}/)
-      .map((p) => p.replace(/\n/g, ' ').trim())
-      .filter(Boolean)
-    for (const p of paragraphs) {
-      bubblesHtml.push(`<p style="font-size:14px;line-height:1.8;color:#7a6555;margin:0 0 24px;">${escapeHtml(p)}</p>`)
-    }
-    proseParts.length = 0
-  }
-
-  for (const line of lines) {
+  for (const line of content.split('\n')) {
     const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
-    if (match) {
-      flushProse()
-      const speaker = match[1]
-      const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
-      const isCast = speaker === interviewerName
-      if (isCast) {
-        // インタビュアー: 右寄せ・アイコンなし
-        bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+    if (!match) continue
+    const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
+    if (match[1] === interviewerName) {
+      bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
   <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
 </div>`)
-      } else {
-        // 回答者: 左寄せ・イニシャルアイコンあり
-        bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:16px;">
+    } else {
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:16px;">
   <div style="width:32px;height:32px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>
   <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
 </div>`)
-      }
-    } else if (line.trim()) {
-      proseParts.push(line.replace(/^#{1,6}\s+/, '').replace(/\*\*(.+?)\*\*/g, '$1'))
-    } else {
-      proseParts.push('')
     }
   }
-  flushProse()
 
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 4px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
@@ -209,7 +181,7 @@ function buildHtml(opts: {
 
   if (articleType === 'conversation' && interviewerName !== null) {
     return buildConversationHtml({
-      title, date: dateStr, content,
+      content,
       interviewerName,
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
@@ -264,9 +236,7 @@ export function ArticleExportPanel({
   interviewerLabel: string | null
   clientName: string | null
 }) {
-  const availableFormats = (Object.keys(FORMAT_LABELS) as Format[]).filter(
-    (f) => f !== 'html' || articleType === 'conversation'
-  )
+  const availableFormats = Object.keys(FORMAT_LABELS) as Format[]
   const [format, setFormat] = useState<Format>('markdown')
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
