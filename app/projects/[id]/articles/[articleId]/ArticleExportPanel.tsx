@@ -22,6 +22,17 @@ const CAST_COLORS: Record<string, string> = {
   cocco: '#be185d',
 }
 
+const DEFAULT_THEME_COLOR = '#c2722a'
+
+// テーマカラーから明度を上げた色を生成
+function lighten(hex: string, amount: number): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const mix = (c: number) => Math.round(c + (255 - c) * amount).toString(16).padStart(2, '0')
+  return `#${mix(r)}${mix(g)}${mix(b)}`
+}
+
 // インラインHTML文字列内でのXSS防止用エスケープ
 function escapeHtml(str: string): string {
   return str
@@ -122,8 +133,12 @@ function buildConversationHtml(opts: {
   interviewerName: string
   clientName: string
   clientInitial: string
+  themeColor: string
 }): string {
-  const { title, date, content, interviewerName, clientName, clientInitial } = opts
+  const { title, date, content, interviewerName, clientName, clientInitial, themeColor } = opts
+  const questionBg = lighten(themeColor, 0.88)
+  const answerBg   = lighten(themeColor, 0.94)
+  const badgeBg    = themeColor
 
   const lines = content.split('\n')
   const bubblesHtml: string[] = []
@@ -152,13 +167,13 @@ function buildConversationHtml(opts: {
       if (isCast) {
         // インタビュアー: 右寄せ・アイコンなし
         bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-  <div style="background:#ede8e0;border-radius:16px 4px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
+  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
 </div>`)
       } else {
         // 回答者: 左寄せ・イニシャルアイコンあり
         bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:16px;">
-  <div style="width:32px;height:32px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>
-  <div style="background:#e8eeff;border-radius:4px 16px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
+  <div style="width:32px;height:32px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>
+  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
 </div>`)
       }
     } else if (line.trim()) {
@@ -186,8 +201,9 @@ function buildHtml(opts: {
   interviewerLabel: string | null
   interviewerId: string | null
   clientName: string | null
+  themeColor: string
 }): string {
-  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName } = opts
+  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, themeColor } = opts
   const interviewerColor = CAST_COLORS[interviewerId ?? ''] ?? '#c2722a'
   const dateStr = formatDateShort(date)
 
@@ -197,6 +213,7 @@ function buildHtml(opts: {
       interviewerName,
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
+      themeColor,
     })
   }
   if (articleType === 'interviewer') {
@@ -220,6 +237,7 @@ function getContent(opts: {
   interviewerLabel: string | null
   interviewerId: string | null
   clientName: string | null
+  themeColor: string
 }): string {
   const { format, ...rest } = opts
   if (format === 'text') return toPlainText(rest.content)
@@ -252,10 +270,11 @@ export function ArticleExportPanel({
   const [format, setFormat] = useState<Format>('markdown')
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
+  const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
 
   const char = getCharacter(interviewerId ?? 'mint')
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
-  const output = getContent({ format: safeFormat, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName })
+  const output = getContent({ format: safeFormat, articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, themeColor })
 
   const handleCopy = useCallback(async () => {
     try {
@@ -320,6 +339,25 @@ export function ArticleExportPanel({
           </button>
         ))}
       </div>
+
+      {safeFormat === 'html' && (
+        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3">
+          <span className="text-xs text-[var(--text3)]">テーマカラー</span>
+          <input
+            type="color"
+            value={themeColor}
+            onChange={(e) => setThemeColor(e.target.value)}
+            className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
+          />
+          <span className="font-mono text-xs text-[var(--text3)]">{themeColor}</span>
+          <button
+            onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
+            className="ml-auto text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
+          >
+            リセット
+          </button>
+        </div>
+      )}
 
       <div className="max-h-[320px] overflow-y-auto p-5">
         <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
