@@ -152,13 +152,13 @@ function buildConversationHtml(opts: {
       if (isCast) {
         // インタビュアー: 右寄せ・アイコンなし
         bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-  <div style="background:#fff8f0;border:1px solid #e2d5c3;border-radius:16px 4px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
+  <div style="background:#fff8f0;border:1px solid #e2d5c3;border-radius:16px 4px 16px 16px;padding:12px 16px;max-width:60%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
 </div>`)
       } else {
         // 回答者: 左寄せ・イニシャルアイコンあり
         bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:28px;">
   <div style="width:44px;height:44px;border-radius:50%;background:#d4a26a;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;">${escapeHtml(clientInitial)}</div>
-  <div style="background:#f0f4ff;border:1px solid #d4d9f0;border-radius:4px 16px 16px 16px;padding:12px 16px;max-width:75%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
+  <div style="background:#f0f4ff;border:1px solid #d4d9f0;border-radius:4px 16px 16px 16px;padding:12px 16px;max-width:60%;font-size:14px;line-height:1.7;color:#3d2b1f;box-sizing:border-box;">${text}</div>
 </div>`)
       }
     } else if (line.trim()) {
