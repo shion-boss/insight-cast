@@ -24,7 +24,7 @@ export const PLANS = {
     label: '法人向け',
     maxProjects: 3,
     additionalProjectAllowed: true,
-    monthlyInterviewLimit: 20,
+    monthlyInterviewLimit: 60,
     maxCompetitorsPerProject: 3,
     supportLabel: '優先サポート',
   },

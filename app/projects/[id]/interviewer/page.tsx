@@ -9,6 +9,8 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { getCharacter } from '@/lib/characters'
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] ?? '' : value ?? ''
@@ -40,6 +42,21 @@ export default async function InterviewerPage({
   const error = getSearchParamValue(query.error)
   const selectedCharacter = CHARACTERS.find((char) => char.id === selectedCharacterId && char.available) ?? null
 
+  const userPlan = await getUserPlan(supabase, user.id)
+  const planLimits = getPlanLimits(userPlan)
+
+  const now = new Date()
+  const thisMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
+  const { count: thisMonthInterviewCount } = await supabase
+    .from('interviews')
+    .select('id', { count: 'exact', head: true })
+    .in('project_id', (await supabase.from('projects').select('id').eq('user_id', user.id)).data?.map((p) => p.id) ?? [])
+    .gte('created_at', `${thisMonthKey}-01`)
+
+  const isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
+
+  const mint = getCharacter('mint')
+
   const { data: audit } = await supabase
     .from('hp_audits')
     .select('suggested_themes')
@@ -67,6 +84,33 @@ export default async function InterviewerPage({
       <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
+        {isInterviewLimitReached && (
+          <div className="mb-6">
+            <InterviewerSpeech
+              icon={(
+                <CharacterAvatar
+                  src={mint?.icon48}
+                  alt={`${mint?.name ?? 'ミント'}のアイコン`}
+                  emoji={mint?.emoji}
+                  size={48}
+                />
+              )}
+              name={mint?.name ?? 'ミント'}
+              title="今月の取材回数の上限に達しています。"
+              description="引き続き取材するには、プランをアップグレードするか、来月をお待ちください。"
+              tone="soft"
+            />
+            <div className="mt-4">
+              <Link
+                href="/pricing?reason=interview_limit"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+              >
+                プランを見る →
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="mb-8">
           <InterviewerSpeech
             icon={(
