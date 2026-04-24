@@ -59,7 +59,7 @@ export function NavigationOverlay() {
   // site: header高さが可変なので fixed top-0 で全画面カバー
   if (area === 'site') {
     return (
-      <div className="fixed inset-0 z-[9990]" style={{ background: 'var(--bg)' }}>
+      <div className="fixed inset-0 z-[9990]" style={{ background: 'rgba(250,246,240,0.9)' }}>
         <div className="h-[2px] overflow-hidden" style={{ background: 'var(--border)' }}>
           <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
         </div>
@@ -84,7 +84,7 @@ export function NavigationOverlay() {
       {/* コンテンツ領域ブランク — ヘッダーの下からサイドバーの右側のみ */}
       <div
         className={`fixed left-0 right-0 bottom-0 z-[9990] ${sidebarClass}`}
-        style={{ top: 64, background: 'var(--bg)' }}
+        style={{ top: 64, background: 'rgba(250,246,240,0.9)' }}
       />
     </>
   )
