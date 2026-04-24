@@ -1,49 +1,56 @@
-import Image from 'next/image'
-import { CHARACTERS } from '@/lib/characters'
-
-const featured = CHARACTERS.filter((c) => c.available).slice(0, 3)
+// Static paths so this component is usable as pure client-side (no next/image server overhead)
+const CHAR_ICONS = [
+  { src: '/characters/mint-48.png', alt: 'ミント', emoji: '🐱' },
+  { src: '/characters/claus-48.png', alt: 'クラウス', emoji: '🦉' },
+  { src: '/characters/rain-48.png', alt: 'レイン', emoji: '🦊' },
+]
 
 export function FullPageLoading() {
   return (
     <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-10"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8"
       style={{ background: 'var(--bg)' }}
     >
-      {/* キャラアイコン群 */}
-      <div className="flex items-end gap-[-8px]">
-        {featured.map((char, i) => (
+      {/* キャラアイコン */}
+      <div className="flex items-center">
+        {CHAR_ICONS.map((c, i) => (
           <div
-            key={char.id}
-            className="relative overflow-hidden rounded-full border-2 border-[var(--surface)] shadow-md"
-            style={{
-              width: 56,
-              height: 56,
-              marginLeft: i === 0 ? 0 : -12,
-              zIndex: featured.length - i,
-              animationDelay: `${i * 0.15}s`,
-            }}
+            key={c.alt}
+            className="overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface2)] shadow"
+            style={{ width: 56, height: 56, marginLeft: i === 0 ? 0 : -12, zIndex: 3 - i }}
           >
-            <Image
-              src={char.icon48}
-              alt={char.name}
+            <img
+              src={c.src}
+              alt={c.alt}
               width={56}
               height={56}
               className="h-full w-full object-cover"
+              onError={(e) => {
+                const t = e.currentTarget
+                t.style.display = 'none'
+                const span = document.createElement('span')
+                span.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:24px;'
+                span.textContent = c.emoji
+                t.parentElement?.appendChild(span)
+              }}
             />
           </div>
         ))}
       </div>
 
       {/* ブランド */}
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-2">
         <p className="font-serif text-2xl font-bold tracking-wide text-[var(--text)]">
           Insight <span className="text-[var(--accent)]">Cast</span>
         </p>
         <p className="text-sm text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 
-      {/* ローディングバー */}
-      <div className="w-40 overflow-hidden rounded-full" style={{ height: 3, background: 'var(--border)' }}>
+      {/* プログレスバー */}
+      <div
+        className="w-36 overflow-hidden rounded-full"
+        style={{ height: 3, background: 'var(--border)' }}
+      >
         <div
           className="h-full rounded-full animate-[page-load_1.4s_ease-in-out_infinite]"
           style={{ background: 'var(--accent)' }}
