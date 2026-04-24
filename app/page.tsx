@@ -12,7 +12,6 @@ import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public
 import { CopyButton } from '@/components/CopyButton'
 import { CheckoutButton } from '@/app/pricing/CheckoutButton'
 import AppPreviewSection from '@/components/app-preview-section'
-import { BlogCoverArt } from '@/components/blog-cover-art'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
@@ -680,7 +679,7 @@ export default async function LandingPage() {
               最新の記事
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">会話から言葉にした経験や、発信のヒントをお届けしています。</p>
-            <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-11 flex flex-col divide-y divide-[var(--border)] rounded-[20px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {latestPosts.map((post) => {
                 const char = getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!
                 const themeColor = BLOG_CATEGORY_COLOR[post.category]
@@ -688,30 +687,23 @@ export default async function LandingPage() {
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,0,0,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
-                    <div className="relative h-[200px] overflow-hidden">
-                      <BlogCoverArt post={post} char={char} variant="card" />
-                      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: themeColor }} />
-                      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full border border-white/30 bg-white/18 px-3 py-1 backdrop-blur-[10px]">
-                        <div className="h-[22px] w-[22px] overflow-hidden rounded-full border-[1.5px] border-white/60 flex-shrink-0">
-                          <Image src={char.icon48} alt={char.name} width={22} height={22} className="h-full w-full object-cover" />
-                        </div>
-                        <span className="text-[11px] font-bold tracking-[0.04em] text-white">{char.name}</span>
-                      </div>
+                    <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
+                      <Image src={char.icon48} alt={char.name} fill className="object-cover" />
                     </div>
-                    <div className="flex flex-1 flex-col px-5 py-[18px] bg-white">
-                      <div className="mb-2.5 flex items-center gap-1.5">
-                        <span className="h-[6px] w-[6px] rounded-full flex-shrink-0" style={{ background: themeColor }} />
-                        <p className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ color: themeColor }}>{CATEGORY_LABELS[post.category]}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                          {CATEGORY_LABELS[post.category]}
+                        </span>
+                        <span className="text-[11px] text-[var(--text3)]">{post.date}</span>
                       </div>
-                      <h3 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410]">{post.title}</h3>
-                      <p className="mb-3 flex-1 text-[12px] leading-[1.75] text-[#7a6555] line-clamp-3">{post.excerpt}</p>
-                      <div className="flex items-center justify-between border-t border-[#e8ddd0] pt-2.5">
-                        <span className="text-[11px] text-[#b8a898]">{post.date}</span>
-                        <span className="text-[11px] font-bold" style={{ color: themeColor }}>続きを読む →</span>
-                      </div>
+                      <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
+                        {post.title}
+                      </p>
                     </div>
+                    <span className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}
