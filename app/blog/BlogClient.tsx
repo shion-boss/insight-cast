@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { getCharacter } from '@/lib/characters'
 import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
-import { BlogCoverArt } from '@/components/blog-cover-art'
 
 type FilterTab = 'all' | PostCategory
 
@@ -29,12 +28,12 @@ const CATEGORY_CHARACTER: Record<PostCategory, string> = {
 }
 
 const CATEGORY_COLOR: Record<PostCategory, string> = {
-  howto:       '#c2722a',
-  service:     '#0f766e',
-  interview:   '#7c3aed',
-  case:        '#1d4ed8',
-  philosophy:  '#065f46',
-  news:        '#be185d',
+  howto:      '#c2722a',
+  service:    '#0f766e',
+  interview:  '#7c3aed',
+  case:       '#1d4ed8',
+  philosophy: '#065f46',
+  news:       '#be185d',
 }
 
 function formatDate(date: string): string {
@@ -78,31 +77,54 @@ export function BlogClient({ posts }: { posts: Post[] }) {
       {/* 注目記事 */}
       {activeFilter === 'all' && featured && (() => {
         const char = resolveChar(featured)
+        const themeColor = CATEGORY_COLOR[featured.category]
         return (
           <Link
             href={`/blog/${featured.slug}`}
-            className="mb-10 grid overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--surface)] transition-shadow duration-200 hover:shadow-[0_16px_48px_rgba(0,0,0,0.09)] sm:grid-cols-2"
+            className="group mb-10 flex flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_14px_36px_rgba(0,0,0,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 sm:flex-row"
           >
-            <BlogCoverArt post={featured} char={char} variant="featured" />
-            <div className="p-10">
-              <div className="mb-4 flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-[var(--warn-l)] px-3 py-0.5 text-xs font-semibold text-[var(--warn)]">
+            {/* キャラパネル */}
+            <div
+              className="relative flex w-full flex-shrink-0 items-center justify-center py-8 sm:w-[200px] sm:py-0"
+              style={{ background: `${themeColor}18` }}
+            >
+              <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at 60% 40%, ${themeColor}, transparent 70%)` }} />
+              <Image
+                src={char.icon96}
+                alt={char.name}
+                width={96}
+                height={96}
+                className="relative z-10 drop-shadow-[0_12px_20px_rgba(60,44,28,0.18)]"
+              />
+            </div>
+
+            {/* テキスト */}
+            <div className="flex flex-1 flex-col justify-center px-8 py-7">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                   {CATEGORY_LABELS[featured.category]}
                 </span>
                 {featured.type === 'interview' && (
-                  <span className="rounded-full bg-[var(--teal-l)] px-3 py-0.5 text-xs font-semibold text-[var(--teal)]">
+                  <span className="rounded-full bg-[var(--teal-l)] px-2.5 py-0.5 text-[10px] font-bold text-[var(--teal)]">
                     インタビュー
                   </span>
                 )}
-                <span className="rounded-full bg-[var(--bg2)] px-3 py-0.5 text-xs font-semibold text-[var(--text3)]">
+                <span className="rounded-full bg-[var(--bg2)] px-2.5 py-0.5 text-[10px] font-bold text-[var(--text3)]">
                   注目記事
                 </span>
               </div>
-              <h2 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold leading-snug text-[var(--text)]">
+              <h2 className="mb-2.5 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-snug text-[var(--text)] sm:text-[22px]">
                 {featured.title}
               </h2>
-              <p className="text-[15px] leading-relaxed text-[var(--text2)]">{featured.excerpt}</p>
-              <p className="mt-4 text-xs text-[var(--text3)]">{formatDate(featured.date)}</p>
+              <p className="mb-4 text-[13px] leading-relaxed text-[var(--text2)] line-clamp-2">{featured.excerpt}</p>
+              <div className="flex items-center gap-3">
+                <div className="h-6 w-6 overflow-hidden rounded-full border border-[var(--border)] flex-shrink-0">
+                  <Image src={char.icon48} alt={char.name} width={24} height={24} className="h-full w-full object-cover" />
+                </div>
+                <span className="text-[11px] font-semibold text-[var(--text2)]">{char.name}</span>
+                <span className="ml-auto text-[11px] text-[var(--text3)]">{formatDate(featured.date)}</span>
+                <span className="text-[11px] font-bold" style={{ color: themeColor }}>続きを読む →</span>
+              </div>
             </div>
           </Link>
         )
@@ -117,39 +139,36 @@ export function BlogClient({ posts }: { posts: Post[] }) {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group flex flex-col overflow-hidden rounded-[20px] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[6px] hover:shadow-[0_24px_60px_rgba(0,0,0,0.20)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="group flex flex-col overflow-hidden rounded-[20px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_14px_36px_rgba(0,0,0,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {/* 画像エリア */}
-              <div className="relative h-[200px] overflow-hidden">
-                <BlogCoverArt post={post} char={char} variant="card" />
-                {/* テーマカラーバー */}
-                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: themeColor }} />
-                {/* フロストキャストバッジ */}
-                <div className="absolute bottom-3 left-3 flex items-center gap-1.5 rounded-full border border-white/30 bg-white/18 px-3 py-1 backdrop-blur-[10px]">
-                  <div className="h-[22px] w-[22px] overflow-hidden rounded-full border-[1.5px] border-white/60 flex-shrink-0">
-                    {/* 仮置き: キャラアイコンで代用 */}
-                    <Image src={char.icon48} alt={char.name} width={22} height={22} className="h-full w-full object-cover" />
-                  </div>
-                  <span className="text-[11px] font-bold tracking-[0.04em] text-white">{char.name}</span>
-                </div>
-              </div>
+              {/* カテゴリカラーバー */}
+              <div className="h-[3px] w-full flex-shrink-0" style={{ background: themeColor }} />
 
-              {/* コンテンツ */}
-              <div className="flex flex-1 flex-col px-5 py-[18px] bg-white">
-                <div className="mb-2.5 flex items-center gap-1.5">
-                  <span className="h-[6px] w-[6px] rounded-full flex-shrink-0" style={{ background: themeColor }} />
-                  <p className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ color: themeColor }}>
+              <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+                {/* キャラ＋カテゴリ */}
+                <div className="mb-3 flex items-center gap-2">
+                  <div className="h-7 w-7 overflow-hidden rounded-full border border-[var(--border)] flex-shrink-0">
+                    <Image src={char.icon48} alt={char.name} width={28} height={28} className="h-full w-full object-cover" />
+                  </div>
+                  <span className="text-[11px] font-semibold text-[var(--text2)]">{char.name}</span>
+                  <span className="ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                     {CATEGORY_LABELS[post.category]}
-                  </p>
+                  </span>
                 </div>
-                <h2 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410]">
+
+                {/* タイトル */}
+                <h2 className="mb-2.5 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[var(--text)]">
                   {post.title}
                 </h2>
-                <p className="mb-3 flex-1 text-[12px] leading-[1.75] text-[#7a6555] line-clamp-3">
+
+                {/* excerpt */}
+                <p className="flex-1 text-[12px] leading-[1.75] text-[var(--text2)] line-clamp-3">
                   {post.excerpt}
                 </p>
-                <div className="flex items-center justify-between border-t border-[#e8ddd0] pt-2.5">
-                  <span className="text-[11px] text-[#b8a898]">{formatDate(post.date)}</span>
+
+                {/* フッター */}
+                <div className="mt-3.5 flex items-center justify-between border-t border-[var(--border)] pt-2.5">
+                  <span className="text-[11px] text-[var(--text3)]">{formatDate(post.date)}</span>
                   <span className="text-[11px] font-bold" style={{ color: themeColor }}>続きを読む →</span>
                 </div>
               </div>
