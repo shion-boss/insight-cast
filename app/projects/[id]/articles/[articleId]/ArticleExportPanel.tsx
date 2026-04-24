@@ -137,8 +137,8 @@ function buildConversationHtml(opts: {
   themeColor: string
 }): string {
   const { content, interviewerName, interviewerAvatarUrl, clientName, clientInitial, userAvatarUrl, themeColor } = opts
-  const questionBg = lighten(themeColor, 0.88)
-  const answerBg   = lighten(themeColor, 0.87)
+  const questionBg = lighten(themeColor, 0.78)
+  const answerBg   = lighten(themeColor, 0.94)
   const badgeBg    = themeColor
 
   const iconStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:-8px;display:block;'
