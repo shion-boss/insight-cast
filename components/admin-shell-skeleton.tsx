@@ -51,14 +51,8 @@ export function AdminShellSkeleton() {
           </div>
         </header>
         <main className="mx-auto min-w-0 max-w-7xl p-8">
-          <div className="space-y-4">
-            <div className="h-8 w-1/3 animate-pulse rounded-lg bg-[var(--border)]" />
-            <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--border)]" />
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-32 animate-pulse rounded-[var(--r-xl)] bg-[var(--border)]" />
-              ))}
-            </div>
+          <div className="h-[2px] overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+            <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
           </div>
         </main>
       </div>

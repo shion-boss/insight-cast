@@ -35,17 +35,9 @@ export function PublicShellSkeleton() {
         </div>
       </header>
 
-      {/* content shimmer */}
-      <main className="mx-auto max-w-6xl px-6 py-16">
-        <div className="space-y-5">
-          <div className="h-10 w-1/2 animate-pulse rounded-lg bg-[var(--border)]" />
-          <div className="h-5 w-3/4 animate-pulse rounded bg-[var(--border)]" />
-          <div className="h-5 w-2/3 animate-pulse rounded bg-[var(--border)]" />
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-40 animate-pulse rounded-[var(--r-xl)] bg-[var(--border)]" />
-            ))}
-          </div>
+      <main className="mx-auto max-w-6xl px-6 py-12">
+        <div className="h-[2px] overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+          <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
         </div>
       </main>
     </div>
