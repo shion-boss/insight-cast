@@ -288,7 +288,7 @@ export default function ArticlePage() {
       showToast({
         id: `article-started-${jobId}`,
         title: `${articleLabel}の作成を開始しました`,
-        description: 'バッチで作成しています。別の作業を進めながら待てます。',
+        description: '記事素材を作成中です。別の作業を進めながら待てます。',
       })
       void loadPageState().catch(() => null)
     } catch {
@@ -314,7 +314,7 @@ export default function ArticlePage() {
 
   const statusDescription = (() => {
     if (currentTabStatus === 'generating') {
-      return 'この形式をバッチで作成中です。数秒おきに状態を確認しています。'
+      return 'この形式の記事素材を作成中です。しばらくお待ちください。'
     }
     if (currentTabStatus === 'ready') {
       return 'この形式の最新の記事素材を確認できます。必要なら条件を変えて作り直せます。'
@@ -509,13 +509,18 @@ export default function ArticlePage() {
               className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {isCurrentTabGenerating ? (
-                <DevAiLabel>この形式を作成中...</DevAiLabel>
+                <>この形式を作成中...</>
               ) : isBusyWithAnotherTab && activeGenerationLabel ? (
-                <DevAiLabel>{activeGenerationLabel}を作成中...</DevAiLabel>
+                <>{activeGenerationLabel}を作成中...</>
               ) : (
-                <DevAiLabel>バッチで作成を始める →</DevAiLabel>
+                <DevAiLabel>記事素材を作成する →</DevAiLabel>
               )}
             </button>
+            {availableThemes.length === 0 && !isGenerating && (
+              <p className="mt-2 text-center text-[12px] leading-[1.6] text-[var(--text3)]">
+                先に取材メモでテーマを確認してください
+              </p>
+            )}
             <p className="mt-2.5 text-center text-[12px] leading-[1.6] text-[var(--text3)]">
               完了すると通知が届きます。{currentPendingJobId ? 'このタブでも自動で状態を更新しています。' : isBusyWithAnotherTab ? 'いまは別の形式を作成中です。完了後にこの形式も始められます。' : '別の作業へ移って大丈夫です。'}
             </p>
@@ -595,7 +600,7 @@ export default function ArticlePage() {
                   <InterviewerSpeech
                     icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                     name="ミント"
-                    title="設定を選んでバッチ作成を始めてください"
+                    title="設定を選んで記事素材を作成してください"
                     description="このページで待たなくても、記事素材ができたら確認できます。"
                     tone="soft"
                   />
@@ -607,7 +612,7 @@ export default function ArticlePage() {
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <WritingLoadingScene
                   title="記事素材を作成しています"
-                  description="バッチ処理で進めています。数秒おきに状態を確認しています。"
+                  description="作成中です。そのまま待っても、別の画面に移っても大丈夫です。"
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
                   <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
@@ -675,7 +680,7 @@ export default function ArticlePage() {
                     disabled={isGenerating}
                     className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <DevAiLabel>もう一度まとめる</DevAiLabel>
+                    <DevAiLabel>もう一度作成する</DevAiLabel>
                   </button>
                 </div>
               </div>

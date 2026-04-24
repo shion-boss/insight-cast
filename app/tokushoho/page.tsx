@@ -36,9 +36,6 @@ export default function TokushohoPage() {
         </table>
       </section>
 
-      <section>
-        <p>※ 上記は準備中の情報を含みます。正式リリース時に更新します。</p>
-      </section>
     </LegalPageTemplate>
   )
 }

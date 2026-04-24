@@ -198,7 +198,7 @@ export default async function InterviewerPage({
                 )}
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text3)] mt-3 font-medium">引き出すこと: {char.specialty}</div>
-                <div className="mt-4 text-xs text-center py-2 bg-[var(--text)] text-white rounded-lg">
+                <div className="mt-4 text-xs text-center py-2 bg-[var(--accent)] text-white rounded-lg transition-colors group-hover:bg-[var(--accent-h)]">
                   このキャストを選ぶ
                 </div>
               </Link>
@@ -342,7 +342,7 @@ export default async function InterviewerPage({
                 </label>
                 <button
                   type="submit"
-                  className="w-full cursor-pointer rounded-xl bg-[var(--text)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   このテーマでインタビューを始める
                 </button>
