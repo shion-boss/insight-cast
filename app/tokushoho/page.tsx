@@ -5,8 +5,8 @@ import { LegalPageTemplate } from '@/components/public-layout'
 export const metadata: Metadata = { title: '特定商取引法に基づく表記 | Insight Cast' }
 
 const rows: { label: string; value: string }[] = [
-  { label: '販売事業者', value: '（代表者名を記載予定）' },
-  { label: '所在地', value: '（住所を記載予定）' },
+  { label: '販売事業者', value: '大槻詞音' },
+  { label: '所在地', value: '特定商取引法第11条に基づき、請求があった場合には遅滞なく開示します' },
   { label: '連絡先', value: 'info@insight-cast.jp' },
   { label: '販売価格', value: '各プランページに記載' },
   { label: '代金の支払時期', value: '月次払い（翌月分を当月末に請求）' },
@@ -20,7 +20,7 @@ export default function TokushohoPage() {
   return (
     <LegalPageTemplate
       title="特定商取引法に基づく表記"
-      updatedAt="2026年4月18日"
+      updatedAt="2026年4月24日"
       summary="販売事業者、価格、支払方法、提供時期、キャンセル・返金条件など、取引に関する法定表示を掲載しています。"
     >
       <section>
