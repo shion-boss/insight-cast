@@ -141,13 +141,14 @@ function buildConversationHtml(opts: {
   const answerBg   = lighten(themeColor, 0.87)
   const badgeBg    = themeColor
 
+  const iconStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:-8px;display:block;'
   const userBadgeHtml = userAvatarUrl
-    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
-    : `<div style="width:36px;height:36px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(clientInitial)}</div>`
+    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="${iconStyle}" />`
+    : `<div style="${iconStyle}background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${escapeHtml(clientInitial)}</div>`
 
   const interviewerBadgeHtml = interviewerAvatarUrl
-    ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerName)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
-    : `<div style="width:36px;height:36px;border-radius:50%;background:${themeColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(interviewerName.slice(0, 1))}</div>`
+    ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerName)}" style="${iconStyle}" />`
+    : `<div style="${iconStyle}background:${themeColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${escapeHtml(interviewerName.slice(0, 1))}</div>`
 
   const bubblesHtml: string[] = []
 
@@ -156,14 +157,14 @@ function buildConversationHtml(opts: {
     if (!match) continue
     const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
     if (match[1] === interviewerName) {
-      bubblesHtml.push(`<div style="display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;margin-bottom:16px;">
-  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;gap:8px;margin-bottom:16px;">
+  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;margin-top:10px;">${rawText}</div>
   ${interviewerBadgeHtml}
 </div>`)
     } else {
-      bubblesHtml.push(`<div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:16px;">
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;">
   ${userBadgeHtml}
-  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
+  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;margin-top:10px;">${rawText}</div>
 </div>`)
     }
   }
