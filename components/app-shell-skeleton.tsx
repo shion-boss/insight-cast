@@ -48,15 +48,12 @@ export function AppShellSkeleton({
       {/* main area */}
       <div className="lg:pl-[236px]">
         {/* header */}
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
-          <div className="relative mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-6">
-            {/* loading bar */}
-            <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
-              <div
-                className="h-full animate-[page-load_1.2s_ease-in-out_infinite]"
-                style={{ background: 'var(--accent)' }}
-              />
-            </div>
+        <header className="relative sticky top-0 z-20 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
+          {/* loading bar — header 幅いっぱい・最下部 */}
+          <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
+            <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
+          </div>
+          <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-6">
             <div className="min-w-0">
               {title
                 ? <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
@@ -70,11 +67,7 @@ export function AppShellSkeleton({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl px-6 py-8">
-          <div className="h-[2px] overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
-            <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
-          </div>
-        </main>
+        <main className="mx-auto w-full max-w-6xl px-6 py-8" />
       </div>
     </div>
   )

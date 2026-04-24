@@ -6,7 +6,7 @@ export function PublicShellSkeleton() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
       {/* header — loading bar は header 全体の最下部 */}
-      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
+      <header className="relative sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex h-[62px] items-center justify-between gap-4">
             <span className="font-serif text-[19px] font-bold text-[var(--text)]">
@@ -26,20 +26,13 @@ export function PublicShellSkeleton() {
             ))}
           </nav>
         </div>
-        {/* loading bar — header 全体の最下部（border-b の直前） */}
+        {/* loading bar — header 幅いっぱい・最下部 */}
         <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
-          <div
-            className="h-full animate-[page-load_1.2s_ease-in-out_infinite]"
-            style={{ background: 'var(--accent)' }}
-          />
+          <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-12">
-        <div className="h-[2px] overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
-          <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
-        </div>
-      </main>
+      <main className="mx-auto max-w-6xl px-6 py-12" />
     </div>
   )
 }

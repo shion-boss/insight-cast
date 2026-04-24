@@ -37,24 +37,17 @@ export function AdminShellSkeleton() {
 
       {/* main */}
       <div className="lg:pl-[220px]">
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--surface)]">
-          <div className="relative mx-auto flex h-[64px] max-w-7xl items-center justify-between gap-4 px-6">
-            {/* loading bar — ヘッダー下部にアクセント */}
-            <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
-              <div
-                className="h-full animate-[page-load_1.2s_ease-in-out_infinite]"
-                style={{ background: 'var(--accent)' }}
-              />
-            </div>
-            <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
-            <div className="h-3 w-40 animate-pulse rounded bg-[var(--border)]" />
-          </div>
-        </header>
-        <main className="mx-auto min-w-0 max-w-7xl p-8">
-          <div className="h-[2px] overflow-hidden rounded-full" style={{ background: 'var(--border)' }}>
+        <header className="relative sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--surface)]">
+          {/* loading bar — header 幅いっぱい・最下部 */}
+          <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
             <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
           </div>
-        </main>
+          <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between gap-4 px-6">
+            <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+            <div className="h-3 w-40 rounded bg-[var(--border)]" />
+          </div>
+        </header>
+        <main className="mx-auto min-w-0 max-w-7xl p-8" />
       </div>
     </div>
   )
