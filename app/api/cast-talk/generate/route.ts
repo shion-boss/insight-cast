@@ -105,12 +105,42 @@ async function isAuthorized(req: NextRequest): Promise<boolean> {
   return isAdminSession()
 }
 
+// ---------- HP調査データ取得 ----------
+
+type HpAnalysisContext = {
+  strengths: string[]
+  gaps: string[]
+  suggestedThemes: string[]
+}
+
+async function fetchSelfHpAnalysis(supabase: ReturnType<typeof createAdminClient>): Promise<HpAnalysisContext | null> {
+  const selfProjectId = process.env.SELF_PROJECT_ID
+  if (!selfProjectId) return null
+
+  const { data } = await supabase
+    .from('hp_audits')
+    .select('strengths, gaps, suggested_themes')
+    .eq('project_id', selfProjectId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  if (!data) return null
+
+  return {
+    strengths: Array.isArray(data.strengths) ? data.strengths : [],
+    gaps: Array.isArray(data.gaps) ? data.gaps : [],
+    suggestedThemes: Array.isArray(data.suggested_themes) ? data.suggested_themes : [],
+  }
+}
+
 // ---------- テーマ選定 ----------
 
 async function selectTheme(
   client: Anthropic,
   existingBlogTitles: string[],
   pastCastTalkTitles: string[],
+  hpAnalysis: HpAnalysisContext | null,
 ): Promise<{ theme: ThemeSelection; usage: { inputTokens: number; outputTokens: number } }> {
   const promptFile = loadPromptFile('.claude/skills/cast-talk/theme-selection-prompt.md')
 
@@ -137,8 +167,22 @@ async function selectTheme(
       ? pastCastTalkTitles.map((t) => `- ${t}`).join('\n')
       : '（まだcast-talkがありません）'
 
-  const userMessage = `以下の情報をもとに、今日のcast-talkのテーマを1つ選んでください。
+  const hpContext = hpAnalysis
+    ? `
+【自社HPの強み】
+${hpAnalysis.strengths.length > 0 ? hpAnalysis.strengths.map((s) => `- ${s}`).join('\n') : '（データなし）'}
 
+【自社HPの課題・不足している情報】
+${hpAnalysis.gaps.length > 0 ? hpAnalysis.gaps.map((g) => `- ${g}`).join('\n') : '（データなし）'}
+
+【HP調査から提案されたテーマ候補】
+${hpAnalysis.suggestedThemes.length > 0 ? hpAnalysis.suggestedThemes.map((t) => `- ${t}`).join('\n') : '（データなし）'}
+
+HP調査の課題・提案テーマを参考にして、まだ記事で扱われていない観点を優先してください。`
+    : ''
+
+  const userMessage = `以下の情報をもとに、今日のcast-talkのテーマを1つ選んでください。
+${hpContext}
 【既存ブログ記事のタイトル一覧】
 ${existingList}
 
@@ -414,15 +458,16 @@ export async function POST(req: NextRequest) {
   const supabase = createAdminClient()
 
   try {
-    const [{ data: blogPosts }, { data: pastTalks }] = await Promise.all([
+    const [{ data: blogPosts }, { data: pastTalks }, hpAnalysis] = await Promise.all([
       supabase.from('blog_posts').select('title').eq('published', true).limit(30),
       supabase.from('cast_talks').select('title').order('published_at', { ascending: false }).limit(30),
+      fetchSelfHpAnalysis(supabase),
     ])
 
     const existingBlogTitles = (blogPosts ?? []).map((p: { title: string }) => p.title)
     const pastCastTalkTitles = (pastTalks ?? []).map((p: { title: string }) => p.title)
 
-    const { theme, usage: themeUsage } = await selectTheme(client, existingBlogTitles, pastCastTalkTitles)
+    const { theme, usage: themeUsage } = await selectTheme(client, existingBlogTitles, pastCastTalkTitles, hpAnalysis)
     const { conversation, usage: convUsage } = await generateConversation(client, theme, supabase)
 
     const slug = generateSlug()

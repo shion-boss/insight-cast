@@ -48,43 +48,50 @@ export default function CompetitorsForm({
     return `次回は ${label} 以降に再調査できます。`
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
-
-    if (!canSubmit) {
-      setError(competitorIssue ?? '参考HPの入力内容を確認してから保存してください。')
-      return
-    }
-
-    const formData = new FormData(event.currentTarget)
+  async function doSave(formData: FormData) {
     const urls = formData.getAll('competitor_urls').map((value) => String(value))
     const industryMemo = String(formData.get('industry_memo') ?? '')
     const location = String(formData.get('location') ?? '')
 
-    setSubmitState('saving')
-
-    const result = await saveCompetitors(projectId, {
-      urls,
-      industryMemo,
-      location,
-    })
+    const result = await saveCompetitors(projectId, { urls, industryMemo, location })
     if (result.error) {
-      setSubmitState('idle')
       if (result.error === 'competitor_limit') {
         setError(`参考HPは最大${maxCompetitors}件までです。1件以上外してから保存してください。`)
-        return
-      }
-      if (result.error === 'competitor_self') {
+      } else if (result.error === 'competitor_self') {
         setError('自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。')
-        return
+      } else {
+        setError('うまく保存できませんでした。少し待ってから、もう一度お試しください。')
       }
-      setError('うまく保存できませんでした。少し待ってから、もう一度お試しください。')
-      return
+      return false
     }
+    return true
+  }
+
+  async function handleSaveOnly(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError(null)
+    if (!canSubmit) { setError(competitorIssue ?? '参考HPの入力内容を確認してから保存してください。'); return }
+
+    setSubmitState('saving')
+    const ok = await doSave(new FormData(event.currentTarget))
+    setSubmitState('idle')
+    if (!ok) return
+
+    showToast({ id: `saved-${projectId}`, title: '保存しました', description: '競合設定を更新しました。' })
+    router.push(`/projects/${projectId}`)
+  }
+
+  async function handleSaveAndAnalyze(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault()
+    setError(null)
+    if (!canSubmit) { setError(competitorIssue ?? '参考HPの入力内容を確認してから保存してください。'); return }
+
+    const form = (event.currentTarget.closest('form') as HTMLFormElement)
+    setSubmitState('saving')
+    const ok = await doSave(new FormData(form))
+    if (!ok) { setSubmitState('idle'); return }
 
     setSubmitState('requesting')
-
     try {
       const response = await fetch(`/api/projects/${projectId}/analyze`, { method: 'POST' })
 
@@ -92,41 +99,24 @@ export default function CompetitorsForm({
         const json = await response.json().catch(() => null)
         const message = getLimitMessage(json?.next_available_at)
         setError(`保存は完了しましたが、${message}`)
-        showToast({
-          id: `analysis-limited-${projectId}`,
-          title: '再調査は月1回までです',
-          description: message,
-          tone: 'warning',
-        })
+        showToast({ id: `analysis-limited-${projectId}`, title: '再調査は月1回までです', description: message, tone: 'warning' })
         return
       }
-
-      if (!response.ok) {
-        throw new Error('failed to analyze')
-      }
+      if (!response.ok) throw new Error('failed to analyze')
 
       trackPendingProjectAnalysis(projectId, projectName)
-      showToast({
-        id: `analysis-started-${projectId}`,
-        title: '再調査を受け付けました',
-        description: '競合設定を反映して、バックグラウンドで結果を作り直します。',
-      })
+      showToast({ id: `analysis-started-${projectId}`, title: '再調査を受け付けました', description: '競合設定を反映して、バックグラウンドで結果を作り直します。' })
       router.push(`/projects/${projectId}`)
     } catch {
       setError('保存は完了しましたが、再調査を受け付けられませんでした。少し待ってから、もう一度お試しください。')
-      showToast({
-        id: `analysis-error-${projectId}`,
-        title: '再調査を開始できませんでした',
-        description: '保存内容は反映されています。少し待ってから、もう一度お試しください。',
-        tone: 'warning',
-      })
+      showToast({ id: `analysis-error-${projectId}`, title: '再調査を開始できませんでした', description: '保存内容は反映されています。', tone: 'warning' })
     } finally {
       setSubmitState('idle')
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSaveOnly} className="space-y-6">
       <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-3">
         <div>
           <p className="text-xs text-[var(--text3)]">自社HP URL</p>
@@ -160,19 +150,27 @@ export default function CompetitorsForm({
       )}
       {error && <p className="text-sm text-red-500">{error}</p>}
 
-      <PrimaryButton
-        type="submit"
-        disabled={isBusy || !canSubmit}
-        className="w-full py-3 text-sm"
-      >
-        {submitState === 'saving' ? (
-          <DevAiLabel>保存しています...</DevAiLabel>
-        ) : submitState === 'requesting' ? (
-          <DevAiLabel>再調査を依頼しています...</DevAiLabel>
-        ) : (
-          <DevAiLabel>この内容で保存して再調査する</DevAiLabel>
-        )}
-      </PrimaryButton>
+      <div className="flex flex-col gap-2">
+        <PrimaryButton
+          type="submit"
+          disabled={isBusy || !canSubmit}
+          className="w-full py-3 text-sm"
+        >
+          {submitState === 'saving' ? '保存しています...' : '保存する'}
+        </PrimaryButton>
+        <button
+          type="button"
+          disabled={isBusy || !canSubmit}
+          onClick={handleSaveAndAnalyze}
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {submitState === 'requesting' ? (
+            <DevAiLabel>再調査を依頼しています...</DevAiLabel>
+          ) : (
+            <DevAiLabel>保存して再調査する</DevAiLabel>
+          )}
+        </button>
+      </div>
     </form>
   )
 }

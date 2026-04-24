@@ -464,6 +464,33 @@ async function discoverViaFirecrawlMap(siteUrl: string): Promise<string[]> {
     .sort((a, b) => scoreBlogUrl(b) - scoreBlogUrl(a))
 }
 
+// ブログ一覧ページをスクレイプしてリンクを収集するフォールバック
+// サイトマップ・RSS・Firecrawl map が使えないサイト向け
+async function discoverViaBlogIndexScrape(siteUrl: string): Promise<string[]> {
+  const base = new URL(siteUrl)
+  const candidates = BLOG_PATH_KEYWORDS.map((kw) => `${base.origin}/${kw}`)
+
+  const results: string[] = []
+  for (const indexUrl of candidates) {
+    try {
+      const markdown = await fetchMarkdown(indexUrl)
+      if (!markdown || markdown.trim().length < 100) continue
+
+      // markdown 内のリンク [text](url) と生URL を抽出
+      const linkPattern = /https?:\/\/[^\s\)\"\']+/g
+      const found = Array.from(markdown.matchAll(linkPattern), (m) => m[0])
+      const sameHost = filterToSameHost(siteUrl, found).filter(isNotMediaOrSystemUrl)
+      const blogLike = sameHost.filter((u) => scoreBlogUrl(u) >= 2)
+      results.push(...blogLike)
+      if (results.length >= 5) break
+    } catch {
+      // 存在しないパスは無視
+    }
+  }
+
+  return [...new Set(results)].sort((a, b) => scoreBlogUrl(b) - scoreBlogUrl(a))
+}
+
 function scoreBlogUrl(candidateUrl: string) {
   try {
     const parsed = new URL(candidateUrl)
@@ -602,7 +629,15 @@ export async function discoverSiteBlogPosts(siteUrl: string, limit = DEFAULT_DIS
   const filtered = sameHostUrls.filter(isNotMediaOrSystemUrl)
   const scored = filtered.sort((a, b) => scoreBlogUrl(b) - scoreBlogUrl(a))
   const blogLikeUrls = scored.filter((url) => scoreBlogUrl(url) >= 2)
-  const urlsToFetch = (blogLikeUrls.length > 0 ? blogLikeUrls : scored).slice(0, limit)
+
+  // 4. blogLike が少ない場合、一覧ページスクレイプで補完
+  let urlsToFetch = (blogLikeUrls.length > 0 ? blogLikeUrls : scored).slice(0, limit)
+  if (urlsToFetch.length < 3) {
+    const scraped = await discoverViaBlogIndexScrape(siteUrl)
+    const existing = new Set(urlsToFetch.map(normalizeBlogUrl))
+    const added = scraped.filter((u) => !existing.has(normalizeBlogUrl(u)))
+    urlsToFetch = [...urlsToFetch, ...added].slice(0, limit)
+  }
 
   if (urlsToFetch.length === 0) return [] as StoredSiteBlogPost[]
 
@@ -683,11 +718,18 @@ export async function discoverNewBlogPosts(
 
   // 3. Firecrawl /map フォールバック
   const allLinks = await mapSiteLinks(siteUrl)
-  const newUrls = filterToSameHost(siteUrl, allLinks)
+  let newUrls = filterToSameHost(siteUrl, allLinks)
     .filter(isNotMediaOrSystemUrl)
     .filter((url) => !existingUrls.has(normalizeBlogUrl(url)))
     .sort((a, b) => scoreBlogUrl(b) - scoreBlogUrl(a))
     .slice(0, limit)
+
+  // 4. 一覧ページスクレイプで補完
+  if (newUrls.length < 3) {
+    const scraped = await discoverViaBlogIndexScrape(siteUrl)
+    const added = scraped.filter((u) => !existingUrls.has(normalizeBlogUrl(u)) && !newUrls.some((n) => normalizeBlogUrl(n) === normalizeBlogUrl(u)))
+    newUrls = [...newUrls, ...added].slice(0, limit)
+  }
 
   if (newUrls.length === 0) return []
 

@@ -79,6 +79,7 @@ export function CastTalkPreviewClient({
         throw new Error(data.message ?? '更新に失敗しました')
       }
       setStatus(newStatus)
+      if (newStatus === 'published') router.push('/admin/cast-talk')
     } catch (e) {
       setError(e instanceof Error ? e.message : '不明なエラー')
     } finally {

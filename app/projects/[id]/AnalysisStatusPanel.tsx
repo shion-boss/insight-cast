@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import StartAnalysisButton from '@/components/start-analysis-button'
@@ -24,7 +25,19 @@ export default function AnalysisStatusPanel({
   reanalysisNextAvailableAt,
 }: Props) {
   const [optimisticAnalyzing, setOptimisticAnalyzing] = useState(false)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (initialStatus !== 'analyzing') setOptimisticAnalyzing(false)
+  }, [initialStatus])
+
   const status = optimisticAnalyzing ? 'analyzing' : initialStatus
+
+  useEffect(() => {
+    if (status !== 'analyzing') return
+    const id = setInterval(() => router.refresh(), 5000)
+    return () => clearInterval(id)
+  }, [status, router])
   const nextAvailableLabel = reanalysisNextAvailableAt
     ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))
     : null

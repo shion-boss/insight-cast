@@ -82,47 +82,52 @@ export default async function BlogDetailPage({
             ブログ
           </Link>
           <span>›</span>
-          <span className="text-[var(--text3)]">{CATEGORY_LABELS[post.category]}</span>
+          <span className="text-[var(--text3)] line-clamp-1">{post.title}</span>
         </nav>
 
         {/* 記事ヘッダー */}
-        <div className="mb-10 max-w-2xl">
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            {(() => {
-              const themeColor = CATEGORY_COLOR_MAP[post.category]
-              return (
+        {(() => {
+          const themeColor = CATEGORY_COLOR_MAP[post.category]
+          const headerChar = interviewer ?? (getCharacter(CATEGORY_CHARACTER_MAP[post.category]) ?? undefined)
+          return (
+            <div className="mb-14">
+              {/* バッジ */}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
                 <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                   {CATEGORY_LABELS[post.category]}
                 </span>
-              )
-            })()}
-            {post.type === 'interview' && (
-              <span className="rounded-full bg-[var(--teal-l)] px-2.5 py-0.5 text-[10px] font-bold text-[var(--teal)]">
-                インタビュー
-              </span>
-            )}
-          </div>
+              </div>
 
+              {headerChar && (
+                <div className="mt-5 flex items-center gap-3">
+                  <CharacterAvatar
+                    src={headerChar.icon48}
+                    alt={`${headerChar.name}のアイコン`}
+                    emoji={headerChar.emoji}
+                    size={40}
+                  />
+                  <div>
+                    <p className="text-[11px] text-[var(--text3)]">取材担当</p>
+                    <p className="text-sm font-semibold text-[var(--text)]">
+                      {headerChar.name}
+                      <span className="ml-1.5 font-normal text-[var(--text3)]">（{headerChar.species}）</span>
+                    </p>
+                    <p className="text-[11px] leading-relaxed text-[var(--text3)]">{headerChar.specialty}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* アクセントライン */}
+              <div className="mt-6 h-[2px] w-full rounded-full" style={{ background: `linear-gradient(90deg, ${themeColor}, transparent)` }} />
+            </div>
+          )
+        })()}
+
+        {/* タイトル */}
+        <div className="mx-auto mb-10 max-w-2xl">
           <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
             {post.title}
           </h1>
-
-          <div className="mt-4 flex items-center gap-3">
-            <time className="text-sm text-[var(--text3)]" dateTime={post.date}>
-              {formatDate(post.date)}
-            </time>
-            {interviewer && (
-              <span className="flex items-center gap-1.5 text-sm text-[var(--text3)]">
-                <CharacterAvatar
-                  src={interviewer.icon48}
-                  alt={`${interviewer.name}のアイコン`}
-                  emoji={interviewer.emoji}
-                  size={20}
-                />
-                {interviewer.name}
-              </span>
-            )}
-          </div>
         </div>
 
         {/* 本文エリア */}
