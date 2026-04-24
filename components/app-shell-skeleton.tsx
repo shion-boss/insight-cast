@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 const NAV_ITEMS = [
   { label: 'ダッシュボード', icon: '⊡' },
   { label: '取材先一覧', icon: '◫' },
@@ -6,7 +8,13 @@ const NAV_ITEMS = [
   { label: '設定', icon: '⚙' },
 ]
 
-export function AppShellSkeleton() {
+export function AppShellSkeleton({
+  title,
+  headerRight,
+}: {
+  title?: ReactNode
+  headerRight?: ReactNode
+} = {}) {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       {/* sidebar */}
@@ -49,8 +57,16 @@ export function AppShellSkeleton() {
                 style={{ background: 'var(--accent)' }}
               />
             </div>
-            <div className="h-6 w-40 animate-pulse rounded bg-[var(--border)]" />
-            <div className="h-8 w-8 animate-pulse rounded-full bg-[var(--border)]" />
+            <div className="min-w-0">
+              {title
+                ? <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
+                : <div className="h-6 w-40 animate-pulse rounded bg-[var(--border)]" />
+              }
+            </div>
+            <div className="flex items-center gap-3">
+              {headerRight && <div className="opacity-50">{headerRight}</div>}
+              <div className="h-8 w-8 animate-pulse rounded-full bg-[var(--border)]" />
+            </div>
           </div>
         </header>
 
