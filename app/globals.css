@@ -561,6 +561,8 @@ button:disabled,
 
 .card-interactive:active {
   border-color: var(--border2);
+  transform: scale(0.98);
+  opacity: 0.85;
 }
 
 /* ─── Legal doc styles ───────────────────────────────────── */

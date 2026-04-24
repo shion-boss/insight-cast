@@ -11,7 +11,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 }
 
 const buttonBaseClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 
 const buttonToneClass = {
   primary: 'border-[var(--accent)] bg-[var(--accent)] text-white hover:border-[var(--accent-h)] hover:bg-[var(--accent-h)]',
