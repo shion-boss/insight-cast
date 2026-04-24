@@ -215,12 +215,12 @@ export default function SummaryPage() {
       {interviewId && (
         <Link
           href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
-          className={getButtonClass('secondary', 'px-3 py-2 text-sm')}
+          className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
         >
           この取材の記事一覧
         </Link>
       )}
-      <Link href={backHref} className={getButtonClass('secondary', 'px-3 py-2 text-sm')}>
+      <Link href={backHref} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         {backLabel}
       </Link>
     </div>

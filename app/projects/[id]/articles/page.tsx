@@ -116,12 +116,12 @@ export default async function ProjectArticlesPage({
           {interview && (
             <Link
               href={`/projects/${id}/summary?interviewId=${interview.id}`}
-              className={getButtonClass('secondary', 'px-3 py-2 text-sm')}
+              className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
             >
               取材メモを見る
             </Link>
           )}
-          <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-3 py-2 text-sm')}>
+          <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
             ← 取材先の管理に戻る
           </Link>
         </div>

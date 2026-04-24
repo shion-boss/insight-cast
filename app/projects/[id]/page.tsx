@@ -191,10 +191,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       isAdmin={checkIsAdmin(user.email)}
       headerRight={(
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <Link href="/projects" className={getButtonClass('secondary', 'px-4 py-2.5 text-sm')}>
+          <Link href="/projects" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
             ← 一覧へ戻る
           </Link>
-          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
             + 取材する
           </Link>
         </div>

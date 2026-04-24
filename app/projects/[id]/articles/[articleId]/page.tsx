@@ -73,7 +73,7 @@ export default async function ArticleDetailPage({
       isAdmin={checkIsAdmin(user.email)}
       contentClassName="max-w-3xl space-y-6"
       headerRight={(
-        <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-3 py-2 text-sm')}>
+        <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
           ← 取材先の管理に戻る
         </Link>
       )}

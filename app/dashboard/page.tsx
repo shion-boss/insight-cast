@@ -214,12 +214,12 @@ export default async function DashboardPage() {
         isProjectLimitReached ? (
           <Link
             href="/pricing?reason=project_limit"
-            className={getButtonClass('secondary', 'px-4 py-2.5 text-sm opacity-60 flex items-center gap-1.5')}
+            className={getButtonClass('secondary', 'px-4 py-2 text-sm opacity-60 flex items-center gap-1.5')}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 取材先を追加（上限）
           </Link>
         ) : (
-          <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm')}>
+          <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
             + 取材先を追加
           </Link>
         )

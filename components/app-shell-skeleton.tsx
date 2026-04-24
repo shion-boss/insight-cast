@@ -49,7 +49,7 @@ export function AppShellSkeleton({
       <div className="lg:pl-[236px]">
         {/* header */}
         <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
-          <div className="relative mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          <div className="relative mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-6">
             {/* loading bar */}
             <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
               <div

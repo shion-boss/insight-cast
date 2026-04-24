@@ -172,7 +172,7 @@ export default async function ProjectsPage() {
       headerRight={(
         <Link
           href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
-          className={getButtonClass('primary', `px-4 py-2.5 text-sm${isProjectLimitReached ? ' opacity-60' : ''}`)}
+          className={getButtonClass('primary', `px-4 py-2 text-sm${isProjectLimitReached ? ' opacity-60' : ''}`)}
         >
           {isProjectLimitReached ? (
             <span className="flex items-center gap-1.5">

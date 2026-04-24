@@ -7,7 +7,7 @@ export default function Loading() {
     <AppShellSkeleton
       title="取材先一覧"
       headerRight={
-        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2.5 text-sm pointer-events-none')}>
+        <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2 text-sm pointer-events-none')}>
           ＋ 取材先を追加
         </Link>
       }
