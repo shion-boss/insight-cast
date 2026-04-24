@@ -1,2 +1,2 @@
-import { FullPageLoading } from '@/components/full-page-loading'
-export default function Loading() { return <FullPageLoading /> }
+import { PublicShellSkeleton } from '@/components/public-shell-skeleton'
+export default function Loading() { return <PublicShellSkeleton /> }
