@@ -130,25 +130,34 @@ ${FOOTER_HTML}
 function buildConversationHtml(opts: {
   content: string
   interviewerName: string
+  interviewerDisplayName: string
   interviewerAvatarUrl: string | null
   clientName: string
   clientInitial: string
   userAvatarUrl: string | null
   themeColor: string
 }): string {
-  const { content, interviewerName, interviewerAvatarUrl, clientName, clientInitial, userAvatarUrl, themeColor } = opts
+  const { content, interviewerName, interviewerDisplayName, interviewerAvatarUrl, clientName, clientInitial, userAvatarUrl, themeColor } = opts
   const questionBg = lighten(themeColor, 0.78)
   const answerBg   = lighten(themeColor, 0.94)
   const badgeBg    = themeColor
 
-  const iconStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:-8px;display:block;'
-  const userBadgeHtml = userAvatarUrl
-    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="${iconStyle}" />`
-    : `<div style="${iconStyle}background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${escapeHtml(clientInitial)}</div>`
+  const imgStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;'
+  const divStyle = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;'
+  const wrapStyle = 'flex-shrink:0;margin-top:-8px;text-align:center;'
+  const nameStyle = 'font-size:10px;color:#b8a898;margin-top:3px;white-space:nowrap;'
 
-  const interviewerBadgeHtml = interviewerAvatarUrl
-    ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerName)}" style="${iconStyle}" />`
-    : `<div style="${iconStyle}background:${themeColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;">${escapeHtml(interviewerName.slice(0, 1))}</div>`
+  const userBadgeHtml = `<div style="${wrapStyle}">` + (
+    userAvatarUrl
+      ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="${imgStyle}" />`
+      : `<div style="${divStyle}background:${badgeBg};">${escapeHtml(clientInitial)}</div>`
+  ) + `<div style="${nameStyle}">${escapeHtml(clientName)}</div></div>`
+
+  const interviewerBadgeHtml = `<div style="${wrapStyle}">` + (
+    interviewerAvatarUrl
+      ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerDisplayName)}" style="${imgStyle}" />`
+      : `<div style="${divStyle}background:${themeColor};">${escapeHtml(interviewerDisplayName.slice(0, 1))}</div>`
+  ) + `<div style="${nameStyle}">${escapeHtml(interviewerDisplayName)}</div></div>`
 
   const bubblesHtml: string[] = []
 
@@ -156,6 +165,7 @@ function buildConversationHtml(opts: {
     const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
     if (!match) continue
     const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
+    // マッチングは元のinterviewerName（コンテンツ内の名前）で行う
     if (match[1] === interviewerName) {
       bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;gap:8px;margin-bottom:16px;">
   <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;margin-top:10px;">${rawText}</div>
@@ -196,10 +206,11 @@ function buildHtml(opts: {
   const dateStr = formatDateShort(date)
   const resolvedInterviewerName = interviewerDisplayName || interviewerName
 
-  if (articleType === 'conversation' && resolvedInterviewerName !== null) {
+  if (articleType === 'conversation' && interviewerName !== null) {
     return buildConversationHtml({
       content,
-      interviewerName: resolvedInterviewerName,
+      interviewerName,
+      interviewerDisplayName: resolvedInterviewerName ?? interviewerName,
       interviewerAvatarUrl,
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
