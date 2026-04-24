@@ -591,7 +591,7 @@ export default function SettingsPage() {
                 </div>
               </section>
 
-              <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
+              {isEmailUser && <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
                   メールアドレスの変更
                 </h2>
@@ -635,7 +635,7 @@ export default function SettingsPage() {
                     </div>
                   </>
                 )}
-              </section>
+              </section>}
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
