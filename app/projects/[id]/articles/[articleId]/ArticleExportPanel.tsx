@@ -130,19 +130,24 @@ ${FOOTER_HTML}
 function buildConversationHtml(opts: {
   content: string
   interviewerName: string
+  interviewerAvatarUrl: string | null
   clientName: string
   clientInitial: string
   userAvatarUrl: string | null
   themeColor: string
 }): string {
-  const { content, interviewerName, clientName, clientInitial, userAvatarUrl, themeColor } = opts
+  const { content, interviewerName, interviewerAvatarUrl, clientName, clientInitial, userAvatarUrl, themeColor } = opts
   const questionBg = lighten(themeColor, 0.88)
   const answerBg   = lighten(themeColor, 0.87)
   const badgeBg    = themeColor
 
-  const badgeHtml = userAvatarUrl
-    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;margin-top:-8px;" />`
-    : `<div style="width:32px;height:32px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;margin-top:-8px;">${escapeHtml(clientInitial)}</div>`
+  const userBadgeHtml = userAvatarUrl
+    ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
+    : `<div style="width:36px;height:36px;border-radius:50%;background:${badgeBg};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(clientInitial)}</div>`
+
+  const interviewerBadgeHtml = interviewerAvatarUrl
+    ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerName)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
+    : `<div style="width:36px;height:36px;border-radius:50%;background:${themeColor};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(interviewerName.slice(0, 1))}</div>`
 
   const bubblesHtml: string[] = []
 
@@ -151,13 +156,14 @@ function buildConversationHtml(opts: {
     if (!match) continue
     const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
     if (match[1] === interviewerName) {
-      bubblesHtml.push(`<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
-  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;margin-bottom:16px;">
+  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
+  ${interviewerBadgeHtml}
 </div>`)
     } else {
-      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:4px;margin-bottom:16px;">
-  ${badgeHtml}
-  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:4px 12px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:16px;">
+  ${userBadgeHtml}
+  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
 </div>`)
     }
   }
@@ -178,18 +184,22 @@ function buildHtml(opts: {
   interviewerName: string | null
   interviewerLabel: string | null
   interviewerId: string | null
+  interviewerAvatarUrl: string | null
+  interviewerDisplayName: string | null
   clientName: string | null
   userAvatarUrl: string | null
   themeColor: string
 }): string {
-  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, clientName, userAvatarUrl, themeColor } = opts
+  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, interviewerAvatarUrl, interviewerDisplayName, clientName, userAvatarUrl, themeColor } = opts
   const interviewerColor = CAST_COLORS[interviewerId ?? ''] ?? '#c2722a'
   const dateStr = formatDateShort(date)
+  const resolvedInterviewerName = interviewerDisplayName || interviewerName
 
-  if (articleType === 'conversation' && interviewerName !== null) {
+  if (articleType === 'conversation' && resolvedInterviewerName !== null) {
     return buildConversationHtml({
       content,
-      interviewerName,
+      interviewerName: resolvedInterviewerName,
+      interviewerAvatarUrl,
       clientName: clientName ?? '事業者',
       clientInitial: initial(clientName),
       userAvatarUrl,
@@ -216,6 +226,8 @@ function getContent(opts: {
   interviewerName: string | null
   interviewerLabel: string | null
   interviewerId: string | null
+  interviewerAvatarUrl: string | null
+  interviewerDisplayName: string | null
   clientName: string | null
   userAvatarUrl: string | null
   themeColor: string
@@ -264,8 +276,19 @@ export function ArticleExportPanel({
   const isDirty = editedContent !== content
 
   const char = getCharacter(interviewerId ?? 'mint')
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
+  const defaultInterviewerAvatarUrl = char?.icon48?.src ? `${appUrl}${char.icon48.src}` : null
+  const [interviewerAvatarUrl, setInterviewerAvatarUrl] = useState<string>(defaultInterviewerAvatarUrl ?? '')
+  const [interviewerDisplayName, setInterviewerDisplayName] = useState<string>(interviewerName ?? '')
+
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
-  const output = getContent({ format: safeFormat, articleType, title, date, content: editedContent, interviewerName, interviewerLabel, interviewerId, clientName, userAvatarUrl, themeColor })
+  const output = getContent({
+    format: safeFormat, articleType, title, date, content: editedContent,
+    interviewerName, interviewerLabel, interviewerId,
+    interviewerAvatarUrl: interviewerAvatarUrl || null,
+    interviewerDisplayName: interviewerDisplayName || null,
+    clientName, userAvatarUrl, themeColor,
+  })
 
   const handleSave = useCallback(() => {
     setSaveState('saving')
@@ -368,35 +391,73 @@ export function ArticleExportPanel({
       </div>
 
       {safeFormat === 'html' && (
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3">
-          <span className="text-xs text-[var(--text3)]">テーマカラー</span>
-          <input
-            type="color"
-            value={themeColor}
-            onChange={(e) => setThemeColor(e.target.value)}
-            className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
-          />
-          <span className="font-mono text-xs text-[var(--text3)]">{themeColor}</span>
-          <button
-            onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
-            className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
-          >
-            リセット
-          </button>
-          <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden text-xs font-semibold">
+        <div className="flex flex-col gap-0 border-b border-[var(--border)]">
+          {/* テーマカラー行 */}
+          <div className="flex items-center gap-3 px-5 py-3 border-b border-[var(--border)]">
+            <span className="text-xs text-[var(--text3)]">テーマカラー</span>
+            <input
+              type="color"
+              value={themeColor}
+              onChange={(e) => setThemeColor(e.target.value)}
+              className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
+            />
+            <span className="font-mono text-xs text-[var(--text3)]">{themeColor}</span>
             <button
-              onClick={() => setHtmlPreview(false)}
-              className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+              onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
+              className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
             >
-              コード
+              リセット
             </button>
-            <button
-              onClick={() => setHtmlPreview(true)}
-              className={`px-3 py-1.5 transition-colors ${htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
-            >
-              プレビュー
-            </button>
+            <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden text-xs font-semibold">
+              <button
+                onClick={() => setHtmlPreview(false)}
+                className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+              >
+                コード
+              </button>
+              <button
+                onClick={() => setHtmlPreview(true)}
+                className={`px-3 py-1.5 transition-colors ${htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+              >
+                プレビュー
+              </button>
+            </div>
           </div>
+          {/* インタビュアー設定行（会話形式のみ） */}
+          {articleType === 'conversation' && (
+            <div className="flex flex-wrap items-center gap-3 px-5 py-3">
+              <span className="text-xs text-[var(--text3)]">インタビュアー</span>
+              <div className="flex items-center gap-2">
+                {interviewerAvatarUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={interviewerAvatarUrl} alt="preview" className="h-7 w-7 rounded-full object-cover border border-[var(--border)]" />
+                )}
+                <input
+                  type="text"
+                  value={interviewerAvatarUrl}
+                  onChange={(e) => setInterviewerAvatarUrl(e.target.value)}
+                  placeholder="アイコン画像URL"
+                  className="w-56 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-xs text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+                />
+              </div>
+              <input
+                type="text"
+                value={interviewerDisplayName}
+                onChange={(e) => setInterviewerDisplayName(e.target.value)}
+                placeholder="名前"
+                className="w-28 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-xs text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
+              />
+              <button
+                onClick={() => {
+                  setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')
+                  setInterviewerDisplayName(interviewerName ?? '')
+                }}
+                className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
+              >
+                リセット
+              </button>
+            </div>
+          )}
         </div>
       )}
 
