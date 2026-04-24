@@ -34,6 +34,22 @@
 ## 週: 2026-04-22 〜（進行中）
 
 ### 今週やったこと
+
+#### 2026-04-24（日次品質改善サイクル 初回）
+- 日次品質改善サイクルの6軸定義を策定（`docs/ops/daily-quality-cycle.md` 新規作成）
+- 無料プラン取材回数を全箇所「2回（単発）」に統一（Blocker: LP・料金ページ・FAQ・CLAUDE.md・lib/plans.ts）
+- DevAiLabel をボタンラベル内から外出しに修正（Blocker）
+- 特定商取引法ページの「準備中」注記を削除（Should Fix）
+- インタビュー画面 placeholder から「Ctrl+Enter」表記を削除（Should Fix）
+- 記事生成画面の「バッチ」表記を自然な言葉に変更（Should Fix）
+- テーマ0件時のボタン無効化に案内テキスト追加（Should Fix）
+- インタビュアー選択「このキャストを選ぶ」ボタン色を accent に統一（Should Fix）
+- `[INTERVIEW_COMPLETE]` マーカー除去を `/g` フラグで全出現に対応（Should Fix）
+- article API に Zod バリデーション追加・zod インストール（Should Fix）
+- 特商法ページのカードに `mt-6` 追加
+- email メール転送設定を案内（info@insight-cast.jp → Gmail 転送）
+
+#### 2026-04-22〜23
 - Stripe サブスク実装（checkout / webhook / customer portal）
 - オンボーディング廃止（サインアップ→Stripe直行フローに変更）
 - 購入導線の網羅修正（next/plan パラメータ引き継ぎ、ログイン状態分岐）
@@ -56,6 +72,10 @@
 ### 今週の指摘パターン集計
 | カテゴリ | 件数 | 初出/再発 | ルール化済みか |
 |---|---|---|---|
+| プラン仕様の数値が複数箇所でバラバラ（無料プラン取材回数）| 1 | 初出 | 🔲 CLAUDE.md「プラン仕様はここを唯一の参照元に」追加候補 |
+| 技術用語が顧客画面に露出（「バッチ」「Ctrl+Enter」）| 2 | 再発 | CLAUDE.md 既存ルール（運用が追いついていない） |
+| DevAiLabel をボタンラベル内部で使用 | 1 | 初出 | 🔲 engineer.md に「DevAiLabel はボタン外テキストにのみ使う」追加候補 |
+| APIルートの入力バリデーション漏れ | 1 | 再発 | 🔲 engineer.md に「req.json() には必ず Zod を通す」追加候補 |
 | 導線パラメータ（next/plan）の引き継ぎ漏れ | 4 | 初出 | ✅ CLAUDE.md §8 / engineer.md |
 | ログイン状態による表示分岐漏れ | 3 | 初出 | ✅ CLAUDE.md §9 / engineer.md |
 | コピーが導線文脈と不一致 | 3 | 初出 | ✅ CLAUDE.md §10 / engineer.md |
@@ -64,6 +84,9 @@
 | インストラクション連結順が意図なく並んでいた | 1 | 初出 | AIデザイナーが設計意図をai-specsに記録 |
 
 ### CLAUDE.md / エージェントmd 更新候補
+- 🔲 CLAUDE.md「プラン仕様の数値はCLAUDE.mdを唯一の参照元とし、変更時はCLAUDE.mdを先に更新する」
+- 🔲 engineer.md「DevAiLabel はボタンラベル外のテキストにのみ使う」
+- 🔲 engineer.md「APIルートで req.json() を使う箇所には必ず Zod でバリデーションする」
 - ✅ 完了: CLAUDE.md §8〜11 追記、engineer.md チェックリスト強化
 - ✅ 完了: 全エージェントmd に「学習ループへの貢献」セクション追加
 - ✅ 完了: director.md に「学習ループオーナー責務」追加
