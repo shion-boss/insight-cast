@@ -1,98 +1,11 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { signOut } from '@/lib/actions/auth'
-import { HeaderSurface, getButtonClass } from '@/components/ui'
-import { MobileNav } from '@/components/mobile-nav'
-
-const NAV_LINKS = [
-  { href: '/service', label: 'サービス' },
-  { href: '/pricing', label: '料金' },
-  { href: '/cast', label: 'キャスト' },
-  { href: '/blog', label: 'ブログ' },
-  { href: '/cast-talk', label: 'Cast Talk' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'お問い合わせ' },
-  { href: '/faq', label: 'FAQ' },
-]
-
-// ドロワー内に表示するリンク（優先度順）
-const DRAWER_NAV_LINKS = [
-  { href: '/cast', label: 'キャストを見る' },
-  { href: '/blog', label: 'ブログ' },
-  { href: '/cast-talk', label: 'Cast Talk' },
-  { href: '/pricing', label: '料金プラン' },
-  { href: '/service', label: '使い方' },
-]
+import { SiteHeaderClient } from '@/components/site-header-client'
 
 export async function PublicHeader() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const isLoggedIn = Boolean(user)
-  return (
-    <HeaderSurface
-      bottom={(
-        // md以上でのみ表示するナビゲーション
-        <nav className="hidden md:flex gap-2 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="メインナビゲーション">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href + link.label}
-              href={link.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      )}
-    >
-      <Link
-        href="/"
-        className="font-serif text-[19px] font-bold text-[var(--text)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-      >
-        Insight <span className="text-[var(--accent)]">Cast</span>
-      </Link>
-
-      {/* PC用ボタン群（md以上） */}
-      <div className="hidden md:flex items-center gap-2 sm:gap-3">
-        {isLoggedIn ? (
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/dashboard"
-              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
-            >
-              ダッシュボード
-            </Link>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
-              >
-                ログアウト
-              </button>
-            </form>
-          </div>
-        ) : (
-          <>
-            <Link
-              href="/auth/login"
-              className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}
-            >
-              ログイン
-            </Link>
-            <Link
-              href="/auth/signup"
-              className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}
-            >
-              無料で試す →
-            </Link>
-          </>
-        )}
-      </div>
-
-      {/* モバイル用ハンバーガー（md未満） */}
-      <MobileNav navLinks={DRAWER_NAV_LINKS} isLoggedIn={isLoggedIn} />
-    </HeaderSurface>
-  )
+  return <SiteHeaderClient isLoggedIn={Boolean(user)} />
 }
 
 export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }) {

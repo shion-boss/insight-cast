@@ -3,7 +3,7 @@ import { PublicHeader, PublicFooter } from '@/components/public-server-component
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
+    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <PublicHeader />
       {children}
       <PublicFooter />

@@ -87,7 +87,7 @@ function LoginForm() {
         )}
 
         {/* カード */}
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-12 w-full shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 sm:p-12 w-full shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
           <h1 className="font-serif text-[22px] font-bold text-[var(--text)] text-center mb-8">ログイン</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">

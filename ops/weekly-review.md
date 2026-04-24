@@ -35,6 +35,40 @@
 
 ### 今週やったこと
 
+#### 2026-04-24（日次品質改善サイクル 第3回・レスポンシブ全面対応・ヘッダー刷新後）
+
+**主な実施内容**
+- サイトヘッダーを client component に分離（SiteHeaderClient）、sticky 対応、backdrop-blur による portal 問題修正
+- 下層ページ FV を PublicHero compact に統一（faq / cast / pricing）
+- レスポンシブ全面修正（12ファイル）：記事検索フィルター・プロジェクト一覧・インタビュー一覧・ダッシュボード等
+- loading 中の空状態にスケルトン追加（settings / summary）
+- z-index 統一（z-[31]/z-[25]）、空 catch → return に修正、pricing FAQ の準備中矛盾を解消
+
+**8軸評価サマリー**
+
+| 軸 | 評価 | 主な指摘 |
+|---|---|---|
+| 1. UI | B+: レスポンシブ修正で大幅改善。z-index 定数化は残課題 | 低 |
+| 2. UX | B: page-transition 空 href・mounted state 修正済み。AccountLabel の一瞬ブレは軽微 | 低 |
+| 3. 整合性 | B+: pricing FAQ の矛盾解消済み。データ保持ポリシーは正式提供時まで保留 | — |
+| 4. AIキャスト品質 | B: cast/page.tsx のキャラ説明文が lib/characters.ts と二重管理（次回整理推奨） | 低 |
+| 5. AI社員品質 | B+: 空 catch 修正済み。URL パース共通化は Nice to Have | 低 |
+| 6. コピー | B+: pricing FAQ 修正済み。「プラン・請求」の温度感は検討余地あり | 低 |
+| 7. セキュリティ | A: /api/account/delete に getUser 認証チェック確認済み | — |
+| 8. ドッグフーディング | 未実施（コードから判断不可） | — |
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 公開ページのコピー矛盾 | 1 | 初出 | 🔲 要確認 |
+| 空 catch ブロック | 2 | 初出 | 🔲 engineer.md に追記推奨 |
+| hydration ガード漏れ（createPortal） | 1 | 初出 | 🔲 engineer.md に追記推奨 |
+
+**CLAUDE.md / エージェントmd 更新候補**
+- `engineer.md`: URL パース時の空 catch は禁止（パース失敗時は `return`）
+- `engineer.md`: `createPortal` 使用時は `mounted` state で SSR 安全を保証する
+
 #### 2026-04-24（日次品質改善サイクル 第2回・ページ遷移loading刷新後）
 
 **8軸評価サマリー**

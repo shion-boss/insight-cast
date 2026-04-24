@@ -200,11 +200,11 @@ export default async function ProjectsPage() {
       </div>
 
       {projectList.length === 0 ? (
-        <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2">
           <AddProjectCard isLocked={isProjectLimitReached} />
         </div>
       ) : (
-        <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(2,1fr)' }}>
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2">
           {projectList.map((project) => {
             const latestInterview = latestInterviewMap.get(project.id)
             const ivCount = interviewCountByProject.get(project.id) ?? 0

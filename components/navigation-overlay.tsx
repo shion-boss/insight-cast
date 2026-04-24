@@ -14,6 +14,7 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
 export function NavigationOverlay() {
   const pathname = usePathname()
   const [visible, setVisible] = useState(false)
+  const [headerBottom, setHeaderBottom] = useState(64)
   // クリック時点のエリアを記録（遷移後に変わる前に使うため ref）
   const areaRef = useRef(classify(pathname))
   const prevPath = useRef(pathname)
@@ -32,7 +33,7 @@ export function NavigationOverlay() {
     const raw = a.getAttribute('href') ?? ''
     if (!raw || raw.startsWith('http') || raw.startsWith('//') || raw.startsWith('#') || a.download) return
     let toPath = raw
-    try { toPath = new URL(raw, location.href).pathname } catch {}
+    try { toPath = new URL(raw, location.href).pathname } catch { return }
     if (toPath === location.pathname) return
 
     const fromArea = classify(location.pathname)
@@ -40,6 +41,9 @@ export function NavigationOverlay() {
     // エリアをまたぐ遷移は PageTransitionOverlay が担当するのでスキップ
     if (fromArea !== toArea) return
 
+    // ヘッダー下端を測定してからオーバーレイを表示
+    const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
+    setHeaderBottom(h)
     areaRef.current = fromArea
     setVisible(true)
   }, [])
@@ -59,11 +63,12 @@ export function NavigationOverlay() {
   // site: header高さが可変なので fixed top-0 で全画面カバー
   if (area === 'site') {
     return (
-      <div className="fixed inset-0 z-[9990]" style={{ background: 'rgba(250,246,240,0.9)' }}>
-        <div className="h-[2px] overflow-hidden" style={{ background: 'var(--border)' }}>
+      <>
+        <div className="fixed left-0 right-0 z-[31] h-[2px] overflow-hidden" style={{ top: headerBottom }}>
           <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
         </div>
-      </div>
+        <div className="fixed inset-0 z-[25]" style={{ background: 'rgba(250,246,240,0.9)' }} />
+      </>
     )
   }
 
@@ -73,8 +78,8 @@ export function NavigationOverlay() {
     <>
       {/* プログレスバー — ヘッダー下端に貼り付け */}
       <div
-        className={`fixed left-0 right-0 z-[9991] h-[2px] overflow-hidden ${sidebarClass}`}
-        style={{ top: 64 }}
+        className={`fixed left-0 right-0 z-[31] h-[2px] overflow-hidden ${sidebarClass}`}
+        style={{ top: headerBottom }}
       >
         <div
           className="h-full animate-[page-load_1.2s_ease-in-out_infinite]"
@@ -83,8 +88,8 @@ export function NavigationOverlay() {
       </div>
       {/* コンテンツ領域ブランク — ヘッダーの下からサイドバーの右側のみ */}
       <div
-        className={`fixed left-0 right-0 bottom-0 z-[9990] ${sidebarClass}`}
-        style={{ top: 64, background: 'rgba(250,246,240,0.9)' }}
+        className={`fixed left-0 right-0 bottom-0 z-[25] ${sidebarClass}`}
+        style={{ top: headerBottom, background: 'rgba(250,246,240,0.9)' }}
       />
     </>
   )

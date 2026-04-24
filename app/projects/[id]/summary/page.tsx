@@ -227,23 +227,12 @@ export default function SummaryPage() {
   )
 
   if (loading) {
-    const mintChar = getCharacter('mint')
     return (
-      <AppShell
-        title="取材メモ"
-        active="interviews"
-        accountLabel={accountLabel}
-        isAdmin={isAdmin}
-        headerRight={headerRight}
-      >
-        <div className="mx-auto flex w-full max-w-md items-center justify-center py-10">
-          <InterviewerSpeech
-            icon={<CharacterAvatar src={mintChar?.icon48} alt="ミントのアイコン" emoji={mintChar?.emoji} size={48} />}
-            name="ミント"
-            title="取材メモの状態を確認しています"
-            description="保存済みのメモがあればすぐ開きます。"
-            tone="soft"
-          />
+      <AppShell title="取材メモ" active="interviews" accountLabel={accountLabel} isAdmin={isAdmin} headerRight={headerRight}>
+        <div className="max-w-lg space-y-3 py-2">
+          {[100, 80, 60].map((w) => (
+            <div key={w} className="h-14 animate-pulse rounded-[var(--r-lg)] bg-[var(--bg2)]" style={{ maxWidth: `${w}%` }} />
+          ))}
         </div>
       </AppShell>
     )

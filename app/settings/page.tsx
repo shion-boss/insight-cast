@@ -434,21 +434,10 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <AppShell title="設定" active="settings" accountLabel={name || '設定'} isAdmin={isAdmin}>
-        <div className="max-w-lg py-2">
-          <InterviewerSpeech
-            icon={(
-              <CharacterAvatar
-                src={mint?.icon48}
-                alt={`${mint?.name ?? 'ミント'}のアイコン`}
-                emoji={mint?.emoji}
-                size={48}
-              />
-            )}
-            name={mint?.name ?? 'ミント'}
-            title="設定を読み込んでいます。"
-            description="少しお待ちください。"
-            tone="soft"
-          />
+        <div className="max-w-lg space-y-3 py-2">
+          {[80, 120, 96].map((w) => (
+            <div key={w} className="h-14 animate-pulse rounded-[var(--r-lg)] bg-[var(--bg2)]" style={{ maxWidth: `${w}%` }} />
+          ))}
         </div>
       </AppShell>
     )

@@ -227,7 +227,7 @@ export default async function DashboardPage() {
     >
       {/* ── Greeting bar ── */}
       <div
-        className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] px-7 py-5 flex items-center justify-between gap-6"
+        className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] px-5 py-5 sm:px-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         style={{ background: 'linear-gradient(135deg,var(--accent-l),var(--teal-l))' }}
       >
         <div>

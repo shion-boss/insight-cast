@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { FaqContent } from './faq-client'
 
 export const metadata: Metadata = {
@@ -106,15 +106,12 @@ export default function FaqPage() {
 
 
       <main className="relative z-10">
-        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[88px] sm:pb-16 sm:pt-[96px]">
-          <div className="mx-auto max-w-6xl">
-            <p className="text-xs font-semibold tracking-[0.18em] text-[var(--accent)] uppercase">FAQ</p>
-            <h1 className="mt-3 font-serif text-4xl font-bold text-[var(--text)] sm:text-5xl">よくある質問</h1>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text2)]">
-              サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。
-            </p>
-          </div>
-        </section>
+        <PublicHero
+          compact
+          eyebrow="FAQ"
+          title="よくある質問"
+          description="サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。"
+        />
 
         <section className="px-6 py-[88px]">
           <FaqContent groups={FAQ_GROUPS} />

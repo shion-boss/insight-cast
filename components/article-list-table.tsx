@@ -80,8 +80,8 @@ export function ArticleListTable({
   return (
     <>
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_repeat(auto-fill,minmax(160px,160px))]">
-          <div>
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_repeat(auto-fill,minmax(160px,160px))]">
+          <div className="sm:col-span-2 lg:col-span-1">
             <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
               キーワード
             </label>

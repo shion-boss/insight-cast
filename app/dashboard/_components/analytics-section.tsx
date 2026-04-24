@@ -212,16 +212,18 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
         </div>
 
-        <div className="mb-5">
+        <div className="mb-5 overflow-x-auto">
           <BarChart data={monthlyArticles} />
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-4">
           <div className="text-[12px] font-semibold mb-3" style={{ color: 'var(--text2)' }}>週次作成カレンダー（過去25週）</div>
-          <Heatmap data={heatmapData} />
+          <div className="overflow-x-auto">
+            <Heatmap data={heatmapData} />
+          </div>
         </div>
 
-        <div className="flex items-center gap-5 pt-4 border-t border-[var(--border)]">
+        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[var(--border)]">
           <ScoreRing score={continuityScore} />
           <div className="flex-1">
             <div className="text-[13px] font-bold mb-1" style={{ color: 'var(--text)' }}>記事づくり継続スコア：{continuityScore} / 100</div>

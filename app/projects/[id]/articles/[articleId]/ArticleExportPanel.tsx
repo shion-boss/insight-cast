@@ -409,21 +409,23 @@ export function ArticleExportPanel({
         </div>
       </div>
 
-      <div className="flex items-center border-b border-[var(--border)]">
-        {availableFormats.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFormat(f)}
-            className={`px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
-              safeFormat === f
-                ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
-                : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
-            }`}
-          >
-            {FORMAT_LABELS[f]}
-          </button>
-        ))}
-        <div className="ml-auto flex items-center gap-2 px-4">
+      <div className="flex flex-col border-b border-[var(--border)] sm:flex-row sm:items-center">
+        <div className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {availableFormats.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFormat(f)}
+              className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
+                safeFormat === f
+                  ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
+                  : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
+              }`}
+            >
+              {FORMAT_LABELS[f]}
+            </button>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2 sm:ml-auto sm:border-t-0 sm:py-0">
           {isDirty && (
             <button
               onClick={handleSave}

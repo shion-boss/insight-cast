@@ -48,7 +48,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
 
   return (
     <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
-      <aside className="lg:sticky lg:top-28 lg:self-start">
+      <aside className="hidden lg:block lg:sticky lg:top-28 lg:self-start">
         <div className="space-y-1">
           {groups.map((group) => (
             <a

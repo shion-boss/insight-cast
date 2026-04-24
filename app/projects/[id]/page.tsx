@@ -333,7 +333,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               return (
                 <div
                   key={interview.id}
-                  className={`flex items-center gap-[14px] py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
+                  className={`flex flex-wrap items-center gap-3 py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
                 >
                   <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
                     <CharacterAvatar
@@ -354,7 +354,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                         : 'テーマ未確定'}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
                     {interviewArticles.length > 0 && (
                       <span className="text-[11px] text-[var(--text3)]">記事 {interviewArticles.length}本</span>
                     )}

@@ -81,7 +81,7 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
           <Link
             key={item.id}
             href={item.href}
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 grid grid-cols-[48px_1fr_auto] gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow block"
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow block"
           >
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--bg2)]">
               <CharacterAvatar
@@ -122,7 +122,20 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-2">
+            <div className="hidden sm:flex flex-col items-end gap-2">
+              <p className="text-xs text-[var(--text3)]">記事素材 {item.articleCount}本</p>
+              {item.isDone ? (
+                <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">
+                  メモを見る →
+                </span>
+              ) : (
+                <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">
+                  続きを取材する →
+                </span>
+              )}
+            </div>
+            {/* モバイル用アクション（2カラムグリッドの下に展開） */}
+            <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
               <p className="text-xs text-[var(--text3)]">記事素材 {item.articleCount}本</p>
               {item.isDone ? (
                 <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">

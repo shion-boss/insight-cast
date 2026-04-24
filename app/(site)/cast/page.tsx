@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
-import { PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -69,39 +69,30 @@ export default async function CastPage() {
 
 
       <main className="relative z-10">
-        {/* Hero */}
-        <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">
-              <div className="flex-1">
-                <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
-                <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
-                  あなたの話を聞く<br />キャストたち
-                </h1>
-                <p className="text-base text-[var(--text2)] mt-4 leading-relaxed">
-                  6名のキャストが、それぞれ違う角度から話を聞きます。いま深めたいテーマに合わせて選べます。
-                </p>
-              </div>
-              <div className="w-full max-w-[320px] flex-shrink-0 self-center lg:self-auto">
-                <div className="grid grid-cols-3 gap-3">
-                  {CHARACTERS.map((char, i) => (
-                    <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${i > 2 ? 'opacity-70' : ''}`}>
-                      <CharacterAvatar
-                        src={char.icon96}
-                        alt={`${char.name}のアイコン`}
-                        emoji={char.emoji}
-                        size={64}
-                        className="mx-auto"
-                      />
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
-                      <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">{char.label}</div>
-                    </div>
-                  ))}
+        <PublicHero
+          compact
+          eyebrow="Cast"
+          title={<>あなたの話を聞く<br />キャストたち</>}
+          description="6名のキャストが、それぞれ違う角度から話を聞きます。いま深めたいテーマに合わせて選べます。"
+          aside={
+            <div className="grid grid-cols-3 gap-3">
+              {CHARACTERS.map((char, i) => (
+                <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${i > 2 ? 'opacity-70' : ''}`}>
+                  <CharacterAvatar
+                    src={char.icon96}
+                    alt={`${char.name}のアイコン`}
+                    emoji={char.emoji}
+                    size={64}
+                    className="mx-auto"
+                  />
+                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
+                  <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">{char.label}</div>
                 </div>
-              </div>
+              ))}
             </div>
-          </div>
-        </section>
+          }
+          asideClassName="p-4"
+        />
 
         {/* How to choose */}
         <section className="py-14 bg-[var(--bg2)]">

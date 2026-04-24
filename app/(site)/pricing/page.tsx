@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
-import { PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
 import { CheckoutButton } from './CheckoutButton'
 
@@ -119,8 +119,8 @@ const FAQS = [
   { q: '無料プランにクレジットカードは必要ですか？', a: '不要です。メールアドレスのみで登録できます。' },
   { q: '追加キャストはどのプランで使えますか？', a: '追加キャストは現在準備中です。正式提供後は、お試し・個人向け・法人向けの各プランで使える形を予定しています。' },
   { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
-  { q: 'プランはいつでも変更できますか？', a: 'マイページの「プラン・請求」からいつでも変更・解約できます。' },
-  { q: '解約するとデータはどうなりますか？', a: '解約後もデータは保持されます。再契約時にそのままご利用いただけます。' },
+  { q: 'プランはいつでも変更できますか？', a: 'プラン変更機能は現在準備中です。正式提供時の切り替え条件はあわせてご案内します。' },
+  { q: '解約するとデータはどうなりますか？', a: '有料プランの解約フローとデータ保持期間は、正式提供時にあわせてご案内します。現時点では課金機能自体が未提供です。' },
 ] as const
 
 export default async function PricingPage({
@@ -149,33 +149,27 @@ export default async function PricingPage({
       <main className="relative z-10">
         {/* Limit banners */}
         {reason === 'project_limit' && (
-          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
             現在のプランでは取材先を追加できません。プランをアップグレードすると、複数の取材先を管理できます。
           </div>
         )}
         {reason === 'interview_limit' && (
-          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
             今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。
           </div>
         )}
         {reason === 'free_plan_locked' && (
-          <div className="bg-[var(--accent)] text-white text-center px-6 py-3.5 text-[13px] font-semibold">
+          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
             無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。
           </div>
         )}
 
-        {/* Hero */}
-        <section className="bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] py-[88px] text-center">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
-            <h1 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(28px,3.5vw,44px)' }}>
-              まず無料で試せます
-            </h1>
-            <p className="mx-auto mt-4 max-w-[480px] text-base text-[var(--text2)] leading-relaxed">
-              AIキャストによる取材を無料で体験できます。続けたい方向けに、月額プランをご用意しています。
-            </p>
-          </div>
-        </section>
+        <PublicHero
+          compact
+          eyebrow="Pricing"
+          title="まず無料で試せます"
+          description="AIキャストによる取材を無料で体験できます。続けたい方向けに、月額プランをご用意しています。"
+        />
 
         {/* Selection Guide */}
         <section className="py-[56px] bg-[var(--bg)]">

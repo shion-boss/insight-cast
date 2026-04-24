@@ -80,12 +80,12 @@ export default async function InterviewsPage() {
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
     >
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Interview Memos</p>
           <h1 className="mt-1 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">取材メモ一覧</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
             {interviews.length}件
           </span>
