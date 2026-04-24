@@ -1,9 +1,35 @@
-// Static paths so this component is usable as pure client-side (no next/image server overhead)
+'use client'
+
+import { useState } from 'react'
+
 const CHAR_ICONS = [
   { src: '/characters/mint-48.png', alt: 'ミント', emoji: '🐱' },
   { src: '/characters/claus-48.png', alt: 'クラウス', emoji: '🦉' },
   { src: '/characters/rain-48.png', alt: 'レイン', emoji: '🦊' },
 ]
+
+function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji: string; index: number }) {
+  const [failed, setFailed] = useState(false)
+  return (
+    <div
+      className="flex items-center justify-center overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface2)] shadow"
+      style={{ width: 56, height: 56, marginLeft: index === 0 ? 0 : -12, zIndex: 3 - index, flexShrink: 0 }}
+    >
+      {failed ? (
+        <span style={{ fontSize: 24 }} aria-hidden="true">{emoji}</span>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          width={56}
+          height={56}
+          className="h-full w-full object-cover"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </div>
+  )
+}
 
 export function FullPageLoading() {
   return (
@@ -11,34 +37,12 @@ export function FullPageLoading() {
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8"
       style={{ background: 'var(--bg)' }}
     >
-      {/* キャラアイコン */}
       <div className="flex items-center">
         {CHAR_ICONS.map((c, i) => (
-          <div
-            key={c.alt}
-            className="overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface2)] shadow"
-            style={{ width: 56, height: 56, marginLeft: i === 0 ? 0 : -12, zIndex: 3 - i }}
-          >
-            <img
-              src={c.src}
-              alt={c.alt}
-              width={56}
-              height={56}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                const t = e.currentTarget
-                t.style.display = 'none'
-                const span = document.createElement('span')
-                span.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:24px;'
-                span.textContent = c.emoji
-                t.parentElement?.appendChild(span)
-              }}
-            />
-          </div>
+          <CharIcon key={c.alt} src={c.src} alt={c.alt} emoji={c.emoji} index={i} />
         ))}
       </div>
 
-      {/* ブランド */}
       <div className="flex flex-col items-center gap-2">
         <p className="font-serif text-2xl font-bold tracking-wide text-[var(--text)]">
           Insight <span className="text-[var(--accent)]">Cast</span>
@@ -46,7 +50,6 @@ export function FullPageLoading() {
         <p className="text-sm text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 
-      {/* プログレスバー */}
       <div
         className="w-36 overflow-hidden rounded-full"
         style={{ height: 3, background: 'var(--border)' }}
