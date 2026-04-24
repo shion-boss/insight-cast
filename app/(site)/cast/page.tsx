@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
-import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -65,8 +65,8 @@ export default async function CastPage() {
   }
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         {/* Hero */}
@@ -269,7 +269,7 @@ export default async function CastPage() {
         </section>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

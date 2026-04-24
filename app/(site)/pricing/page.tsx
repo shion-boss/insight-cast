@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
-import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
 import { CheckoutButton } from './CheckoutButton'
 
@@ -143,8 +143,8 @@ export default async function PricingPage({
   }
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         {/* Limit banners */}
@@ -386,7 +386,7 @@ export default async function PricingPage({
         </section>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

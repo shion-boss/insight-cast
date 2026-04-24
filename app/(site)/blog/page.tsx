@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 
@@ -13,8 +13,8 @@ export default async function BlogPage() {
   const posts = await getBlogPostsFromDB()
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <PublicHero
@@ -57,7 +57,7 @@ export default async function BlogPage() {
 
       </main>
 
-      <PublicFooter showPromo={false} />
-    </PublicPageFrame>
+
+    </>
   )
 }

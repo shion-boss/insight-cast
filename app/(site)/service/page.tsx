@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { ButtonLink } from '@/components/ui'
-import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -141,8 +141,8 @@ export default async function ServicePage() {
   }
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <PublicHero
@@ -298,7 +298,7 @@ export default async function ServicePage() {
 
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

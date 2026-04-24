@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { PublicHeader, PublicFooter, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { getButtonClass } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
 
@@ -112,8 +112,8 @@ export default async function PhilosophyPage() {
   }
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <PublicHero
@@ -267,7 +267,7 @@ export default async function PhilosophyPage() {
         </section>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

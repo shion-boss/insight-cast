@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import { CastTalkGrid } from './CastTalkGrid'
@@ -28,8 +28,8 @@ export default async function CastTalkPage() {
   const { talks, total } = await getInitialTalks()
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <PublicHero
@@ -72,7 +72,7 @@ export default async function CastTalkPage() {
         </section>
       </main>
 
-      <PublicFooter showPromo={false} />
-    </PublicPageFrame>
+
+    </>
   )
 }

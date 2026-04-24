@@ -1,4 +1,4 @@
-import { PublicPageFrame, PublicHeader, PublicFooter } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { ContactForm } from './_components/contact-form'
@@ -12,8 +12,8 @@ export default function ContactPage() {
   const mint = getCharacter('mint')
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-24 pt-[108px]">
         <div className="mx-auto max-w-lg">
@@ -47,7 +47,7 @@ export default function ContactPage() {
         </div>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

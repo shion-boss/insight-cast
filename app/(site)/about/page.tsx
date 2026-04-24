@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 
 import { CHARACTERS } from '@/lib/characters'
-import { PublicFooter, PublicHeader, PublicHero, PublicPageFrame } from '@/components/public-layout'
+import { PublicHero } from '@/components/public-layout'
 
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
@@ -26,8 +26,8 @@ export default function AboutPage() {
   const allCasts = CHARACTERS
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <PublicHero
@@ -145,7 +145,7 @@ export default function AboutPage() {
         </section>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

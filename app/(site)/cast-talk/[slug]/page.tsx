@@ -3,7 +3,7 @@ import Image from 'next/image'
 import type { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { EyebrowBadge, getButtonClass } from '@/components/ui'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
@@ -91,8 +91,8 @@ export default async function CastTalkDetailPage({
   )
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         {/* ヒーロー */}
@@ -197,7 +197,7 @@ export default async function CastTalkDetailPage({
         </div>
       </main>
 
-      <PublicFooter showPromo={false} />
-    </PublicPageFrame>
+
+    </>
   )
 }

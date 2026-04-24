@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。ホームページを会話で少しずつ育てるサービス。カード不要で無料体験できます。',
 }
 import { CharacterAvatar } from '@/components/ui'
-import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { CopyButton } from '@/components/CopyButton'
-import { CheckoutButton } from '@/app/pricing/CheckoutButton'
+import { CheckoutButton } from '@/app/(site)/pricing/CheckoutButton'
 import AppPreviewSection from '@/components/app-preview-section'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import scenePlanning from '@/assets/scene/scene-story-planning.png'
@@ -170,8 +170,8 @@ export default async function LandingPage() {
     .limit(3)
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
 
@@ -855,7 +855,7 @@ export default async function LandingPage() {
 
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

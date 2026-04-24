@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
-import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
@@ -72,8 +72,8 @@ export default async function BlogDetailPage({
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
         {/* パンくず */}
@@ -320,7 +320,7 @@ export default async function BlogDetailPage({
         )}
       </main>
 
-      <PublicFooter showPromo={false} />
-    </PublicPageFrame>
+
+    </>
   )
 }

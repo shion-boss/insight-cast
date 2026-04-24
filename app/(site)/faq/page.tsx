@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PublicFooter, PublicHeader, PublicPageFrame } from '@/components/public-layout'
+import { PublicPageFrame } from '@/components/public-layout'
 import { FaqContent } from './faq-client'
 
 export const metadata: Metadata = {
@@ -102,8 +102,8 @@ const FAQ_GROUPS = [
 
 export default function FaqPage() {
   return (
-    <PublicPageFrame>
-      <PublicHeader />
+    <>
+
 
       <main className="relative z-10">
         <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[88px] sm:pb-16 sm:pt-[96px]">
@@ -121,7 +121,7 @@ export default function FaqPage() {
         </section>
       </main>
 
-      <PublicFooter />
-    </PublicPageFrame>
+
+    </>
   )
 }

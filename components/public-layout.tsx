@@ -95,10 +95,7 @@ export function LegalPageTemplate({
   children: ReactNode
 }) {
   return (
-    <PublicPageFrame>
-      <PublicHeader />
-
-      <main className="relative z-10">
+    <main className="relative z-10">
         <PublicHero
           compact
           eyebrow={title}
@@ -138,10 +135,7 @@ export function LegalPageTemplate({
             </div>
           </div>
         </section>
-      </main>
-
-      <PublicFooter />
-    </PublicPageFrame>
+    </main>
   )
 }
 
