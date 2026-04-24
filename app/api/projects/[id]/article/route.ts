@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import Anthropic from '@anthropic-ai/sdk'
 import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { logApiUsage } from '@/lib/api-usage'
@@ -179,14 +180,17 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const {
-    interviewId,
-    articleType,
-    style,
-    volume,
-    theme,
-    polishAnswers,
-  } = await req.json()
+  const body = await req.json()
+  const parsed = z.object({
+    interviewId: z.string().uuid(),
+    articleType: z.enum(['client', 'interviewer', 'conversation']),
+    style: z.enum(['desu', 'de-aru', 'da-na']).optional(),
+    volume: z.enum(['short', 'medium', 'long']).optional(),
+    theme: z.string().max(200).optional(),
+    polishAnswers: z.boolean().optional(),
+  }).safeParse(body)
+  if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  const { interviewId, articleType, style, volume, theme, polishAnswers } = parsed.data
 
   const { data: interview } = await supabase
     .from('interviews')

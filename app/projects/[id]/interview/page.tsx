@@ -101,11 +101,11 @@ export default function InterviewPage() {
         const { done, value } = await reader.read()
         if (done) break
         text += decoder.decode(value)
-        setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim())
+        setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim())
       }
 
-      const interviewComplete = /\[INTERVIEW_COMPLETE\]\s*$/m.test(text)
-      const finalText = text.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
+      const interviewComplete = /\[INTERVIEW_COMPLETE\]/g.test(text)
+      const finalText = text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim()
       if (finalText) {
         setMessages((prev) => [...prev, { role: 'interviewer', content: finalText }])
       }
