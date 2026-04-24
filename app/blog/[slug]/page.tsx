@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { CharacterAvatar } from '@/components/ui'
-import { BlogCoverArt } from '@/components/blog-cover-art'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
 import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
@@ -87,19 +86,24 @@ export default async function BlogDetailPage({
         </nav>
 
         {/* 記事ヘッダー */}
-        <div className="mb-12 max-w-2xl">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[var(--border)] bg-[rgba(255,253,249,0.94)] px-3 py-1 text-xs font-medium text-[var(--text3)]">
-              {CATEGORY_LABELS[post.category]}
-            </span>
+        <div className="mb-10 max-w-2xl">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            {(() => {
+              const themeColor = CATEGORY_COLOR_MAP[post.category]
+              return (
+                <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                  {CATEGORY_LABELS[post.category]}
+                </span>
+              )
+            })()}
             {post.type === 'interview' && (
-              <span className="rounded-full border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 py-1 text-xs font-medium text-[var(--warn)]">
-                インタビュー記事
+              <span className="rounded-full bg-[var(--teal-l)] px-2.5 py-0.5 text-[10px] font-bold text-[var(--teal)]">
+                インタビュー
               </span>
             )}
           </div>
 
-          <h1 className="text-2xl font-bold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
+          <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
             {post.title}
           </h1>
 
@@ -113,16 +117,12 @@ export default async function BlogDetailPage({
                   src={interviewer.icon48}
                   alt={`${interviewer.name}のアイコン`}
                   emoji={interviewer.emoji}
-                  size={24}
+                  size={20}
                 />
-                {interviewer.name}取材
+                {interviewer.name}
               </span>
             )}
           </div>
-        </div>
-
-        <div className="mx-auto mb-10 max-w-4xl overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface)]">
-          <BlogCoverArt post={post} char={interviewer ?? CHARACTERS[0]} variant="detail" />
         </div>
 
         {/* 本文エリア */}
