@@ -246,6 +246,14 @@ export default function InterviewPage() {
       return
     }
 
+    // 直前のインタビュアーの質問を履歴から取り消す
+    setMessages((prev) => {
+      const last = [...prev].reverse().findIndex((m) => m.role === 'interviewer')
+      if (last === -1) return prev
+      const idx = prev.length - 1 - last
+      return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
+    })
+
     const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
     if (!result.ok) return
 
@@ -397,9 +405,17 @@ export default function InterviewPage() {
               className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
             />
             <div className="bg-[var(--surface)] border border-[var(--border)] px-3 py-1 rounded-2xl rounded-tl-sm">
-              <span className="text-[var(--text2)] text-[15px] whitespace-pre-wrap leading-[1.85]">
-                {streamingMessage || '少し待ってください...'}
-              </span>
+              {streamingMessage ? (
+                <span className="text-[var(--text2)] text-[15px] whitespace-pre-wrap leading-[1.85]">
+                  {streamingMessage}
+                </span>
+              ) : (
+                <span className="ic-typing-dots">
+                  <span className="ic-typing-dot" />
+                  <span className="ic-typing-dot" />
+                  <span className="ic-typing-dot" />
+                </span>
+              )}
             </div>
           </div>
         )}
