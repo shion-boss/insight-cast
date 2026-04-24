@@ -133,31 +133,43 @@ function buildConversationHtml(opts: {
   interviewerDisplayName: string
   interviewerAvatarUrl: string | null
   clientName: string
+  clientDisplayName: string
   clientInitial: string
   userAvatarUrl: string | null
   themeColor: string
+  showIcon: boolean
+  showName: boolean
+  showClientIcon: boolean
+  showClientName: boolean
 }): string {
-  const { content, interviewerName, interviewerDisplayName, interviewerAvatarUrl, clientName, clientInitial, userAvatarUrl, themeColor } = opts
+  const { content, interviewerName, interviewerDisplayName, interviewerAvatarUrl, clientDisplayName, clientInitial, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
   const questionBg = lighten(themeColor, 0.78)
-  const answerBg   = lighten(themeColor, 0.94)
+  const answerBg   = lighten(themeColor, 0.88)
   const badgeBg    = themeColor
 
   const imgStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;'
   const divStyle = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;'
-  const wrapStyle = 'flex-shrink:0;margin-top:-8px;text-align:center;'
-  const nameStyle = 'font-size:10px;color:#b8a898;margin-top:3px;white-space:nowrap;'
+  const nameStyle = 'font-size:10px;color:#b8a898;margin-bottom:4px;white-space:nowrap;'
 
-  const userBadgeHtml = `<div style="${wrapStyle}">` + (
-    userAvatarUrl
-      ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="${imgStyle}" />`
-      : `<div style="${divStyle}background:${badgeBg};">${escapeHtml(clientInitial)}</div>`
-  ) + `<div style="${nameStyle}">${escapeHtml(clientName)}</div></div>`
+  const userIconHtml = showClientIcon
+    ? (userAvatarUrl
+        ? `<img src="${escapeHtml(userAvatarUrl)}" alt="${escapeHtml(clientInitial)}" style="${imgStyle}" />`
+        : `<div style="${divStyle}background:${badgeBg};">${escapeHtml(clientInitial)}</div>`)
+    : ''
 
-  const interviewerBadgeHtml = `<div style="${wrapStyle}">` + (
-    interviewerAvatarUrl
-      ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerDisplayName)}" style="${imgStyle}" />`
-      : `<div style="${divStyle}background:${themeColor};">${escapeHtml(interviewerDisplayName.slice(0, 1))}</div>`
-  ) + `<div style="${nameStyle}">${escapeHtml(interviewerDisplayName)}</div></div>`
+  const interviewerIconHtml = showIcon
+    ? (interviewerAvatarUrl
+        ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerDisplayName)}" style="${imgStyle}" />`
+        : `<div style="${divStyle}background:${themeColor};">${escapeHtml(interviewerDisplayName.slice(0, 1))}</div>`)
+    : ''
+
+  const nameHtmlInterviewer = showName      ? `<div style="${nameStyle}">${escapeHtml(interviewerDisplayName)}</div>` : ''
+  const nameHtmlClient      = showClientName ? `<div style="${nameStyle}">${escapeHtml(clientDisplayName)}</div>` : ''
+
+  const iconGapInterviewer = showIcon       ? 'gap:8px;' : ''
+  const iconGapClient      = showClientIcon ? 'gap:8px;' : ''
+  const iconMarginTopInterviewer = showIcon       ? 'margin-top:8px;' : ''
+  const iconMarginTopClient      = showClientIcon ? 'margin-top:8px;' : ''
 
   const bubblesHtml: string[] = []
 
@@ -167,14 +179,20 @@ function buildConversationHtml(opts: {
     const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
     // マッチングは元のinterviewerName（コンテンツ内の名前）で行う
     if (match[1] === interviewerName) {
-      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;gap:8px;margin-bottom:16px;">
-  <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;margin-top:10px;">${rawText}</div>
-  ${interviewerBadgeHtml}
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;${iconGapInterviewer}margin-bottom:20px;">
+  <div style="display:flex;flex-direction:column;align-items:flex-end;${iconMarginTopInterviewer}flex:1;min-width:0;">
+    ${nameHtmlInterviewer}
+    <div style="background:${questionBg};border-radius:16px 4px 16px 16px;padding:10px 14px;max-width:75%;font-size:15px;line-height:1.85;color:#3d2b1f;box-sizing:border-box;">${rawText}</div>
+  </div>
+  ${interviewerIconHtml ? `<div style="flex-shrink:0;">${interviewerIconHtml}</div>` : ''}
 </div>`)
     } else {
-      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;">
-  ${userBadgeHtml}
-  <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:10px 14px;max-width:60%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;margin-top:10px;">${rawText}</div>
+      bubblesHtml.push(`<div style="display:flex;align-items:flex-start;${iconGapClient}margin-bottom:20px;">
+  ${userIconHtml ? `<div style="flex-shrink:0;">${userIconHtml}</div>` : ''}
+  <div style="display:flex;flex-direction:column;align-items:flex-start;${iconMarginTopClient}flex:1;min-width:0;">
+    ${nameHtmlClient}
+    <div style="background:${answerBg};border-radius:4px 16px 16px 16px;padding:10px 14px;max-width:75%;font-size:15px;line-height:1.85;color:#2a2a3d;box-sizing:border-box;">${rawText}</div>
+  </div>
 </div>`)
     }
   }
@@ -198,10 +216,15 @@ function buildHtml(opts: {
   interviewerAvatarUrl: string | null
   interviewerDisplayName: string | null
   clientName: string | null
+  clientDisplayName: string | null
   userAvatarUrl: string | null
   themeColor: string
+  showIcon: boolean
+  showName: boolean
+  showClientIcon: boolean
+  showClientName: boolean
 }): string {
-  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, interviewerAvatarUrl, interviewerDisplayName, clientName, userAvatarUrl, themeColor } = opts
+  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, interviewerAvatarUrl, interviewerDisplayName, clientName, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
   const interviewerColor = CAST_COLORS[interviewerId ?? ''] ?? '#c2722a'
   const dateStr = formatDateShort(date)
   const resolvedInterviewerName = interviewerDisplayName || interviewerName
@@ -213,9 +236,14 @@ function buildHtml(opts: {
       interviewerDisplayName: resolvedInterviewerName ?? interviewerName,
       interviewerAvatarUrl,
       clientName: clientName ?? '事業者',
-      clientInitial: initial(clientName),
+      clientDisplayName: opts.clientDisplayName ?? clientName ?? '事業者',
+      clientInitial: initial(opts.clientDisplayName ?? clientName),
       userAvatarUrl,
       themeColor,
+      showIcon,
+      showName,
+      showClientIcon,
+      showClientName,
     })
   }
   if (articleType === 'interviewer') {
@@ -241,8 +269,13 @@ function getContent(opts: {
   interviewerAvatarUrl: string | null
   interviewerDisplayName: string | null
   clientName: string | null
+  clientDisplayName: string | null
   userAvatarUrl: string | null
   themeColor: string
+  showIcon: boolean
+  showName: boolean
+  showClientIcon: boolean
+  showClientName: boolean
 }): string {
   const { format, ...rest } = opts
   if (format === 'text') return toPlainText(rest.content)
@@ -292,6 +325,12 @@ export function ArticleExportPanel({
   const defaultInterviewerAvatarUrl = char?.icon48?.src ? `${appUrl}${char.icon48.src}` : null
   const [interviewerAvatarUrl, setInterviewerAvatarUrl] = useState<string>(defaultInterviewerAvatarUrl ?? '')
   const [interviewerDisplayName, setInterviewerDisplayName] = useState<string>(interviewerName ?? '')
+  const [clientDisplayName, setClientDisplayName] = useState<string>(clientName ?? '')
+  const [clientAvatarUrl, setClientAvatarUrl] = useState<string>(userAvatarUrl ?? '')
+  const [showInterviewerIcon, setShowInterviewerIcon] = useState(true)
+  const [showInterviewerName, setShowInterviewerName] = useState(true)
+  const [showClientIcon, setShowClientIcon] = useState(true)
+  const [showClientName, setShowClientName] = useState(true)
 
   const safeFormat = availableFormats.includes(format) ? format : 'markdown'
   const output = getContent({
@@ -299,7 +338,14 @@ export function ArticleExportPanel({
     interviewerName, interviewerLabel, interviewerId,
     interviewerAvatarUrl: interviewerAvatarUrl || null,
     interviewerDisplayName: interviewerDisplayName || null,
-    clientName, userAvatarUrl, themeColor,
+    clientName,
+    clientDisplayName: clientDisplayName || null,
+    userAvatarUrl: clientAvatarUrl || userAvatarUrl,
+    themeColor,
+    showIcon: showInterviewerIcon,
+    showName: showInterviewerName,
+    showClientIcon,
+    showClientName,
   })
 
   const handleSave = useCallback(() => {
@@ -403,82 +449,130 @@ export function ArticleExportPanel({
       </div>
 
       {safeFormat === 'html' && (
-        <div className="flex flex-col gap-0 border-b border-[var(--border)]">
-          {/* テーマカラー行 */}
-          <div className="flex items-center gap-3 px-5 py-3 border-b border-[var(--border)]">
-            <span className="text-xs text-[var(--text3)]">テーマカラー</span>
-            <input
-              type="color"
-              value={themeColor}
-              onChange={(e) => setThemeColor(e.target.value)}
-              className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
-            />
-            <span className="font-mono text-xs text-[var(--text3)]">{themeColor}</span>
-            <button
-              onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
-              className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
-            >
-              リセット
-            </button>
-            <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden text-xs font-semibold">
-              <button
-                onClick={() => setHtmlPreview(false)}
-                className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
-              >
-                コード
-              </button>
-              <button
-                onClick={() => setHtmlPreview(true)}
-                className={`px-3 py-1.5 transition-colors ${htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
-              >
-                プレビュー
-              </button>
-            </div>
-          </div>
-          {/* インタビュアー設定行（会話形式のみ） */}
-          {articleType === 'conversation' && (
-            <div className="flex flex-wrap items-center gap-3 px-5 py-3">
-              <span className="text-xs text-[var(--text3)]">インタビュアー</span>
-              <div className="flex items-center gap-2">
-                {interviewerAvatarUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={interviewerAvatarUrl} alt="preview" className="h-7 w-7 rounded-full object-cover border border-[var(--border)]" />
-                )}
-                <input
-                  type="text"
-                  value={interviewerAvatarUrl}
-                  onChange={(e) => setInterviewerAvatarUrl(e.target.value)}
-                  placeholder="アイコン画像URL"
-                  className="w-56 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-xs text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-                />
-              </div>
-              <input
-                type="text"
-                value={interviewerDisplayName}
-                onChange={(e) => setInterviewerDisplayName(e.target.value)}
-                placeholder="名前"
-                className="w-28 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-xs text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]"
-              />
-              <button
-                onClick={() => {
-                  setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')
-                  setInterviewerDisplayName(interviewerName ?? '')
-                }}
-                className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
-              >
-                リセット
-              </button>
-            </div>
-          )}
+        <div className="border-b border-[var(--border)]">
+          <table className="w-full text-xs">
+            <tbody>
+              {/* テーマカラー */}
+              <tr className="border-b border-[var(--border)]">
+                <td className="w-28 shrink-0 px-5 py-3 text-[var(--text3)] align-middle">テーマカラー</td>
+                <td className="px-3 py-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      type="color"
+                      value={themeColor}
+                      onChange={(e) => setThemeColor(e.target.value)}
+                      className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
+                    />
+                    <span className="font-mono text-[var(--text3)]">{themeColor}</span>
+                    <button onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
+                      リセット
+                    </button>
+                    <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
+                      <button onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
+                      <button onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {/* インタビュアー（会話形式のみ） */}
+              {articleType === 'conversation' && (
+                <tr className="border-b border-[var(--border)]">
+                  <td className="whitespace-nowrap px-5 py-3 text-[var(--text3)] align-middle">インタビュアー</td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-1 items-center gap-2 min-w-0">
+                        <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
+                          {interviewerAvatarUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={interviewerAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                          )}
+                        </div>
+                        <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                          画像を選ぶ
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            const file = e.target.files?.[0]; if (!file) return
+                            const reader = new FileReader(); reader.onload = () => setInterviewerAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                          }} />
+                        </label>
+                        {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
+                          <button onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                        )}
+                        <input type="text" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                        <button onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerIcon(v => !v)}>
+                          <div role="switch" aria-checked={showInterviewerIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                          </div>
+                          <span className="text-[var(--text3)]">アイコン</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerName(v => !v)}>
+                          <div role="switch" aria-checked={showInterviewerName} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                          </div>
+                          <span className="text-[var(--text3)]">名前</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              )}
+              {/* 取材先（会話形式のみ） */}
+              {articleType === 'conversation' && (
+                <tr>
+                  <td className="whitespace-nowrap px-5 py-3 text-[var(--text3)] align-middle">取材先</td>
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-1 items-center gap-2 min-w-0">
+                        <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
+                          {clientAvatarUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={clientAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                          )}
+                        </div>
+                        <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                          画像を選ぶ
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            const file = e.target.files?.[0]; if (!file) return
+                            const reader = new FileReader(); reader.onload = () => setClientAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                          }} />
+                        </label>
+                        {clientAvatarUrl && (
+                          <button onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                        )}
+                        <input type="text" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                        <button onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientIcon(v => !v)}>
+                          <div role="switch" aria-checked={showClientIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                          </div>
+                          <span className="text-[var(--text3)]">アイコン</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientName(v => !v)}>
+                          <div role="switch" aria-checked={showClientName} className={`relative h-5 w-9 rounded-full transition-colors ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                          </div>
+                          <span className="text-[var(--text3)]">名前</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
 
       {safeFormat === 'html' && htmlPreview ? (
-        <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output) }} />
+        <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output, { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }) }} />
       ) : safeFormat === 'html' ? (
         <div className="p-5">
           <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
-            {output}
+            {output.replace(/src="data:image\/[^;]+;base64,[^"]+"/g, 'src="[画像データ]"')}
           </pre>
         </div>
       ) : (

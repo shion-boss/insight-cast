@@ -1,11 +1,15 @@
 import type { ReactNode } from 'react'
 
+const EMBED_START = '<!-- EMBED_HTML_START -->'
+const EMBED_END = '<!-- EMBED_HTML_END -->'
+
 type MarkdownBlock =
   | { type: 'h1' | 'h2' | 'h3'; text: string }
   | { type: 'p'; text: string }
   | { type: 'ul'; items: string[] }
   | { type: 'ol'; items: string[] }
   | { type: 'blockquote'; lines: string[] }
+  | { type: 'embed'; html: string }
 
 function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
   const pattern = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/
@@ -71,6 +75,18 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
   while (index < lines.length) {
     const rawLine = lines[index]
     const line = rawLine.trim()
+
+    if (line === EMBED_START) {
+      const htmlLines: string[] = []
+      index += 1
+      while (index < lines.length && lines[index].trim() !== EMBED_END) {
+        htmlLines.push(lines[index])
+        index += 1
+      }
+      blocks.push({ type: 'embed', html: htmlLines.join('\n') })
+      index += 1
+      continue
+    }
 
     if (!line) {
       index += 1
@@ -153,6 +169,16 @@ export function MarkdownArticleBody({ markdown }: { markdown: string }) {
   return (
     <div>
       {blocks.map((block, index) => {
+        if (block.type === 'embed') {
+          return (
+            <div
+              key={`embed-${index}`}
+              className="my-8"
+              dangerouslySetInnerHTML={{ __html: block.html }}
+            />
+          )
+        }
+
         if (block.type === 'h1') {
           return (
             <h2 key={`h1-${index}`} className="mb-4 mt-10 text-2xl font-bold text-[var(--text)] first:mt-0">

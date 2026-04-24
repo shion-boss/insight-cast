@@ -37,7 +37,6 @@ function slugify(text: string): string {
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
   if (ascii) return ascii
-  // 日本語など非ASCII タイトルは日付+ランダムsuffixにフォールバック
   const date = new Date().toISOString().slice(0, 10)
   const suffix = Math.random().toString(36).slice(2, 7)
   return `${date}-${suffix}`
@@ -46,6 +45,157 @@ function slugify(text: string): string {
 const selectClass =
   'min-h-11 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 
+// ── ブロック型 ───────────────────────────────────────────
+type Block =
+  | { id: string; type: 'markdown'; content: string }
+  | { id: string; type: 'embed'; content: string }
+
+const EMBED_START = '<!-- EMBED_HTML_START -->'
+const EMBED_END = '<!-- EMBED_HTML_END -->'
+
+function bodyToBlocks(body: string): Block[] {
+  const parts = body.split(new RegExp(`${EMBED_START}|${EMBED_END}`))
+  const blocks: Block[] = []
+  parts.forEach((part, i) => {
+    const trimmed = part.trim()
+    if (trimmed === '') return
+    // 偶数インデックス = EMBED_START の前後なのでMarkdown、奇数 = embed内
+    const isEmbed = i % 2 === 1
+    blocks.push({ id: crypto.randomUUID(), type: isEmbed ? 'embed' : 'markdown', content: trimmed })
+  })
+  if (blocks.length === 0) blocks.push({ id: crypto.randomUUID(), type: 'markdown', content: '' })
+  return blocks
+}
+
+function blocksToBody(blocks: Block[]): string {
+  return blocks
+    .map((b) =>
+      b.type === 'embed'
+        ? `${EMBED_START}\n${b.content}\n${EMBED_END}`
+        : b.content
+    )
+    .join('\n\n')
+}
+
+function newBlock(type: Block['type']): Block {
+  return { id: crypto.randomUUID(), type, content: '' }
+}
+
+// ── ブロックエディタ ─────────────────────────────────────
+function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="relative flex justify-center">
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-dashed border-[var(--border)]" />
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="relative z-10 flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-0.5 text-xs text-[var(--text3)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+      >
+        ＋ ブロックを追加
+      </button>
+      {open && (
+        <div className="absolute top-7 z-20 flex gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] p-2 shadow-md">
+          <button
+            type="button"
+            onClick={() => { onAdd('markdown'); setOpen(false) }}
+            className="rounded px-3 py-1.5 text-xs font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+          >
+            Markdown
+          </button>
+          <button
+            type="button"
+            onClick={() => { onAdd('embed'); setOpen(false) }}
+            className="rounded px-3 py-1.5 text-xs font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+          >
+            埋め込みHTML
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BlockEditor({
+  blocks,
+  onChange,
+}: {
+  blocks: Block[]
+  onChange: (blocks: Block[]) => void
+}) {
+  function updateContent(id: string, content: string) {
+    onChange(blocks.map((b) => (b.id === id ? { ...b, content } : b)))
+  }
+
+  function removeBlock(id: string) {
+    const next = blocks.filter((b) => b.id !== id)
+    onChange(next.length > 0 ? next : [newBlock('markdown')])
+  }
+
+  function insertAfter(index: number, type: Block['type']) {
+    const next = [...blocks]
+    next.splice(index + 1, 0, newBlock(type))
+    onChange(next)
+  }
+
+  return (
+    <div className="space-y-3">
+      {blocks.map((block, i) => (
+        <div key={block.id}>
+          {block.type === 'markdown' ? (
+            <div className="group relative">
+              <div className="absolute right-2 top-2 hidden items-center gap-1 group-hover:flex">
+                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[10px] text-[var(--text3)]">Markdown</span>
+                {blocks.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeBlock(block.id)}
+                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[10px] text-[var(--text3)] hover:text-red-500 transition-colors"
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
+              <textarea
+                value={block.content}
+                onChange={(e) => updateContent(block.id, e.target.value)}
+                rows={10}
+                placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
+                className="min-h-40 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
+              />
+            </div>
+          ) : (
+            <div className="group relative rounded-[var(--r-sm)] border-[1.5px] border-dashed border-[var(--accent)]/40 bg-[var(--accent)]/[0.03]">
+              <div className="flex items-center justify-between border-b border-dashed border-[var(--accent)]/30 px-3 py-1.5">
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--accent)]/60">埋め込みHTML</span>
+                <button
+                  type="button"
+                  onClick={() => removeBlock(block.id)}
+                  className="text-[11px] text-[var(--text3)] hover:text-red-500 transition-colors"
+                >
+                  削除
+                </button>
+              </div>
+              <textarea
+                value={block.content}
+                onChange={(e) => updateContent(block.id, e.target.value)}
+                rows={8}
+                placeholder="<div>埋め込みHTMLをここに貼り付けてください</div>"
+                className="w-full bg-transparent px-4 py-3 font-mono text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:outline-none resize-y"
+              />
+            </div>
+          )}
+
+          <div className="py-2">
+            <AddBlockMenu onAdd={(type) => insertAfter(i, type)} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── メインフォーム ───────────────────────────────────────
 export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -70,14 +220,20 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
     body: defaultValues?.body ?? '',
   })
 
+  const [blocks, setBlocks] = useState<Block[]>(() => bodyToBlocks(defaultValues?.body ?? ''))
+
   function handleChange<K extends keyof PostFormData>(key: K, value: PostFormData[K]) {
     setForm((prev: PostFormData) => ({ ...prev, [key]: value }))
     setHasChanges(true)
     setSuccessMsg(null)
   }
 
-  function handleTitleChange(title: string) {
-    handleChange('title', title)
+  function handleBlocksChange(next: Block[]) {
+    setBlocks(next)
+    const body = blocksToBody(next)
+    setForm((prev) => ({ ...prev, body }))
+    setHasChanges(true)
+    setSuccessMsg(null)
   }
 
   function handleSave() {
@@ -122,7 +278,6 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
 
   return (
     <div className="space-y-8">
-      {/* エラー・成功メッセージ */}
       {errorMsg && (
         <div className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {errorMsg}
@@ -141,7 +296,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             <FieldLabel required>タイトル</FieldLabel>
             <TextInput
               value={form.title}
-              onChange={(e) => handleTitleChange(e.target.value)}
+              onChange={(e) => handleChange('title', e.target.value)}
               placeholder="記事のタイトルを入力してください"
             />
           </div>
@@ -180,20 +335,13 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div>
-            <FieldLabel>本文（Markdown）</FieldLabel>
-            <textarea
-              value={form.body ?? ''}
-              onChange={(e) => handleChange('body', e.target.value)}
-              rows={20}
-              placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
-              className="min-h-96 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
-            />
+            <FieldLabel>本文</FieldLabel>
+            <BlockEditor blocks={blocks} onChange={handleBlocksChange} />
           </div>
         </div>
 
         {/* サイドカラム */}
         <div className="space-y-5">
-          {/* 公開設定 */}
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
             <h3 className="text-sm font-semibold text-[var(--text)]">公開設定</h3>
 
@@ -217,7 +365,6 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             </div>
           </div>
 
-          {/* 分類 */}
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
             <h3 className="text-sm font-semibold text-[var(--text)]">分類</h3>
 
@@ -261,7 +408,6 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             </div>
           </div>
 
-          {/* カバーカラー */}
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-3">
             <h3 className="text-sm font-semibold text-[var(--text)]">カバーカラー</h3>
             <div>
@@ -272,11 +418,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               />
               <p className="mt-1 text-[12px] text-[var(--text3)]">Tailwind CSSのクラス名を入力</p>
             </div>
-            {/* プレビュー */}
             <div className={`h-12 rounded-xl ${form.cover_color}`} aria-hidden="true" />
           </div>
 
-          {/* アクションボタン */}
           <div className="space-y-3">
             <PrimaryButton
               onClick={handleSave}
