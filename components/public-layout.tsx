@@ -133,7 +133,7 @@ export function LegalPageTemplate({
               </div>
             </aside>
 
-            <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7 sm:p-10">
+            <div className="mt-6 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7 sm:p-10">
               <div className="legal-doc space-y-8">{children}</div>
             </div>
           </div>
