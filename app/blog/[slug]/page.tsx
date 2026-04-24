@@ -283,51 +283,35 @@ export default async function BlogDetailPage({
         {/* 関連記事 */}
         {relatedPosts.length > 0 && (
           <div className="mx-auto mt-16 max-w-2xl">
-            <h2 className="mb-6 text-base font-semibold tracking-[0.12em] text-[var(--text3)] uppercase">Related</h2>
-            <div className="flex flex-col gap-3">
+            <h2 className="mb-5 text-[11px] font-semibold tracking-[0.14em] text-[var(--accent)] uppercase">Related</h2>
+            <div className="flex flex-col divide-y divide-[var(--border)] rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {relatedPosts.map((related) => {
                 const relatedInterviewer = related.interviewer
                   ? CHARACTERS.find((c) => c.id === related.interviewer)
                   : undefined
+                const relChar = relatedInterviewer ?? getCharacter(CATEGORY_CHARACTER_MAP[related.category]) ?? CHARACTERS[0]
+                const relColor = CATEGORY_COLOR_MAP[related.category]
                 return (
                   <Link
                     key={related.slug}
                     href={`/blog/${related.slug}`}
-                    className="card-interactive flex items-start gap-4 rounded-[var(--r-lg)] border border-[var(--border)]/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
-                    {(() => {
-                      const relChar = relatedInterviewer ?? getCharacter(CATEGORY_CHARACTER_MAP[related.category]) ?? CHARACTERS[0]
-                      const relColor = CATEGORY_COLOR_MAP[related.category]
-                      return (
-                        <div
-                          className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl flex items-center justify-center"
-                          style={{ background: `${relColor}18` }}
-                        >
-                          <Image src={relChar.icon48} alt={relChar.name} width={36} height={36} className="drop-shadow-sm" />
-                        </div>
-                      )
-                    })()}
-                    <div className="min-w-0">
-                      <div className="mb-1 flex flex-wrap items-center gap-2">
-                        {related.type === 'interview' && relatedInterviewer && (
-                          <span className="flex items-center gap-1 text-xs text-amber-600">
-                            <CharacterAvatar
-                              src={relatedInterviewer.icon48}
-                              alt={`${relatedInterviewer.name}のアイコン`}
-                              emoji={relatedInterviewer.emoji}
-                              size={16}
-                            />
-                            {relatedInterviewer.name}取材
-                          </span>
-                        )}
+                    <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${relColor}18` }}>
+                      <Image src={relChar.icon48} alt={relChar.name} fill className="object-cover" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${relColor}1a`, color: relColor }}>
+                          {CATEGORY_LABELS[related.category]}
+                        </span>
+                        <span className="text-[11px] text-[var(--text3)]">{related.date}</span>
                       </div>
-                      <p className="text-sm font-medium leading-snug text-[var(--text)] line-clamp-2">
+                      <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
                         {related.title}
                       </p>
-                      <time className="mt-1 text-xs text-[var(--text3)]" dateTime={related.date}>
-                        {formatDate(related.date)}
-                      </time>
                     </div>
+                    <span className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}
