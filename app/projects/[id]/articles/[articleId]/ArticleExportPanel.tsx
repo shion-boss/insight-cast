@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useTransition } from 'react'
 import { marked } from 'marked'
-import DOMPurify from 'isomorphic-dompurify'
+import DOMPurify from 'dompurify'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
 import { saveArticleContent } from './actions'
