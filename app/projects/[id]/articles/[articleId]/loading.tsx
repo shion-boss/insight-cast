@@ -1,3 +1,2 @@
-import { PageLoading } from '@/components/page-loading'
-export default function Loading() { return <PageLoading /> }
-
+import { AppShellSkeleton } from '@/components/app-shell-skeleton'
+export default function Loading() { return <AppShellSkeleton /> }
