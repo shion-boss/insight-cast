@@ -122,6 +122,28 @@ export async function POST(
       }
     : null
 
+  // 過去インタビューのテーマ・生成済み記事タイトルを取得（現在のインタビューは除く）
+  const [{ data: pastInterviews }, { data: pastArticles }] = await Promise.all([
+    supabase
+      .from('interviews')
+      .select('focus_theme')
+      .eq('project_id', projectId)
+      .neq('id', interviewId ?? '')
+      .not('focus_theme', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(30),
+    supabase
+      .from('articles')
+      .select('title')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(30),
+  ])
+
+  const pastInterviewThemes = (pastInterviews ?? []).map((r: { focus_theme: string }) => r.focus_theme).filter(Boolean)
+  const pastArticleTitles = (pastArticles ?? []).map((r: { title: string }) => r.title).filter(Boolean)
+  const pastCoverage = [...pastInterviewThemes, ...pastArticleTitles]
+
   const { data: competitorThemeRows } = await supabase
     .from('competitor_analyses')
     .select('raw_data, competitors(url)')
@@ -165,7 +187,24 @@ export async function POST(
   }
   if (audit) {
     if (audit.gaps.length) contextParts.push(`【HPで伝えきれていないこと（調査結果）】\n${audit.gaps.map((g) => `・${g}`).join('\n')}`)
-    if (audit.suggested_themes.length) contextParts.push(`【インタビューで深めたいテーマ（調査結果）】\n${audit.suggested_themes.map((t) => `・${t}`).join('\n')}`)
+    if (audit.suggested_themes.length) {
+      const themeFrequency = audit.suggested_themes.map((theme) => {
+        const keywords = theme.replace(/[、。・]/g, ' ').split(/\s+/).filter((w) => w.length >= 2)
+        const count = pastCoverage.filter((t) => keywords.some((kw) => t.includes(kw))).length
+        return { theme, count }
+      })
+      const fresh = themeFrequency.filter((t) => t.count === 0).map((t) => t.theme)
+      const revisit = themeFrequency.filter((t) => t.count >= 1 && t.count <= 2).map((t) => `${t.theme}（${t.count}回取り上げ済み）`)
+      const saturated = themeFrequency.filter((t) => t.count >= 3).map((t) => `${t.theme}（${t.count}回取り上げ済み）`)
+
+      contextParts.push(
+        `【インタビューで深めたいテーマ（調査結果）】\n` +
+        `未取り上げ（優先して掘り下げる）:\n${fresh.length > 0 ? fresh.map((t) => `・${t}`).join('\n') : '（なし）'}\n\n` +
+        `取り上げ済み・別角度から可（1〜2回）:\n${revisit.length > 0 ? revisit.map((t) => `・${t}`).join('\n') : '（なし）'}\n\n` +
+        `当面は避ける（3回以上）:\n${saturated.length > 0 ? saturated.map((t) => `・${t}`).join('\n') : '（なし）'}\n\n` +
+        `未取り上げのテーマを優先し、取り上げ済みのものは同じ切り口を繰り返さず別の角度から掘り下げる場合のみ選んでください。3回以上のテーマは他に選択肢がない場合を除き避けてください。`
+      )
+    }
   }
 
   // キャラ別コンテキスト注入
