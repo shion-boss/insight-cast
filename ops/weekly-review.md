@@ -35,7 +35,7 @@
 
 ### 今週やったこと
 
-#### 2026-04-24（日次品質改善サイクル 初回）
+#### 2026-04-24（日次品質改善サイクル 初回・8軸に拡張）
 - 日次品質改善サイクルの6軸定義を策定（`docs/ops/daily-quality-cycle.md` 新規作成）
 - 無料プラン取材回数を全箇所「2回（単発）」に統一（Blocker: LP・料金ページ・FAQ・CLAUDE.md・lib/plans.ts）
 - DevAiLabel をボタンラベル内から外出しに修正（Blocker）
@@ -48,6 +48,10 @@
 - article API に Zod バリデーション追加・zod インストール（Should Fix）
 - 特商法ページのカードに `mt-6` 追加
 - email メール転送設定を案内（info@insight-cast.jp → Gmail 転送）
+- 日次品質改善サイクルを6軸→8軸に拡張（軸7: セキュリティ、軸8: ドッグフーディング進捗）
+- XSS: ArticleExportPanel の dangerouslySetInnerHTML に DOMPurify サニタイズ追加（Blocker）
+- ドッグフーディング使用記録フォルダ作成（`ops/dogfooding-log/`）
+- ブログ記事進捗: 5本確認（目標10本まであと5本）
 
 #### 2026-04-22〜23
 - Stripe サブスク実装（checkout / webhook / customer portal）
@@ -72,6 +76,9 @@
 ### 今週の指摘パターン集計
 | カテゴリ | 件数 | 初出/再発 | ルール化済みか |
 |---|---|---|---|
+| XSS（dangerouslySetInnerHTML にサニタイズなし）| 1 | 初出 | 🔲 CLAUDE.md「marked→HTML変換後は必ずDOMPurifyを通す」追加候補 |
+| Zodバリデーション未適用のAPIルート（interview系）| 複数 | 再発 | 🔲 engineer.md「Zodパターンを全APIルートに横展開」追加候補 |
+| Image alt 属性の欠落 | 複数 | 初出 | 🔲 engineer.md「Image には必ず alt を入れる（装飾は alt=""）」追加候補 |
 | プラン仕様の数値が複数箇所でバラバラ（無料プラン取材回数）| 1 | 初出 | 🔲 CLAUDE.md「プラン仕様はここを唯一の参照元に」追加候補 |
 | 技術用語が顧客画面に露出（「バッチ」「Ctrl+Enter」）| 2 | 再発 | CLAUDE.md 既存ルール（運用が追いついていない） |
 | DevAiLabel をボタンラベル内部で使用 | 1 | 初出 | 🔲 engineer.md に「DevAiLabel はボタン外テキストにのみ使う」追加候補 |

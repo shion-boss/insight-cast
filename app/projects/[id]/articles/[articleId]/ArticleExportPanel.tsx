@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useTransition } from 'react'
 import { marked } from 'marked'
+import DOMPurify from 'isomorphic-dompurify'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
 import { saveArticleContent } from './actions'
@@ -400,7 +401,7 @@ export function ArticleExportPanel({
       )}
 
       {safeFormat === 'html' && htmlPreview ? (
-        <div className="p-5" dangerouslySetInnerHTML={{ __html: output }} />
+        <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output) }} />
       ) : safeFormat === 'html' ? (
         <div className="p-5">
           <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
