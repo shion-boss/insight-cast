@@ -49,15 +49,18 @@ export function ArticleListTable({
   const [query, setQuery] = useState('')
   const [articleType, setArticleType] = useState('all')
   const [interviewerLabel, setInterviewerLabel] = useState('all')
+  const [projectLabel, setProjectLabel] = useState('all')
 
   const deferredQuery = useDeferredValue(query)
   const normalizedQuery = deferredQuery.trim().toLowerCase()
   const articleTypeOptions = getUniqueOptions(items.map((item) => item.articleTypeLabel))
   const interviewerOptions = getUniqueOptions(items.map((item) => item.interviewerLabel ?? ''))
+  const projectOptions = getUniqueOptions(items.map((item) => item.projectLabel ?? ''))
 
   const filteredItems = items.filter((item) => {
     if (articleType !== 'all' && item.articleTypeLabel !== articleType) return false
     if (interviewerLabel !== 'all' && item.interviewerLabel !== interviewerLabel) return false
+    if (projectLabel !== 'all' && item.projectLabel !== projectLabel) return false
 
     if (!normalizedQuery) return true
 
@@ -72,17 +75,12 @@ export function ArticleListTable({
     return haystacks.some((value) => value.toLowerCase().includes(normalizedQuery))
   })
 
-  const hasActiveFilters = query.trim().length > 0 || articleType !== 'all' || interviewerLabel !== 'all'
+  const hasActiveFilters = query.trim().length > 0 || articleType !== 'all' || interviewerLabel !== 'all' || projectLabel !== 'all'
 
   return (
     <>
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
-        <div
-          className={cx(
-            'grid gap-3',
-            showInterviewerColumn ? 'lg:grid-cols-[minmax(0,1fr)_180px_180px]' : 'lg:grid-cols-[minmax(0,1fr)_180px]',
-          )}
-        >
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_repeat(auto-fill,minmax(160px,160px))]">
           <div>
             <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
               キーワード
@@ -94,6 +92,24 @@ export function ArticleListTable({
               placeholder={searchPlaceholder}
             />
           </div>
+
+          {showProjectColumn && projectOptions.length > 1 && (
+            <div>
+              <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+                取材先
+              </label>
+              <select
+                value={projectLabel}
+                onChange={(event) => setProjectLabel(event.target.value)}
+                className={selectClassName()}
+              >
+                <option value="all">すべて</option>
+                {projectOptions.map((option) => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
@@ -146,6 +162,7 @@ export function ArticleListTable({
                 setQuery('')
                 setArticleType('all')
                 setInterviewerLabel('all')
+                setProjectLabel('all')
               }}
               className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
             >
