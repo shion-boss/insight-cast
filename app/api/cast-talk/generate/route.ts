@@ -168,7 +168,20 @@ async function selectTheme(
       : '（まだcast-talkがありません）'
 
   const hpContext = hpAnalysis
-    ? `
+    ? (() => {
+        // 過去のcast-talkタイトルとの簡易マッチで、suggested_themesの取り上げ回数を推定
+        const themeFrequency = hpAnalysis.suggestedThemes.map((theme) => {
+          const keywords = theme.replace(/[、。・]/g, ' ').split(/\s+/).filter((w) => w.length >= 2)
+          const count = pastCastTalkTitles.filter((title) =>
+            keywords.some((kw) => title.includes(kw))
+          ).length
+          return { theme, count }
+        })
+        const fresh = themeFrequency.filter((t) => t.count === 0).map((t) => t.theme)
+        const revisit = themeFrequency.filter((t) => t.count >= 1 && t.count <= 2).map((t) => `${t.theme}（${t.count}回取り上げ済み）`)
+        const saturated = themeFrequency.filter((t) => t.count >= 3).map((t) => `${t.theme}（${t.count}回取り上げ済み）`)
+
+        return `
 【自社HPの強み】
 ${hpAnalysis.strengths.length > 0 ? hpAnalysis.strengths.map((s) => `- ${s}`).join('\n') : '（データなし）'}
 
@@ -176,9 +189,17 @@ ${hpAnalysis.strengths.length > 0 ? hpAnalysis.strengths.map((s) => `- ${s}`).jo
 ${hpAnalysis.gaps.length > 0 ? hpAnalysis.gaps.map((g) => `- ${g}`).join('\n') : '（データなし）'}
 
 【HP調査から提案されたテーマ候補】
-${hpAnalysis.suggestedThemes.length > 0 ? hpAnalysis.suggestedThemes.map((t) => `- ${t}`).join('\n') : '（データなし）'}
+未取り上げ（優先して選ぶ）:
+${fresh.length > 0 ? fresh.map((t) => `- ${t}`).join('\n') : '（なし）'}
 
-HP調査の課題・提案テーマを参考にして、まだ記事で扱われていない観点を優先してください。`
+取り上げ済み・再掘り下げ可（別角度なら可）:
+${revisit.length > 0 ? revisit.map((t) => `- ${t}`).join('\n') : '（なし）'}
+
+取り上げ済み・当面は避ける（3回以上）:
+${saturated.length > 0 ? saturated.map((t) => `- ${t}`).join('\n') : '（なし）'}
+
+未取り上げのテーマを優先し、取り上げ済みのものは同じ切り口を繰り返さず別の角度から掘り下げる場合のみ選んでください。3回以上のテーマは他に選択肢がない場合を除き避けてください。`
+      })()
     : ''
 
   const userMessage = `以下の情報をもとに、今日のcast-talkのテーマを1つ選んでください。
