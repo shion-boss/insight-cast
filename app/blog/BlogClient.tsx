@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { getCharacter } from '@/lib/characters'
-import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, type PostCategory, type Post } from '@/lib/blog-posts'
 
 type FilterTab = 'all' | PostCategory
 
@@ -18,31 +18,13 @@ const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'news', label: 'お知らせ' },
 ]
 
-const CATEGORY_CHARACTER: Record<PostCategory, string> = {
-  howto: 'mint',
-  service: 'claus',
-  interview: 'rain',
-  case: 'rain',
-  philosophy: 'claus',
-  news: 'mint',
-}
-
-const CATEGORY_COLOR: Record<PostCategory, string> = {
-  howto:      '#c2722a',
-  service:    '#0f766e',
-  interview:  '#7c3aed',
-  case:       '#1d4ed8',
-  philosophy: '#065f46',
-  news:       '#be185d',
-}
-
 function formatDate(date: string): string {
   const [y, m, d] = date.split('-')
   return `${y}.${m}.${d}`
 }
 
 function resolveChar(post: Post) {
-  const id = post.interviewer ?? CATEGORY_CHARACTER[post.category]
+  const id = post.interviewer ?? CATEGORY_CHARACTER_MAP[post.category]
   return getCharacter(id) ?? getCharacter('mint')!
 }
 
@@ -77,7 +59,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
       {/* 注目記事 */}
       {activeFilter === 'all' && featured && (() => {
         const char = resolveChar(featured)
-        const themeColor = CATEGORY_COLOR[featured.category]
+        const themeColor = CATEGORY_COLOR_MAP[featured.category]
         return (
           <Link
             href={`/blog/${featured.slug}`}
@@ -134,7 +116,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {gridPosts.map((post) => {
           const char = resolveChar(post)
-          const themeColor = CATEGORY_COLOR[post.category]
+          const themeColor = CATEGORY_COLOR_MAP[post.category]
           return (
             <Link
               key={post.slug}

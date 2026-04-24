@@ -24,6 +24,24 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
   news: 'お知らせ',
 }
 
+export const CATEGORY_COLOR_MAP: Record<PostCategory, string> = {
+  howto:      '#c2722a',
+  service:    '#0f766e',
+  interview:  '#7c3aed',
+  case:       '#1d4ed8',
+  philosophy: '#065f46',
+  news:       '#be185d',
+}
+
+export const CATEGORY_CHARACTER_MAP: Record<PostCategory, string> = {
+  howto:      'mint',
+  service:    'claus',
+  interview:  'rain',
+  case:       'rain',
+  philosophy: 'claus',
+  news:       'mint',
+}
+
 const LEGACY_CATEGORY_MAP = {
   'insight-cast': 'service',
 } as const

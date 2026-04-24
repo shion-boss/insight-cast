@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { CharacterAvatar } from '@/components/ui'
 import { BlogCoverArt } from '@/components/blog-cover-art'
-import { CHARACTERS } from '@/lib/characters'
+import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHeader, PublicFooter, PublicPageFrame } from '@/components/public-layout'
-import { POSTS, CATEGORY_LABELS, getRelatedPostsFromList } from '@/lib/blog-posts'
+import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
 import { MarkdownArticleBody } from '@/lib/blog-markdown'
@@ -289,13 +290,18 @@ export default async function BlogDetailPage({
                     href={`/blog/${related.slug}`}
                     className="card-interactive flex items-start gap-4 rounded-[var(--r-lg)] border border-[var(--border)]/80 bg-[rgba(255,253,249,0.94)] p-5 backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    <div className="overflow-hidden rounded-xl">
-                      <BlogCoverArt
-                        post={related}
-                        char={relatedInterviewer ?? CHARACTERS[0]}
-                        variant="mini"
-                      />
-                    </div>
+                    {(() => {
+                      const relChar = relatedInterviewer ?? getCharacter(CATEGORY_CHARACTER_MAP[related.category]) ?? CHARACTERS[0]
+                      const relColor = CATEGORY_COLOR_MAP[related.category]
+                      return (
+                        <div
+                          className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-xl flex items-center justify-center"
+                          style={{ background: `${relColor}18` }}
+                        >
+                          <Image src={relChar.icon48} alt={relChar.name} width={36} height={36} className="drop-shadow-sm" />
+                        </div>
+                      )
+                    })()}
                     <div className="min-w-0">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
                         {related.type === 'interview' && relatedInterviewer && (
