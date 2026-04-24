@@ -704,7 +704,7 @@ export default function SettingsPage() {
                 {[
                   { label: '今月の取材回数', value: interviewCount === null ? '...' : `${interviewCount} 回` },
                   plan.lifetimeInterviewLimit !== null
-                    ? { label: '取材上限（生涯）', value: `${plan.lifetimeInterviewLimit} 回` }
+                    ? { label: 'お試し取材', value: `${plan.lifetimeInterviewLimit} 回` }
                     : { label: '月間取材上限', value: `${plan.monthlyInterviewLimit} 回` },
                   { label: '取材先上限', value: `${plan.maxProjects} 件` },
                   { label: '競合調査', value: `各取材先 ${plan.maxCompetitorsPerProject} 社` },
