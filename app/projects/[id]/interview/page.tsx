@@ -312,11 +312,11 @@ export default function InterviewPage() {
   return (
     <div className="bg-[var(--bg)] h-dvh flex flex-col overflow-hidden">
       {/* ヘッダー */}
-      <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-6 gap-4 flex-shrink-0">
+      <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-3 sm:px-6 gap-2 sm:gap-4 flex-shrink-0">
         <button
           type="button"
           onClick={() => router.push(backHref)}
-          className="rounded-[var(--r-sm)] min-h-[44px] px-3 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          className="rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] px-2 sm:px-3 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
           {backLabel}
         </button>
@@ -341,7 +341,7 @@ export default function InterviewPage() {
           type="button"
           onClick={handleManualFinish}
           aria-label="インタビューを終わらせる"
-          className="md:hidden bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] p-2 transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
+          className="md:hidden bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -358,7 +358,7 @@ export default function InterviewPage() {
       </header>
 
       {/* 進捗バー */}
-      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-6 py-3 flex-shrink-0">
+      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-3 sm:px-6 py-2 sm:py-3 flex-shrink-0">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
@@ -386,7 +386,7 @@ export default function InterviewPage() {
                 className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
               />
             )}
-            <div className={`max-w-[75%] sm:max-w-[60%] px-3 py-1 text-[15px] whitespace-pre-wrap leading-[1.85] ${
+            <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
               msg.role === 'interviewer'
                 ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
                 : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
@@ -423,9 +423,9 @@ export default function InterviewPage() {
       </div>
 
       {/* 入力エリア */}
-      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-6 py-4 flex-shrink-0">
+      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
         {showSupportPanel && (
-          <div className="max-w-2xl mx-auto mb-3 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--bg2)] p-4">
+          <div className="max-w-2xl mx-auto mb-3 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--bg2)] p-3 sm:p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-medium text-[var(--text2)]">この質問と似たテーマを扱う記事</p>
@@ -520,18 +520,19 @@ export default function InterviewPage() {
           </div>
         )}
         <div className="max-w-2xl mx-auto">
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-xs text-[var(--text3)]">答えづらい質問は、無理せずパスして次へ進めます。</p>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-xs text-[var(--text3)] hidden sm:block">答えづらい質問は、無理せずパスして次へ進めます。</p>
+            <p className="text-xs text-[var(--text3)] sm:hidden">答えづらければパスできます。</p>
             <button
               type="button"
               onClick={handlePassQuestion}
               disabled={loading || hasReachedTurnLimit}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-4 py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
             >
               この質問はパス
             </button>
           </div>
-          <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+          <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3 items-end">
             <textarea
               ref={textareaRef}
               value={input}
@@ -542,16 +543,16 @@ export default function InterviewPage() {
                   handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
-              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'ここに話しかけてください（Ctrl+Enter で送信）'}
+              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'ここに話しかけてください'}
               disabled={loading || hasReachedTurnLimit}
               rows={3}
               autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[80px]"
             />
             <button
               type="submit"
               disabled={loading || !input.trim() || hasReachedTurnLimit}
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-5 py-3 min-h-[44px] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
             >
               {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
             </button>
