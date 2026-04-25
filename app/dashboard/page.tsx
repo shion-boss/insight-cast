@@ -83,77 +83,63 @@ export default async function DashboardPage() {
   if (!supabase) redirect('/')
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('id, name, hp_url, status, created_at, updated_at')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false })
+  // profile・projects・plan を並列取得
+  const [{ data: profile }, { data: projects }, userPlan] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('projects')
+      .select('id, name, hp_url, status, created_at, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false }),
+    getUserPlan(supabase, user.id),
+  ])
 
   const projectList = (projects ?? []) as Project[]
   const projectMap = Object.fromEntries(projectList.map((p) => [p.id, p]))
+  const projectIds = projectList.map((p) => p.id)
 
-  const { data: auditRows } = projectList.length > 0
-    ? await supabase
-      .from('hp_audits')
-      .select('id, project_id, raw_data, created_at')
-      .in('project_id', projectList.map((p) => p.id))
-      .order('created_at', { ascending: false })
-    : { data: [] }
+  // プロジェクト関連データを並列取得
+  const [auditResult, competitorResult, competitorAnalysisResult, interviewResult] = await Promise.all([
+    projectList.length > 0
+      ? supabase.from('hp_audits').select('id, project_id, raw_data, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('competitors').select('id, project_id, url').in('project_id', projectIds)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('competitor_analyses').select('project_id, competitor_id, raw_data').in('project_id', projectIds)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+  ])
 
-  const { data: competitorRows } = projectList.length > 0
-    ? await supabase
-      .from('competitors')
-      .select('id, project_id, url')
-      .in('project_id', projectList.map((p) => p.id))
-    : { data: [] }
-
-  const { data: competitorAnalysisRows } = projectList.length > 0
-    ? await supabase
-      .from('competitor_analyses')
-      .select('project_id, competitor_id, raw_data')
-      .in('project_id', projectList.map((p) => p.id))
-    : { data: [] }
+  const auditRows = auditResult.data ?? []
+  const competitorRows = competitorResult.data ?? []
+  const competitorAnalysisRows = competitorAnalysisResult.data ?? []
+  let interviews = (interviewResult.data ?? []) as Interview[]
 
   const analysisReadyProjectIds = new Set(
     projectList
       .filter((p) => isProjectAnalysisReady({
         project: p,
-        competitors: (competitorRows ?? []).filter((c) => c.project_id === p.id),
-        audit: (auditRows ?? []).find((a) => a.project_id === p.id),
-        competitorAnalyses: (competitorAnalysisRows ?? []).filter((r) => r.project_id === p.id),
+        competitors: competitorRows.filter((c) => c.project_id === p.id),
+        audit: auditRows.find((a) => a.project_id === p.id),
+        competitorAnalyses: competitorAnalysisRows.filter((r) => r.project_id === p.id),
       }).isReady)
       .map((p) => p.id),
   )
 
-  let interviews: Interview[] = []
   const latestInterviewMap = new Map<string, Interview>()
   let articleCountByInterview = new Map<string, number>()
   const interviewCountByProject = new Map<string, number>()
   const articleCountByProject = new Map<string, number>()
 
-  if (projectList.length > 0) {
-    const { data: ivRows } = await supabase
-      .from('interviews')
-      .select('id, project_id, interviewer_type, status, summary, themes, created_at')
-      .in('project_id', projectList.map((p) => p.id))
-      .order('created_at', { ascending: false })
-
-    interviews = (ivRows ?? []) as Interview[]
-
-    for (const iv of interviews) {
-      if (!latestInterviewMap.has(iv.project_id)) latestInterviewMap.set(iv.project_id, iv)
-      interviewCountByProject.set(iv.project_id, (interviewCountByProject.get(iv.project_id) ?? 0) + 1)
-    }
+  for (const iv of interviews) {
+    if (!latestInterviewMap.has(iv.project_id)) latestInterviewMap.set(iv.project_id, iv)
+    interviewCountByProject.set(iv.project_id, (interviewCountByProject.get(iv.project_id) ?? 0) + 1)
   }
 
-  // Fetch articles with created_at for charts
   let allArticles: ArticleRow[] = []
   if (interviews.length > 0) {
     const { data: articleRows } = await supabase
@@ -196,7 +182,6 @@ export default async function DashboardPage() {
   const mint = getCharacter('mint')
   const nextProject = projectList[0] ?? null
 
-  const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
   const isInterviewLimitReached = thisMonthInterviews >= planLimits.monthlyInterviewLimit

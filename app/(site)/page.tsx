@@ -145,29 +145,31 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
 }
 
 export default async function LandingPage() {
-  let isLoggedIn = false
-  try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    isLoggedIn = Boolean(user)
-  } catch {
-    // 認証失敗時も表示する
-  }
+  const supabaseAdmin = createAdminClient()
+
+  const [authResult, latestPostsAll, talksResult] = await Promise.allSettled([
+    (async () => {
+      const supabase = await createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      return Boolean(user)
+    })(),
+    getBlogPostsFromDB(),
+    supabaseAdmin
+      .from('cast_talks')
+      .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(3),
+  ])
+
+  const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
+  const latestPosts = (latestPostsAll.status === 'fulfilled' ? latestPostsAll.value : []).slice(0, 3)
+  const latestTalks = talksResult.status === 'fulfilled' ? talksResult.value.data : []
 
   const priceIds = {
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
-
-  const latestPosts = (await getBlogPostsFromDB()).slice(0, 3)
-
-  const supabaseAdmin = createAdminClient()
-  const { data: latestTalks } = await supabaseAdmin
-    .from('cast_talks')
-    .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-    .limit(3)
 
   return (
     <>
