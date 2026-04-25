@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation'
 
 import { AppShell } from '@/components/app-shell'
 import {
+  CharacterAvatar,
   TextInput,
   getButtonClass,
 } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 import {
   type NotificationPreferences,
 } from '@/lib/notification-preferences'
@@ -347,6 +349,7 @@ export function SettingsClient({
     }
   }
 
+  const mint = getCharacter('mint')
   const hasUnsavedProfileChanges = name.trim() !== savedName.trim()
   const hasUnsavedNotificationChanges = !areNotificationPreferencesEqual(
     notifications,
@@ -443,9 +446,10 @@ export function SettingsClient({
                 </div>
 
                 {(profileError || avatarError) && (
-                  <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                    {avatarError ?? profileError}
-                  </p>
+                  <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                    <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-[var(--err)]">{avatarError ?? profileError}</p>
+                  </div>
                 )}
 
                 <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -490,9 +494,10 @@ export function SettingsClient({
                     </div>
 
                     {emailError && (
-                      <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                        {emailError}
-                      </p>
+                      <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                        <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-[var(--err)]">{emailError}</p>
+                      </div>
                     )}
 
                     <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -531,9 +536,10 @@ export function SettingsClient({
                   />
 
                   {deleteError && (
-                    <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                      {deleteError}
-                    </p>
+                    <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                      <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-[var(--err)]">{deleteError}</p>
+                    </div>
                   )}
 
                   <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -677,9 +683,10 @@ export function SettingsClient({
               </div>
 
               {notificationError && (
-                <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                  {notificationError}
-                </p>
+                <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-[var(--err)]">{notificationError}</p>
+                </div>
               )}
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -741,9 +748,10 @@ export function SettingsClient({
                 </p>
 
                 {passwordError && (
-                  <p className="mt-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                    {passwordError}
-                  </p>
+                  <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                    <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-[var(--err)]">{passwordError}</p>
+                  </div>
                 )}
 
                 <div className="mt-5 flex flex-wrap items-center gap-3">

@@ -582,7 +582,7 @@ export function ArticleExportPanel({
         />
       )}
       {copyError && (
-        <p className="px-5 pb-3 text-xs text-[var(--text3)]">コピーできませんでした。手動でお試しください。</p>
+        <p className="px-5 pb-3 text-xs text-[var(--err)]">コピーできませんでした。手動でお試しください。</p>
       )}
     </section>
   )

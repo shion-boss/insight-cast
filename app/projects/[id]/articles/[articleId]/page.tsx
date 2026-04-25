@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
-import { StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
 
@@ -56,6 +56,8 @@ export default async function ArticleDetailPage({
   if (!project || project.user_id !== user.id) redirect('/dashboard')
 
   const interviewer = interview?.interviewer_type ? getCharacter(interview.interviewer_type) : null
+  const fallbackChar = getCharacter('mint')
+  const displayChar = interviewer ?? fallbackChar
 
   return (
     <AppShell
@@ -97,7 +99,14 @@ export default async function ArticleDetailPage({
 
         {!article.content ? (
           <StateCard
-            icon="📝"
+            icon={
+              <CharacterAvatar
+                src={displayChar?.icon48}
+                alt={`${displayChar?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={displayChar?.emoji}
+                size={48}
+              />
+            }
             title="まだ記事の本文が見つかりませんでした。"
             description="少し待ってから開き直すと見られることがあります。"
             tone="warning"
