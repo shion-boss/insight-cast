@@ -109,9 +109,9 @@ const ADDON_CASTS = [
 ] as const
 
 const SELECTION_GUIDE = [
-  { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方' },
-  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方' },
-  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方' },
+  { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', emoji: '🐱' },
+  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', emoji: '🦊' },
+  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', emoji: '🦉' },
 ] as const
 
 const FAQS = [
@@ -171,7 +171,7 @@ export default async function PricingPage({
             <div className="grid gap-4 md:grid-cols-3">
               {SELECTION_GUIDE.map((item) => (
                 <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-start">
-                  <span className="text-[var(--accent)] font-bold text-sm flex-shrink-0 mt-0.5">→</span>
+                  <span className="text-lg flex-shrink-0 mt-0.5 leading-none">{item.emoji}</span>
                   <div>
                     <span className="font-bold text-sm text-[var(--text)]">{item.plan}</span>
                     <span className="text-sm text-[var(--text2)] ml-2">{item.desc}</span>
@@ -319,14 +319,14 @@ export default async function PricingPage({
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある質問</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              料金についての Q&A
+              料金に関するよくある質問
             </h2>
             <div className="mt-10 divide-y divide-[var(--border)] rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {FAQS.map((faq, i) => (
                 <details key={i} className="group">
                   <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
                     <span>{faq.q}</span>
-                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">⌄</span>
+                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>
                   <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>
