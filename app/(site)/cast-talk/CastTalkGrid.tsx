@@ -151,9 +151,10 @@ export function CastTalkGrid({ initialTalks, total, pageSize }: {
       {hasMore && (
         <div className="mt-12 flex justify-center">
           <button
+            type="button"
             onClick={loadMore}
             disabled={loading}
-            className="rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-8 py-3 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50"
+            className="rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-8 py-3 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             {loading ? '読み込み中...' : `もっと見る（残り ${total - talks.length} 件）`}
           </button>

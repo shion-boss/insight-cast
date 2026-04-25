@@ -262,7 +262,7 @@ export function WritingLoadingScene({
           <p className="mt-0.5 text-xs text-[var(--text3)]">{description}</p>
         </div>
         <div className="ml-auto">
-          <AiBadge label="生成中" />
+          <AiBadge label="作成中" />
         </div>
       </div>
       <div className="ic-loading-card-body">
