@@ -55,7 +55,7 @@ export function FullPageLoading() {
         style={{ height: 3, background: 'var(--border)' }}
       >
         <div
-          className="h-full rounded-full animate-[page-load_1.4s_ease-in-out_infinite]"
+          className="h-full rounded-full animate-[page-load_1s_ease-in-out_infinite]"
           style={{ background: 'var(--accent)' }}
         />
       </div>

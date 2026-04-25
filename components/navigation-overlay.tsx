@@ -65,7 +65,7 @@ export function NavigationOverlay() {
     return (
       <>
         <div className="fixed left-0 right-0 z-[31] h-[2px] overflow-hidden" style={{ top: headerBottom }}>
-          <div className="h-full animate-[page-load_1.2s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
+          <div className="h-full animate-[page-load_1s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
         </div>
         <div className="fixed inset-0 z-[25]" style={{ background: 'rgba(250,246,240,0.9)' }} />
       </>
@@ -82,7 +82,7 @@ export function NavigationOverlay() {
         style={{ top: headerBottom }}
       >
         <div
-          className="h-full animate-[page-load_1.2s_ease-in-out_infinite]"
+          className="h-full animate-[page-load_1s_ease-in-out_infinite]"
           style={{ background: 'var(--accent)' }}
         />
       </div>
