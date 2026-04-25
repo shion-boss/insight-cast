@@ -357,7 +357,7 @@ export default async function DashboardPage() {
                         const latestIv = latestInterviewMap.get(project.id)
                         const cardChar = latestIv ? (getCharacter(latestIv.interviewer_type) ?? mint) : mint
                         return (
-                          <div className="w-11 h-11 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                          <div className="w-11 h-11 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
                             <CharacterAvatar src={cardChar?.icon48} alt={cardChar?.name ?? 'インタビュアー'} emoji={cardChar?.emoji} size={32} />
                           </div>
                         )

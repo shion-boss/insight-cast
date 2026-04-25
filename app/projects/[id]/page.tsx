@@ -206,7 +206,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
                 <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
               </div>
               <div>
@@ -237,7 +237,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               { n: articles.length, l: '記事素材' },
               { n: formatDateTime(project.updated_at), l: '最終更新', small: true },
             ].map((s) => (
-              <div key={s.l} className="rounded-[10px] px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.6)' }}>
+              <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.6)' }}>
                 <div
                   className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]"
                   style={{ fontSize: s.small ? 11 : 22 }}

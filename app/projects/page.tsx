@@ -186,7 +186,7 @@ export default async function ProjectsPage() {
           { n: projectList.length, l: '取材先' },
           { n: interviews.length, l: '総インタビュー' },
         ].map((s) => (
-          <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[12px] px-6 py-4 flex gap-3 items-center">
+          <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
             <span className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)]">{s.n}</span>
             <span className="text-[13px] text-[var(--text2)]">{s.l}</span>
           </div>
@@ -217,7 +217,7 @@ export default async function ProjectsPage() {
               >
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-[12px] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={36} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -247,7 +247,7 @@ export default async function ProjectsPage() {
                     { n: articleCount, l: '記事素材' },
                     { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
                   ].map((s) => (
-                    <div key={s.l} className="bg-[var(--bg2)] rounded-[8px] p-2.5 text-center">
+                    <div key={s.l} className="bg-[var(--bg2)] rounded-[var(--r-sm)] p-2.5 text-center">
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold text-[var(--text)]" style={{ fontSize: String(s.n).length > 4 ? 14 : undefined }}>{s.n}</div>
                       <div className="text-[11px] text-[var(--text3)] mt-0.5">{s.l}</div>
                     </div>

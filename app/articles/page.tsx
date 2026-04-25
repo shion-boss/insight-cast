@@ -3,8 +3,9 @@ export const dynamic = 'force-dynamic'
 import { redirect } from 'next/navigation'
 
 import { ArticleListTable } from '@/components/article-list-table'
-import { ButtonLink, StateCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
+import { getCharacter } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
 
 type ArticleRow = {
@@ -106,21 +107,34 @@ export default async function ArticlesPage() {
       isAdmin={checkIsAdmin(user.email)}
     >
       <div className="mb-6 flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Articles</p>
-          <h1 className="mt-1 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">記事一覧</h1>
-        </div>
         <span className="text-sm text-[var(--text3)]">{articles.length} 件</span>
       </div>
 
       {articles.length === 0 ? (
-        <StateCard
-          icon="📝"
-          title="まだ作成した記事はありません。"
-          description="インタビューの取材メモから記事を作ると、ここに一覧で並びます。"
-          align="left"
-          action={<ButtonLink href="/dashboard">ダッシュボードへ戻る</ButtonLink>}
-        />
+        (() => {
+          const rain = getCharacter('rain')
+          return (
+            <>
+              <InterviewerSpeech
+                icon={(
+                  <CharacterAvatar
+                    src={rain?.icon48}
+                    alt={`${rain?.name ?? 'インタビュアー'}のアイコン`}
+                    emoji={rain?.emoji}
+                    size={48}
+                  />
+                )}
+                name={rain?.name ?? 'インタビュアー'}
+                title="まだ作成した記事はありません。"
+                description="インタビューの取材メモから記事を作ると、ここに一覧で並びます。"
+                tone="soft"
+              />
+              <div className="mt-4">
+                <ButtonLink href="/dashboard">ダッシュボードへ戻る</ButtonLink>
+              </div>
+            </>
+          )
+        })()
       ) : (
         <ArticleListTable
           items={articleItems}

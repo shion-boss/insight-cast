@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 
-import { ButtonLink, StateCard } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { InterviewsFilterClient } from '@/components/interviews-filter-client'
 import { getCharacter } from '@/lib/characters'
@@ -75,33 +75,44 @@ export default async function InterviewsPage() {
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
     >
-      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Interview Memos</p>
-          <h1 className="mt-1 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">取材メモ一覧</h1>
-        </div>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
-            {interviews.length}件
+            {interviews.length} 件
           </span>
           <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
-            記事化 {articleInterviewIds.size}件
+            記事化 {articleInterviewIds.size} 件
           </span>
         </div>
       </div>
 
       {interviews.length === 0 ? (
-        <StateCard
-          icon="🎙️"
-          title="まだ取材メモはありません。"
-          description="取材先を登録して取材を始めると、ここにメモが並びます。"
-          align="left"
-          action={(
-            <ButtonLink href={projects[0] ? `/projects/${projects[0].id}/interviewer` : '/projects/new'}>
-              {projects[0] ? '最初のインタビューを始める' : '最初の取材先を登録する'}
-            </ButtonLink>
-          )}
-        />
+        (() => {
+          const mint = getCharacter('mint')
+          return (
+            <>
+              <InterviewerSpeech
+                icon={(
+                  <CharacterAvatar
+                    src={mint?.icon48}
+                    alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+                    emoji={mint?.emoji}
+                    size={48}
+                  />
+                )}
+                name={mint?.name ?? 'インタビュアー'}
+                title="まだ取材メモはありません。"
+                description="取材先を登録して取材を始めると、ここにメモが並びます。"
+                tone="soft"
+              />
+              <div className="mt-4">
+                <ButtonLink href={projects[0] ? `/projects/${projects[0].id}/interviewer` : '/projects/new'}>
+                  {projects[0] ? '最初のインタビューを始める' : '最初の取材先を登録する'}
+                </ButtonLink>
+              </div>
+            </>
+          )
+        })()
       ) : (
         <InterviewsFilterClient
           items={interviews.map((interview) => {
