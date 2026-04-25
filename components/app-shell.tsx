@@ -105,29 +105,31 @@ export function AppShell({
 
       <div className="lg:pl-[236px]">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-md">
-          <div className="mx-auto flex min-h-[64px] max-w-6xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
-            <div className="flex flex-1 items-center gap-3 min-w-0">
-              {/* モバイル: ハンバーガー */}
-              <div className="lg:hidden shrink-0">
-                <ToolMobileNav
-                  navItems={NAV_ITEMS}
-                  active={active}
-                  accountLabel={accountLabel}
-                  accountInitial={accountInitial}
-                  isAdmin={showAdmin}
-                />
-              </div>
-              <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
+          <div className="mx-auto flex min-h-[64px] max-w-6xl items-center px-4 py-2 sm:px-6">
+            {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
+            <div className="flex w-full items-center justify-between lg:hidden">
+              <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+              <ToolMobileNav
+                navItems={NAV_ITEMS}
+                active={active}
+                accountLabel={accountLabel}
+                accountInitial={accountInitial}
+                isAdmin={showAdmin}
+              />
             </div>
-            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              {headerRight}
-              <Link
-                href="/settings"
-                aria-label="設定"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {accountInitial}
-              </Link>
+            {/* PC: タイトル + 右側アクション */}
+            <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between lg:gap-4 lg:min-w-0">
+              <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
+              <div className="flex shrink-0 items-center gap-3">
+                {headerRight}
+                <Link
+                  href="/settings"
+                  aria-label="設定"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                >
+                  {accountInitial}
+                </Link>
+              </div>
             </div>
           </div>
         </header>

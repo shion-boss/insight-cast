@@ -63,14 +63,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
       <div className="lg:pl-[220px]">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
-            <div className="flex items-center gap-3">
-              <div className="lg:hidden">
-                <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
-              </div>
-              <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+          <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
+            {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
+            <div className="flex w-full items-center justify-between lg:hidden">
+              <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+              <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
             </div>
-            <span className="text-xs text-[var(--text3)]">{user.email}</span>
+            {/* PC: 管理画面ラベル + メール */}
+            <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
+              <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+              <span className="text-xs text-[var(--text3)]">{user.email}</span>
+            </div>
           </div>
         </header>
 
