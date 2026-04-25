@@ -9,10 +9,7 @@ export function AdminShellSkeleton() {
       <aside className="border-b border-white/8 bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[220px] lg:border-b-0 lg:border-r lg:border-r-white/8">
         {/* loading bar — サイドバー最上部にホワイト */}
         <div className="absolute left-0 top-0 hidden h-[2px] w-[220px] overflow-hidden lg:block">
-          <div
-            className="h-full animate-[page-load_1s_ease-in-out_infinite]"
-            style={{ background: 'rgba(255,255,255,0.6)' }}
-          />
+          <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-white/60" />
         </div>
         <div className="mx-auto flex max-w-6xl flex-col lg:h-full lg:max-w-none">
           <div className="border-b border-white/8 px-6 py-5 lg:px-5">
@@ -40,7 +37,7 @@ export function AdminShellSkeleton() {
         <header className="relative sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--surface)]">
           {/* loading bar — header 幅いっぱい・最下部 */}
           <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
-            <div className="h-full animate-[page-load_1s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
+            <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
           </div>
           <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between gap-4 px-6">
             <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>

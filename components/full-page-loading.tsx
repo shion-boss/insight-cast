@@ -16,7 +16,7 @@ function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji:
       style={{ width: 56, height: 56, marginLeft: index === 0 ? 0 : -12, zIndex: 3 - index, flexShrink: 0 }}
     >
       {failed ? (
-        <span style={{ fontSize: 24 }} aria-hidden="true">{emoji}</span>
+        <span className="text-[24px]" aria-hidden="true">{emoji}</span>
       ) : (
         <img
           src={src}

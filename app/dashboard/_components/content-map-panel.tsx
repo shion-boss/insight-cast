@@ -217,7 +217,7 @@ export function ContentMapPanel({
                         )}
                         <div className="relative z-10 text-center">
                           {isEmpty ? (
-                            <div className="text-xs font-medium" style={{ color: '#fb923c' }}>不足</div>
+                            <div className="text-xs font-medium text-[#fb923c]">不足</div>
                           ) : (
                             <>
                               <div
@@ -255,10 +255,7 @@ export function ContentMapPanel({
               </div>
             )}
             <div className="text-center">
-              <div
-                className="text-[22px] font-bold"
-                style={{ color: '#fb923c' }}
-              >
+              <div className="text-[22px] font-bold text-[#fb923c]">
                 {gapCells.length}
               </div>
               <div className="text-[11px] text-[var(--text3)] mt-0.5">不足ゾーン</div>
@@ -272,7 +269,7 @@ export function ContentMapPanel({
               <ul className="space-y-1">
                 {gapCells.slice(0, 3).map((cell) => (
                   <li key={`${cell.genre}-${cell.effect}`} className="text-[12px] text-[var(--text2)] flex gap-2 items-center">
-                    <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: '#fb923c' }} />
+                    <span className="w-1 h-1 rounded-full flex-shrink-0 bg-[#fb923c]" />
                     <span className="font-medium">{cell.genre}</span>
                     <span className="text-[var(--text3)]">×</span>
                     <span>{cell.effect}</span>

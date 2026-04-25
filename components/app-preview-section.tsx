@@ -31,7 +31,7 @@ export default function AppPreviewSection() {
           ブラウザ上で完結します。インストール不要で、今すぐ始められます。
         </p>
 
-        <div className="mt-8 flex gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg2)]/80 p-1" style={{ width: 'fit-content' }}>
+        <div className="mt-8 flex w-fit gap-1 rounded-xl border border-[var(--border)] bg-[var(--bg2)]/80 p-1">
           {TABS.map((tab) => (
             <button
               key={tab}
