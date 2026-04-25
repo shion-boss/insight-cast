@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { getButtonClass } from '@/components/ui'
 
 export type MonthlyPoint   = { m: string; n: number }
 export type HeatmapEntry   = { date: string; count: number }
@@ -209,7 +210,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
             <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事素材づくりの進み具合</div>
             <div className="text-[12px]" style={{ color: 'var(--text3)' }}>取材から作った記事素材の継続ペース</div>
           </div>
-          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去6ヶ月</span>
         </div>
 
         <div className="mb-5">
@@ -237,8 +238,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
           </div>
           <Link
             href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
-            className="text-sm font-semibold text-white px-4 py-2 rounded-[var(--r-sm)] transition-colors flex-shrink-0"
-            style={{ background: 'var(--accent)' }}
+            className={getButtonClass('primary', 'flex-shrink-0 text-sm px-4 py-2')}
           >
             取材する →
           </Link>

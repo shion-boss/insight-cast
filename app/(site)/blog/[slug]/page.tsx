@@ -158,7 +158,7 @@ export default async function BlogDetailPage({
                     {body.highlights.map((item, i) => (
                       <li
                         key={i}
-                        className="relative pl-4 text-sm leading-7 text-[var(--text2)] before:absolute before:left-0 before:top-3 before:h-1.5 before:w-1.5 before:rounded-full before:bg-amber-400"
+                        className="relative pl-4 text-sm leading-7 text-[var(--text2)] before:absolute before:left-0 before:top-3 before:h-1.5 before:w-1.5 before:rounded-full before:bg-[var(--accent)]"
                       >
                         {item}
                       </li>
@@ -208,7 +208,7 @@ export default async function BlogDetailPage({
                             className="flex-shrink-0"
                           />
                         )}
-                        <div className="flex-1 rounded-2xl border border-amber-200/60 bg-amber-50/70 px-5 py-4 text-sm leading-7 text-[var(--text2)]">
+                        <div className="flex-1 rounded-2xl border border-[var(--accent-l)] bg-[var(--accent-l)] px-5 py-4 text-sm leading-7 text-[var(--text2)]">
                           {turn.text}
                         </div>
                       </div>
@@ -217,7 +217,7 @@ export default async function BlogDetailPage({
                 </div>
 
                 {/* まとめ */}
-                <div className="rounded-[var(--r-lg)] border border-amber-200/60 bg-[linear-gradient(145deg,rgba(255,247,230,0.98),rgba(255,253,249,0.95))] px-6 py-5">
+                <div className="rounded-[var(--r-lg)] border border-[var(--accent-l)] bg-[linear-gradient(145deg,rgba(255,247,230,0.98),rgba(255,253,249,0.95))] px-6 py-5">
                   <p className="mb-2 text-sm font-semibold text-[var(--text2)]">取材のまとめ</p>
                   <p className="text-sm leading-7 text-[var(--text2)]">{body.summary}</p>
                 </div>

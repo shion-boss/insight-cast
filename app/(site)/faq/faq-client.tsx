@@ -36,7 +36,7 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
                 aria-expanded={open}
               >
                 <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>
-                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`}>⌄</span>
+                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
               </button>
               {open && (
                 <div className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]">

@@ -419,7 +419,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       <div className="overflow-hidden text-ellipsis whitespace-nowrap">{article.title || '記事'}</div>
                     </td>
                     <td className="px-5 py-3">
-                      <span className="text-[11px] bg-[var(--border)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
+                      <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
                         {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
                       </span>
                     </td>
