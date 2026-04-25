@@ -336,6 +336,34 @@ export default function InterviewPage() {
             )}
           </div>
         </div>
+        {/* 参考記事ボタン — PC のみ */}
+        {showSupportPanel && (
+          <div className="hidden md:flex items-center flex-shrink-0">
+            {supportPosts.loading ? (
+              <span className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text3)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                確認中
+              </span>
+            ) : (supportPostCount > 0 || supportPosts.error) ? (
+              <button
+                type="button"
+                onClick={() => setIsSupportPanelOpen((prev) => !prev)}
+                className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer ${
+                  isSupportPanelOpen
+                    ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
+                    : 'border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:bg-white'
+                }`}
+              >
+                参考記事
+                {supportPostCount > 0 && (
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">
+                    {supportPostCount}
+                  </span>
+                )}
+              </button>
+            ) : null}
+          </div>
+        )}
         {/* モバイル: アイコンのみ表示 */}
         <button
           type="button"
@@ -424,83 +452,6 @@ export default function InterviewPage() {
 
       {/* 入力エリア */}
       <div className="bg-[var(--surface)] border-t border-[var(--border)] px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
-        {showSupportPanel && (
-          <div className="max-w-2xl mx-auto mb-3 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--bg2)] p-3 sm:p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium text-[var(--text2)]">この質問と似たテーマを扱う記事</p>
-                <p className="mt-1 text-xs text-[var(--text3)]">
-                  {supportPosts.loading
-                    ? '自社HPと競合の記事から、近いテーマのものを探しています。'
-                    : supportPosts.error
-                      ? '必要ならあとで開いて確認できます。'
-                      : supportPostCount > 0
-                        ? `自社HP ${supportPosts.ownPosts.length}件・競合 ${supportPosts.competitorPosts.length}件。必要なときだけ開けます。`
-                        : 'いま開ける関連記事はありません。'}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                {supportPosts.loading && <p className="text-xs text-[var(--text3)]">探しています...</p>}
-                {(supportPostCount > 0 || supportPosts.error) && (
-                  <button
-                    type="button"
-                    onClick={() => setIsSupportPanelOpen((prev) => !prev)}
-                    aria-expanded={isSupportPanelOpen}
-                    className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs text-[var(--text2)] transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                  >
-                    {isSupportPanelOpen ? '閉じる' : '開く'}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {isSupportPanelOpen && supportPosts.error && (
-              <p className="mt-3 text-xs text-[var(--text3)]">{supportPosts.error}</p>
-            )}
-
-            {isSupportPanelOpen && supportPosts.ownPosts.length > 0 && (
-              <div className="mt-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent)]">自社HPで似たテーマを扱う記事</p>
-                <div className="mt-2 grid gap-3">
-                  {supportPosts.ownPosts.map((post) => (
-                    <a
-                      key={post.url}
-                      href={post.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      <p className="text-sm font-medium text-[var(--text)]">{post.title}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
-                      <p className="mt-2 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {isSupportPanelOpen && supportPosts.competitorPosts.length > 0 && (
-              <div className="mt-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--teal)]">競合で似たテーマを扱う記事</p>
-                <div className="mt-2 grid gap-3">
-                  {supportPosts.competitorPosts.map((post) => (
-                    <a
-                      key={post.url}
-                      href={post.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      <p className="text-sm font-medium text-[var(--text)]">{post.title}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
-                      <p className="mt-2 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
         {submitError && (
           <div className="max-w-2xl mx-auto mb-3">
             <InterviewerSpeech
@@ -559,6 +510,57 @@ export default function InterviewPage() {
           </form>
         </div>
       </div>
+
+      {/* 参考記事パネル — PC のみ, fixed */}
+      {isSupportPanelOpen && !supportPosts.loading && (
+        <div className="hidden md:block fixed right-4 top-[68px] z-30 w-80 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg">
+          <div className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-medium text-[var(--text2)]">この質問に近い記事</p>
+              <button
+                type="button"
+                onClick={() => setIsSupportPanelOpen(false)}
+                className="rounded-[var(--r-sm)] px-2 py-1 text-xs text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer"
+              >
+                閉じる
+              </button>
+            </div>
+            {supportPosts.error && (
+              <p className="text-xs text-[var(--text3)]">{supportPosts.error}</p>
+            )}
+            {supportPosts.ownPosts.length > 0 && (
+              <div className="mb-3">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">自社HP</p>
+                <div className="space-y-2">
+                  {supportPosts.ownPosts.map((post) => (
+                    <a key={post.url} href={post.url} target="_blank" rel="noreferrer"
+                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                      <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="mt-1 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {supportPosts.competitorPosts.length > 0 && (
+              <div>
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">競合</p>
+                <div className="space-y-2">
+                  {supportPosts.competitorPosts.map((post) => (
+                    <a key={post.url} href={post.url} target="_blank" rel="noreferrer"
+                      className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                      <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="mt-1 truncate text-[11px] text-[var(--text3)]">{post.url}</p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* 完了確認モーダル */}
       {showComplete && (
