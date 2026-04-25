@@ -245,7 +245,7 @@ export default async function ProjectsPage() {
                     { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
                   ].map((s) => (
                     <div key={s.l} className="bg-[var(--bg2)] rounded-[var(--r-sm)] p-2.5 text-center">
-                      <div className="text-[20px] font-bold text-[var(--text)]" style={{ fontSize: String(s.n).length > 4 ? 14 : undefined }}>{s.n}</div>
+                      <div className={`font-bold text-[var(--text)] ${String(s.n).length > 4 ? 'text-[14px]' : 'text-[20px]'}`}>{s.n}</div>
                       <div className="text-[11px] text-[var(--text3)] mt-0.5">{s.l}</div>
                     </div>
                   ))}

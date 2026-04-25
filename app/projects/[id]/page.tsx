@@ -234,11 +234,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               { n: articles.length, l: '記事素材' },
               { n: formatDateTime(project.updated_at), l: '最終更新', small: true },
             ].map((s) => (
-              <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.6)' }}>
-                <div
-                  className="font-bold text-[var(--text)]"
-                  style={{ fontSize: s.small ? 11 : 22 }}
-                >{s.n}</div>
+              <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center bg-white/60">
+                <div className={`font-bold text-[var(--text)] ${s.small ? 'text-[11px]' : 'text-[22px]'}`}>{s.n}</div>
                 <div className="text-[11px] text-[var(--text2)] mt-1">{s.l}</div>
               </div>
             ))}
