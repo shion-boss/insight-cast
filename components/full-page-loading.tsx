@@ -44,7 +44,9 @@ export function FullPageLoading() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <img src="/logo.jpg" alt="Insight Cast" className="h-[44px] w-auto object-contain" />
+        <p className="font-serif text-2xl font-bold tracking-wide text-[var(--text)]">
+          Insight <span className="text-[var(--accent)]">Cast</span>
+        </p>
         <p className="text-sm text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 
