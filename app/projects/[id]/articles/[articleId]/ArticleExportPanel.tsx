@@ -384,7 +384,7 @@ export function ArticleExportPanel({
     a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[safeFormat]}`
     a.click()
     URL.revokeObjectURL(url)
-  }, [output, format, title])
+  }, [output, safeFormat, title])
 
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
