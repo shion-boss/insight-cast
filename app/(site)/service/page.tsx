@@ -1,9 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
-import { ButtonLink } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
-import { createClient } from '@/lib/supabase/server'
+import { ServiceHeroCTA, ServiceBottomCTA } from './ServiceCTA'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
@@ -130,16 +128,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
   )
 }
 
-export default async function ServicePage() {
-  let isLoggedIn = false
-  try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    isLoggedIn = Boolean(user)
-  } catch {
-    // 認証失敗時も表示する
-  }
-
+export default function ServicePage() {
   return (
     <>
 
@@ -153,16 +142,7 @@ export default async function ServicePage() {
               AIキャストが取材し、記事の素材が届くまでの流れをご紹介します。
             </>
           )}
-          actions={(
-            <div className="flex flex-col gap-3 sm:flex-row">
-              {isLoggedIn ? (
-                <ButtonLink href="/dashboard" className="px-7 py-4">ダッシュボードへ →</ButtonLink>
-              ) : (
-                <ButtonLink href="/auth/signup" className="px-7 py-4">無料で始める →</ButtonLink>
-              )}
-              <ButtonLink href="/pricing" tone="secondary" className="px-7 py-4">料金を見る</ButtonLink>
-            </div>
-          )}
+          actions={<ServiceHeroCTA />}
           aside={(
             <div className="space-y-4">
               <div>
@@ -270,29 +250,7 @@ export default async function ServicePage() {
             <p className="mt-4 text-sm text-[var(--text2)] leading-[1.8]">
               カード登録不要。無料で3名のキャストによる取材を体験できます。
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              {isLoggedIn ? (
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)]"
-                >
-                  ダッシュボードへ →
-                </Link>
-              ) : (
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)]"
-                >
-                  無料で体験する
-                </Link>
-              )}
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-8 py-3.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                まず相談してみる
-              </Link>
-            </div>
+            <ServiceBottomCTA />
           </div>
         </section>
 
