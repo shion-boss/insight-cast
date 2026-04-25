@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   webpack: (config) => {
-    // WasmHash bug workaround for Node.js 22.x + webpack
-    config.output.hashFunction = "xxhash64";
+    // Node.js 22/24 + webpack WASM hash bug workaround: use sha256 (no WASM dependency)
+    config.output.hashFunction = "sha256";
     return config;
   },
   async headers() {
