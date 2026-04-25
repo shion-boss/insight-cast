@@ -160,7 +160,7 @@ export function ContentMapPanel({
 
           {/* Grid */}
           <div>
-            <div style={{ minWidth: 0 }}>
+            <div className="min-w-0">
               {/* Column headers */}
               <div className="grid mb-1" style={{ gridTemplateColumns: '72px repeat(4, 1fr)' }}>
                 <div />
