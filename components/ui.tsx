@@ -36,9 +36,10 @@ export function DevAiLabel({
   children: ReactNode
   className?: string
 }) {
+  if (!isDevelopment) return null
   return (
-    <span className={cx('inline-flex items-center gap-1', className)}>
-      {isDevelopment && <span aria-hidden="true">✨</span>}
+    <span aria-hidden="true" className={cx('inline-flex items-center gap-1', className)}>
+      <span>✨</span>
       <span>{children}</span>
     </span>
   )

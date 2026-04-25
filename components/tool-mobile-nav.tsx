@@ -99,7 +99,7 @@ export function ToolMobileNav({
                 onClick={() => setOpen(false)}
                 className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                <Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-[32px] w-auto" priority />
+                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto" priority />
               </Link>
               <button
                 type="button"

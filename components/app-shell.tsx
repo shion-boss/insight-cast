@@ -105,7 +105,7 @@ export function AppShell({
             href="/"
             className="block transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            <Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" priority />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" priority />
           </Link>
         </div>
 
@@ -130,7 +130,7 @@ export function AppShell({
               className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[#1c1410] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[#2a1f18] hover:text-white"
             >
               <span className="flex items-center gap-2">
-                <IconSettings />管理画面
+                <IconSettings /><span>管理画面</span>
               </span>
               <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-xs font-bold text-stone-400 uppercase">Admin</span>
             </Link>
@@ -147,7 +147,7 @@ export function AppShell({
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
               <Link href="/">
-                <Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" priority />
+                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" priority />
               </Link>
               <ToolMobileNav
                 navItems={NAV_ITEMS}

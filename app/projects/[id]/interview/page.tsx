@@ -614,12 +614,13 @@ export default function InterviewPage() {
                 <p className="text-[var(--text)] font-semibold text-center mb-2">いいお話がたくさん聞けました。</p>
                 <p className="text-sm text-[var(--text2)] text-center mb-6">十分な内容が集まりました。このまままとめてもいいですか？</p>
                 <div className="space-y-2">
+                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
                   >
-                    <DevAiLabel>はい、まとめてください</DevAiLabel>
+                    はい、まとめてください
                   </button>
                   <button
                     type="button"
@@ -643,12 +644,13 @@ export default function InterviewPage() {
                   >
                     もう少し話す
                   </button>
+                  <DevAiLabel className="justify-center mt-1 text-xs opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
                   >
-                    <DevAiLabel>ここまでの内容でまとめる</DevAiLabel>
+                    ここまでの内容でまとめる
                   </button>
                 </div>
               </>
@@ -658,12 +660,13 @@ export default function InterviewPage() {
                 <p className="text-[var(--text)] font-semibold text-center mb-2">取材をまとめますか？</p>
                 <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめることができます。</p>
                 <div className="space-y-2">
+                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
                   >
-                    <DevAiLabel>はい、まとめてください</DevAiLabel>
+                    はい、まとめてください
                   </button>
                   <button
                     type="button"
