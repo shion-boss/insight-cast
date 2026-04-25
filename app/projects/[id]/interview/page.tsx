@@ -316,7 +316,7 @@ export default function InterviewPage() {
         <button
           type="button"
           onClick={() => router.push(backHref)}
-          className="rounded-[var(--r-sm)] text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          className="rounded-[var(--r-sm)] min-h-[44px] px-3 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
           {backLabel}
         </button>
@@ -374,7 +374,7 @@ export default function InterviewPage() {
       </div>
 
       {/* 会話ログ */}
-      <div className="flex-1 overflow-y-auto p-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
+      <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
@@ -386,7 +386,7 @@ export default function InterviewPage() {
                 className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
               />
             )}
-            <div className={`max-w-[60%] px-3 py-1 text-[15px] whitespace-pre-wrap leading-[1.85] ${
+            <div className={`max-w-[75%] sm:max-w-[60%] px-3 py-1 text-[15px] whitespace-pre-wrap leading-[1.85] ${
               msg.role === 'interviewer'
                 ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
                 : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
@@ -526,7 +526,7 @@ export default function InterviewPage() {
               type="button"
               onClick={handlePassQuestion}
               disabled={loading || hasReachedTurnLimit}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-4 py-2.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-4 py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
             >
               この質問はパス
             </button>
@@ -551,7 +551,7 @@ export default function InterviewPage() {
             <button
               type="submit"
               disabled={loading || !input.trim() || hasReachedTurnLimit}
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-5 py-2.5 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-5 py-3 min-h-[44px] font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
             >
               {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
             </button>

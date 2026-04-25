@@ -225,7 +225,7 @@ export default async function InterviewerPage({
                 </div>
                 <Link
                   href={`/projects/${id}/interviewer`}
-                  className="rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="rounded-lg border border-[var(--border)] px-3 py-2.5 min-h-[44px] text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   選び直す
                 </Link>

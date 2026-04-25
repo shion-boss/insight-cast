@@ -187,8 +187,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
       headerRight={(
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <Link href="/projects" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
+        <div className="flex items-center gap-2">
+          <Link href="/projects" className={getButtonClass('secondary', 'hidden sm:inline-flex px-4 py-2 text-sm')}>
             ← 一覧へ戻る
           </Link>
           <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
@@ -385,7 +385,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">記事素材</h2>
           </div>
           <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--border)]">
-            <table className="w-full">
+            <table className="w-full min-w-[500px]">
               <thead className="bg-[var(--bg2)]">
                 <tr>
                   <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>

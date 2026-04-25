@@ -451,121 +451,111 @@ export function ArticleExportPanel({
       </div>
 
       {safeFormat === 'html' && (
-        <div className="border-b border-[var(--border)]">
-          <table className="w-full text-xs">
-            <tbody>
-              {/* テーマカラー */}
-              <tr className="border-b border-[var(--border)]">
-                <td className="w-28 shrink-0 px-5 py-3 text-[var(--text3)] align-middle">テーマカラー</td>
-                <td className="px-3 py-3">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <input
-                      type="color"
-                      value={themeColor}
-                      onChange={(e) => setThemeColor(e.target.value)}
-                      className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
-                    />
-                    <span className="font-mono text-[var(--text3)]">{themeColor}</span>
-                    <button onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
-                      リセット
-                    </button>
-                    <div className="ml-auto flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
-                      <button onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
-                      <button onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
-                    </div>
+        <div className="border-b border-[var(--border)] divide-y divide-[var(--border)] text-xs">
+          {/* テーマカラー */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 px-5 py-3">
+            <span className="sm:w-28 shrink-0 text-[var(--text3)]">テーマカラー</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="color"
+                value={themeColor}
+                onChange={(e) => setThemeColor(e.target.value)}
+                className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
+              />
+              <span className="font-mono text-[var(--text3)]">{themeColor}</span>
+              <button onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
+                リセット
+              </button>
+              <div className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
+                <button onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
+                <button onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
+              </div>
+            </div>
+          </div>
+          {/* インタビュアー（会話形式のみ） */}
+          {articleType === 'conversation' && (
+            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
+              <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">インタビュアー</span>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
+                    {interviewerAvatarUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={interviewerAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                    )}
                   </div>
-                </td>
-              </tr>
-              {/* インタビュアー（会話形式のみ） */}
-              {articleType === 'conversation' && (
-                <tr className="border-b border-[var(--border)]">
-                  <td className="whitespace-nowrap px-5 py-3 text-[var(--text3)] align-middle">インタビュアー</td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-1 items-center gap-2 min-w-0">
-                        <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
-                          {interviewerAvatarUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={interviewerAvatarUrl} alt="preview" className="h-full w-full object-cover" />
-                          )}
-                        </div>
-                        <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
-                          画像を選ぶ
-                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                            const file = e.target.files?.[0]; if (!file) return
-                            const reader = new FileReader(); reader.onload = () => setInterviewerAvatarUrl(reader.result as string); reader.readAsDataURL(file)
-                          }} />
-                        </label>
-                        {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
-                          <button onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
-                        )}
-                        <input type="text" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                        <button onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3">
-                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerIcon(v => !v)}>
-                          <div role="switch" aria-checked={showInterviewerIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                          </div>
-                          <span className="text-[var(--text3)]">アイコン</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerName(v => !v)}>
-                          <div role="switch" aria-checked={showInterviewerName} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                          </div>
-                          <span className="text-[var(--text3)]">名前</span>
-                        </div>
-                      </div>
+                  <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                    画像を選ぶ
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const file = e.target.files?.[0]; if (!file) return
+                      const reader = new FileReader(); reader.onload = () => setInterviewerAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                    }} />
+                  </label>
+                  {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
+                    <button onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                  )}
+                  <input type="text" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <button onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerIcon(v => !v)}>
+                    <div role="switch" aria-checked={showInterviewerIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
-                  </td>
-                </tr>
-              )}
-              {/* 取材先（会話形式のみ） */}
-              {articleType === 'conversation' && (
-                <tr>
-                  <td className="whitespace-nowrap px-5 py-3 text-[var(--text3)] align-middle">取材先</td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="flex flex-1 items-center gap-2 min-w-0">
-                        <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
-                          {clientAvatarUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={clientAvatarUrl} alt="preview" className="h-full w-full object-cover" />
-                          )}
-                        </div>
-                        <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
-                          画像を選ぶ
-                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                            const file = e.target.files?.[0]; if (!file) return
-                            const reader = new FileReader(); reader.onload = () => setClientAvatarUrl(reader.result as string); reader.readAsDataURL(file)
-                          }} />
-                        </label>
-                        {clientAvatarUrl && (
-                          <button onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
-                        )}
-                        <input type="text" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                        <button onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
-                      </div>
-                      <div className="flex shrink-0 items-center gap-3">
-                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientIcon(v => !v)}>
-                          <div role="switch" aria-checked={showClientIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                          </div>
-                          <span className="text-[var(--text3)]">アイコン</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientName(v => !v)}>
-                          <div role="switch" aria-checked={showClientName} className={`relative h-5 w-9 rounded-full transition-colors ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                            <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                          </div>
-                          <span className="text-[var(--text3)]">名前</span>
-                        </div>
-                      </div>
+                    <span className="text-[var(--text3)]">アイコン</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerName(v => !v)}>
+                    <div role="switch" aria-checked={showInterviewerName} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    <span className="text-[var(--text3)]">名前</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* 取材先（会話形式のみ） */}
+          {articleType === 'conversation' && (
+            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
+              <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">取材先</span>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
+                    {clientAvatarUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={clientAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                    )}
+                  </div>
+                  <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                    画像を選ぶ
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                      const file = e.target.files?.[0]; if (!file) return
+                      const reader = new FileReader(); reader.onload = () => setClientAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                    }} />
+                  </label>
+                  {clientAvatarUrl && (
+                    <button onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                  )}
+                  <input type="text" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <button onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientIcon(v => !v)}>
+                    <div role="switch" aria-checked={showClientIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </div>
+                    <span className="text-[var(--text3)]">アイコン</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientName(v => !v)}>
+                    <div role="switch" aria-checked={showClientName} className={`relative h-5 w-9 rounded-full transition-colors ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </div>
+                    <span className="text-[var(--text3)]">名前</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

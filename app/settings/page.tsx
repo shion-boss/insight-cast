@@ -485,7 +485,7 @@ export default function SettingsPage() {
               key={section}
               type="button"
               onClick={() => setActiveSection(section)}
-              className={`whitespace-nowrap rounded-[var(--r-sm)] border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+              className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-3 py-2.5 text-left text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                 activeSection === section
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
                   : 'border-transparent text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'

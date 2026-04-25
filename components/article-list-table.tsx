@@ -241,7 +241,7 @@ export function ArticleListTable({
                     <td className="px-4 py-4 whitespace-nowrap">
                       <Link
                         href={item.detailHref}
-                        className="rounded text-xs font-medium text-[var(--text3)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="inline-flex min-h-[44px] items-center rounded px-3 text-xs font-medium text-[var(--text3)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         詳細
                       </Link>

@@ -57,7 +57,7 @@ export function ToolMobileNav({
             onClick={() => setOpen(false)}
           />
           <div
-            className={`fixed top-0 left-0 z-50 h-full w-[272px] bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+            className={`fixed top-0 left-0 z-50 h-full w-[min(272px,calc(100vw-24px))] bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
             role="dialog"
             aria-modal="true"
             aria-label="ナビゲーションメニュー"

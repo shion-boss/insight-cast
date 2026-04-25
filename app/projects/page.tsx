@@ -258,20 +258,20 @@ export default async function ProjectsPage() {
                 <div className="flex gap-2 flex-wrap">
                   <Link
                     href={`/projects/${project.id}/interviewer`}
-                    className={getButtonClass('primary', 'text-xs px-3 py-1.5')}
+                    className={getButtonClass('primary', 'text-xs px-3 py-2.5')}
                   >
                     取材する →
                   </Link>
                   <Link
                     href={`/projects/${project.id}`}
-                    className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                    className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
                   >
                     管理
                   </Link>
                   {articleCount > 0 && (
                     <Link
                       href={`/projects/${project.id}#articles`}
-                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
                     >
                       記事を見る
                     </Link>
@@ -283,7 +283,7 @@ export default async function ProjectsPage() {
                   ) : analysisReadyProjectIds.has(project.id) ? (
                     <Link
                       href={`/projects/${project.id}/report`}
-                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
                     >
                       レポート
                     </Link>
@@ -292,7 +292,7 @@ export default async function ProjectsPage() {
                       projectId={project.id}
                       projectName={project.name || project.hp_url}
                       compact
-                      className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
                     />
                   )}
                 </div>

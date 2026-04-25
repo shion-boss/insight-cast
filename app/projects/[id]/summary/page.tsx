@@ -380,7 +380,7 @@ export default function SummaryPage() {
                       </div>
                       <Link
                         href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                        className="flex-shrink-0 bg-[var(--accent)] text-white text-xs font-semibold px-3 py-1.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
+                        className="flex-shrink-0 bg-[var(--accent)] text-white text-xs font-semibold px-3 py-2.5 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
                       >
                         この記事を作る →
                       </Link>
