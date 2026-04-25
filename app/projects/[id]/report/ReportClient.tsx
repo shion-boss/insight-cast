@@ -378,7 +378,7 @@ export default function ReportClient({
 
           {conversionObstacles.length > 0 && (
             <div>
-              <p className="text-xs text-[var(--text3)] mb-2">問い合わせを止めていそうな要因</p>
+              <p className="text-xs text-[var(--text3)] mb-2">問い合わせの邪魔になりそうなこと</p>
               <ul className="space-y-1">
                 {conversionObstacles.map((item, i) => (
                   <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
@@ -391,7 +391,7 @@ export default function ReportClient({
 
           {priorityActions.length > 0 && (
             <div>
-              <p className="text-xs text-[var(--text3)] mb-2">次回改善で優先したいこと</p>
+              <p className="text-xs text-[var(--text3)] mb-2">次に手を入れるとよさそうなこと</p>
               <ul className="space-y-1">
                 {priorityActions.map((item, i) => (
                   <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
@@ -406,7 +406,7 @@ export default function ReportClient({
 
       {/* 自社HP現状 */}
       <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-        <h2 className="text-sm font-medium text-[var(--text2)]">あなたのHPの現状</h2>
+        <h2 className="text-sm font-medium text-[var(--text2)]">いまのホームページで伝えていること</h2>
 
         {audit.current_content && audit.current_content.length > 0 && (
           <div>
@@ -423,7 +423,7 @@ export default function ReportClient({
 
         {audit.strengths && audit.strengths.length > 0 && (
           <div>
-            <p className="text-xs text-[var(--text3)] mb-2">強みとして見えるもの</p>
+            <p className="text-xs text-[var(--text3)] mb-2">強みとして伝えていること</p>
             <ul className="space-y-1">
               {audit.strengths.map((item, i) => (
                 <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
@@ -451,7 +451,7 @@ export default function ReportClient({
       {/* 競合比較 */}
       {competitorAnalyses.length > 0 && (
         <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-          <h2 className="text-sm font-medium text-[var(--text2)]">競合との比較</h2>
+          <h2 className="text-sm font-medium text-[var(--text2)]">競合と比べてみると</h2>
           {competitorAnalyses.map((ca, i) => {
             const hasData = (ca.gaps?.length ?? 0) > 0 || (ca.advantages?.length ?? 0) > 0 || ca.influentialTopics.length > 0
             return (
@@ -520,9 +520,9 @@ export default function ReportClient({
 
       <Link
         href={interviewerPath}
-        className="block w-full py-4 bg-[var(--text)] text-white rounded-xl hover:bg-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors text-sm text-center"
+        className={getButtonClass('primary', 'w-full')}
       >
-        この内容をもとにインタビューを始める →
+        AIキャストを呼んで取材を始める →
       </Link>
     </div>
   )
