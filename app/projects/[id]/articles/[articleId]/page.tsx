@@ -32,36 +32,28 @@ export default async function ArticleDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name, avatar_url')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const { data: article } = await supabase
-    .from('articles')
-    .select('id, title, content, article_type, created_at, project_id, interview_id')
-    .eq('id', articleId)
-    .eq('project_id', id)
-    .single()
+  // profile と article を並列取得
+  const [{ data: profile }, { data: article }] = await Promise.all([
+    supabase.from('profiles').select('name, avatar_url').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('articles')
+      .select('id, title, content, article_type, created_at, project_id, interview_id')
+      .eq('id', articleId)
+      .eq('project_id', id)
+      .single(),
+  ])
 
   if (!article) redirect(`/projects/${id}`)
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, user_id, name, hp_url')
-    .eq('id', id)
-    .single()
+  // article が取れてから project と interview を並列取得
+  const [{ data: project }, { data: interview }] = await Promise.all([
+    supabase.from('projects').select('id, user_id, name, hp_url').eq('id', id).single(),
+    article.interview_id
+      ? supabase.from('interviews').select('interviewer_type').eq('id', article.interview_id).single()
+      : Promise.resolve({ data: null }),
+  ])
 
   if (!project || project.user_id !== user.id) redirect('/dashboard')
-
-  const { data: interview } = article.interview_id
-    ? await supabase
-        .from('interviews')
-        .select('interviewer_type')
-        .eq('id', article.interview_id)
-        .single()
-    : { data: null }
 
   const interviewer = interview?.interviewer_type ? getCharacter(interview.interviewer_type) : null
 
