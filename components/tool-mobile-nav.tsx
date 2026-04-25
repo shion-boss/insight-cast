@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -66,9 +67,9 @@ export function ToolMobileNav({
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="font-serif text-[17px] font-bold text-[var(--text)]"
+                className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                Insight <span className="text-[var(--accent)]">Cast</span>
+                <img src="/logo.jpg" alt="Insight Cast" className="h-[32px] w-auto" />
               </Link>
               <button
                 type="button"
