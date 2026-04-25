@@ -188,6 +188,7 @@ export function CastTalkPreviewClient({
       {/* アクション */}
       <div className="flex items-center gap-3 flex-wrap">
         <button
+          type="button"
           onClick={handleSave}
           disabled={saving || saved}
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
@@ -195,6 +196,7 @@ export function CastTalkPreviewClient({
           {saving ? '保存中...' : saved ? '保存済み ✓' : '保存する'}
         </button>
         <button
+          type="button"
           onClick={() => handleStatusChange(status === 'published' ? 'draft' : 'published')}
           disabled={statusChanging}
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"

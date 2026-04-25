@@ -19,6 +19,7 @@ export function PortalButton() {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
       className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-60 disabled:cursor-not-allowed')}

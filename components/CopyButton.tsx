@@ -13,6 +13,7 @@ export function CopyButton({ text }: { text: string }) {
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className="ml-auto border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-3 py-1 text-xs font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
     >

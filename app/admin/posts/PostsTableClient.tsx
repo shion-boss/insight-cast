@@ -222,6 +222,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                         <span className="inline-block w-24 px-2.5 py-1.5 text-xs" />
                       )}
                       <button
+                        type="button"
                         onClick={() => handleDelete(post)}
                         disabled={deletingId === post.id}
                         className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"

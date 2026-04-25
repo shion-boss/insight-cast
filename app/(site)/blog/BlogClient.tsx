@@ -44,6 +44,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
         {FILTER_TABS.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => setActiveFilter(tab.id)}
             className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
               activeFilter === tab.id
@@ -110,6 +111,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
         <div className="flex flex-col items-center gap-3 py-12 text-center">
           <p className="text-sm text-[var(--text3)]">このカテゴリの記事はまだありません</p>
           <button
+            type="button"
             onClick={() => setActiveFilter('all')}
             className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2"
           >

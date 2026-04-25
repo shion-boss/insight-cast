@@ -39,6 +39,7 @@ export function CheckoutButton({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
       className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
