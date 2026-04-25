@@ -68,6 +68,15 @@ const SERVICES: Service[] = [
     envKeys: [],
   },
   {
+    name: 'GitHub',
+    description: 'コード管理',
+    role: 'ソースコードのバージョン管理・Issue・Pull Request管理',
+    status: 'free',
+    plan: '無料',
+    dashboardUrl: 'https://github.com',
+    envKeys: [],
+  },
+  {
     name: 'Google Analytics',
     description: 'アクセス解析',
     role: '公開サイトのPV・ユーザー行動の計測',

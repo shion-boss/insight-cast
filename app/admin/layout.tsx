@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { AdminMobileNav } from '@/components/admin-mobile-nav'
 
 async function getAdminUser() {
   const supabase = await createClient()
@@ -37,35 +38,38 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <aside className="border-b border-white/8 bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[220px] lg:border-b-0 lg:border-r lg:border-r-white/8">
-        <div className="mx-auto flex max-w-6xl flex-col lg:h-full lg:max-w-none">
-          <div className="border-b border-white/8 px-6 py-5 lg:px-5">
-            <Link href="/admin" className="font-serif text-[17px] font-bold text-white">
-              Insight <span className="text-[var(--accent)]">Cast</span>{' '}
-              <span className="text-[11px] text-white/50">Admin</span>
-            </Link>
-          </div>
-          <nav className="flex gap-2 overflow-x-auto px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:py-3">
-            {NAV_LINKS.map((link) => (
-              <AdminNavLink key={link.href} href={link.href} label={link.label} />
-            ))}
-          </nav>
-          <div className="border-t border-white/8 px-4 py-4 lg:px-3">
-            <p className="truncate text-xs text-white/50">{user.email}</p>
-            <Link
-              href="/dashboard"
-              className="mt-3 inline-flex w-full items-center justify-center rounded-[var(--r-sm)] border border-white/10 px-4 py-2.5 text-sm font-medium text-white/72 transition-colors hover:bg-white/6 hover:text-white"
-            >
-              ← 顧客画面へ
-            </Link>
-          </div>
+      <aside className="hidden bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[220px] lg:flex-col lg:border-r lg:border-r-white/8">
+        <div className="border-b border-white/8 px-5 py-5">
+          <Link href="/admin" className="font-serif text-[17px] font-bold text-white">
+            Insight <span className="text-[var(--accent)]">Cast</span>{' '}
+            <span className="text-[11px] text-white/50">Admin</span>
+          </Link>
+        </div>
+        <nav className="flex-1 overflow-y-auto px-3 py-3">
+          {NAV_LINKS.map((link) => (
+            <AdminNavLink key={link.href} href={link.href} label={link.label} />
+          ))}
+        </nav>
+        <div className="border-t border-white/8 px-3 py-4">
+          <p className="truncate text-xs text-white/50">{user.email}</p>
+          <Link
+            href="/dashboard"
+            className="mt-3 inline-flex w-full items-center justify-center rounded-[var(--r-sm)] border border-white/10 px-4 py-2.5 text-sm font-medium text-white/72 transition-colors hover:bg-white/6 hover:text-white"
+          >
+            ← 顧客画面へ
+          </Link>
         </div>
       </aside>
 
       <div className="lg:pl-[220px]">
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--surface)]">
+        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
-            <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+            <div className="flex items-center gap-3">
+              <div className="lg:hidden">
+                <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
+              </div>
+              <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+            </div>
             <span className="text-xs text-[var(--text3)]">{user.email}</span>
           </div>
         </header>
