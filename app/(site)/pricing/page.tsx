@@ -233,9 +233,30 @@ export default async function PricingPage({
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
-            <p className="mt-4 mb-3 text-xs text-[var(--text3)] text-center sm:hidden" aria-hidden="true">← スクロールして比較 →</p>
-            <div className="mt-4 sm:mt-10 overflow-x-auto rounded-[20px] border border-[var(--border)]">
-              <table className="min-w-[720px] w-full border-collapse">
+            {/* モバイル: プランごとのカード比較 */}
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:hidden">
+              {(['free', 'personal', 'business'] as const).map((plan) => {
+                const isPersonal = plan === 'personal'
+                const planLabel = plan === 'free' ? 'お試し' : plan === 'personal' ? '個人向け' : '法人向け'
+                return (
+                  <div key={plan} className={`rounded-[16px] border p-5 ${isPersonal ? 'border-[var(--accent)] bg-[var(--accent-l)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
+                    <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--accent)]' : 'text-[var(--text2)]'}`}>{planLabel}</div>
+                    <div className="space-y-3">
+                      {TABLE_ROWS.map((row) => (
+                        <div key={row.label} className="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3 last:border-0 last:pb-0">
+                          <span className="text-[12px] text-[var(--text2)]">{row.label}</span>
+                          <span className={`text-[12px] font-semibold ${isPersonal ? 'text-[var(--text)]' : 'text-[var(--text2)]'}`}>{row[plan]}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* PC: テーブル */}
+            <div className="mt-10 hidden overflow-hidden rounded-[20px] border border-[var(--border)] sm:block">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="px-5 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[30%]"></th>
@@ -245,8 +266,8 @@ export default async function PricingPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {TABLE_ROWS.map((row, i) => (
-                    <tr key={row.label} className={i < TABLE_ROWS.length - 1 ? '' : ''}>
+                  {TABLE_ROWS.map((row) => (
+                    <tr key={row.label}>
                       <td className="px-5 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
                       <td className="px-5 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.free}</td>
                       <td className="px-5 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{row.personal}</td>

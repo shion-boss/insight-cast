@@ -85,7 +85,17 @@ export default async function ArticlesPage() {
   const articleItems = articles.map((article) => {
     const project = projects.get(article.project_id)
     const interview = article.interview_id ? interviews.get(article.interview_id) : null
-    const excerpt = article.content.replace(/^#\s+.+$/m, '').trim().slice(0, 80)
+    const excerpt = article.content
+      .replace(/^#{1,6}\s+/gm, '')   // 見出し記号を除去
+      .replace(/\*\*(.+?)\*\*/g, '$1') // bold
+      .replace(/\*(.+?)\*/g, '$1')     // italic
+      .replace(/`(.+?)`/g, '$1')       // inline code
+      .replace(/^\s*[-*+]\s+/gm, '')   // リスト記号
+      .replace(/^\s*\d+\.\s+/gm, '')   // 番号リスト
+      .replace(/\[(.+?)\]\(.+?\)/g, '$1') // リンク
+      .replace(/\n+/g, ' ')            // 改行をスペースに
+      .trim()
+      .slice(0, 80)
 
     return {
       id: article.id,

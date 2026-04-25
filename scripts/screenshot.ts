@@ -1,18 +1,21 @@
 /**
  * 全ページスクリーンショットスクリプト
  * 実行: npm run screenshot
- * 前提: ローカルで `npm run dev` が起動済み（BASE_URL=http://localhost:3000）
+ * 前提: ローカルで `npm run dev` が起動済み（BASE_URL=http://localhost:3001）
  *
  * ツール側ページの撮影には以下の環境変数が必要:
  *   SCREENSHOT_EMAIL=<メールアドレス>
  *   SCREENSHOT_PASSWORD=<パスワード>
  */
 
+import { config } from 'dotenv'
 import { chromium, type BrowserContext } from '@playwright/test'
 import * as fs from 'fs'
 import * as path from 'path'
 
-const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000'
+config({ path: '.env.local' })
+
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3001'
 
 // 公開ページ（認証不要）
 const PUBLIC_PAGES = [
@@ -47,6 +50,14 @@ const TOOL_PAGES = [
   '/articles',
   '/settings',
   '/settings/billing',
+]
+
+// 管理画面（admin権限必須）
+const ADMIN_PAGES = [
+  '/admin',
+  '/admin/cast-talk',
+  '/admin/posts',
+  '/admin/users',
 ]
 
 const VIEWPORTS = {
@@ -216,6 +227,19 @@ async function main() {
       }
 
       for (const pagePath of TOOL_PAGES) {
+        const result = await screenshotPage(context, pagePath, outputDir, viewport)
+        if (result.success) {
+          totalSuccess++
+          console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
+        } else {
+          totalFailure++
+          console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
+        }
+      }
+
+      // --- admin ページ ---
+      console.log(`\n管理画面を撮影します... [${viewport}]`)
+      for (const pagePath of ADMIN_PAGES) {
         const result = await screenshotPage(context, pagePath, outputDir, viewport)
         if (result.success) {
           totalSuccess++
