@@ -4,8 +4,7 @@ import Link from 'next/link'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
-import { createClient } from '@/lib/supabase/server'
-import { CheckoutButton } from './CheckoutButton'
+import { PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
@@ -128,12 +127,6 @@ export default async function PricingPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  const isLoggedIn = Boolean(user)
-
   const query = await searchParams
   const reason = Array.isArray(query.reason) ? query.reason[0] : query.reason
 
@@ -226,40 +219,7 @@ export default async function PricingPage({
                       </div>
                     ))}
                   </div>
-                  {plan.id === 'free' ? (
-                    isLoggedIn ? (
-                      <Link
-                        href="/dashboard"
-                        className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                      >
-                        ダッシュボードへ
-                      </Link>
-                    ) : (
-                      <Link
-                        href="/auth/signup"
-                        className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                      >
-                        {plan.cta}
-                      </Link>
-                    )
-                  ) : isLoggedIn ? (
-                    <CheckoutButton
-                      priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
-                      label={plan.cta}
-                      featured={plan.featured}
-                    />
-                  ) : (
-                    <Link
-                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-                      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center ${
-                        plan.featured
-                          ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
-                          : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                      }`}
-                    >
-                      {plan.cta}
-                    </Link>
-                  )}
+                  <PlanCardCTA plan={plan} priceIds={priceIds} />
                 </div>
               ))}
             </div>
@@ -356,26 +316,7 @@ export default async function PricingPage({
         {/* 締めのCTA */}
         <section className="py-[88px] bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              {isLoggedIn ? 'ダッシュボードから始めましょう' : 'まず、無料で試してみませんか？'}
-            </h2>
-            <p className="mt-4 text-[15px] text-[var(--text2)] leading-relaxed">
-              {isLoggedIn ? 'ご登録ありがとうございます。ダッシュボードから取材を始めてください。' : 'クレジットカード不要。メールアドレスだけで始められます。'}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3 justify-center">
-              {isLoggedIn ? (
-                <Link href="/dashboard" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
-                  ダッシュボードへ →
-                </Link>
-              ) : (
-                <Link href="/auth/signup" className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]">
-                  無料で始める →
-                </Link>
-              )}
-              <Link href="/contact" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors">
-                まず相談してみる
-              </Link>
-            </div>
+            <PricingBottomCTA />
           </div>
         </section>
       </main>
