@@ -9,7 +9,15 @@ type FaqGroup = {
 }
 
 function FaqGroupSection({ group }: { group: FaqGroup }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [openSet, setOpenSet] = useState<Set<number>>(new Set())
+
+  function toggle(index: number) {
+    setOpenSet(prev => {
+      const next = new Set(prev)
+      next.has(index) ? next.delete(index) : next.add(index)
+      return next
+    })
+  }
 
   return (
     <section id={group.id} className="scroll-mt-32">
@@ -18,12 +26,12 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
       </h2>
       <div className="mt-6 overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)]">
         {group.items.map((item, index) => {
-          const open = openIndex === index
+          const open = openSet.has(index)
           return (
             <div key={item.q} className={index < group.items.length - 1 ? 'border-b border-[var(--border)]' : ''}>
               <button
                 type="button"
-                onClick={() => setOpenIndex(open ? null : index)}
+                onClick={() => toggle(index)}
                 className="flex w-full items-center justify-between gap-4 bg-[var(--surface)] px-6 py-5 text-left transition-colors hover:bg-[var(--surface2)]"
                 aria-expanded={open}
               >
