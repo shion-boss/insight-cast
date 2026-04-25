@@ -21,7 +21,7 @@ export default async function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">ユーザー管理</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">ユーザー管理</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">登録ユーザー {users.length} 件</p>
       </div>
 

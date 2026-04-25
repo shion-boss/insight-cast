@@ -145,7 +145,7 @@ export function ToolMobileNav({
                   <span className="flex items-center gap-2">
                     <span aria-hidden="true">⚙</span>管理画面
                   </span>
-                  <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold text-stone-400 uppercase">Admin</span>
+                  <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-xs font-bold text-stone-400 uppercase">Admin</span>
                 </Link>
               )}
               <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>

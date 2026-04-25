@@ -53,7 +53,7 @@ export default function AppPreviewSection() {
             <div className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
             <div className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
             <div className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-            <div className="mx-2 flex h-5 flex-1 items-center rounded px-2.5 text-[10px] text-[var(--text3)] bg-white border border-[var(--border)]">
+            <div className="mx-2 flex h-5 flex-1 items-center rounded px-2.5 text-xs text-[var(--text3)] bg-white border border-[var(--border)]">
               {active.url}
             </div>
           </div>

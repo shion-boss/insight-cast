@@ -95,7 +95,7 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
 
             <div className="min-w-0">
               <div className="flex items-center gap-2.5 mb-1">
-                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base leading-[1.3]">
+                <p className="font-bold text-[var(--text)] text-base leading-[1.3]">
                   {item.projectLabel}
                 </p>
                 {item.isDone ? (

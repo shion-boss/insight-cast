@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Noto_Sans_JP, Shippori_Mincho } from "next/font/google";
+import { Geist_Mono, M_PLUS_1p, Shippori_Mincho } from "next/font/google";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
 import { PageTransitionOverlay } from "@/components/page-transition-overlay";
@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const notoSansJP = Noto_Sans_JP({
+const mplus1p = M_PLUS_1p({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
@@ -44,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${geistMono.variable} ${shipporiMincho.variable} antialiased`}
+        className={`${mplus1p.variable} ${geistMono.variable} ${shipporiMincho.variable} antialiased`}
       >
         <ProjectAnalysisNotifier />
         <ToastViewport />

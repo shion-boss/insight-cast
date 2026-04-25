@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useDeferredValue, useState } from 'react'
 
 import { TextInput, getButtonClass } from '@/components/ui'
@@ -46,6 +47,7 @@ export function ArticleListTable({
   noResultsTitle?: string
   noResultsDescription?: string
 }) {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [articleType, setArticleType] = useState('all')
   const [interviewerLabel, setInterviewerLabel] = useState('all')
@@ -174,7 +176,7 @@ export function ArticleListTable({
 
       {filteredItems.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
-          <p className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">
+          <p className="text-lg font-bold text-[var(--text)]">
             {noResultsTitle}
           </p>
           <p className="mt-2 text-sm text-[var(--text3)]">{noResultsDescription}</p>
@@ -184,12 +186,16 @@ export function ArticleListTable({
           {/* モバイル: カードリスト */}
           <div className="space-y-3 sm:hidden">
             {filteredItems.map((item) => (
-              <div key={item.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <Link
+                key={item.id}
+                href={item.detailHref}
+                className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
+              >
                 <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-3 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
                 )}
-                <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">
                   <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                     {item.articleTypeLabel}
                   </span>
@@ -201,13 +207,7 @@ export function ArticleListTable({
                   )}
                   <span>{item.createdAtLabel}</span>
                 </div>
-                <Link
-                  href={item.detailHref}
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
-                >
-                  詳細
-                </Link>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -229,7 +229,6 @@ export function ArticleListTable({
                     </th>
                   )}
                   <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>
-                  <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
@@ -237,9 +236,10 @@ export function ArticleListTable({
                   <tr
                     key={item.id}
                     className={cx(
-                      'transition-colors hover:bg-[var(--bg2)]',
+                      'cursor-pointer transition-colors hover:bg-[var(--bg2)]',
                       index < filteredItems.length - 1 && 'border-b border-[var(--border)]',
                     )}
+                    onClick={() => router.push(item.detailHref)}
                   >
                     <td className="max-w-xs px-5 py-4">
                       <p className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">
@@ -268,14 +268,6 @@ export function ArticleListTable({
                     )}
                     <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text3)]">
                       {item.createdAtLabel}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <Link
-                        href={item.detailHref}
-                        className="inline-flex min-h-[44px] items-center rounded px-3 text-xs font-medium text-[var(--text3)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                      >
-                        詳細
-                      </Link>
                     </td>
                   </tr>
                 ))}

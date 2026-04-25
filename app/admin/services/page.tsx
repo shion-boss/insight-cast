@@ -97,7 +97,7 @@ export default function AdminServicesPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">関連サービス</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">関連サービス</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">Insight Cast が利用する外部サービスの一覧</p>
       </div>
 

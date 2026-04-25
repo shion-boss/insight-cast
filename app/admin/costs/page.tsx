@@ -151,7 +151,7 @@ export default async function AdminCostsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">コスト管理</h1>
+        <h1 className="text-2xl font-bold text-[var(--text)]">コスト管理</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">
           {now.getFullYear()}年{now.getMonth() + 1}月 — AI API利用料・固定費の確認
         </p>
@@ -166,7 +166,7 @@ export default async function AdminCostsPage() {
           <CostCard label="先月合計" usd={lastCost} />
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">今月トークン数</p>
-            <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
+            <p className="mt-2 text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
             <p className="mt-0.5 text-xs text-[var(--text3)]">tokens</p>
           </div>
         </div>

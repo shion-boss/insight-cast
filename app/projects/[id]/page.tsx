@@ -70,12 +70,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   if (!project) redirect('/dashboard')
 
-  // project が取れてから interviews, auditRow, competitors, competitorAnalyses を並列取得
+  // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得
   const [
     { data: interviewRows },
     { data: auditRow },
     { data: competitors },
     { data: competitorAnalyses },
+    { data: articleRows },
   ] = await Promise.all([
     supabase
       .from('interviews')
@@ -91,6 +92,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .maybeSingle(),
     supabase.from('competitors').select('id, url').eq('project_id', id),
     supabase.from('competitor_analyses').select('competitor_id, raw_data').eq('project_id', id),
+    supabase
+      .from('articles')
+      .select('id, interview_id, article_type, title, created_at')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false }),
   ])
 
   const interviews = (interviewRows ?? []) as InterviewRow[]
@@ -111,16 +117,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return next > new Date() ? next.toISOString() : null
   })()
 
-  let articles: ArticleRow[] = []
-  if (interviews.length > 0) {
-    const { data: articleRows } = await supabase
-      .from('articles')
-      .select('id, interview_id, article_type, title, created_at')
-      .in('interview_id', interviews.map((interview) => interview.id))
-      .order('created_at', { ascending: false })
-
-    articles = (articleRows ?? []) as ArticleRow[]
-  }
+  const articles = (articleRows ?? []) as ArticleRow[]
 
   const { articleCountByInterview } = buildArticleCountByInterview(articles as InterviewArticleRef[])
   const articlesByInterview = new Map<string, ArticleRow[]>()
@@ -210,8 +207,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
               </div>
               <div>
-                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
-                <div className="text-[13px] text-[var(--text2)] flex items-center gap-1">
+                <div className="text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
+                <div className="text-sm text-[var(--text2)] flex items-center gap-1">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text3)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   {project.hp_url}
                 </div>
@@ -239,7 +236,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             ].map((s) => (
               <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,.6)' }}>
                 <div
-                  className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]"
+                  className="font-bold text-[var(--text)]"
                   style={{ fontSize: s.small ? 11 : 22 }}
                 >{s.n}</div>
                 <div className="text-[11px] text-[var(--text2)] mt-1">{s.l}</div>
@@ -286,7 +283,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {/* Interview history */}
       <div className="mt-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">取材履歴</h2>
+          <h2 className="text-[16px] font-bold text-[var(--text)]">取材履歴</h2>
           <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'text-sm px-4 py-2')}>
             + 新しく取材する
           </Link>
@@ -384,7 +381,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {articles.length > 0 && (
         <div id="articles" className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">記事素材</h2>
+            <h2 className="text-[16px] font-bold text-[var(--text)]">記事素材</h2>
           </div>
           {/* モバイル: カードリスト */}
           <div className="space-y-3 sm:hidden">

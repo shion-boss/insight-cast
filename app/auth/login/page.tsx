@@ -66,10 +66,8 @@ function LoginForm() {
     <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         {/* ブランド */}
-        <div className="mb-8 text-center">
-          <span className="font-serif text-[22px] font-bold text-[var(--text)]">
-            Insight <span className="text-[var(--accent)]">Cast</span>
-          </span>
+        <div className="mb-8 flex justify-center">
+          <img src="/logo.jpg" alt="Insight Cast" className="h-9 w-auto" />
         </div>
 
         {/* 有料プラン文脈の案内 */}
@@ -78,7 +76,7 @@ function LoginForm() {
             {mint?.icon48 && (
               <Image src={mint.icon48} alt={mint.name} width={36} height={36} className="rounded-full flex-shrink-0 mt-0.5" />
             )}
-            <p className="text-[13px] text-[var(--text2)] leading-[1.7]">
+            <p className="text-sm text-[var(--text2)] leading-[1.7]">
               <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />
               ログイン後、そのままお支払い画面に進みます。<br />
               アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>

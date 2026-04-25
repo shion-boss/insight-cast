@@ -62,6 +62,7 @@ export default function SummaryPage() {
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null)
   const [accountLabel, setAccountLabel] = useState('設定')
   const [isAdmin, setIsAdmin] = useState(false)
+  const pollCountRef = useRef(0)
 
   useEffect(() => {
     let cancelled = false
@@ -201,12 +202,21 @@ export default function SummaryPage() {
 
   useEffect(() => {
     if (!pendingSummary) return
+    pollCountRef.current = 0
 
-    const intervalId = window.setInterval(() => {
+    const handle = { id: 0 }
+    handle.id = window.setInterval(() => {
+      pollCountRef.current += 1
+      if (pollCountRef.current >= 60) {
+        window.clearInterval(handle.id)
+        setPendingSummary(false)
+        setLoadError('取材メモの作成に時間がかかっています。ページを開き直すか、しばらく後にもう一度お試しください。')
+        return
+      }
       void loadSummary()
     }, 5000)
 
-    return () => window.clearInterval(intervalId)
+    return () => window.clearInterval(handle.id)
   }, [loadSummary, pendingSummary])
 
   const char = data ? getCharacter(data.interviewerType) : null
@@ -324,7 +334,7 @@ export default function SummaryPage() {
             className="border-2 border-[var(--accent)]"
           />
           <div className="flex-1 min-w-0">
-            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">
+            <p className="font-bold text-[var(--text)] text-sm">
               {char?.name ? `${char.name}の取材メモ` : '取材メモが届きました'}
             </p>
             <p className="text-xs text-[var(--text2)] mt-0.5">
@@ -347,7 +357,7 @@ export default function SummaryPage() {
                   {data.values.map((v, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--accent)] rounded-[var(--r-sm)] text-[13px] font-semibold border border-[rgba(194,114,42,0.2)]"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--accent)] rounded-[var(--r-sm)] text-sm font-semibold border border-[rgba(194,114,42,0.2)]"
                     >
                       ✦ {v}
                     </span>
@@ -362,7 +372,7 @@ export default function SummaryPage() {
             {data?.themes && data.themes.length > 0 && (
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-base">記事テーマ候補</p>
+                  <p className="font-bold text-[var(--text)] text-base">記事テーマ候補</p>
                   {articles.length > 0 && (
                     <span className="text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2.5 py-0.5 rounded-full">
                       {articles.length}件作成済み
@@ -376,7 +386,7 @@ export default function SummaryPage() {
                       className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-center justify-between gap-4"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>
+                        <p className="font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>
                       </div>
                       <Link
                         href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
@@ -393,7 +403,7 @@ export default function SummaryPage() {
             {/* 取材ログ */}
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
               <div className="flex items-center justify-between mb-0">
-                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">取材ログ</p>
+                <p className="font-bold text-[var(--text)] text-sm">取材ログ</p>
                 <button
                   type="button"
                   onClick={() => setShowMessages(!showMessages)}
@@ -428,8 +438,8 @@ export default function SummaryPage() {
           <aside className="space-y-4">
             {/* 記事素材を受け取る */}
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm mb-2">記事素材を受け取る</p>
-              <p className="text-[13px] text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事素材を作ります。種類・文字量を設定できます。</p>
+              <p className="font-bold text-[var(--text)] text-sm mb-2">記事素材を受け取る</p>
+              <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事素材を作ります。種類・文字量を設定できます。</p>
               <Link
                 href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
                 className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
@@ -441,7 +451,7 @@ export default function SummaryPage() {
             {/* このインタビューから作った記事 */}
             <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
               <div className="flex items-center justify-between gap-2 mb-4">
-                <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
+                <p className="font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
                 <Link
                   href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
                   className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
@@ -450,14 +460,14 @@ export default function SummaryPage() {
                 </Link>
               </div>
               {articles.length === 0 ? (
-                <p className="text-[13px] text-[var(--text3)]">この取材から作成した記事はまだありません。</p>
+                <p className="text-sm text-[var(--text3)]">この取材から作成した記事はまだありません。</p>
               ) : (
                 <div className="space-y-0">
                   {articles.map((article) => (
                     <Link
                       key={article.id}
                       href={`/projects/${projectId}/articles/${article.id}`}
-                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-[13px] text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors"
+                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors"
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
                       <span className="text-[var(--text3)] flex-shrink-0 text-[11px]">

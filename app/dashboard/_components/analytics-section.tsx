@@ -206,7 +206,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-1">記事素材づくりの進み具合</div>
+            <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事素材づくりの進み具合</div>
             <div className="text-[12px]" style={{ color: 'var(--text3)' }}>取材から作った記事素材の継続ペース</div>
           </div>
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
@@ -232,12 +232,12 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[var(--border)]">
           <ScoreRing score={continuityScore} />
           <div className="flex-1">
-            <div className="text-[13px] font-bold mb-1" style={{ color: 'var(--text)' }}>記事づくり継続スコア：{continuityScore} / 100</div>
+            <div className="text-sm font-bold mb-1" style={{ color: 'var(--text)' }}>記事づくり継続スコア：{continuityScore} / 100</div>
             <div className="text-[12px] leading-relaxed" style={{ color: 'var(--text2)' }}>{scoreDesc}</div>
           </div>
           <Link
             href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
-            className="text-[13px] font-semibold text-white px-4 py-2 rounded-[var(--r-sm)] transition-colors flex-shrink-0"
+            className="text-sm font-semibold text-white px-4 py-2 rounded-[var(--r-sm)] transition-colors flex-shrink-0"
             style={{ background: 'var(--accent)' }}
           >
             取材する →

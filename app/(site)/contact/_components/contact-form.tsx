@@ -50,10 +50,13 @@ export function ContactForm() {
     setServerMessage('')
     setStatus('loading')
 
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(() => controller.abort(), 15000)
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           name,
           email,
@@ -66,8 +69,14 @@ export function ContactForm() {
       if (!res.ok) throw new Error(json?.message ?? '送信失敗')
       setStatus('success')
     } catch (error) {
-      setServerMessage(error instanceof Error ? error.message : '送信できませんでした。時間をおいて再度お試しください。')
+      const message =
+        error instanceof Error && error.name === 'AbortError'
+          ? '送信がタイムアウトしました。時間をおいて再度お試しください。'
+          : (error instanceof Error ? error.message : '送信できませんでした。時間をおいて再度お試しください。')
+      setServerMessage(message)
       setStatus('error')
+    } finally {
+      window.clearTimeout(timeoutId)
     }
   }
 

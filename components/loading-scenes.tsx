@@ -78,7 +78,7 @@ export function AnalysisLoadingScene({
                       : index + 1}
                 </div>
                 <div>
-                  <p className="text-[13px] font-semibold">{step.label}</p>
+                  <p className="text-sm font-semibold">{step.label}</p>
                   {state === 'active' && <p className="mt-0.5 text-[11px] opacity-80">{step.subLabel}</p>}
                 </div>
               </div>

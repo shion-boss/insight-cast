@@ -145,12 +145,12 @@ function BlockEditor({
           {block.type === 'markdown' ? (
             <div className="group relative">
               <div className="absolute right-2 top-2 hidden items-center gap-1 group-hover:flex">
-                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[10px] text-[var(--text3)]">Markdown</span>
+                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)]">Markdown</span>
                 {blocks.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeBlock(block.id)}
-                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[10px] text-[var(--text3)] hover:text-red-500 transition-colors"
+                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)] hover:text-red-500 transition-colors"
                   >
                     削除
                   </button>

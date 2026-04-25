@@ -43,7 +43,7 @@
   --color-foreground: var(--text);
   --font-sans: var(--font-noto-sans-jp);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-noto-serif-jp), "Noto Serif JP", Georgia, serif;
+  --font-serif: var(--font-noto-sans-jp);
 }
 
 html {

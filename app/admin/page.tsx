@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-10">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">管理ダッシュボード</h1>
+          <h1 className="text-2xl font-bold text-[var(--text)]">管理ダッシュボード</h1>
           <p className="mt-1 text-sm text-[var(--text2)]">ブログ記事の管理・公開を行います</p>
         </div>
         <ButtonLink href="/admin/posts/new">新しい記事を書く</ButtonLink>
@@ -95,12 +95,12 @@ export default async function AdminDashboardPage() {
 
       {/* サービス統計 */}
       <section>
-        <h2 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold uppercase tracking-[0.12em] text-[var(--text3)]">サービス統計</h2>
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--text3)]">サービス統計</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {serviceCards.map((s) => (
             <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">{s.l}</p>
-              <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]">{s.n}</p>
+              <p className="mt-2 text-3xl font-bold text-[var(--text)]">{s.n}</p>
             </div>
           ))}
         </div>
@@ -121,12 +121,12 @@ export default async function AdminDashboardPage() {
 
       {/* ブログ統計 */}
       <section>
-        <h2 className="mb-3 font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ブログ記事</h2>
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ブログ記事</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {blogCards.map((s) => (
             <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">{s.l}</p>
-              <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-3xl font-bold text-[var(--text)]">{s.n}</p>
+              <p className="mt-2 text-3xl font-bold text-[var(--text)]">{s.n}</p>
             </div>
           ))}
         </div>
@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
         {/* 最近の記事 */}
         <div>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">最近の記事</h2>
+            <h2 className="text-lg font-bold text-[var(--text)]">最近の記事</h2>
             <Link href="/admin/posts" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
               すべて見る →
             </Link>
@@ -185,7 +185,7 @@ export default async function AdminDashboardPage() {
 
         {/* サイド情報 */}
         <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 h-fit">
-          <h3 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm mb-4">クイックアクション</h3>
+          <h3 className="font-bold text-[var(--text)] text-sm mb-4">クイックアクション</h3>
           <div className="space-y-2">
             <ButtonLink href="/admin/posts/new" className="w-full justify-center">
               + 新しい記事を書く

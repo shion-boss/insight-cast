@@ -283,7 +283,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
               )
             ))}
           </div>
-          <span className="text-[13px] text-white/80">3名のキャストが待っています</span>
+          <span className="text-sm text-white/80">3名のキャストが待っています</span>
         </div>
       </div>
     </div>

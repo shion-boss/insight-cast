@@ -100,11 +100,11 @@ export function BlogCoverArt({
         {!isMini && (
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-wrap gap-2">
-              <span className="rounded-full border border-white/70 bg-white/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[rgba(47,35,24,0.78)]">
+              <span className="rounded-full border border-white/70 bg-white/80 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[rgba(47,35,24,0.78)]">
                 {CATEGORY_LABELS[post.category]}
               </span>
               {post.type === 'interview' && (
-                <span className="rounded-full border border-[#0f766e]/15 bg-[#ecfdf5]/85 px-2.5 py-1 text-[10px] font-semibold text-[#0f766e]">
+                <span className="rounded-full border border-[#0f766e]/15 bg-[#ecfdf5]/85 px-2.5 py-1 text-xs font-semibold text-[#0f766e]">
                   Interview
                 </span>
               )}
@@ -120,7 +120,7 @@ export function BlogCoverArt({
             <div className="min-w-0 max-w-[72%]">
               {variant === 'detail' ? (
                 <>
-                  <p className={`font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] ${TITLE_CLASS[variant]}`}>
+                  <p className={`font-bold text-[var(--text)] ${TITLE_CLASS[variant]}`}>
                     {post.title}
                   </p>
                   <p className={EXCERPT_CLASS[variant]}>{post.excerpt}</p>
@@ -130,7 +130,7 @@ export function BlogCoverArt({
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[rgba(47,35,24,0.5)]">
                     Insight Cast Blog
                   </p>
-                  <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.45] text-[var(--text)]">
+                  <p className="mt-2 text-[16px] font-bold leading-[1.45] text-[var(--text)]">
                     {char.name}が見つける、まだ言葉になっていない価値
                   </p>
                 </>

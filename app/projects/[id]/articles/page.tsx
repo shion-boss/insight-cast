@@ -56,45 +56,31 @@ export default async function ProjectArticlesPage({
 
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, name, hp_url')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  // profile と project を並列取得
+  const [{ data: profile }, { data: project }] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase.from('projects').select('id, name, hp_url').eq('id', id).eq('user_id', user.id).single(),
+  ])
 
   if (!project) redirect('/dashboard')
 
-  let interview: InterviewRow | null = null
-  if (interviewId) {
-    const { data: interviewRow } = await supabase
-      .from('interviews')
-      .select('id, interviewer_type, created_at')
-      .eq('id', interviewId)
-      .eq('project_id', id)
-      .maybeSingle()
-
-    if (!interviewRow) redirect(`/projects/${id}`)
-    interview = interviewRow as InterviewRow
-  }
-
+  // interview と articles を並列取得
   let articlesQuery = supabase
     .from('articles')
     .select('id, title, article_type, created_at, interview_id')
     .eq('project_id', id)
     .order('created_at', { ascending: false })
+  if (interviewId) articlesQuery = articlesQuery.eq('interview_id', interviewId)
 
-  if (interviewId) {
-    articlesQuery = articlesQuery.eq('interview_id', interviewId)
-  }
+  const [{ data: interviewRow }, { data: articleRows }] = await Promise.all([
+    interviewId
+      ? supabase.from('interviews').select('id, interviewer_type, created_at').eq('id', interviewId).eq('project_id', id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    articlesQuery,
+  ])
 
-  const { data: articleRows } = await articlesQuery
+  if (interviewId && !interviewRow) redirect(`/projects/${id}`)
+  const interview = interviewRow as InterviewRow | null
   const articles = (articleRows ?? []) as ArticleRow[]
   const interviewer = interview ? getCharacter(interview.interviewer_type) : null
   const articleItems = articles.map((article) => ({
@@ -130,7 +116,7 @@ export default async function ProjectArticlesPage({
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Project Articles</p>
-          <h1 className="mt-1 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--text)]">
+          <h1 className="mt-1 text-2xl font-bold text-[var(--text)]">
             {project.name || project.hp_url}
           </h1>
           <p className="mt-2 text-sm text-[var(--text3)]">

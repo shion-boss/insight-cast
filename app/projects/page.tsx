@@ -94,6 +94,7 @@ export default async function ProjectsPage() {
     { data: competitorRows },
     { data: competitorAnalysisRows },
     { data: interviewRows },
+    { data: articleRows },
   ] = await Promise.all([
     projectList.length > 0
       ? supabase.from('hp_audits').select('id, project_id, raw_data, created_at').in('project_id', projectIds)
@@ -110,6 +111,9 @@ export default async function ProjectsPage() {
           .select('id, project_id, created_at')
           .in('project_id', projectIds)
           .order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('articles').select('interview_id').in('project_id', projectIds)
       : Promise.resolve({ data: [] }),
   ])
 
@@ -140,13 +144,6 @@ export default async function ProjectsPage() {
       (interviewCountByProject.get(interview.project_id) ?? 0) + 1,
     )
   }
-
-  const { data: articleRows } = interviews.length > 0
-    ? await supabase
-      .from('articles')
-      .select('interview_id')
-      .in('interview_id', interviews.map((interview) => interview.id))
-    : { data: [] }
 
   const { articleCountByInterview } = buildArticleCountByInterview((articleRows ?? []) as InterviewArticleRef[])
   const articleCountByProject = new Map<string, number>()
@@ -187,8 +184,8 @@ export default async function ProjectsPage() {
           { n: interviews.length, l: '総インタビュー' },
         ].map((s) => (
           <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
-            <span className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)]">{s.n}</span>
-            <span className="text-[13px] text-[var(--text2)]">{s.l}</span>
+            <span className="text-[28px] font-bold text-[var(--accent)]">{s.n}</span>
+            <span className="text-sm text-[var(--text2)]">{s.l}</span>
           </div>
         ))}
       </div>
@@ -222,7 +219,7 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link href={`/projects/${project.id}`} className="block">
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>
+                      <div className="text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>
                       <div className="text-[12px] text-[var(--text3)] overflow-hidden text-ellipsis whitespace-nowrap">🔗 {project.hp_url}</div>
                     </Link>
                   </div>
@@ -248,7 +245,7 @@ export default async function ProjectsPage() {
                     { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
                   ].map((s) => (
                     <div key={s.l} className="bg-[var(--bg2)] rounded-[var(--r-sm)] p-2.5 text-center">
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold text-[var(--text)]" style={{ fontSize: String(s.n).length > 4 ? 14 : undefined }}>{s.n}</div>
+                      <div className="text-[20px] font-bold text-[var(--text)]" style={{ fontSize: String(s.n).length > 4 ? 14 : undefined }}>{s.n}</div>
                       <div className="text-[11px] text-[var(--text3)] mt-0.5">{s.l}</div>
                     </div>
                   ))}

@@ -350,7 +350,7 @@ export default function ArticlePage() {
 
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[320px_1fr]">
           <aside className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-20">
-            <p className="mb-5 font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)]">記事の仕上げ方</p>
+            <p className="mb-5 text-base font-bold text-[var(--text)]">記事の仕上げ方</p>
 
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
@@ -360,7 +360,7 @@ export default function ArticlePage() {
                     key={t.type}
                     type="button"
                     onClick={() => setTab(t.type)}
-                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       tab === t.type
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -386,7 +386,7 @@ export default function ArticlePage() {
                       key={item}
                       type="button"
                       onClick={() => setTheme(item)}
-                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-[13px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         theme === item
                           ? 'border border-[var(--accent)] bg-[var(--accent-l)] font-semibold text-[var(--accent)]'
                           : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -401,7 +401,7 @@ export default function ArticlePage() {
                 </div>
               ) : (
                 <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
-                  <p className="text-[13px] leading-[1.7] text-[var(--text3)]">
+                  <p className="text-sm leading-[1.7] text-[var(--text3)]">
                     まだ選べるテーマがありません。先に取材メモを確認するか、取材に戻って話を足すと作りやすくなります。
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -431,7 +431,7 @@ export default function ArticlePage() {
                       key={opt.value}
                       type="button"
                       onClick={() => setStyle(opt.value)}
-                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         style === opt.value
                           ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                           : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -452,7 +452,7 @@ export default function ArticlePage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setVolume(opt.value)}
-                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-[13px] font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       volume === opt.value
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -471,7 +471,7 @@ export default function ArticlePage() {
                 className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <div className="text-left">
-                  <p className="text-[13px] font-semibold text-[var(--text)]">回答を整える</p>
+                  <p className="text-sm font-semibold text-[var(--text)]">回答を整える</p>
                   <p className="mt-0.5 text-[11px] text-[var(--text3)]">誤字や話し言葉を自然に整えます</p>
                 </div>
                 <div className={`relative h-6 w-10 flex-shrink-0 overflow-hidden rounded-full transition-colors ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
@@ -529,10 +529,10 @@ export default function ArticlePage() {
           <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-4">
               <div className="flex items-center gap-2.5">
-                <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-[10px] font-semibold text-[var(--accent)]">
+                <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-xs font-semibold text-[var(--accent)]">
                   {TABS.find((item) => item.type === tab)?.label ?? tab}
                 </span>
-                <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                   currentTabStatus === 'generating'
                     ? 'bg-[var(--warn-l)] text-[var(--warn)]'
                     : currentTabStatus === 'ready'

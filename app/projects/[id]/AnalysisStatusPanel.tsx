@@ -47,8 +47,8 @@ export default function AnalysisStatusPanel({
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-2">調査レポート</div>
-          <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
-          <p className="text-[13px] text-[var(--text2)] leading-relaxed">
+          <h3 className="text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
+          <p className="text-sm text-[var(--text2)] leading-relaxed">
             {competitorCount > 0
               ? `${competitorCount}件の競合HPを設定中。`
               : 'まだ競合HPは設定していません。競合なしでも調査は始められます。'}

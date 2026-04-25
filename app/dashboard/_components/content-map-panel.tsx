@@ -80,7 +80,7 @@ export function ContentMapPanel({
             />
           </div>
           <div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">
+            <h2 className="text-[18px] font-bold text-[var(--text)]">
               コンテンツマップ
             </h2>
             <p className="text-[12px] text-[var(--text3)] mt-0.5">
@@ -94,7 +94,7 @@ export function ContentMapPanel({
             type="button"
             onClick={runClassification}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-[13px] font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             style={{ background: 'var(--accent)' }}
           >
             {loading ? (
@@ -110,13 +110,13 @@ export function ContentMapPanel({
       </div>
 
       {error && (
-        <p className="text-[13px] text-red-500 mb-4">{error}</p>
+        <p className="text-sm text-red-500 mb-4">{error}</p>
       )}
 
       {/* Not yet classified */}
       {classifications === null && !loading && (
         <div className="border border-dashed border-[var(--border)] rounded-xl p-8 flex flex-col items-center gap-3 text-center">
-          <div className="text-[13px] text-[var(--text2)] leading-relaxed">
+          <div className="text-sm text-[var(--text2)] leading-relaxed">
             HPから見つかった <span className="font-semibold text-[var(--text)]">{blogPostCount} 件</span> の記事を分析すると、<br />
             どのジャンル・効果が不足しているか可視化できます。
           </div>
@@ -131,7 +131,7 @@ export function ContentMapPanel({
             className="w-8 h-8 border-[3px] rounded-full animate-spin"
             style={{ borderColor: 'var(--border)', borderTopColor: 'var(--accent)' }}
           />
-          <p className="text-[13px] text-[var(--text2)]">記事の内容を読んでいます…</p>
+          <p className="text-sm text-[var(--text2)]">記事の内容を読んでいます…</p>
         </div>
       )}
 
@@ -164,8 +164,8 @@ export function ContentMapPanel({
                 <div />
                 {EFFECTS.map((e) => (
                   <div key={e.key} className="text-center px-0.5">
-                    <div className="text-[10px] font-semibold text-[var(--text)] leading-tight">{e.label}</div>
-                    <div className="hidden sm:block text-[10px] text-[var(--text3)] leading-tight mt-0.5">{e.desc}</div>
+                    <div className="text-xs font-semibold text-[var(--text)] leading-tight">{e.label}</div>
+                    <div className="hidden sm:block text-xs text-[var(--text3)] leading-tight mt-0.5">{e.desc}</div>
                   </div>
                 ))}
               </div>
@@ -215,7 +215,7 @@ export function ContentMapPanel({
                         )}
                         <div className="relative z-10 text-center">
                           {isEmpty ? (
-                            <div className="text-[10px] font-medium" style={{ color: '#fb923c' }}>不足</div>
+                            <div className="text-xs font-medium" style={{ color: '#fb923c' }}>不足</div>
                           ) : (
                             <>
                               <div
@@ -240,7 +240,7 @@ export function ContentMapPanel({
           <div className="mt-5 pt-5 border-t border-[var(--border)] grid grid-cols-3 gap-4">
             <div className="text-center">
               <div
-                className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold"
+                className="text-[22px] font-bold"
                 style={{ color: 'var(--accent)' }}
               >
                 {existingCount}
@@ -250,7 +250,7 @@ export function ContentMapPanel({
             {insightCastCount > 0 && (
               <div className="text-center">
                 <div
-                  className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold"
+                  className="text-[22px] font-bold"
                   style={{ color: 'var(--teal)' }}
                 >
                   {insightCastCount}
@@ -260,7 +260,7 @@ export function ContentMapPanel({
             )}
             <div className="text-center">
               <div
-                className="font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold"
+                className="text-[22px] font-bold"
                 style={{ color: '#fb923c' }}
               >
                 {gapCells.length}

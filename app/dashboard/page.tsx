@@ -98,8 +98,8 @@ export default async function DashboardPage() {
   const projectMap = Object.fromEntries(projectList.map((p) => [p.id, p]))
   const projectIds = projectList.map((p) => p.id)
 
-  // プロジェクト関連データを並列取得
-  const [auditResult, competitorResult, competitorAnalysisResult, interviewResult] = await Promise.all([
+  // プロジェクト関連データを並列取得（articles も同時に取得）
+  const [auditResult, competitorResult, competitorAnalysisResult, interviewResult, articleResult] = await Promise.all([
     projectList.length > 0
       ? supabase.from('hp_audits').select('id, project_id, raw_data, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
@@ -111,6 +111,9 @@ export default async function DashboardPage() {
       : Promise.resolve({ data: [] }),
     projectList.length > 0
       ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('articles').select('id, interview_id, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
   ])
 
@@ -140,24 +143,15 @@ export default async function DashboardPage() {
     interviewCountByProject.set(iv.project_id, (interviewCountByProject.get(iv.project_id) ?? 0) + 1)
   }
 
-  let allArticles: ArticleRow[] = []
-  if (interviews.length > 0) {
-    const { data: articleRows } = await supabase
-      .from('articles')
-      .select('id, interview_id, created_at')
-      .in('interview_id', interviews.map((iv) => iv.id))
-      .order('created_at', { ascending: false })
+  const allArticles = (articleResult.data ?? []) as ArticleRow[]
+  const built = buildArticleCountByInterview(allArticles as InterviewArticleRef[])
+  articleCountByInterview = built.articleCountByInterview
 
-    allArticles = (articleRows ?? []) as ArticleRow[]
-    const built = buildArticleCountByInterview(allArticles as InterviewArticleRef[])
-    articleCountByInterview = built.articleCountByInterview
-
-    for (const iv of interviews) {
-      articleCountByProject.set(
-        iv.project_id,
-        (articleCountByProject.get(iv.project_id) ?? 0) + (articleCountByInterview.get(iv.id) ?? 0),
-      )
-    }
+  for (const iv of interviews) {
+    articleCountByProject.set(
+      iv.project_id,
+      (articleCountByProject.get(iv.project_id) ?? 0) + (articleCountByInterview.get(iv.id) ?? 0),
+    )
   }
 
   const totalArticles = allArticles.length
@@ -216,10 +210,15 @@ export default async function DashboardPage() {
         style={{ background: 'linear-gradient(135deg,var(--accent-l),var(--teal-l))' }}
       >
         <div>
-          <div className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold text-[var(--text)] mb-1.5">
+          <div className="text-[20px] font-bold text-[var(--text)] mb-1.5">
             こんにちは、{profile?.name ?? 'ゲスト'}さん
           </div>
-          <div className="text-[13px] text-[var(--text2)]">
+          {!profile?.name && (
+            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline">
+              名前を設定する →
+            </Link>
+          )}
+          <div className="text-sm text-[var(--text2)]">
             今月の取材: <strong>{thisMonthInterviews} 回</strong>
             {totalArticles > 0 && <> · 累計記事素材 <strong>{totalArticles} 件</strong></>}
           </div>
@@ -228,14 +227,14 @@ export default async function DashboardPage() {
           {isInterviewLimitReached ? (
             <Link
               href="/pricing?reason=interview_limit"
-              className={getButtonClass('secondary', 'text-[13px] px-4 py-2 opacity-60 flex items-center gap-1.5')}
+              className={getButtonClass('secondary', 'text-sm px-4 py-2 opacity-60 flex items-center gap-1.5')}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 今月の取材上限です
             </Link>
           ) : (
             <Link
               href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-              className={getButtonClass('primary', 'text-[13px] px-4 py-2')}
+              className={getButtonClass('primary', 'text-sm px-4 py-2')}
             >
               次の取材を開く →
             </Link>
@@ -251,8 +250,8 @@ export default async function DashboardPage() {
           { n: totalArticles,       l: '記事素材',    delta: deltaLabel(articleDelta) },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
-            <div className="font-[family-name:var(--font-noto-serif-jp)] text-[34px] font-bold tabular-nums text-[var(--text)] leading-none">{stat.n}</div>
-            <div className="text-[13px] text-[var(--text2)] mt-1.5">{stat.l}</div>
+            <div className="text-[34px] font-bold tabular-nums text-[var(--text)] leading-none">{stat.n}</div>
+            <div className="text-sm text-[var(--text2)] mt-1.5">{stat.l}</div>
             <div className="text-[12px] mt-1 font-semibold" style={{ color: 'var(--teal)' }}>{stat.delta}</div>
           </div>
         ))}
@@ -300,16 +299,16 @@ export default async function DashboardPage() {
                     </div>
                   )}
                   <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} className={isProjectLimitReached ? 'opacity-40' : undefined} />
-                  <div className={`text-[13px] font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>取材先を追加する</div>
+                  <div className={`text-sm font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>取材先を追加する</div>
                 </Link>
                 {isInterviewLimitReached ? (
                   <Link
                     href="/pricing?reason=interview_limit"
                     className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity"
                   >
-                    <div className="absolute top-2 right-2 text-[10px] font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
+                    <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
-                    <div className="text-[13px] font-semibold text-[var(--text3)]">取材画面を開く</div>
+                    <div className="text-sm font-semibold text-[var(--text3)]">取材画面を開く</div>
                     <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る →</div>
                   </Link>
                 ) : (
@@ -318,7 +317,7 @@ export default async function DashboardPage() {
                     className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
-                    <div className="text-[13px] font-semibold text-[var(--text2)]">取材画面を開く</div>
+                    <div className="text-sm font-semibold text-[var(--text2)]">取材画面を開く</div>
                   </Link>
                 )}
                 <Link
@@ -326,7 +325,7 @@ export default async function DashboardPage() {
                   className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                 >
                   <CharacterAvatar src={rain?.icon48} alt={rain?.name ?? 'レイン'} emoji={rain?.emoji} size={40} />
-                  <div className="text-[13px] font-semibold text-[var(--text2)]">記事素材を確認する</div>
+                  <div className="text-sm font-semibold text-[var(--text2)]">記事素材を確認する</div>
                 </Link>
               </div>
             )
@@ -336,8 +335,8 @@ export default async function DashboardPage() {
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
-                <Link href="/projects" className="text-[13px] text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
+                <h2 className="text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
+                <Link href="/projects" className="text-sm text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -390,8 +389,8 @@ export default async function DashboardPage() {
 
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" className="text-[13px] text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
+                <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
+                <Link href="/interviews" className="text-sm text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech

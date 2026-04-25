@@ -81,7 +81,7 @@ export default async function BillingPage({
 
         {/* 現在のプラン */}
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-          <h2 className="mb-1 font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">
+          <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
             現在のプラン
           </h2>
           <p className="mb-6 text-xs text-[var(--text3)]">契約中のプランと請求サイクルを確認できます</p>
@@ -91,7 +91,7 @@ export default async function BillingPage({
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
                 Current Plan
               </p>
-              <p className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--accent)]">
+              <p className="text-xl font-bold text-[var(--accent)]">
                 {planLabel}
               </p>
             </div>
@@ -117,7 +117,7 @@ export default async function BillingPage({
             )}
             {!isPaid && (
               <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[var(--text2)]">
-                <p className="text-[13px] leading-[1.75]">
+                <p className="text-sm leading-[1.75]">
                   個人向け・法人向けプランにすると、取材回数が増え、より多くの取材先を管理できます。
                 </p>
                 <Link
@@ -134,7 +134,7 @@ export default async function BillingPage({
         {/* 支払い管理 */}
         {isPaid && hasCustomer && (
           <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-            <h2 className="mb-1 font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">
+            <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
               支払い管理
             </h2>
             <p className="mb-5 text-xs text-[var(--text3)]">

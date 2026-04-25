@@ -383,7 +383,7 @@ export function SettingsClient({
           {activeSection === 'アカウント' && (
             <>
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウント情報
                 </h2>
                 <p className="mb-6 text-xs text-[var(--text3)]">表示名、メールアドレス、アイコンを管理します</p>
@@ -391,7 +391,7 @@ export function SettingsClient({
                 <div className="mb-6 flex flex-col gap-5 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-4">
                     <div
-                      className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold text-[var(--accent)]"
+                      className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] text-2xl font-bold text-[var(--accent)]"
                       aria-label={avatarUrl ? '現在のアイコン画像' : '現在のアイコン'}
                       role="img"
                       style={avatarUrl ? {
@@ -431,7 +431,7 @@ export function SettingsClient({
 
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-[13px] font-semibold text-[var(--text)]">表示名</label>
+                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">表示名</label>
                     <TextInput
                       type="text"
                       value={name}
@@ -458,13 +458,13 @@ export function SettingsClient({
                     {profileSaving ? '保存中...' : '変更を保存する'}
                   </button>
                   {profileSaved && (
-                    <span className="text-[13px] font-semibold text-[var(--teal)]">保存しました</span>
+                    <span className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
                   )}
                 </div>
               </section>
 
               {isEmailUser && <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   メールアドレスの変更
                 </h2>
                 <p className="mb-5 text-xs text-[var(--text3)]">現在: {email || '未設定'}</p>
@@ -478,7 +478,7 @@ export function SettingsClient({
                   <>
                     <div className="space-y-3">
                       <div>
-                        <label className="mb-1.5 block text-[13px] font-semibold text-[var(--text)]">新しいメールアドレス</label>
+                        <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいメールアドレス</label>
                         <TextInput
                           type="email"
                           value={newEmail}
@@ -510,14 +510,14 @@ export function SettingsClient({
               </section>}
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウントを削除
                 </h2>
                 <p className="mb-5 text-xs text-[var(--text3)]">この操作は取り消せません</p>
 
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
-                  <p className="mb-4 text-[13px] leading-[1.75] text-[var(--text2)]">
+                  <p className="mb-4 text-sm leading-[1.75] text-[var(--text2)]">
                     取材先、取材メモ、記事素材、プロフィール情報を含むアカウント全体を完全に削除します。確認のため、下に「削除」と入力してください。
                   </p>
 
@@ -553,7 +553,7 @@ export function SettingsClient({
 
           {activeSection === 'プラン・請求' && (
             <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-              <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+              <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 現在のプラン
               </h2>
               <p className="mb-6 text-xs text-[var(--text3)]">現在の契約内容と利用上限を確認できます</p>
@@ -563,7 +563,7 @@ export function SettingsClient({
                   <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
                     Current Plan
                   </p>
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--accent)]">
+                  <p className="text-xl font-bold text-[var(--accent)]">
                     {plan.label}
                   </p>
                 </div>
@@ -583,7 +583,7 @@ export function SettingsClient({
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl bg-[var(--bg2)] px-4 py-4">
                     <p className="text-xs text-[var(--text3)]">{item.label}</p>
-                    <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
+                    <p className="mt-2 text-xl font-bold text-[var(--text)]">
                       {item.value}
                     </p>
                   </div>
@@ -591,8 +591,8 @@ export function SettingsClient({
               </div>
 
               <div className="mt-5 rounded-xl bg-[var(--bg2)] p-4">
-                <p className="mb-3 text-[13px] font-semibold text-[var(--text)]">現在の利用状況</p>
-                <div className="space-y-2 text-[13px] text-[var(--text2)]">
+                <p className="mb-3 text-sm font-semibold text-[var(--text)]">現在の利用状況</p>
+                <div className="space-y-2 text-sm text-[var(--text2)]">
                   <div className="flex items-center justify-between gap-4">
                     <span>登録済みの取材先</span>
                     <span className="font-semibold text-[var(--text)]">
@@ -607,7 +607,7 @@ export function SettingsClient({
               </div>
 
               <div className="mt-5 rounded-xl border border-[var(--border)] p-5">
-                <p className="mb-3 text-[13px] font-semibold text-[var(--text)]">
+                <p className="mb-3 text-sm font-semibold text-[var(--text)]">
                   {nextPlan ? `${nextPlan.label}にすると` : '現在ご利用中のプランです'}
                 </p>
                 {nextPlan ? (
@@ -619,7 +619,7 @@ export function SettingsClient({
                         nextPlan.maxCompetitorsPerProject !== plan.maxCompetitorsPerProject && `競合調査を各取材先 ${nextPlan.maxCompetitorsPerProject} 社まで`,
                         nextPlan.supportLabel !== plan.supportLabel && `${nextPlan.supportLabel}が利用可能`,
                       ].filter(Boolean).map((feature) => (
-                        <div key={String(feature)} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                        <div key={String(feature)} className="flex items-center gap-2 text-sm text-[var(--text2)]">
                           <span className="font-bold text-[var(--teal)]">✓</span>
                           {feature}
                         </div>
@@ -635,7 +635,7 @@ export function SettingsClient({
                     </div>
                   </>
                 ) : (
-                  <p className="text-[13px] leading-[1.75] text-[var(--text2)]">
+                  <p className="text-sm leading-[1.75] text-[var(--text2)]">
                     法人向けプランをご利用中です。最新の料金や内容は料金ページで確認できます。
                   </p>
                 )}
@@ -645,7 +645,7 @@ export function SettingsClient({
 
           {activeSection === '通知' && (
             <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-              <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+              <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 通知設定
               </h2>
               <p className="mb-5 text-xs text-[var(--text3)]">メール通知の受信設定を保存できます</p>
@@ -692,7 +692,7 @@ export function SettingsClient({
                   {notificationSaving ? '保存中...' : '通知設定を保存する'}
                 </button>
                 {notificationSaved && (
-                  <span className="text-[13px] font-semibold text-[var(--teal)]">保存しました</span>
+                  <span className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
                 )}
               </div>
             </section>
@@ -700,7 +700,7 @@ export function SettingsClient({
 
           {activeSection === 'セキュリティ' && (
             <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-              <h2 className="mb-1 text-lg font-bold text-[var(--text)] font-[family-name:var(--font-noto-serif-jp)]">
+              <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 セキュリティ
               </h2>
               <p className="mb-6 text-xs text-[var(--text3)]">ログイン中のアカウントのパスワードを更新できます</p>
@@ -713,7 +713,7 @@ export function SettingsClient({
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5">
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-[13px] font-semibold text-[var(--text)]">新しいパスワード</label>
+                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいパスワード</label>
                     <TextInput
                       type="password"
                       autoComplete="new-password"
@@ -724,7 +724,7 @@ export function SettingsClient({
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-[13px] font-semibold text-[var(--text)]">確認用パスワード</label>
+                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">確認用パスワード</label>
                     <TextInput
                       type="password"
                       autoComplete="new-password"
@@ -756,7 +756,7 @@ export function SettingsClient({
                     {passwordSaving ? '更新中...' : 'パスワードを変更する'}
                   </button>
                   {passwordSaved && (
-                    <span className="text-[13px] font-semibold text-[var(--teal)]">パスワードを更新しました</span>
+                    <span className="text-sm font-semibold text-[var(--teal)]">パスワードを更新しました</span>
                   )}
                 </div>
               </div>

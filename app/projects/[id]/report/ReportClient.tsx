@@ -321,7 +321,7 @@ export default function ReportClient({
                       className="flex flex-col items-center justify-end flex-1 min-w-0 h-full gap-1"
                     >
                       {count > 0 && (
-                        <span className="text-[10px] leading-none text-[var(--text3)]">{count}</span>
+                        <span className="text-xs leading-none text-[var(--text3)]">{count}</span>
                       )}
                       <div
                         className="w-full rounded-t-sm bg-[var(--accent)]"
