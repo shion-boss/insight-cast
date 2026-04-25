@@ -96,8 +96,7 @@ export function ContentMapPanel({
               type="button"
               onClick={runClassification}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              style={{ background: 'var(--accent)' }}
+              className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white bg-[var(--accent)] hover:bg-[var(--accent-h)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <>
@@ -144,12 +143,12 @@ export function ContentMapPanel({
           {/* Legend */}
           <div className="flex flex-wrap items-center gap-4 mb-5 text-[11px] text-[var(--text3)]">
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm" style={{ background: 'var(--accent)' }} />
+              <span className="w-3 h-3 rounded-sm bg-[var(--accent)]" />
               既存HP記事
             </div>
             {insightCastCount > 0 && (
               <div className="flex items-center gap-1.5">
-                <span className="w-3 h-3 rounded-sm" style={{ background: 'var(--teal)' }} />
+                <span className="w-3 h-3 rounded-sm bg-[var(--teal)]" />
                 Insight Cast記事
               </div>
             )}

@@ -33,10 +33,7 @@ function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji:
 
 export function FullPageLoading() {
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8"
-      style={{ background: 'var(--bg)' }}
-    >
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-[var(--bg)]">
       <div className="flex items-center">
         {CHAR_ICONS.map((c, i) => (
           <CharIcon key={c.alt} src={c.src} alt={c.alt} emoji={c.emoji} index={i} />
@@ -50,14 +47,8 @@ export function FullPageLoading() {
         <p className="text-sm text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 
-      <div
-        className="w-36 overflow-hidden rounded-full"
-        style={{ height: 3, background: 'var(--border)' }}
-      >
-        <div
-          className="h-full rounded-full animate-[page-load_1s_ease-in-out_infinite]"
-          style={{ background: 'var(--accent)' }}
-        />
+      <div className="w-36 h-[3px] overflow-hidden rounded-full bg-[var(--border)]">
+        <div className="h-full rounded-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
       </div>
     </div>
   )

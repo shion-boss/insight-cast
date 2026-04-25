@@ -28,7 +28,7 @@ export function PublicShellSkeleton() {
         </div>
         {/* loading bar — header 幅いっぱい・最下部 */}
         <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
-          <div className="h-full animate-[page-load_1s_ease-in-out_infinite]" style={{ background: 'var(--accent)' }} />
+          <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
         </div>
       </header>
 
