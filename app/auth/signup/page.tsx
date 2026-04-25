@@ -86,17 +86,30 @@ function SignupForm() {
         <LeftPanel mint={mint} claus={claus} rain={rain} />
 
         <div className="bg-white flex items-center justify-center p-[60px]">
-          <div className="max-w-[420px] w-full text-center">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] ring-1 ring-[var(--border)]">
-              <span className="text-3xl" aria-hidden="true">📬</span>
+          <div className="max-w-[420px] w-full">
+            <div className="flex items-start gap-4 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--accent-l)] px-6 py-5 mb-8">
+              {mint?.icon48 ? (
+                <Image
+                  src={mint.icon48}
+                  alt={`${mint.name}のアイコン`}
+                  width={48}
+                  height={48}
+                  className="flex-shrink-0 rounded-full border border-[var(--border)] object-cover"
+                />
+              ) : (
+                <span className="text-3xl flex-shrink-0" aria-hidden="true">{mint?.emoji ?? '📬'}</span>
+              )}
+              <div>
+                <p className="text-sm font-semibold text-[var(--text)] mb-1">メールを送りました</p>
+                <p className="text-sm text-[var(--text2)] leading-[1.75]">
+                  <strong className="font-semibold text-[var(--text)]">{email}</strong> 宛てに確認メールを送りました。
+                  メールを開いてリンクをクリックしてください。
+                  {plan ? ' リンクを開くと、そのままお申し込み画面に進めます。' : ''}
+                </p>
+              </div>
             </div>
-            <h2 className="font-serif text-[28px] font-bold text-[var(--text)] mb-3">確認メールを送りました</h2>
-            <p className="text-[14px] text-[var(--text2)] leading-[1.85] mb-8">
-              <strong className="font-semibold text-[var(--text)]">{email}</strong> にメールを送りました。
-              <br />
-              {plan
-                ? 'リンクを開くと、そのままお申し込み画面に進めます。'
-                : 'リンクを開くとそのままログインできます。'}
+            <p className="text-xs text-[var(--text3)] leading-relaxed mb-6">
+              メールが届かない場合は、迷惑メールフォルダをご確認ください。
             </p>
             <Link
               href="/auth/login"

@@ -262,26 +262,18 @@ export default function SummaryPage() {
           <InterviewerSpeech
             icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
             name={mint?.name ?? 'ミント'}
-            title="取材メモを作成しています"
-            description="AIで整理しているので、このページで待たなくて大丈夫です。完了したらお知らせします。"
+            title="取材メモを作っています"
+            description={`会話の内容をまとめています。このページから離れて大丈夫です。完了したらお知らせします。${lastCheckedAt ? `（最終確認: ${lastCheckedAt}）` : ''}`}
             tone="soft"
           />
-          <div className="mt-6 space-y-4">
-            <InterviewerSpeech
-              icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={48} />}
-              name={mint?.name ?? 'ミント'}
-              title="バックグラウンドで処理中です"
-              description={`数分かかることがあります。約5秒ごとに自動で確認しています${lastCheckedAt ? `。最終確認 ${lastCheckedAt}` : '。'}`}
-            />
-            <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={() => void loadSummary({ manual: true })}
-                className={getButtonClass('primary')}
-              >
-                {isCheckingNow ? '確認しています...' : '今すぐ確認する'}
-              </button>
-            </div>
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => void loadSummary({ manual: true })}
+              className={getButtonClass('secondary')}
+            >
+              {isCheckingNow ? '確認しています...' : '今すぐ確認する'}
+            </button>
           </div>
         </div>
       </AppShell>
@@ -369,16 +361,16 @@ export default function SummaryPage() {
             </section>
 
             {/* 記事テーマ候補 */}
-            {data?.themes && data.themes.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <p className="font-bold text-[var(--text)] text-base">記事テーマ候補</p>
-                  {articles.length > 0 && (
-                    <span className="text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2.5 py-0.5 rounded-full">
-                      {articles.length}件作成済み
-                    </span>
-                  )}
-                </div>
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <p className="font-bold text-[var(--text)] text-base">記事テーマ候補</p>
+                {articles.length > 0 && (
+                  <span className="text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2.5 py-0.5 rounded-full">
+                    {articles.length}件作成済み
+                  </span>
+                )}
+              </div>
+              {data?.themes && data.themes.length > 0 ? (
                 <div className="space-y-2.5">
                   {data.themes.map((t, i) => (
                     <div
@@ -397,8 +389,12 @@ export default function SummaryPage() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4">
+                  <p className="text-sm text-[var(--text3)]">取材メモの作成が完了すると、ここにテーマが並びます。</p>
+                </div>
+              )}
+            </div>
 
             {/* 取材ログ */}
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
@@ -409,7 +405,7 @@ export default function SummaryPage() {
                   onClick={() => setShowMessages(!showMessages)}
                   className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors cursor-pointer"
                 >
-                  {showMessages ? 'たたむ ↑' : 'ログを見る ↓'}
+                  {showMessages ? '閉じる' : '会話を見る'}
                 </button>
               </div>
               {showMessages && (

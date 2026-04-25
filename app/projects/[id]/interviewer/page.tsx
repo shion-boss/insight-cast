@@ -296,9 +296,9 @@ export default async function InterviewerPage({
                       <input type="hidden" name="focusTheme" value={suggestion.theme} />
                       <button
                         type="submit"
-                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-teal-300 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--ok)]/40 hover:bg-[var(--ok-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
-                        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-teal-700">Competitive Signal</p>
+                        <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ok)]">Competitive Signal</p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{suggestion.theme}</p>
                         <div className="mt-3 space-y-2">
                           {suggestion.sources.map((source, index) => (
