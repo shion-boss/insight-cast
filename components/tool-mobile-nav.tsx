@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { signOut } from '@/lib/actions/auth'
 
@@ -23,16 +23,44 @@ export function ToolMobileNav({
 }) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const drawerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden'
+      // 開いたら最初のフォーカス可能要素にフォーカス
+      const el = drawerRef.current?.querySelector<HTMLElement>('a,button,[tabindex]:not([tabindex="-1"])')
+      el?.focus()
     } else {
       document.body.style.overflow = ''
     }
     return () => { document.body.style.overflow = '' }
+  }, [open])
+
+  // フォーカストラップ
+  useEffect(() => {
+    if (!open) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') { setOpen(false); return }
+      if (e.key !== 'Tab') return
+      const drawer = drawerRef.current
+      if (!drawer) return
+      const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(
+        'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+      ))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [open])
 
   return (
@@ -44,9 +72,9 @@ export function ToolMobileNav({
         onClick={() => setOpen((v) => !v)}
         className="flex flex-col items-center justify-center gap-[5px] rounded-[var(--r-sm)] w-9 h-9 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
       >
-        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-all duration-200 origin-center ${open ? 'translate-y-[7px] rotate-45' : ''}`} />
-        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-all duration-200 ${open ? 'opacity-0 scale-x-0' : ''}`} />
-        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-all duration-200 origin-center ${open ? '-translate-y-[7px] -rotate-45' : ''}`} />
+        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-200 origin-center ${open ? 'translate-y-[7px] rotate-45' : ''}`} />
+        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-200 ${open ? 'opacity-0 scale-x-0' : ''}`} />
+        <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-200 origin-center ${open ? '-translate-y-[7px] -rotate-45' : ''}`} />
       </button>
 
       {mounted && createPortal(
@@ -57,7 +85,8 @@ export function ToolMobileNav({
             onClick={() => setOpen(false)}
           />
           <div
-            className={`fixed top-0 left-0 z-50 h-full w-[min(272px,calc(100vw-24px))] bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+            ref={drawerRef}
+            className={`fixed top-0 left-0 z-50 h-dvh w-[min(272px,calc(100vw-24px))] bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
             role="dialog"
             aria-modal="true"
             aria-label="ナビゲーションメニュー"
@@ -117,7 +146,7 @@ export function ToolMobileNav({
                   <span className="flex items-center gap-2">
                     <span aria-hidden="true">⚙</span>管理画面
                   </span>
-                  <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold tracking-widest text-stone-400 uppercase">Admin</span>
+                  <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold text-stone-400 uppercase">Admin</span>
                 </Link>
               )}
               <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>

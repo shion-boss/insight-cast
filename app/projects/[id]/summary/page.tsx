@@ -373,7 +373,7 @@ export default function SummaryPage() {
                   {data.themes.map((t, i) => (
                     <div
                       key={i}
-                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-center justify-between gap-4 hover:shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-shadow cursor-default"
+                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-center justify-between gap-4"
                     >
                       <div className="flex-1 min-w-0">
                         <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>

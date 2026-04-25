@@ -315,7 +315,7 @@ export function ArticleExportPanel({
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
   const [htmlPreview, setHtmlPreview] = useState(false)
   const [editedContent, setEditedContent] = useState(content)
-  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [, startTransition] = useTransition()
 
   const isDirty = editedContent !== content
@@ -356,7 +356,8 @@ export function ArticleExportPanel({
         setSaveState('saved')
         setTimeout(() => setSaveState('idle'), 2000)
       } catch {
-        setSaveState('idle')
+        setSaveState('error')
+        setTimeout(() => setSaveState('idle'), 3000)
       }
     })
   }, [articleId, projectId, content, editedContent])
@@ -414,6 +415,7 @@ export function ArticleExportPanel({
           {availableFormats.map((f) => (
             <button
               key={f}
+              type="button"
               onClick={() => setFormat(f)}
               className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
                 safeFormat === f
@@ -428,20 +430,23 @@ export function ArticleExportPanel({
         <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2 sm:ml-auto sm:border-t-0 sm:py-0">
           {isDirty && (
             <button
+              type="button"
               onClick={handleSave}
               disabled={saveState === 'saving'}
               className="w-24 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none"
             >
-              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : '保存する'}
+              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : saveState === 'error' ? '保存できませんでした' : '保存する'}
             </button>
           )}
           <button
+            type="button"
             onClick={handleCopy}
             className="w-32 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
           >
             {copied ? '✓ コピーしました' : 'コピー'}
           </button>
           <button
+            type="button"
             onClick={handleDownload}
             className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
           >
@@ -498,18 +503,18 @@ export function ArticleExportPanel({
                   <button onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerIcon(v => !v)}>
-                    <div role="switch" aria-checked={showInterviewerIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <button type="button" role="switch" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                       <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
                     <span className="text-[var(--text3)]">アイコン</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowInterviewerName(v => !v)}>
-                    <div role="switch" aria-checked={showInterviewerName} className={`relative h-5 w-9 rounded-full transition-colors ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  </button>
+                  <button type="button" role="switch" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                       <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
                     <span className="text-[var(--text3)]">名前</span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -540,18 +545,18 @@ export function ArticleExportPanel({
                   <button onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientIcon(v => !v)}>
-                    <div role="switch" aria-checked={showClientIcon} className={`relative h-5 w-9 rounded-full transition-colors ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <button type="button" role="switch" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                       <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
                     <span className="text-[var(--text3)]">アイコン</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 cursor-pointer select-none" onClick={() => setShowClientName(v => !v)}>
-                    <div role="switch" aria-checked={showClientName} className={`relative h-5 w-9 rounded-full transition-colors ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  </button>
+                  <button type="button" role="switch" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                       <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
                     </div>
                     <span className="text-[var(--text3)]">名前</span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

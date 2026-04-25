@@ -91,7 +91,7 @@ export function AppShell({
               <span className="flex items-center gap-2">
                 <span aria-hidden="true">⚙</span>管理画面
               </span>
-              <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold tracking-widest text-stone-400 uppercase">Admin</span>
+              <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold text-stone-400 uppercase">Admin</span>
             </Link>
           )}
           <Link href="/" className={getButtonClass('secondary', 'justify-center px-4 py-2.5 text-sm')}>
@@ -104,7 +104,7 @@ export function AppShell({
       </aside>
 
       <div className="lg:pl-[236px]">
-        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
+        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-md">
           <div className="mx-auto flex min-h-[64px] max-w-6xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
             <div className="flex flex-1 items-center gap-3 min-w-0">
               {/* モバイル: ハンバーガー */}

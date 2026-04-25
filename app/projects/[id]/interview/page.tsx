@@ -289,7 +289,7 @@ export default function InterviewPage() {
 
   if (initializing) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[var(--bg)] px-6">
+      <div className="h-dvh flex items-center justify-center bg-[var(--bg)] px-6">
         <div className="w-full max-w-[520px] space-y-4">
           <InterviewerSpeech
             icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? 'インタビュアー'}のアイコン`} emoji={char?.emoji} size={48} />}
@@ -310,7 +310,7 @@ export default function InterviewPage() {
   }
 
   return (
-    <div className="bg-[var(--bg)] h-screen flex flex-col overflow-hidden">
+    <div className="bg-[var(--bg)] h-dvh flex flex-col overflow-hidden">
       {/* ヘッダー */}
       <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-6 gap-4 flex-shrink-0">
         <button
@@ -561,12 +561,15 @@ export default function InterviewPage() {
 
       {/* 完了確認モーダル */}
       {showComplete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50" aria-hidden="true">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div
             role="dialog"
             aria-modal="true"
             aria-label="取材まとめの確認"
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]"
+            // eslint-disable-next-line jsx-a11y/no-autofocus
+            autoFocus
+            tabIndex={-1}
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)] focus-visible:outline-none"
           >
             <div className="flex justify-center mb-4">
               <CharacterAvatar
