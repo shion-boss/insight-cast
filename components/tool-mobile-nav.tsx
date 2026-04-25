@@ -149,13 +149,6 @@ export function ToolMobileNav({
                 </Link>
               )}
               <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="flex w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
-              >
-                ← 公開サイトへ
-              </Link>
               <form action={signOut}>
                 <button
                   type="submit"
