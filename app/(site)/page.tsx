@@ -181,7 +181,7 @@ export default async function LandingPage() {
         <section className="pt-[72px] pb-[56px] sm:pt-[88px] sm:pb-[72px] lg:pt-[112px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_480px] lg:gap-14">
-              <div>
+              <div className="order-2 lg:order-1">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-l)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-6">
                   ✦ AI取材サービス
                 </div>
@@ -217,7 +217,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Cast team visual */}
-              <div className="relative overflow-visible py-3 px-3 sm:py-0 sm:px-0">
+              <div className="order-1 lg:order-2 relative overflow-visible py-3 px-3 sm:py-0 sm:px-0">
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.14)]">
                   <Image
                     src={sceneCastTeam}
@@ -352,7 +352,7 @@ export default async function LandingPage() {
         <section className="py-14 sm:py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[520px_minmax(0,1fr)] lg:gap-16">
-              <div className="relative">
+              <div className="order-2 lg:order-1 relative">
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
                   <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" />
                 </div>
@@ -361,7 +361,7 @@ export default async function LandingPage() {
                   <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
                 </div>
               </div>
-              <div>
+              <div className="order-1 lg:order-2">
                 <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 02 — Interview</div>
                 <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
                   今日もAIキャストが、<br />あなたの話を聞きます。
