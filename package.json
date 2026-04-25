@@ -12,6 +12,7 @@
     "build:stable": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "screenshot": "tsx scripts/screenshot.ts"
   },
   "dependencies": {
