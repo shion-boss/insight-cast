@@ -70,7 +70,9 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
           >
             {/* ドロワーヘッダー */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-              <img src="/logo.jpg" alt="Insight Cast" className="h-[32px] w-auto object-contain" />
+              <Link href="/" onClick={() => setOpen(false)}>
+                <img src="/logo.jpg" alt="Insight Cast" className="h-[32px] w-auto object-contain" />
+              </Link>
               <button
                 type="button"
                 aria-label="メニューを閉じる"

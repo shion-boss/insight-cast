@@ -93,7 +93,7 @@ export function ToolMobileNav({
             {/* ヘッダー */}
             <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
               <Link
-                href="/dashboard"
+                href="/"
                 onClick={() => setOpen(false)}
                 className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >

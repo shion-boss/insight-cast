@@ -61,7 +61,7 @@ export function AppShell({
       <aside aria-label="サイドバーナビゲーション" className="hidden bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[236px] lg:flex-col lg:border-r lg:border-[var(--border)]">
         <div className="border-b border-[var(--border)] px-5 py-5">
           <Link
-            href="/dashboard"
+            href="/"
             className="font-serif text-[17px] font-bold text-[var(--text)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             Insight <span className="text-[var(--accent)]">Cast</span>
@@ -108,7 +108,9 @@ export function AppShell({
           <div className="mx-auto flex min-h-[64px] max-w-6xl items-center px-4 py-2 sm:px-6">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
-              <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+              <Link href="/">
+                <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+              </Link>
               <ToolMobileNav
                 navItems={NAV_ITEMS}
                 active={active}

@@ -83,7 +83,7 @@ export function AdminMobileNav({
           >
             <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
               <Link
-                href="/admin"
+                href="/"
                 onClick={() => setOpen(false)}
                 className="font-serif text-[17px] font-bold text-white"
               >

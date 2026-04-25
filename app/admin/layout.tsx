@@ -40,7 +40,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="min-h-screen bg-[var(--bg)]">
       <aside className="hidden bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[220px] lg:flex-col lg:border-r lg:border-r-white/8">
         <div className="border-b border-white/8 px-5 py-5">
-          <Link href="/admin" className="font-serif text-[17px] font-bold text-white">
+          <Link href="/" className="font-serif text-[17px] font-bold text-white">
             Insight <span className="text-[var(--accent)]">Cast</span>{' '}
             <span className="text-[11px] text-white/50">Admin</span>
           </Link>
@@ -66,7 +66,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
-              <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+              <Link href="/"><img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" /></Link>
               <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
             </div>
             {/* PC: 管理画面ラベル + メール */}
