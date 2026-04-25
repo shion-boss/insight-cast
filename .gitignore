@@ -45,3 +45,6 @@ next-env.d.ts
 
 # Claude Code
 .claude/scheduled_tasks.lock
+
+# screenshots (自動生成。コミット対象外)
+/screenshots/
