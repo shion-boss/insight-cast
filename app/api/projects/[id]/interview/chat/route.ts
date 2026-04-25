@@ -23,8 +23,11 @@ export async function POST(
   }
 
   const body = await req.json().catch(() => null)
-  if (!body) return new Response('Bad Request', { status: 400 })
-  const { interviewId, userMessage } = body as { interviewId?: string; userMessage?: string }
+  if (!body || typeof body !== 'object') return new Response('Bad Request', { status: 400 })
+  const { interviewId, userMessage } = body as Record<string, unknown>
+  if (typeof interviewId !== 'string' || typeof userMessage !== 'string') {
+    return new Response('Bad Request', { status: 400 })
+  }
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
 

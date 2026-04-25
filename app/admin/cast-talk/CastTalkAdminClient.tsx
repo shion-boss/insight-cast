@@ -32,6 +32,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [themeInput, setThemeInput] = useState('')
 
   async function handleGenerate() {
     setGenerating(true)
@@ -39,6 +40,8 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
     try {
       const res = await fetch('/api/cast-talk/generate', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(themeInput.trim() ? { theme: themeInput.trim() } : {}),
       })
       const json = await res.json() as {
         id: string; title: string; slug: string
@@ -52,8 +55,8 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       }
       const { traceId: _, message: __, ...newItem } = json
       setItems((prev) => [newItem, ...prev])
-    } catch (e) {
-      setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
+    } catch {
+      setError('生成できませんでした。しばらく待ってから再試行してください。')
     } finally {
       setGenerating(false)
     }
@@ -112,14 +115,24 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             AIキャスト対話記事の一覧・公開管理
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleGenerate}
-          disabled={generating}
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
-        >
-          <DevAiLabel>{generating ? '生成中...' : '今すぐ生成'}</DevAiLabel>
-        </button>
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <input
+            type="text"
+            value={themeInput}
+            onChange={(e) => setThemeInput(e.target.value)}
+            placeholder="テーマを指定（省略可）"
+            disabled={generating}
+            className="min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 disabled:opacity-50 sm:w-64"
+          />
+          <button
+            type="button"
+            onClick={handleGenerate}
+            disabled={generating}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
+          >
+            <DevAiLabel>{generating ? '生成中...' : '今すぐ生成'}</DevAiLabel>
+          </button>
+        </div>
       </div>
 
       {error && (

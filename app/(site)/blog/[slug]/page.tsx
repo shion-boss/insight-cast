@@ -88,7 +88,7 @@ export default async function BlogDetailPage({
         {/* 記事ヘッダー */}
         {(() => {
           const themeColor = CATEGORY_COLOR_MAP[post.category]
-          const headerChar = interviewer ?? (getCharacter(CATEGORY_CHARACTER_MAP[post.category]) ?? undefined)
+          const headerChar = interviewer
           return (
             <div className="mb-14">
               {/* バッジ */}
@@ -289,7 +289,7 @@ export default async function BlogDetailPage({
                 const relatedInterviewer = related.interviewer
                   ? CHARACTERS.find((c) => c.id === related.interviewer)
                   : undefined
-                const relChar = relatedInterviewer ?? getCharacter(CATEGORY_CHARACTER_MAP[related.category]) ?? CHARACTERS[0]
+                const relChar = relatedInterviewer ?? undefined
                 const relColor = CATEGORY_COLOR_MAP[related.category]
                 return (
                   <Link
@@ -298,7 +298,7 @@ export default async function BlogDetailPage({
                     className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
                     <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${relColor}18` }}>
-                      <Image src={relChar.icon48} alt={relChar.name} fill className="object-cover" />
+                      {relChar && <Image src={relChar.icon48} alt={relChar.name} fill className="object-cover" />}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2">

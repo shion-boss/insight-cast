@@ -12,13 +12,14 @@ type Message = { role: 'user' | 'interviewer'; content: string }
 type SupportPost = { url: string; title: string; summary: string }
 
 const MAX_TURNS = 15
+const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 
 function getProgressLabel(turns: number) {
-  if (turns < 5) return '話を聞かせてもらっています'
-  if (turns < 10) return 'もう少し教えてもらえますか'
-  if (turns < 13) return 'いい話が集まってきました'
-  if (turns < MAX_TURNS) return 'そろそろまとまりそうです'
+  if (turns < 3) return '話を聞かせてもらっています'
+  if (turns < 5) return 'いろいろと教えてもらっています'
+  if (turns < STANDARD_TURNS) return 'いい話が集まってきました'
+  if (turns < MAX_TURNS) return 'もう少し掘り下げています'
   return 'まとめに入ります'
 }
 
@@ -39,6 +40,8 @@ export default function InterviewPage() {
   const [initializing, setInitializing] = useState(true)
   const [userTurns, setUserTurns] = useState(0)
   const [showComplete, setShowComplete] = useState(false)
+  const [completionType, setCompletionType] = useState<'standard_sufficient' | 'standard_need_more' | 'hard_limit' | 'manual'>('manual')
+  const [continueCount, setContinueCount] = useState(0)
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [focusThemeLabel, setFocusThemeLabel] = useState<string | null>('テーマ: お任せ')
@@ -234,7 +237,14 @@ export default function InterviewPage() {
     const result = await sendMessageToAI(text)
     if (!result.ok) return
 
-    if (newTurns >= MAX_TURNS || result.interviewComplete) {
+    if (newTurns >= MAX_TURNS) {
+      setCompletionType('hard_limit')
+      setShowComplete(true)
+    } else if (newTurns === STANDARD_TURNS) {
+      setCompletionType(result.interviewComplete ? 'standard_sufficient' : 'standard_need_more')
+      setShowComplete(true)
+    } else if (result.interviewComplete && continueCount < 2) {
+      setCompletionType('standard_sufficient')
       setShowComplete(true)
     }
   }
@@ -257,7 +267,8 @@ export default function InterviewPage() {
     const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
     if (!result.ok) return
 
-    if (result.interviewComplete) {
+    if (result.interviewComplete && continueCount < 2) {
+      setCompletionType('standard_sufficient')
       setShowComplete(true)
     }
   }
@@ -268,11 +279,13 @@ export default function InterviewPage() {
 
   function handleContinue() {
     if (hasReachedTurnLimit) return
+    setContinueCount((c) => c + 1)
     setShowComplete(false)
     setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function handleManualFinish() {
+    setCompletionType('manual')
     setShowComplete(true)
   }
 
@@ -283,6 +296,7 @@ export default function InterviewPage() {
 
   useEffect(() => {
     if (!initializing && hasReachedTurnLimit) {
+      setCompletionType('hard_limit')
       setShowComplete(true)
     }
   }, [hasReachedTurnLimit, initializing])
@@ -336,25 +350,25 @@ export default function InterviewPage() {
             )}
           </div>
         </div>
-        {/* 参考記事ボタン — PC のみ */}
+        {/* 参考記事ボタン */}
         {showSupportPanel && (
-          <div className="hidden md:flex items-center flex-shrink-0">
+          <div className="flex items-center flex-shrink-0">
             {supportPosts.loading ? (
-              <span className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text3)]">
+              <span className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2 py-1 text-xs text-[var(--text3)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
-                確認中
+                <span className="hidden sm:inline">確認中</span>
               </span>
             ) : (supportPostCount > 0 || supportPosts.error) ? (
               <button
                 type="button"
                 onClick={() => setIsSupportPanelOpen((prev) => !prev)}
-                className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer ${
+                className={`flex items-center gap-1.5 rounded-full border px-2 sm:px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer ${
                   isSupportPanelOpen
                     ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
                     : 'border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:bg-white'
                 }`}
               >
-                参考記事
+                <span className="hidden sm:inline">参考記事</span>
                 {supportPostCount > 0 && (
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">
                     {supportPostCount}
@@ -390,12 +404,12 @@ export default function InterviewPage() {
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-xs text-[var(--text3)]">{Math.min(userTurns, MAX_TURNS)}/{MAX_TURNS}</span>
+            <span className="text-xs text-[var(--text3)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
           </div>
           <div className="bg-[var(--border)] h-1 rounded-full overflow-hidden">
             <div
               className="h-full bg-[var(--accent)] rounded-full transition-all duration-300"
-              style={{ width: `${Math.min((userTurns / MAX_TURNS) * 100, 100)}%` }}
+              style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
             />
           </div>
         </div>
@@ -404,7 +418,7 @@ export default function InterviewPage() {
       {/* 会話ログ */}
       <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
         {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
               <CharacterAvatar
                 src={char?.icon48}
@@ -511,9 +525,9 @@ export default function InterviewPage() {
         </div>
       </div>
 
-      {/* 参考記事パネル — PC のみ, fixed */}
+      {/* 参考記事パネル — fixed */}
       {isSupportPanelOpen && !supportPosts.loading && (
-        <div className="hidden md:block fixed right-4 top-[68px] z-30 w-80 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg">
+        <div className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg md:left-auto md:w-80">
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-medium text-[var(--text2)]">この質問に近い記事</p>
@@ -583,30 +597,85 @@ export default function InterviewPage() {
                 className="border-2 border-[var(--accent)]"
               />
             </div>
-            <p className="text-[var(--text)] font-semibold text-center mb-2">
-              {hasReachedTurnLimit ? `上限の${MAX_TURNS}回まで質問しました。` : 'いいお話がたくさん聞けました。'}
-            </p>
-            <p className="text-sm text-[var(--text2)] text-center mb-6">
-              {hasReachedTurnLimit ? 'ここまでの内容を記事の素材にまとめてもいいですか？' : 'これを記事の素材にまとめてもいいですか？'}
-            </p>
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={handleFinish}
-                className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
-              >
-                <DevAiLabel>はい、まとめてください</DevAiLabel>
-              </button>
-              {!hasReachedTurnLimit && (
+            {completionType === 'hard_limit' && (
+              <>
+                <p className="text-[var(--text)] font-semibold text-center mb-2">上限の{MAX_TURNS}回まで質問しました。</p>
+                <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめます。</p>
                 <button
                   type="button"
-                  onClick={handleContinue}
-                  className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                  onClick={handleFinish}
+                  className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
                 >
-                  もう少し話す
+                  <DevAiLabel>記事素材へまとめる</DevAiLabel>
                 </button>
-              )}
-            </div>
+              </>
+            )}
+            {completionType === 'standard_sufficient' && (
+              <>
+                <p className="text-[var(--text)] font-semibold text-center mb-2">いいお話がたくさん聞けました。</p>
+                <p className="text-sm text-[var(--text2)] text-center mb-6">十分な内容が集まりました。このまままとめてもいいですか？</p>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={handleFinish}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  >
+                    <DevAiLabel>はい、まとめてください</DevAiLabel>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleContinue}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                  >
+                    もう少し話す
+                  </button>
+                </div>
+              </>
+            )}
+            {completionType === 'standard_need_more' && (
+              <>
+                <p className="text-[var(--text)] font-semibold text-center mb-2">もう少し話を聞かせてもらえますか？</p>
+                <p className="text-sm text-[var(--text2)] text-center mb-6">もう少し掘り下げると、さらに深い内容が引き出せるかもしれません。</p>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={handleContinue}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  >
+                    もう少し話す
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleFinish}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                  >
+                    <DevAiLabel>ここまでの内容でまとめる</DevAiLabel>
+                  </button>
+                </div>
+              </>
+            )}
+            {completionType === 'manual' && (
+              <>
+                <p className="text-[var(--text)] font-semibold text-center mb-2">取材をまとめますか？</p>
+                <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめることができます。</p>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={handleFinish}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  >
+                    <DevAiLabel>はい、まとめてください</DevAiLabel>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleContinue}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                  >
+                    まだ話す
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

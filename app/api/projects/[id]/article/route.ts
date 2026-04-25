@@ -132,11 +132,11 @@ async function saveArticle(input: {
   const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
   if (isAdmin) {
     const today = new Date().toISOString().slice(0, 10)
-    const suffix = Math.random().toString(36).slice(2, 7)
-    const slug = `${today}-${suffix}`
+    const slug = `${today}-${crypto.randomUUID().slice(0, 8)}`
     const isInterviewStyle = input.articleType === 'interviewer'
     const blogCategory = isInterviewStyle ? 'interview' : 'insight-cast'
 
+    const blogBody = cleanContent.replace(/^#\s+[^\n]*\n?/, '').trimStart()
     await input.supabase
       .from('blog_posts')
       .insert({
@@ -149,7 +149,7 @@ async function saveArticle(input: {
         cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
         date: today,
         published: false,
-        body: { kind: 'markdown', content: cleanContent },
+        body: { kind: 'markdown', content: blogBody },
       })
       .then(({ error }) => {
         if (error) console.warn('[article/saveArticle] blog_posts 下書き保存失敗:', error.message)
