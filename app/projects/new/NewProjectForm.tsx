@@ -62,7 +62,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
       </div>
 
       {errorMessage && (
-        <div className="mb-6 rounded-[var(--r-lg)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
+        <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--warn-l)] bg-[var(--warn-l)] px-4 py-3 text-sm leading-relaxed text-[var(--warn)]">
           {errorMessage}
         </div>
       )}

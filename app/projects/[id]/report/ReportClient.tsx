@@ -85,13 +85,13 @@ export default function ReportClient({
     if (!blogMetrics) return null
     switch (blogMetrics.freshnessStatus) {
       case 'fresh':
-        return { label: '更新感あり', className: 'border-emerald-200 bg-emerald-50 text-emerald-700' }
+        return { label: '更新感あり', className: 'border-[var(--ok-l)] bg-[var(--ok-l)] text-[var(--ok)]' }
       case 'watch':
-        return { label: '少し静か', className: 'border-amber-200 bg-amber-50 text-amber-700' }
+        return { label: '少し静か', className: 'border-[var(--warn-l)] bg-[var(--warn-l)] text-[var(--warn)]' }
       case 'stale':
-        return { label: '更新停滞', className: 'border-rose-200 bg-rose-50 text-rose-700' }
+        return { label: '更新停滞', className: 'border-[var(--err-l)] bg-[var(--err-l)] text-[var(--err)]' }
       default:
-        return { label: '日付推定中', className: 'border-slate-200 bg-slate-50 text-slate-700' }
+        return { label: '日付推定中', className: 'border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]' }
     }
   }
 
@@ -382,7 +382,7 @@ export default function ReportClient({
               <ul className="space-y-1">
                 {conversionObstacles.map((item, i) => (
                   <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                    <span className="text-amber-500 flex-shrink-0">▲</span>{item}
+                    <span className="text-[var(--warn)] flex-shrink-0">▲</span>{item}
                   </li>
                 ))}
               </ul>
@@ -414,7 +414,7 @@ export default function ReportClient({
             <ul className="space-y-1">
               {audit.current_content.map((item, i) => (
                 <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                  <span className="text-[rgba(255,255,255,0.56)] flex-shrink-0">・</span>{item}
+                  <span className="text-[var(--text3)] flex-shrink-0">・</span>{item}
                 </li>
               ))}
             </ul>
@@ -427,7 +427,7 @@ export default function ReportClient({
             <ul className="space-y-1">
               {audit.strengths.map((item, i) => (
                 <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                  <span className="text-green-400 flex-shrink-0">✓</span>{item}
+                  <span className="text-[var(--ok)] flex-shrink-0">✓</span>{item}
                 </li>
               ))}
             </ul>
@@ -440,7 +440,7 @@ export default function ReportClient({
             <ul className="space-y-1">
               {audit.gaps.map((item, i) => (
                 <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                  <span className="text-amber-400 flex-shrink-0">△</span>{item}
+                  <span className="text-[var(--warn)] flex-shrink-0">△</span>{item}
                 </li>
               ))}
             </ul>
@@ -468,7 +468,7 @@ export default function ReportClient({
                   <ul className="space-y-1">
                     {ca.gaps.map((item, j) => (
                       <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
-                        <span className="text-red-300 flex-shrink-0">▲</span>{item}
+                        <span className="text-[var(--err)] flex-shrink-0">▲</span>{item}
                       </li>
                     ))}
                   </ul>
@@ -480,7 +480,7 @@ export default function ReportClient({
                   <ul className="space-y-1">
                     {ca.advantages.map((item, j) => (
                       <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
-                        <span className="text-green-400 flex-shrink-0">◎</span>{item}
+                        <span className="text-[var(--ok)] flex-shrink-0">◎</span>{item}
                       </li>
                     ))}
                   </ul>

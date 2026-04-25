@@ -194,7 +194,7 @@ export default async function InterviewerPage({
                 <div className="font-medium text-[var(--text)] text-sm">{char.name}</div>
                 <div className="text-xs text-[var(--text3)] mt-0.5">{char.species}</div>
                 {char.label && (
-                  <div className="text-xs text-amber-600 mt-1 font-medium">{char.label}</div>
+                  <div className="text-xs text-[var(--accent)] mt-1 font-medium">{char.label}</div>
                 )}
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
@@ -337,7 +337,7 @@ export default async function InterviewerPage({
                     required
                     maxLength={INTERVIEW_FOCUS_THEME_MAX_LENGTH}
                     placeholder="例: 初めて相談する人が安心できる理由"
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] outline-none transition-colors placeholder:text-[var(--text3)] focus:border-amber-400 focus:bg-white"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] outline-none transition-colors placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:bg-[var(--surface)]"
                   />
                 </label>
                 <button
