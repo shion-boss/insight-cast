@@ -42,7 +42,7 @@ export function CheckoutButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
+      className={`w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
         featured
           ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
           : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'

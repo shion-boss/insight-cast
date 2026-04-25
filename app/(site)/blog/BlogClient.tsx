@@ -113,7 +113,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
           <button
             type="button"
             onClick={() => setActiveFilter('all')}
-            className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2"
+            className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
           >
             すべての記事を見る
           </button>
