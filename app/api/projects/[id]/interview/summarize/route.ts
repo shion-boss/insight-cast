@@ -25,9 +25,9 @@ export async function POST(
 
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
-  const parsed = z.object({ interviewId: z.string().uuid() }).safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'invalid params' }, { status: 400 })
-  const { interviewId } = parsed.data
+  const bodyParsed = z.object({ interviewId: z.string().uuid() }).safeParse(body)
+  if (!bodyParsed.success) return NextResponse.json({ error: 'invalid params' }, { status: 400 })
+  const { interviewId } = bodyParsed.data
 
   const { data: interview } = await supabase
     .from('interviews')
