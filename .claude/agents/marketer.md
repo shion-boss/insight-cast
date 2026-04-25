@@ -11,6 +11,7 @@ model: sonnet
 
 ## 優先して使う shared skill
 
+- `.claude/skills/copywriting-lp/SKILL.md`
 - `.claude/skills/blog-theme-analysis/SKILL.md`
 - `.claude/skills/competitor-analysis/SKILL.md`
 - `.claude/skills/competitor-suggest/SKILL.md`
