@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { getButtonClass } from '@/components/ui'
 import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
@@ -32,9 +33,9 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         <div className="flex h-[62px] items-center justify-between gap-4">
           <Link
             href="/"
-            className="font-serif text-[19px] font-bold text-[var(--text)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            Insight <span className="text-[var(--accent)]">Cast</span>
+            <Image src="/logo.jpg" alt="Insight Cast" width={160} height={48} className="h-[38px] w-auto object-contain" priority />
           </Link>
 
           {/* PC用ボタン群 */}
