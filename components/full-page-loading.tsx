@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 
 const CHAR_ICONS = [
   { src: '/characters/mint-48.png', alt: 'ミント', emoji: '🐱' },
@@ -45,7 +44,7 @@ export function FullPageLoading() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <Image src="/logo.jpg" alt="Insight Cast" width={200} height={60} className="h-[44px] w-auto object-contain" />
+        <img src="/logo.jpg" alt="Insight Cast" className="h-[44px] w-auto object-contain" />
         <p className="text-sm text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getButtonClass } from '@/components/ui'
 
 type NavLink = { href: string; label: string }
@@ -71,7 +70,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
           >
             {/* ドロワーヘッダー */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
-              <Image src="/logo.jpg" alt="Insight Cast" width={140} height={42} className="h-[32px] w-auto object-contain" />
+              <img src="/logo.jpg" alt="Insight Cast" className="h-[32px] w-auto object-contain" />
               <button
                 type="button"
                 aria-label="メニューを閉じる"
