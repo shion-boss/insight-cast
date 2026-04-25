@@ -57,44 +57,41 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, name, hp_url, status, updated_at')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
+  // profile と project を並列取得
+  const [{ data: profile }, { data: project }] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('projects')
+      .select('id, name, hp_url, status, updated_at')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .single(),
+  ])
 
   if (!project) redirect('/dashboard')
 
-  const { data: interviewRows } = await supabase
-    .from('interviews')
-    .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
-    .eq('project_id', id)
-    .order('created_at', { ascending: false })
-
-  const { data: auditRow } = await supabase
-    .from('hp_audits')
-    .select('id, raw_data')
-    .eq('project_id', id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  const { data: competitors } = await supabase
-    .from('competitors')
-    .select('id, url')
-    .eq('project_id', id)
-
-  const { data: competitorAnalyses } = await supabase
-    .from('competitor_analyses')
-    .select('competitor_id, raw_data')
-    .eq('project_id', id)
+  // project が取れてから interviews, auditRow, competitors, competitorAnalyses を並列取得
+  const [
+    { data: interviewRows },
+    { data: auditRow },
+    { data: competitors },
+    { data: competitorAnalyses },
+  ] = await Promise.all([
+    supabase
+      .from('interviews')
+      .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('hp_audits')
+      .select('id, raw_data')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase.from('competitors').select('id, url').eq('project_id', id),
+    supabase.from('competitor_analyses').select('competitor_id, raw_data').eq('project_id', id),
+  ])
 
   const interviews = (interviewRows ?? []) as InterviewRow[]
   const analysisReady = isProjectAnalysisReady({
