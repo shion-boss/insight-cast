@@ -48,7 +48,7 @@ export default async function AdminUsersPage() {
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--border)] text-left">
+                <tr className="border-b border-[var(--border)] bg-[var(--bg2)] text-left">
                   <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">メールアドレス</th>
                   <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">作成日</th>
                   <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">最終ログイン</th>

@@ -318,7 +318,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               placeholder="url-slug-here"
               pattern="[a-z0-9-]+"
             />
-            <p className="mt-1 text-xs text-stone-400">
+            <p className="mt-1 text-xs text-[var(--text3)]">
               半角英数字とハイフンのみ。公開後は変更しないでください。
             </p>
           </div>
@@ -352,7 +352,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                 onChange={(e) => handleChange('published', e.target.checked)}
                 className="h-4 w-4 rounded border-[var(--border)] accent-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               />
-              <span className="text-sm text-stone-700">公開する</span>
+              <span className="text-sm text-[var(--text)]">公開する</span>
             </label>
 
             <div>

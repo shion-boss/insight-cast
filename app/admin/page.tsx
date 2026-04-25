@@ -181,12 +181,7 @@ export default async function AdminDashboardPage() {
               ))}
             </div>
           )}
-          <div className="mt-3 text-right">
-            <Link href="/admin/posts" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
-              すべて見る →
-            </Link>
-          </div>
-        </div>
+            </div>
 
         {/* サイド情報 */}
         <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 h-fit">

@@ -49,12 +49,12 @@ export default async function AdminPostEditPage({
       <div>
         <Link
           href="/admin/posts"
-          className="text-sm text-stone-400 transition-colors hover:text-stone-700"
+          className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)]"
         >
           ← 記事一覧
         </Link>
-        <h1 className="mt-2 text-2xl font-bold text-stone-950">記事を編集する</h1>
-        <p className="mt-1 text-sm text-stone-400">/{post.slug as string}</p>
+        <h1 className="mt-2 font-serif text-2xl font-bold text-[var(--text)]">記事を編集する</h1>
+        <p className="mt-1 text-sm text-[var(--text3)]">/{post.slug as string}</p>
       </div>
 
       <PostFormClient mode="edit" id={id} defaultValues={defaultValues} />

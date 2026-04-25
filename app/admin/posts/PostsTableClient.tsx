@@ -150,11 +150,11 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
-                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">ステータス</th>
-                <th className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">操作</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase">タイトル</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
+                <th className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">ステータス</th>
+                <th className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">操作</th>
               </tr>
             </thead>
             <tbody>

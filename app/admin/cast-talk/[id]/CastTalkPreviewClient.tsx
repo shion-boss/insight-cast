@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import type { Character } from '@/lib/characters'
@@ -90,20 +91,28 @@ export function CastTalkPreviewClient({
   return (
     <div className="space-y-6">
       {/* ヘッダー */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <p className="text-sm text-[var(--text3)]">編集</p>
-          <p className="mt-1 text-xs text-[var(--text3)]">{talk.theme}</p>
-        </div>
-        <span
-          className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-            status === 'published'
-              ? 'bg-[var(--ok-l)] text-[var(--ok)]'
-              : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]'
-          }`}
+      <div className="space-y-1">
+        <Link
+          href="/admin/cast-talk"
+          className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)]"
         >
-          {status === 'published' ? '公開中' : '下書き'}
-        </span>
+          ← Cast Talk 一覧
+        </Link>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-serif text-2xl font-bold text-[var(--text)]">Cast Talk 編集</h1>
+            <p className="mt-0.5 text-xs text-[var(--text3)]">{talk.theme}</p>
+          </div>
+          <span
+            className={`mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+              status === 'published'
+                ? 'bg-[var(--ok-l)] text-[var(--ok)]'
+                : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]'
+            }`}
+          >
+            {status === 'published' ? '公開中' : '下書き'}
+          </span>
+        </div>
       </div>
 
       {error && (
@@ -121,7 +130,7 @@ export function CastTalkPreviewClient({
           type="text"
           value={title}
           onChange={(e) => { setTitle(e.target.value); setSaved(false) }}
-          className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+          className="w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         />
       </div>
 
@@ -154,7 +163,7 @@ export function CastTalkPreviewClient({
                     value={msg.text}
                     onChange={(e) => updateMessage(i, e.target.value)}
                     rows={3}
-                    className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-relaxed text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+                    className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-relaxed text-[var(--text)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   />
                 </div>
               </div>
@@ -172,7 +181,7 @@ export function CastTalkPreviewClient({
           value={summary}
           onChange={(e) => { setSummary(e.target.value); setSaved(false) }}
           rows={3}
-          className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm leading-relaxed text-[var(--text)] outline-none transition-colors focus:border-[var(--accent)]"
+          className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm leading-relaxed text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         />
       </div>
 
@@ -191,12 +200,6 @@ export function CastTalkPreviewClient({
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
         >
           {statusChanging ? '更新中...' : status === 'published' ? '下書きに戻す' : '公開する'}
-        </button>
-        <button
-          onClick={() => router.push('/admin/cast-talk')}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]"
-        >
-          一覧に戻る
         </button>
       </div>
     </div>
