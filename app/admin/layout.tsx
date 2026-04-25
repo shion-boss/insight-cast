@@ -93,3 +93,4 @@ function AdminNavLink({ href, label }: { href: string; label: string }) {
     </Link>
   )
 }
+

@@ -47,7 +47,7 @@ export default function GlobalError({
                 marginBottom: '0.5rem',
               }}
             >
-              申し訳ありません。エラーが起きました。
+              うまく表示できませんでした。
             </p>
             <p
               style={{

@@ -537,12 +537,12 @@ export default function InterviewPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && e.ctrlKey) {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                   e.preventDefault()
                   handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
-              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'ここに話しかけてください'}
+              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'ここに話しかけてください（Ctrl+Enter で送信）'}
               disabled={loading || hasReachedTurnLimit}
               rows={3}
               autoFocus
@@ -561,8 +561,13 @@ export default function InterviewPage() {
 
       {/* 完了確認モーダル */}
       {showComplete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50" aria-hidden="true">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="取材まとめの確認"
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)]"
+          >
             <div className="flex justify-center mb-4">
               <CharacterAvatar
                 src={char?.icon96}

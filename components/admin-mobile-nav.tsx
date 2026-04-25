@@ -67,9 +67,9 @@ export function AdminMobileNav({
                 type="button"
                 aria-label="メニューを閉じる"
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-white/50 transition-colors hover:bg-white/8 hover:text-white"
+                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-white/50 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>

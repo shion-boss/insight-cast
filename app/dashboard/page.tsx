@@ -366,7 +366,7 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={getProjectContinueHref(project)}
-                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-shadow hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
+                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                     >
                       {(() => {
                         const latestIv = latestInterviewMap.get(project.id)
@@ -428,7 +428,7 @@ export default async function DashboardPage() {
                       <Link
                         key={interview.id}
                         href={interviewHref}
-                        className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors`}
+                        className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40`}
                       >
                         <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
                           <CharacterAvatar

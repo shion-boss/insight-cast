@@ -658,7 +658,7 @@ export default function SettingsPage() {
                       type="button"
                       onClick={handleDeleteAccount}
                       disabled={deletePending}
-                      className="inline-flex min-h-11 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50"
+                      className="inline-flex min-h-11 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                     >
                       {deletePending ? '削除中...' : 'アカウントを削除する'}
                     </button>

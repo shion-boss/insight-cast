@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { getButtonClass } from '@/components/ui'
 import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
@@ -25,6 +26,7 @@ const DRAWER_NAV_LINKS = [
 ]
 
 export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
+  const pathname = usePathname()
 
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
@@ -69,15 +71,23 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
           className="hidden md:flex gap-2 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           aria-label="メインナビゲーション"
         >
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-full px-4 py-2 text-sm font-medium text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive ? 'page' : undefined}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                  isActive
+                    ? 'text-[var(--accent)] font-semibold'
+                    : 'text-[var(--text2)] hover:text-[var(--accent)]'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
       </div>
     </header>

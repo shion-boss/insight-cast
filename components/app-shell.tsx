@@ -56,7 +56,7 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <aside className="border-b border-[var(--border)] bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[236px] lg:border-b-0 lg:border-r">
+      <aside aria-label="サイドバーナビゲーション" className="border-b border-[var(--border)] bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[236px] lg:border-b-0 lg:border-r">
         <div className="mx-auto flex max-w-6xl flex-col lg:h-full lg:max-w-none">
           <div className="border-b border-[var(--border)] px-6 py-5 lg:px-5">
             <Link
@@ -67,11 +67,12 @@ export function AppShell({
             </Link>
           </div>
 
-          <nav className="flex gap-2 overflow-x-auto px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:py-3">
+          <nav aria-label="メインナビゲーション" className="flex gap-2 overflow-x-auto px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:py-3">
             {NAV_ITEMS.map((item) => (
               <Link
                 key={item.key}
                 href={item.href}
+                aria-current={item.key === active ? 'page' : undefined}
                 className={navLinkClass(item.key === active)}
               >
                 <span aria-hidden="true" className="text-base leading-none">{item.icon}</span>
@@ -95,7 +96,7 @@ export function AppShell({
                 </span>
               </Link>
             )}
-<div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
               <Link href="/" className={getButtonClass('secondary', 'justify-center px-4 py-2.5 text-sm')}>
                 ← 公開サイトへ
               </Link>
