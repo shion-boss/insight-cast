@@ -71,14 +71,14 @@ const PAIN_ITEMS = [
 
 const OUTCOME_ITEMS = [
   { charId: 'mint',  title: '当たり前の中に眠る価値が言葉になる', body: 'AIキャストが丁寧に取材することで、気づかなかった自社の強みが見えてきます。' },
-  { charId: 'claus', title: '記事の素材が手元に届く', body: '取材で引き出した話をもとに、記事の素材が手元に届きます。何を書くか悩む前に、素材がある状態を作ります。' },
-  { charId: 'rain',  title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ね、問い合わせにつながるコンテンツ資産になります。' },
+  { charId: 'claus', title: '記事の素材が手元に届く', body: '取材で引き出した話をもとに、記事の素材が手元に届きます。何を書くか悩む前に、素材が手元にある状態で始められます。' },
+  { charId: 'rain',  title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ねることで、あなただけの話がホームページに増えていきます。' },
 ] as const
 
 const WORKFLOW_ITEMS = [
   { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいかが、最初から見えた状態で始められます。' },
-  { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分のチャットで、一次情報が引き出されます。' },
-  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材を作ります。「何を書くか」に迷う前に、素材がある状態を作ります。' },
+  { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分の会話で、あなたの話が引き出されます。' },
+  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材がまとまります。「何を書くか」に迷う前に、素材が手元にある状態で始められます。' },
 ] as const
 
 const COMPARE_ROWS = [
@@ -109,7 +109,7 @@ const PLANS = [
     period: '/ 月',
     desc: '週1〜2本ペースでHPを育てたい方へ',
     features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
-    cta: '申し込む',
+    cta: '月額プランを始める',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',
     highlight: true,
   },
@@ -120,7 +120,7 @@ const PLANS = [
     period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
     features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中', '優先サポート'],
-    cta: '申し込む',
+    cta: '月額プランを始める',
     href: '/auth/login?next=/api/stripe/checkout-redirect?plan=business',
     highlight: false,
   },
@@ -189,10 +189,7 @@ export default async function LandingPage() {
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。「何を書けばいいか分からない」を解消します。
-                </p>
-                <p className="text-[13px] text-[var(--text3)] leading-[1.75] mt-3 max-w-[420px]">
-                  あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
+                  動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
@@ -396,13 +393,13 @@ export default async function LandingPage() {
                   積み重ねるたびに、<br />ホームページが強くなる。
                 </h2>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
-                  一回の取材で終わりではありません。取材を重ねるほど、あなたのホームページには一次情報が蓄積され、検索でも口コミでも「信頼できる」と思われやすくなっていきます。
+                  一回の取材で終わりではありません。取材を重ねるほど、「自社だけの話」がホームページに増え、検索でも口コミでも信頼されやすくなっていきます。
                 </p>
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {[
                     { label: 'HP現状分析', body: '今のホームページで何が足りないかを可視化' },
                     { label: '競合比較', body: '同業他社との違いを客観的に整理' },
-                    { label: '取材メモ', body: '引き出した一次情報をそのまま記録' },
+                    { label: '取材メモ', body: '会話で出てきた話をそのまま記録' },
                     { label: '記事素材', body: 'ブログや実績ページにそのまま使える文章' },
                   ].map((item) => (
                     <div key={item.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-4 py-4">
@@ -545,7 +542,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why Insight Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              「自分で書く」との違い
+              他の方法と、比べてみてください。
             </h2>
             {/* モバイル: カードリスト */}
             <div className="mt-8 sm:hidden space-y-2.5">
@@ -602,7 +599,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              まず無料で体験してください。<br />2回まで（単発）、カード不要で使えます。
+              まず無料で体験してください。<br />2回まで、カード不要で使えます。
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
             <div className="mt-11 grid gap-6 lg:grid-cols-3">
@@ -674,10 +671,10 @@ export default async function LandingPage() {
               私たち自身が、Insight Cast を使っています。
             </h2>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[560px] mx-auto">
-              Insight Cast は今、自社のホームページ更新を Insight Cast 自体で進めています。このブログもその過程から生まれています。
+              このサービスは、私たち自身が「HPを更新しなきゃ、でも何を書けばいいか分からない」という状態を経験したことから生まれました。
             </p>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-4 max-w-[560px] mx-auto">
-              自分たちが「ホームページ更新が止まっている状態」を経験し、それを解決するためにこのサービスを作りました。実際に使いながら改善してきた過程をブログで公開しています。
+              Insight Cast は今、自社のホームページ更新をこのツールで進めています。このブログの記事も、実際に取材を重ねながら作っています。売り込みではなく、私たちが先に使って確かめたことを、そのままお届けしています。
             </p>
             <div className="mt-8">
               <Link

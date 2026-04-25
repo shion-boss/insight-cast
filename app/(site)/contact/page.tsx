@@ -30,7 +30,7 @@ export default function ContactPage() {
               }
               name="ミント"
               title="まず、気になることを聞かせてください。"
-              description="Insight Cast がどんなサービスか、あなたのホームページに使えるかどうか、お気軽にご相談ください。"
+              description="「こんな使い方はできますか？」「まず何から始めればいいですか？」そんなところから聞かせてください。業種のことも、ホームページの状況も、何も準備しなくて大丈夫です。"
               tone="soft"
             />
           </div>
