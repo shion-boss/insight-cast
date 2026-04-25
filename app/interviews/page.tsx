@@ -39,36 +39,31 @@ export default async function InterviewsPage() {
 
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-
-  const { data: projectRows } = await supabase
-    .from('projects')
-    .select('id, name, hp_url')
-    .eq('user_id', user.id)
+  // auth+profile と projects を並列取得
+  const [{ data: profile }, { data: projectRows }] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id),
+  ])
 
   const projects = (projectRows ?? []) as Project[]
   const projectMap = new Map(projects.map((project) => [project.id, project]))
 
+  // interviews と articles はprojectsに依存するが互いに独立 → 2段階並列
   const { data: interviewRows } = projects.length > 0
-      ? await supabase
-      .from('interviews')
-      .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
-      .in('project_id', projects.map((project) => project.id))
-      .order('created_at', { ascending: false })
+    ? await supabase
+        .from('interviews')
+        .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
+        .in('project_id', projects.map((project) => project.id))
+        .order('created_at', { ascending: false })
     : { data: [] }
 
   const interviews = (interviewRows ?? []) as Interview[]
 
   const { data: articleRows } = interviews.length > 0
     ? await supabase
-      .from('articles')
-      .select('interview_id')
-      .in('interview_id', interviews.map((interview) => interview.id))
+        .from('articles')
+        .select('interview_id')
+        .in('interview_id', interviews.map((interview) => interview.id))
     : { data: [] }
 
   const { articleInterviewIds, articleCountByInterview } = buildArticleCountByInterview((articleRows ?? []) as InterviewArticleRef[])
