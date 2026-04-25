@@ -227,7 +227,7 @@ export function ContentMapPanel({
                               >
                                 {posts.length}
                               </div>
-                              <div className="text-[9px] mt-0.5" style={{ color: 'var(--text3)' }}>記事</div>
+                              <div className="text-[9px] mt-0.5 text-[var(--text3)]">記事</div>
                             </>
                           )}
                         </div>
@@ -242,20 +242,14 @@ export function ContentMapPanel({
           {/* Summary */}
           <div className="mt-5 pt-5 border-t border-[var(--border)] grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div
-                className="text-[22px] font-bold"
-                style={{ color: 'var(--accent)' }}
-              >
+              <div className="text-[22px] font-bold text-[var(--accent)]">
                 {existingCount}
               </div>
               <div className="text-[11px] text-[var(--text3)] mt-0.5">既存HP記事</div>
             </div>
             {insightCastCount > 0 && (
               <div className="text-center">
-                <div
-                  className="text-[22px] font-bold"
-                  style={{ color: 'var(--teal)' }}
-                >
+                <div className="text-[22px] font-bold text-[var(--teal)]">
                   {insightCastCount}
                 </div>
                 <div className="text-[11px] text-[var(--text3)] mt-0.5">Insight Cast記事</div>

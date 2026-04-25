@@ -417,7 +417,7 @@ export function ArticleExportPanel({
               key={f}
               type="button"
               onClick={() => setFormat(f)}
-              className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none border-b-2 ${
+              className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 border-b-2 ${
                 safeFormat === f
                   ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
                   : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
@@ -433,7 +433,7 @@ export function ArticleExportPanel({
               type="button"
               onClick={handleSave}
               disabled={saveState === 'saving'}
-              className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none"
+              className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : saveState === 'error' ? '保存できませんでした' : '保存する'}
             </button>
@@ -441,14 +441,14 @@ export function ArticleExportPanel({
           <button
             type="button"
             onClick={handleCopy}
-            className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+            className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             {copied ? '✓ コピーしました' : 'コピー'}
           </button>
           <button
             type="button"
             onClick={handleDownload}
-            className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+            className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             ファイル保存
           </button>
@@ -468,12 +468,12 @@ export function ArticleExportPanel({
                 className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
               />
               <span className="font-mono text-[var(--text3)]">{themeColor}</span>
-              <button onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
+              <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
                 リセット
               </button>
               <div className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
-                <button onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
-                <button onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
+                <button type="button" onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
+                <button type="button" onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
               </div>
             </div>
           </div>
@@ -497,10 +497,10 @@ export function ArticleExportPanel({
                     }} />
                   </label>
                   {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
-                    <button onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                    <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
                   )}
                   <input type="text" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                  <button onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                  <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <button type="button" role="switch" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
@@ -539,10 +539,10 @@ export function ArticleExportPanel({
                     }} />
                   </label>
                   {clientAvatarUrl && (
-                    <button onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                    <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
                   )}
                   <input type="text" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
-                  <button onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                  <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <button type="button" role="switch" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">

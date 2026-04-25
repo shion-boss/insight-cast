@@ -598,7 +598,7 @@ export default async function LandingPage() {
                         {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
+                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
                         <span className="text-[var(--teal)] text-lg font-bold">✓</span>
@@ -838,7 +838,7 @@ export default async function LandingPage() {
                 <details key={i} className="group">
                   <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
                     <span>{faq.q}</span>
-                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">⌄</span>
+                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>
                   <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>

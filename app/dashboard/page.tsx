@@ -252,7 +252,7 @@ export default async function DashboardPage() {
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
             <div className="text-[34px] font-bold tabular-nums text-[var(--text)] leading-none">{stat.n}</div>
             <div className="text-sm text-[var(--text2)] mt-1.5">{stat.l}</div>
-            <div className="text-[12px] mt-1 font-semibold" style={{ color: 'var(--teal)' }}>{stat.delta}</div>
+            <div className="text-[12px] mt-1 font-semibold text-[var(--teal)]">{stat.delta}</div>
           </div>
         ))}
       </div>
