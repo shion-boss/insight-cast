@@ -11,9 +11,11 @@ const NAV_ITEMS = [
 export function AppShellSkeleton({
   title,
   headerRight,
+  children,
 }: {
   title?: ReactNode
   headerRight?: ReactNode
+  children?: ReactNode
 } = {}) {
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
@@ -67,7 +69,7 @@ export function AppShellSkeleton({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl px-6 py-8" />
+        <main className="mx-auto w-full max-w-6xl px-6 py-8">{children}</main>
       </div>
     </div>
   )
