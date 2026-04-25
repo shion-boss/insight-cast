@@ -76,7 +76,7 @@ export function AdminMobileNav({
           />
           <div
             ref={drawerRef}
-            className={`fixed top-0 left-0 z-50 h-dvh w-[260px] bg-[#1c1410] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+            className={`fixed top-0 right-0 z-50 h-dvh w-[260px] bg-[#1c1410] flex flex-col transition-transform duration-300 ease-in-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
             role="dialog"
             aria-modal="true"
             aria-label="管理メニュー"
