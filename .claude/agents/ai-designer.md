@@ -12,6 +12,7 @@ model: sonnet
 ## 優先して使う shared skill
 
 - `.claude/skills/interview-quality/SKILL.md`
+- `.claude/skills/content-authority/SKILL.md`
 - `.claude/skills/ai-education-loop/SKILL.md`
 - `.claude/skills/hp-analysis/SKILL.md`
 - `.claude/skills/blog-theme-analysis/SKILL.md`

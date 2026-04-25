@@ -13,6 +13,7 @@ model: sonnet
 
 - `.claude/skills/ui-quality-checklist/SKILL.md`
 - `.claude/skills/interview-quality/SKILL.md`
+- `.claude/skills/content-authority/SKILL.md`
 - `.claude/skills/ai-education-loop/SKILL.md`
 - `.claude/skills/agent-handoff/SKILL.md`
 
