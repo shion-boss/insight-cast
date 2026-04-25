@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import { PublicHero } from '@/components/public-layout'
 import { getButtonClass } from '@/components/ui'
-import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'AI時代の発信について | Insight Cast',
@@ -101,16 +100,7 @@ const articles = [
   },
 ]
 
-export default async function PhilosophyPage() {
-  let isLoggedIn = false
-  try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    isLoggedIn = Boolean(user)
-  } catch {
-    // 認証失敗時も表示する
-  }
-
+export default function PhilosophyPage() {
   return (
     <>
 
@@ -240,21 +230,12 @@ export default async function PhilosophyPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                {isLoggedIn ? (
-                  <Link
-                    href="/dashboard"
-                    className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
-                  >
-                    ダッシュボードへ →
-                  </Link>
-                ) : (
-                  <Link
-                    href="/auth/signup"
-                    className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
-                  >
-                    無料で取材を始める
-                  </Link>
-                )}
+                <Link
+                  href="/auth/signup"
+                  className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
+                >
+                  無料で取材を始める
+                </Link>
                 <Link
                   href="/cast"
                   className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"

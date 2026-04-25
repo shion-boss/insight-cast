@@ -174,9 +174,29 @@ function LoginForm() {
   )
 }
 
+function LoginSkeleton() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-[440px]">
+        <div className="mb-8 flex justify-center">
+          <div className="h-7 w-32 animate-pulse rounded-full bg-[var(--border)]" />
+        </div>
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 sm:p-12 shadow-[0_24px_64px_rgba(0,0,0,0.08)] space-y-4">
+          <div className="h-7 w-20 animate-pulse rounded-full bg-[var(--border)] mx-auto mb-8" />
+          <div className="h-12 animate-pulse rounded-[var(--r-sm)] bg-[var(--border)]" />
+          <div className="h-px bg-[var(--border)]" />
+          <div className="h-10 animate-pulse rounded-[var(--r-sm)] bg-[var(--border)]" />
+          <div className="h-10 animate-pulse rounded-[var(--r-sm)] bg-[var(--border)]" />
+          <div className="h-12 animate-pulse rounded-[var(--r-sm)] bg-[var(--accent-l)]" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function LoginPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<LoginSkeleton />}>
       <LoginForm />
     </Suspense>
   )
