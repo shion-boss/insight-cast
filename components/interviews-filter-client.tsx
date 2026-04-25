@@ -81,7 +81,7 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
           <Link
             key={item.id}
             href={item.href}
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow block"
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow"
           >
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--bg2)]">
               <CharacterAvatar

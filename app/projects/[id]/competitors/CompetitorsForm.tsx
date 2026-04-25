@@ -145,10 +145,11 @@ export default function CompetitorsForm({
         }}
       />
 
-      {competitorIssue && !error && (
-        <p className="text-sm text-[var(--err)]">{competitorIssue}</p>
+      {(competitorIssue || error) && (
+        <p className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+          {error ?? competitorIssue}
+        </p>
       )}
-      {error && <p className="text-sm text-red-500">{error}</p>}
 
       <div className="flex flex-col gap-2">
         <PrimaryButton

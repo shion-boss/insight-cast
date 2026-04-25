@@ -198,7 +198,7 @@ export default async function InterviewerPage({
                 )}
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text3)] mt-3 font-medium">引き出すこと: {char.specialty}</div>
-                <div className="mt-4 text-xs text-center py-2 bg-[var(--accent)] text-white rounded-lg transition-colors group-hover:bg-[var(--accent-h)]">
+                <div className="mt-4 text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-lg transition-colors group-hover:bg-[var(--accent-h)]">
                   このキャストを選ぶ
                 </div>
               </Link>

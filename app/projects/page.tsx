@@ -258,32 +258,32 @@ export default async function ProjectsPage() {
                 <div className="flex gap-2 flex-wrap">
                   <Link
                     href={`/projects/${project.id}/interviewer`}
-                    className={getButtonClass('primary', 'text-xs px-3 py-2.5')}
+                    className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
                   >
                     取材する →
                   </Link>
                   <Link
                     href={`/projects/${project.id}`}
-                    className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
+                    className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                   >
                     管理
                   </Link>
                   {articleCount > 0 && (
                     <Link
                       href={`/projects/${project.id}#articles`}
-                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                     >
                       記事を見る
                     </Link>
                   )}
                   {project.status === 'analyzing' ? (
-                    <span className="inline-flex items-center rounded-lg border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 py-1.5 text-xs text-[var(--warn)]">
+                    <span className="inline-flex items-center rounded-lg border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 min-h-[44px] text-xs text-[var(--warn)]">
                       調査中
                     </span>
                   ) : analysisReadyProjectIds.has(project.id) ? (
                     <Link
                       href={`/projects/${project.id}/report`}
-                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                     >
                       レポート
                     </Link>
@@ -292,7 +292,7 @@ export default async function ProjectsPage() {
                       projectId={project.id}
                       projectName={project.name || project.hp_url}
                       compact
-                      className={getButtonClass('secondary', 'text-xs px-3 py-2.5')}
+                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                     />
                   )}
                 </div>

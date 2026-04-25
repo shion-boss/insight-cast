@@ -433,7 +433,7 @@ export function ArticleExportPanel({
               type="button"
               onClick={handleSave}
               disabled={saveState === 'saving'}
-              className="w-24 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none"
+              className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-60 focus-visible:outline-none"
             >
               {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : saveState === 'error' ? '保存できませんでした' : '保存する'}
             </button>
@@ -441,14 +441,14 @@ export function ArticleExportPanel({
           <button
             type="button"
             onClick={handleCopy}
-            className="w-32 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+            className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
           >
             {copied ? '✓ コピーしました' : 'コピー'}
           </button>
           <button
             type="button"
             onClick={handleDownload}
-            className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
+            className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none"
           >
             ファイル保存
           </button>

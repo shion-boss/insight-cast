@@ -330,25 +330,27 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               return (
                 <div
                   key={interview.id}
-                  className={`flex flex-wrap items-center gap-3 py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
+                  className={`flex flex-col sm:flex-row sm:items-center gap-3 py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
                 >
-                  <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
-                    <CharacterAvatar
-                      src={char?.icon48}
-                      alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                      emoji={char?.emoji}
-                      size={38}
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
-                      {char?.name ?? 'インタビュアー'} · {formatDateTime(interview.created_at)}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                      <CharacterAvatar
+                        src={char?.icon48}
+                        alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                        emoji={char?.emoji}
+                        size={38}
+                        className="w-full h-full object-cover object-top"
+                      />
                     </div>
-                    <div className="text-[12px] text-[var(--text3)]">
-                      {interview.themes && interview.themes.length > 0
-                        ? interview.themes.join('、')
-                        : 'テーマ未確定'}
+                    <div className="min-w-0">
+                      <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
+                        {char?.name ?? 'インタビュアー'} · {formatDateTime(interview.created_at)}
+                      </div>
+                      <div className="text-[12px] text-[var(--text3)] truncate">
+                        {interview.themes && interview.themes.length > 0
+                          ? interview.themes.join('、')
+                          : 'テーマ未確定'}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
@@ -363,11 +365,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       articleStatus={interview.article_status}
                     />
                     {articleHref && (
-                      <Link href={articleHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                      <Link href={articleHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
                         {articleLabel}
                       </Link>
                     )}
-                    <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                    <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
                       メモを見る
                     </Link>
                   </div>
