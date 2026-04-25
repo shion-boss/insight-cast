@@ -71,45 +71,47 @@ export default async function ProjectsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('id, name, hp_url, status, updated_at')
-    .eq('user_id', user.id)
-    .order('updated_at', { ascending: false })
+  // profile, projects, userPlan を並列取得
+  const [{ data: profile }, { data: projects }, userPlan] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('projects')
+      .select('id, name, hp_url, status, updated_at')
+      .eq('user_id', user.id)
+      .order('updated_at', { ascending: false }),
+    getUserPlan(supabase, user.id),
+  ])
 
   const projectList = (projects ?? []) as Project[]
 
-  const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
 
-  const { data: auditRows } = projectList.length > 0
-    ? await supabase
-      .from('hp_audits')
-      .select('id, project_id, raw_data, created_at')
-      .in('project_id', projectList.map((project) => project.id))
-    : { data: [] }
-
-  const { data: competitorRows } = projectList.length > 0
-    ? await supabase
-      .from('competitors')
-      .select('id, project_id, url')
-      .in('project_id', projectList.map((project) => project.id))
-    : { data: [] }
-
-  const { data: competitorAnalysisRows } = projectList.length > 0
-    ? await supabase
-      .from('competitor_analyses')
-      .select('project_id, competitor_id, raw_data')
-      .in('project_id', projectList.map((project) => project.id))
-    : { data: [] }
+  // projects が取れてから audits, competitors, competitorAnalyses, interviews を並列取得
+  const projectIds = projectList.map((project) => project.id)
+  const [
+    { data: auditRows },
+    { data: competitorRows },
+    { data: competitorAnalysisRows },
+    { data: interviewRows },
+  ] = await Promise.all([
+    projectList.length > 0
+      ? supabase.from('hp_audits').select('id, project_id, raw_data, created_at').in('project_id', projectIds)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('competitors').select('id, project_id, url').in('project_id', projectIds)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('competitor_analyses').select('project_id, competitor_id, raw_data').in('project_id', projectIds)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase
+          .from('interviews')
+          .select('id, project_id, created_at')
+          .in('project_id', projectIds)
+          .order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+  ])
 
   const analysisReadyProjectIds = new Set(
     projectList
@@ -121,14 +123,6 @@ export default async function ProjectsPage() {
       }).isReady)
       .map((project) => project.id),
   )
-
-  const { data: interviewRows } = projectList.length > 0
-    ? await supabase
-      .from('interviews')
-      .select('id, project_id, created_at')
-      .in('project_id', projectList.map((project) => project.id))
-      .order('created_at', { ascending: false })
-    : { data: [] }
 
   const interviews = (interviewRows ?? []) as Interview[]
   const latestInterviewMap = new Map<string, Interview>()
