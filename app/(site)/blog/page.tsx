@@ -20,7 +20,7 @@ export default async function BlogPage() {
         <PublicHero
           compact
           eyebrow="Blog"
-          title={<>記事一覧</>}
+          title={<>取材から生まれた記事を読む</>}
           description={(
             <>
               ホームページ更新・コンテンツ制作・一次情報の活かし方など、

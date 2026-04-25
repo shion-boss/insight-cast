@@ -83,7 +83,7 @@ const WORKFLOW_ITEMS = [
 
 const COMPARE_ROWS = [
   { label: '「何を書くか」を考えなくていい',  ai: false, none: false },
-  { label: '自社だけの一次情報が使われる',     ai: false, none: true  },
+  { label: '引き出せていなかった強みが言葉になる', ai: false, none: false },
   { label: '専門知識がなくても使える',          ai: true,  none: false },
   { label: '継続しやすい（止まりにくい）',      ai: false, none: false },
   { label: 'ホームページの現状分析つき',        ai: false, none: false },
@@ -189,7 +189,7 @@ export default async function LandingPage() {
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
+                  HPはあるけど、何年も更新できていませんか？動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
@@ -277,6 +277,23 @@ export default async function LandingPage() {
                   </div>
                 )
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* ③-b Mid CTA */}
+        <section className="py-10 sm:py-14 bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 text-center">
+            <p className="text-[15px] font-semibold text-[var(--text)] leading-[1.7]">
+              まず無料で体験してみませんか。カード不要、約20分で取材が終わります。
+            </p>
+            <div className="mt-5">
+              <Link
+                href={isLoggedIn ? '/dashboard' : '/auth/signup'}
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.10)]"
+              >
+                {isLoggedIn ? 'ダッシュボードへ →' : '無料で体験する →'}
+              </Link>
             </div>
           </div>
         </section>
@@ -556,7 +573,7 @@ export default async function LandingPage() {
                   <p className="text-[13px] font-medium text-[var(--text)] mb-2.5">{row.label}</p>
                   <div className="grid grid-cols-3 gap-1">
                     <div className="text-center text-[15px]">{row.ai ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
-                    <div className="text-center text-[15px]">{row.none === true ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
+                    <div className="text-center text-[15px]">{row.none ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
                     <div className="text-center text-[17px]"><span className="text-[var(--teal)] font-bold">✓</span></div>
                   </div>
                 </div>
@@ -581,7 +598,7 @@ export default async function LandingPage() {
                         {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.none === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
+                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
                         <span className="text-[var(--teal)] text-lg font-bold">✓</span>
@@ -861,7 +878,7 @@ export default async function LandingPage() {
                     href="/contact"
                     className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]"
                   >
-                    問い合わせる（無料・返信は1営業日以内） →
+                    問い合わせる（無料・返信は2営業日以内） →
                   </Link>
                 </div>
               </div>

@@ -11,10 +11,7 @@ const NAV_LINKS = [
   { href: '/pricing', label: '料金' },
   { href: '/cast', label: 'キャスト' },
   { href: '/blog', label: 'ブログ' },
-  { href: '/cast-talk', label: 'Cast Talk' },
-  { href: '/about', label: 'About' },
   { href: '/contact', label: 'お問い合わせ' },
-  { href: '/faq', label: 'FAQ' },
 ]
 
 const DRAWER_NAV_LINKS = [
@@ -23,6 +20,7 @@ const DRAWER_NAV_LINKS = [
   { href: '/cast-talk', label: 'Cast Talk' },
   { href: '/pricing', label: '料金プラン' },
   { href: '/service', label: '使い方' },
+  { href: '/contact', label: 'お問い合わせ' },
 ]
 
 export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { TextInput, PrimaryButton, SecondaryButton, FieldLabel } from '@/components/ui'
 import { createPost, updatePost, deletePost, type PostFormData } from '@/lib/actions/admin-posts'
@@ -84,8 +84,21 @@ function newBlock(type: Block['type']): Block {
 // ── ブロックエディタ ─────────────────────────────────────
 function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
   const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
   return (
-    <div className="relative flex justify-center">
+    <div ref={ref} className="relative flex justify-center">
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-dashed border-[var(--border)]" />
       <button
         type="button"
