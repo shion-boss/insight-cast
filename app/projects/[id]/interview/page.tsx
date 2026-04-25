@@ -599,12 +599,13 @@ export default function InterviewPage() {
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">上限の{MAX_TURNS}回まで質問しました。</p>
                 <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめます。</p>
+                <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
                 <button
                   type="button"
                   onClick={handleFinish}
                   className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
                 >
-                  <DevAiLabel>記事素材へまとめる</DevAiLabel>
+                  記事素材へまとめる
                 </button>
               </>
             )}
