@@ -369,7 +369,7 @@ export default function ReportClient({
               <ul className="space-y-1">
                 {trustSignals.map((item, i) => (
                   <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                    <span className="text-emerald-500 flex-shrink-0">●</span>{item}
+                    <span className="text-[var(--ok)] flex-shrink-0">●</span>{item}
                   </li>
                 ))}
               </ul>
