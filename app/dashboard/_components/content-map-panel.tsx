@@ -90,27 +90,30 @@ export function ContentMapPanel({
         </div>
 
         {classifications === null && (
-          <button
-            type="button"
-            onClick={runClassification}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-            style={{ background: 'var(--accent)' }}
-          >
-            {loading ? (
-              <>
-                <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                分析中…
-              </>
-            ) : (
-              <DevAiLabel>記事を分析する</DevAiLabel>
-            )}
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <DevAiLabel className="text-xs opacity-60">記事分析</DevAiLabel>
+            <button
+              type="button"
+              onClick={runClassification}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              style={{ background: 'var(--accent)' }}
+            >
+              {loading ? (
+                <>
+                  <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  分析中…
+                </>
+              ) : (
+                <>記事を分析する</>
+              )}
+            </button>
+          </div>
         )}
       </div>
 
       {error && (
-        <p className="text-sm text-red-500 mb-4">{error}</p>
+        <p className="text-sm text-[var(--err)] mb-4">{error}</p>
       )}
 
       {/* Not yet classified */}

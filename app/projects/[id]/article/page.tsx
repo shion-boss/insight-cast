@@ -502,6 +502,7 @@ export default function ArticlePage() {
               <p className="mt-3 text-[12px] leading-[1.7] text-[var(--text3)]">{statusDescription}</p>
             </div>
 
+            <DevAiLabel className="justify-center mb-1 text-xs opacity-60">記事生成</DevAiLabel>
             <button
               type="button"
               onClick={() => void startBatchGeneration()}
@@ -513,7 +514,7 @@ export default function ArticlePage() {
               ) : isBusyWithAnotherTab && activeGenerationLabel ? (
                 <>{activeGenerationLabel}を作成中...</>
               ) : (
-                <DevAiLabel>記事素材を作成する →</DevAiLabel>
+                <>記事素材を作成する →</>
               )}
             </button>
             {availableThemes.length === 0 && !isGenerating && (
@@ -680,7 +681,7 @@ export default function ArticlePage() {
                     disabled={isGenerating}
                     className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <DevAiLabel>もう一度作成する</DevAiLabel>
+                    もう一度作成する
                   </button>
                 </div>
               </div>

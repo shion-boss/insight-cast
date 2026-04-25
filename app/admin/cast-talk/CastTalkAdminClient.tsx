@@ -130,13 +130,13 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             disabled={generating}
             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
           >
-            <DevAiLabel>{generating ? '生成中...' : '今すぐ生成'}</DevAiLabel>
+            {generating ? '生成中...' : '今すぐ生成'}
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="rounded-[var(--r-sm)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-[var(--r-sm)] border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {error}
         </div>
       )}
