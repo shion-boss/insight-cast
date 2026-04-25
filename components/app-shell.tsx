@@ -106,9 +106,9 @@ export function AppShell({
       <div className="lg:pl-[236px]">
         <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
           <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex flex-1 items-center gap-3 min-w-0">
               {/* モバイル: ハンバーガー */}
-              <div className="lg:hidden">
+              <div className="lg:hidden shrink-0">
                 <ToolMobileNav
                   navItems={NAV_ITEMS}
                   active={active}
@@ -119,12 +119,12 @@ export function AppShell({
               </div>
               <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               {headerRight}
               <Link
                 href="/settings"
                 aria-label="設定"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 {accountInitial}
               </Link>
