@@ -1,7 +1,7 @@
 /**
  * 全ページスクリーンショットスクリプト
  * 実行: npm run screenshot
- * 前提: ローカルで `npm run dev` が起動済み（BASE_URL=http://localhost:3001）
+ * 前提: ローカルで `npm run dev` が起動済み（BASE_URL=http://localhost:3000）
  *
  * ツール側ページの撮影には以下の環境変数が必要:
  *   SCREENSHOT_EMAIL=<メールアドレス>
@@ -15,7 +15,7 @@ import * as path from 'path'
 
 config({ path: '.env.local' })
 
-const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3001'
+const BASE_URL = process.env.BASE_URL ?? 'http://localhost:3000'
 
 // 公開ページ（認証不要）
 const PUBLIC_PAGES = [
