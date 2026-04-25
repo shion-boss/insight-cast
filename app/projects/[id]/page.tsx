@@ -301,12 +301,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 />
               )}
               name={mint?.name ?? 'インタビュアー'}
-              title="まだこの取材先のインタビューはありません。"
-              description="必要なタイミングでAIキャストを呼べば、ここに実施履歴と記事がまとまっていきます。"
+              title="AIキャストを呼んで、取材を始めましょう。"
+              description="インタビューを重ねるたびに、ここに履歴と記事素材がまとまっていきます。"
               tone="soft"
             />
             <div className="mt-4">
-              <ButtonLink href={`/projects/${id}/interviewer`}>最初のインタビューを始める</ButtonLink>
+              <ButtonLink href={`/projects/${id}/interviewer`}>AIキャストを呼ぶ →</ButtonLink>
             </div>
           </>
         ) : (

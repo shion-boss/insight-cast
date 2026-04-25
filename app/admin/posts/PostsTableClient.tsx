@@ -87,10 +87,25 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   return (
     <div>
       {errorMsg && (
-        <div className="mb-4 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-          {errorMsg}
+        <div className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+          <span className="mt-0.5 shrink-0">⚠</span>
+          <div>
+            <p>{errorMsg}</p>
+            <button
+              type="button"
+              onClick={() => setErrorMsg(null)}
+              className="mt-0.5 text-xs underline opacity-70 hover:opacity-100 transition-opacity"
+            >
+              閉じる
+            </button>
+          </div>
         </div>
       )}
+      {rows.length === 0 ? (
+        <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
+          <p className="text-sm text-[var(--text3)]">記事がありません</p>
+        </div>
+      ) : (
       <>
         {/* モバイル: カードリスト */}
         <div className="space-y-3 sm:hidden">
@@ -221,6 +236,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
           </table>
         </div>
       </>
+      )}
     </div>
   )
 }

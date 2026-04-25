@@ -246,7 +246,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { n: projectList.length,  l: '取材先',      delta: deltaLabel(projectDelta) },
-          { n: interviews.length,   l: '完了した取材', delta: deltaLabel(interviewDelta) },
+          { n: interviews.filter((iv) => iv.status === 'done' || iv.summary).length, l: '完了した取材', delta: deltaLabel(interviewDelta) },
           { n: totalArticles,       l: '記事素材',    delta: deltaLabel(articleDelta) },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
@@ -269,12 +269,12 @@ export default async function DashboardPage() {
               />
             )}
             name={mint?.name ?? 'インタビュアー'}
-            title="まだ取材先がありません。"
-            description="最初の取材先を登録すると、ここにインタビュー履歴と取材先の管理が並びます。"
+            title="AIキャストが取材の準備をして待っています。"
+            description="まずは取材先を登録してみましょう。登録するとインタビューを始められます。"
             tone="soft"
           />
           <div className="mt-4">
-            <ButtonLink href="/projects/new">最初の取材先を登録する</ButtonLink>
+            <ButtonLink href="/projects/new">最初の取材先を登録する →</ButtonLink>
           </div>
         </div>
       ) : (
@@ -396,8 +396,8 @@ export default async function DashboardPage() {
                 <InterviewerSpeech
                   icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
                   name={mint?.name ?? 'インタビュアー'}
-                  title="まだインタビューは始まっていません。"
-                  description="取材先を選んで、インタビューを始めましょう。"
+                  title="まだ取材は始まっていません。"
+                  description="上の「取材先」から取材先を開き、インタビューを始めてみてください。"
                   tone="soft"
                 />
               ) : (

@@ -6,7 +6,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
 import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech, StateCard } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 
 type Message = { role: 'user' | 'interviewer'; content: string }
 type SupportPost = { url: string; title: string; summary: string }
@@ -310,12 +310,6 @@ export default function InterviewPage() {
             name={char?.name ?? 'インタビュアー'}
             title="取材画面を開いています"
             description="会話履歴と設定を読み込んでいます。通常はすぐに始まります。"
-            tone="soft"
-          />
-          <StateCard
-            icon="🎤"
-            title="AIの長時間処理ではありません"
-            description="ここは画面の準備だけなので、派手なアニメーションは使わないようにしました。"
             tone="soft"
           />
         </div>

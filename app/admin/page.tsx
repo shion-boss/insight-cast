@@ -67,7 +67,7 @@ export default async function AdminDashboardPage() {
     { n: String(stats.total),     l: '総記事数' },
     { n: String(stats.published), l: '公開中' },
     { n: String(stats.draft),     l: '下書き' },
-    { n: '—',                     l: '今月PV' },
+    { n: '—',                     l: '今月PV（未連携）' },
   ]
 
   const serviceCards = [
@@ -195,6 +195,12 @@ export default async function AdminDashboardPage() {
               className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               ユーザー一覧を見る
+            </Link>
+            <Link
+              href="/admin/cast-talk"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+            >
+              Cast Talk 管理
             </Link>
             <Link
               href="/admin/costs"

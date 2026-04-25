@@ -55,7 +55,7 @@ export default async function NewProjectPage({
               />
             )}
             name={claus?.name ?? 'クラウス'}
-            title={`現在のプランでは取材先を${planLimits.maxProjects}件まで登録できます。`}
+            title={`現在のプランで登録できる取材先は${planLimits.maxProjects}件までです。`}
             description="複数の取材先を管理したい場合は、法人向けプランへのアップグレードをご検討ください。"
             tone="soft"
           />
@@ -88,12 +88,12 @@ export default async function NewProjectPage({
             icon={(
               <CharacterAvatar
                 src={claus?.icon48}
-                alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+                alt={`${claus?.name ?? 'クラウス'}のアイコン`}
                 emoji={claus?.emoji}
                 size={48}
               />
             )}
-            name={claus?.name ?? 'インタビュアー'}
+            name={claus?.name ?? 'クラウス'}
             title="まずは、取材先のホームページを教えてください。"
             description="取材先を登録しながら、参考にしたい競合候補もここで一緒に選べます。"
             tone="soft"

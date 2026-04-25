@@ -70,7 +70,7 @@ export default async function InterviewsPage() {
 
   return (
     <AppShell
-      title="取材メモ一覧"
+      title="取材履歴"
       active="interviews"
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
@@ -101,13 +101,13 @@ export default async function InterviewsPage() {
                   />
                 )}
                 name={mint?.name ?? 'インタビュアー'}
-                title="まだ取材メモはありません。"
-                description="取材先を登録して取材を始めると、ここにメモが並びます。"
+                title="まだ取材の記録がありません。"
+                description="インタビューを終えると、ここに取材ごとのメモと記事テーマが届きます。"
                 tone="soft"
               />
               <div className="mt-4">
                 <ButtonLink href={projects[0] ? `/projects/${projects[0].id}/interviewer` : '/projects/new'}>
-                  {projects[0] ? '最初のインタビューを始める' : '最初の取材先を登録する'}
+                  {projects[0] ? 'AIキャストを呼んで取材を始める →' : '最初の取材先を登録する →'}
                 </ButtonLink>
               </div>
             </>

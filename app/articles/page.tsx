@@ -135,12 +135,12 @@ export default async function ArticlesPage() {
                   />
                 )}
                 name={rain?.name ?? 'インタビュアー'}
-                title="まだ作成した記事はありません。"
-                description="インタビューの取材メモから記事を作ると、ここに一覧で並びます。"
+                title="記事素材がまだありません。"
+                description="取材メモから記事を作ると、ここに一覧で並びます。まずは取材を始めてみましょう。"
                 tone="soft"
               />
               <div className="mt-4">
-                <ButtonLink href="/dashboard">ダッシュボードへ戻る</ButtonLink>
+                <ButtonLink href="/dashboard">取材先を確認する →</ButtonLink>
               </div>
             </>
           )

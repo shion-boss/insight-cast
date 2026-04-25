@@ -38,7 +38,7 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '')
   if (ascii) return ascii
   const date = new Date().toISOString().slice(0, 10)
-  const suffix = Math.random().toString(36).slice(2, 7)
+  const suffix = crypto.randomUUID().slice(0, 8)
   return `${date}-${suffix}`
 }
 
@@ -292,8 +292,12 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   return (
     <div className="space-y-8">
       {errorMsg && (
-        <div className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-          {errorMsg}
+        <div className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+          <span className="mt-0.5 shrink-0">⚠</span>
+          <div>
+            <p>{errorMsg}</p>
+            <p className="mt-0.5 text-xs opacity-80">入力内容を確認してから、もう一度お試しください。</p>
+          </div>
         </div>
       )}
       {successMsg && (
@@ -358,15 +362,21 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
             <h3 className="text-sm font-semibold text-[var(--text)]">公開設定</h3>
 
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={form.published}
-                onChange={(e) => handleChange('published', e.target.checked)}
-                className="h-4 w-4 rounded border-[var(--border)] accent-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              />
-              <span className="text-sm text-[var(--text)]">公開する</span>
-            </label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                role="switch"
+                aria-checked={form.published}
+                aria-label={form.published ? '下書きに戻す' : '公開する'}
+                onClick={() => handleChange('published', !form.published)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${form.published ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
+              >
+                <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.published ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              </button>
+              <span className={`text-sm font-semibold ${form.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                {form.published ? '公開中' : '下書き'}
+              </span>
+            </div>
 
             <div>
               <FieldLabel>公開日</FieldLabel>
