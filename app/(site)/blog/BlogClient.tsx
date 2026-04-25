@@ -70,7 +70,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                 className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
               >
                 <div
-                  className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]"
+                  className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)] sm:h-10 sm:w-10"
                   style={{ background: `${themeColor}18` }}
                 >
                   <Image src={char.icon48} alt={char.name} fill className="object-cover" />
@@ -92,7 +92,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                     )}
                     <span className="text-[11px] text-[var(--text3)]">{formatDate(post.date)}</span>
                   </div>
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-1 transition-colors group-hover:text-[var(--accent)]">
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-2 transition-colors group-hover:text-[var(--accent)]">
                     {post.title}
                   </p>
                   {post.excerpt && (

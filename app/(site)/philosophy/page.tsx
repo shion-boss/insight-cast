@@ -193,8 +193,8 @@ export default function PhilosophyPage() {
         <section className="px-6 py-[88px]">
           <div className="mx-auto max-w-6xl">
             <div className="rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] p-8 text-white sm:p-10">
-              <p className="text-xs font-medium tracking-[0.22em] text-[var(--text3)] uppercase">Summary</p>
-              <h2 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
+              <p className="text-xs font-medium tracking-[0.22em] text-[rgba(255,255,255,0.55)] uppercase">Summary</p>
+              <h2 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                 「書く」より「聞く」が先。
                 <br />
                 一次情報が、HPを育てる。
@@ -205,9 +205,9 @@ export default function PhilosophyPage() {
                   { num: '02', text: 'インタビューは「強みを聞く」のではなく「エピソードから引き出す」' },
                   { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
                 ].map((item) => (
-                  <div key={item.num} className="rounded-[var(--r-sm)] border border-white/10 bg-white/6 p-5">
-                    <p className="text-xs font-semibold tracking-[0.2em] text-[var(--text3)] uppercase">{item.num}</p>
-                    <p className="mt-3 text-sm leading-7 text-[rgba(255,255,255,0.72)]">{item.text}</p>
+                  <div key={item.num} className="rounded-[var(--r-sm)] border border-white/20 bg-white/10 p-5">
+                    <p className="text-xs font-semibold tracking-[0.2em] text-[rgba(255,255,255,0.55)] uppercase">{item.num}</p>
+                    <p className="mt-3 text-sm leading-7 text-[rgba(255,255,255,0.88)]">{item.text}</p>
                   </div>
                 ))}
               </div>
@@ -218,13 +218,13 @@ export default function PhilosophyPage() {
         {/* CTA */}
         <section className="px-6 py-[88px]">
           <div className="mx-auto max-w-6xl overflow-hidden rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] px-6 py-10 text-white sm:px-10 sm:py-12">
-            <p className="text-xs font-medium tracking-[0.22em] text-[var(--accent-l)] uppercase">Try It</p>
+            <p className="text-xs font-medium tracking-[0.22em] text-[rgba(255,255,255,0.55)] uppercase">Try It</p>
             <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-xl">
-                <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
                   まず一度、AIキャストに話しかけてみてください。
                 </h2>
-                <p className="mt-4 text-sm leading-7 text-[rgba(255,255,255,0.72)]">
+                <p className="mt-4 text-sm leading-7 text-[rgba(255,255,255,0.88)]">
                   ここまで読んでくださった方は、ぜひ一度試してみてください。
                   登録無料で、ミント・クラウス・レインの取材を試せます。
                 </p>
@@ -232,7 +232,7 @@ export default function PhilosophyPage() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className={getButtonClass('secondary', 'px-6 py-4 text-sm')}
+                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--bg)] px-6 py-4 text-sm font-semibold text-[var(--text)] transition-colors duration-150 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                 >
                   無料で取材を始める
                 </Link>

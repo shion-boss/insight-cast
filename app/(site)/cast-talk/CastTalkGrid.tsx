@@ -82,8 +82,8 @@ function TalkCard({ talk }: { talk: Talk }) {
         <div className="mb-3 flex items-center gap-1.5">
           {[interviewer, guest].map((c, i) =>
             c ? (
-              <div key={i} className="h-6 w-6 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
-                <Image src={c.icon48} alt={c.name} width={24} height={24} className="h-full w-full object-cover" />
+              <div key={i} className="h-8 w-8 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                <Image src={c.icon48} alt={c.name} width={32} height={32} className="h-full w-full object-cover" />
               </div>
             ) : null,
           )}
@@ -99,7 +99,7 @@ function TalkCard({ talk }: { talk: Talk }) {
         <div className="h-px bg-[#e8ddd0] my-2.5" />
 
         {talk.summary && (
-          <p className="flex-1 border-l-2 pl-3 text-[12px] italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
             「{talk.summary}」
           </p>
         )}

@@ -4,10 +4,10 @@ import { LegalPageTemplate } from '@/components/public-layout'
 
 export const metadata: Metadata = { title: '特定商取引法に基づく表記 | Insight Cast' }
 
-const rows: { label: string; value: string }[] = [
+const rows: { label: string; value: string; breakAll?: boolean }[] = [
   { label: '販売事業者', value: '大槻詞音' },
   { label: '所在地', value: '特定商取引法第11条に基づき、請求があった場合には遅滞なく開示します' },
-  { label: '連絡先', value: 'info@insight-cast.jp' },
+  { label: '連絡先', value: 'info@insight-cast.jp', breakAll: true },
   { label: '販売価格', value: '各プランページに記載' },
   { label: '代金の支払時期', value: '月次払い（翌月分を当月末に請求）' },
   { label: '支払方法', value: 'クレジットカード（Stripe経由）' },
@@ -29,7 +29,7 @@ export default function TokushohoPage() {
             {rows.map((row) => (
               <tr key={row.label}>
                 <th>{row.label}</th>
-                <td>{row.value}</td>
+                <td style={row.breakAll ? { wordBreak: 'break-all', overflowWrap: 'anywhere' } : undefined}>{row.value}</td>
               </tr>
             ))}
           </tbody>

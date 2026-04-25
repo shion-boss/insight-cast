@@ -267,7 +267,7 @@ export default async function PricingPage({
               専門キャスト（提供予定）
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">追加キャストは現在準備中です。以下は正式提供時の予定価格です。</p>
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-10 grid gap-5 sm:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)
                 return (
