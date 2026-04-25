@@ -117,7 +117,7 @@ export default async function DashboardPage() {
   const auditRows = auditResult.data ?? []
   const competitorRows = competitorResult.data ?? []
   const competitorAnalysisRows = competitorAnalysisResult.data ?? []
-  let interviews = (interviewResult.data ?? []) as Interview[]
+  const interviews = (interviewResult.data ?? []) as Interview[]
 
   const analysisReadyProjectIds = new Set(
     projectList
