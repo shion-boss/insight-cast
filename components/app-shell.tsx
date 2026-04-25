@@ -3,7 +3,6 @@ import type { ReactNode } from 'react'
 
 import LogoutButton from '@/app/dashboard/logout-button'
 import { signOut } from '@/lib/actions/auth'
-import { getButtonClass } from '@/components/ui'
 import { ToolMobileNav } from '@/components/tool-mobile-nav'
 
 type AppSection = 'dashboard' | 'projects' | 'interviews' | 'articles' | 'settings'
@@ -59,12 +58,12 @@ export function AppShell({
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       {/* PC サイドバー */}
       <aside aria-label="サイドバーナビゲーション" className="hidden bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[236px] lg:flex-col lg:border-r lg:border-[var(--border)]">
-        <div className="border-b border-[var(--border)] px-5 py-5">
+        <div className="border-b border-[var(--border)] px-5 py-4">
           <Link
             href="/"
-            className="font-serif text-[17px] font-bold text-[var(--text)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="block transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            Insight <span className="text-[var(--accent)]">Cast</span>
+            <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
           </Link>
         </div>
 
@@ -94,9 +93,6 @@ export function AppShell({
               <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-[10px] font-bold text-stone-400 uppercase">Admin</span>
             </Link>
           )}
-          <Link href="/" className={getButtonClass('secondary', 'justify-center px-4 py-2.5 text-sm')}>
-            ← 公開サイトへ
-          </Link>
           <form action={signOut}>
             <LogoutButton />
           </form>
