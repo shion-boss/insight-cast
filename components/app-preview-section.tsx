@@ -38,7 +38,7 @@ export default function AppPreviewSection() {
               onClick={() => setActiveTab(tab)}
               className={`rounded-[0.6rem] px-4 py-2 text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                 activeTab === tab
-                  ? 'bg-white text-amber-700 shadow-sm'
+                  ? 'bg-white text-[var(--accent)] shadow-sm'
                   : 'text-[var(--text3)] hover:text-[var(--text)]'
               }`}
             >

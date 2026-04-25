@@ -89,7 +89,7 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
                 alt={`${item.interviewerName}のアイコン`}
                 emoji={item.interviewerEmoji}
                 size={48}
-                className="bg-amber-50"
+                className="bg-[var(--accent-l)]"
               />
             </div>
 

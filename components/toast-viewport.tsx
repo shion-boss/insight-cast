@@ -11,8 +11,8 @@ type ToastItem = AppToastDetail & {
 const DEFAULT_DURATION_MS = 5000
 
 function toneClass(tone: ToastItem['tone']) {
-  if (tone === 'success') return 'border-emerald-200 bg-emerald-50'
-  if (tone === 'warning') return 'border-amber-200 bg-amber-50'
+  if (tone === 'success') return 'border-[var(--ok-l)] bg-[var(--ok-l)]'
+  if (tone === 'warning') return 'border-[var(--warn-l)] bg-[var(--warn-l)]'
   return 'border-[var(--border)] bg-[var(--surface)]'
 }
 

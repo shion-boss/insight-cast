@@ -215,7 +215,7 @@ export default function CompetitorSelectionFields({
       </div>
 
       {reachedMax && !overLimit && (
-        <p className="text-xs text-amber-700">
+        <p className="text-xs text-[var(--warn)]">
           競合は3件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
         </p>
       )}
