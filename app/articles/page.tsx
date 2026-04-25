@@ -56,34 +56,28 @@ export default async function ArticlesPage() {
 
   if (!user) redirect('/')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  const { data: articleRows } = await supabase
-    .from('articles')
-    .select('id, title, content, article_type, created_at, project_id, interview_id')
-    .order('created_at', { ascending: false })
+  // profile と articles を並列取得
+  const [{ data: profile }, { data: articleRows }] = await Promise.all([
+    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase
+      .from('articles')
+      .select('id, title, content, article_type, created_at, project_id, interview_id')
+      .order('created_at', { ascending: false }),
+  ])
 
   const articles = (articleRows ?? []) as ArticleRow[]
   const projectIds = [...new Set(articles.map((article) => article.project_id))]
   const interviewIds = [...new Set(articles.map((article) => article.interview_id).filter((id): id is string => Boolean(id)))]
 
-  const { data: projectRows } = projectIds.length > 0
-    ? await supabase
-      .from('projects')
-      .select('id, name, hp_url')
-      .in('id', projectIds)
-    : { data: [] }
-
-  const { data: interviewRows } = interviewIds.length > 0
-    ? await supabase
-      .from('interviews')
-      .select('id, interviewer_type')
-      .in('id', interviewIds)
-    : { data: [] }
+  // projects と interviews は articles に依存するが互いに独立 → 並列取得
+  const [{ data: projectRows }, { data: interviewRows }] = await Promise.all([
+    projectIds.length > 0
+      ? supabase.from('projects').select('id, name, hp_url').in('id', projectIds)
+      : Promise.resolve({ data: [] }),
+    interviewIds.length > 0
+      ? supabase.from('interviews').select('id, interviewer_type').in('id', interviewIds)
+      : Promise.resolve({ data: [] }),
+  ])
 
   const projects = new Map((projectRows ?? []).map((project) => [project.id, project as ProjectRow]))
   const interviews = new Map((interviewRows ?? []).map((interview) => [interview.id, interview as InterviewRow]))
