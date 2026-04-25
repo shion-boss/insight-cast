@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import Anthropic from '@anthropic-ai/sdk'
 import { extractJsonBlock, formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { revalidatePath } from 'next/cache'
@@ -24,7 +25,9 @@ export async function POST(
 
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
-  const { interviewId } = body as { interviewId?: string }
+  const parsed = z.object({ interviewId: z.string().uuid() }).safeParse(body)
+  if (!parsed.success) return NextResponse.json({ error: 'invalid params' }, { status: 400 })
+  const { interviewId } = parsed.data
 
   const { data: interview } = await supabase
     .from('interviews')

@@ -97,7 +97,7 @@ const PLANS = [
     price: '¥0',
     period: '',
     desc: 'まず体験してみてください',
-    features: ['取材回数：2回まで（単発）', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：1社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
+    features: ['取材回数：2回まで（単発）', 'フリーキャスト 3名', '取材先登録：1件', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
     cta: '無料で始める',
     href: '/auth/signup',
     highlight: false,
@@ -547,16 +547,33 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               「自分で書く」との違い
             </h2>
-            {/* モバイルではスクロールヒントを表示 */}
-            <p className="mt-4 mb-3 text-xs text-[var(--text3)] text-center sm:hidden" aria-hidden="true">← スクロールして比較 →</p>
-            <div className="mt-4 sm:mt-11 overflow-x-auto rounded-[20px] border border-[var(--border)]">
-              <table className="min-w-[580px] w-full border-collapse">
+            {/* モバイル: カードリスト */}
+            <div className="mt-8 sm:hidden space-y-2.5">
+              <div className="grid grid-cols-3 gap-1 px-1 mb-1">
+                <div className="text-[10px] font-semibold text-[var(--text3)] text-center">AIツール</div>
+                <div className="text-[10px] font-semibold text-[var(--text3)] text-center">自分で書く</div>
+                <div className="text-[10px] font-semibold text-[var(--accent)] text-center">Insight Cast</div>
+              </div>
+              {COMPARE_ROWS.map((row) => (
+                <div key={row.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[12px] px-4 py-3">
+                  <p className="text-[13px] font-medium text-[var(--text)] mb-2.5">{row.label}</p>
+                  <div className="grid grid-cols-3 gap-1">
+                    <div className="text-center text-[15px]">{row.ai ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
+                    <div className="text-center text-[15px]">{row.none === true ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
+                    <div className="text-center text-[17px]"><span className="text-[var(--teal)] font-bold">✓</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* PC: テーブル */}
+            <div className="hidden sm:block mt-11 rounded-[20px] border border-[var(--border)] overflow-hidden">
+              <table className="w-full border-collapse">
                 <thead>
                   <tr>
                     <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"></th>
                     <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで書いてもらう</th>
                     <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
-                    <th className="sticky right-0 z-10 px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white shadow-[-4px_0_8px_rgba(0,0,0,0.06)]">Insight Cast</th>
+                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -569,7 +586,7 @@ export default async function LandingPage() {
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
                         {row.none === true ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span>✕</span>}
                       </td>
-                      <td className="sticky right-0 z-10 px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] shadow-[-4px_0_8px_rgba(0,0,0,0.06)]">
+                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
                         <span className="text-[var(--teal)] text-lg font-bold">✓</span>
                       </td>
                     </tr>
