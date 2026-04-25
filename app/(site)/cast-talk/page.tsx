@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import { unstable_cache } from 'next/cache'
 import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
@@ -13,16 +14,20 @@ export const metadata: Metadata = {
 
 const PAGE_SIZE = 12
 
-async function getInitialTalks() {
-  const supabase = createAdminClient()
-  const { data, count } = await supabase
-    .from('cast_talks')
-    .select('id, title, summary, interviewer_id, guest_id, slug, published_at', { count: 'exact' })
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-    .range(0, PAGE_SIZE - 1)
-  return { talks: data ?? [], total: count ?? 0 }
-}
+const getInitialTalks = unstable_cache(
+  async () => {
+    const supabase = createAdminClient()
+    const { data, count } = await supabase
+      .from('cast_talks')
+      .select('id, title, summary, interviewer_id, guest_id, slug, published_at', { count: 'exact' })
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .range(0, PAGE_SIZE - 1)
+    return { talks: data ?? [], total: count ?? 0 }
+  },
+  ['cast-talks-initial'],
+  { revalidate: 120 },
+)
 
 export default async function CastTalkPage() {
   const { talks, total } = await getInitialTalks()
