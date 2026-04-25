@@ -368,6 +368,7 @@ export default function InterviewPage() {
                     : 'border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:bg-white'
                 }`}
               >
+                <span className="sm:hidden">記事</span>
                 <span className="hidden sm:inline">参考記事</span>
                 {supportPostCount > 0 && (
                   <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">
@@ -514,13 +515,16 @@ export default function InterviewPage() {
               autoFocus
               className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[80px]"
             />
-            <button
-              type="submit"
-              disabled={loading || !input.trim() || hasReachedTurnLimit}
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors flex-shrink-0"
-            >
-              {loading ? <DevAiLabel>送信中...</DevAiLabel> : <DevAiLabel>送信</DevAiLabel>}
-            </button>
+            <div className="flex flex-col items-end gap-1 flex-shrink-0">
+              <DevAiLabel>AI送信</DevAiLabel>
+              <button
+                type="submit"
+                disabled={loading || !input.trim() || hasReachedTurnLimit}
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+              >
+                {loading ? '送信中...' : '送信'}
+              </button>
+            </div>
           </form>
         </div>
       </div>

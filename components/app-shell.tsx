@@ -1,4 +1,6 @@
+import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { ReactNode } from 'react'
 
 import LogoutButton from '@/app/dashboard/logout-button'
@@ -9,12 +11,52 @@ type AppSection = 'dashboard' | 'projects' | 'interviews' | 'articles' | 'settin
 
 export { checkIsAdmin } from '@/lib/auth-utils.server'
 
-const NAV_ITEMS: Array<{ href: string; label: string; icon: string; key: AppSection }> = [
-  { href: '/dashboard', label: 'ダッシュボード', icon: '⊡', key: 'dashboard' },
-  { href: '/projects', label: '取材先一覧', icon: '◫', key: 'projects' },
-  { href: '/interviews', label: '取材メモ一覧', icon: '◎', key: 'interviews' },
-  { href: '/articles', label: '記事一覧', icon: '≡', key: 'articles' },
-  { href: '/settings', label: '設定', icon: '⚙', key: 'settings' },
+// SVGアイコン定義
+const IconDashboard = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="3" width="7" height="7" rx="1" />
+    <rect x="14" y="3" width="7" height="7" rx="1" />
+    <rect x="3" y="14" width="7" height="7" rx="1" />
+    <rect x="14" y="14" width="7" height="7" rx="1" />
+  </svg>
+)
+
+const IconProjects = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+  </svg>
+)
+
+const IconInterviews = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+)
+
+const IconArticles = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="8" y1="13" x2="16" y2="13" />
+    <line x1="8" y1="17" x2="16" y2="17" />
+  </svg>
+)
+
+const IconSettings = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+)
+
+type NavItem = { href: string; label: string; icon: () => React.JSX.Element; key: AppSection }
+
+const NAV_ITEMS: NavItem[] = [
+  { href: '/dashboard', label: 'ダッシュボード', icon: IconDashboard, key: 'dashboard' },
+  { href: '/projects', label: '取材先一覧', icon: IconProjects, key: 'projects' },
+  { href: '/interviews', label: '取材メモ一覧', icon: IconInterviews, key: 'interviews' },
+  { href: '/articles', label: '記事一覧', icon: IconArticles, key: 'articles' },
+  { href: '/settings', label: '設定', icon: IconSettings, key: 'settings' },
 ]
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -63,7 +105,7 @@ export function AppShell({
             href="/"
             className="block transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+            <Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" priority />
           </Link>
         </div>
 
@@ -75,7 +117,7 @@ export function AppShell({
               aria-current={item.key === active ? 'page' : undefined}
               className={navLinkClass(item.key === active)}
             >
-              <span aria-hidden="true" className="text-base leading-none">{item.icon}</span>
+              <item.icon />
               <span className="whitespace-nowrap">{item.label}</span>
             </Link>
           ))}
@@ -88,7 +130,7 @@ export function AppShell({
               className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[#1c1410] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[#2a1f18] hover:text-white"
             >
               <span className="flex items-center gap-2">
-                <span aria-hidden="true">⚙</span>管理画面
+                <IconSettings />管理画面
               </span>
               <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-xs font-bold text-stone-400 uppercase">Admin</span>
             </Link>
@@ -105,7 +147,7 @@ export function AppShell({
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
               <Link href="/">
-                <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+                <Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" priority />
               </Link>
               <ToolMobileNav
                 navItems={NAV_ITEMS}
