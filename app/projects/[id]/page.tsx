@@ -384,8 +384,27 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold text-[var(--text)]">記事素材</h2>
           </div>
-          <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--border)]">
-            <table className="w-full min-w-[500px]">
+          {/* モバイル: カードリスト */}
+          <div className="space-y-3 sm:hidden">
+            {articles.map((article) => (
+              <div key={article.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
+                <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
+                    {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
+                  </span>
+                  <span>{formatDateTime(article.created_at)}</span>
+                </div>
+                <Link href={`/projects/${id}/articles/${article.id}`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]">
+                  詳細
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* PC: テーブル */}
+          <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
+            <table className="w-full">
               <thead className="bg-[var(--bg2)]">
                 <tr>
                   <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>

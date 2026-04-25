@@ -180,8 +180,39 @@ export function ArticleListTable({
           <p className="mt-2 text-sm text-[var(--text3)]">{noResultsDescription}</p>
         </section>
       ) : (
-        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-          <div className="overflow-x-auto">
+        <>
+          {/* モバイル: カードリスト */}
+          <div className="space-y-3 sm:hidden">
+            {filteredItems.map((item) => (
+              <div key={item.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
+                {item.excerpt && (
+                  <p className="mb-3 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
+                )}
+                <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
+                    {item.articleTypeLabel}
+                  </span>
+                  {showProjectColumn && item.projectLabel && (
+                    <span>{item.projectLabel}</span>
+                  )}
+                  {showInterviewerColumn && item.interviewerLabel && (
+                    <span>{item.interviewerLabel}</span>
+                  )}
+                  <span>{item.createdAtLabel}</span>
+                </div>
+                <Link
+                  href={item.detailHref}
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                >
+                  詳細
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {/* PC: テーブル */}
+          <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -251,7 +282,7 @@ export function ArticleListTable({
               </tbody>
             </table>
           </div>
-        </div>
+        </>
       )}
     </>
   )

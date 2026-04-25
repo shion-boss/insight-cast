@@ -91,8 +91,62 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
           {errorMsg}
         </div>
       )}
-      <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-        <div className="overflow-x-auto">
+      <>
+        {/* モバイル: カードリスト */}
+        <div className="space-y-3 sm:hidden">
+          {rows.map((post) => (
+            <div key={post.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="mb-2 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="line-clamp-2 font-semibold text-[var(--text)]">{post.title}</p>
+                  <p className="text-[11px] text-[var(--text3)]">/{post.slug}</p>
+                </div>
+                <span className={`shrink-0 text-xs font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                  {post.published ? '公開中' : '下書き'}
+                </span>
+              </div>
+              <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
+                  {CATEGORY_LABELS[post.category] ?? post.category}
+                </span>
+                <span>{formatDate(post.date)}</span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <ToggleSwitch
+                  on={post.published}
+                  onToggle={() => handleToggle(post.id, post.published)}
+                  disabled={isPending}
+                />
+                <Link
+                  href={`/admin/posts/${post.id}/edit`}
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                >
+                  編集
+                </Link>
+                {post.published && (
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    target="_blank"
+                    className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                  >
+                    公開ページ ↗
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleDelete(post)}
+                  disabled={deletingId === post.id}
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-red-200 px-4 py-2 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                >
+                  {deletingId === post.id ? '削除中...' : '削除'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* PC: テーブル */}
+        <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -166,7 +220,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
             </tbody>
           </table>
         </div>
-      </div>
+      </>
     </div>
   )
 }

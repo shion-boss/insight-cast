@@ -157,15 +157,15 @@ export function ContentMapPanel({
           </div>
 
           {/* Grid */}
-          <div className="overflow-x-auto">
-            <div style={{ minWidth: 500 }}>
+          <div>
+            <div style={{ minWidth: 0 }}>
               {/* Column headers */}
-              <div className="grid mb-1" style={{ gridTemplateColumns: '100px repeat(4, 1fr)' }}>
+              <div className="grid mb-1" style={{ gridTemplateColumns: '72px repeat(4, 1fr)' }}>
                 <div />
                 {EFFECTS.map((e) => (
-                  <div key={e.key} className="text-center px-1">
-                    <div className="text-[11px] font-semibold text-[var(--text)]">{e.label}</div>
-                    <div className="text-[10px] text-[var(--text3)] leading-tight mt-0.5">{e.desc}</div>
+                  <div key={e.key} className="text-center px-0.5">
+                    <div className="text-[10px] font-semibold text-[var(--text)] leading-tight">{e.label}</div>
+                    <div className="hidden sm:block text-[10px] text-[var(--text3)] leading-tight mt-0.5">{e.desc}</div>
                   </div>
                 ))}
               </div>
@@ -175,9 +175,9 @@ export function ContentMapPanel({
                 <div
                   key={g.key}
                   className="grid items-center mb-1.5"
-                  style={{ gridTemplateColumns: '100px repeat(4, 1fr)', gap: '4px' }}
+                  style={{ gridTemplateColumns: '72px repeat(4, 1fr)', gap: '4px' }}
                 >
-                  <div className="text-[12px] font-medium text-[var(--text2)] pr-2 text-right leading-tight">
+                  <div className="text-[11px] font-medium text-[var(--text2)] pr-1 text-right leading-tight">
                     {g.label}
                   </div>
                   {EFFECTS.map((e) => {
@@ -189,7 +189,7 @@ export function ContentMapPanel({
                     return (
                       <div
                         key={e.key}
-                        className="relative rounded-[6px] h-[52px] flex flex-col items-center justify-center overflow-hidden border"
+                        className="relative rounded-[6px] h-[44px] sm:h-[52px] flex flex-col items-center justify-center overflow-hidden border"
                         title={isEmpty ? `${g.label} × ${e.label} — 記事なし` : posts.map((p) => p.title).join('\n')}
                         style={
                           isEmpty

@@ -20,7 +20,7 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
   const W = 340, H = 80, BAR = 28, GAP = 16, PAD = 20
 
   return (
-    <svg width={W} height={H + 30} style={{ overflow: 'visible' }}>
+    <svg width="100%" viewBox={`0 0 ${W} ${H + 30}`} style={{ overflow: 'visible', display: 'block' }}>
       {data.map((d, i) => {
         const x = PAD + i * (BAR + GAP)
         const barH = d.n === 0 ? 3 : Math.max(8, (d.n / max) * (H - 10))
@@ -71,15 +71,15 @@ function localDateKey(dt: Date): string {
   return `${y}-${m}-${d}`
 }
 
-function buildHeatmapGrid(data: HeatmapEntry[]) {
+function buildHeatmapGrid(data: HeatmapEntry[], weeks = 25) {
   const countMap = new Map(data.map((e) => [e.date, e.count]))
   const today = new Date()
   const start = new Date(today)
-  start.setDate(start.getDate() - 167)
+  start.setDate(start.getDate() - (weeks * 7 - 1))
   start.setDate(start.getDate() - start.getDay()) // back to Sunday
 
   const cols: Array<Array<{ label: string; count: number; key: string } | null>> = []
-  for (let w = 0; w < 25; w++) {
+  for (let w = 0; w < weeks; w++) {
     const col: Array<{ label: string; count: number; key: string } | null> = []
     for (let d = 0; d < 7; d++) {
       const dt = new Date(start)
@@ -93,10 +93,10 @@ function buildHeatmapGrid(data: HeatmapEntry[]) {
   return cols
 }
 
-function Heatmap({ data }: { data: HeatmapEntry[] }) {
+function Heatmap({ data, weeks = 25 }: { data: HeatmapEntry[]; weeks?: number }) {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null)
   const DAY_LABELS = ['', '月', '', '水', '', '金', '']
-  const cols = buildHeatmapGrid(data)
+  const cols = buildHeatmapGrid(data, weeks)
 
   // Derive month labels from grid cells (avoids separate date calculation)
   const monthLabels: Array<{ wi: number; label: string }> = []
@@ -212,14 +212,20 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold" style={{ background: '#fef3c7', color: '#92400e' }}>過去6ヶ月</span>
         </div>
 
-        <div className="mb-5 overflow-x-auto">
+        <div className="mb-5">
           <BarChart data={monthlyArticles} />
         </div>
 
         <div className="pt-4 border-t border-[var(--border)] mb-4">
-          <div className="text-[12px] font-semibold mb-3" style={{ color: 'var(--text2)' }}>週次作成カレンダー（過去25週）</div>
-          <div className="overflow-x-auto">
-            <Heatmap data={heatmapData} />
+          <div className="text-[12px] font-semibold mb-3" style={{ color: 'var(--text2)' }}>
+            <span className="sm:hidden">週次作成カレンダー（過去13週）</span>
+            <span className="hidden sm:inline">週次作成カレンダー（過去25週）</span>
+          </div>
+          <div className="sm:hidden">
+            <Heatmap data={heatmapData} weeks={13} />
+          </div>
+          <div className="hidden sm:block">
+            <Heatmap data={heatmapData} weeks={25} />
           </div>
         </div>
 

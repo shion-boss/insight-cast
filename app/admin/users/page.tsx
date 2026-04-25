@@ -30,29 +30,45 @@ export default async function AdminUsersPage() {
           <p className="text-sm text-[var(--text3)]">登録ユーザーがいません</p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-          <table className="w-full min-w-[560px] text-sm">
-            <thead>
-              <tr className="border-b border-[var(--border)] text-left">
-                <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">メールアドレス</th>
-                <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">作成日</th>
-                <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">最終ログイン</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, i) => (
-                <tr
-                  key={user.id}
-                  className={i < users.length - 1 ? 'border-b border-[var(--border)]' : ''}
-                >
-                  <td className="px-5 py-3.5 font-medium text-[var(--text)]">{user.email ?? '—'}</td>
-                  <td className="px-5 py-3.5 text-[var(--text2)]">{formatDateTime(user.created_at)}</td>
-                  <td className="px-5 py-3.5 text-[var(--text2)]">{formatDateTime(user.last_sign_in_at)}</td>
+        <>
+          {/* モバイル: カードリスト */}
+          <div className="space-y-3 sm:hidden">
+            {users.map((user) => (
+              <div key={user.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+                <p className="mb-2 break-all font-medium text-[var(--text)]">{user.email ?? '—'}</p>
+                <div className="space-y-1 text-xs text-[var(--text3)]">
+                  <p>作成日: {formatDateTime(user.created_at)}</p>
+                  <p>最終ログイン: {formatDateTime(user.last_sign_in_at)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* PC: テーブル */}
+          <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--border)] text-left">
+                  <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">メールアドレス</th>
+                  <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">作成日</th>
+                  <th className="px-5 py-3 font-semibold text-[var(--text3)] text-xs uppercase tracking-[0.12em]">最終ログイン</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {users.map((user, i) => (
+                  <tr
+                    key={user.id}
+                    className={i < users.length - 1 ? 'border-b border-[var(--border)]' : ''}
+                  >
+                    <td className="px-5 py-3.5 font-medium text-[var(--text)]">{user.email ?? '—'}</td>
+                    <td className="px-5 py-3.5 text-[var(--text2)]">{formatDateTime(user.created_at)}</td>
+                    <td className="px-5 py-3.5 text-[var(--text2)]">{formatDateTime(user.last_sign_in_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )
