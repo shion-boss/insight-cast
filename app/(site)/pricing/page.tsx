@@ -165,7 +165,7 @@ export default async function PricingPage({
         />
 
         {/* Selection Guide */}
-        <section className="py-[56px] bg-[var(--bg)]">
+        <section className="py-10 sm:py-[56px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[13px] font-semibold text-[var(--text2)] mb-5">どれを選べばいいか迷ったら</div>
             <div className="grid gap-4 md:grid-cols-3">
@@ -183,7 +183,7 @@ export default async function PricingPage({
         </section>
 
         {/* Plan cards */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="mt-0 grid gap-6 lg:grid-cols-3 lg:items-start">
               {PLANS.map((plan) => (
@@ -227,13 +227,14 @@ export default async function PricingPage({
         </section>
 
         {/* Compare Table */}
-        <section className="py-[88px]">
+        <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Plan Comparison</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
-            <div className="mt-10 overflow-x-auto rounded-[20px] border border-[var(--border)]">
+            <p className="mt-4 mb-3 text-xs text-[var(--text3)] text-center sm:hidden" aria-hidden="true">← スクロールして比較 →</p>
+            <div className="mt-4 sm:mt-10 overflow-x-auto rounded-[20px] border border-[var(--border)]">
               <table className="min-w-[720px] w-full border-collapse">
                 <thead>
                   <tr>
@@ -259,7 +260,7 @@ export default async function PricingPage({
         </section>
 
         {/* Add-on Cast (buyout) */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -293,7 +294,7 @@ export default async function PricingPage({
         </section>
 
         {/* FAQ */}
-        <section className="py-[88px]">
+        <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある質問</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -314,7 +315,7 @@ export default async function PricingPage({
         </section>
 
         {/* 締めのCTA */}
-        <section className="py-[88px] bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0]">
+        <section className="py-14 sm:py-[88px] bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
             <PricingBottomCTA />
           </div>

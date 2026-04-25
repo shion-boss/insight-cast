@@ -137,7 +137,7 @@ export default function PhilosophyPage() {
           <section
             key={article.id}
             id={article.id}
-            className="px-6 py-[88px]"
+            className="px-6 py-14 sm:py-[88px]"
           >
             <div className="mx-auto max-w-6xl">
               <div className={`grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] ${articleIndex % 2 === 1 ? 'lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]' : ''}`}>

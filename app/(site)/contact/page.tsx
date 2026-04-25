@@ -15,7 +15,7 @@ export default function ContactPage() {
     <>
 
 
-      <main className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-24 pt-[108px]">
+      <main className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[72px] sm:pb-24 sm:pt-[108px]">
         <div className="mx-auto max-w-lg">
           {/* キャラ吹き出し + キャッチ */}
           <div className="mb-10">

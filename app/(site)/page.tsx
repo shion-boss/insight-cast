@@ -178,7 +178,7 @@ export default async function LandingPage() {
       <main className="relative z-10">
 
         {/* ① Hero */}
-        <section style={{ padding: '112px 0 88px', background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
+        <section className="pt-[72px] pb-[56px] sm:pt-[88px] sm:pb-[72px] lg:pt-[112px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_480px] lg:gap-14">
               <div>
@@ -241,7 +241,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ② Pain */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pain Points</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -261,7 +261,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ③ Outcome */}
-        <section className="py-[88px]">
+        <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">What You Get</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -285,7 +285,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ④ Workflow */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">How It Works</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -308,7 +308,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑤ Competitor Analysis Scene — text left, image right */}
-        <section className="py-[96px] overflow-hidden bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[96px] overflow-hidden bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
               <div>
@@ -349,7 +349,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑤ Planning Scene — image left, text right */}
-        <section className="py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
+        <section className="py-14 sm:py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[520px_minmax(0,1fr)] lg:gap-16">
               <div className="relative">
@@ -387,7 +387,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑦ Growth Scene — text left, image right */}
-        <section className="py-[96px] overflow-hidden">
+        <section className="py-14 sm:py-[96px] overflow-hidden">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
               <div>
@@ -429,7 +429,7 @@ export default async function LandingPage() {
         <AppPreviewSection />
 
         {/* ⑨ Output Example */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -475,7 +475,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑩ Cast */}
-        <section className="py-[88px] bg-[var(--bg)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -541,7 +541,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑪ Compare */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why Insight Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -581,7 +581,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑫ Pricing */}
-        <section className="py-[88px]">
+        <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -650,7 +650,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑬ From the Team — ドッグフーディング開示 */}
-        <section className="py-[88px]" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
+        <section className="py-14 sm:py-[88px]" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">From the Team</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -674,7 +674,7 @@ export default async function LandingPage() {
         </section>
 
         {/* ⑭ Blog Preview */}
-        <section className="py-[88px] bg-[var(--bg2)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Blog</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -720,7 +720,7 @@ export default async function LandingPage() {
 
         {/* ⑭ Cast Talk Preview */}
         {latestTalks && latestTalks.length > 0 && (
-          <section className="py-[88px] bg-[var(--bg)]">
+          <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
             <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
               <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -796,7 +796,7 @@ export default async function LandingPage() {
         )}
 
         {/* ⑮ FAQ */}
-        <section className="py-[88px] bg-[var(--bg)]">
+        <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">FAQ</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
@@ -825,7 +825,7 @@ export default async function LandingPage() {
         {(() => {
           const mint = getCharacter('mint')
           return (
-            <section style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)', padding: '80px 0' }}>
+            <section className="py-14 sm:py-20" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
               <div className="mx-auto max-w-[720px] px-6 sm:px-8 text-center">
                 <div className="flex justify-center mb-6">
                   <CharacterAvatar
