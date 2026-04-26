@@ -83,6 +83,112 @@ function PlanSelect({
   )
 }
 
+function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
+  const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [plan, setPlan] = useState<PlanKey>('free')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setSaving(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/users/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, plan }),
+      })
+      const data = (await res.json()) as { ok?: boolean; user?: { id: string; email: string; created_at: string }; plan?: PlanKey; message?: string }
+      if (!res.ok) throw new Error(data.message ?? '作成に失敗しました')
+      onCreated({
+        id: data.user!.id,
+        email: data.user!.email ?? null,
+        created_at: data.user!.created_at,
+        last_sign_in_at: null,
+        plan: data.plan ?? 'free',
+      })
+      setEmail('')
+      setPassword('')
+      setPlan('free')
+      setOpen(false)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : '作成に失敗しました')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+      >
+        + ユーザーを作成
+      </button>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-[var(--text)]">ユーザーを作成</p>
+        <button type="button" onClick={() => setOpen(false)} className="text-xs text-[var(--text3)] hover:text-[var(--text)]">キャンセル</button>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div>
+          <label htmlFor="create-email" className="block text-xs font-semibold text-[var(--text2)] mb-1">メールアドレス</label>
+          <input
+            id="create-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="user@example.com"
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          />
+        </div>
+        <div>
+          <label htmlFor="create-password" className="block text-xs font-semibold text-[var(--text2)] mb-1">パスワード（8文字以上）</label>
+          <input
+            id="create-password"
+            type="text"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+            placeholder="password123"
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          />
+        </div>
+        <div>
+          <label htmlFor="create-plan" className="block text-xs font-semibold text-[var(--text2)] mb-1">プラン</label>
+          <select
+            id="create-plan"
+            value={plan}
+            onChange={(e) => setPlan(e.target.value as PlanKey)}
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            {PLAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
+      </div>
+      {error && <p role="alert" className="text-xs text-[var(--err)]">{error}</p>}
+      <button
+        type="submit"
+        disabled={saving}
+        className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:opacity-50"
+      >
+        {saving ? '作成中...' : 'メール確認なしで作成'}
+      </button>
+    </form>
+  )
+}
+
 export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) {
   const [users, setUsers] = useState(initialUsers)
 
@@ -90,16 +196,16 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
     setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, plan } : u))
   }
 
-  if (users.length === 0) {
-    return (
-      <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
-        <p className="text-sm text-[var(--text3)]">登録ユーザーがいません</p>
-      </div>
-    )
-  }
-
   return (
-    <>
+    <div className="space-y-6">
+      <CreateUserForm onCreated={(user) => setUsers((prev) => [user, ...prev])} />
+
+      {users.length === 0 ? (
+        <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
+          <p className="text-sm text-[var(--text3)]">登録ユーザーがいません</p>
+        </div>
+      ) : (
+        <>
       {/* モバイル: カードリスト */}
       <div className="space-y-3 sm:hidden">
         {users.map((user) => (
@@ -155,6 +261,8 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
           </tbody>
         </table>
       </div>
-    </>
+        </>
+      )}
+    </div>
   )
 }
