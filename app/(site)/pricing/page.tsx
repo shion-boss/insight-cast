@@ -135,6 +135,7 @@ export default async function PricingPage({
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
   const guideChars = SELECTION_GUIDE.map((g) => ({ ...g, char: getCharacter(g.charId) }))
+  const mint = getCharacter('mint')
 
   return (
     <>
@@ -143,18 +144,21 @@ export default async function PricingPage({
       <main className="relative z-10">
         {/* Limit banners */}
         {reason === 'project_limit' && (
-          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
-            現在のプランでは取材先を追加できません。プランをアップグレードすると、複数の取材先を管理できます。
+          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+            <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
+            <span>現在のプランでは取材先を追加できません。プランをアップグレードすると、複数の取材先を管理できます。</span>
           </div>
         )}
         {reason === 'interview_limit' && (
-          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
-            今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。
+          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+            <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
+            <span>今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。</span>
           </div>
         )}
         {reason === 'free_plan_locked' && (
-          <div className="bg-[var(--accent)] text-white text-center px-4 py-3.5 text-[13px] font-semibold leading-relaxed">
-            無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。
+          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+            <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
+            <span>無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。</span>
           </div>
         )}
 
