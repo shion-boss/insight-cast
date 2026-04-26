@@ -161,7 +161,7 @@ export default function ReportClient({
     return (
       <div className="mx-auto max-w-[560px] px-6 py-16">
         {analysisError ? (
-          <div className="space-y-4">
+          <div role="alert" className="space-y-4">
             <InterviewerSpeech
               icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
               name="クラウス"

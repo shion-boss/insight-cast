@@ -302,7 +302,7 @@ export default function SummaryPage() {
         </nav>
 
         {loadError && (
-          <div className="mb-6 space-y-4">
+          <div role="alert" className="mb-6 space-y-4">
             <InterviewerSpeech
               icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? 'ミント'}のアイコン`} emoji={char?.emoji ?? '📝'} size={48} />}
               name={char?.name ?? 'ミント'}
