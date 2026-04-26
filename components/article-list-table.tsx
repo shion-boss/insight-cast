@@ -84,10 +84,11 @@ export function ArticleListTable({
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
           <div className="sm:col-span-2 lg:col-span-1">
-            <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="article-filter-query" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
               キーワード
             </label>
             <TextInput
+              id="article-filter-query"
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -97,10 +98,11 @@ export function ArticleListTable({
 
           {showProjectColumn && projectOptions.length > 1 && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+              <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
                 取材先
               </label>
               <select
+                id="article-filter-project"
                 value={projectLabel}
                 onChange={(event) => setProjectLabel(event.target.value)}
                 className={selectClassName()}
@@ -114,10 +116,11 @@ export function ArticleListTable({
           )}
 
           <div>
-            <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="article-filter-type" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
               種別
             </label>
             <select
+              id="article-filter-type"
               value={articleType}
               onChange={(event) => setArticleType(event.target.value)}
               className={selectClassName()}
@@ -133,10 +136,11 @@ export function ArticleListTable({
 
           {showInterviewerColumn && (
             <div>
-              <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+              <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
                 担当
               </label>
               <select
+                id="article-filter-interviewer"
                 value={interviewerLabel}
                 onChange={(event) => setInterviewerLabel(event.target.value)}
                 className={selectClassName()}

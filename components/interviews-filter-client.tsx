@@ -55,8 +55,8 @@ export function InterviewsFilterClient({ items }: { items: InterviewItem[] }) {
       {projectOptions.length > 1 && (
         <div className="mb-5 flex flex-wrap items-end gap-3">
           <div>
-            <label className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">取材先</label>
-            <select value={projectId} onChange={(e) => setProjectId(e.target.value)} className={selectClassName()}>
+            <label htmlFor="filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">取材先</label>
+            <select id="filter-project" value={projectId} onChange={(e) => setProjectId(e.target.value)} className={selectClassName()}>
               <option value="all">すべて</option>
               {projectOptions.map(([id, label]) => (
                 <option key={id} value={id}>{label}</option>
