@@ -176,7 +176,7 @@ function ScoreRing({ score }: { score: number }) {
   const dash = (score / 100) * circ
   return (
     <div style={{ position: 'relative', width: 64, height: 64, flexShrink: 0 }}>
-      <svg width={64} height={64} viewBox="0 0 64 64">
+      <svg width={64} height={64} viewBox="0 0 64 64" aria-hidden="true">
         <circle cx={32} cy={32} r={R} fill="none" stroke="var(--bg2)" strokeWidth={7} />
         <circle cx={32} cy={32} r={R} fill="none" stroke="var(--accent)" strokeWidth={7}
           strokeDasharray={`${dash} ${circ - dash}`}

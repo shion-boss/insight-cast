@@ -292,7 +292,7 @@ export default async function DashboardPage() {
                 >
                   {isProjectLimitReached && (
                     <div className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-[var(--text3)] text-white">
-                      <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect x="1" y="5" width="8" height="7" rx="1.5" fill="currentColor"/>
                         <path d="M3 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                       </svg>
