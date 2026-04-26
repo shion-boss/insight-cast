@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 
 import { PublicHero } from '@/components/public-layout'
 import { ServiceHeroCTA, ServiceBottomCTA } from './ServiceCTA'
+import { CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
@@ -51,21 +53,29 @@ const DELIVERABLES = [
   {
     title: 'HP調査レポート',
     body: '今のホームページで何が足りないか・競合との違いが一枚にまとまります。',
+    charId: 'claus',
   },
   {
     title: '取材メモ',
     body: 'AI取材の内容を整理した記録。抽出された強み・記事テーマ一覧が含まれます。',
+    charId: 'mint',
   },
   {
     title: '記事素材',
     body: '取材メモをもとに整えた記事のテキスト。ブログ・採用ページ・実績ページなどに使えます。',
+    charId: 'rain',
   },
 ] as const
 
 function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }) {
   if (type === 'analysis') {
+    const clausChar = getCharacter('claus')
     return (
       <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
+        <div className="flex items-center gap-2 mb-1">
+          <CharacterAvatar src={clausChar?.icon48} alt={clausChar?.name ?? 'クラウス'} emoji={clausChar?.emoji} size={28} />
+          <span className="text-[12px] font-semibold text-[var(--text3)]">クラウスが分析しています</span>
+        </div>
         <div className="flex items-center gap-2 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[13px] text-[var(--text2)]">
           🔗 https://tanaka-kensetsu.example.jp
         </div>
@@ -86,6 +96,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
   }
 
   if (type === 'chat') {
+    const mintChar = getCharacter('mint')
     return (
       <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
         {[
@@ -93,9 +104,12 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
           { side: 'user', text: '先月、外壁塗装のお客さんに「また頼みたい」と連絡が来ました。' },
           { side: 'cast', text: '嬉しいですね。その方が再依頼してくれた理由、心当たりはありますか？' },
         ].map((message, index) => (
-          <div key={index} className={`flex ${message.side === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <div key={index} className={`flex items-end gap-2 ${message.side === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {message.side === 'cast' && (
+              <CharacterAvatar src={mintChar?.icon48} alt={mintChar?.name ?? 'ミント'} emoji={mintChar?.emoji} size={32} />
+            )}
             <div
-              className={`max-w-[82%] rounded-xl px-4 py-3 text-sm leading-7 ${
+              className={`max-w-[75%] rounded-xl px-4 py-3 text-sm leading-7 ${
                 message.side === 'user'
                   ? 'rounded-tr-sm bg-[var(--accent)] text-white'
                   : 'rounded-tl-sm border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]'
@@ -224,20 +238,23 @@ export default function ServicePage() {
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Deliverables</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>取材が終わると、こんなものが届きます</h2>
             <div className="mt-10 rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-8">
-              {DELIVERABLES.map((item, index) => (
+              {DELIVERABLES.map((item, index) => {
+              const char = getCharacter(item.charId)
+              return (
                 <div
                   key={item.title}
                   className={`flex items-start gap-[14px] py-[14px] ${index < DELIVERABLES.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
                 >
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-[var(--accent-l)] text-lg">
-                    {index === 0 ? '📊' : index === 1 ? '📝' : '📄'}
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[10px] bg-[var(--accent-l)]">
+                    <CharacterAvatar src={char?.icon48} alt={char?.name ?? item.title} emoji={char?.emoji} size={32} />
                   </div>
                   <div>
                     <div className="text-[15px] font-bold text-[var(--text)] mb-1">{item.title}</div>
                     <div className="text-[13px] text-[var(--text2)] leading-[1.7]">{item.body}</div>
                   </div>
                 </div>
-              ))}
+              )
+            })}
             </div>
           </div>
         </section>
