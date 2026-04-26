@@ -30,7 +30,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/dashboard"
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     ダッシュボードへ →
                   </Link>
@@ -45,13 +45,13 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/auth/signup"
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea]"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     無料で取材を始める →
                   </Link>
                   <Link
                     href="/cast"
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     キャストを見る
                   </Link>
