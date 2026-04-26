@@ -54,7 +54,13 @@ function SignupForm() {
 
     const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
     if (error) {
-      setError('登録に失敗しました。もう一度お試しください。')
+      if (error.message.toLowerCase().includes('rate limit')) {
+        setError('メールの送信上限に達しています。しばらく待ってから再度お試しください。')
+      } else if (error.message.toLowerCase().includes('already registered') || error.message.toLowerCase().includes('already exists')) {
+        setError('このメールアドレスはすでに登録されています。ログインページからお試しください。')
+      } else {
+        setError('登録に失敗しました。もう一度お試しください。')
+      }
       setLoading(false)
       return
     }
