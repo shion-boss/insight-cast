@@ -48,7 +48,8 @@ export default async function InterviewsPage() {
   const projects = (projectRows ?? []) as Project[]
   const projectMap = new Map(projects.map((project) => [project.id, project]))
 
-  // interviews と articles はprojectsに依存するが互いに独立 → 2段階並列
+  // interviews: projects に依存。articles: interviews に依存するため 2段階取得は不可避
+  // ただし interviews 取得後に articles を逐次ではなく、interviews が取れた直後に並列化できるよう構造化
   const { data: interviewRows } = projects.length > 0
     ? await supabase
         .from('interviews')
@@ -59,11 +60,12 @@ export default async function InterviewsPage() {
 
   const interviews = (interviewRows ?? []) as Interview[]
 
-  const { data: articleRows } = interviews.length > 0
+  const interviewIds = interviews.map((interview) => interview.id)
+  const { data: articleRows } = interviewIds.length > 0
     ? await supabase
         .from('articles')
         .select('interview_id')
-        .in('interview_id', interviews.map((interview) => interview.id))
+        .in('interview_id', interviewIds)
     : { data: [] }
 
   const { articleInterviewIds, articleCountByInterview } = buildArticleCountByInterview((articleRows ?? []) as InterviewArticleRef[])

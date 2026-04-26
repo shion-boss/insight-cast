@@ -35,6 +35,57 @@
 
 ### 今週やったこと
 
+#### 2026-04-27（日次品質改善サイクル 第5回：5周完結）
+
+**テーマ別5周の構成**
+- 周1: UI状態表示（コード重複・記号不統一）
+- 周2: コピー温度感（専門用語・冷たい表現）
+- 周3: 世界観一貫性（AI文言露出・絵文字→キャラアイコン）
+- 周4: API/コスト（レート制限の抜け・コストログ）
+- 周5: 総合（フォールバック絵文字の直書き）
+
+**具体的な修正内容（全5周）**
+
+周1:
+- `app/articles/page.tsx`: `CHAR_LABEL` 辞書を削除 → `getCastName()` に一本化
+- `app/projects/page.tsx`: `AddProjectCard` の `＋`（全角）を `+`（半角）に統一
+- `app/projects/page.tsx`: HP URL 表示の `🔗` 絵文字 → インラインSVG
+- `app/interviews/page.tsx`: `interviewIds` を明示変数化（可読性）
+
+周2:
+- `app/projects/[id]/interview/page.tsx`: placeholder 「質問上限に達しました」→「取材はここまでです。ここまでの内容を記事素材にまとめられます。」
+- `app/settings/SettingsClient.tsx`: セクション名「プラン・請求」→「ご利用プラン」
+
+周3:
+- `components/loading-scenes.tsx`: `ic-orbit-center` の「AI」文字 → `✦`（装飾記号）
+- `components/loading-scenes.tsx`: クラウスステップ「技術的な質問リスト」→「聞きたい切り口」
+- `components/loading-scenes.tsx`: レインステップ「メッセージ戦略の質問」→「引き出したい切り口」
+- `components/loading-scenes.tsx`: ミントステップ「質問リストを作成」→「お話を聞く準備」
+- `components/loading-scenes.tsx`: 取材準備完了表示の `🎤` → `CharacterAvatar`、「最初の質問」→「最初の話しかけ」
+
+周4:
+- `lib/api-usage.ts`: `RATE_LIMITS` に `interview/summarize`（5回/時）を追加
+- `app/api/projects/[id]/interview/summarize/route.ts`: `checkRateLimit` の呼び出しを追加
+
+周5:
+- `app/dashboard/page.tsx`: 取材履歴リスト内 `CharacterAvatar` の `emoji={char?.emoji ?? '🎙️'}` を `emoji={char?.emoji}` に統一（フォールバック絵文字の直書きを除去）
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| キャラ名称の複数管理（getCastName 未使用） | 1 | 再発 | ✅ 既存ルール（浸透が課題） |
+| 全角文字の混入（＋） | 1 | 初出 | 🔲 engineer.md 追記候補 |
+| 顧客画面への絵文字直書き（SVG 代替可能箇所） | 2 | 再発 | ✅ CLAUDE.md §実装ルール記載済み |
+| 顧客画面への「AI」文字露出 | 1 | 再発 | ✅ CLAUDE.md 禁止事項記載済み |
+| 「質問リスト」等の AI ツール的語彙 | 3 | 再発 | ✅ CLAUDE.md 禁止事項記載済み |
+| APIルートのレート制限抜け（summarize） | 1 | 初出 | ✅ 修正済み |
+| CharacterAvatar フォールバック絵文字の直書き | 1 | 初出 | 🔲 engineer.md 追記候補 |
+
+**CLAUDE.md / エージェントmd 更新候補（今回追加）**
+- 🔲 `engineer.md`: `CharacterAvatar` の `emoji` props にフォールバック絵文字を直書きしない。フォールバックは `CharacterAvatar` 内で処理する
+- 🔲 `engineer.md`: 半角文字を使うべき場所（ボタン、記号）に全角文字（`＋` `－` 等）を使わない
+
 #### 2026-04-26（日次品質改善サイクル 第4回）
 
 **主な実施内容（機能追加 + 品質改善）**

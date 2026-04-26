@@ -537,7 +537,7 @@ export default function InterviewPage() {
                   handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
-              placeholder={hasReachedTurnLimit ? '質問上限に達しました。ここまでの内容を記事素材へ整理できます。' : 'ここに話しかけてください'}
+              placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事素材にまとめられます。' : 'ここに話しかけてください'}
               disabled={loading || hasReachedTurnLimit}
               rows={3}
               autoFocus

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 import { ArticleListTable } from '@/components/article-list-table'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
-import { getCharacter } from '@/lib/characters'
+import { getCharacter, getCastName } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
 
 type ArticleRow = {
@@ -35,14 +35,6 @@ const ARTICLE_TYPE_LABEL: Record<string, string> = {
   conversation: '会話込み',
 }
 
-const CHAR_LABEL: Record<string, string> = {
-  mint: 'ミント',
-  claus: 'クラウス',
-  rain: 'レイン',
-  hal: 'ハル',
-  mogro: 'モグロ',
-  cocco: 'コッコ',
-}
 
 function formatDate(value: string) {
   const d = new Date(value)
@@ -105,7 +97,7 @@ export default async function ArticlesPage() {
       createdAtLabel: formatDate(article.created_at),
       detailHref: `/projects/${article.project_id}/articles/${article.id}`,
       projectLabel: project?.name || project?.hp_url || '—',
-      interviewerLabel: interview ? (CHAR_LABEL[interview.interviewer_type] ?? interview.interviewer_type) : '—',
+      interviewerLabel: interview ? getCastName(interview.interviewer_type) : '—',
     }
   })
 

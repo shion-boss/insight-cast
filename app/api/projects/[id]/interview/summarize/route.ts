@@ -4,7 +4,7 @@ import { extractJsonBlock, formatConversationForPrompt, normalizeUniqueStringLis
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
@@ -21,6 +21,9 @@ export async function POST(
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   if (await isFreePlanLocked(supabase, user.id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
+  if (!(await checkRateLimit(user.id, '/api/projects/[id]/interview/summarize')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
   const body = await req.json().catch(() => null)

@@ -17,11 +17,11 @@ import {
 import { getPlanLimits, type PlanKey } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/client'
 
-type Section = 'アカウント' | 'プラン・請求' | '通知' | 'セキュリティ'
+type Section = 'アカウント' | 'ご利用プラン' | '通知' | 'セキュリティ'
 
 type NotificationKey = keyof NotificationPreferences
 
-const SECTIONS: Section[] = ['アカウント', 'プラン・請求', '通知', 'セキュリティ']
+const SECTIONS: Section[] = ['アカウント', 'ご利用プラン', '通知', 'セキュリティ']
 
 const NOTIFICATIONS: Array<{
   key: NotificationKey
@@ -566,7 +566,7 @@ export function SettingsClient({
             </>
           )}
 
-          {activeSection === 'プラン・請求' && (
+          {activeSection === 'ご利用プラン' && (
             <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 現在のプラン

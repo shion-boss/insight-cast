@@ -112,7 +112,7 @@ export function InterviewLoadingScene({
       return [
         'HP調査レポートを読み込んでいます',
         '業種の専門知識を確認しています',
-        '技術的な質問リストを作成しています',
+        '聞きたい切り口を整えています',
         '取材の準備が整いました',
       ]
     }
@@ -120,15 +120,15 @@ export function InterviewLoadingScene({
       return [
         'HP調査レポートを読み込んでいます',
         '競合サイトとの違いを整理しています',
-        'メッセージ戦略の質問を準備しています',
+        '引き出したい切り口を整えています',
         '取材の準備が整いました',
       ]
     }
 
     return [
       'HP調査レポートを読み込んでいます',
-      'お客様目線のテーマを整理しています',
-      'ミントが質問リストを作成しています',
+      'お客様目線の話題を整理しています',
+      'お話を聞く準備をしています',
       '取材の準備が整いました',
     ]
   }, [characterId])
@@ -212,9 +212,15 @@ export function InterviewLoadingScene({
 
       {complete && (
         <div className="ic-prep-complete">
-          <div className="text-[48px]">🎤</div>
+          <CharacterAvatar
+            src={character?.icon96 ?? character?.icon48}
+            alt={`${character?.name ?? 'キャスト'}のアイコン`}
+            emoji={character?.emoji}
+            size={56}
+            className="border-2 border-[var(--accent)]"
+          />
           <p className="mt-3 font-serif text-lg font-bold text-[var(--text)]">取材を開始しています…</p>
-          <p className="mt-2 text-sm text-[var(--text2)]">最初の質問を整えています。</p>
+          <p className="mt-2 text-sm text-[var(--text2)]">最初の話しかけを整えています。</p>
         </div>
       )}
     </div>
@@ -271,7 +277,7 @@ export function WritingLoadingScene({
             <div className="ic-orbit-ring ic-orbit-ring-1" />
             <div className="ic-orbit-ring ic-orbit-ring-2" />
             <div className="ic-orbit-ring ic-orbit-ring-3" />
-            <div className="ic-orbit-center">AI</div>
+            <div className="ic-orbit-center">✦</div>
           </div>
         </div>
 

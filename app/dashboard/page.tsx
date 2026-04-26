@@ -419,7 +419,7 @@ export default async function DashboardPage() {
                           <CharacterAvatar
                             src={char?.icon48}
                             alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                            emoji={char?.emoji ?? '🎙️'}
+                            emoji={char?.emoji}
                             size={32}
                             className="w-full h-full object-cover object-top"
                           />
