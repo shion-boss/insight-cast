@@ -493,7 +493,7 @@ export default function InterviewPage() {
       {/* 入力エリア */}
       <div className="bg-[var(--surface)] border-t border-[var(--border)] px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
         {submitError && (
-          <div className="max-w-2xl mx-auto mb-3">
+          <div role="alert" className="max-w-2xl mx-auto mb-3">
             <InterviewerSpeech
               icon={(
                 <CharacterAvatar

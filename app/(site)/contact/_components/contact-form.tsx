@@ -180,7 +180,7 @@ export function ContactForm() {
 
       {/* エラー通知 */}
       {status === 'error' && (
-        <div className="flex items-start gap-3 rounded-[var(--r-lg)] border border-[var(--warn)]/30 bg-[var(--warn-l)] px-4 py-3">
+        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-lg)] border border-[var(--warn)]/30 bg-[var(--warn-l)] px-4 py-3">
           <CharacterAvatar
             src={mint?.icon48}
             alt="ミントのアイコン"

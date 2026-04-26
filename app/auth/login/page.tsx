@@ -136,7 +136,7 @@ function LoginForm() {
             </div>
 
             {(error || oauthError) && (
-              <p className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-4 py-3 text-sm">
+              <p role="alert" className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-4 py-3 text-sm">
                 {error ?? oauthError}
               </p>
             )}

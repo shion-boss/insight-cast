@@ -130,7 +130,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
         />
 
         {competitorIssue && (
-          <p className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+          <p role="alert" className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
             {competitorIssue}
           </p>
         )}
