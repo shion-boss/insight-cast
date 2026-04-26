@@ -452,7 +452,7 @@ export function SettingsClient({
                 </div>
 
                 {(profileError || avatarError) && (
-                  <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-[var(--err)]">{avatarError ?? profileError}</p>
                   </div>
@@ -501,7 +501,7 @@ export function SettingsClient({
                     </div>
 
                     {emailError && (
-                      <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                      <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                         <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                         <p className="text-sm text-[var(--err)]">{emailError}</p>
                       </div>
@@ -533,7 +533,9 @@ export function SettingsClient({
                     取材先、取材メモ、記事素材、プロフィール情報を含むアカウント全体を完全に削除します。確認のため、下に「削除」と入力してください。
                   </p>
 
+                  <label htmlFor="settings-delete-confirm" className="sr-only">「削除」と入力して確認</label>
                   <TextInput
+                    id="settings-delete-confirm"
                     type="text"
                     value={deleteConfirmation}
                     onChange={(event) => setDeleteConfirmation(event.target.value)}
@@ -543,7 +545,7 @@ export function SettingsClient({
                   />
 
                   {deleteError && (
-                    <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                    <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                       <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                       <p className="text-sm text-[var(--err)]">{deleteError}</p>
                     </div>
@@ -691,7 +693,7 @@ export function SettingsClient({
               </div>
 
               {notificationError && (
-                <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                   <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-[var(--err)]">{notificationError}</p>
                 </div>
@@ -758,7 +760,7 @@ export function SettingsClient({
                 </p>
 
                 {passwordError && (
-                  <div className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-[var(--err)]">{passwordError}</p>
                   </div>

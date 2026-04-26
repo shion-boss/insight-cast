@@ -562,13 +562,15 @@ export default function ArticlePage() {
             {!isCurrentTabGenerating && !currentSavedArticle && currentTabStatus !== 'failed' && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 {error ? (
-                  <StateCard
-                    icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
-                    title="いまは記事素材の状態を確認できません。"
-                    description={error}
-                    tone="warning"
-                    align="left"
-                  />
+                  <div role="alert">
+                    <StateCard
+                      icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
+                      title="いまは記事素材の状態を確認できません。"
+                      description={error}
+                      tone="warning"
+                      align="left"
+                    />
+                  </div>
                 ) : availableThemes.length === 0 ? (
                   <>
                     <InterviewerSpeech
