@@ -25,12 +25,26 @@ export async function POST(request: Request) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
   const stripe = getStripe()
 
-  // 既存の stripe_customer_id があれば再利用
   const { data: sub } = await supabase
     .from('subscriptions')
-    .select('stripe_customer_id')
+    .select('stripe_customer_id, plan')
     .eq('user_id', user.id)
     .single()
+
+  // 同じプランまたは上位プランへの再購入を防ぐ
+  const PLAN_RANK: Record<string, number> = { free: 0, personal: 1, business: 2 }
+  const priceIdToPlan: Record<string, string> = {
+    [process.env.STRIPE_PRICE_ID_PERSONAL ?? '']: 'personal',
+    [process.env.STRIPE_PRICE_ID_BUSINESS ?? '']: 'business',
+  }
+  const requestedPlan = priceIdToPlan[priceId]
+  const currentPlan = (sub?.plan as string | undefined) ?? 'free'
+  if (requestedPlan && (PLAN_RANK[requestedPlan] ?? 0) <= (PLAN_RANK[currentPlan] ?? 0)) {
+    const message = currentPlan === requestedPlan
+      ? 'すでにこのプランをご契約中です'
+      : 'より上位のプランをご契約中です'
+    return NextResponse.json({ code: 'ALREADY_SUBSCRIBED', message }, { status: 409 })
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
