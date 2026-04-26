@@ -2,14 +2,14 @@ export const dynamic = 'force-dynamic'
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { completeOnboarding } from '@/lib/actions/onboarding'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, FieldLabel, InterviewerSpeech, PrimaryButton, TextInput } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
+import { OnboardingForm } from './OnboardingForm'
 
 export default async function OnboardingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>
+  searchParams: Promise<{ next?: string; error?: string }>
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -23,6 +23,7 @@ export default async function OnboardingPage({
 
   const params = await searchParams
   const next = params.next?.startsWith('/') ? params.next : '/dashboard'
+  const hasError = params.error === '1'
 
   if (profile?.onboarded) redirect(next)
   const mint = getCharacter('mint')
@@ -47,16 +48,7 @@ export default async function OnboardingPage({
           />
         </div>
 
-        <form action={completeOnboarding} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
-          <input type="hidden" name="next" value={next} />
-          <div>
-            <FieldLabel required htmlFor="onboarding-name">お名前</FieldLabel>
-            <TextInput id="onboarding-name" type="text" name="name" required placeholder="例: 山田さん" />
-          </div>
-          <PrimaryButton type="submit" className="w-full py-3 text-sm mt-2">
-            はじめる
-          </PrimaryButton>
-        </form>
+        <OnboardingForm next={next} hasError={hasError} />
       </div>
     </div>
   )
