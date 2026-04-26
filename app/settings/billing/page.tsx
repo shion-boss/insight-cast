@@ -147,7 +147,7 @@ export default async function BillingPage({
         <div className="text-center">
           <Link
             href="/settings"
-            className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors"
+            className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             ← 設定に戻る
           </Link>

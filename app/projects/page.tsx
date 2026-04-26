@@ -31,7 +31,7 @@ function AddProjectCard({ isLocked }: { isLocked: boolean }) {
   return (
     <Link
       href={isLocked ? '/pricing?reason=project_limit' : '/projects/new'}
-      className="relative bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px]"
+      className="relative bg-[var(--bg2)] border-2 border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-8 flex flex-col items-center justify-center gap-3 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] min-h-[200px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
     >
       {isLocked ? (
         <>
