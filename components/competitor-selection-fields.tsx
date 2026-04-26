@@ -168,8 +168,9 @@ export default function CompetitorSelectionFields({
     <section className="bg-white rounded-2xl border border-[var(--border)] p-6 space-y-4">
       <div className="space-y-4">
         <div>
-          <FieldLabel>業界情報</FieldLabel>
+          <FieldLabel htmlFor="competitor-industry">業界情報</FieldLabel>
           <TextInput
+            id="competitor-industry"
             type="text"
             name="industry_memo"
             value={industryMemo}
@@ -179,8 +180,9 @@ export default function CompetitorSelectionFields({
           <p className="mt-1 text-xs text-[var(--text3)]">競合候補を探すときの手がかりに使います。</p>
         </div>
         <div>
-          <FieldLabel>地域・商圏（任意）</FieldLabel>
+          <FieldLabel htmlFor="competitor-location">地域・商圏（任意）</FieldLabel>
           <TextInput
+            id="competitor-location"
             type="text"
             name="location"
             value={location}

@@ -70,8 +70,9 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
       <form action={createProject} className="space-y-6">
         <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-8 space-y-4">
           <div>
-            <FieldLabel required>取材先名</FieldLabel>
+            <FieldLabel required htmlFor="new-project-name">取材先名</FieldLabel>
             <TextInput
+              id="new-project-name"
               type="text"
               name="name"
               required
@@ -81,8 +82,9 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
             />
           </div>
           <div>
-            <FieldLabel required>自社HP URL</FieldLabel>
+            <FieldLabel required htmlFor="new-project-url">自社HP URL</FieldLabel>
             <TextInput
+              id="new-project-url"
               type="text"
               name="url"
               required
