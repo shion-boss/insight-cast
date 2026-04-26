@@ -48,9 +48,9 @@ export default function UpdatePasswordPage() {
 
         <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-12 w-full shadow-[0_24px_64px_rgba(0,0,0,0.08)]">
           {done ? (
-            <div className="text-center">
+            <div role="status" className="text-center">
               <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-l)]">
-                <span className="text-2xl">✓</span>
+                <span className="text-2xl" aria-hidden="true">✓</span>
               </div>
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] mb-3">パスワードを更新しました</h1>
               <p className="text-sm text-[var(--text2)]">ダッシュボードに移動します...</p>
