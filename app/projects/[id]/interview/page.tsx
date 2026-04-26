@@ -60,6 +60,7 @@ export default function InterviewPage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: streamingMessage ? 'instant' : 'smooth' })
@@ -289,6 +290,29 @@ export default function InterviewPage() {
     setShowComplete(true)
   }
 
+  // モーダルフォーカストラップ
+  useEffect(() => {
+    if (!showComplete) return
+    const modal = modalRef.current
+    if (!modal) return
+    const el = modal.querySelector<HTMLElement>('button,[tabindex]:not([tabindex="-1"])')
+    el?.focus()
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key !== 'Tab') return
+      const focusable = Array.from(modal!.querySelectorAll<HTMLElement>('button:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [showComplete])
+
   const char = getCharacter(characterId)
   const hasReachedTurnLimit = userTurns >= MAX_TURNS
   const supportPostCount = supportPosts.ownPosts.length + supportPosts.competitorPosts.length
@@ -401,7 +425,14 @@ export default function InterviewPage() {
             <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
             <span className="text-xs text-[var(--text3)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
           </div>
-          <div className="bg-[var(--border)] h-1 rounded-full overflow-hidden">
+          <div
+            role="progressbar"
+            aria-label="インタビューの進行状況"
+            aria-valuenow={userTurns}
+            aria-valuemin={0}
+            aria-valuemax={STANDARD_TURNS}
+            className="bg-[var(--border)] h-1 rounded-full overflow-hidden"
+          >
             <div
               className="h-full bg-[var(--accent)] rounded-full transition-all duration-300"
               style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
@@ -411,7 +442,7 @@ export default function InterviewPage() {
       </div>
 
       {/* 会話ログ */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
+      <div role="log" aria-label="インタビューの会話" aria-live="polite" className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
         {messages.map((msg, i) => (
           <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (
@@ -579,11 +610,10 @@ export default function InterviewPage() {
       {showComplete && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
           <div
+            ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-label="取材まとめの確認"
-            // eslint-disable-next-line jsx-a11y/no-autofocus
-            autoFocus
             tabIndex={-1}
             className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)] focus-visible:outline-none"
           >

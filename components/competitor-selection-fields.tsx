@@ -281,6 +281,7 @@ export default function CompetitorSelectionFields({
                 key={suggestion.url}
                 onClick={() => toggleSelectedUrl(suggestion.url)}
                 disabled={disabled}
+                aria-pressed={selected}
                 className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                   selected
                     ? 'border-[var(--text)] bg-[var(--text)] text-white'
@@ -318,6 +319,7 @@ export default function CompetitorSelectionFields({
           <TextInput
             key={index}
             type="text"
+            aria-label={`競合URL ${index + 1}`}
             value={manualUrls[index] ?? ''}
             onChange={(e) => updateManualUrl(index, e.target.value)}
             placeholder="https://competitor.com"
@@ -335,15 +337,15 @@ export default function CompetitorSelectionFields({
                 type="button"
                 key={urlValue}
                 onClick={() => removeChosenUrl(urlValue)}
+                aria-label={`${urlValue} を外す`}
                 className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs ${
                   normalizeComparableUrl(urlValue) === normalizedSiteUrl
                     ? 'border-[var(--err)]/30 bg-[var(--err-l)] text-[var(--err)]'
                     : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]'
                 }`}
-                title={urlValue}
               >
-                <span className="truncate">{urlValue}</span>
-                <span className="font-semibold">×</span>
+                <span className="truncate" aria-hidden="true">{urlValue}</span>
+                <span className="font-semibold" aria-hidden="true">×</span>
               </button>
             ))}
           </div>

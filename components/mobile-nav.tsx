@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { getButtonClass } from '@/components/ui'
@@ -15,17 +15,44 @@ type MobileNavProps = {
 export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const drawerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
 
-  // スクロール防止
+  // スクロール防止 + 初期フォーカス
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden'
+      const el = drawerRef.current?.querySelector<HTMLElement>('a,button,[tabindex]:not([tabindex="-1"])')
+      el?.focus()
     } else {
       document.body.style.overflow = ''
     }
     return () => { document.body.style.overflow = '' }
+  }, [open])
+
+  // フォーカストラップ + Escape
+  useEffect(() => {
+    if (!open) return
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') { setOpen(false); return }
+      if (e.key !== 'Tab') return
+      const drawer = drawerRef.current
+      if (!drawer) return
+      const focusable = Array.from(drawer.querySelectorAll<HTMLElement>(
+        'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])'
+      ))
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) { e.preventDefault(); last.focus() }
+      } else {
+        if (document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [open])
 
   return (
@@ -62,6 +89,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
 
           {/* ドロワー */}
           <div
+            ref={drawerRef}
             id="mobile-drawer"
             role="dialog"
             aria-modal="true"

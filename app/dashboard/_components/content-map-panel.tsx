@@ -128,8 +128,8 @@ export function ContentMapPanel({
 
       {/* Loading state */}
       {loading && (
-        <div className="flex flex-col items-center gap-3 py-10">
-          <div className="w-8 h-8 border-[3px] rounded-full animate-spin border-[var(--border)] border-t-[var(--accent)]" />
+        <div role="status" aria-label="記事を分析中" className="flex flex-col items-center gap-3 py-10">
+          <div className="w-8 h-8 border-[3px] rounded-full animate-spin border-[var(--border)] border-t-[var(--accent)]" aria-hidden="true" />
           <p className="text-sm text-[var(--text2)]">記事の内容を読んでいます…</p>
         </div>
       )}
