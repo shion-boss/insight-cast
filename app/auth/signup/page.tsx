@@ -211,9 +211,9 @@ function SignupForm() {
 
           <p className="mt-5 text-[12px] text-[var(--text3)] text-center leading-relaxed">
             登録すると{' '}
-            <a href="/terms" className="text-[var(--accent)] underline">利用規約</a>
+            <Link href="/terms" className="text-[var(--accent)] underline">利用規約</Link>
             {' '}と{' '}
-            <a href="/privacy" className="text-[var(--accent)] underline">プライバシーポリシー</a>
+            <Link href="/privacy" className="text-[var(--accent)] underline">プライバシーポリシー</Link>
             {' '}に同意したものとみなされます
           </p>
         </div>
