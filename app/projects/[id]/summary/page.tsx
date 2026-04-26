@@ -263,9 +263,12 @@ export default function SummaryPage() {
             icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
             name={mint?.name ?? 'ミント'}
             title="取材メモを作っています"
-            description={`会話の内容をまとめています。このページから離れて大丈夫です。完了したらお知らせします。${lastCheckedAt ? `（最終確認: ${lastCheckedAt}）` : ''}`}
+            description="会話の内容をまとめています。このページから離れて大丈夫です。完了したらお知らせします。"
             tone="soft"
           />
+          {lastCheckedAt && (
+            <p className="mt-2 text-xs text-[var(--text3)]">最終確認: {lastCheckedAt}</p>
+          )}
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
             <button
               type="button"
@@ -356,7 +359,7 @@ export default function SummaryPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[var(--text3)]">もう少し話を重ねると、ここに整理した内容が並びます。</p>
+                <p className="text-sm text-[var(--text3)]">この取材では価値の要点を引き出せませんでした。もう一度取材するか、取材ログを確認してみてください。</p>
               )}
             </section>
 

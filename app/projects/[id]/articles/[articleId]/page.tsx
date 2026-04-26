@@ -7,9 +7,9 @@ import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
-  client: 'クライアント視点',
+  client: '解説・まとめ形式',
   interviewer: 'インタビュアー視点',
-  conversation: '会話込み',
+  conversation: 'インタビュー形式',
 }
 
 function formatDateTime(value: string) {
@@ -62,7 +62,7 @@ export default async function ArticleDetailPage({
   return (
     <AppShell
       title="記事詳細"
-      active="articles"
+      active="projects"
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
       contentClassName="max-w-3xl space-y-6"
@@ -98,19 +98,35 @@ export default async function ArticleDetailPage({
         </section>
 
         {!article.content ? (
-          <StateCard
-            icon={
-              <CharacterAvatar
-                src={displayChar?.icon48}
-                alt={`${displayChar?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={displayChar?.emoji}
-                size={48}
-              />
-            }
-            title="まだ記事の本文が見つかりませんでした。"
-            description="少し待ってから開き直すと見られることがあります。"
-            tone="warning"
-          />
+          <div className="space-y-4">
+            <StateCard
+              icon={
+                <CharacterAvatar
+                  src={displayChar?.icon48}
+                  alt={`${displayChar?.name ?? 'インタビュアー'}のアイコン`}
+                  emoji={displayChar?.emoji}
+                  size={48}
+                />
+              }
+              title="まだ記事の本文が見つかりませんでした。"
+              description="少し待ってから開き直すと見られることがあります。取材先の管理から記事を再生成することもできます。"
+              tone="warning"
+            />
+            <div className="flex gap-3">
+              <Link
+                href={`/projects/${id}/article?interviewId=${article.interview_id}`}
+                className={getButtonClass('primary', 'text-sm px-4 py-2.5')}
+              >
+                記事を再生成する
+              </Link>
+              <Link
+                href={`/projects/${id}`}
+                className={getButtonClass('secondary', 'text-sm px-4 py-2.5')}
+              >
+                ← 取材先の管理に戻る
+              </Link>
+            </div>
+          </div>
         ) : (
           <>
             <ArticleExportPanel

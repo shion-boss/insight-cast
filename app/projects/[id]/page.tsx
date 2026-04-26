@@ -36,9 +36,9 @@ type ArticleRow = {
 }
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
-  client: 'クライアント視点',
+  client: '解説・まとめ形式',
   interviewer: 'インタビュアー視点',
-  conversation: '会話込み',
+  conversation: 'インタビュー形式',
 }
 
 function formatDateTime(value: string) {
