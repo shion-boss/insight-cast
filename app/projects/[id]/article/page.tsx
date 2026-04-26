@@ -360,6 +360,7 @@ export default function ArticlePage() {
                     key={t.type}
                     type="button"
                     onClick={() => setTab(t.type)}
+                    aria-pressed={tab === t.type}
                     className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       tab === t.type
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
@@ -431,6 +432,7 @@ export default function ArticlePage() {
                       key={opt.value}
                       type="button"
                       onClick={() => setStyle(opt.value)}
+                      aria-pressed={style === opt.value}
                       className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         style === opt.value
                           ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
@@ -452,6 +454,7 @@ export default function ArticlePage() {
                     key={opt.value}
                     type="button"
                     onClick={() => setVolume(opt.value)}
+                    aria-pressed={volume === opt.value}
                     className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                       volume === opt.value
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
@@ -468,6 +471,7 @@ export default function ArticlePage() {
               <button
                 type="button"
                 onClick={() => setPolishAnswers((value) => !value)}
+                aria-pressed={polishAnswers}
                 className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <div className="text-left">
