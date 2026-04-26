@@ -2,7 +2,8 @@
 
 import { useFormStatus } from 'react-dom'
 import { completeOnboarding } from '@/lib/actions/onboarding'
-import { FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
+import { CharacterAvatar, FieldLabel, PrimaryButton, TextInput } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 function SubmitButton() {
   const { pending } = useFormStatus()
@@ -14,13 +15,15 @@ function SubmitButton() {
 }
 
 export function OnboardingForm({ next, hasError }: { next: string; hasError: boolean }) {
+  const mint = getCharacter('mint')
   return (
     <form action={completeOnboarding} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
       <input type="hidden" name="next" value={next} />
       {hasError && (
-        <p role="alert" className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-          登録できませんでした。もう一度お試しください。
-        </p>
+        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+          <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-[var(--err)]">登録できませんでした。もう一度お試しください。</p>
+        </div>
       )}
       <div>
         <FieldLabel required htmlFor="onboarding-name">お名前</FieldLabel>

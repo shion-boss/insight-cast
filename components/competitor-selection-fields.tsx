@@ -223,9 +223,10 @@ export default function CompetitorSelectionFields({
       )}
 
       {validationIssue && (
-        <p role="alert" className="rounded-lg bg-[var(--err-l)] px-3 py-2 text-xs leading-relaxed text-[var(--err)]">
-          {validationIssue}
-        </p>
+        <div role="alert" className="flex items-start gap-3 rounded-lg bg-[var(--err-l)] px-3 py-2">
+          <CharacterAvatar src={claus?.icon48} alt={`${claus?.name ?? 'クラウス'}のアイコン`} emoji={claus?.emoji} size={28} className="flex-shrink-0 mt-0.5" />
+          <p className="text-xs leading-relaxed text-[var(--err)]">{validationIssue}</p>
+        </div>
       )}
 
       {!canSuggest && (
