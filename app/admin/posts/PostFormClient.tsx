@@ -392,8 +392,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             <h3 className="text-sm font-semibold text-[var(--text)]">分類</h3>
 
             <div>
-              <FieldLabel required>カテゴリ</FieldLabel>
+              <FieldLabel required htmlFor="post-category">カテゴリ</FieldLabel>
               <select
+                id="post-category"
                 value={form.category}
                 onChange={(e) => handleChange('category', e.target.value as PostFormData['category'])}
                 className={selectClass}
@@ -405,8 +406,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             </div>
 
             <div>
-              <FieldLabel required>記事タイプ</FieldLabel>
+              <FieldLabel required htmlFor="post-type">記事タイプ</FieldLabel>
               <select
+                id="post-type"
                 value={form.type}
                 onChange={(e) => handleChange('type', e.target.value as PostFormData['type'])}
                 className={selectClass}
@@ -418,8 +420,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             </div>
 
             <div>
-              <FieldLabel>インタビュアー</FieldLabel>
+              <FieldLabel htmlFor="post-interviewer">インタビュアー</FieldLabel>
               <select
+                id="post-interviewer"
                 value={form.interviewer ?? ''}
                 onChange={(e) => handleChange('interviewer', e.target.value || null)}
                 className={selectClass}
