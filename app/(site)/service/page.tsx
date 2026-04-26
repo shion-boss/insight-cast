@@ -191,7 +191,7 @@ export default function ServicePage() {
                     index % 2 === 1 ? 'lg:[direction:rtl]' : ''
                   }`}
                 >
-                  <div style={{ direction: 'ltr' }}>
+                  <div className="[direction:ltr]">
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-[80px] font-bold leading-none text-[var(--border)]">{item.step}</div>
                     <h3 className="font-[family-name:var(--font-noto-serif-jp)] mt-4 text-[26px] font-bold text-[var(--text)] leading-[1.35]">{item.title}</h3>
                     <div className="mt-4 space-y-3">
@@ -210,7 +210,7 @@ export default function ServicePage() {
                     </div>
                   </div>
 
-                  <div style={{ direction: 'ltr' }}>
+                  <div className="[direction:ltr]">
                     <VisualPanel type={item.visual} />
                   </div>
                 </div>
