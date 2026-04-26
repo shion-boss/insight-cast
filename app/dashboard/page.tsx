@@ -336,7 +336,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
-                <Link href="/projects" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
+                <Link href="/projects" aria-label="取材先をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -390,7 +390,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
+                <Link href="/interviews" aria-label="取材履歴をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech

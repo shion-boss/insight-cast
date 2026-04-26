@@ -363,11 +363,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       articleStatus={interview.article_status}
                     />
                     {articleHref && (
-                      <Link href={articleHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
+                      <Link href={articleHref} aria-label={`${char?.name ?? 'インタビュアー'}の${articleLabel}`} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
                         {articleLabel}
                       </Link>
                     )}
-                    <Link href={managementHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
+                    <Link href={managementHref} aria-label={`${char?.name ?? 'インタビュアー'}のメモを見る`} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
                       メモを見る
                     </Link>
                   </div>
@@ -395,7 +395,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   </span>
                   <span>{formatDateTime(article.created_at)}</span>
                 </div>
-                <Link href={`/projects/${id}/articles/${article.id}`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                <Link href={`/projects/${id}/articles/${article.id}`} aria-label={`${article.title ?? '記事'}の詳細`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   詳細
                 </Link>
               </div>
@@ -426,7 +426,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     </td>
                     <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.created_at)}</td>
                     <td className="px-5 py-3">
-                      <Link href={`/projects/${id}/articles/${article.id}`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                      <Link href={`/projects/${id}/articles/${article.id}`} aria-label={`${article.title ?? '記事'}の詳細`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
                         詳細
                       </Link>
                     </td>

@@ -67,7 +67,7 @@ export default function AnalysisStatusPanel({
             </>
           ) : status === 'fetch_failed' ? (
             <>
-              <div className="flex items-start gap-3">
+              <div role="alert" className="flex items-start gap-3">
                 <CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={32} />
                 <div className="px-1 text-sm text-[var(--err)]">ホームページを取得できませんでした。URLを確認してもう一度お試しください。</div>
               </div>
