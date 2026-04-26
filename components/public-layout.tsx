@@ -64,7 +64,7 @@ export function PublicHero({
       >
         <div className={cx('max-w-3xl', contentClassName)}>
           <EyebrowBadge>{eyebrow}</EyebrowBadge>
-          <h1 className="mt-6 text-balance text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text)] sm:text-5xl lg:text-[4rem]">
+          <h1 className="mt-6 text-pretty text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text)] sm:text-5xl lg:text-[4rem]">
             {title}
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--text2)] sm:text-[1.05rem]">
