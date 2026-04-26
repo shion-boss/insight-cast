@@ -240,6 +240,7 @@ export function ArticleListTable({
                   <tr
                     key={item.id}
                     tabIndex={0}
+                    aria-label={item.title}
                     className={cx(
                       'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
                       index < filteredItems.length - 1 && 'border-b border-[var(--border)]',
