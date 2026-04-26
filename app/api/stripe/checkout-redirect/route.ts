@@ -28,11 +28,29 @@ export async function GET(request: NextRequest) {
 
   const { data: sub } = await supabase
     .from('subscriptions')
-    .select('stripe_customer_id')
+    .select('stripe_customer_id, stripe_subscription_id, status')
     .eq('user_id', user.id)
     .single()
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? origin
+
+  // アクティブなサブスクがある場合はプラン変更（新規作成すると二重請求になる）
+  const isActive = sub?.status === 'active' || sub?.status === 'trialing'
+  if (sub?.stripe_subscription_id && isActive) {
+    try {
+      const existing = await stripe.subscriptions.retrieve(sub.stripe_subscription_id)
+      const itemId = existing.items.data[0]?.id
+      if (!itemId) return NextResponse.redirect(`${origin}/pricing`)
+
+      await stripe.subscriptions.update(sub.stripe_subscription_id, {
+        items: [{ id: itemId, price: priceId }],
+        proration_behavior: 'create_prorations',
+      })
+      return NextResponse.redirect(`${appUrl}/settings/billing?success=1`)
+    } catch {
+      return NextResponse.redirect(`${origin}/pricing`)
+    }
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
