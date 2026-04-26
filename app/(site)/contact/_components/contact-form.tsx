@@ -170,7 +170,7 @@ export function ContactForm() {
           aria-invalid={!!fieldErrors.message}
           aria-describedby={fieldErrors.message ? 'err-message' : undefined}
           className={cx(
-            'min-h-[120px] w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus:ring-3 focus:ring-[var(--accent-l)] resize-y',
+            'min-h-[120px] w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y',
           )}
         />
         {fieldErrors.message && (

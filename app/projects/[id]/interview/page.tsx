@@ -432,7 +432,7 @@ export default function InterviewPage() {
             aria-label="インタビューの進行状況"
             aria-valuenow={userTurns}
             aria-valuemin={0}
-            aria-valuemax={STANDARD_TURNS}
+            aria-valuemax={userTurns <= STANDARD_TURNS ? STANDARD_TURNS : MAX_TURNS}
             className="bg-[var(--border)] h-1 rounded-full overflow-hidden"
           >
             <div
@@ -541,7 +541,7 @@ export default function InterviewPage() {
               disabled={loading || hasReachedTurnLimit}
               rows={3}
               autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-l)] focus:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[80px]"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[80px]"
             />
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <DevAiLabel>AI送信</DevAiLabel>
