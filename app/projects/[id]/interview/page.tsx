@@ -380,6 +380,8 @@ export default function InterviewPage() {
               <button
                 type="button"
                 onClick={() => setIsSupportPanelOpen((prev) => !prev)}
+                aria-expanded={isSupportPanelOpen}
+                aria-controls="support-posts-panel"
                 className={`flex items-center gap-1.5 rounded-full border px-2 sm:px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer ${
                   isSupportPanelOpen
                     ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
@@ -557,7 +559,7 @@ export default function InterviewPage() {
 
       {/* 参考記事パネル — fixed */}
       {isSupportPanelOpen && !supportPosts.loading && (
-        <div className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg md:left-auto md:w-80">
+        <div id="support-posts-panel" className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg md:left-auto md:w-80">
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-medium text-[var(--text2)]">この質問に近い記事</p>
