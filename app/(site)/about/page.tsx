@@ -46,19 +46,21 @@ export default function AboutPage() {
           aside={(
             <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg2)] p-4 sm:p-6">
               <div className="grid grid-cols-3 gap-3">
-                {allCasts.map((char, i) => (
-                  <div key={char.id} className={`text-center ${i > 2 ? 'opacity-70' : ''}`}>
+                {allCasts.map((char) => (
+                  <div key={char.id} className={`text-center ${!char.available ? 'opacity-70' : ''}`}>
                     <div className="mb-2.5 overflow-hidden rounded-[16px] border-[1.5px] border-[var(--border)] bg-[var(--surface)]">
                       <Image
                         src={char.portrait}
-                        alt={`${char.name}のポートレート`}
+                        alt={char.available ? `${char.name}のポートレート` : `${char.name}のポートレート（準備中）`}
                         width={80}
                         height={80}
                         className="w-full object-contain"
                       />
                     </div>
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</div>
-                    <div className="mt-0.5 text-[11px] font-semibold tracking-[.06em] text-[var(--accent)]">{char.label}</div>
+                    <div className="mt-0.5 text-[11px] font-semibold tracking-[.06em] text-[var(--accent)]">
+                      {char.available ? char.label : '準備中'}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -136,19 +138,21 @@ export default function AboutPage() {
               AIキャストを紹介します
             </h2>
             <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {allCasts.map((char, i) => (
+              {allCasts.map((char) => (
                 <div key={char.id} className="text-center">
-                  <div className={`rounded-[16px] overflow-hidden border-[1.5px] border-[var(--border)] mb-2.5 bg-[var(--bg2)] ${i > 2 ? 'opacity-70' : ''}`}>
+                  <div className={`rounded-[16px] overflow-hidden border-[1.5px] border-[var(--border)] mb-2.5 bg-[var(--bg2)] ${!char.available ? 'opacity-70' : ''}`}>
                     <Image
                       src={char.portrait}
-                      alt={`${char.name}のポートレート`}
+                      alt={char.available ? `${char.name}のポートレート` : `${char.name}のポートレート（準備中）`}
                       width={120}
                       height={120}
                       className="w-full object-contain"
                     />
                   </div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-0.5">{char.name}</div>
-                  <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</div>
+                  <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.06em]">
+                    {char.available ? char.label : '準備中'}
+                  </div>
                 </div>
               ))}
             </div>
