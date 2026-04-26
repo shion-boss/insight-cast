@@ -3,6 +3,8 @@
 import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('')
@@ -10,6 +12,7 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClient()
+  const mint = getCharacter('mint')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -77,9 +80,10 @@ export default function ResetPasswordPage() {
                 </div>
 
                 {error && (
-                  <p role="alert" className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-4 py-3 text-sm">
-                    {error}
-                  </p>
+                  <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                    <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-[var(--err)]">{error}</p>
+                  </div>
                 )}
 
                 <button

@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation'
 import { useState, type FormEvent } from 'react'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
 import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
-import { DevAiLabel, PrimaryButton } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel, PrimaryButton } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 import { saveCompetitors } from '@/lib/actions/projects'
 import { showToast } from '@/lib/client/toast'
 
@@ -28,6 +29,7 @@ export default function CompetitorsForm({
   maxCompetitors = 3,
 }: Props) {
   const router = useRouter()
+  const mint = getCharacter('mint')
   const [error, setError] = useState<string | null>(null)
   const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
   const [canSubmit, setCanSubmit] = useState(true)
@@ -146,9 +148,10 @@ export default function CompetitorsForm({
       />
 
       {(competitorIssue || error) && (
-        <p role="alert" className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-          {error ?? competitorIssue}
-        </p>
+        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+          <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-[var(--err)]">{error ?? competitorIssue}</p>
+        </div>
       )}
 
       <div className="flex flex-col gap-2">

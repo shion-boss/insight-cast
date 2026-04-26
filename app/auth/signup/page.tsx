@@ -8,7 +8,7 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 
-import { FieldLabel, TextInput } from '@/components/ui'
+import { CharacterAvatar, FieldLabel, TextInput } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 function SignupForm() {
@@ -195,9 +195,10 @@ function SignupForm() {
             </div>
 
             {error && (
-              <p role="alert" className="bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-4 py-3 text-sm">
-                {error}
-              </p>
+              <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[var(--err)]">{error}</p>
+              </div>
             )}
 
             <button

@@ -112,7 +112,10 @@ export function ContentMapPanel({
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-[var(--err)] mb-4">{error}</p>
+        <div role="alert" className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+          <CharacterAvatar src={clausIcon} alt="クラウスのアイコン" emoji={clausEmoji ?? '🦉'} size={32} className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-[var(--err)]">{error}</p>
+        </div>
       )}
 
       {/* Not yet classified */}
