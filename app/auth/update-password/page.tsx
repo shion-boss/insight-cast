@@ -57,8 +57,9 @@ export default function UpdatePasswordPage() {
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] text-center mb-8">新しいパスワードを設定</h1>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（8文字以上）</label>
+                  <label htmlFor="update-password" className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（8文字以上）</label>
                   <input
+                    id="update-password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -69,8 +70,9 @@ export default function UpdatePasswordPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（確認）</label>
+                  <label htmlFor="update-password-confirm" className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（確認）</label>
                   <input
+                    id="update-password-confirm"
                     type="password"
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
