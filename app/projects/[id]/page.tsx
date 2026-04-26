@@ -391,7 +391,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                   </span>
                   <span>{formatDateTime(article.created_at)}</span>
                 </div>
-                <Link href={`/projects/${id}/articles/${article.id}`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]">
+                <Link href={`/projects/${id}/articles/${article.id}`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   詳細
                 </Link>
               </div>

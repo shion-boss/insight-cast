@@ -190,7 +190,7 @@ export default async function CastTalkDetailPage({
         <div className="mx-auto max-w-3xl px-6 py-6 sm:px-8">
           <Link
             href="/cast-talk"
-            className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)]"
+            className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             ← Cast Talk 一覧に戻る
           </Link>

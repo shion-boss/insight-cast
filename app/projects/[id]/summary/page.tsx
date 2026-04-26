@@ -291,9 +291,9 @@ export default function SummaryPage() {
       <div>
         {/* breadcrumb */}
         <nav className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
-          <Link href="/projects" className="hover:text-[var(--text2)] transition-colors">取材先一覧</Link>
+          <Link href="/projects" className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
           <span>/</span>
-          <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors">取材先の管理</Link>
+          <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
           <span>/</span>
           <span className="text-[var(--text2)]">取材メモ</span>
         </nav>
@@ -450,7 +450,7 @@ export default function SummaryPage() {
                 <p className="font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
                 <Link
                   href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
-                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors"
+                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   この取材の一覧へ
                 </Link>
@@ -463,7 +463,7 @@ export default function SummaryPage() {
                     <Link
                       key={article.id}
                       href={`/projects/${projectId}/articles/${article.id}`}
-                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors"
+                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
                       <span className="text-[var(--text3)] flex-shrink-0 text-[11px]">

@@ -334,13 +334,13 @@ export default function ArticlePage() {
 
       <div className="mx-auto max-w-6xl px-6 py-8">
         <nav className="mb-6 flex items-center gap-1.5 text-xs text-[var(--text3)]">
-          <Link href="/projects" className="transition-colors hover:text-[var(--text2)]">取材先一覧</Link>
+          <Link href="/projects" className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
           <span>/</span>
-          <Link href={`/projects/${projectId}`} className="transition-colors hover:text-[var(--text2)]">取材先の管理</Link>
+          <Link href={`/projects/${projectId}`} className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
           <span>/</span>
           <Link
             href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
-            className="transition-colors hover:text-[var(--text2)]"
+            className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             取材メモ
           </Link>

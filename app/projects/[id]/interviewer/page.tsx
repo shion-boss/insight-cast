@@ -114,13 +114,13 @@ export default async function InterviewerPage({
             <div className="mt-4 flex gap-3">
               <Link
                 href="/pricing?reason=free_plan_locked"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 プランを見る →
               </Link>
               <Link
                 href={`/projects/${id}`}
-                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 取材先に戻る
               </Link>
@@ -149,7 +149,7 @@ export default async function InterviewerPage({
             <div className="mt-4">
               <Link
                 href="/pricing?reason=interview_limit"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 プランを見る →
               </Link>

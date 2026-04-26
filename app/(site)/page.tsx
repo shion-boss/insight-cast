@@ -498,7 +498,7 @@ export default async function LandingPage() {
             <p className="text-base text-[var(--text2)] mt-3">3名の無料キャストがいます。「誰に頼もうか迷う」場合は、ミントから始めてください。</p>
             <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
               {freeCast.map((char) => (
-                <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)]">
+                <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
                     <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} className="h-full w-full object-contain" />
                   </div>
