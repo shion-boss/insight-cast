@@ -380,6 +380,55 @@ function buildEditFewShot(edits: EditRecord[]): string {
   return lines.join('\n')
 }
 
+// ---------- レビューフィードバック ----------
+
+type ReviewRecord = {
+  overall_score: number
+  good_points: string | null
+  improve_points: string | null
+}
+
+async function fetchRecentReviews(supabase: ReturnType<typeof createAdminClient>): Promise<ReviewRecord[]> {
+  const { data, error } = await supabase
+    .from('cast_talk_reviews')
+    .select('overall_score, good_points, improve_points')
+    .order('updated_at', { ascending: false })
+    .limit(20)
+
+  if (error) {
+    console.warn('[cast-talk/generate] cast_talk_reviews 取得失敗:', error.message)
+    return []
+  }
+  return (data ?? []) as ReviewRecord[]
+}
+
+function buildReviewContext(reviews: ReviewRecord[]): string {
+  if (reviews.length === 0) return ''
+
+  const improvements = reviews
+    .filter((r) => r.improve_points?.trim())
+    .map((r) => `- ${r.improve_points!.trim()}`)
+    .slice(0, 6)
+
+  const goods = reviews
+    .filter((r) => r.good_points?.trim())
+    .map((r) => `- ${r.good_points!.trim()}`)
+    .slice(0, 4)
+
+  if (improvements.length === 0 && goods.length === 0) return ''
+
+  const lines: string[] = ['【過去の品質評価フィードバック】']
+  if (improvements.length > 0) {
+    lines.push('繰り返さないようにしてほしい点:')
+    lines.push(...improvements)
+  }
+  if (goods.length > 0) {
+    lines.push('維持してほしい良い点:')
+    lines.push(...goods)
+  }
+  return lines.join('\n')
+}
+
 // ---------- 会話生成 ----------
 
 async function generateConversation(
@@ -406,9 +455,14 @@ async function generateConversation(
       ? `${interviewerName}が取材する形式（${interviewerName}→${guestName}）`
       : `${interviewerName}と${guestName}が対等に話し合う形式`
 
-  // 過去の修正例を取得してfew-shotとしてプロンプトに追加する
-  const recentEdits = await fetchRecentEdits(supabase)
+  const [recentEdits, recentReviews] = await Promise.all([
+    fetchRecentEdits(supabase),
+    fetchRecentReviews(supabase),
+  ])
   const editFewShot = buildEditFewShot(recentEdits)
+  const reviewContext = buildReviewContext(recentReviews)
+
+  const feedbackSection = [editFewShot, reviewContext].filter(Boolean).join('\n\n')
 
   const userMessage = `以下のテーマと条件で対話記事を生成してください。
 
@@ -428,7 +482,7 @@ async function generateConversation(
   "summary": "記事の要約（SNS投稿に使える・80〜120文字）"
 }
 
-※ messages の最後は必ずインタビュアー側（interviewer_id）の締めのひとことで終わらせてください。${editFewShot ? `\n\n${editFewShot}` : ''}`
+※ messages の最後は必ずインタビュアー側（interviewer_id）の締めのひとことで終わらせてください。${feedbackSection ? `\n\n${feedbackSection}` : ''}`
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',

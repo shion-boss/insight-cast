@@ -16,13 +16,23 @@ async function getCastTalk(id: string) {
   return data
 }
 
+async function getCastTalkReview(castTalkId: string) {
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from('cast_talk_reviews')
+    .select('id, overall_score, naturalness_score, character_score, good_points, improve_points')
+    .eq('cast_talk_id', castTalkId)
+    .maybeSingle()
+  return data ?? null
+}
+
 export default async function AdminCastTalkDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const talk = await getCastTalk(id)
+  const [talk, review] = await Promise.all([getCastTalk(id), getCastTalkReview(id)])
   if (!talk) notFound()
 
   const characterMap: Record<string, Character> = {}
@@ -44,6 +54,13 @@ export default async function AdminCastTalkDetailPage({
         status: 'draft' | 'published'
       }}
       characterMap={characterMap}
+      existingReview={review as {
+        overall_score: number
+        naturalness_score: number | null
+        character_score: number | null
+        good_points: string | null
+        improve_points: string | null
+      } | null}
     />
   )
 }
