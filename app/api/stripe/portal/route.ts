@@ -21,10 +21,13 @@ export async function POST() {
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const session = await getStripe().billingPortal.sessions.create({
-    customer: sub.stripe_customer_id,
-    return_url: `${appUrl}/settings/billing`,
-  })
-
-  return NextResponse.redirect(session.url, { status: 303 })
+  try {
+    const session = await getStripe().billingPortal.sessions.create({
+      customer: sub.stripe_customer_id,
+      return_url: `${appUrl}/settings/billing`,
+    })
+    return NextResponse.json({ url: session.url })
+  } catch {
+    return NextResponse.json({ code: 'STRIPE_ERROR', message: '支払い管理ページを開けませんでした' }, { status: 500 })
+  }
 }

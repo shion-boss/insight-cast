@@ -34,20 +34,24 @@ export async function GET(request: NextRequest) {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? origin
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    customer: sub?.stripe_customer_id ?? undefined,
-    customer_email: sub?.stripe_customer_id ? undefined : (user.email ?? undefined),
-    success_url: `${appUrl}/settings/billing?success=1`,
-    cancel_url: `${appUrl}/pricing`,
-    metadata: { user_id: user.id },
-  })
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      customer: sub?.stripe_customer_id ?? undefined,
+      customer_email: sub?.stripe_customer_id ? undefined : (user.email ?? undefined),
+      success_url: `${appUrl}/settings/billing?success=1`,
+      cancel_url: `${appUrl}/pricing`,
+      metadata: { user_id: user.id },
+    })
 
-  if (!session.url) {
+    if (!session.url) {
+      return NextResponse.redirect(`${origin}/pricing`)
+    }
+
+    return NextResponse.redirect(session.url)
+  } catch {
     return NextResponse.redirect(`${origin}/pricing`)
   }
-
-  return NextResponse.redirect(session.url)
 }

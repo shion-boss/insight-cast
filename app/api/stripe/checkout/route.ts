@@ -32,16 +32,19 @@ export async function POST(request: Request) {
     .eq('user_id', user.id)
     .single()
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'subscription',
-    payment_method_types: ['card'],
-    line_items: [{ price: priceId, quantity: 1 }],
-    customer: sub?.stripe_customer_id ?? undefined,
-    customer_email: sub?.stripe_customer_id ? undefined : (user.email ?? undefined),
-    success_url: `${appUrl}/settings/billing?success=1`,
-    cancel_url: `${appUrl}/pricing`,
-    metadata: { user_id: user.id },
-  })
-
-  return NextResponse.json({ url: session.url })
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      line_items: [{ price: priceId, quantity: 1 }],
+      customer: sub?.stripe_customer_id ?? undefined,
+      customer_email: sub?.stripe_customer_id ? undefined : (user.email ?? undefined),
+      success_url: `${appUrl}/settings/billing?success=1`,
+      cancel_url: `${appUrl}/pricing`,
+      metadata: { user_id: user.id },
+    })
+    return NextResponse.json({ url: session.url })
+  } catch {
+    return NextResponse.json({ code: 'STRIPE_ERROR', message: 'お支払いページを開けませんでした' }, { status: 500 })
+  }
 }
