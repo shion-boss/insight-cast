@@ -89,7 +89,7 @@ export function ContactForm() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-8">
+      <div role="status" className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-8">
         <InterviewerSpeech
           icon={
             <CharacterAvatar
