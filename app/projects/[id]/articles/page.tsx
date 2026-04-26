@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { ArticleListTable } from '@/components/article-list-table'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
-import { ButtonLink, StateCard, getButtonClass } from '@/components/ui'
+import { ButtonLink, CharacterAvatar, StateCard, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
 
@@ -83,6 +83,7 @@ export default async function ProjectArticlesPage({
   const interview = interviewRow as InterviewRow | null
   const articles = (articleRows ?? []) as ArticleRow[]
   const interviewer = interview ? getCharacter(interview.interviewer_type) : null
+  const mintChar = getCharacter('mint')
   const articleItems = articles.map((article) => ({
     id: article.id,
     title: article.title || '記事',
@@ -132,7 +133,7 @@ export default async function ProjectArticlesPage({
 
       {articles.length === 0 ? (
         <StateCard
-          icon="📝"
+          icon={<CharacterAvatar src={mintChar?.icon48} alt={mintChar?.name ?? 'ミント'} emoji={mintChar?.emoji} size={48} />}
           title={interview ? 'この取材から作成した記事はまだありません。' : 'まだ記事はありません。'}
           description={interview ? '取材メモから記事素材を受け取ると、ここに一覧で並びます。' : '記事素材が届くと、ここに一覧で並びます。'}
           align="left"
