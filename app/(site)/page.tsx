@@ -192,10 +192,10 @@ export default async function LandingPage() {
                   HPはあるけど、何年も更新できていませんか？動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
-                  <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]">
+                  <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                     {isLoggedIn ? 'ダッシュボードへ →' : 'カード不要・無料で体験する →'}
                   </Link>
-                  <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+                  <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                     キャストを見る
                   </Link>
                 </div>
@@ -290,7 +290,7 @@ export default async function LandingPage() {
             <div className="mt-5">
               <Link
                 href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.10)]"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 {isLoggedIn ? 'ダッシュボードへ →' : '無料で体験する →'}
               </Link>
@@ -547,7 +547,7 @@ export default async function LandingPage() {
               </>
             )}
             <div className="text-center mt-8">
-              <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+              <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                 キャストをすべて見る →
               </Link>
             </div>
@@ -643,14 +643,14 @@ export default async function LandingPage() {
                     isLoggedIn ? (
                       <Link
                         href="/dashboard"
-                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
+                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'}`}
                       >
                         ダッシュボードへ
                       </Link>
                     ) : (
                       <Link
                         href={plan.href}
-                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                        className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
                       >
                         {plan.cta}
                       </Link>
@@ -664,7 +664,7 @@ export default async function LandingPage() {
                   ) : (
                     <Link
                       href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
                     >
                       {plan.cta}
                     </Link>
@@ -696,7 +696,7 @@ export default async function LandingPage() {
             <div className="mt-8">
               <Link
                 href="/blog"
-                className="border-[1.5px] border-[var(--accent)] text-[var(--accent)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold hover:bg-[var(--accent)] hover:text-white transition-colors inline-flex items-center"
+                className="border-[1.5px] border-[var(--accent)] text-[var(--accent)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold hover:bg-[var(--accent)] hover:text-white transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 運営ブログを読む →
               </Link>
@@ -742,7 +742,7 @@ export default async function LandingPage() {
               })}
             </div>
             <div className="text-center mt-8">
-              <Link href="/blog" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+              <Link href="/blog" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                 記事をもっと読む →
               </Link>
             </div>
@@ -818,7 +818,7 @@ export default async function LandingPage() {
                 })}
               </div>
               <div className="text-center mt-8">
-                <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+                <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   Cast Talk をもっと読む →
                 </Link>
               </div>
@@ -845,7 +845,7 @@ export default async function LandingPage() {
               ))}
             </div>
             <div className="text-center mt-8">
-              <Link href="/faq" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+              <Link href="/faq" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                 よくある質問をすべて見る →
               </Link>
             </div>
@@ -876,7 +876,7 @@ export default async function LandingPage() {
                 <div className="mt-8">
                   <Link
                     href="/contact"
-                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     問い合わせる（無料・返信は2営業日以内） →
                   </Link>
