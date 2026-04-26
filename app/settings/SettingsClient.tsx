@@ -434,8 +434,9 @@ export function SettingsClient({
 
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">表示名</label>
+                    <label htmlFor="settings-name" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">表示名</label>
                     <TextInput
+                      id="settings-name"
                       type="text"
                       value={name}
                       onChange={(event) => setName(event.target.value)}
@@ -482,8 +483,9 @@ export function SettingsClient({
                   <>
                     <div className="space-y-3">
                       <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいメールアドレス</label>
+                        <label htmlFor="settings-new-email" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいメールアドレス</label>
                         <TextInput
+                          id="settings-new-email"
                           type="email"
                           value={newEmail}
                           onChange={(event) => setNewEmail(event.target.value)}
@@ -720,8 +722,9 @@ export function SettingsClient({
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5">
                 <div className="space-y-4">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいパスワード</label>
+                    <label htmlFor="settings-password" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいパスワード</label>
                     <TextInput
+                      id="settings-password"
                       type="password"
                       autoComplete="new-password"
                       value={password}
@@ -731,8 +734,9 @@ export function SettingsClient({
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[var(--text)]">確認用パスワード</label>
+                    <label htmlFor="settings-password-confirm" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">確認用パスワード</label>
                     <TextInput
+                      id="settings-password-confirm"
                       type="password"
                       autoComplete="new-password"
                       value={passwordConfirm}
