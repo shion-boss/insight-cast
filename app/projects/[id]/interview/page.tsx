@@ -533,7 +533,7 @@ export default function InterviewPage() {
               <button
                 type="button"
                 onClick={() => setIsSupportPanelOpen(false)}
-                className="rounded-[var(--r-sm)] px-2 py-1 text-xs text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                className="rounded-[var(--r-sm)] px-2 py-1 text-xs text-[var(--text3)] hover:text-[var(--text)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 閉じる
               </button>
