@@ -34,12 +34,13 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
                 onClick={() => toggle(index)}
                 className="flex w-full items-center justify-between gap-4 bg-[var(--surface)] px-6 py-5 text-left transition-colors hover:bg-[var(--surface2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                 aria-expanded={open}
+                aria-controls={`${group.id}-answer-${index}`}
               >
                 <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>
-                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`}>▾</span>
+                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
               </button>
               {open && (
-                <div className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]">
+                <div id={`${group.id}-answer-${index}`} className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]">
                   {item.a}
                 </div>
               )}
@@ -63,7 +64,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
               key={group.id}
               href={`#${group.id}`}
               onClick={() => setActiveId(group.id)}
-              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors ${
+              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                 activeId === group.id
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
                   : 'border-transparent text-[var(--text2)] hover:text-[var(--accent)]'
