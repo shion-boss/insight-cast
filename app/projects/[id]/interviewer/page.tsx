@@ -233,16 +233,20 @@ export default async function InterviewerPage({
             </section>
 
             {(error === 'monthly_limit' || error === 'lifetime_limit') && (
-              <div className="rounded-xl border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
-                {error === 'lifetime_limit'
-                  ? '無料体験の取材回数を使い切りました。プランへのアップグレードが必要です。'
-                  : '今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。'}
+              <div className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
+                <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[var(--err)]">
+                  {error === 'lifetime_limit'
+                    ? '無料体験の取材回数を使い切りました。プランへのアップグレードが必要です。'
+                    : '今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。'}
+                </p>
               </div>
             )}
 
             {error === 'theme-required' && (
-              <div className="rounded-xl border border-[var(--warn-l)] bg-[var(--warn-l)] px-4 py-3 text-sm text-[var(--warn)]">
-                テーマを自由入力する場合は内容を入れてください。決まっていなければ「テーマはお任せ」でも始められます。
+              <div className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
+                <CharacterAvatar src={selectedCharacter.icon48} alt={`${selectedCharacter.name}のアイコン`} emoji={selectedCharacter.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[var(--warn)]">テーマを自由入力する場合は内容を入れてください。決まっていなければ「テーマはお任せ」でも始められます。</p>
               </div>
             )}
 

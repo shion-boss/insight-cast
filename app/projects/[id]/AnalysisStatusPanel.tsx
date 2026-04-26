@@ -58,8 +58,9 @@ export default function AnalysisStatusPanel({
         <div className="flex flex-col gap-2 lg:min-w-[240px] lg:flex-shrink-0">
           {status === 'analyzing' ? (
             <>
-              <div className="inline-flex items-center justify-center rounded-xl border border-[var(--warn)]/30 bg-[var(--warn-l)] px-4 py-3 text-sm text-[var(--warn)]">
-                調査中です。数分ほどお待ちください
+              <div className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
+                <CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[var(--warn)]">調査中です。数分ほどお待ちください</p>
               </div>
               <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed`}>
                 この取材先を再調査する
