@@ -38,7 +38,7 @@ export default function UpdatePasswordPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         <div className="mb-8 text-center">
-          <Link href="/" className="font-serif text-[22px] font-bold text-[var(--text)]">
+          <Link href="/" className="font-serif text-[22px] font-bold text-[var(--text)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
             Insight <span className="text-[var(--accent)]">Cast</span>
           </Link>
         </div>

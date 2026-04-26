@@ -218,7 +218,7 @@ export default async function ProjectsPage() {
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={36} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <Link href={`/projects/${project.id}`} className="block">
+                    <Link href={`/projects/${project.id}`} className="block rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                       <div className="text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>
                       <div className="text-[12px] text-[var(--text3)] overflow-hidden text-ellipsis whitespace-nowrap">🔗 {project.hp_url}</div>
                     </Link>

@@ -674,7 +674,7 @@ export default async function LandingPage() {
             </div>
             <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
               料金の詳細は
-              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1">料金ページ</Link>
+              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
               をご覧ください。
             </p>
           </div>

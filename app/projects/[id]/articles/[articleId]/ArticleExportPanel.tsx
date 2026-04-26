@@ -463,6 +463,7 @@ export function ArticleExportPanel({
             <div className="flex flex-wrap items-center gap-3">
               <input
                 type="color"
+                aria-label="テーマカラーを選択"
                 value={themeColor}
                 onChange={(e) => setThemeColor(e.target.value)}
                 className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
@@ -499,7 +500,7 @@ export function ArticleExportPanel({
                   {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
                     <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
                   )}
-                  <input type="text" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <input type="text" aria-label="インタビュアーの表示名" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
                   <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
@@ -541,7 +542,7 @@ export function ArticleExportPanel({
                   {clientAvatarUrl && (
                     <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
                   )}
-                  <input type="text" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)]" />
+                  <input type="text" aria-label="取材先の表示名" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
                   <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">

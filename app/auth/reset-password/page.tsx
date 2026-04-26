@@ -34,7 +34,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         <div className="mb-8 flex justify-center">
-          <Link href="/">
+          <Link href="/" className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
             <img src="/logo.jpg" alt="Insight Cast" className="h-9 w-auto" />
           </Link>
         </div>
