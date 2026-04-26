@@ -37,6 +37,7 @@ export default function AppPreviewSection() {
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
+              aria-pressed={activeTab === tab}
               className={`rounded-[0.6rem] px-4 py-2 text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                 activeTab === tab
                   ? 'bg-white text-[var(--accent)] shadow-sm'

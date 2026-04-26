@@ -46,6 +46,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
             key={tab.id}
             type="button"
             onClick={() => setActiveFilter(tab.id)}
+            aria-pressed={activeFilter === tab.id}
             className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
               activeFilter === tab.id
                 ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
