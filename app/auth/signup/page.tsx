@@ -54,7 +54,7 @@ function SignupForm() {
 
     const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
     if (error) {
-      setError('登録に失敗しました。もう一度お試しください')
+      setError('登録に失敗しました。もう一度お試しください。')
       setLoading(false)
       return
     }
