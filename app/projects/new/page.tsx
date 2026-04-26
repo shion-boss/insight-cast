@@ -11,7 +11,7 @@ function getErrorMessage(error: string) {
   if (error === 'url') return '自社HPのURLを入力してから、もう一度登録してください。'
   if (error === 'competitor_limit') return '現在のプランの上限を超えています。競合URLの件数を減らしてから、もう一度登録してください。'
   if (error === 'competitor_self') return '自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。'
-  if (error === 'plan_limit') return '現在のプランで登録できる取材先の上限に達しています。追加したい場合はお問い合わせください。'
+  if (error === 'plan_limit') return '現在のプランで登録できる取材先の上限に達しています。複数の取材先を管理したい場合は、プランのアップグレードをご検討ください。'
   if (error === '1') return '登録中に問題が起きました。少し待ってから、もう一度お試しください。'
   return ''
 }

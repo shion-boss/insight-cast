@@ -150,7 +150,6 @@ export function AppShell({
                 <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" priority />
               </Link>
               <ToolMobileNav
-                navItems={NAV_ITEMS}
                 active={active}
                 accountLabel={accountLabel}
                 accountInitial={accountInitial}

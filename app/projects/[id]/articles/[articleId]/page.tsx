@@ -109,7 +109,7 @@ export default async function ArticleDetailPage({
                 />
               }
               title="まだ記事の本文が見つかりませんでした。"
-              description="少し待ってから開き直すと見られることがあります。取材先の管理から記事を再生成することもできます。"
+              description="少し待ってから開き直すと見られることがあります。取材先の管理から記事を作り直すこともできます。"
               tone="warning"
             />
             <div className="flex gap-3">
@@ -117,7 +117,7 @@ export default async function ArticleDetailPage({
                 href={`/projects/${id}/article?interviewId=${article.interview_id}`}
                 className={getButtonClass('primary', 'text-sm px-4 py-2.5')}
               >
-                記事を再生成する
+                記事を作り直す
               </Link>
               <Link
                 href={`/projects/${id}`}
