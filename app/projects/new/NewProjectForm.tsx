@@ -76,8 +76,9 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
       </div>
 
       {errorMessage && (
-        <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--warn-l)] bg-[var(--warn-l)] px-4 py-3 text-sm leading-relaxed text-[var(--warn)]">
-          {errorMessage}
+        <div role="alert" className="mb-6 flex items-start gap-3 rounded-[var(--r-lg)] bg-[var(--warn-l)] px-4 py-3">
+          <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm leading-relaxed text-[var(--warn)]">{errorMessage}</p>
         </div>
       )}
 

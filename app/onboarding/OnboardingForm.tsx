@@ -22,7 +22,7 @@ export function OnboardingForm({ next, hasError }: { next: string; hasError: boo
       {hasError && (
         <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
           <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-[var(--err)]">登録できませんでした。もう一度お試しください。</p>
+          <p id="onboarding-error" className="text-sm text-[var(--err)]">登録できませんでした。もう一度お試しください。</p>
         </div>
       )}
       <div>
