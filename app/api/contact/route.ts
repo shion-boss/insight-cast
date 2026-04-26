@@ -174,7 +174,7 @@ export async function POST(req: Request) {
 
   if (error) {
     return NextResponse.json(
-      { code: 'DB_ERROR', message: '保存に失敗しました' },
+      { code: 'DB_ERROR', message: '送信できませんでした。しばらく待ってからもう一度お試しください。' },
       { status: 500 },
     )
   }

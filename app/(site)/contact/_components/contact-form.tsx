@@ -66,13 +66,20 @@ export function ContactForm() {
         }),
       })
       const json = await res.json().catch(() => null)
-      if (!res.ok) throw new Error(json?.message ?? '送信失敗')
+      if (!res.ok) {
+        const apiMessage = typeof json?.message === 'string' && json.message
+          ? json.message
+          : '送信できませんでした。時間をおいてもう一度お試しください。'
+        throw new Error(apiMessage)
+      }
       setStatus('success')
     } catch (error) {
       const message =
         error instanceof Error && error.name === 'AbortError'
           ? '送信がタイムアウトしました。時間をおいて再度お試しください。'
-          : (error instanceof Error ? error.message : '送信できませんでした。時間をおいて再度お試しください。')
+          : error instanceof Error
+            ? error.message
+            : '送信できませんでした。時間をおいてもう一度お試しください。'
       setServerMessage(message)
       setStatus('error')
     } finally {
