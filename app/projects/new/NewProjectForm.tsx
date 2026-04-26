@@ -30,9 +30,23 @@ function SubmitProjectButton({
   )
 }
 
+function validateUrl(raw: string): string | null {
+  const trimmed = raw.trim()
+  if (!trimmed) return null
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  try {
+    const parsed = new URL(withProtocol)
+    if (!parsed.hostname.includes('.')) return 'URLの形式を確認してください（例: https://example.com）'
+    return null
+  } catch {
+    return 'URLの形式を確認してください（例: https://example.com）'
+  }
+}
+
 export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Props) {
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
+  const [urlError, setUrlError] = useState<string | null>(null)
   const [competitorIssue, setCompetitorIssue] = useState<string | null>(null)
   const [canSubmit, setCanSubmit] = useState(true)
   const mint = getCharacter('mint')
@@ -89,10 +103,20 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
               name="url"
               required
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={(e) => {
+                setUrl(e.target.value)
+                setUrlError(null)
+              }}
+              onBlur={(e) => setUrlError(validateUrl(e.target.value))}
+              aria-describedby={urlError ? 'url-error' : 'url-hint'}
+              aria-invalid={urlError ? true : undefined}
               placeholder="https://example.com"
             />
-            <p className="mt-1 text-[12px] text-[var(--text3)]">https:// がなくても大丈夫です</p>
+            {urlError ? (
+              <p id="url-error" className="mt-1 text-[12px] text-[var(--err)]">{urlError}</p>
+            ) : (
+              <p id="url-hint" className="mt-1 text-[12px] text-[var(--text3)]">https:// がなくても大丈夫です</p>
+            )}
           </div>
         </section>
 
