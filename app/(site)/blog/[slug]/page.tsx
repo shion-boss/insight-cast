@@ -26,6 +26,18 @@ export async function generateMetadata({
   return {
     title: `${post.title} | Insight Cast`,
     description: post.excerpt,
+    openGraph: {
+      title: `${post.title} | Insight Cast`,
+      description: post.excerpt ?? undefined,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/blog/${slug}`,
+      siteName: 'Insight Cast',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${post.title} | Insight Cast`,
+      description: post.excerpt ?? undefined,
+    },
   }
 }
 

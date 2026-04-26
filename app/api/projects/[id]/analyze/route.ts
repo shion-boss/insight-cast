@@ -10,7 +10,7 @@ import { buildClassificationSummary } from '@/lib/content-map'
 import { classifyBlogPosts } from '@/lib/content-map.server'
 import { buildBlogFreshnessMetrics, discoverNewBlogPosts, discoverSiteBlogPosts, getStoredSiteBlogPosts, COMPETITOR_BLOG_POST_LIMIT } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -338,6 +338,9 @@ export async function POST(
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   if (await isFreePlanLocked(supabase, user.id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
+  if (!(await checkRateLimit(user.id, '/api/projects/[id]/analyze')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
   const { data: project } = await supabase

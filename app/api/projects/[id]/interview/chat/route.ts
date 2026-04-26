@@ -3,7 +3,7 @@ import { buildInterviewQualityContext } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -20,6 +20,9 @@ export async function POST(
   if (!user) return new Response('Unauthorized', { status: 401 })
   if (await isFreePlanLocked(supabase, user.id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
+  if (!(await checkRateLimit(user.id, '/api/projects/[id]/interview/chat')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
   const body = await req.json().catch(() => null)

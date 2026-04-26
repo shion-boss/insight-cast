@@ -1,5 +1,30 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 
+// Per-user rate limits for AI routes
+export const RATE_LIMITS: Record<string, { maxRequests: number; windowMs: number }> = {
+  '/api/projects/[id]/interview/chat': { maxRequests: 30, windowMs: 60_000 },
+  '/api/projects/[id]/analyze':        { maxRequests: 3,  windowMs: 3_600_000 },
+  '/api/projects/[id]/article':        { maxRequests: 5,  windowMs: 3_600_000 },
+  '/api/cast-talk/generate':           { maxRequests: 5,  windowMs: 3_600_000 },
+}
+
+export async function checkRateLimit(userId: string, route: string): Promise<{ allowed: boolean }> {
+  const limit = RATE_LIMITS[route]
+  if (!limit) return { allowed: true }
+
+  const supabase = createAdminClient()
+  const since = new Date(Date.now() - limit.windowMs).toISOString()
+  const { count, error } = await supabase
+    .from('api_usage_logs')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('route', route)
+    .gte('created_at', since)
+
+  if (error) return { allowed: true } // ログ障害時はブロックしない
+  return { allowed: (count ?? 0) < limit.maxRequests }
+}
+
 // API pricing per token (USD)
 const MODEL_PRICING: Record<string, { input: number; output: number }> = {
   // Claude API (Anthropic)

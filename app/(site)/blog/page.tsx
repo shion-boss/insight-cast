@@ -7,6 +7,18 @@ export const metadata: Metadata = {
   title: 'ブログ | Insight Cast',
   description:
     'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
+  openGraph: {
+    title: 'ブログ | Insight Cast',
+    description: 'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
+    url: `${process.env.NEXT_PUBLIC_APP_URL}/blog`,
+    siteName: 'Insight Cast',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ブログ | Insight Cast',
+    description: 'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
+  },
 }
 
 export default async function BlogPage() {

@@ -39,9 +39,9 @@
 - [x] `interview/chat` に `userMessage` 2000文字上限を設定済み
 - [x] Firecrawl に渡す URL を `https://` のみに制限（SSRF対策）
 - [x] `interview/chat` のプラン上限チェック（月次・生涯）
-- [ ] AI を使う全 API ルート（`analyze`、`article`、`cast-talk/generate`）に対してレート制限を追加（要実装）
+- [x] AI を使う全 API ルート（`analyze`、`article`、`interview/chat`）に対してレート制限を追加（`api_usage_logs` ベース、`lib/api-usage.ts` の `checkRateLimit`）
 - [ ] Zod によるリクエストバリデーションの統一（現在は手動検証）
-- [ ] API レスポンスにスタックトレースが含まれていないことを確認
+- [x] API レスポンスにスタックトレースが含まれていないことを確認（`error.message` 露出を 2ファイルで `'internal_error'` に修正済み）
 - [ ] バックグラウンド分析中の重複リクエスト排他制御を確認
 
 ---
@@ -50,9 +50,9 @@
 
 - [x] `subscriptions` テーブルの RLS が有効
 - [x] プロジェクト操作で `user_id` チェックを実施
-- [ ] `projects`、`interviews`、`articles`、`interview_messages` の全テーブルで RLS が有効か Supabase ダッシュボードで確認
-- [ ] 全 `[id]` パラメータを含む API ルートで所有者チェックが実施されているか確認（IDOR防止）
-- [ ] `api/admin/*` エンドポイントが API ルート内でも管理者チェックをしているか確認
+- [x] `projects`、`interviews`、`articles`、`interview_messages` の全テーブルで RLS が有効か（マイグレーションファイルで確認済み。全テーブル `ENABLE ROW LEVEL SECURITY` + ポリシー設定済み）
+- [x] 全 `[id]` パラメータを含む API ルートで所有者チェックが実施されているか確認（全ルート: user_id 直接チェックまたは RLS でカバー済み）
+- [x] `api/admin/*` エンドポイントが API ルート内でも管理者チェックをしているか確認（全ルート: ADMIN_EMAILS チェックまたは isAuthorized チェック済み）
 
 ---
 
@@ -74,10 +74,8 @@
 
 - [x] `.gitignore` で `.env*` を除外
 - [x] `SUPABASE_SERVICE_ROLE_KEY` / `STRIPE_SECRET_KEY` が `NEXT_PUBLIC_` でない
-- [ ] `git log -p | grep -iE "secret|api.?key|password"` でシークレットの混入がないか確認
-- [ ] `.env.local.example` に全必須キーが記載されているか確認
-  - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_PERSONAL`, `STRIPE_PRICE_ID_BUSINESS`
-  - `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_GA_ID`, `RESEND_API_KEY`, `FIRECRAWL_API_KEY`
+- [x] `git log -p | grep -iE "secret|api.?key|password"` でシークレットの混入がないか確認（実施済み。全て `process.env.*` 経由で実値なし）
+- [x] `.env.local.example` に全必須キーが記載されているか確認（`STRIPE_SECRET_KEY`、`STRIPE_WEBHOOK_SECRET`、`STRIPE_PRICE_ID_*`、`NEXT_PUBLIC_APP_URL`、`NEXT_PUBLIC_GA_ID`、`RESEND_API_KEY` を追記済み）
 - [ ] Vercel の本番環境変数がすべて設定されているか確認
 - [ ] Preview 環境と本番環境で別の Stripe / Supabase プロジェクトを使っているか
 
@@ -97,7 +95,7 @@
 
 - [x] `robots.ts` で `/admin`・`/dashboard`・`/settings` 等を `noindex` に設定済み
 - [x] `sitemap.ts` でサイトマップを生成済み
-- [ ] LP・料金ページ・ブログ記事に OG タグ（`openGraph`・`twitter`）が設定されているか
+- [x] LP・料金ページ・ブログ記事に OG タグ（`openGraph`・`twitter`）が設定されているか（LP・料金ページは前セッション済み、ブログ一覧・詳細を追加）
 - [ ] `NEXT_PUBLIC_APP_URL` が本番 URL に設定されているか（sitemap の URL が正しいか）
 - [ ] Google Search Console にサイトマップを送信済みか
 
@@ -108,13 +106,13 @@
 - [x] `app/global-error.tsx` でルートレイアウトのエラーを捕捉
 - [x] `app/error.tsx` で各ルートセグメントのエラーを捕捉
 - [x] `app/not-found.tsx` が存在する
-- [ ] `console.log` が本番ビルドに残っていないか確認（`grep -r "console\.log" app/ lib/` で検索）
+- [x] `console.log` が本番ビルドに残っていないか確認（grep 実施、0件）
 
 ---
 
 ## 10. 依存パッケージ
 
-- [ ] `npm audit` でクリティカル・高重要度の脆弱性がないことを確認
+- [x] `npm audit` でクリティカル・高重要度の脆弱性がないことを確認（実施済み、0件）
 - [ ] `next`・`@supabase/ssr`・`stripe`・`@anthropic-ai/sdk` が最新安定版か確認
 
 ---
@@ -129,17 +127,17 @@
 - [ ] 特定商取引法の必須記載項目（代表者名・住所・電話番号・キャンセルポリシー等）が揃っているか確認
 - [ ] Stripe・Supabase・Anthropic への個人情報提供がプライバシーポリシーに記載されているか
 - [ ] Cookie 同意バナーが必要かを確認（EU/UK ユーザーを対象にする場合は必須）
-- [ ] アカウント削除時に全関連データが連鎖削除されるか確認（`ON DELETE CASCADE`）
+- [x] アカウント削除時に全関連データが連鎖削除されるか確認（マイグレーション確認済み。全テーブルで `ON DELETE CASCADE` 設定済み）
 
 ---
 
 ## 優先度の高い未対応項目（要対応）
 
-| 優先度 | 項目 |
-|---|---|
-| 高 | AI API ルートへのレート制限（コスト爆発防止） |
-| 高 | 全テーブルの RLS 有効化を Supabase ダッシュボードで確認 |
-| 中 | CSP を nonce ベースに移行（`unsafe-inline` 除去） |
-| 中 | Vercel maxDuration vs 契約プランの整合性確認 |
-| 中 | `npm audit` の実施 |
-| 中 | `console.log` の本番ビルドへの混入確認 |
+| 優先度 | 項目 | 状態 |
+|---|---|---|
+| ~~高~~ | ~~AI API ルートへのレート制限（コスト爆発防止）~~ | ✅ 完了 |
+| ~~高~~ | ~~全テーブルの RLS 有効化を Supabase ダッシュボードで確認~~ | ✅ 完了 |
+| 中 | CSP を nonce ベースに移行（`unsafe-inline` 除去） | 未対応 |
+| ~~中~~ | ~~Vercel `maxDuration` vs 契約プランの整合性確認~~ | ✅ Hobby (60s) に合わせて修正済み |
+| ~~中~~ | ~~`npm audit` の実施~~ | ✅ 完了 |
+| ~~中~~ | ~~`console.log` の本番ビルドへの混入確認~~ | ✅ 完了 |

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import Anthropic from '@anthropic-ai/sdk'
 import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -179,6 +179,9 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
+  if (!(await checkRateLimit(user.id, '/api/projects/[id]/article')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
+  }
 
   const body = await req.json()
   const parsed = z.object({

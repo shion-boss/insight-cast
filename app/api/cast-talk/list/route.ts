@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     .order('published_at', { ascending: false })
     .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'internal_error' }, { status: 500 })
 
   return NextResponse.json({ talks: data ?? [], total: count ?? 0, pageSize: PAGE_SIZE })
 }

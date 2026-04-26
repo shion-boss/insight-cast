@@ -41,10 +41,32 @@ export async function middleware(request: NextRequest) {
     pathname === '/terms' ||
     pathname === '/tokushoho' ||
     pathname === '/contact' ||
-    pathname.startsWith('/auth/')
+    pathname.startsWith('/auth/') ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt'
 
-  // /admin へのアクセス制御: ADMIN_EMAILS に含まれるメールのみ許可
+  // /admin へのアクセス制御: ベーシック認証 + ADMIN_EMAILS チェック
   if (pathname.startsWith('/admin')) {
+    // ベーシック認証（PCI DSS 要件: パスワード認証に加えた追加の制限）
+    const basicUser = process.env.ADMIN_BASIC_AUTH_USER
+    const basicPass = process.env.ADMIN_BASIC_AUTH_PASSWORD
+    if (basicUser && basicPass) {
+      const authorization = request.headers.get('authorization')
+      if (!authorization || !authorization.startsWith('Basic ')) {
+        return new NextResponse('Authentication required', {
+          status: 401,
+          headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+        })
+      }
+      const [credUser, credPass] = atob(authorization.slice(6)).split(':')
+      if (credUser !== basicUser || credPass !== basicPass) {
+        return new NextResponse('Authentication required', {
+          status: 401,
+          headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
+        })
+      }
+    }
+
     if (!user) {
       return NextResponse.redirect(new URL('/auth/login', request.url))
     }
