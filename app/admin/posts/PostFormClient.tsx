@@ -170,6 +170,7 @@ function BlockEditor({
                 )}
               </div>
               <textarea
+                aria-label={`本文ブロック ${i + 1}（Markdown）`}
                 value={block.content}
                 onChange={(e) => updateContent(block.id, e.target.value)}
                 rows={10}
@@ -190,6 +191,7 @@ function BlockEditor({
                 </button>
               </div>
               <textarea
+                aria-label={`本文ブロック ${i + 1}（埋め込みHTML）`}
                 value={block.content}
                 onChange={(e) => updateContent(block.id, e.target.value)}
                 rows={8}
@@ -341,8 +343,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div>
-            <FieldLabel>抜粋（一覧ページに表示されます）</FieldLabel>
+            <FieldLabel htmlFor="post-excerpt">抜粋（一覧ページに表示されます）</FieldLabel>
             <textarea
+              id="post-excerpt"
               value={form.excerpt}
               onChange={(e) => handleChange('excerpt', e.target.value)}
               rows={3}

@@ -574,6 +574,7 @@ export function ArticleExportPanel({
         </div>
       ) : (
         <textarea
+          aria-label="記事コンテンツ編集エリア"
           value={safeFormat === 'markdown' ? editedContent : output}
           onChange={safeFormat === 'markdown' ? (e) => setEditedContent(e.target.value) : undefined}
           readOnly={safeFormat !== 'markdown'}

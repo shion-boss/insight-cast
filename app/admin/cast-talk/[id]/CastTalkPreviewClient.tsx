@@ -160,6 +160,7 @@ export function CastTalkPreviewClient({
                     {char?.name ?? msg.castId}
                   </p>
                   <textarea
+                    aria-label={`${char?.name ?? msg.castId}のセリフ`}
                     value={msg.text}
                     onChange={(e) => updateMessage(i, e.target.value)}
                     rows={3}
@@ -174,10 +175,11 @@ export function CastTalkPreviewClient({
 
       {/* サマリー */}
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
+        <label htmlFor="cast-talk-summary" className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
           サマリー
         </label>
         <textarea
+          id="cast-talk-summary"
           value={summary}
           onChange={(e) => { setSummary(e.target.value); setSaved(false) }}
           rows={3}

@@ -494,6 +494,7 @@ export default function InterviewPage() {
           </div>
           <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3 items-end">
             <textarea
+              aria-label="インタビューへの回答を入力"
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
