@@ -113,7 +113,7 @@ function SignupForm() {
             </p>
             <Link
               href="/auth/login"
-              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)]"
+              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               ログイン画面へ
             </Link>

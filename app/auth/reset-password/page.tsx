@@ -51,7 +51,7 @@ export default function ResetPasswordPage() {
               </p>
               <Link
                 href="/auth/login"
-                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)]"
+                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 ログイン画面に戻る
               </Link>
@@ -94,7 +94,7 @@ export default function ResetPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href="/auth/login"
-                  className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors"
+                  className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   ← ログインに戻る
                 </Link>

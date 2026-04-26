@@ -214,7 +214,7 @@ export default async function DashboardPage() {
             こんにちは、{profile?.name ?? 'ゲスト'}さん
           </div>
           {!profile?.name && (
-            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline">
+            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
               名前を設定する →
             </Link>
           )}
@@ -288,7 +288,7 @@ export default async function DashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Link
                   href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
-                  className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                  className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   {isProjectLimitReached && (
                     <div className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-[var(--text3)] text-white">
@@ -304,7 +304,7 @@ export default async function DashboardPage() {
                 {isInterviewLimitReached ? (
                   <Link
                     href="/pricing?reason=interview_limit"
-                    className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity"
+                    className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
@@ -314,7 +314,7 @@ export default async function DashboardPage() {
                 ) : (
                   <Link
                     href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
-                    className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                    className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
                     <div className="text-sm font-semibold text-[var(--text2)]">取材画面を開く</div>
@@ -322,7 +322,7 @@ export default async function DashboardPage() {
                 )}
                 <Link
                   href="/articles"
-                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
+                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   <CharacterAvatar src={rain?.icon48} alt={rain?.name ?? 'レイン'} emoji={rain?.emoji} size={40} />
                   <div className="text-sm font-semibold text-[var(--text2)]">記事素材を確認する</div>
@@ -336,7 +336,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
-                <Link href="/projects" className="text-sm text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
+                <Link href="/projects" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -390,7 +390,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" className="text-sm text-[var(--accent)] font-semibold hover:underline">すべて見る →</Link>
+                <Link href="/interviews" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech

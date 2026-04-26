@@ -120,7 +120,7 @@ function LoginForm() {
                 <label htmlFor="login-password" className="text-sm font-medium text-[var(--text2)]">パスワード</label>
                 <Link
                   href="/auth/reset-password"
-                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors"
+                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   パスワードを忘れた場合
                 </Link>
