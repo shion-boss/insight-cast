@@ -146,7 +146,7 @@ export default function CompetitorsForm({
       />
 
       {(competitorIssue || error) && (
-        <p className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <p role="alert" className="rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {error ?? competitorIssue}
         </p>
       )}

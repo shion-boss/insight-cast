@@ -223,7 +223,7 @@ export default function CompetitorSelectionFields({
       )}
 
       {validationIssue && (
-        <p className="rounded-lg bg-[var(--err-l)] px-3 py-2 text-xs leading-relaxed text-[var(--err)]">
+        <p role="alert" className="rounded-lg bg-[var(--err-l)] px-3 py-2 text-xs leading-relaxed text-[var(--err)]">
           {validationIssue}
         </p>
       )}
