@@ -585,10 +585,10 @@ export default async function LandingPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"></th>
-                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで書いてもらう</th>
-                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
-                    <th className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
+                    <th scope="col" className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"><span className="sr-only">比較項目</span></th>
+                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで書いてもらう</th>
+                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
+                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
                   </tr>
                 </thead>
                 <tbody>

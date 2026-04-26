@@ -211,12 +211,12 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">タイトル</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">形式</th>
-                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] md:table-cell">キャスト</th>
-                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] lg:table-cell">作成日</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">ステータス</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-[var(--text3)]">操作</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">タイトル</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">形式</th>
+                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] md:table-cell">キャスト</th>
+                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] lg:table-cell">作成日</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">ステータス</th>
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold uppercase text-[var(--text3)]">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
