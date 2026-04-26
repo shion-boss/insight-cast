@@ -54,16 +54,19 @@ function Toggle({
   on,
   onToggle,
   disabled = false,
+  label,
 }: {
   on: boolean
   onToggle: () => void
   disabled?: boolean
+  label?: string
 }) {
   return (
     <button
       type="button"
       role="switch"
       aria-checked={on}
+      aria-label={label}
       disabled={disabled}
       onClick={onToggle}
       className="relative h-6 w-11 flex-shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-60"
@@ -673,6 +676,7 @@ export function SettingsClient({
                     <Toggle
                       on={notifications[notification.key]}
                       disabled={notificationInputsDisabled}
+                      label={notification.label}
                       onToggle={() =>
                         setNotifications((current) => ({
                           ...current,
