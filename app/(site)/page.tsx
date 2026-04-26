@@ -77,18 +77,18 @@ const OUTCOME_ITEMS = [
 ] as const
 
 const WORKFLOW_ITEMS = [
-  { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいかが、最初から見えた状態で始められます。' },
+  { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいか、最初から見えてきます。' },
   { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分の会話で、あなたの話が引き出されます。' },
-  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材がまとまります。「何を書くか」に迷う前に、素材が手元にある状態で始められます。' },
+  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材がまとまります。「何を書くか」ではなく、「どの素材を使うか」だけを考えてください。' },
 ] as const
 
 const COMPARE_ROWS = [
-  { label: '「何を書くか」を考えなくていい',  ai: false, none: false },
-  { label: '引き出せていなかった強みが言葉になる', ai: false, none: false },
-  { label: '専門知識がなくても使える',          ai: true,  none: false },
-  { label: '継続しやすい（止まりにくい）',      ai: false, none: false },
-  { label: 'ホームページの現状分析つき',        ai: false, none: false },
-  { label: '無料から始められる',                 ai: false, none: false },
+  { label: '「何を書くか」を考えなくていい',    ai: false, none: false },
+  { label: '自分では気づかない強みが言葉になる', ai: false, none: false },
+  { label: '専門知識がなくても使える',           ai: true,  none: false },
+  { label: 'ネタ切れせず継続できる',             ai: false, none: false },
+  { label: 'ホームページの現状分析つき',         ai: false, none: false },
+  { label: '無料で体験してから始められる',       ai: false, none: false },
 ] as const
 
 const PLANS = [
