@@ -86,6 +86,8 @@ export default async function ProjectsPage() {
 
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
+  // updated_at 降順で先頭 maxProjects 件が有効。それ以降はダウングレードによるロック中
+  const lockedProjectIds = new Set(projectList.slice(planLimits.maxProjects).map((p) => p.id))
 
   // projects が取れてから audits, competitors, competitorAnalyses, interviews を並列取得
   const projectIds = projectList.map((project) => project.id)
@@ -177,6 +179,28 @@ export default async function ProjectsPage() {
         </Link>
       )}
     >
+      {lockedProjectIds.size > 0 && (
+        <div className="mb-6 flex items-start gap-3 rounded-[var(--r-lg)] border border-[var(--warn)]/40 bg-[var(--warn-l)] px-5 py-4">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0.5 flex-shrink-0 text-[var(--warn)]" aria-hidden="true">
+            <path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 4v5m0 2v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-[var(--text)]">
+              プランの上限を超えた取材先があります
+            </p>
+            <p className="mt-1 text-sm text-[var(--text2)]">
+              現在のプランでは取材先を{planLimits.maxProjects}件まで管理できます。ロック中の取材先を削除するか、プランをアップグレードしてください。
+            </p>
+            <Link
+              href="/pricing?reason=project_over_limit"
+              className="mt-2 inline-block text-sm font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+            >
+              プランを見る →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Summary */}
       <div className="flex gap-4 mb-7">
         {[
@@ -206,16 +230,24 @@ export default async function ProjectsPage() {
               interviewCount: ivCount,
               articleCount,
             })
+            const isLocked = lockedProjectIds.has(project.id)
 
             return (
               <div
                 key={project.id}
-                className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6"
+                className={`bg-[var(--surface)] border rounded-[var(--r-lg)] p-6 ${isLocked ? 'border-[var(--warn)]/40 opacity-75' : 'border-[var(--border)]'}`}
               >
                 {/* Header */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
-                    <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={36} />
+                  <div className={`w-12 h-12 rounded-[var(--r)] flex items-center justify-center flex-shrink-0 ${isLocked ? 'bg-[var(--bg2)]' : 'bg-[var(--accent-l)]'}`}>
+                    {isLocked ? (
+                      <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text3)]" aria-hidden="true">
+                        <rect x="3" y="11" width="14" height="13" rx="3" fill="currentColor"/>
+                        <path d="M6 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                      </svg>
+                    ) : (
+                      <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={36} />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <Link href={`/projects/${project.id}`} className="block rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
@@ -225,6 +257,11 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="flex-shrink-0">
                     <div className="flex flex-wrap justify-end gap-2">
+                      {isLocked && (
+                        <StatusPill tone="warning" className="px-2.5 py-1 text-[11px] font-semibold">
+                          ロック中
+                        </StatusPill>
+                      )}
                       <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
                         {analysisBadge.label}
                       </StatusPill>
@@ -253,12 +290,25 @@ export default async function ProjectsPage() {
 
                 {/* Actions */}
                 <div className="flex gap-2 flex-wrap">
+                  {isLocked ? (
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text3)] cursor-not-allowed"
+                      title="プランの上限を超えているため取材できません"
+                    >
+                      <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="1" y="6" width="9" height="7" rx="2" fill="currentColor"/>
+                        <path d="M3 6V4a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                      </svg>
+                      取材不可
+                    </span>
+                  ) : (
                   <Link
                     href={`/projects/${project.id}/interviewer`}
                     className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
                   >
                     取材する →
                   </Link>
+                  )}
                   <Link
                     href={`/projects/${project.id}`}
                     className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}

@@ -42,10 +42,17 @@ export async function createInterview(projectId: string, formData: FormData) {
     .from('projects')
     .select('id')
     .eq('user_id', user.id)
+    .order('updated_at', { ascending: false })
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
 
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
+
+  // プランダウングレード時: 上限を超えた取材先からのインタビューを防ぐ
+  const activeProjectIds = new Set(projectIds.slice(0, planLimits.maxProjects))
+  if (!activeProjectIds.has(projectId)) {
+    redirect(`/projects/${projectId}/interviewer?error=project_over_limit`)
+  }
 
   if (planLimits.lifetimeInterviewLimit !== null) {
     // 無料プラン: 生涯インタビュー回数チェック

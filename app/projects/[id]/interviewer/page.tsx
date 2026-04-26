@@ -46,7 +46,15 @@ export default async function InterviewerPage({
   const planLimits = getPlanLimits(userPlan)
   const freeLocked = await isFreePlanLocked(supabase, user.id)
 
-  const userProjectIds = (await supabase.from('projects').select('id').eq('user_id', user.id)).data?.map((p) => p.id) ?? []
+  const { data: allUserProjects } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('user_id', user.id)
+    .order('updated_at', { ascending: false })
+  const userProjectIds = (allUserProjects ?? []).map((p) => p.id as string)
+
+  const activeProjectIds = new Set(userProjectIds.slice(0, planLimits.maxProjects))
+  const isProjectOverLimit = !activeProjectIds.has(id)
 
   let isInterviewLimitReached = false
   if (planLimits.lifetimeInterviewLimit !== null) {
@@ -89,6 +97,44 @@ export default async function InterviewerPage({
       competitors: { url: string } | { url: string }[] | null
     }>),
   )
+
+  if (isProjectOverLimit) {
+    return (
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
+        <PageHeader title="キャストを選ぶ" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+        <div className="max-w-2xl mx-auto px-6 py-10">
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={mint?.icon48}
+                alt={`${mint?.name ?? 'ミント'}のアイコン`}
+                emoji={mint?.emoji}
+                size={48}
+              />
+            )}
+            name={mint?.name ?? 'ミント'}
+            title={`現在のプランで取材できる取材先は${planLimits.maxProjects}件までです。`}
+            description="この取材先からの取材はプランの上限を超えているため、いまはご利用いただけません。他の取材先を削除するか、プランをアップグレードしてください。"
+            tone="soft"
+          />
+          <div className="mt-6 flex flex-col gap-3">
+            <Link
+              href="/pricing?reason=project_over_limit"
+              className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              プランをアップグレードする →
+            </Link>
+            <Link
+              href="/projects"
+              className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-sm font-semibold hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              取材先の一覧へ
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
@@ -231,6 +277,15 @@ export default async function InterviewerPage({
                 </Link>
               </div>
             </section>
+
+            {error === 'project_over_limit' && (
+              <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
+                <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-[var(--err)]">
+                  この取材先はプランの上限を超えているため、取材を開始できません。他の取材先を削除するか、プランをアップグレードしてください。
+                </p>
+              </div>
+            )}
 
             {(error === 'monthly_limit' || error === 'lifetime_limit') && (
               <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
