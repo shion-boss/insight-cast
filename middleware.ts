@@ -1,6 +1,19 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// Edge Runtime でのタイミングセーフな文字列比較（タイミングアタック対策）
+function timingSafeEqual(a: string, b: string): boolean {
+  const encoder = new TextEncoder()
+  const aBytes = encoder.encode(a)
+  const bBytes = encoder.encode(b)
+  const len = Math.max(aBytes.length, bBytes.length)
+  let result = aBytes.length === bBytes.length ? 0 : 1
+  for (let i = 0; i < len; i++) {
+    result |= (aBytes[i] ?? 0) ^ (bBytes[i] ?? 0)
+  }
+  return result === 0
+}
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -58,8 +71,12 @@ export async function middleware(request: NextRequest) {
           headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
         })
       }
-      const [credUser, credPass] = atob(authorization.slice(6)).split(':')
-      if (credUser !== basicUser || credPass !== basicPass) {
+      // RFC 7617: パスワードに ':' が含まれる場合を正しく扱うため indexOf で分割
+      const decoded = atob(authorization.slice(6))
+      const colonIdx = decoded.indexOf(':')
+      const credUser = decoded.slice(0, colonIdx)
+      const credPass = decoded.slice(colonIdx + 1)
+      if (!timingSafeEqual(credUser, basicUser) || !timingSafeEqual(credPass, basicPass)) {
         return new NextResponse('Authentication required', {
           status: 401,
           headers: { 'WWW-Authenticate': 'Basic realm="Admin"' },
