@@ -112,7 +112,7 @@ export function ContentMapPanel({
       </div>
 
       {error && (
-        <p className="text-sm text-[var(--err)] mb-4">{error}</p>
+        <p role="alert" className="text-sm text-[var(--err)] mb-4">{error}</p>
       )}
 
       {/* Not yet classified */}

@@ -87,7 +87,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   return (
     <div>
       {errorMsg && (
-        <div className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           <span className="mt-0.5 shrink-0">⚠</span>
           <div>
             <p>{errorMsg}</p>
