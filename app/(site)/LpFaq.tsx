@@ -5,16 +5,20 @@ import { useState } from 'react'
 type FaqItem = { readonly q: string; readonly a: string }
 
 export function LpFaq({ faqs }: { faqs: readonly FaqItem[] }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const [openSet, setOpenSet] = useState<Set<number>>(new Set())
 
   function toggle(i: number) {
-    setOpenIndex(prev => (prev === i ? null : i))
+    setOpenSet(prev => {
+      const next = new Set(prev)
+      next.has(i) ? next.delete(i) : next.add(i)
+      return next
+    })
   }
 
   return (
     <div className="divide-y divide-[var(--border)] rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
       {faqs.map((faq, i) => {
-        const open = openIndex === i
+        const open = openSet.has(i)
         const answerId = `lp-faq-answer-${i}`
         return (
           <div key={i}>
