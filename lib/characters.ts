@@ -122,6 +122,64 @@ export function getCastName(id: string): string {
   return getCharacter(id)?.name ?? id
 }
 
+// ---------- Cast Talk 口調定義 ----------
+//
+// Cast Talk（キャスト同士の対話記事）でキャラの一貫性を保つための口調ルール。
+// インタビュアーとしての人格（SYSTEM_PROMPTS）とは目的が異なるが、
+// 「同じキャラである」という一貫性を守るために、一人称・語尾・禁止語のみここで管理する。
+//
+// Cast Talk 生成プロンプト（generate/route.ts の DEFAULT_CONVERSATION_SYSTEM、
+// または .claude/skills/cast-talk/conversation-prompt.md）は、
+// このオブジェクトの定義を単一の参照源として扱う。
+// プロンプト文字列を直接変更する場合は必ずここも同時に更新すること。
+
+export type CastTalkVoice = {
+  /** 一人称（「私」「僕」など） */
+  firstPerson: string
+  /** 代表的な語尾・話し方の特徴 */
+  speechStyle: string
+  /** Cast Talk 内で使わない言葉 */
+  prohibited: string[]
+}
+
+export const CAST_TALK_VOICE: Record<string, CastTalkVoice> = {
+  mint: {
+    firstPerson: '私',
+    speechStyle: '柔らかい敬語。「〜ですよね」「〜が多いんです」「〜かなと思います」',
+    prohibited: ['だよね', 'じゃん', 'AIとして', '生成します', '処理します'],
+  },
+  claus: {
+    firstPerson: '私',
+    speechStyle: '落ち着いた敬語。断定より問いかけ。「〜ということですよね」「〜なんでしょうね」',
+    prohibited: ['だよね', 'じゃん', 'AIとして', '生成します', '処理します'],
+  },
+  rain: {
+    firstPerson: '僕',
+    speechStyle: '軽めの敬語・観察スタンス。「〜じゃないですか」「〜が気になって」',
+    prohibited: ['だよね', 'じゃん', 'AIとして', '生成します', '処理します'],
+  },
+}
+
+/**
+ * Cast Talk 生成プロンプト用に、登場キャスト2人分の口調定義を文字列化して返す。
+ * 登場しないキャストの定義を混入させないために、castIds で絞る。
+ */
+export function buildCastTalkVoiceContext(castIds: string[]): string {
+  const lines: string[] = []
+  for (const id of castIds) {
+    const voice = CAST_TALK_VOICE[id]
+    const character = getCharacter(id)
+    if (!voice || !character) continue
+    lines.push(
+      `【${character.name}（${character.species}）】`,
+      `- 一人称: ${voice.firstPerson}`,
+      `- 話し方: ${voice.speechStyle}`,
+      `- 使わない言葉: ${voice.prohibited.join('・')}`,
+    )
+  }
+  return lines.join('\n')
+}
+
 const PRIVACY_SCOPE_INSTRUCTION = `
 
 【情報のスコープについて】

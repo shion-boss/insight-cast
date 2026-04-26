@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { getCastName } from '@/lib/characters'
+import { getCastName, buildCastTalkVoiceContext } from '@/lib/characters'
 import { logApiUsage } from '@/lib/api-usage'
 
 export const maxDuration = 120
@@ -271,6 +271,17 @@ ${pastList}
 
 // ---------- 会話生成 ----------
 
+// DEFAULT_CONVERSATION_SYSTEM は Cast Talk 生成の「編集担当」プロンプト。
+// インタビュアーとしての人格（lib/characters.ts の SYSTEM_PROMPTS）とは目的が異なるが、
+// キャラの口調定義（一人称・語尾・禁止語）は CAST_TALK_VOICE（lib/characters.ts）を
+// 単一の参照源として、buildCastTalkVoiceContext() 経由でユーザーメッセージに注入している。
+//
+// このファイルの口調ルール記述（【口調の基本ルール】セクション）は
+// CAST_TALK_VOICE と必ず同期すること。どちらかを変えたら必ずもう一方も更新する。
+//
+// .claude/skills/cast-talk/conversation-prompt.md が存在すればそちらを優先して使う。
+// （ファイルがなければ以下の DEFAULT_CONVERSATION_SYSTEM にフォールバックする）
+
 const DEFAULT_CONVERSATION_SYSTEM = `あなたはInsight Castの編集担当です。
 AIキャスト同士の会話を、ブログ記事として読めるかたちに書き起こす仕事をしています。
 
@@ -380,7 +391,23 @@ function buildEditFewShot(edits: EditRecord[]): string {
   return lines.join('\n')
 }
 
-// ---------- レビューフィードバック ----------
+// ---------- レビューフィードバック（応急処置・生注入） ----------
+//
+// [応急処置] cast_talk_reviews の生テキストをそのままプロンプトに注入している。
+//
+// この方式は以下の理由で一時的な対処に留める:
+//   1. AIデザイナーによる合成を経ていない生の意見の積み上がりのため、
+//      矛盾したルールや誇張が入り込む可能性がある
+//   2. ai-education-loop スキル（.claude/skills/ai-education-loop/SKILL.md）が
+//      定義する「症例収集→分類→改善案→レビュー→記録」のプロセスをバイパスしている
+//   3. 実インタビュー（lib/characters.ts の SYSTEM_PROMPTS）には届かないため、
+//      フィードバックがキャラ全体に反映されない
+//
+// 正規の改善フロー（.claude/skills/cast-talk-feedback-loop/SKILL.md 参照）:
+//   AIデザイナーがレビューを定期合成 → 合成済みルールを skill file または
+//   DEFAULT_CONVERSATION_SYSTEM に反映 → 人間承認後に生注入を削除または縮小する
+//
+// 合成済みルールが skill file に書かれたら、そちらを優先してこの生注入は削除すること。
 
 type ReviewRecord = {
   overall_score: number
@@ -417,7 +444,7 @@ function buildReviewContext(reviews: ReviewRecord[]): string {
 
   if (improvements.length === 0 && goods.length === 0) return ''
 
-  const lines: string[] = ['【過去の品質評価フィードバック】']
+  const lines: string[] = ['【過去の品質評価フィードバック（応急処置・生注入）】']
   if (improvements.length > 0) {
     lines.push('繰り返さないようにしてほしい点:')
     lines.push(...improvements)
@@ -455,6 +482,10 @@ async function generateConversation(
       ? `${interviewerName}が取材する形式（${interviewerName}→${guestName}）`
       : `${interviewerName}と${guestName}が対等に話し合う形式`
 
+  // 登場する2人分の口調定義を lib/characters.ts の CAST_TALK_VOICE から取得する。
+  // 全員分を渡さないのは、登場しないキャストの口調が混入するリスクを避けるため。
+  const castVoiceContext = buildCastTalkVoiceContext([theme.interviewer, theme.guest])
+
   const [recentEdits, recentReviews] = await Promise.all([
     fetchRecentEdits(supabase),
     fetchRecentReviews(supabase),
@@ -471,6 +502,9 @@ async function generateConversation(
 登場キャスト:
   - インタビュアー側: ${interviewerName}（id: ${theme.interviewer}）
   - 回答者側: ${guestName}（id: ${theme.guest}）
+
+【口調の定義（必ず守ること）】
+${castVoiceContext}
 
 出力形式（JSONのみ）:
 {
