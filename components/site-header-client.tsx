@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { getButtonClass } from '@/components/ui'
@@ -34,7 +35,7 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
             href="/"
             className="transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            <img src="/logo.jpg" alt="Insight Cast" className="h-[32px] w-auto object-contain" />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" priority />
           </Link>
 
           {/* PC用ボタン群 */}

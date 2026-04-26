@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import type { ReactNode } from 'react'
 
 const NAV_ITEMS = [
@@ -23,7 +24,7 @@ export function AppShellSkeleton({
       <aside className="border-b border-[var(--border)] bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[236px] lg:border-b-0 lg:border-r">
         <div className="mx-auto flex max-w-6xl flex-col lg:h-full lg:max-w-none">
           <div className="border-b border-[var(--border)] px-5 py-4">
-            <img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" priority />
           </div>
           <nav className="flex gap-2 overflow-x-auto px-4 py-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:flex-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:px-3 lg:py-3">
             {NAV_ITEMS.map((item) => (
