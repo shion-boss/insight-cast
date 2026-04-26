@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { CHARACTERS } from '@/lib/characters'
+import { CHARACTERS, getCharacter } from '@/lib/characters'
+import { CharacterAvatar } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
 import { AboutBottomCTA } from './AboutCTA'
 
@@ -19,13 +20,14 @@ const PRINCIPLES = [
 ] as const
 
 const TRUST_POINTS = [
-  { icon: '🎤', title: '取材から始める', desc: '情報をいきなり書くのではなく、まず「引き出す」。あなたの経験・言葉・判断が素材です。' },
-  { icon: '📖', title: '一次情報の尊重', desc: 'あなた自身の体験にしか語れないことがある。その固有性こそが、信頼につながります。' },
-  { icon: '🌱', title: '継続的に育てる', desc: '一度作って終わりではなく、取材を重ねることでホームページが育っていく仕組みをつくります。' },
+  { charId: 'mint', title: '取材から始める', desc: '情報をいきなり書くのではなく、まず「引き出す」。あなたの経験・言葉・判断が素材です。' },
+  { charId: 'claus', title: '一次情報の尊重', desc: 'あなた自身の体験にしか語れないことがある。その固有性こそが、信頼につながります。' },
+  { charId: 'rain', title: '継続的に育てる', desc: '一度作って終わりではなく、取材を重ねることでホームページが育っていく仕組みをつくります。' },
 ] as const
 
 export default function AboutPage() {
   const allCasts = CHARACTERS
+  const trustChars = TRUST_POINTS.map((p) => ({ ...p, char: getCharacter(p.charId) }))
 
   return (
     <>
@@ -89,9 +91,16 @@ export default function AboutPage() {
               私たちが大切にしていること
             </h2>
             <div className="mt-10 grid gap-5 md:grid-cols-3">
-              {TRUST_POINTS.map((item) => (
+              {trustChars.map((item) => (
                 <div key={item.title} className="text-center py-8 px-5 bg-[var(--surface)] border border-[var(--border)] rounded-[18px]">
-                  <div className="text-[36px] mb-4">{item.icon}</div>
+                  <div className="flex justify-center mb-4">
+                    <CharacterAvatar
+                      src={item.char?.icon96}
+                      alt={`${item.char?.name ?? item.title}のアイコン`}
+                      emoji={item.char?.emoji}
+                      size={64}
+                    />
+                  </div>
                   <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)] mb-2.5">{item.title}</h3>
                   <p className="text-sm text-[var(--text2)] leading-[1.8]">{item.desc}</p>
                 </div>

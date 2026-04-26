@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { CharacterAvatar } from '@/components/ui'
-import { CHARACTERS } from '@/lib/characters'
+import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
 
@@ -80,11 +80,11 @@ const TABLE_ROWS = [
   { label: '取材回数', free: '2回（単発）', personal: '月15回', business: '月60回' },
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
-  { label: '競合調査', free: '—', personal: '3社', business: '各取材先3社' },
-  { label: '取材メモを受け取れる', free: '○', personal: '○', business: '○' },
-  { label: '記事素材を受け取れる', free: '○', personal: '○', business: '○' },
+  { label: '競合調査', free: 'なし', personal: '3社', business: '各取材先3社' },
+  { label: '取材メモを受け取れる', free: 'あり', personal: 'あり', business: 'あり' },
+  { label: '記事素材を受け取れる', free: 'あり', personal: 'あり', business: 'あり' },
   { label: '追加キャスト', free: '準備中', personal: '準備中', business: '準備中' },
-  { label: '優先サポート', free: '—', personal: '—', business: '○' },
+  { label: '優先サポート', free: 'なし', personal: 'なし', business: 'あり' },
 ] as const
 
 const ADDON_CASTS = [
@@ -109,9 +109,9 @@ const ADDON_CASTS = [
 ] as const
 
 const SELECTION_GUIDE = [
-  { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', emoji: '🐱' },
-  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', emoji: '🦊' },
-  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', emoji: '🦉' },
+  { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', charId: 'mint' },
+  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', charId: 'rain' },
+  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', charId: 'claus' },
 ] as const
 
 const FAQS = [
@@ -134,6 +134,7 @@ export default async function PricingPage({
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
+  const guideChars = SELECTION_GUIDE.map((g) => ({ ...g, char: getCharacter(g.charId) }))
 
   return (
     <>
@@ -169,9 +170,16 @@ export default async function PricingPage({
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[13px] font-semibold text-[var(--text2)] mb-5">どれを選べばいいか迷ったら</div>
             <div className="grid gap-4 md:grid-cols-3">
-              {SELECTION_GUIDE.map((item) => (
-                <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-start">
-                  <span className="text-lg flex-shrink-0 mt-0.5 leading-none">{item.emoji}</span>
+              {guideChars.map((item) => (
+                <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-center">
+                  <div className="flex-shrink-0">
+                    <CharacterAvatar
+                      src={item.char?.icon48}
+                      alt={`${item.char?.name ?? item.plan}のアイコン`}
+                      emoji={item.char?.emoji}
+                      size={40}
+                    />
+                  </div>
                   <div>
                     <span className="font-bold text-sm text-[var(--text)]">{item.plan}</span>
                     <span className="text-sm text-[var(--text2)] ml-2">{item.desc}</span>
