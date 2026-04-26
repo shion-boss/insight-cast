@@ -65,7 +65,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 
 function navLinkClass(active: boolean) {
   return cx(
-    'flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors duration-150',
+    'flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40',
     active
       ? 'bg-[var(--accent-l)] text-[var(--accent)]'
       : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]',
@@ -127,7 +127,7 @@ export function AppShell({
           {showAdmin && (
             <Link
               href="/admin"
-              className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[#1c1410] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[#2a1f18] hover:text-white"
+              className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[#1c1410] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[#2a1f18] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400/40"
             >
               <span className="flex items-center gap-2">
                 <IconSettings /><span>管理画面</span>
@@ -146,7 +146,7 @@ export function AppShell({
           <div className="mx-auto flex min-h-[64px] max-w-6xl items-center px-4 py-2 sm:px-6">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
-              <Link href="/">
+              <Link href="/" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                 <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" priority />
               </Link>
               <ToolMobileNav
