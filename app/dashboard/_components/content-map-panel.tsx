@@ -129,10 +129,7 @@ export function ContentMapPanel({
       {/* Loading state */}
       {loading && (
         <div className="flex flex-col items-center gap-3 py-10">
-          <div
-            className="w-8 h-8 border-[3px] rounded-full animate-spin"
-            style={{ borderColor: 'var(--border)', borderTopColor: 'var(--accent)' }}
-          />
+          <div className="w-8 h-8 border-[3px] rounded-full animate-spin border-[var(--border)] border-t-[var(--accent)]" />
           <p className="text-sm text-[var(--text2)]">記事の内容を読んでいます…</p>
         </div>
       )}
@@ -153,7 +150,7 @@ export function ContentMapPanel({
               </div>
             )}
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-sm border border-dashed" style={{ borderColor: '#fb923c', background: '#fff7ed' }} />
+              <span className="w-3 h-3 rounded-sm border border-dashed border-[#fb923c] bg-[#fff7ed]" />
               不足ゾーン
             </div>
           </div>
