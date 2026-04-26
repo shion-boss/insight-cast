@@ -90,7 +90,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
           </p>
           <a
             href="mailto:hello@insightcast.jp"
-            className="mt-6 inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+            className="mt-6 inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             お問い合わせ →
           </a>

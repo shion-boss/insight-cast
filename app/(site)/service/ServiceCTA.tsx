@@ -42,21 +42,21 @@ export function ServiceBottomCTA() {
       {isLoggedIn ? (
         <Link
           href="/dashboard"
-          className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+          className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
           ダッシュボードへ →
         </Link>
       ) : (
         <Link
           href="/auth/signup"
-          className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+          className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
           無料で体験する
         </Link>
       )}
       <Link
         href="/contact"
-        className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-8 py-3.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-8 py-3.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
       >
         まず相談してみる
       </Link>

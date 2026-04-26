@@ -180,7 +180,7 @@ export default async function CastPage() {
                       <div className="mt-6">
                         <Link
                           href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                          className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center"
+                          className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                         >
                           {isLoggedIn ? 'ダッシュボードへ →' : 'このキャストで取材を始める →'}
                         </Link>
@@ -251,7 +251,7 @@ export default async function CastPage() {
               </p>
               <Link
                 href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 {isLoggedIn ? 'ダッシュボードへ →' : '無料で取材を始める →'}
               </Link>
