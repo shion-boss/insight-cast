@@ -76,17 +76,19 @@ export default async function CastPage() {
           description="6名のキャストが、それぞれ違う角度から話を聞きます。いま深めたいテーマに合わせて選べます。"
           aside={
             <div className="grid grid-cols-3 gap-3">
-              {CHARACTERS.map((char, i) => (
-                <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${i > 2 ? 'opacity-70' : ''}`}>
+              {CHARACTERS.map((char) => (
+                <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${!char.available ? 'opacity-70' : ''}`}>
                   <CharacterAvatar
                     src={char.icon96}
-                    alt={`${char.name}のアイコン`}
+                    alt={char.available ? `${char.name}のアイコン` : `${char.name}のアイコン（準備中）`}
                     emoji={char.emoji}
                     size={64}
                     className="mx-auto"
                   />
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
-                  <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">{char.label}</div>
+                  <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">
+                    {char.available ? char.label : '準備中'}
+                  </div>
                 </div>
               ))}
             </div>
