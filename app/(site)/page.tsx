@@ -18,6 +18,7 @@ import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
 import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
 import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
 import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
+import { LpFaq } from './LpFaq'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -833,16 +834,8 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               よくある質問
             </h2>
-            <div className="mt-10 divide-y divide-[var(--border)] rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-              {FAQS.map((faq, i) => (
-                <details key={i} className="group">
-                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
-                    <span>{faq.q}</span>
-                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
-                  </summary>
-                  <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
-                </details>
-              ))}
+            <div className="mt-10">
+              <LpFaq faqs={FAQS} />
             </div>
             <div className="text-center mt-8">
               <Link href="/faq" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
