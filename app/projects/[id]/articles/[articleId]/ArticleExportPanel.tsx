@@ -411,11 +411,13 @@ export function ArticleExportPanel({
       </div>
 
       <div className="flex flex-col border-b border-[var(--border)] sm:flex-row sm:items-center">
-        <div className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div role="tablist" className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {availableFormats.map((f) => (
             <button
               key={f}
               type="button"
+              role="tab"
+              aria-selected={safeFormat === f}
               onClick={() => setFormat(f)}
               className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 border-b-2 ${
                 safeFormat === f
