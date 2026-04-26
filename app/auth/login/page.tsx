@@ -105,8 +105,9 @@ function LoginForm() {
             </div>
 
             <div>
-              <FieldLabel>メールアドレス</FieldLabel>
+              <FieldLabel htmlFor="login-email">メールアドレス</FieldLabel>
               <TextInput
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -116,7 +117,7 @@ function LoginForm() {
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-medium text-[var(--text2)]">パスワード</label>
+                <label htmlFor="login-password" className="text-sm font-medium text-[var(--text2)]">パスワード</label>
                 <Link
                   href="/auth/reset-password"
                   className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors"
@@ -125,6 +126,7 @@ function LoginForm() {
                 </Link>
               </div>
               <TextInput
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

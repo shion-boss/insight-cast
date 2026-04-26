@@ -144,12 +144,14 @@ export function PageHeader({
 export function FieldLabel({
   children,
   required,
+  htmlFor,
 }: {
   children: ReactNode
   required?: boolean
+  htmlFor?: string
 }) {
   return (
-    <label className="mb-1 block text-sm font-medium text-[var(--text2)]">
+    <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-[var(--text2)]">
       {children}
       {required && <span className="text-[var(--err)]"> *</span>}
     </label>

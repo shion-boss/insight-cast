@@ -160,8 +160,9 @@ function SignupForm() {
             </div>
 
             <div>
-              <FieldLabel>メールアドレス</FieldLabel>
+              <FieldLabel htmlFor="signup-email">メールアドレス</FieldLabel>
               <TextInput
+                id="signup-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -170,8 +171,9 @@ function SignupForm() {
               />
             </div>
             <div>
-              <FieldLabel>パスワード（8文字以上）</FieldLabel>
+              <FieldLabel htmlFor="signup-password">パスワード（8文字以上）</FieldLabel>
               <TextInput
+                id="signup-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -181,8 +183,9 @@ function SignupForm() {
               />
             </div>
             <div>
-              <FieldLabel>パスワード（確認）</FieldLabel>
+              <FieldLabel htmlFor="signup-confirm">パスワード（確認）</FieldLabel>
               <TextInput
+                id="signup-confirm"
                 type="password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}

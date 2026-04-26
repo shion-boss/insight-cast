@@ -32,7 +32,7 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
               <button
                 type="button"
                 onClick={() => toggle(index)}
-                className="flex w-full items-center justify-between gap-4 bg-[var(--surface)] px-6 py-5 text-left transition-colors hover:bg-[var(--surface2)]"
+                className="flex w-full items-center justify-between gap-4 bg-[var(--surface)] px-6 py-5 text-left transition-colors hover:bg-[var(--surface2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                 aria-expanded={open}
               >
                 <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>

@@ -117,8 +117,9 @@ export function ContactForm() {
 
       {/* お名前 */}
       <div>
-        <FieldLabel required>お名前</FieldLabel>
+        <FieldLabel required htmlFor="contact-name">お名前</FieldLabel>
         <TextInput
+          id="contact-name"
           type="text"
           value={name}
           onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: undefined })) }}
@@ -134,8 +135,9 @@ export function ContactForm() {
 
       {/* メールアドレス */}
       <div>
-        <FieldLabel required>メールアドレス</FieldLabel>
+        <FieldLabel required htmlFor="contact-email">メールアドレス</FieldLabel>
         <TextInput
+          id="contact-email"
           type="email"
           value={email}
           onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })) }}
@@ -151,8 +153,9 @@ export function ContactForm() {
 
       {/* ご相談内容 */}
       <div>
-        <FieldLabel required>ご質問・ご相談内容</FieldLabel>
+        <FieldLabel required htmlFor="contact-message">ご質問・ご相談内容</FieldLabel>
         <textarea
+          id="contact-message"
           value={message}
           onChange={(e) => { setMessage(e.target.value); setFieldErrors((p) => ({ ...p, message: undefined })) }}
           rows={5}
