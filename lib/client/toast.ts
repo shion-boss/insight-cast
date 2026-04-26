@@ -7,6 +7,7 @@ export type AppToastDetail = {
   tone?: 'default' | 'success' | 'warning'
   href?: string
   hrefLabel?: string
+  characterId?: string
 }
 
 export function showToast(detail: AppToastDetail) {

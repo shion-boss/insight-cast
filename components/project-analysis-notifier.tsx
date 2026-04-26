@@ -211,6 +211,7 @@ export default function ProjectAnalysisNotifier() {
             tone: 'success',
             href: `/projects/${project.id}/report`,
             hrefLabel: '調査結果を見る',
+            characterId: 'claus',
           })
           delete nextPending[project.id]
         }
@@ -246,6 +247,7 @@ export default function ProjectAnalysisNotifier() {
             tone: 'success',
             href: `/projects/${pendingSummary.projectId}/summary?interviewId=${interviewId}`,
             hrefLabel: '取材メモを見る',
+            characterId: 'mint',
           })
           delete nextPendingSummaries[interviewId]
           continue
@@ -271,6 +273,7 @@ export default function ProjectAnalysisNotifier() {
               title: '取材メモを作成できませんでした',
               description: '少し待ってから、もう一度お試しください。',
               tone: 'warning',
+              characterId: 'mint',
             })
             router.refresh()
           })
@@ -321,6 +324,7 @@ export default function ProjectAnalysisNotifier() {
             tone: 'success',
             href: `/projects/${job.projectId}/articles/${matchedArticle.id}`,
             hrefLabel: '記事を見る',
+            characterId: 'mint',
           })
           delete nextPendingArticles[jobId]
           continue
@@ -333,6 +337,7 @@ export default function ProjectAnalysisNotifier() {
             title: '記事素材を作成できませんでした',
             description: interview.article_error || '少し待ってから、もう一度お試しください。',
             tone: 'warning',
+            characterId: 'mint',
           })
           router.refresh()
           delete nextPendingArticles[jobId]

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 import type { AppToastDetail } from '@/lib/client/toast'
 
 type ToastItem = AppToastDetail & {
@@ -46,27 +48,41 @@ export default function ToastViewport() {
       aria-atomic="false"
       className="pointer-events-none fixed right-4 top-4 z-50 flex w-[min(360px,calc(100vw-2rem))] flex-col gap-3"
     >
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          role="status"
-          className={`pointer-events-auto rounded-2xl border px-4 py-3 ${toneClass(toast.tone)}`}
-        >
-          <p className="text-sm font-medium text-[var(--text)]">{toast.title}</p>
-          {toast.description && (
-            <p className="mt-1 text-sm leading-relaxed text-[var(--text3)]">{toast.description}</p>
-          )}
-          {toast.href && (
-            <Link
-              href={toast.href}
-              prefetch={false}
-              className="mt-3 inline-flex rounded-md text-sm text-[var(--text2)] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
-            >
-              {toast.hrefLabel ?? '開く'}
-            </Link>
-          )}
-        </div>
-      ))}
+      {toasts.map((toast) => {
+        const char = getCharacter(toast.characterId ?? 'mint')
+        return (
+          <div
+            key={toast.id}
+            role="status"
+            className={`pointer-events-auto rounded-2xl border px-4 py-3 ${toneClass(toast.tone)}`}
+          >
+            <div className="flex items-start gap-2.5">
+              <CharacterAvatar
+                src={char?.icon48}
+                alt={`${char?.name ?? 'ミント'}のアイコン`}
+                emoji={char?.emoji}
+                size={28}
+                className="flex-shrink-0 mt-0.5"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-[var(--text)]">{toast.title}</p>
+                {toast.description && (
+                  <p className="mt-1 text-sm leading-relaxed text-[var(--text3)]">{toast.description}</p>
+                )}
+                {toast.href && (
+                  <Link
+                    href={toast.href}
+                    prefetch={false}
+                    className="mt-3 inline-flex rounded-md text-sm text-[var(--text2)] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
+                  >
+                    {toast.hrefLabel ?? '開く'}
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
