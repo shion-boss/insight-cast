@@ -333,7 +333,7 @@ export default function ArticlePage() {
       <PageHeader title="記事を作る" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
 
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <nav className="mb-6 flex items-center gap-1.5 text-xs text-[var(--text3)]">
+        <nav aria-label="パンくず" className="mb-6 flex items-center gap-1.5 text-xs text-[var(--text3)]">
           <Link href="/projects" className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
           <span>/</span>
           <Link href={`/projects/${projectId}`} className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
@@ -387,6 +387,7 @@ export default function ArticlePage() {
                       key={item}
                       type="button"
                       onClick={() => setTheme(item)}
+                      aria-pressed={theme === item}
                       className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                         theme === item
                           ? 'border border-[var(--accent)] bg-[var(--accent-l)] font-semibold text-[var(--accent)]'
@@ -636,7 +637,7 @@ export default function ArticlePage() {
             )}
 
             {currentTabStatus === 'failed' && !isCurrentTabGenerating && (
-              <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
+              <div role="alert" className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <StateCard
                   icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                   title="記事素材を仕上げきれませんでした"

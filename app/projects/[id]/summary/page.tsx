@@ -293,7 +293,7 @@ export default function SummaryPage() {
     >
       <div>
         {/* breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
+        <nav aria-label="パンくず" className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
           <Link href="/projects" className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
           <span>/</span>
           <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
@@ -406,13 +406,15 @@ export default function SummaryPage() {
                 <button
                   type="button"
                   onClick={() => setShowMessages(!showMessages)}
+                  aria-expanded={showMessages}
+                  aria-controls="summary-interview-log"
                   className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors cursor-pointer"
                 >
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
               </div>
               {showMessages && (
-                <div className="mt-4 space-y-0 max-h-80 overflow-y-auto">
+                <div id="summary-interview-log" className="mt-4 space-y-0 max-h-80 overflow-y-auto">
                   {data?.messages.map((m, i) => (
                     <div
                       key={i}
