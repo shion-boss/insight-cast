@@ -480,7 +480,7 @@ export default async function LandingPage() {
                   <CopyButton text={`朝8時〜15時、この時間帯を、父の代から守り続けている理由。\n\nうちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。\n\n塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。施工中は騒音もあるし、養生シートで通路が狭くなることもある。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。`} />
                 </div>
                 <div className="p-[22px]">
-                  <h4 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">朝8時〜15時、この時間帯を、父の代から守り続けている理由。</h4>
+                  <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">朝8時〜15時、この時間帯を、父の代から守り続けている理由。</h3>
                   <p className="text-sm text-[var(--text)] leading-[1.85] mb-3">うちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。</p>
                   <p className="text-sm text-[var(--text)] leading-[1.85]">塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。</p>
                 </div>
