@@ -40,7 +40,7 @@ function SignupForm() {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault()
     if (password !== confirm) {
-      setError('パスワードが一致しません')
+      setError('パスワードが一致していません。もう一度入力してください。')
       return
     }
     setLoading(true)
@@ -75,7 +75,7 @@ function SignupForm() {
     })
 
     if (error) {
-      setError('Google登録を開始できませんでした。設定をご確認ください')
+      setError('Google登録を開始できませんでした。ページを再読み込みしてもう一度お試しください。')
       setGoogleLoading(false)
     }
   }

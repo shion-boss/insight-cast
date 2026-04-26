@@ -57,7 +57,7 @@ function LoginForm() {
     })
 
     if (error) {
-      setError('Googleログインを開始できませんでした。設定をご確認ください')
+      setError('Googleログインを開始できませんでした。ページを再読み込みしてもう一度お試しください。')
       setGoogleLoading(false)
     }
   }

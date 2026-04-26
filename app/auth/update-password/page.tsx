@@ -17,7 +17,7 @@ export default function UpdatePasswordPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (password !== confirm) {
-      setError('パスワードが一致しません')
+      setError('パスワードが一致していません。もう一度入力してください。')
       return
     }
     setLoading(true)
