@@ -411,7 +411,7 @@ export function ArticleExportPanel({
       </div>
 
       <div className="flex flex-col border-b border-[var(--border)] sm:flex-row sm:items-center">
-        <div role="tablist" className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div role="tablist" aria-label="出力フォーマット" className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {availableFormats.map((f) => (
             <button
               key={f}
