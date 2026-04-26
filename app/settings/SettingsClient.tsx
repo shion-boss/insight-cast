@@ -368,11 +368,13 @@ export function SettingsClient({
   return (
     <AppShell title="設定" active="settings" accountLabel={name.trim() || email || '設定'} isAdmin={isAdmin}>
       <div className="grid items-start gap-8 lg:grid-cols-[200px_1fr]">
-        <nav className="flex flex-row gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:sticky lg:top-20 lg:flex-col">
+        <nav role="tablist" aria-label="設定セクション" className="flex flex-row gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:sticky lg:top-20 lg:flex-col">
           {SECTIONS.map((section) => (
             <button
               key={section}
               type="button"
+              role="tab"
+              aria-selected={activeSection === section}
               onClick={() => setActiveSection(section)}
               className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-xs sm:text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                 activeSection === section
