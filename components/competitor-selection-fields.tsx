@@ -236,20 +236,22 @@ export default function CompetitorSelectionFields({
       )}
 
       {suggestError && (
-        <InterviewerSpeech
-          icon={(
-            <CharacterAvatar
-              src={claus?.icon48}
-              alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
-              emoji={claus?.emoji}
-              size={44}
-            />
-          )}
-          name={claus?.name ?? 'インタビュアー'}
-          title="おすすめ候補をまだ出せません。"
-          description={suggestError}
-          tone="soft"
-        />
+        <div role="alert">
+          <InterviewerSpeech
+            icon={(
+              <CharacterAvatar
+                src={claus?.icon48}
+                alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+                emoji={claus?.emoji}
+                size={44}
+              />
+            )}
+            name={claus?.name ?? 'インタビュアー'}
+            title="おすすめ候補をまだ出せません。"
+            description={suggestError}
+            tone="soft"
+          />
+        </div>
       )}
 
       {didSuggest && suggestions.length === 0 && !suggestError && (

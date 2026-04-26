@@ -468,7 +468,7 @@ export function SettingsClient({
                     {profileSaving ? '保存中...' : '変更を保存する'}
                   </button>
                   {profileSaved && (
-                    <span className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
+                    <span role="status" className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
                   )}
                 </div>
               </section>
@@ -709,7 +709,7 @@ export function SettingsClient({
                   {notificationSaving ? '保存中...' : '通知設定を保存する'}
                 </button>
                 {notificationSaved && (
-                  <span className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
+                  <span role="status" className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
                 )}
               </div>
             </section>
@@ -776,7 +776,7 @@ export function SettingsClient({
                     {passwordSaving ? '更新中...' : 'パスワードを変更する'}
                   </button>
                   {passwordSaved && (
-                    <span className="text-sm font-semibold text-[var(--teal)]">パスワードを更新しました</span>
+                    <span role="status" className="text-sm font-semibold text-[var(--teal)]">パスワードを更新しました</span>
                   )}
                 </div>
               </div>
