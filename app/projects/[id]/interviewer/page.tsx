@@ -341,7 +341,7 @@ export default async function InterviewerPage({
                     required
                     maxLength={INTERVIEW_FOCUS_THEME_MAX_LENGTH}
                     placeholder="例: 初めて相談する人が安心できる理由"
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] outline-none transition-colors placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:bg-[var(--surface)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
                   />
                 </label>
                 <button

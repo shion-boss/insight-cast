@@ -123,7 +123,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             onChange={(e) => setThemeInput(e.target.value)}
             placeholder="テーマを指定（省略可）"
             disabled={generating}
-            className="min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/30 disabled:opacity-50 sm:w-64"
+            className="min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50 sm:w-64"
           />
           <button
             type="button"
