@@ -3,9 +3,24 @@ import Link from 'next/link'
 
 import Image, { type StaticImageData } from 'next/image'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
   description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。ホームページを会話で少しずつ育てるサービス。カード不要で無料体験できます。',
+  openGraph: {
+    title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
+    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。',
+    url: APP_URL,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
+    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。',
+  },
 }
 import { CharacterAvatar } from '@/components/ui'
 import { PublicPageFrame } from '@/components/public-layout'

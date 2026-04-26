@@ -5,7 +5,8 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const requestedNext = searchParams.get('next')
-  const next = requestedNext?.startsWith('/') ? requestedNext : '/dashboard'
+  // '//' から始まるプロトコル相対URLによるオープンリダイレクトを防ぐ
+  const next = requestedNext && /^\/(?!\/)/.test(requestedNext) ? requestedNext : '/dashboard'
 
   if (code) {
     const supabase = await createClient()

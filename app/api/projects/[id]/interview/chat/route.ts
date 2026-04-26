@@ -28,6 +28,9 @@ export async function POST(
   if (typeof interviewId !== 'string' || typeof userMessage !== 'string') {
     return new Response('Bad Request', { status: 400 })
   }
+  if (userMessage.length > 2000) {
+    return new Response(JSON.stringify({ error: 'メッセージが長すぎます' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+  }
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
 

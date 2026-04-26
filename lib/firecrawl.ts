@@ -3,10 +3,23 @@ import { logApiUsage } from '@/lib/api-usage'
 // Starter plan ($16/3,000 credits) ≒ $0.0053/scrape
 const FIRECRAWL_COST_PER_SCRAPE = 0.0053
 
+export function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 export async function fetchMarkdown(
   url: string,
   opts?: { userId?: string | null; projectId?: string | null; route?: string },
 ): Promise<string> {
+  if (!isSafeUrl(url)) {
+    console.error('[firecrawl] unsafe URL rejected', url)
+    return ''
+  }
   const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
     method: 'POST',
     headers: {
