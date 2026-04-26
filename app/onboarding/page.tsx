@@ -50,8 +50,8 @@ export default async function OnboardingPage({
         <form action={completeOnboarding} className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
           <input type="hidden" name="next" value={next} />
           <div>
-            <FieldLabel required>お名前</FieldLabel>
-            <TextInput type="text" name="name" required placeholder="例: 山田さん" />
+            <FieldLabel required htmlFor="onboarding-name">お名前</FieldLabel>
+            <TextInput id="onboarding-name" type="text" name="name" required placeholder="例: 山田さん" />
           </div>
           <PrimaryButton type="submit" className="w-full py-3 text-sm mt-2">
             はじめる
