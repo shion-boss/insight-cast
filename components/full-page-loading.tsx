@@ -33,7 +33,7 @@ function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji:
 
 export function FullPageLoading() {
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-[var(--bg)]">
+    <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-[var(--bg)]">
       <div className="flex items-center">
         {CHAR_ICONS.map((c, i) => (
           <CharIcon key={c.alt} src={c.src} alt={c.alt} emoji={c.emoji} index={i} />
