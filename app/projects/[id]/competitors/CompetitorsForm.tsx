@@ -79,7 +79,7 @@ export default function CompetitorsForm({
     setSubmitState('idle')
     if (!ok) return
 
-    showToast({ id: `saved-${projectId}`, title: '保存しました', description: '競合設定を更新しました。' })
+    showToast({ id: `saved-${projectId}`, title: '保存しました', description: '競合設定を更新しました。', characterId: 'claus' })
     router.push(`/projects/${projectId}`)
   }
 
@@ -101,17 +101,17 @@ export default function CompetitorsForm({
         const json = await response.json().catch(() => null)
         const message = getLimitMessage(json?.next_available_at)
         setError(`保存は完了しましたが、${message}`)
-        showToast({ id: `analysis-limited-${projectId}`, title: '再調査は月1回までです', description: message, tone: 'warning' })
+        showToast({ id: `analysis-limited-${projectId}`, title: '再調査は月1回までです', description: message, tone: 'warning', characterId: 'claus' })
         return
       }
       if (!response.ok) throw new Error('failed to analyze')
 
       trackPendingProjectAnalysis(projectId, projectName)
-      showToast({ id: `analysis-started-${projectId}`, title: '再調査を受け付けました', description: '競合設定を反映して、バックグラウンドで結果を作り直します。' })
+      showToast({ id: `analysis-started-${projectId}`, title: '再調査を受け付けました', description: '競合設定を反映して、バックグラウンドで結果を作り直します。', characterId: 'claus' })
       router.push(`/projects/${projectId}`)
     } catch {
       setError('保存は完了しましたが、再調査を受け付けられませんでした。少し待ってから、もう一度お試しください。')
-      showToast({ id: `analysis-error-${projectId}`, title: '再調査を開始できませんでした', description: '保存内容は反映されています。', tone: 'warning' })
+      showToast({ id: `analysis-error-${projectId}`, title: '再調査を開始できませんでした', description: '保存内容は反映されています。', tone: 'warning', characterId: 'claus' })
     } finally {
       setSubmitState('idle')
     }

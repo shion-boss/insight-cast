@@ -289,6 +289,7 @@ export default function ArticlePage() {
         id: `article-started-${jobId}`,
         title: `${articleLabel}の作成を開始しました`,
         description: '記事素材を作成中です。別の作業を進めながら待てます。',
+        characterId: 'mint',
       })
       void loadPageState().catch(() => null)
     } catch {
@@ -308,6 +309,7 @@ export default function ArticlePage() {
         title: '記事素材の作成を開始できませんでした',
         description: '少し待ってから、もう一度お試しください。',
         tone: 'warning',
+        characterId: 'mint',
       })
     }
   }

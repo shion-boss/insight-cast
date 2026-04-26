@@ -52,6 +52,7 @@ export default function StartAnalysisButton({
         ? `次回は ${formatted} 以降に再調査できます。`
         : '前回の調査から30日経過後に再調査できます。',
       tone: 'warning',
+      characterId: 'claus',
     })
   }
 
@@ -90,6 +91,7 @@ export default function StartAnalysisButton({
           tone: 'success',
           href: `/projects/${projectId}/report`,
           hrefLabel: '調査結果を見る',
+          characterId: 'claus',
         })
         return
       }
@@ -116,6 +118,7 @@ export default function StartAnalysisButton({
         description: force
           ? '最新の内容で結果を作り直します。完了したらお知らせします。'
           : 'バックグラウンドで進めます。完了したらお知らせします。',
+        characterId: 'claus',
       })
       router.refresh()
     } catch {
@@ -125,6 +128,7 @@ export default function StartAnalysisButton({
         title: '調査を開始できませんでした',
         description: '少し待ってから、もう一度お試しください。',
         tone: 'warning',
+        characterId: 'claus',
       })
     } finally {
       setPhase('idle')

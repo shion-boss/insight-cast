@@ -152,6 +152,7 @@ export default function SummaryPage() {
             id: `summary-started-${interviewId}`,
             title: '取材メモの作成を開始しました',
             description: 'このまま別の作業を進めて大丈夫です。完了したらお知らせします。',
+            characterId: 'mint',
           })
         }
 
