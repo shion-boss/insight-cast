@@ -25,7 +25,7 @@ function LoginForm() {
   const mint = getCharacter('mint')
   const oauthErrorMessage = searchParams.get('message')
   const oauthError = searchParams.get('error') === 'oauth_callback'
-    ? oauthErrorMessage ?? 'Googleログインに失敗しました。Supabase の Google Provider 設定をご確認ください'
+    ? oauthErrorMessage ?? 'Googleログインできませんでした。しばらく待ってから、もう一度お試しください。'
     : null
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {

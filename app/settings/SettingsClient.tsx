@@ -220,7 +220,7 @@ export function SettingsClient({
       .eq('id', userId)
 
     if (profileError) {
-      setAvatarError('プロフィールの更新に失敗しました。')
+      setAvatarError('アイコンを保存できませんでした。時間をおいてもう一度お試しください。')
       setAvatarUploading(false)
       return
     }
