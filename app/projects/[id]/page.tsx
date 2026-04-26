@@ -407,10 +407,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <table className="w-full">
               <thead className="bg-[var(--bg2)]">
                 <tr>
-                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
-                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
-                  <th className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
-                  <th className="px-5 py-3"></th>
+                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
+                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
+                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
+                  <th scope="col" className="px-5 py-3"><span className="sr-only">操作</span></th>
                 </tr>
               </thead>
               <tbody className="bg-[var(--surface)]">
