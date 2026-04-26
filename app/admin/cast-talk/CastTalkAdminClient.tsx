@@ -118,6 +118,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <input
             type="text"
+            aria-label="生成テーマ（省略可）"
             value={themeInput}
             onChange={(e) => setThemeInput(e.target.value)}
             placeholder="テーマを指定（省略可）"
@@ -136,7 +137,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       </div>
 
       {error && (
-        <div className="rounded-[var(--r-sm)] border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="rounded-[var(--r-sm)] border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           {error}
         </div>
       )}

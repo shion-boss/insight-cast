@@ -294,7 +294,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   return (
     <div className="space-y-8">
       {errorMsg && (
-        <div className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           <span className="mt-0.5 shrink-0">⚠</span>
           <div>
             <p>{errorMsg}</p>
@@ -303,7 +303,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         </div>
       )}
       {successMsg && (
-        <div className="rounded-[var(--r-sm)] bg-[var(--ok-l)] px-4 py-3 text-sm text-[var(--ok)]">
+        <div role="status" className="rounded-[var(--r-sm)] bg-[var(--ok-l)] px-4 py-3 text-sm text-[var(--ok)]">
           {successMsg}
         </div>
       )}
@@ -312,8 +312,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         {/* メインカラム */}
         <div className="space-y-5">
           <div>
-            <FieldLabel required>タイトル</FieldLabel>
+            <FieldLabel required htmlFor="post-title">タイトル</FieldLabel>
             <TextInput
+              id="post-title"
               value={form.title}
               onChange={(e) => handleChange('title', e.target.value)}
               placeholder="記事のタイトルを入力してください"
@@ -322,7 +323,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <FieldLabel required>スラッグ（URL）</FieldLabel>
+              <FieldLabel required htmlFor="post-slug">スラッグ（URL）</FieldLabel>
               <button
                 type="button"
                 onClick={() => handleChange('slug', slugify(form.title || ''))}
@@ -332,6 +333,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               </button>
             </div>
             <TextInput
+              id="post-slug"
               value={form.slug}
               onChange={(e) => handleChange('slug', e.target.value)}
               placeholder="url-slug-here"
@@ -382,8 +384,9 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
             </div>
 
             <div>
-              <FieldLabel>公開日</FieldLabel>
+              <FieldLabel htmlFor="post-date">公開日</FieldLabel>
               <TextInput
+                id="post-date"
                 type="date"
                 value={form.date}
                 onChange={(e) => handleChange('date', e.target.value)}
