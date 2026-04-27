@@ -21,7 +21,7 @@ const aboutJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
   url: `${APP_URL}/about`,
-  name: 'About | Insight Cast',
+  name: 'Insight Cast について',
   description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。',
   publisher: {
     '@type': 'Organization',
