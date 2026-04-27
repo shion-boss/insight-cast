@@ -22,5 +22,8 @@ export async function GET(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: 'internal_error' }, { status: 500 })
 
-  return NextResponse.json({ talks: data ?? [], total: count ?? 0, pageSize: limit })
+  return NextResponse.json(
+    { talks: data ?? [], total: count ?? 0, pageSize: limit },
+    { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
+  )
 }
