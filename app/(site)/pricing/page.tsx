@@ -165,11 +165,41 @@ export default async function PricingPage({
     })),
   }
 
+  const offerCatalogJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Insight Cast 料金プラン',
+    url: `${APP_URL}/pricing`,
+    itemListElement: PLANS.map((plan, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'Offer',
+        name: plan.name,
+        description: plan.catch,
+        price: String(plan.price),
+        priceCurrency: 'JPY',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: String(plan.price),
+          priceCurrency: 'JPY',
+          unitText: '月',
+        },
+        url: `${APP_URL}/pricing`,
+        seller: { '@type': 'Organization', name: 'Insight Cast' },
+      },
+    })),
+  }
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingFaqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalogJsonLd) }}
       />
 
       <main className="relative z-10">

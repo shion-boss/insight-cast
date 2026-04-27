@@ -125,6 +125,16 @@ export default async function CastTalkDetailPage({
     }),
   }
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+      { '@type': 'ListItem', position: 2, name: 'Cast Talk', item: `${APP_URL}/cast-talk` },
+      { '@type': 'ListItem', position: 3, name: talk.title, item: talkUrl },
+    ],
+  }
+
   const raw = Array.isArray(talk.messages) ? talk.messages : []
   const messages: Message[] = raw.filter(
     (m): m is Message =>
@@ -139,6 +149,10 @@ export default async function CastTalkDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <main className="relative z-10">

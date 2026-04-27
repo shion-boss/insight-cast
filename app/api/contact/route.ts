@@ -15,11 +15,15 @@ async function sendAdminNotification({
   email,
   message,
   referralSource,
+  industry,
+  hpUrl,
 }: {
   name: string
   email: string
   message: string
   referralSource?: string
+  industry?: string
+  hpUrl?: string
 }) {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
@@ -45,6 +49,8 @@ async function sendAdminNotification({
     '',
     `お名前: ${name}`,
     `メールアドレス: ${email}`,
+    ...(industry ? [`業種: ${industry}`] : []),
+    ...(hpUrl ? [`現在のHP: ${hpUrl}`] : []),
     ...(referralLabel ? [`どこで知ったか: ${referralLabel}`] : []),
     '',
     '【ご相談内容】',
@@ -108,7 +114,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const { name, email, message, referralSource, website, startedAt } = body as Record<string, unknown>
+  const { name, email, message, referralSource, industry, hpUrl, website, startedAt } = body as Record<string, unknown>
 
   if (typeof website === 'string' && website.trim()) {
     return NextResponse.json({ ok: true })
@@ -196,6 +202,8 @@ export async function POST(req: Request) {
     email: normalizedEmail,
     message: message.trim(),
     referralSource: typeof referralSource === 'string' ? referralSource : undefined,
+    industry: typeof industry === 'string' && industry.trim() ? industry.trim() : undefined,
+    hpUrl: typeof hpUrl === 'string' && hpUrl.trim() ? hpUrl.trim() : undefined,
   })
 
   return NextResponse.json({ ok: true })

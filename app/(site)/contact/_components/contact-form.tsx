@@ -21,6 +21,8 @@ export function ContactForm() {
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
   const [referralSource, setReferralSource] = useState('')
+  const [industry, setIndustry] = useState('')
+  const [hpUrl, setHpUrl] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [serverMessage, setServerMessage] = useState('')
@@ -63,6 +65,8 @@ export function ContactForm() {
           email,
           message,
           referralSource,
+          industry,
+          hpUrl,
           website,
           startedAt,
         }),
@@ -175,6 +179,31 @@ export function ContactForm() {
           <option value="referral">知人・紹介</option>
           <option value="other">その他</option>
         </select>
+      </div>
+
+      {/* 業種 */}
+      <div>
+        <FieldLabel htmlFor="contact-industry">業種（任意）</FieldLabel>
+        <TextInput
+          id="contact-industry"
+          type="text"
+          value={industry}
+          onChange={(e) => setIndustry(e.target.value)}
+          placeholder="例: 整体院、建設業、税理士事務所"
+        />
+      </div>
+
+      {/* 現在のHP URL */}
+      <div>
+        <FieldLabel htmlFor="contact-hp-url">現在のホームページURL（任意）</FieldLabel>
+        <TextInput
+          id="contact-hp-url"
+          type="text"
+          value={hpUrl}
+          onChange={(e) => setHpUrl(e.target.value)}
+          placeholder="https://example.com"
+          autoComplete="url"
+        />
       </div>
 
       {/* ご相談内容 */}
