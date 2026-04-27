@@ -166,6 +166,7 @@ export default async function CastPage() {
                           width={340}
                           height={340}
                           className="h-full w-full object-contain"
+                          priority={index === 0}
                         />
                       </div>
                       <div className="mt-4 flex gap-2 flex-wrap">

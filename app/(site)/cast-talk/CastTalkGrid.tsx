@@ -68,6 +68,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
             alt={`${getCastName(talk.interviewer_id ?? '')} × ${getCastName(talk.guest_id ?? '')}`}
             fill
             className="object-cover brightness-95 saturate-90"
+            priority
           />
         ) : (
           <div className="h-full bg-[var(--accent-l)]" />
