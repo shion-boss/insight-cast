@@ -736,23 +736,28 @@ export default async function LandingPage() {
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+                    className="group flex items-start gap-4 px-5 py-5 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
-                    <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
+                    <div className="relative mt-0.5 h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
                       <Image src={char.icon48} alt={char.name} fill className="object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="mb-1 flex items-center gap-2">
+                      <div className="mb-1.5 flex items-center gap-2">
                         <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                           {CATEGORY_LABELS[post.category]}
                         </span>
                         <span className="text-[11px] text-[var(--text3)]">{post.date}</span>
                       </div>
-                      <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
+                      <p className="text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
                         {post.title}
                       </p>
+                      {post.excerpt && (
+                        <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--text3)] line-clamp-2">
+                          {post.excerpt}
+                        </p>
+                      )}
                     </div>
-                    <span className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
+                    <span className="mt-0.5 flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}
