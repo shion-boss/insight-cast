@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
-import type { PlanKey } from '@/lib/plans'
+import { PLANS, type PlanKey } from '@/lib/plans'
 
-const VALID_PLANS: PlanKey[] = ['free', 'lightning', 'personal', 'business']
+const VALID_PLANS = Object.keys(PLANS) as PlanKey[]
 
 async function isAdmin(): Promise<boolean> {
   const supabase = await createClient()
