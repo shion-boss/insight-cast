@@ -38,8 +38,14 @@ export async function POST(request: Request) {
     [process.env.STRIPE_PRICE_ID_BUSINESS ?? '']: 'business',
   }
   const requestedPlan = priceIdToPlan[priceId]
+
+  // ホワイトリスト外の priceId は拒否（環境変数に登録されていない任意の price_id 送り込みを防ぐ）
+  if (requestedPlan === undefined) {
+    return NextResponse.json({ code: 'INVALID_PRICE_ID', message: '指定されたプランは存在しません' }, { status: 400 })
+  }
+
   const currentPlan = (sub?.plan as string | undefined) ?? 'free'
-  if (requestedPlan && (PLAN_RANK[requestedPlan] ?? 0) <= (PLAN_RANK[currentPlan] ?? 0)) {
+  if ((PLAN_RANK[requestedPlan] ?? 0) <= (PLAN_RANK[currentPlan] ?? 0)) {
     const message = currentPlan === requestedPlan
       ? 'すでにこのプランをご契約中です'
       : 'より上位のプランをご契約中です'
@@ -57,6 +63,12 @@ export async function POST(request: Request) {
       cancel_url: `${appUrl}/pricing`,
       metadata: { user_id: user.id },
     })
+
+    // session.url が null の場合はセッション作成に問題があるため 500 を返す
+    if (!session.url) {
+      return NextResponse.json({ code: 'STRIPE_ERROR', message: 'お支払いページのURLを取得できませんでした' }, { status: 500 })
+    }
+
     return NextResponse.json({ url: session.url })
   } catch {
     return NextResponse.json({ code: 'STRIPE_ERROR', message: 'お支払いページを開けませんでした' }, { status: 500 })
