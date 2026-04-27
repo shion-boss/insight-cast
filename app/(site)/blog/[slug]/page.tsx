@@ -86,6 +86,16 @@ export default async function BlogDetailPage({
   const prevPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null
   const nextPost = currentIdx >= 0 && currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null
 
+  const bodyTextLength = (() => {
+    const b = post.body
+    if (!b) return 0
+    if (b.kind === 'markdown') return b.content.replace(/\s+/g, '').length
+    if (b.kind === 'normal') return b.sections.map((s) => ('text' in s ? s.text : s.items.join(''))).join('').replace(/\s+/g, '').length
+    if (b.kind === 'interview') return b.conversation.map((t) => t.text).join('').replace(/\s+/g, '').length
+    return 0
+  })()
+  const readingTimeMin = Math.max(1, Math.ceil(bodyTextLength / 500))
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -129,6 +139,8 @@ export default async function BlogDetailPage({
                 <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                   {CATEGORY_LABELS[post.category]}
                 </span>
+                <span className="text-[11px] text-[var(--text3)]">約{readingTimeMin}分で読めます</span>
+                <span className="text-[11px] text-[var(--text3)]">· {post.date}</span>
               </div>
 
               {headerChar && (
