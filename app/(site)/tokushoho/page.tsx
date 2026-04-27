@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const rows: { label: string; value: string; breakAll?: boolean }[] = [
   { label: '販売事業者', value: '大槻詞音' },
-  { label: '所在地', value: '〒085-1203 北海道阿寒郡鶴居村鶴居東5-1-11 ラブバード A' },
+  { label: '所在地', value: '〒085-1206 北海道阿寒郡鶴居村鶴居東5-1-11 ラブバード A' },
   { label: '連絡先', value: 'info@insight-cast.jp', breakAll: true },
   { label: '販売価格', value: '各プランページに記載' },
   { label: '代金の支払時期', value: '月次払い（翌月分を当月末に請求）' },
