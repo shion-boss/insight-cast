@@ -9,6 +9,7 @@ import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } f
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
 import { MarkdownArticleBody } from '@/lib/blog-markdown'
+import { ShareButtons } from './ShareButtons'
 
 export async function generateStaticParams() {
   return POSTS.map((post) => ({ slug: post.slug }))
@@ -273,6 +274,9 @@ export default async function BlogDetailPage({
           {!body && (
             <p className="text-[var(--text3)]">本文を準備中です。</p>
           )}
+
+          {/* SNS シェアボタン */}
+          <ShareButtons title={post.title} url={`${APP_URL}/blog/${slug}`} />
 
           {/* 前後記事ナビゲーション */}
           {(prevPost ?? nextPost) && (
