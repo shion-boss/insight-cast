@@ -80,18 +80,12 @@ export default async function ArticleDetailPage({
             {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
           </p>
           {article.interview_id && (
-            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <div className="mt-4">
               <Link
                 href={`/projects/${id}/summary?interviewId=${article.interview_id}`}
                 className={getButtonClass('secondary')}
               >
                 元の取材メモを見る
-              </Link>
-              <Link
-                href={`/projects/${id}/article?interviewId=${article.interview_id}`}
-                className={getButtonClass('primary')}
-              >
-                この取材から記事を作り直す
               </Link>
             </div>
           )}
@@ -109,16 +103,10 @@ export default async function ArticleDetailPage({
                 />
               }
               title="まだ記事の本文が見つかりませんでした。"
-              description="少し待ってから開き直すと見られることがあります。取材先の管理から記事を作り直すこともできます。"
+              description="少し待ってから開き直すと見られることがあります。"
               tone="warning"
             />
             <div className="flex gap-3">
-              <Link
-                href={`/projects/${id}/article?interviewId=${article.interview_id}`}
-                className={getButtonClass('primary', 'text-sm px-4 py-2.5')}
-              >
-                記事を作り直す
-              </Link>
               <Link
                 href={`/projects/${id}`}
                 className={getButtonClass('secondary', 'text-sm px-4 py-2.5')}
