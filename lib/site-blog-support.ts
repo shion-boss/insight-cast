@@ -335,7 +335,9 @@ async function fetchSitemapEntries(
 ): Promise<Array<{ url: string; lastmod: string | null }>> {
   let origin: string
   try {
-    origin = new URL(siteUrl).origin
+    const parsed = new URL(siteUrl)
+    if (parsed.protocol !== 'https:') return []
+    origin = parsed.origin
   } catch {
     return []
   }
@@ -394,7 +396,9 @@ async function fetchSitemapEntries(
 async function fetchRssUrls(siteUrl: string): Promise<string[]> {
   let origin: string
   try {
-    origin = new URL(siteUrl).origin
+    const parsed = new URL(siteUrl)
+    if (parsed.protocol !== 'https:') return []
+    origin = parsed.origin
   } catch {
     return []
   }
@@ -467,7 +471,13 @@ async function discoverViaFirecrawlMap(siteUrl: string): Promise<string[]> {
 // ブログ一覧ページをスクレイプしてリンクを収集するフォールバック
 // サイトマップ・RSS・Firecrawl map が使えないサイト向け
 async function discoverViaBlogIndexScrape(siteUrl: string): Promise<string[]> {
-  const base = new URL(siteUrl)
+  let base: URL
+  try {
+    base = new URL(siteUrl)
+    if (base.protocol !== 'https:') return []
+  } catch {
+    return []
+  }
   const candidates = BLOG_PATH_KEYWORDS.map((kw) => `${base.origin}/${kw}`)
 
   const results: string[] = []
