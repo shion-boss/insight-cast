@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import StartAnalysisButton from '@/components/start-analysis-button'
 import { getCharacter } from '@/lib/characters'
+
+type GscStatus = 'loading' | 'connected' | 'disconnected'
 
 type Props = {
   projectId: string
@@ -25,7 +27,62 @@ export default function AnalysisStatusPanel({
   reanalysisNextAvailableAt,
 }: Props) {
   const [optimisticAnalyzing, setOptimisticAnalyzing] = useState(false)
+  const [gscStatus, setGscStatus] = useState<GscStatus>('loading')
+  const [gscSiteUrl, setGscSiteUrl] = useState<string | null>(null)
+  const [gscToast, setGscToast] = useState<'connected' | 'error' | 'no_property' | null>(null)
+  const [gscDeleting, setGscDeleting] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // GSC 接続状態を取得
+  const fetchGscStatus = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}/gsc`)
+      if (!res.ok) {
+        setGscStatus('disconnected')
+        return
+      }
+      const data = (await res.json()) as { connected: boolean; site_url?: string }
+      setGscStatus(data.connected ? 'connected' : 'disconnected')
+      setGscSiteUrl(data.site_url ?? null)
+    } catch {
+      setGscStatus('disconnected')
+    }
+  }, [projectId])
+
+  useEffect(() => {
+    void fetchGscStatus()
+  }, [fetchGscStatus])
+
+  // ?gsc= クエリでトースト表示
+  useEffect(() => {
+    const gscParam = searchParams.get('gsc')
+    if (gscParam === 'connected') {
+      setGscToast('connected')
+      void fetchGscStatus()
+      // クエリを除去（履歴は残さない）
+      const url = new URL(window.location.href)
+      url.searchParams.delete('gsc')
+      window.history.replaceState(null, '', url.toString())
+    } else if (gscParam === 'error') {
+      setGscToast('error')
+      const url = new URL(window.location.href)
+      url.searchParams.delete('gsc')
+      window.history.replaceState(null, '', url.toString())
+    } else if (gscParam === 'no_property') {
+      setGscToast('no_property')
+      const url = new URL(window.location.href)
+      url.searchParams.delete('gsc')
+      window.history.replaceState(null, '', url.toString())
+    }
+  }, [searchParams, fetchGscStatus])
+
+  // トーストを数秒後に消す
+  useEffect(() => {
+    if (!gscToast) return
+    const timer = setTimeout(() => setGscToast(null), 5000)
+    return () => clearTimeout(timer)
+  }, [gscToast])
 
   useEffect(() => {
     if (initialStatus !== 'analyzing') setOptimisticAnalyzing(false)
@@ -38,12 +95,34 @@ export default function AnalysisStatusPanel({
     const id = setInterval(() => router.refresh(), 5000)
     return () => clearInterval(id)
   }, [status, router])
+
   const nextAvailableLabel = reanalysisNextAvailableAt
     ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))
     : null
 
+  const handleGscDisconnect = async () => {
+    if (!window.confirm('Google Search Console の連携を解除しますか？')) return
+    setGscDeleting(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}/gsc`, { method: 'DELETE' })
+      if (res.ok) {
+        setGscStatus('disconnected')
+        setGscSiteUrl(null)
+      } else {
+        alert('解除に失敗しました。もう一度お試しください。')
+      }
+    } catch {
+      alert('解除に失敗しました。もう一度お試しください。')
+    } finally {
+      setGscDeleting(false)
+    }
+  }
+
+  const claus = getCharacter('claus')
+
   return (
-    <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
+    <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 space-y-6">
+      {/* HP調査・競合比較 セクション */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-2">調査レポート</div>
@@ -59,7 +138,7 @@ export default function AnalysisStatusPanel({
           {status === 'analyzing' ? (
             <>
               <div role="status" className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
-                <CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--warn)]">調査中です。数分ほどお待ちください</p>
               </div>
               <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed`}>
@@ -69,7 +148,7 @@ export default function AnalysisStatusPanel({
           ) : status === 'fetch_failed' ? (
             <>
               <div role="alert" className="flex items-start gap-3">
-                <CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={32} />
+                <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} />
                 <div className="px-1 text-sm text-[var(--err)]">ホームページを取得できませんでした。URLを確認してもう一度お試しください。</div>
               </div>
               <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} onStarted={() => setOptimisticAnalyzing(true)} />
@@ -94,6 +173,97 @@ export default function AnalysisStatusPanel({
               次回の再調査は {nextAvailableLabel} 以降に行えます。
             </p>
           )}
+        </div>
+      </div>
+
+      {/* Google Search Console 連携 セクション */}
+      <div className="border-t border-[var(--border)] pt-5">
+        {/* トースト */}
+        {gscToast === 'connected' && (
+          <div role="status" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--ok-l)] px-4 py-3 border border-[var(--ok)]/30">
+            <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
+            <p className="text-sm text-[var(--ok)] font-medium">Google Search Console と連携しました。次回の調査から検索データが分析に使われます。</p>
+          </div>
+        )}
+        {gscToast === 'error' && (
+          <div role="alert" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--err-l,#fff0f0)] px-4 py-3 border border-[var(--err)]/30">
+            <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
+            <p className="text-sm text-[var(--err)]">連携に失敗しました。もう一度お試しください。</p>
+          </div>
+        )}
+        {gscToast === 'no_property' && (
+          <div role="alert" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3 border border-[var(--warn)]/30">
+            <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
+            <p className="text-sm text-[var(--warn)]">Google Search Console にこのサイトのプロパティが見つかりませんでした。GSCにサイトを登録してからもう一度お試しください。</p>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-3 min-w-0">
+            <CharacterAvatar
+              src={claus?.icon48}
+              alt="クラウスのアイコン"
+              emoji={claus?.emoji}
+              size={36}
+              className="flex-shrink-0 mt-0.5"
+            />
+            <div className="min-w-0">
+              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-1">
+                Google Search Console
+              </div>
+              {gscStatus === 'loading' && (
+                <p className="text-sm text-[var(--text3)]">確認中...</p>
+              )}
+              {gscStatus === 'connected' && (
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ok-l)] border border-[var(--ok)]/30 px-2.5 py-0.5 text-xs font-semibold text-[var(--ok)]">
+                      連携済み
+                    </span>
+                    {gscSiteUrl && (
+                      <span className="text-xs text-[var(--text3)] truncate max-w-[200px]" title={gscSiteUrl}>
+                        {gscSiteUrl}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-[var(--text2)]">
+                    検索クエリ・流入ページのデータが調査分析に使われます。
+                  </p>
+                </div>
+              )}
+              {gscStatus === 'disconnected' && (
+                <p className="text-sm text-[var(--text2)]">
+                  連携すると、検索データをもとにより詳しい調査ができます。
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-shrink-0">
+            {gscStatus === 'loading' && (
+              <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed text-sm`}>
+                読み込み中
+              </button>
+            )}
+            {gscStatus === 'connected' && (
+              <button
+                type="button"
+                onClick={() => void handleGscDisconnect()}
+                disabled={gscDeleting}
+                className={`${getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')} disabled:opacity-40`}
+              >
+                {gscDeleting ? '解除中...' : '連携を解除'}
+              </button>
+            )}
+            {gscStatus === 'disconnected' && (
+              <Link
+                href={`/api/auth/google?project_id=${projectId}`}
+                className={getButtonClass('secondary', 'text-sm')}
+              >
+                Google Search Console を連携する
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>

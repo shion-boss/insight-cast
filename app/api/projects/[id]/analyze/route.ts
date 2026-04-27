@@ -11,6 +11,7 @@ import { classifyBlogPosts } from '@/lib/content-map.server'
 import { buildBlogFreshnessMetrics, discoverNewBlogPosts, discoverSiteBlogPosts, getStoredSiteBlogPosts, COMPETITOR_BLOG_POST_LIMIT } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
+import { getValidGscToken, fetchGscSearchData, buildGscPromptSection } from '@/lib/gsc'
 import type { PostgrestError } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
@@ -24,6 +25,7 @@ function throwIfError(error: PostgrestError | null, context: string) {
 async function analyzeHp(
   markdown: string,
   blogPosts: Array<{ title: string; summary: string }>,
+  gscSection: string,
   logCtx?: { userId?: string; projectId?: string },
 ): Promise<{
   current_content: string[]
@@ -50,6 +52,8 @@ async function analyzeHp(
 ## ホームページ内容
 ${markdown.slice(0, 6000)}
 ${blogSection}
+
+${gscSection}
 
 ## 出力形式（JSONのみ返してください）
 {
@@ -475,8 +479,14 @@ async function runAnalysis({
       : discoverSiteBlogPosts(hpUrl, 30)
     )
 
+    // GSC データ取得（未連携 / 失敗時は null のまま進む）
+    const gscData = await getValidGscToken(supabase, projectId)
+      .then((tok) => tok ? fetchGscSearchData(tok.accessToken, tok.siteUrl) : null)
+      .catch(() => null)
+    const gscSection = buildGscPromptSection(gscData)
+
     const [audit, ownBlogMetrics, blogClassifications] = await Promise.all([
-      analyzeHp(mainMarkdown, ownBlogPosts, { userId, projectId }),
+      analyzeHp(mainMarkdown, ownBlogPosts, gscSection, { userId, projectId }),
       Promise.resolve(buildBlogFreshnessMetrics(ownBlogPosts)),
       classifyBlogPosts(ownBlogPosts, { userId, projectId }).catch(() => []),
     ])
