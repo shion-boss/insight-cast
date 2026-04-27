@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest } from 'next/server'
 import { buildCompetitorSuggestionSignature, normalizeAnalysisUrl } from '@/lib/analysis/cache'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 
 const anthropic = new Anthropic()
 
@@ -45,6 +45,10 @@ export async function POST(req: NextRequest) {
       cached: true,
       savedAt: cached.updated_at,
     })
+  }
+
+  if (!(await checkRateLimit(user.id, '/api/profile/competitor-suggestions')).allowed) {
+    return Response.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
   const response = await anthropic.messages.create({

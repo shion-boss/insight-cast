@@ -8,6 +8,7 @@ export const RATE_LIMITS: Record<string, { maxRequests: number; windowMs: number
   '/api/projects/[id]/article':             { maxRequests: 5,  windowMs: 3_600_000 },
   '/api/cast-talk/generate':                { maxRequests: 5,  windowMs: 3_600_000 },
   '/api/account/analyze':                   { maxRequests: 2,  windowMs: 3_600_000 },
+  '/api/profile/competitor-suggestions':    { maxRequests: 5,  windowMs: 3_600_000 },
 }
 
 export async function checkRateLimit(userId: string, route: string): Promise<{ allowed: boolean }> {
