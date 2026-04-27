@@ -73,7 +73,6 @@ export default function ArticlePage() {
   const [error, setError] = useState<string | null>(null)
   const [availableThemes, setAvailableThemes] = useState<string[]>([])
   const [loadingThemes, setLoadingThemes] = useState(true)
-  const [savedArticles, setSavedArticles] = useState<Partial<Record<ArticleType, SavedArticle>>>({})
   const [pendingArticleJobIdByType, setPendingArticleJobIdByType] = useState<Partial<Record<ArticleType, string>>>({})
   const [articleStatus, setArticleStatus] = useState<ArticleGenerationStatus>('idle')
   const [articleErrorMessage, setArticleErrorMessage] = useState<string | null>(null)
@@ -86,7 +85,6 @@ export default function ArticlePage() {
 
   const [allArticles, setAllArticles] = useState<SavedArticleRow[]>([])
   const [startingArticleType, setStartingArticleType] = useState<ArticleType | null>(null)
-  const currentSavedArticle = savedArticles[tab] ?? null
   const currentPendingJobId = pendingArticleJobIdByType[tab] ?? null
   const pendingArticleTypes = Object.keys(pendingArticleJobIdByType) as ArticleType[]
   const activeGenerationType = startingArticleType ?? pendingArticleTypes[0] ?? null
@@ -190,7 +188,6 @@ export default function ArticlePage() {
       ? interview.themes.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
       : []
 
-    setSavedArticles(nextSavedArticles)
     setAllArticles((articleRows ?? []) as SavedArticleRow[])
     setPendingArticleJobIdByType(nextPending)
     setFailedArticleMessages((prev) => {
@@ -230,7 +227,6 @@ export default function ArticlePage() {
     void loadPageState(true, true).catch(() => {
       setError('記事素材の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
       setLoadingThemes(false)
-      setSavedArticles({})
       setAvailableThemes([])
       setPendingArticleJobIdByType({})
     })

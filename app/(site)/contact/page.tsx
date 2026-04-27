@@ -1,4 +1,3 @@
-import { PublicPageFrame } from '@/components/public-layout'
 import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { ContactForm } from './_components/contact-form'

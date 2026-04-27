@@ -147,8 +147,6 @@ function CastTalkReviewForm({
     }
   }
 
-  const SCORE_LABELS: Record<number, string> = { 1: '1', 2: '2', 3: '3', 4: '4', 5: '5' }
-
   return (
     <form onSubmit={handleSubmit} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-5">
       <div className="flex items-start justify-between gap-3">

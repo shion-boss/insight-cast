@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, DevAiLabel, FieldLabel, InterviewerSpeech, TextInput } from '@/components/ui'
+import { CharacterAvatar, FieldLabel, InterviewerSpeech, TextInput } from '@/components/ui'
 
 type CompetitorSuggestion = {
   name: string

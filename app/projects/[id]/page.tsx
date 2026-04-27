@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
-import InterviewStatusPills from '@/components/interview-status-pills'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
@@ -43,12 +42,6 @@ type ArticleRow = {
   article_type: string | null
   title: string | null
   created_at: string
-}
-
-const ARTICLE_TYPE_LABEL: Record<string, string> = {
-  client: '解説・まとめ形式',
-  interviewer: 'インタビュアー視点',
-  conversation: 'インタビュー形式',
 }
 
 function formatDateTime(value: string) {

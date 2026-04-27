@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import Link from 'next/link'
 
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { CharacterAvatar } from '@/components/ui'

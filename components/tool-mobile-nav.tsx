@@ -57,12 +57,10 @@ const NAV_ITEMS: NavItem[] = [
 export function ToolMobileNav({
   active,
   accountLabel,
-  accountInitial,
   isAdmin,
 }: {
   active: string
   accountLabel: string
-  accountInitial: string
   isAdmin?: boolean
 }) {
   const [open, setOpen] = useState(false)

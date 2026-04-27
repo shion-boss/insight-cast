@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PublicHero } from '@/components/public-layout'
-import { getButtonClass } from '@/components/ui'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
 

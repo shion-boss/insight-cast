@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { DevAiLabel } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
 import {
   clearPendingProjectAnalysis,

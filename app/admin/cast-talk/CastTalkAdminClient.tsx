@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { DevAiLabel } from '@/components/ui'
 import { getCastName } from '@/lib/characters'
 
 type CastTalk = {
@@ -53,7 +52,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       if (!res.ok) {
         throw new Error(json.message ?? '生成に失敗しました')
       }
-      const { traceId: _, message: __, ...newItem } = json
+      const { traceId: _traceId, message: _message, ...newItem } = json
       setItems((prev) => [newItem, ...prev])
     } catch {
       setError('生成できませんでした。しばらく待ってから再試行してください。')

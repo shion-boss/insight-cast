@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic'
 
-import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CostValue, CostCard, CostTotal } from './CostValue'
 import { Breadcrumb } from '@/components/ui'
@@ -133,13 +132,6 @@ async function getCostData() {
   return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute }
 }
 
-function usd(v: number) {
-  return `$${v.toFixed(4)}`
-}
-
-function jpy(usdAmount: number) {
-  return `¥${Math.round(usdAmount * EXCHANGE_RATE).toLocaleString()}`
-}
 
 export default async function AdminCostsPage() {
   const { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute } = await getCostData()

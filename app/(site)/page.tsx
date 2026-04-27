@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import Image, { type StaticImageData } from 'next/image'
+import Image from 'next/image'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
 
@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   },
 }
 import { CharacterAvatar } from '@/components/ui'
-import { PublicPageFrame } from '@/components/public-layout'
 import { CopyButton } from '@/components/CopyButton'
 import { CheckoutButton } from '@/app/(site)/pricing/CheckoutButton'
 import AppPreviewSection from '@/components/app-preview-section'
@@ -38,29 +37,8 @@ import { LpFaq } from './LpFaq'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import mintXClaus from '@/assets/story/mint-x-claus.png'
-import mintXRain from '@/assets/story/mint-x-rain.jpg'
-import clausXRain from '@/assets/story/claus-x-rain.jpg'
-import halXCocco from '@/assets/story/hal-x-cocco.png'
-import halXMogro from '@/assets/story/hal-x-mogro.png'
-import mogroXRain from '@/assets/story/mogro-x-rain.png'
-import rainXCocco from '@/assets/story/rain-x-cocco.png'
-
 const freeCast = CHARACTERS.filter((char) => char.available)
 const addonCast = CHARACTERS.filter((char) => !char.available)
-
-const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
-  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
-  'mint-rain': mintXRain,   'rain-mint': mintXRain,
-  'claus-rain': clausXRain, 'rain-claus': clausXRain,
-  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
-  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
-  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
-  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
-}
-function getStoryImage(id1: string, id2: string) {
-  return STORY_IMAGE_MAP[`${id1}-${id2}`] ?? null
-}
 
 const CAST_TALK_THEME: Record<string, { color: string; label: string }> = {
   mint:  { color: '#c2722a', label: 'Customer Perspective' },

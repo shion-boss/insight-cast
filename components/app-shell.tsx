@@ -152,7 +152,6 @@ export function AppShell({
               <ToolMobileNav
                 active={active}
                 accountLabel={accountLabel}
-                accountInitial={accountInitial}
                 isAdmin={showAdmin}
               />
             </div>

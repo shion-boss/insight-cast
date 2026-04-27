@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
 
 const CHAR_ICONS = [
@@ -18,7 +19,7 @@ function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji:
       {failed ? (
         <span className="text-[24px]" aria-hidden="true">{emoji}</span>
       ) : (
-        <img
+        <Image
           src={src}
           alt={alt}
           width={56}

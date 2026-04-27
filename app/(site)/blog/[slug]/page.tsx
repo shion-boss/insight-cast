@@ -4,9 +4,8 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { CharacterAvatar, Breadcrumb } from '@/components/ui'
-import { CHARACTERS, getCharacter } from '@/lib/characters'
-import { PublicPageFrame } from '@/components/public-layout'
-import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
+import { CHARACTERS } from '@/lib/characters'
+import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
 import { MarkdownArticleBody } from '@/lib/blog-markdown'
@@ -41,11 +40,6 @@ export async function generateMetadata({
       description: post.excerpt ?? undefined,
     },
   }
-}
-
-function formatDate(date: string): string {
-  const d = new Date(date)
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
 function NormalBodySection({ section }: { section: NormalSection }) {
