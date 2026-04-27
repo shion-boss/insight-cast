@@ -181,6 +181,19 @@ export const POSTS: Post[] = [
     icon: '🐾',
     featured: false,
   },
+  {
+    slug: 'ai-search-era-for-small-business',
+    title: 'AI検索が当たり前になる時代に、中小企業のHPで起きていること',
+    excerpt:
+      'ChatGPTやGoogleで情報を調べる人が増えています。その変化の中で、「どこにでも書いてある情報」と「この会社だけが知っている話」の価値の差が、かつてないほど広がっています。',
+    category: 'philosophy',
+    type: 'normal',
+    date: '2026-04-30',
+    interviewer: 'claus',
+    coverColor: 'bg-[#e8f2f0]',
+    icon: '🦉',
+    featured: false,
+  },
 ]
 
 export function getPost(slug: string): Post | undefined {
