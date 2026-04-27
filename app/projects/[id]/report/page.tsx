@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ReportClient from './ReportClient'
-import { PageHeader } from '@/components/ui'
+import { Breadcrumb, PageHeader } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { buildBlogFreshnessMetrics, getStoredBlogMetrics, getStoredSiteBlogPosts } from '@/lib/site-blog-support'
@@ -99,6 +99,13 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
       <PageHeader title="取材先の調査結果" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <div className="mx-auto max-w-6xl px-6 pt-5">
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: '調査結果' },
+        ]} />
+      </div>
 
       <ReportClient
         projectId={id}

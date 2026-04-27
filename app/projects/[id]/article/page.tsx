@@ -11,6 +11,7 @@ import {
   trackPendingArticleGeneration,
 } from '@/components/project-analysis-notifier'
 import {
+  Breadcrumb,
   CharacterAvatar,
   DevAiLabel,
   InterviewerSpeech,
@@ -65,6 +66,7 @@ export default function ArticlePage() {
   const interviewId = searchParams.get('interviewId') ?? ''
   const initialTheme = searchParams.get('theme') ?? ''
   const projectName = searchParams.get('projectName') ?? 'この取材先'
+  const from = searchParams.get('from') ?? ''
   const supabaseRef = useRef(createClient())
 
   const [tab, setTab] = useState<ArticleType>('client')
@@ -92,10 +94,21 @@ export default function ArticlePage() {
     ? (TABS.find((item) => item.type === activeGenerationType)?.label ?? '別の形式')
     : null
   const currentFailureMessage = failedArticleMessages[tab] ?? null
+
+  // 選択中のテーマ全体の作成済み記事（種類問わず）
+  const themeArticles = theme ? allArticles.filter((a) => a.source_theme === theme) : []
+  // 記事の種類 × テーマの組み合わせで絞り込んだ記事
+  const comboArticles = allArticles.filter((a) => {
+    if (a.article_type !== tab) return false
+    if (theme) return a.source_theme === theme
+    return !a.source_theme
+  })
+  const latestComboArticle = comboArticles[0] ?? null
+
   const currentTabStatus: ArticleGenerationStatus = (() => {
     if (startingArticleType === tab || currentPendingJobId) return 'generating'
     if (currentFailureMessage) return 'failed'
-    if (currentSavedArticle) return 'ready'
+    if (latestComboArticle) return 'ready'
     return 'idle'
   })()
   const isCurrentTabGenerating = currentTabStatus === 'generating'
@@ -152,7 +165,10 @@ export default function ArticlePage() {
 
       const [jobId, job] = pending
       const matchedSavedArticle = latestArticleByType.get(articleType)
-      const isCompleted = matchedSavedArticle && isFreshEnough(matchedSavedArticle.created_at, job.requestedAt)
+      const jobTheme = (job.theme ?? null) as string | null
+      const isCompleted = matchedSavedArticle
+        && isFreshEnough(matchedSavedArticle.created_at, job.requestedAt)
+        && matchedSavedArticle.source_theme === jobTheme
 
       if (interview?.article_status === 'failed') {
         failedMessages[articleType] = typeof interview.article_error === 'string'
@@ -276,7 +292,25 @@ export default function ArticlePage() {
       if (response.status === 403) {
         const body = await response.json().catch(() => ({}))
         if (body.error === 'lifetime_article_limit' || body.error === 'free_plan_locked') {
+          clearPendingArticleGeneration(jobId)
+          setPendingArticleJobIdByType((prev) => {
+            const next = { ...prev }
+            delete next[tab]
+            return next
+          })
+          setStartingArticleType(null)
           window.location.href = '/pricing?reason=free_plan_locked'
+          return
+        }
+        if (body.error === 'monthly_article_limit_reached') {
+          clearPendingArticleGeneration(jobId)
+          setPendingArticleJobIdByType((prev) => {
+            const next = { ...prev }
+            delete next[tab]
+            return next
+          })
+          setStartingArticleType(null)
+          window.location.href = '/pricing?reason=monthly_article_limit'
           return
         }
         throw new Error('failed to start article generation')
@@ -322,7 +356,7 @@ export default function ArticlePage() {
       return 'この形式の記事素材を作成中です。しばらくお待ちください。'
     }
     if (currentTabStatus === 'ready') {
-      return 'この形式の最新の記事素材を確認できます。必要なら条件を変えて作り直せます。'
+      return 'このテーマとこの形式の組み合わせで作成済みです。条件を変えて作り直すこともできます。'
     }
     if (currentTabStatus === 'failed') {
       return currentFailureMessage ?? articleErrorMessage ?? '記事素材を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
@@ -335,23 +369,15 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg)]">
-      <PageHeader title="記事を作る" backHref={`/projects/${projectId}`} backLabel="← 取材先の管理" />
+      <PageHeader title="記事を作る" backHref={`/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}`} backLabel="← 取材メモ" />
 
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <nav aria-label="パンくず" className="mb-6 flex items-center gap-1.5 text-xs text-[var(--text3)]">
-          <Link href="/projects" className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
-          <span>/</span>
-          <Link href={`/projects/${projectId}`} className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
-          <span>/</span>
-          <Link
-            href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
-            className="transition-colors hover:text-[var(--text2)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            取材メモ
-          </Link>
-          <span>/</span>
-          <span className="text-[var(--text2)]">記事素材を作成</span>
-        </nav>
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${projectId}` },
+          { label: '取材メモ', href: `/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}` },
+          { label: '記事素材を作成' },
+        ]} />
 
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[320px_1fr]">
           <aside className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-20">
@@ -429,33 +455,6 @@ export default function ArticlePage() {
               )}
             </div>
 
-            {(() => {
-              const themeArticles = theme ? allArticles.filter((a) => a.source_theme === theme) : []
-              if (themeArticles.length === 0) return null
-              return (
-                <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">
-                    このテーマの作成済み記事 ({themeArticles.length}件)
-                  </p>
-                  <div className="space-y-1.5">
-                    {themeArticles.map((a) => {
-                      const typeLabel = a.article_type === 'interviewer' ? 'インタビュー' : a.article_type === 'conversation' ? '会話込み' : 'ブログ'
-                      const dateLabel = new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
-                      return (
-                        <Link
-                          key={a.id}
-                          href={`/projects/${projectId}/articles/${a.id}`}
-                          className="flex items-center justify-between gap-2 rounded-[var(--r-sm)] px-2.5 py-2 text-xs hover:bg-[var(--surface)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                        >
-                          <span className="truncate text-[var(--text2)]">{a.title ?? '記事'}</span>
-                          <span className="flex-shrink-0 text-[var(--text3)]">{typeLabel} · {dateLabel}</span>
-                        </Link>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })()}
 
             {tab === 'client' && (
               <div className="mb-5">
@@ -583,9 +582,9 @@ export default function ArticlePage() {
                   {currentTabStatus === 'generating' ? '作成中' : currentTabStatus === 'ready' ? '作成済み' : currentTabStatus === 'failed' ? '要確認' : '未作成'}
                 </span>
               </div>
-              {currentSavedArticle && !isCurrentTabGenerating && (
+              {latestComboArticle && !isCurrentTabGenerating && (
                 <Link
-                  href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
+                  href={`/projects/${projectId}/articles/${latestComboArticle.id}`}
                   className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
                 >
                   {tab === 'conversation' ? '記事を確認・書き出す' : '最新の記事を見る'}
@@ -593,7 +592,32 @@ export default function ArticlePage() {
               )}
             </div>
 
-            {!isCurrentTabGenerating && !currentSavedArticle && currentTabStatus !== 'failed' && (
+            {themeArticles.length > 0 && (
+              <div className="border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-4">
+                <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">
+                  このテーマの作成済み記事（{themeArticles.length}件）
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {themeArticles.map((a) => {
+                    const typeLabel = a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'
+                    const dateLabel = new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
+                    return (
+                      <Link
+                        key={a.id}
+                        href={`/projects/${projectId}/articles/${a.id}`}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      >
+                        <span>{typeLabel}</span>
+                        <span className="text-[var(--text3)]">·</span>
+                        <span className="text-[var(--text3)]">{dateLabel}</span>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {!isCurrentTabGenerating && comboArticles.length === 0 && currentTabStatus !== 'failed' && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 {error ? (
                   <div role="alert">
@@ -641,8 +665,8 @@ export default function ArticlePage() {
                   <InterviewerSpeech
                     icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                     name="ミント"
-                    title="設定を選んで記事素材を作成してください"
-                    description="このページで待たなくても、記事素材ができたら確認できます。"
+                    title="現在の設定を選んで記事素材を作成してください"
+                    description="記事の種類とテーマの組み合わせで、まだこのパターンは作成されていません。左の設定を確認して作成を始めてください。"
                     tone="soft"
                   />
                 )}
@@ -693,25 +717,28 @@ export default function ArticlePage() {
               </div>
             )}
 
-            {currentSavedArticle && !isCurrentTabGenerating && (
-              <div className="p-8">
-                <InterviewerSpeech
-                  icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
-                  name="ミント"
-                  title={currentSavedArticle.title || '記事素材が用意できています'}
-                  description="保存済みの記事を開くか、条件を少し変えてもう一度作り直せます。"
-                  tone="soft"
-                />
-                <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
-                  <Link
-                    href={`/projects/${projectId}/articles/${currentSavedArticle.id}`}
-                    className={getButtonClass('primary')}
-                  >
-                    {tab === 'conversation' ? '記事を確認・書き出す' : '保存した記事を確認する'}
-                  </Link>
+            {comboArticles.length > 0 && !isCurrentTabGenerating && currentTabStatus !== 'failed' && (
+              <div className="p-6 space-y-3">
+                {comboArticles.map((a) => {
+                  const dateLabel = new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
+                  return (
+                    <Link
+                      key={a.id}
+                      href={`/projects/${projectId}/articles/${a.id}`}
+                      className="flex items-center justify-between gap-4 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg)] px-5 py-4 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    >
+                      <p className="truncate text-sm font-medium text-[var(--text)]">{a.title ?? '記事'}</p>
+                      <div className="flex flex-shrink-0 items-center gap-3">
+                        <span className="text-xs text-[var(--text3)]">{dateLabel}</span>
+                        <span className="text-xs font-medium text-[var(--accent)]">確認する →</span>
+                      </div>
+                    </Link>
+                  )
+                })}
+                <div className="flex flex-wrap justify-end gap-2 pt-2">
                   <Link
                     href={`/projects/${projectId}#articles`}
-                    className={getButtonClass('secondary')}
+                    className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
                   >
                     取材先の管理で確認する
                   </Link>
@@ -719,7 +746,7 @@ export default function ArticlePage() {
                     type="button"
                     onClick={() => void startBatchGeneration()}
                     disabled={isGenerating}
-                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     もう一度作成する
                   </button>

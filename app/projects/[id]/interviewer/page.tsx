@@ -8,7 +8,7 @@ import {
 } from '@/lib/interview-focus-theme'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
 
@@ -103,6 +103,11 @@ export default async function InterviewerPage({
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <PageHeader title="キャストを選ぶ" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
         <div className="max-w-2xl mx-auto px-6 py-10">
+          <Breadcrumb items={[
+            { label: '取材先一覧', href: '/projects' },
+            { label: '取材先の管理', href: `/projects/${id}` },
+            { label: 'キャストを選ぶ' },
+          ]} />
           <InterviewerSpeech
             icon={(
               <CharacterAvatar
@@ -141,6 +146,11 @@ export default async function InterviewerPage({
       <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ' },
+        ]} />
         {freeLocked && (
           <div className="mb-6">
             <InterviewerSpeech

@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { Breadcrumb } from '@/components/ui'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { PostFormClient } from '../../PostFormClient'
 import type { PostFormData } from '@/lib/actions/admin-posts'
@@ -47,13 +47,12 @@ export default async function AdminPostEditPage({
   return (
     <div className="space-y-6">
       <div>
-        <Link
-          href="/admin/posts"
-          className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)]"
-        >
-          ← 記事一覧
-        </Link>
-        <h1 className="mt-2 font-serif text-2xl font-bold text-[var(--text)]">記事を編集する</h1>
+        <Breadcrumb items={[
+          { label: '管理', href: '/admin' },
+          { label: '記事管理', href: '/admin/posts' },
+          { label: '編集' },
+        ]} />
+        <h1 className="font-serif text-2xl font-bold text-[var(--text)]">記事を編集する</h1>
         <p className="mt-1 text-sm text-[var(--text3)]">/{post.slug as string}</p>
       </div>
 

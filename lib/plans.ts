@@ -9,6 +9,7 @@ export const PLANS = {
     monthlyInterviewLimit: 999, // lifetimeInterviewLimit が有効なため実質未使用
     lifetimeInterviewLimit: 2,
     lifetimeArticleLimit: 3,
+    monthlyArticleLimit: null, // lifetimeArticleLimit が有効なため使用しない
     maxCompetitorsPerProject: 0,
     supportLabel: 'コミュニティサポート',
   },
@@ -20,6 +21,7 @@ export const PLANS = {
     monthlyInterviewLimit: 15,
     lifetimeInterviewLimit: null,
     lifetimeArticleLimit: null,
+    monthlyArticleLimit: 60,
     maxCompetitorsPerProject: 3,
     supportLabel: '通常サポート',
   },
@@ -31,6 +33,7 @@ export const PLANS = {
     monthlyInterviewLimit: 60,
     lifetimeInterviewLimit: null,
     lifetimeArticleLimit: null,
+    monthlyArticleLimit: 240,
     maxCompetitorsPerProject: 3,
     supportLabel: '優先サポート',
   },
@@ -42,6 +45,7 @@ export const PLANS = {
   monthlyInterviewLimit: number
   lifetimeInterviewLimit: number | null
   lifetimeArticleLimit: number | null
+  monthlyArticleLimit: number | null
   maxCompetitorsPerProject: number
   supportLabel: string
 }>
@@ -67,6 +71,33 @@ export async function isFreePlanLocked(
     .select('id', { count: 'exact', head: true })
     .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
   return (count ?? 0) >= limits.lifetimeArticleLimit
+}
+
+// 有料プランの月次記事上限に達しているか確認する
+export async function checkMonthlyArticleLimit(
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
+  userId: string,
+): Promise<{ allowed: boolean; limit: number | null; count: number }> {
+  const plan = await getUserPlan(supabase, userId)
+  const limits = getPlanLimits(plan)
+  if (limits.monthlyArticleLimit === null) return { allowed: true, limit: null, count: 0 }
+
+  const now = new Date()
+  const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+
+  const { data: userProjects } = await supabase.from('projects').select('id').eq('user_id', userId)
+  const projectIds = (userProjects ?? []).map((p) => p.id as string)
+  const { count } = await supabase
+    .from('articles')
+    .select('id', { count: 'exact', head: true })
+    .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+    .gte('created_at', startOfMonth.toISOString())
+
+  return {
+    allowed: (count ?? 0) < limits.monthlyArticleLimit,
+    limit: limits.monthlyArticleLimit,
+    count: count ?? 0,
+  }
 }
 
 // subscriptions テーブルからユーザーのプランを取得する

@@ -6,6 +6,7 @@ import { ArticleListTable } from '@/components/article-list-table'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { getCharacter, getCastName } from '@/lib/characters'
+import { getUserPlan } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 
 type ArticleRow = {
@@ -27,6 +28,7 @@ type ProjectRow = {
 type InterviewRow = {
   id: string
   interviewer_type: string
+  created_at: string
 }
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
@@ -41,7 +43,12 @@ function formatDate(value: string) {
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
 
-export default async function ArticlesPage() {
+export default async function ArticlesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ projectId?: string; interviewId?: string }>
+}) {
+  const { projectId: initialProjectId, interviewId: initialInterviewId } = await searchParams
   const supabase = await createClient()
   const {
     data: { user },
@@ -49,13 +56,14 @@ export default async function ArticlesPage() {
 
   if (!user) redirect('/')
 
-  // profile と articles を並列取得
-  const [{ data: profile }, { data: articleRows }] = await Promise.all([
+  // profile・articles・プランを並列取得
+  const [{ data: profile }, { data: articleRows }, plan] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
     supabase
       .from('articles')
       .select('id, title, content, article_type, created_at, project_id, interview_id')
       .order('created_at', { ascending: false }),
+    getUserPlan(supabase, user.id),
   ])
 
   const articles = (articleRows ?? []) as ArticleRow[]
@@ -68,7 +76,7 @@ export default async function ArticlesPage() {
       ? supabase.from('projects').select('id, name, hp_url').in('id', projectIds)
       : Promise.resolve({ data: [] }),
     interviewIds.length > 0
-      ? supabase.from('interviews').select('id, interviewer_type').in('id', interviewIds)
+      ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', interviewIds)
       : Promise.resolve({ data: [] }),
   ])
 
@@ -97,7 +105,7 @@ export default async function ArticlesPage() {
       createdAtLabel: formatDate(article.created_at),
       detailHref: `/projects/${article.project_id}/articles/${article.id}`,
       projectLabel: project?.name || project?.hp_url || '—',
-      interviewerLabel: interview ? getCastName(interview.interviewer_type) : '—',
+      interviewerLabel: interview ? `${formatDate(interview.created_at)} · ${getCastName(interview.interviewer_type)}` : '—',
     }
   })
 
@@ -141,8 +149,15 @@ export default async function ArticlesPage() {
         <ArticleListTable
           items={articleItems}
           showProjectColumn
+          alwaysShowProjectFilter={plan === 'business'}
+          initialProjectLabel={initialProjectId ? (projects.get(initialProjectId)?.name || projects.get(initialProjectId)?.hp_url) : undefined}
+          initialInterviewerLabel={(() => {
+            if (!initialInterviewId) return undefined
+            const iv = interviews.get(initialInterviewId)
+            return iv ? `${formatDate(iv.created_at)} · ${getCastName(iv.interviewer_type)}` : undefined
+          })()}
           showInterviewerColumn
-          searchPlaceholder="タイトル・取材先・本文で検索"
+          searchPlaceholder="タイトル・本文で検索"
           noResultsTitle="条件に合う記事が見つかりません。"
           noResultsDescription="キーワードや絞り込み条件を変えると、記事が表示されます。"
         />

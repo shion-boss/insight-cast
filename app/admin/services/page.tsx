@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { Breadcrumb } from '@/components/ui'
 
 type ServiceStatus = 'active' | 'free' | 'inactive'
 
@@ -96,6 +96,7 @@ const STATUS_STYLES: Record<ServiceStatus, { badge: string; label: string }> = {
 export default function AdminServicesPage() {
   return (
     <div className="space-y-8">
+      <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: '関連サービス' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">関連サービス</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">Insight Cast が利用する外部サービスの一覧</p>
@@ -140,11 +141,6 @@ export default function AdminServicesPage() {
         ))}
       </div>
 
-      <div>
-        <Link href="/admin" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
-          ← 管理ダッシュボードに戻る
-        </Link>
-      </div>
     </div>
   )
 }

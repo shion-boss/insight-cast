@@ -4,6 +4,7 @@ import { useState, useTransition, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { TextInput, PrimaryButton, SecondaryButton, FieldLabel } from '@/components/ui'
 import { createPost, updatePost, deletePost, type PostFormData } from '@/lib/actions/admin-posts'
+import { CHARACTERS } from '@/lib/characters'
 
 type PostFormProps = {
   mode: 'new' | 'edit'
@@ -25,9 +26,7 @@ const TYPE_OPTIONS = [
 
 const INTERVIEWER_OPTIONS = [
   { value: '', label: '（なし）' },
-  { value: 'mint', label: 'ミント（猫）' },
-  { value: 'claus', label: 'クラウス（フクロウ）' },
-  { value: 'rain', label: 'レイン（キツネ）' },
+  ...CHARACTERS.map((c) => ({ value: c.id, label: `${c.name}（${c.species}）` })),
 ]
 
 function slugify(text: string): string {

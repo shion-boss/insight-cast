@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { ArticleListTable } from '@/components/article-list-table'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
-import { ButtonLink, CharacterAvatar, StateCard, getButtonClass } from '@/components/ui'
+import { Breadcrumb, ButtonLink, CharacterAvatar, StateCard, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
 
@@ -89,7 +89,7 @@ export default async function ProjectArticlesPage({
     title: article.title || '記事',
     articleTypeLabel: ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事',
     createdAtLabel: formatDate(article.created_at),
-    detailHref: `/projects/${id}/articles/${article.id}`,
+    detailHref: `/projects/${id}/articles/${article.id}?from=articles${interviewId ? `&interviewId=${interviewId}` : ''}`,
   }))
 
   return (
@@ -98,22 +98,21 @@ export default async function ProjectArticlesPage({
       active="articles"
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
-      headerRight={(
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {interview && (
-            <Link
-              href={`/projects/${id}/summary?interviewId=${interview.id}`}
-              className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
-            >
-              取材メモを見る
-            </Link>
-          )}
-          <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-            ← 取材先の管理に戻る
-          </Link>
-        </div>
-      )}
+      headerRight={interview ? (
+        <Link
+          href={`/projects/${id}/summary?interviewId=${interview.id}`}
+          className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+        >
+          取材メモを見る
+        </Link>
+      ) : undefined}
     >
+      <Breadcrumb items={[
+        { label: '取材先一覧', href: '/projects' },
+        { label: '取材先の管理', href: `/projects/${id}` },
+        ...(interviewId ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${interviewId}` }] : []),
+        { label: interview ? 'この取材の記事一覧' : '記事一覧' },
+      ]} />
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Project Articles</p>

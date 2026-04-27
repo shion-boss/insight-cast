@@ -1,6 +1,7 @@
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { Fragment } from 'react'
 import { CHARACTERS } from '@/lib/characters'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
@@ -27,6 +28,30 @@ const panelBaseClass = 'rounded-[var(--r-xl)] border border-[var(--border)] bg-[
 
 export function getPanelClass(className?: string) {
   return cx(panelBaseClass, className)
+}
+
+export function Breadcrumb({ items }: {
+  items: Array<{ label: string; href?: string }>
+}) {
+  return (
+    <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-xs text-[var(--text3)]">
+      {items.map((item, i) => (
+        <Fragment key={i}>
+          {i > 0 && <span>/</span>}
+          {item.href ? (
+            <Link
+              href={item.href}
+              className="rounded transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              {item.label}
+            </Link>
+          ) : (
+            <span className="text-[var(--text2)]">{item.label}</span>
+          )}
+        </Fragment>
+      ))}
+    </nav>
+  )
 }
 
 export function DevAiLabel({

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
-import { CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
 
@@ -24,10 +24,13 @@ function formatDateTime(value: string) {
 
 export default async function ArticleDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string; articleId: string }>
+  searchParams: Promise<{ from?: string; interviewId?: string }>
 }) {
   const { id, articleId } = await params
+  const { from, interviewId: fromInterviewId } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
@@ -59,6 +62,11 @@ export default async function ArticleDetailPage({
   const fallbackChar = getCharacter('mint')
   const displayChar = interviewer ?? fallbackChar
 
+  const backHref = from === 'articles'
+    ? fromInterviewId ? `/articles?interviewId=${fromInterviewId}&projectId=${id}` : `/articles`
+    : `/projects/${id}`
+  const backLabel = from === 'articles' ? '← 記事一覧に戻る' : '← 取材先の管理に戻る'
+
   return (
     <AppShell
       title="記事詳細"
@@ -67,12 +75,18 @@ export default async function ArticleDetailPage({
       isAdmin={checkIsAdmin(user.email)}
       contentClassName="max-w-3xl space-y-6"
       headerRight={(
-        <Link href={`/projects/${id}`} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-          ← 取材先の管理に戻る
+        <Link href={backHref} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
+          {backLabel}
         </Link>
       )}
     >
       <div className="space-y-6">
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${id}` },
+          ...(article.interview_id ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${article.interview_id}` }] : []),
+          { label: '記事詳細' },
+        ]} />
         <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
           <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
           <h1 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h1>
@@ -108,10 +122,10 @@ export default async function ArticleDetailPage({
             />
             <div className="flex gap-3">
               <Link
-                href={`/projects/${id}`}
+                href={backHref}
                 className={getButtonClass('secondary', 'text-sm px-4 py-2.5')}
               >
-                ← 取材先の管理に戻る
+                {backLabel}
               </Link>
             </div>
           </div>

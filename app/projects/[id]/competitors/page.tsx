@@ -3,7 +3,7 @@ import CompetitorsForm from './CompetitorsForm'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { loadProjectCompetitorContext } from '@/lib/project-competitor-context'
-import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
 
 export default async function CompetitorsPage({ params }: { params: Promise<{ id: string }> }) {
@@ -44,6 +44,11 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
       <PageHeader title="参考にするHPを見直す" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: '参考HPを見直す' },
+        ]} />
         <div className="mb-8">
           <InterviewerSpeech
             icon={(

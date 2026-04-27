@@ -176,6 +176,12 @@ export default async function PricingPage({
             <span>無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。</span>
           </div>
         )}
+        {reason === 'monthly_article_limit' && (
+          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+            <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
+            <span>今月の記事作成数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。</span>
+          </div>
+        )}
 
         <PublicHero
           compact

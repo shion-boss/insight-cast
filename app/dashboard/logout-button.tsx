@@ -10,7 +10,7 @@ export default function LogoutButton() {
     <button
       type="submit"
       disabled={pending}
-      className={getButtonClass('secondary', 'min-w-24 font-medium')}
+      className={getButtonClass('secondary', 'w-full font-medium')}
     >
       {pending ? 'ログアウト中...' : 'ログアウト'}
     </button>

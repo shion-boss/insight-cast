@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { AppShell } from '@/components/app-shell'
-import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { PortalButton } from '@/app/settings/PortalButton'
 
@@ -60,6 +60,10 @@ export default async function BillingPage({
   return (
     <AppShell title="ご利用プラン" active="settings" accountLabel={user.email ?? '設定'}>
       <div className="max-w-2xl space-y-5">
+        <Breadcrumb items={[
+          { label: '設定', href: '/settings' },
+          { label: 'ご利用プラン' },
+        ]} />
         {isSuccess && (
           <div className="rounded-[var(--r-lg)] border border-[var(--teal)] bg-[color-mix(in_srgb,var(--teal)_8%,transparent)] p-5">
             <InterviewerSpeech
@@ -144,14 +148,6 @@ export default async function BillingPage({
           </section>
         )}
 
-        <div className="text-center">
-          <Link
-            href="/settings"
-            className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            ← 設定に戻る
-          </Link>
-        </div>
       </div>
     </AppShell>
   )

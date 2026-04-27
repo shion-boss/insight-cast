@@ -7,6 +7,7 @@ import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { InterviewsFilterClient } from '@/components/interviews-filter-client'
 import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
+import { getUserPlan } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 
 type Project = {
@@ -39,10 +40,11 @@ export default async function InterviewsPage() {
 
   if (!user) redirect('/')
 
-  // auth+profile と projects を並列取得
-  const [{ data: profile }, { data: projectRows }] = await Promise.all([
+  // auth+profile・projects・プランを並列取得
+  const [{ data: profile }, { data: projectRows }, plan] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
     supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id),
+    getUserPlan(supabase, user.id),
   ])
 
   const projects = (projectRows ?? []) as Project[]
@@ -72,7 +74,7 @@ export default async function InterviewsPage() {
 
   return (
     <AppShell
-      title="取材履歴"
+      title="取材メモ一覧"
       active="interviews"
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
@@ -117,6 +119,7 @@ export default async function InterviewsPage() {
         })()
       ) : (
         <InterviewsFilterClient
+          alwaysShowProjectFilter={plan === 'business'}
           items={interviews.map((interview) => {
             const project = projectMap.get(interview.project_id)!
             const char = getCharacter(interview.interviewer_type)

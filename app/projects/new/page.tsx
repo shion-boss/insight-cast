@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Breadcrumb } from '@/components/ui'
 import NewProjectForm from './NewProjectForm'
 
 function getErrorMessage(error: string) {
@@ -45,6 +46,10 @@ export default async function NewProjectPage({
       <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
         <PageHeader title="取材先を登録する" backHref="/projects" backLabel="← 取材先一覧" />
         <div className="max-w-lg mx-auto px-6 py-12">
+          <Breadcrumb items={[
+            { label: '取材先一覧', href: '/projects' },
+            { label: '取材先を登録する' },
+          ]} />
           <InterviewerSpeech
             icon={(
               <CharacterAvatar
@@ -83,6 +88,10 @@ export default async function NewProjectPage({
       <PageHeader title="取材先を登録する" backHref="/projects" backLabel="← 取材先一覧" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先を登録する' },
+        ]} />
         <div className="mb-8">
           <InterviewerSpeech
             icon={(

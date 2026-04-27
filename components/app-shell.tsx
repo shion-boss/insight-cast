@@ -135,7 +135,7 @@ export function AppShell({
               <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-xs font-bold text-stone-400 uppercase">Admin</span>
             </Link>
           )}
-          <form action={signOut}>
+          <form action={signOut} className="w-full">
             <LogoutButton />
           </form>
         </div>

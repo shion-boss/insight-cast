@@ -8,13 +8,23 @@ import InterviewStatusPills from '@/components/interview-status-pills'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
-import { ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
+import { Breadcrumb, ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill, getButtonClass } from '@/components/ui'
+
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
+import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { ContentMapPanel } from '@/app/dashboard/_components/content-map-panel'
 import { AnalyticsSection, type HeatmapEntry, type MonthlyPoint } from '@/app/dashboard/_components/analytics-section'
 import AnalysisStatusPanel from './AnalysisStatusPanel'
+import {
+  PaginatedUncreatedThemes,
+  PaginatedInterviewHistory,
+  PaginatedArticles,
+  type UncreatedThemeItem,
+  type InterviewHistoryItem,
+  type ArticleSectionItem,
+} from './ProjectSections'
 
 type InterviewRow = {
   id: string
@@ -161,6 +171,76 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return [...countMap.entries()].map(([date, count]) => ({ date, count }))
   })()
 
+  // HP診断サマリー用データ
+  const toStringList = (value: unknown) =>
+    Array.isArray(value) ? value.filter((v): v is string => typeof v === 'string') : []
+  const hpPriorityActions = toStringList(rawData?.priority_actions).slice(0, 5)
+  const hpStrengths = toStringList(rawData?.strengths).slice(0, 4)
+  const hpGaps = toStringList(rawData?.gaps).slice(0, 4)
+
+  // 競合差分ハイライト用データ
+  const influentialTopics = [...new Map(
+    (competitorAnalyses ?? []).flatMap((ca) =>
+      getCompetitorInfluentialTopics(ca.raw_data as Record<string, unknown>).map((t) => [t.theme, t] as const)
+    )
+  ).values()].slice(0, 5)
+
+  // 未作成テーマ一覧
+  const uncreatedThemeItems: UncreatedThemeItem[] = interviews
+    .filter((interview) => {
+      const { hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+      return hasUncreatedThemes && Array.isArray(interview.themes) && interview.themes.length > 0
+    })
+    .flatMap((interview) => {
+      const char = getCharacter(interview.interviewer_type)
+      return (interview.themes ?? []).map((theme) => ({
+        theme,
+        interviewId: interview.id,
+        interviewerName: char?.name ?? 'インタビュアー',
+        icon48: char?.icon48,
+        emoji: char?.emoji,
+      }))
+    })
+
+  // 取材履歴アイテム
+  const interviewHistoryItems: InterviewHistoryItem[] = interviews.map((interview) => {
+    const interviewArticles = articlesByInterview.get(interview.id) ?? []
+    const latestInterviewArticle = interviewArticles[0] ?? null
+    const char = getCharacter(interview.interviewer_type)
+    const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+    const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
+    const articleHref = interviewArticles.length > 1
+      ? `/articles?interviewId=${interview.id}&projectId=${id}`
+      : latestInterviewArticle
+        ? `/projects/${id}/articles/${latestInterviewArticle.id}`
+        : null
+    return {
+      id: interview.id,
+      charName: char?.name ?? 'インタビュアー',
+      charEmoji: char?.emoji ?? '🎙️',
+      charIcon48: char?.icon48,
+      themes: interview.themes,
+      hasSummary,
+      hasArticle,
+      hasUncreatedThemes,
+      articleStatus: interview.article_status,
+      createdAt: interview.created_at,
+      articleCount: interviewArticles.length,
+      articleHref,
+      articleLabel: interviewArticles.length > 1 ? '記事一覧を見る' : '記事を見る',
+      managementHref,
+    }
+  })
+
+  // 記事素材アイテム
+  const articleSectionItems: ArticleSectionItem[] = articles.map((article) => ({
+    id: article.id,
+    title: article.title,
+    articleType: article.article_type,
+    createdAt: article.created_at,
+    href: `/projects/${id}/articles/${article.id}`,
+  }))
+
   const continuityScore = (() => {
     const now = new Date()
     const thisSunday = new Date(now)
@@ -184,17 +264,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       accountLabel={profile?.name ?? user.email ?? '設定'}
       isAdmin={checkIsAdmin(user.email)}
       headerRight={(
-        <div className="flex items-center gap-2">
-          <Link href="/projects" className={getButtonClass('secondary', 'hidden sm:inline-flex px-4 py-2 text-sm')}>
-            ← 一覧へ戻る
-          </Link>
-          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
-            + 取材する
-          </Link>
-        </div>
+        <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
+          + 取材する
+        </Link>
       )}
       contentClassName="max-w-5xl"
     >
+      <Breadcrumb items={[
+        { label: '取材先一覧', href: '/projects' },
+        { label: project.name || project.hp_url },
+      ]} />
       {/* Overview panel */}
       <div
         className="rounded-[var(--r-lg)] border border-[var(--border)] p-7 mb-7"
@@ -271,6 +350,84 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         </div>
       )}
 
+      {/* HP診断サマリー */}
+      {auditRow && (hpPriorityActions.length > 0 || hpStrengths.length > 0 || hpGaps.length > 0) && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[16px] font-bold text-[var(--text)]">HP診断サマリー</h2>
+            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              詳細レポートを見る →
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {hpPriorityActions.length > 0 && (
+              <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 sm:col-span-3">
+                <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">優先アクション</p>
+                <ul className="space-y-2">
+                  {hpPriorityActions.map((action, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
+                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">{i + 1}</span>
+                      {action}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {hpStrengths.length > 0 && (
+              <div className="rounded-[var(--r-lg)] border border-[var(--ok)]/30 bg-[var(--ok-l)] p-5 sm:col-span-1">
+                <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--ok)] uppercase">強み</p>
+                <ul className="space-y-1.5">
+                  {hpStrengths.map((s, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text)]">
+                      <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--ok)]" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {hpGaps.length > 0 && (
+              <div className="rounded-[var(--r-lg)] border border-[var(--warn)]/30 bg-[var(--warn-l)] p-5 sm:col-span-2">
+                <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--warn)] uppercase">課題・弱点</p>
+                <ul className="space-y-1.5">
+                  {hpGaps.map((g, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text)]">
+                      <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--warn)]" />
+                      {g}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 競合差分ハイライト */}
+      {influentialTopics.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[16px] font-bold text-[var(--text)]">競合が扱っている注目テーマ</h2>
+            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              詳細レポートを見る →
+            </Link>
+          </div>
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
+            {influentialTopics.map((topic, i) => (
+              <div key={i} className="flex items-start gap-3 px-5 py-4">
+                <div className="mt-0.5 flex items-center gap-2">
+                  <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[var(--text)]">{topic.theme}</p>
+                  <p className="mt-0.5 text-xs text-[var(--text3)] line-clamp-2">{topic.summary}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Analysis / competitors section */}
       <AnalysisStatusPanel
         projectId={id}
@@ -280,6 +437,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         hasAudit={!!auditRow}
         reanalysisNextAvailableAt={reanalysisNextAvailableAt}
       />
+
+      {/* 未作成テーマ一覧 */}
+      {uncreatedThemeItems.length > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[16px] font-bold text-[var(--text)]">記事にしていないテーマ</h2>
+            <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text2)]">
+              {uncreatedThemeItems.length}件
+            </span>
+          </div>
+          <PaginatedUncreatedThemes items={uncreatedThemeItems} projectId={id} />
+        </div>
+      )}
 
       {/* Interview history */}
       <div className="mt-8">
@@ -311,70 +481,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             </div>
           </>
         ) : (
-          <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
-            {interviews.map((interview, i) => {
-              const interviewArticles = articlesByInterview.get(interview.id) ?? []
-              const latestInterviewArticle = interviewArticles[0] ?? null
-              const char = getCharacter(interview.interviewer_type)
-              const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
-              const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
-              const articleHref = interviewArticles.length > 1
-                ? `/projects/${id}/articles?interviewId=${interview.id}`
-                : latestInterviewArticle
-                  ? `/projects/${id}/articles/${latestInterviewArticle.id}`
-                  : null
-              const articleLabel = interviewArticles.length > 1 ? '記事一覧を見る' : '記事を見る'
-
-              return (
-                <div
-                  key={interview.id}
-                  className={`flex flex-col sm:flex-row sm:items-center gap-3 py-4 ${i < interviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
-                      <CharacterAvatar
-                        src={char?.icon48}
-                        alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                        emoji={char?.emoji}
-                        size={38}
-                        className="w-full h-full object-cover object-top"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
-                        {char?.name ?? 'インタビュアー'} · {formatDateTime(interview.created_at)}
-                      </div>
-                      <div className="text-[12px] text-[var(--text3)] truncate">
-                        {interview.themes && interview.themes.length > 0
-                          ? interview.themes.join('、')
-                          : 'テーマ未確定'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
-                    {interviewArticles.length > 0 && (
-                      <span className="text-[11px] text-[var(--text3)]">記事 {interviewArticles.length}本</span>
-                    )}
-                    <InterviewStatusPills
-                      interviewId={interview.id}
-                      hasSummary={hasSummary}
-                      hasArticle={hasArticle}
-                      hasUncreatedThemes={hasUncreatedThemes}
-                      articleStatus={interview.article_status}
-                    />
-                    {articleHref && (
-                      <Link href={articleHref} aria-label={`${char?.name ?? 'インタビュアー'}の${articleLabel}`} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
-                        {articleLabel}
-                      </Link>
-                    )}
-                    <Link href={managementHref} aria-label={`${char?.name ?? 'インタビュアー'}のメモを見る`} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
-                      メモを見る
-                    </Link>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <PaginatedInterviewHistory items={interviewHistoryItems} />
         )}
       </div>
 
@@ -384,57 +491,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事素材</h2>
           </div>
-          {/* モバイル: カードリスト */}
-          <div className="space-y-3 sm:hidden">
-            {articles.map((article) => (
-              <div key={article.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
-                <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
-                <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
-                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
-                    {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
-                  </span>
-                  <span>{formatDateTime(article.created_at)}</span>
-                </div>
-                <Link href={`/projects/${id}/articles/${article.id}`} aria-label={`${article.title ?? '記事'}の詳細`} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                  詳細
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          {/* PC: テーブル */}
-          <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
-            <table className="w-full">
-              <thead className="bg-[var(--bg2)]">
-                <tr>
-                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
-                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
-                  <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
-                  <th scope="col" className="px-5 py-3"><span className="sr-only">操作</span></th>
-                </tr>
-              </thead>
-              <tbody className="bg-[var(--surface)]">
-                {articles.map((article, i) => (
-                  <tr key={article.id} className={i < articles.length - 1 ? 'border-b border-[var(--border)]' : ''}>
-                    <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] max-w-[320px]">
-                      <div className="overflow-hidden text-ellipsis whitespace-nowrap">{article.title || '記事'}</div>
-                    </td>
-                    <td className="px-5 py-3">
-                      <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
-                        {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.created_at)}</td>
-                    <td className="px-5 py-3">
-                      <Link href={`/projects/${id}/articles/${article.id}`} aria-label={`${article.title ?? '記事'}の詳細`} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
-                        詳細
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <PaginatedArticles items={articleSectionItems} />
         </div>
       )}
     </AppShell>

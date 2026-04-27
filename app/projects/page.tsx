@@ -320,7 +320,7 @@ export default async function ProjectsPage() {
                   </Link>
                   {articleCount > 0 && (
                     <Link
-                      href={`/projects/${project.id}#articles`}
+                      href={`/articles?projectId=${project.id}`}
                       className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                     >
                       記事を見る

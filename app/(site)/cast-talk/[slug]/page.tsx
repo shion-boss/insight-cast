@@ -4,7 +4,7 @@ import type { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PublicPageFrame } from '@/components/public-layout'
-import { EyebrowBadge, getButtonClass } from '@/components/ui'
+import { Breadcrumb, EyebrowBadge, getButtonClass } from '@/components/ui'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
@@ -98,6 +98,10 @@ export default async function CastTalkDetailPage({
         {/* ヒーロー */}
         <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
           <div className="mx-auto max-w-3xl">
+            <Breadcrumb items={[
+              { label: 'Cast Talk', href: '/cast-talk' },
+              { label: talk.title },
+            ]} />
             <EyebrowBadge>Cast Talk</EyebrowBadge>
 
             <h1 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.03em] text-[var(--text)] sm:text-3xl lg:text-4xl">
@@ -186,15 +190,6 @@ export default async function CastTalkDetailPage({
           </div>
         </section>
 
-        {/* 記事一覧へ戻る */}
-        <div className="mx-auto max-w-3xl px-6 py-6 sm:px-8">
-          <Link
-            href="/cast-talk"
-            className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            ← Cast Talk 一覧に戻る
-          </Link>
-        </div>
       </main>
 
 

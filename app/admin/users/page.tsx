@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { createAdminClient } from '@/lib/supabase/admin'
 import { UsersTableClient, type UserRow } from './UsersTableClient'
+import { Breadcrumb } from '@/components/ui'
 import type { PlanKey } from '@/lib/plans'
 
 async function getUsersWithPlans(): Promise<UserRow[]> {
@@ -33,6 +34,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: 'ユーザー管理' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">ユーザー管理</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">登録ユーザー {users.length} 件</p>

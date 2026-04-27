@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
-import { CharacterAvatar } from '@/components/ui'
+import { CharacterAvatar, Breadcrumb } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicPageFrame } from '@/components/public-layout'
 import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
@@ -88,14 +88,10 @@ export default async function BlogDetailPage({
 
 
       <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
-        {/* パンくず */}
-        <nav aria-label="パンくず" className="mb-8 flex items-center gap-2 text-sm text-[var(--text3)]">
-          <Link href="/blog" className="rounded transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-            ブログ
-          </Link>
-          <span>›</span>
-          <span className="text-[var(--text3)] line-clamp-1">{post.title}</span>
-        </nav>
+        <Breadcrumb items={[
+          { label: 'ブログ', href: '/blog' },
+          { label: post.title },
+        ]} />
 
         {/* 記事ヘッダー */}
         {(() => {
@@ -243,13 +239,6 @@ export default async function BlogDetailPage({
 
           {/* 記事末尾 */}
           <div className="mt-14 flex flex-col gap-8">
-            <Link
-              href="/blog"
-              className="inline-flex items-center rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              ← ブログ一覧へ
-            </Link>
-
             <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[rgba(255,253,249,0.94)] px-6 py-6">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text3)]">
                 Continue Reading

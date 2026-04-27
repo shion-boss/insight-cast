@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CostValue, CostCard, CostTotal } from './CostValue'
+import { Breadcrumb } from '@/components/ui'
 
 // 固定費（月額・USD換算）
 const FIXED_COSTS = [
@@ -150,6 +151,7 @@ export default async function AdminCostsPage() {
 
   return (
     <div className="space-y-10">
+      <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: 'コスト管理' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">コスト管理</h1>
         <p className="mt-1 text-sm text-[var(--text2)]">
@@ -310,11 +312,6 @@ export default async function AdminCostsPage() {
         <p>* ログが取れるのはこの機能実装以降の利用分からです。</p>
       </div>
 
-      <div>
-        <Link href="/admin" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
-          ← 管理ダッシュボードに戻る
-        </Link>
-      </div>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { createAdminClient } from '@/lib/supabase/admin'
-import { ButtonLink } from '@/components/ui'
+import { Breadcrumb, ButtonLink } from '@/components/ui'
 import { PostsTableClient } from './PostsTableClient'
 
 async function getAllPosts() {
@@ -20,6 +20,7 @@ export default async function AdminPostsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: '記事管理' }]} />
       <div className="flex items-start justify-between">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[var(--text)]">記事管理</h1>

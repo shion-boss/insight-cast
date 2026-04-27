@@ -3,6 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
 import { CastTalkPreviewClient } from './CastTalkPreviewClient'
+import { Breadcrumb } from '@/components/ui'
 
 async function getCastTalk(id: string) {
   const supabase = createAdminClient()
@@ -41,26 +42,33 @@ export default async function AdminCastTalkDetailPage({
   }
 
   return (
-    <CastTalkPreviewClient
-      talk={talk as {
-        id: string
-        title: string
-        theme: string
-        format: 'interview' | 'dialogue'
-        interviewer_id: string
-        guest_id: string
-        messages: Array<{ castId: string; text: string }>
-        summary: string | null
-        status: 'draft' | 'published'
-      }}
-      characterMap={characterMap}
-      existingReview={review as {
-        overall_score: number
-        naturalness_score: number | null
-        character_score: number | null
-        good_points: string | null
-        improve_points: string | null
-      } | null}
-    />
+    <div className="space-y-6">
+      <Breadcrumb items={[
+        { label: '管理', href: '/admin' },
+        { label: 'Cast Talk', href: '/admin/cast-talk' },
+        { label: talk.title },
+      ]} />
+      <CastTalkPreviewClient
+        talk={talk as {
+          id: string
+          title: string
+          theme: string
+          format: 'interview' | 'dialogue'
+          interviewer_id: string
+          guest_id: string
+          messages: Array<{ castId: string; text: string }>
+          summary: string | null
+          status: 'draft' | 'published'
+        }}
+        characterMap={characterMap}
+        existingReview={review as {
+          overall_score: number
+          naturalness_score: number | null
+          character_score: number | null
+          good_points: string | null
+          improve_points: string | null
+        } | null}
+      />
+    </div>
   )
 }

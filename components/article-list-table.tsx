@@ -35,6 +35,9 @@ function selectClassName() {
 export function ArticleListTable({
   items,
   showProjectColumn = false,
+  alwaysShowProjectFilter = false,
+  initialProjectLabel,
+  initialInterviewerLabel,
   showInterviewerColumn = false,
   searchPlaceholder = 'タイトルで検索',
   noResultsTitle = '条件に合う記事がありません。',
@@ -42,6 +45,9 @@ export function ArticleListTable({
 }: {
   items: ArticleListItem[]
   showProjectColumn?: boolean
+  alwaysShowProjectFilter?: boolean
+  initialProjectLabel?: string
+  initialInterviewerLabel?: string
   showInterviewerColumn?: boolean
   searchPlaceholder?: string
   noResultsTitle?: string
@@ -50,8 +56,8 @@ export function ArticleListTable({
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [articleType, setArticleType] = useState('all')
-  const [interviewerLabel, setInterviewerLabel] = useState('all')
-  const [projectLabel, setProjectLabel] = useState('all')
+  const [interviewerLabel, setInterviewerLabel] = useState(initialInterviewerLabel ?? 'all')
+  const [projectLabel, setProjectLabel] = useState(initialProjectLabel ?? 'all')
 
   const deferredQuery = useDeferredValue(query)
   const normalizedQuery = deferredQuery.trim().toLowerCase()
@@ -96,7 +102,7 @@ export function ArticleListTable({
             />
           </div>
 
-          {showProjectColumn && projectOptions.length > 1 && (
+          {showProjectColumn && (alwaysShowProjectFilter || projectOptions.length > 1) && (
             <div>
               <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
                 取材先
@@ -137,7 +143,7 @@ export function ArticleListTable({
           {showInterviewerColumn && (
             <div>
               <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-                担当
+                取材メモ
               </label>
               <select
                 id="article-filter-interviewer"
@@ -229,7 +235,7 @@ export function ArticleListTable({
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
                   {showInterviewerColumn && (
                     <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">
-                      担当
+                      取材メモ
                     </th>
                   )}
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>

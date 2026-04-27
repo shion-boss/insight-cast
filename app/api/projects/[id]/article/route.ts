@@ -10,7 +10,7 @@ import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
-import { isFreePlanLocked } from '@/lib/plans'
+import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -216,6 +216,11 @@ export async function POST(
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
+  const monthlyCheck = await checkMonthlyArticleLimit(supabase, user.id)
+  if (!monthlyCheck.allowed) {
+    return NextResponse.json({ error: 'monthly_article_limit_reached', limit: monthlyCheck.limit, count: monthlyCheck.count }, { status: 403 })
+  }
+
   const { data: project } = await supabase
     .from('projects')
     .select('name, hp_url')
@@ -313,19 +318,17 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 情報が足りない点は無理に埋めず、省くか控えめに表現する
 - 読みやすく整えてよいが、事業者の温度感や言い回しはできるだけ残す`
 
-  let prompt: string
+  // 同一インタビューから複数の記事を作る場合にキャッシュが効くよう、
+  // インタビューデータ（大きいブロック）と指示（小さいブロック）を分ける
+  const contextBlock = `## 事業者情報\n${bizContext}\n\n## インタビュー記録\n${conversation}${summaryContext}${extractedThemesContext}`
+
+  let instructionBlock: string
 
   if (articleType === 'client') {
     const styleLabel = STYLE_MAP[style as keyof typeof STYLE_MAP] ?? 'ですます体'
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
-    prompt = `以下のインタビュー内容をもとに、事業者（${bizName}）の視点・言葉で語る読み物記事を書いてください。
-
-## 事業者情報
-${bizContext}
-
-## インタビュー記録
-${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
+    instructionBlock = `上の事業者情報とインタビュー記録をもとに、事業者（${bizName}）の視点・言葉で語る読み物記事を書いてください。${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 一人称は「私」または「弊社」
@@ -341,13 +344,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
   } else if (articleType === 'interviewer') {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
-    prompt = `以下のインタビュー内容をもとに、インタビュアー（${charName}）の視点で${bizName}を紹介する記事を書いてください。
-
-## 事業者情報
-${bizContext}
-
-## インタビュー記録
-${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
+    instructionBlock = `上の事業者情報とインタビュー記録をもとに、インタビュアー（${charName}）の視点で${bizName}を紹介する記事を書いてください。${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - インタビュアーが「取材して発見した魅力」を語るスタイル
@@ -360,13 +357,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
   } else {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
-    prompt = `以下のインタビュー内容をもとに、Q&A形式のインタビュー記事を書いてください。
-
-## 事業者情報
-${bizContext}
-
-## インタビュー記録
-${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${internalLinkInstruction}
+    instructionBlock = `上の事業者情報とインタビュー記録をもとに、Q&A形式のインタビュー記事を書いてください。${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
 - 最初に導入文（2〜3行）
@@ -401,7 +392,13 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
         model: 'claude-sonnet-4-6',
         max_tokens: 4096,
         system: editorialGuardrail,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'text', text: contextBlock, cache_control: { type: 'ephemeral' } },
+            { type: 'text', text: instructionBlock },
+          ],
+        }],
       })
       for await (const chunk of stream) {
         if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {

@@ -7,7 +7,7 @@ import { getCharacter } from '@/lib/characters'
 import Link from 'next/link'
 import { hasPendingInterviewSummary, trackPendingInterviewSummary } from '@/components/project-analysis-notifier'
 import { AppShell } from '@/components/app-shell'
-import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
 import { getIsAdmin } from '@/lib/actions/auth'
 
@@ -226,7 +226,7 @@ export default function SummaryPage() {
     <div className="flex flex-wrap items-center justify-end gap-2">
       {interviewId && (
         <Link
-          href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
+          href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
           className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
         >
           この取材の記事一覧
@@ -294,14 +294,11 @@ export default function SummaryPage() {
       headerRight={headerRight}
     >
       <div>
-        {/* breadcrumb */}
-        <nav aria-label="パンくず" className="flex items-center gap-1.5 text-xs text-[var(--text3)] mb-6">
-          <Link href="/projects" className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先一覧</Link>
-          <span>/</span>
-          <Link href={`/projects/${projectId}`} className="hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">取材先の管理</Link>
-          <span>/</span>
-          <span className="text-[var(--text2)]">取材メモ</span>
-        </nav>
+        <Breadcrumb items={[
+          { label: '取材先一覧', href: '/projects' },
+          { label: '取材先の管理', href: `/projects/${projectId}` },
+          { label: '取材メモ' },
+        ]} />
 
         {loadError && (
           <div role="alert" className="mb-6 space-y-4">
@@ -404,7 +401,7 @@ export default function SummaryPage() {
                           href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
                           className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
                         >
-                          {articlesByTheme.length > 0 ? 'また作る →' : 'この記事を作る →'}
+                          この記事を作る →
                         </Link>
                       </div>
                     )
@@ -472,7 +469,7 @@ export default function SummaryPage() {
               <div className="flex items-center justify-between gap-2 mb-4">
                 <p className="font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
                 <Link
-                  href={`/projects/${projectId}/articles?interviewId=${interviewId}`}
+                  href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
                   className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   この取材の一覧へ
@@ -505,12 +502,6 @@ export default function SummaryPage() {
                 className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
               >
                 もう少し話す
-              </Link>
-              <Link
-                href={backHref}
-                className="flex w-full items-center justify-center text-sm text-[var(--text3)] hover:text-[var(--text2)] py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors"
-              >
-                {backLabel}
               </Link>
             </div>
           </aside>
