@@ -463,7 +463,7 @@ export default async function LandingPage() {
                     '取材後、記事素材づくりに進める',
                   ].map((text) => (
                     <li key={text} className="flex items-start gap-3 text-[14px] text-[var(--text2)] leading-[1.7]">
-                      <span className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--accent)] text-[10px] font-bold">✓</span>
+                      <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--accent)] text-[10px] font-bold">✓</span>
                       {text}
                     </li>
                   ))}
@@ -646,9 +646,9 @@ export default async function LandingPage() {
                 <div key={row.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[12px] px-4 py-3">
                   <p className="text-[13px] font-medium text-[var(--text)] mb-2.5">{row.label}</p>
                   <div className="grid grid-cols-3 gap-1">
-                    <div className="text-center text-[15px]">{row.ai ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
-                    <div className="text-center text-[15px]">{row.none ? <span className="text-[var(--teal)] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}</div>
-                    <div className="text-center text-[17px]"><span className="text-[var(--teal)] font-bold">✓</span></div>
+                    <div className="text-center text-[15px]">{row.ai ? <span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}</div>
+                    <div className="text-center text-[15px]">{row.none ? <span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}</div>
+                    <div className="text-center text-[17px]"><span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span></div>
                   </div>
                 </div>
               ))}
@@ -670,13 +670,13 @@ export default async function LandingPage() {
                     <tr key={row.label}>
                       <td className="px-[22px] py-[15px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
+                        {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold">✓</span> : <span className="text-[var(--text3)]">✕</span>}
+                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}
                       </td>
                       <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
-                        <span className="text-[var(--teal)] text-lg font-bold">✓</span>
+                        <span className="text-[var(--teal)] text-lg font-bold" aria-label="対応">✓</span>
                       </td>
                     </tr>
                   ))}
@@ -709,7 +709,7 @@ export default async function LandingPage() {
                   <ul className="space-y-2.5 flex-1 mb-8">
                     {plan.features.map((f) => (
                       <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
-                        <span className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
+                        <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
                         {f}
                       </li>
                     ))}

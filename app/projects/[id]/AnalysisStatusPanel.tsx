@@ -266,7 +266,7 @@ export default function AnalysisStatusPanel({
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
               </div>
-              <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed`}>
+              <button type="button" disabled className={getButtonClass('secondary')}>
                 この取材先を再調査する
               </button>
             </>
@@ -366,7 +366,7 @@ export default function AnalysisStatusPanel({
 
           <div className="flex-shrink-0">
             {gscStatus === 'loading' && (
-              <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed text-sm`}>
+              <button type="button" disabled className={getButtonClass('secondary', 'text-sm')}>
                 読み込み中
               </button>
             )}
@@ -375,7 +375,7 @@ export default function AnalysisStatusPanel({
                 type="button"
                 onClick={handleGscDisconnectRequest}
                 disabled={gscDeleting}
-                className={`${getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')} disabled:opacity-40`}
+                className={getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')}
               >
                 {gscDeleting ? '解除中...' : '連携を解除'}
               </button>
