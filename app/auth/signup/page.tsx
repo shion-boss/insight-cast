@@ -273,7 +273,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
         <ul className="space-y-3 mb-auto">
           {perks.map((perk) => (
             <li key={perk} className="flex items-center gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-white text-xs font-bold">
+              <span aria-hidden="true" className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-white text-xs font-bold">
                 ✓
               </span>
               <span className="text-[14px] text-white/90">{perk}</span>

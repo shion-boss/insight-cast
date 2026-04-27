@@ -84,7 +84,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
         ))}
 
         <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] text-2xl text-[var(--accent)]">
+          <div aria-hidden="true" className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] text-2xl text-[var(--accent)]">
             ?
           </div>
           <h2 className="mt-5 font-serif text-2xl font-bold text-[var(--text)]">解決しない質問がありますか？</h2>
@@ -95,7 +95,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
             href="/contact"
             className={getButtonClass('primary', 'mt-6 px-6 py-3 text-sm')}
           >
-            お問い合わせ →
+            お問い合わせ <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

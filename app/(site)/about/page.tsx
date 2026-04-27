@@ -168,7 +168,7 @@ export default function AboutPage() {
             <div className="mt-11 grid gap-6 lg:grid-cols-2">
               {PRINCIPLES.map((item) => (
                 <div key={item.n} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden">
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[48px] font-bold text-[var(--border)] absolute top-4 right-5 leading-none">{item.n}</div>
+                  <div aria-hidden="true" className="font-[family-name:var(--font-noto-serif-jp)] text-[48px] font-bold text-[var(--border)] absolute top-4 right-5 leading-none">{item.n}</div>
                   <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)] mb-3">{item.title}</h3>
                   <p className="text-sm text-[var(--text2)] leading-[1.85]">{item.desc}</p>
                 </div>

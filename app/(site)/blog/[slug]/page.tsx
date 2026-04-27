@@ -160,7 +160,7 @@ export default async function BlogDetailPage({
                   {CATEGORY_LABELS[post.category]}
                 </span>
                 <span className="text-[11px] text-[var(--text3)]">約{readingTimeMin}分で読めます</span>
-                <span className="text-[11px] text-[var(--text3)]">· {post.date}</span>
+                <span className="text-[11px] text-[var(--text3)]"><span aria-hidden="true">· </span>{post.date}</span>
               </div>
 
               {headerChar && (
@@ -396,7 +396,7 @@ export default async function BlogDetailPage({
                         {related.title}
                       </p>
                     </div>
-                    <span className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
+                    <span aria-hidden="true" className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}
@@ -429,7 +429,7 @@ export default async function BlogDetailPage({
                     href="/auth/signup"
                     className="rounded-[var(--r-sm)] bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    無料で体験する →
+                    無料で体験する <span aria-hidden="true">→</span>
                   </Link>
                   <Link
                     href="/contact"

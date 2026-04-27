@@ -95,7 +95,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
           <span className="text-[12px] font-semibold text-[var(--text3)]">クラウスが分析しています</span>
         </div>
         <div className="flex items-center gap-2 rounded-[10px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[13px] text-[var(--text2)]">
-          🔗 https://tanaka-kensetsu.example.jp
+          <span aria-hidden="true">🔗</span> https://tanaka-kensetsu.example.jp
         </div>
         {[
           ['現状評価', '情報が古く、施工実績が少ない'],
@@ -153,7 +153,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
         </div>
       </div>
       <div className="flex gap-2">
-        <div className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold text-center select-none opacity-60">📋 コピー</div>
+        <div className="flex-1 py-2 bg-[var(--accent-l)] text-[var(--accent)] rounded-[8px] text-[12px] font-semibold text-center select-none opacity-60"><span aria-hidden="true">📋</span> コピー</div>
         <div className="flex-1 py-2 bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] rounded-[8px] text-[12px] font-semibold text-center select-none opacity-60">記事画面で確認</div>
       </div>
     </div>

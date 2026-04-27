@@ -213,7 +213,7 @@ export default function PhilosophyPage() {
                       className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7"
                     >
                       <div className="flex items-start gap-4">
-                        <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
+                        <span aria-hidden="true" className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <h3 className="pt-1 text-base font-semibold leading-snug text-[var(--text)] sm:text-lg">
