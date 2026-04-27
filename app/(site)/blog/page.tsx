@@ -3,14 +3,17 @@ import { PublicHero } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'ブログ | Insight Cast',
   description:
     'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
+  alternates: { canonical: `${APP_URL}/blog` },
   openGraph: {
     title: 'ブログ | Insight Cast',
     description: 'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
-    url: `${process.env.NEXT_PUBLIC_APP_URL}/blog`,
+    url: `${APP_URL}/blog`,
     siteName: 'Insight Cast',
     type: 'website',
   },

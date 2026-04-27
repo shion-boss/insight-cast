@@ -11,6 +11,7 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
   description: 'まずカード不要の無料プランで取材を体験できます。会話で記事の素材を作り続けたい方向けに、個人向け（¥4,980/月）・法人向け（¥14,800/月）のプランもご用意しています。',
+  alternates: { canonical: `${APP_URL}/pricing` },
   openGraph: {
     title: '料金プラン | Insight Cast',
     description: 'カード不要で無料体験。個人向け ¥4,980/月、法人向け ¥14,800/月。',

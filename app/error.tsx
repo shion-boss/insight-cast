@@ -1,21 +1,34 @@
 'use client'
 
+import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
+
 export default function Error({
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const mint = getCharacter('mint')
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] px-6">
-      <div className="max-w-md w-full text-center">
-        <p className="text-5xl mb-6" aria-hidden="true">🐾</p>
-        <h1 className="text-xl font-bold text-[var(--text)] mb-3">
-          うまく表示できませんでした
-        </h1>
-        <p className="text-sm text-[var(--text2)] mb-8 leading-relaxed">
-          一時的な問題が起きています。ページを再読み込みしてもう一度お試しください。
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6">
+      <div className="max-w-sm w-full text-center space-y-8">
+        <InterviewerSpeech
+          icon={
+            <CharacterAvatar
+              src={mint?.icon96}
+              alt={mint?.name ? `${mint.name}のアイコン` : 'キャストのアイコン'}
+              emoji={mint?.emoji}
+              size={72}
+              priority
+            />
+          }
+          name={mint?.name ?? 'ミント'}
+          title="うまく表示できませんでした"
+          description="一時的な問題が起きています。ページを再読み込みしてもう一度お試しください。"
+          tone="soft"
+        />
         <button
           type="button"
           onClick={reset}
