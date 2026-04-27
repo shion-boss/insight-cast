@@ -98,7 +98,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!user && !isPublicPath) {
-    return NextResponse.redirect(new URL('/', request.url))
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('next', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   if (user && (pathname === '/auth/login' || pathname === '/auth/signup')) {
