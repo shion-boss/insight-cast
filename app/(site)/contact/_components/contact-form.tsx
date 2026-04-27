@@ -161,7 +161,7 @@ export function ContactForm() {
           aria-describedby={fieldErrors.email ? 'err-email' : undefined}
         />
         {fieldErrors.email && (
-          <p id="err-email" className="mt-xs text-xs text-[var(--err)] mt-1">{fieldErrors.email}</p>
+          <p id="err-email" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.email}</p>
         )}
       </div>
 

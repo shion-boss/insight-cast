@@ -346,7 +346,7 @@ export default async function PricingPage({
                   <div className="flex flex-col flex-1 mb-7">
                     {plan.features.map((feat, i) => (
                       <div key={i} className={`flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 ${!feat.ok ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>
-                        <span className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text3)]'}`}>
+                        <span aria-hidden="true" className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text3)]'}`}>
                           {feat.ok ? '✓' : '–'}
                         </span>
                         {feat.label}
@@ -464,7 +464,7 @@ export default async function PricingPage({
                 <details key={i} className="group">
                   <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
                     <span>{faq.q}</span>
-                    <span className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
+                    <span aria-hidden="true" className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>
                   <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>
