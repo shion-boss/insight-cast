@@ -133,6 +133,18 @@ export const POSTS: Post[] = [
     coverColor: 'bg-[#fdf0e4]',
     icon: '📊',
   },
+  {
+    slug: 'dogfooding-6-interviews-discovery',
+    title: '自社で取材を6回やってみたら、予想外の話が次々と出てきた',
+    excerpt:
+      '「何を書けばいいか分からない」は材料不足ではなく、引き出す設計の不足でした。Insight Castを自分たちで使って気づいたことを正直に書きます。',
+    category: 'case',
+    type: 'normal',
+    date: '2026-04-28',
+    coverColor: 'bg-[#f0ede8]',
+    icon: '🎙️',
+    featured: false,
+  },
 ]
 
 export function getPost(slug: string): Post | undefined {
