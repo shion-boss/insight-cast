@@ -263,7 +263,7 @@ export default async function DashboardPage() {
               href={interviewerHref}
               className={getButtonClass('primary', 'text-sm px-4 py-2')}
             >
-              {projectList.length > 1 ? '取材先を選ぶ →' : '次の取材を開く →'}
+              {projectList.length > 1 ? '取材先を選ぶ →' : '取材を始める →'}
             </Link>
           )}
         </div>
@@ -336,7 +336,7 @@ export default async function DashboardPage() {
                   >
                     <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
-                    <div className="text-sm font-semibold text-[var(--text3)]">取材画面を開く</div>
+                    <div className="text-sm font-semibold text-[var(--text3)]">取材を始める</div>
                     <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る →</div>
                   </Link>
                 ) : (
@@ -345,7 +345,7 @@ export default async function DashboardPage() {
                     className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
-                    <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? '取材先を選ぶ' : '取材画面を開く'}</div>
+                    <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? '取材先を選ぶ' : '取材を始める'}</div>
                   </Link>
                 )}
                 <Link

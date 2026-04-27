@@ -467,7 +467,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               tone="soft"
             />
             <div className="mt-4">
-              <ButtonLink href={`/projects/${id}/interviewer`}>AIキャストを呼ぶ →</ButtonLink>
+              <ButtonLink href={`/projects/${id}/interviewer`}>取材を始める →</ButtonLink>
             </div>
           </>
         ) : (
