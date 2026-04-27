@@ -169,6 +169,18 @@ export const POSTS: Post[] = [
     icon: '🗒️',
     featured: false,
   },
+  {
+    slug: 'why-animal-character-design',
+    title: 'なぜ動物キャラにインタビューしてもらうのか、設計側の本音',
+    excerpt:
+      '「かわいいから」ではありません。動物キャラでなければ引き出せない話があります。事業者さんが身構えず、普段の言葉で話してくれるための設計上の理由を、正直に書きます。',
+    category: 'philosophy',
+    type: 'normal',
+    date: '2026-04-29',
+    coverColor: 'bg-[#f0eef5]',
+    icon: '🐾',
+    featured: false,
+  },
 ]
 
 export function getPost(slug: string): Post | undefined {

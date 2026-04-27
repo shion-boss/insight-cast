@@ -803,7 +803,7 @@ export default async function LandingPage() {
                     className="group flex items-start gap-4 px-5 py-5 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
                     <div className="relative mt-0.5 h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
-                      <Image src={char.icon48} alt={char.name} fill className="object-cover" />
+                      <Image src={char.icon48} alt={char.name} fill sizes="40px" className="object-cover" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="mb-1.5 flex items-center gap-2">
