@@ -6,6 +6,7 @@ import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',
@@ -54,6 +55,21 @@ const castDetails: Record<string, { desc: string; specialty: string; strengths: 
   },
 }
 
+type TalkPreview = { slug: string; title: string | null; summary: string | null; interviewer_id: string | null; guest_id: string | null } | null
+
+async function getLatestTalkByCharacter(characterId: string): Promise<TalkPreview> {
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from('cast_talks')
+    .select('slug, title, summary, interviewer_id, guest_id')
+    .eq('status', 'published')
+    .or(`interviewer_id.eq.${characterId},guest_id.eq.${characterId}`)
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  return data ?? null
+}
+
 export default async function CastPage() {
   let isLoggedIn = false
   try {
@@ -63,6 +79,10 @@ export default async function CastPage() {
   } catch {
     // 認証失敗時も表示する
   }
+
+  const talksByChar = Object.fromEntries(
+    await Promise.all(freeCasts.map(async (c) => [c.id, await getLatestTalkByCharacter(c.id)]))
+  ) as Record<string, TalkPreview>
 
   return (
     <>
@@ -179,7 +199,7 @@ export default async function CastPage() {
                           <span className="text-sm text-[var(--text2)]">{detail.input}</span>
                         </div>
                       </div>
-                      <div className="mt-6">
+                      <div className="mt-6 flex flex-wrap items-center gap-3">
                         <Link
                           href={isLoggedIn ? '/dashboard' : '/auth/signup'}
                           className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
@@ -187,10 +207,54 @@ export default async function CastPage() {
                           {isLoggedIn ? 'ダッシュボードへ →' : 'このキャストで取材を始める →'}
                         </Link>
                       </div>
+
+                      {/* Cast Talk 対話記事プレビュー */}
+                      {talksByChar[char.id] && (
+                        <Link
+                          href={`/cast-talk/${talksByChar[char.id]!.slug}`}
+                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--accent)]">Cast Talk</div>
+                            <div className="text-sm font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
+                              {talksByChar[char.id]!.title}
+                            </div>
+                            {talksByChar[char.id]!.summary && (
+                              <div className="mt-1 text-[12px] leading-relaxed text-[var(--text3)] line-clamp-2">
+                                {talksByChar[char.id]!.summary}
+                              </div>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-[12px] font-bold text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1 inline-block mt-0.5">
+                            読む →
+                          </span>
+                        </Link>
+                      )}
+
                     </div>
                   </div>
                 )
               })}
+            </div>
+
+            {/* Cast Talk バナー */}
+            <div className="mt-16 rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div>
+                <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">Cast Talk</div>
+                <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
+                  キャストの実際の対話を読んでみる
+                </p>
+                <p className="text-sm text-[var(--text2)] leading-relaxed">
+                  ミント・クラウス・レインが実際にどんな質問をするのか。<br className="hidden sm:block" />
+                  対話形式の記事で、取材スタイルを確認できます。
+                </p>
+              </div>
+              <Link
+                href="/cast-talk"
+                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              >
+                Cast Talk を読む →
+              </Link>
             </div>
           </div>
         </section>
