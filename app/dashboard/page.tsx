@@ -238,8 +238,16 @@ export default async function DashboardPage() {
             {totalArticles > 0 && <> · 累計記事素材 <strong>{totalArticles} 件</strong></>}
           </div>
           {(isFreePlan ? planLimits.lifetimeInterviewLimit !== null : planLimits.monthlyInterviewLimit < 9999) && (
-            <div className="mt-2 w-48 h-1.5 rounded-full bg-[rgba(0,0,0,0.08)] overflow-hidden">
+            <div
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={isFreePlan ? (planLimits.lifetimeInterviewLimit ?? 1) : planLimits.monthlyInterviewLimit}
+              aria-valuenow={isFreePlan ? totalInterviewCount : thisMonthInterviews}
+              aria-label={isFreePlan ? '生涯取材回数' : '今月の取材回数'}
+              className="mt-2 w-48 h-1.5 rounded-full bg-[rgba(0,0,0,0.08)] overflow-hidden"
+            >
               <div
+                aria-hidden="true"
                 className={`h-full rounded-full transition-all ${isInterviewLimitReached ? 'bg-[var(--err)]' : 'bg-[var(--accent)]'}`}
                 style={{
                   width: isFreePlan

@@ -240,9 +240,14 @@ export default async function CastPage() {
                         </div>
                         <div className="flex items-start gap-3 py-2.5 border-b border-[var(--border)]">
                           <span className="text-sm font-semibold text-[var(--text)] w-[100px] flex-shrink-0">得意なこと</span>
-                          <span className="text-sm text-[var(--text2)]">
-                            {detail.strengths.map((s, i) => <span key={i} className="block">• {s}</span>)}
-                          </span>
+                          <ul className="text-sm text-[var(--text2)] space-y-0.5">
+                            {detail.strengths.map((s) => (
+                              <li key={s} className="flex items-start gap-1.5">
+                                <span aria-hidden="true" className="flex-shrink-0">•</span>
+                                {s}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                         <div className="flex items-start gap-3 py-2.5">
                           <span className="text-sm font-semibold text-[var(--text)] w-[100px] flex-shrink-0">入力形式</span>
