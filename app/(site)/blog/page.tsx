@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     description: 'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
     url: `${APP_URL}/blog`,
     siteName: 'Insight Cast',
+    locale: 'ja_JP',
     type: 'website',
   },
   twitter: {

@@ -1,9 +1,14 @@
+import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminMobileNav } from '@/components/admin-mobile-nav'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 async function getAdminUser() {
   const supabase = await createClient()
