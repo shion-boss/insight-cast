@@ -89,7 +89,7 @@ function SignupForm() {
 
   if (sent) {
     return (
-      <div className="grid min-h-screen lg:grid-cols-2">
+      <div className="grid min-h-dvh lg:grid-cols-2">
         <LeftPanel mint={mint} claus={claus} rain={rain} />
 
         <div className="bg-white flex items-center justify-center px-6 py-12 sm:px-10 lg:p-[60px]">
@@ -131,7 +131,7 @@ function SignupForm() {
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-dvh lg:grid-cols-2">
       <LeftPanel mint={mint} claus={claus} rain={rain} />
 
       <div className="bg-white flex items-center justify-center p-[60px]">

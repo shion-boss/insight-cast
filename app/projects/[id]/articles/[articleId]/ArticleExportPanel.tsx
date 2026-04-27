@@ -489,7 +489,7 @@ export function ArticleExportPanel({
                   <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
                     {interviewerAvatarUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={interviewerAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                      <img src={interviewerAvatarUrl} alt="インタビュアーのアイコンプレビュー" className="h-full w-full object-cover" />
                     )}
                   </div>
                   <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
@@ -531,7 +531,7 @@ export function ArticleExportPanel({
                   <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
                     {clientAvatarUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={clientAvatarUrl} alt="preview" className="h-full w-full object-cover" />
+                      <img src={clientAvatarUrl} alt="取材先のアイコンプレビュー" className="h-full w-full object-cover" />
                     )}
                   </div>
                   <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">

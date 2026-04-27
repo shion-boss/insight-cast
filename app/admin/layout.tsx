@@ -43,7 +43,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-dvh bg-[var(--bg)]">
       <aside className="hidden bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[220px] lg:flex-col lg:border-r lg:border-r-white/8">
         <div className="border-b border-white/8 px-5 py-5">
           <Link href="/" className="font-serif text-[17px] font-bold text-white">

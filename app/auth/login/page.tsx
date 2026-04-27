@@ -64,7 +64,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
+    <div className="min-h-dvh bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         {/* ブランド */}
         <div className="mb-8 flex justify-center">
@@ -178,7 +178,7 @@ function LoginForm() {
 
 function LoginSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
+    <div className="min-h-dvh bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         <div className="mb-8 flex justify-center">
           <div className="h-7 w-32 animate-pulse rounded-full bg-[var(--border)]" />

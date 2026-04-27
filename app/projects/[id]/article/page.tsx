@@ -364,7 +364,7 @@ export default function ArticlePage() {
   })()
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-dvh bg-[var(--bg)]">
       <PageHeader title="記事を作る" backHref={`/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}`} backLabel="← 取材メモ" />
 
       <div className="mx-auto max-w-6xl px-6 py-8">

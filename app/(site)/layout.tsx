@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <div className="relative min-h-dvh bg-[var(--bg)] text-[var(--text)]">
       <PublicHeader />
       <div id="main-content">
         {children}

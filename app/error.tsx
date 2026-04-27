@@ -12,7 +12,7 @@ export default function Error({
   const mint = getCharacter('mint')
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6">
+    <div className="min-h-dvh flex items-center justify-center bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6">
       <div className="max-w-sm w-full text-center space-y-8">
         <InterviewerSpeech
           icon={

@@ -6,11 +6,11 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: 'よくある質問 | Insight Cast',
-  description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+  description: 'Insight Cast のよくある質問をまとめています。サービス内容・キャストの使い方・料金プランの違い・データの扱いについてお答えします。解決しない場合はお気軽にお問い合わせください。',
   alternates: { canonical: `${APP_URL}/faq` },
   openGraph: {
     title: 'よくある質問 | Insight Cast',
-    description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+    description: 'サービス内容・キャストの使い方・料金プランの違い・データの扱いについてよくある質問をまとめています。',
     url: `${APP_URL}/faq`,
     siteName: 'Insight Cast',
     locale: 'ja_JP',
