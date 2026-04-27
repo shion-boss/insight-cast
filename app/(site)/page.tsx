@@ -142,6 +142,27 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
 export default async function LandingPage() {
   const supabaseAdmin = createAdminClient()
 
+  // 管理者のユーザーIDを取得（ADMIN_EMAILS の最初のアドレスを使用）
+  const adminEmail = process.env.ADMIN_EMAILS?.split(',')[0]?.trim()
+  let adminUserId: string | null = null
+  if (adminEmail) {
+    // listUsers でメールアドレスが一致するユーザーを特定する
+    // （service_role では auth.users に直接アクセス可能、ユーザー数が少ない現フェーズで有効）
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
+    const adminUser = (usersData?.users ?? []).find((u) => u.email === adminEmail)
+    adminUserId = adminUser?.id ?? null
+  }
+
+  // 管理者の project_id 一覧を取得（ユーザーが見つからない場合は空配列）
+  let adminProjectIds: string[] = []
+  if (adminUserId) {
+    const { data: projectRows } = await supabaseAdmin
+      .from('projects')
+      .select('id')
+      .eq('user_id', adminUserId)
+    adminProjectIds = (projectRows ?? []).map((r: { id: string }) => r.id)
+  }
+
   const [authResult, latestPostsAll, talksResult, interviewCountResult, blogCountResult] = await Promise.allSettled([
     (async () => {
       const supabase = await createClient()
@@ -155,10 +176,14 @@ export default async function LandingPage() {
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(3),
-    supabaseAdmin
-      .from('interviews')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'completed'),
+    // 取材回数: 管理者アカウントの completed インタビューのみカウント（ドッグフーディング実績）
+    adminProjectIds.length > 0
+      ? supabaseAdmin
+          .from('interviews')
+          .select('*', { count: 'exact', head: true })
+          .in('project_id', adminProjectIds)
+          .eq('status', 'completed')
+      : Promise.resolve({ count: 0, data: null, error: null }),
     supabaseAdmin
       .from('blog_posts')
       .select('*', { count: 'exact', head: true })
@@ -169,13 +194,13 @@ export default async function LandingPage() {
   const latestPosts = (latestPostsAll.status === 'fulfilled' ? latestPostsAll.value : []).slice(0, 3)
   const latestTalks = talksResult.status === 'fulfilled' ? talksResult.value.data : []
 
-  // 取材回数: completedのinterviews全件
+  // 取材回数: 管理者アカウントの completed インタビュー数
   const interviewCount =
     interviewCountResult.status === 'fulfilled'
       ? (interviewCountResult.value.count ?? 0)
       : 0
 
-  // ブログ本数: DB公開記事数と静的記事数の大きい方
+  // ブログ本数: DB公開記事数と静的記事数の大きい方（blog_posts に user_id なし、全件が管理者ブログ）
   const dbBlogCount =
     blogCountResult.status === 'fulfilled'
       ? (blogCountResult.value.count ?? 0)
