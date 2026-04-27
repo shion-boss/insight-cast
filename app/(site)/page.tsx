@@ -255,7 +255,7 @@ export default async function LandingPage() {
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_480px] lg:gap-14">
               <div className="order-2 lg:order-1">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-l)] px-3.5 py-1.5 text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-6">
-                  ✦ AIキャストが取材します
+                  <span aria-hidden="true">✦</span> AIキャストが取材します
                 </div>
                 <h1 className="font-[family-name:var(--font-noto-serif-jp)] leading-[1.14] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(34px,4vw,54px)' }}>
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
@@ -824,7 +824,7 @@ export default async function LandingPage() {
                         </p>
                       )}
                     </div>
-                    <span className="mt-0.5 flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
+                    <span aria-hidden="true" className="mt-0.5 flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}

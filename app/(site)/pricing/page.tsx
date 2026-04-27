@@ -334,7 +334,7 @@ export default async function PricingPage({
                 >
                   {plan.featured && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-white text-[11px] font-bold px-4 py-1 rounded-full tracking-[.06em] whitespace-nowrap">
-                      ✦ おすすめ
+                      <span aria-hidden="true">✦ </span>おすすめ
                     </div>
                   )}
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>

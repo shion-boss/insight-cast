@@ -16,7 +16,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs disabled:opacity-40')}
+        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
       >
         ← 前へ
       </button>
@@ -25,7 +25,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
         type="button"
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs disabled:opacity-40')}
+        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
       >
         次へ →
       </button>

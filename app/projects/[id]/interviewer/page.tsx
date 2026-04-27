@@ -444,7 +444,7 @@ export default async function InterviewerPage({
           <p className="text-xs text-[var(--text3)] mb-3">これから選べるキャスト</p>
           <div className="grid grid-cols-3 gap-3">
             {CHARACTERS.filter(c => !c.available).map((char) => (
-              <div key={char.id} className="p-4 bg-white rounded-2xl border border-[var(--border)] opacity-40">
+              <div key={char.id} className="p-4 bg-[var(--surface)] rounded-2xl border border-[var(--border)] opacity-40">
                 <CharacterAvatar
                   src={char.icon48}
                   alt={`${char.name}のアイコン`}

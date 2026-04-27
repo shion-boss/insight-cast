@@ -636,7 +636,7 @@ export function SettingsClient({
                         nextPlan.supportLabel !== plan.supportLabel && `${nextPlan.supportLabel}が利用可能`,
                       ].filter(Boolean).map((feature) => (
                         <div key={String(feature)} className="flex items-center gap-2 text-sm text-[var(--text2)]">
-                          <span className="font-bold text-[var(--teal)]">✓</span>
+                          <span aria-hidden="true" className="font-bold text-[var(--teal)]">✓</span>
                           {feature}
                         </div>
                       ))}
