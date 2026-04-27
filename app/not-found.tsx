@@ -26,12 +26,20 @@ export default function NotFound() {
             tone="soft"
           />
         </div>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          ダッシュボードに戻る
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            href="/dashboard"
+            className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            ダッシュボードに戻る
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            トップページへ
+          </Link>
+        </div>
       </div>
     </div>
   )

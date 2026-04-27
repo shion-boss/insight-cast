@@ -158,10 +158,35 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
   )
 }
 
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Insight Cast',
+  url: `${APP_URL}/service`,
+  description: '動物モチーフのAIインタビュアーが取材し、ホームページを継続的に強くするサービス。HP分析・競合比較・AIインタビュー・記事素材提供の4ステップ。',
+  provider: {
+    '@type': 'Organization',
+    name: 'Insight Cast',
+    url: APP_URL,
+  },
+  areaServed: { '@type': 'Country', name: '日本' },
+  inLanguage: 'ja',
+  serviceType: 'コンテンツ制作支援 / ホームページ強化',
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'JPY',
+    lowPrice: '0',
+    highPrice: '14800',
+  },
+}
+
 export default function ServicePage() {
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero

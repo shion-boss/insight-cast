@@ -188,9 +188,25 @@ export default async function LandingPage() {
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
 
+  const howToJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'Insight Cast の使い方',
+    description: 'HPを登録してAIキャストが取材し、記事素材が届くまでの3ステップ。',
+    step: WORKFLOW_ITEMS.map((item, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: item.title,
+      text: item.body,
+    })),
+  }
+
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
 
       <main className="relative z-10">
 

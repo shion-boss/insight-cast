@@ -552,6 +552,7 @@ export default function InterviewPage() {
               >
                 {loading ? '送信中...' : '送信'}
               </button>
+              <p className="text-[10px] text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
             </div>
           </form>
         </div>
