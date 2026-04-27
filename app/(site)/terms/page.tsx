@@ -8,7 +8,6 @@ export const metadata: Metadata = {
   title: '利用規約 | Insight Cast',
   description: 'Insight Cast を利用いただく際の基本条件、禁止事項、権利関係、免責事項などを定めています。',
   alternates: { canonical: `${APP_URL}/terms` },
-  robots: { index: false },
 }
 
 export default function TermsPage() {
