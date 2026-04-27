@@ -303,7 +303,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               HPが止まっているのは、<br />意欲がないからじゃない。
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">更新が後回しになるのには、理由があります。</p>
+            <p className="text-base text-[var(--text2)] mt-3">「何を書けばいいか分からない」——それが、根本の理由です。</p>
             <div className="mt-11 grid gap-5 md:grid-cols-3">
               {PAIN_ITEMS.map((item) => (
                 <div key={item.n} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8">
@@ -620,6 +620,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               他の方法と、比べてみてください。
             </h2>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[560px]">AIツールも、記事代行も、「すでに書く材料を持っている人」向けに作られています。Insight Cast はその前の段階——「何が自社の強みか、まだ言葉にできていない」という根本から引き出すことが、仕事の核心です。</p>
             {/* モバイル: カードリスト */}
             <div className="mt-8 sm:hidden space-y-2.5">
               <div className="grid grid-cols-3 gap-1 px-1 mb-1">
