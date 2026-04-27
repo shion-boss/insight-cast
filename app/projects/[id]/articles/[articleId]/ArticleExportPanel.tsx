@@ -400,7 +400,7 @@ export function ArticleExportPanel({
               className="rounded-full border border-[var(--border)] object-cover"
             />
           ) : (
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-lg">
+            <div aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-lg">
               {char?.emoji ?? '🐱'}
             </div>
           )}
