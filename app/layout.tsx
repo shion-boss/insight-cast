@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast',
     description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
+    images: ['/logo.jpg'],
   },
   formatDetection: {
     telephone: false,
