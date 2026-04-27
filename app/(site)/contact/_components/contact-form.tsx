@@ -20,6 +20,7 @@ export function ContactForm() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
+  const [referralSource, setReferralSource] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [serverMessage, setServerMessage] = useState('')
@@ -61,6 +62,7 @@ export function ContactForm() {
           name,
           email,
           message,
+          referralSource,
           website,
           startedAt,
         }),
@@ -156,6 +158,23 @@ export function ContactForm() {
         {fieldErrors.email && (
           <p id="err-email" className="mt-xs text-xs text-[var(--err)] mt-1">{fieldErrors.email}</p>
         )}
+      </div>
+
+      {/* どこでお知りになりましたか */}
+      <div>
+        <FieldLabel htmlFor="contact-referral">どこでお知りになりましたか？（任意）</FieldLabel>
+        <select
+          id="contact-referral"
+          value={referralSource}
+          onChange={(e) => setReferralSource(e.target.value)}
+          className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        >
+          <option value="">選択してください（任意）</option>
+          <option value="search">検索（Google など）</option>
+          <option value="sns">SNS（X / Instagram など）</option>
+          <option value="referral">知人・紹介</option>
+          <option value="other">その他</option>
+        </select>
       </div>
 
       {/* ご相談内容 */}

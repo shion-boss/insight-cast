@@ -3,14 +3,23 @@ import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
 
+const REFERRAL_LABELS: Record<string, string> = {
+  search: '検索（Google など）',
+  sns: 'SNS（X / Instagram など）',
+  referral: '知人・紹介',
+  other: 'その他',
+}
+
 async function sendAdminNotification({
   name,
   email,
   message,
+  referralSource,
 }: {
   name: string
   email: string
   message: string
+  referralSource?: string
 }) {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
@@ -30,11 +39,13 @@ async function sendAdminNotification({
   const { Resend } = await import('resend')
   const resend = new Resend(apiKey)
 
+  const referralLabel = referralSource ? REFERRAL_LABELS[referralSource] ?? referralSource : ''
   const text = [
     'Insight Cast にお問い合わせが届きました。',
     '',
     `お名前: ${name}`,
     `メールアドレス: ${email}`,
+    ...(referralLabel ? [`どこで知ったか: ${referralLabel}`] : []),
     '',
     '【ご相談内容】',
     message,
@@ -97,7 +108,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const { name, email, message, website, startedAt } = body as Record<string, unknown>
+  const { name, email, message, referralSource, website, startedAt } = body as Record<string, unknown>
 
   if (typeof website === 'string' && website.trim()) {
     return NextResponse.json({ ok: true })
@@ -184,6 +195,7 @@ export async function POST(req: Request) {
     name: name.trim(),
     email: normalizedEmail,
     message: message.trim(),
+    referralSource: typeof referralSource === 'string' ? referralSource : undefined,
   })
 
   return NextResponse.json({ ok: true })

@@ -6,10 +6,26 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import { CastTalkGrid } from './CastTalkGrid'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'Cast Talk | Insight Cast',
   description:
     'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントを、キャストの視点でお届けします。',
+  alternates: { canonical: `${APP_URL}/cast-talk` },
+  openGraph: {
+    title: 'Cast Talk | Insight Cast',
+    description: 'AIキャストたちの対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
+    url: `${APP_URL}/cast-talk`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cast Talk | Insight Cast',
+    description: 'AIキャストたちの対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
+  },
 }
 
 const LIST_PAGE_SIZE = 10
