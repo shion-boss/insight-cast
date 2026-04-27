@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { CharacterAvatar, Breadcrumb } from '@/components/ui'
-import { CHARACTERS } from '@/lib/characters'
+import { getCharacter, CHARACTERS } from '@/lib/characters'
 import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
@@ -401,6 +401,45 @@ export default async function BlogDetailPage({
             </div>
           </div>
         )}
+
+        {/* 記事下CTA */}
+        <div className="mx-auto mt-14 max-w-2xl">
+          {(() => {
+            const mint = getCharacter('mint')
+            return (
+              <div className="rounded-[var(--r-xl)] border border-[var(--accent)]/20 bg-[var(--accent-l)] px-6 py-7 text-center">
+                <div className="mb-3 flex justify-center">
+                  <CharacterAvatar
+                    src={mint?.icon48}
+                    alt="ミントのアイコン"
+                    emoji={mint?.emoji}
+                    size={40}
+                  />
+                </div>
+                <p className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">
+                  まず、一度試してみませんか？
+                </p>
+                <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+                  カード不要。メールアドレスだけで、AIキャストの取材を体験できます。
+                </p>
+                <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+                  <Link
+                    href="/auth/signup"
+                    className="rounded-[var(--r-sm)] bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    無料で体験する →
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] px-7 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    まず相談してみる
+                  </Link>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
       </main>
 
 
