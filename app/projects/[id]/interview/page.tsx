@@ -587,7 +587,7 @@ export default function InterviewPage() {
                 <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">自社HP</p>
                 <div className="space-y-2">
                   {supportPosts.ownPosts.map((post) => (
-                    <a key={post.url} href={post.url} target="_blank" rel="noreferrer"
+                    <a key={post.url} href={post.url} target="_blank" rel="noopener noreferrer"
                       className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                       <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
                       <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
@@ -602,7 +602,7 @@ export default function InterviewPage() {
                 <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--teal)]">競合</p>
                 <div className="space-y-2">
                   {supportPosts.competitorPosts.map((post) => (
-                    <a key={post.url} href={post.url} target="_blank" rel="noreferrer"
+                    <a key={post.url} href={post.url} target="_blank" rel="noopener noreferrer"
                       className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--teal)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                       <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
                       <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>

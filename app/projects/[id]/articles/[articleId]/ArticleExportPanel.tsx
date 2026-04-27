@@ -74,7 +74,7 @@ function initial(name: string | null): string {
   return name ? name.slice(0, 1) : '?'
 }
 
-const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
+const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
 
 function buildClientHtml(opts: { title: string; date: string; content: string }): string {
   const { title, date, content } = opts
@@ -200,7 +200,7 @@ function buildConversationHtml(opts: {
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 4px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
 ${bubblesHtml.join('\n')}
-<div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
+<div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
 <div style="height:1px;background:#e2d5c3;"></div>
 </div>`
 }
