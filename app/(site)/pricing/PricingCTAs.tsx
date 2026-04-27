@@ -105,6 +105,36 @@ export function PlanCardCTA({
   )
 }
 
+export function FreeBannerCTA() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => {
+      setIsLoggedIn(Boolean(data.user))
+    })
+  }, [])
+
+  if (isLoggedIn === null) {
+    return <div className="h-[46px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
+  }
+
+  return isLoggedIn ? (
+    <Link
+      href="/dashboard"
+      className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
+    >
+      ダッシュボードへ →
+    </Link>
+  ) : (
+    <Link
+      href="/auth/signup"
+      className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
+    >
+      無料で始める →
+    </Link>
+  )
+}
+
 export function PricingBottomCTA() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 

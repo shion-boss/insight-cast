@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
-import { PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
+import { PlanCardCTA, PricingBottomCTA, FreeBannerCTA } from './PricingCTAs'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -298,11 +298,30 @@ export default async function PricingPage({
           </div>
         </section>
 
+        {/* Free trial banner */}
+        <section className="py-10 sm:py-14 bg-[var(--bg)]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="bg-[var(--accent-l)] border border-[var(--accent)]/30 rounded-[20px] px-8 py-8 sm:px-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+              <div>
+                <div className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] sm:text-[22px] font-bold text-[var(--text)] mb-2">
+                  まず、無料で試してみてください
+                </div>
+                <p className="text-[13px] sm:text-sm text-[var(--text2)] leading-relaxed">
+                  クレジットカード不要。メールアドレスだけで登録でき、2回の取材を無料で体験できます。
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <FreeBannerCTA />
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Plan cards */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="mt-0 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
-              {PLANS.map((plan) => (
+            <div className="mt-0 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:items-start">
+              {PLANS.filter((plan) => plan.id !== 'free').map((plan) => (
                 <div
                   key={plan.id}
                   className={`relative flex flex-col bg-[var(--surface)] rounded-[24px] p-9 ${
@@ -319,10 +338,7 @@ export default async function PricingPage({
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>
                   <div className="text-[12px] text-[var(--text3)] mb-4 leading-[1.6]">{plan.catch}</div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[44px] font-bold text-[var(--text)] leading-none mb-1">
-                    {plan.price === 0
-                      ? <span className="text-[28px] font-bold">無料</span>
-                      : <><sup className="text-[22px] align-super font-sans">¥</sup>{plan.price.toLocaleString()}<sub className="text-base text-[var(--text2)] font-sans font-normal">/月</sub></>
-                    }
+                    <><sup className="text-[22px] align-super font-sans">¥</sup>{plan.price.toLocaleString()}<sub className="text-base text-[var(--text2)] font-sans font-normal">/月</sub></>
                   </div>
                   <div className="text-[13px] text-[var(--text3)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
                   <div className="flex flex-col flex-1 mb-7">
@@ -349,19 +365,20 @@ export default async function PricingPage({
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
-            {/* モバイル: プランごとのカード比較 */}
+            {/* モバイル: プランごとのカード比較（お試しは参考として末尾に表示） */}
             <div className="mt-8 grid grid-cols-1 gap-4 sm:hidden">
-              {(['free', 'lightning', 'personal', 'business'] as const).map((plan) => {
+              {(['lightning', 'personal', 'business', 'free'] as const).map((plan) => {
                 const isPersonal = plan === 'personal'
+                const isFree = plan === 'free'
                 const planLabel = plan === 'free' ? 'お試し' : plan === 'lightning' ? 'ライト' : plan === 'personal' ? '個人向け' : '法人向け'
                 return (
-                  <div key={plan} className={`rounded-[16px] border p-5 ${isPersonal ? 'border-[var(--accent)] bg-[var(--accent-l)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
-                    <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--accent)]' : 'text-[var(--text2)]'}`}>{planLabel}</div>
+                  <div key={plan} className={`rounded-[16px] border p-5 ${isPersonal ? 'border-[var(--accent)] bg-[var(--accent-l)]' : isFree ? 'border-[var(--border)] bg-[var(--bg2)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
+                    <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--accent)]' : isFree ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>{planLabel}{isFree && <span className="ml-2 font-normal text-[11px]">（無料体験）</span>}</div>
                     <div className="space-y-3">
                       {TABLE_ROWS.map((row) => (
                         <div key={row.label} className="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3 last:border-0 last:pb-0">
-                          <span className="text-[12px] text-[var(--text2)]">{row.label}</span>
-                          <span className={`text-[12px] font-semibold ${isPersonal ? 'text-[var(--text)]' : 'text-[var(--text2)]'}`}>{row[plan]}</span>
+                          <span className={`text-[12px] ${isFree ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>{row.label}</span>
+                          <span className={`text-[12px] font-semibold ${isPersonal ? 'text-[var(--text)]' : isFree ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>{row[plan]}</span>
                         </div>
                       ))}
                     </div>
@@ -376,7 +393,7 @@ export default async function PricingPage({
                 <thead>
                   <tr>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[25%]"><span className="sr-only">機能</span></th>
-                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">お試し</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]">お試し</th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">ライト</th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">個人向け</th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">法人向け</th>
@@ -386,7 +403,7 @@ export default async function PricingPage({
                   {TABLE_ROWS.map((row) => (
                     <tr key={row.label}>
                       <td className="px-4 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.free}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">{row.free}</td>
                       <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.lightning}</td>
                       <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{row.personal}</td>
                       <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.business}</td>
