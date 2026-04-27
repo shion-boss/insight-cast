@@ -3,9 +3,25 @@ import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { ContactForm } from './_components/contact-form'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata = {
   title: 'お問い合わせ | Insight Cast',
   description: 'Insight Cast へのご質問・ご相談はこちらから。まず気になることを聞かせてください。',
+  alternates: { canonical: `${APP_URL}/contact` },
+  openGraph: {
+    title: 'お問い合わせ | Insight Cast',
+    description: 'Insight Cast へのご質問・ご相談はこちらから。まず気になることを聞かせてください。',
+    url: `${APP_URL}/contact`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'お問い合わせ | Insight Cast',
+    description: 'Insight Cast へのご質問・ご相談はこちらから。まず気になることを聞かせてください。',
+  },
 }
 
 export default function ContactPage() {

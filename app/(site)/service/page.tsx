@@ -5,9 +5,25 @@ import { ServiceHeroCTA, ServiceBottomCTA } from './ServiceCTA'
 import { CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
   description: 'Insight Cast の3ステップを紹介。取材先を登録し、AIキャストが話を聞き、記事の素材が届きます。書くより先に話す。会話から記事が生まれる流れをご紹介します。',
+  alternates: { canonical: `${APP_URL}/service` },
+  openGraph: {
+    title: 'サービス紹介 | Insight Cast',
+    description: '取材先を登録 → AIキャストが取材 → 記事素材を受け取る。3ステップでHPを継続的に強くするサービスです。',
+    url: `${APP_URL}/service`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'サービス紹介 | Insight Cast',
+    description: '取材先を登録 → AIキャストが取材 → 記事素材を受け取る。3ステップでHPを継続的に強くするサービスです。',
+  },
 }
 
 const STEP_SUMMARY = [

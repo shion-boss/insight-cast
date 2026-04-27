@@ -7,9 +7,25 @@ import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',
   description: '6名のAIキャストを紹介。ミント・クラウス・レインの3名は無料で使えます。それぞれ引き出せる価値と取材スタイルが違うので、深めたいテーマに合わせて選んでください。',
+  alternates: { canonical: `${APP_URL}/cast` },
+  openGraph: {
+    title: 'AIキャスト紹介 | Insight Cast',
+    description: '6名のAIキャストを紹介。ミント・クラウス・レインの3名は無料で使えます。引き出せる価値と取材スタイルが違うので、テーマに合わせて選べます。',
+    url: `${APP_URL}/cast`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AIキャスト紹介 | Insight Cast',
+    description: '6名のAIキャストを紹介。ミント・クラウス・レインの3名は無料で使えます。',
+  },
 }
 
 const freeCasts = CHARACTERS.filter((c) => c.available)

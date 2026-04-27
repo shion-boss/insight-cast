@@ -69,6 +69,8 @@ function NormalBodySection({ section }: { section: NormalSection }) {
   }
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export default async function BlogDetailPage({
   params,
 }: {
@@ -83,9 +85,31 @@ export default async function BlogDetailPage({
   const relatedPosts = getRelatedPostsFromList(allPosts, post, 3)
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    datePublished: post.date,
+    dateModified: post.date,
+    url: `${APP_URL}/blog/${slug}`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Insight Cast',
+      url: APP_URL,
+    },
+    author: interviewer
+      ? { '@type': 'Person', name: `${interviewer.name}（Insight Cast AIキャスト）` }
+      : { '@type': 'Organization', name: 'Insight Cast' },
+    inLanguage: 'ja',
+  }
+
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
 
       <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
         <Breadcrumb items={[

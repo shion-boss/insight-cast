@@ -2,9 +2,25 @@ import type { Metadata } from 'next'
 import { PublicHero } from '@/components/public-layout'
 import { FaqContent } from './faq-client'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'よくある質問 | Insight Cast',
   description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+  alternates: { canonical: `${APP_URL}/faq` },
+  openGraph: {
+    title: 'よくある質問 | Insight Cast',
+    description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+    url: `${APP_URL}/faq`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'よくある質問 | Insight Cast',
+    description: 'Insight Cast のサービス内容・キャスト・料金・データ管理についてよくある質問をまとめています。',
+  },
 }
 
 const FAQ_GROUPS = [
@@ -100,10 +116,28 @@ const FAQ_GROUPS = [
   },
 ] as const
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ_GROUPS.flatMap((group) =>
+    group.items.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    }))
+  ),
+}
+
 export default function FaqPage() {
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero

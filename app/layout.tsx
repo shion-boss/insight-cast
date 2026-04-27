@@ -21,13 +21,49 @@ const mplus1p = M_PLUS_1p({
   display: "swap",
 });
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: {
     default: 'Insight Cast',
     template: '%s | Insight Cast',
   },
-  description: 'AI取材で、ホームページにまだ書けていない価値を引き出し、記事や訴求素材までつなげるサービス。',
+  description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。更新が止まったHPを、一次情報で少しずつ強くします。',
+  metadataBase: new URL(APP_URL),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Insight Cast',
+    description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
+    url: APP_URL,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Insight Cast',
+    description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
+  },
 };
+
+const orgJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Insight Cast',
+  url: APP_URL,
+  applicationCategory: 'BusinessApplication',
+  description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。更新が止まったHPを、一次情報で少しずつ強くします。',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'JPY',
+    lowPrice: '0',
+    highPrice: '14800',
+  },
+  inLanguage: 'ja',
+}
 
 export default function RootLayout({
   children,
@@ -36,6 +72,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+      </head>
       <body
         className={`${mplus1p.variable} ${geistMono.variable} antialiased`}
       >

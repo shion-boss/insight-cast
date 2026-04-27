@@ -14,7 +14,6 @@ export default function robots(): MetadataRoute.Robots {
           '/interviews',
           '/articles',
           '/settings',
-          '/onboarding',
           '/auth',
           '/api',
         ],
