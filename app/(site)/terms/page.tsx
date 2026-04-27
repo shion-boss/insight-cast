@@ -6,7 +6,7 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: '利用規約 | Insight Cast',
-  description: 'Insight Cast を利用いただく際の基本条件、禁止事項、権利関係、免責事項などを定めています。',
+  description: 'Insight Cast のご利用規約です。サービスを利用いただく際の基本条件、禁止事項、著作権などの権利関係、免責事項などをまとめて定めています。',
   alternates: { canonical: `${APP_URL}/terms` },
 }
 
