@@ -23,13 +23,15 @@ export async function generateMetadata({
   const { slug } = await params
   const post = await getBlogPostFromDB(slug)
   if (!post) return {}
+  const postUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'}/blog/${slug}`
   return {
     title: `${post.title} | Insight Cast`,
     description: post.excerpt,
+    alternates: { canonical: postUrl },
     openGraph: {
       title: `${post.title} | Insight Cast`,
       description: post.excerpt ?? undefined,
-      url: `${process.env.NEXT_PUBLIC_APP_URL}/blog/${slug}`,
+      url: postUrl,
       siteName: 'Insight Cast',
       type: 'article',
     },

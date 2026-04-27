@@ -153,9 +153,25 @@ export default async function PricingPage({
   const guideChars = SELECTION_GUIDE.map((g) => ({ ...g, char: getCharacter(g.charId) }))
   const mint = getCharacter('mint')
 
+  const pricingFaqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  }
+
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingFaqJsonLd) }}
+      />
 
       <main className="relative z-10">
         {/* Limit banners */}
