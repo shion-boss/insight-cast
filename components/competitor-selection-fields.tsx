@@ -176,6 +176,7 @@ export default function CompetitorSelectionFields({
             value={industryMemo}
             onChange={(e) => setIndustryMemo(e.target.value)}
             placeholder="例: 地域密着の工務店、住宅リフォーム"
+            maxLength={500}
           />
           <p className="mt-1 text-xs text-[var(--text3)]">競合候補を探すときの手がかりに使います。</p>
         </div>
@@ -188,6 +189,7 @@ export default function CompetitorSelectionFields({
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="例: 大阪府吹田市"
+            maxLength={200}
           />
         </div>
       </div>
