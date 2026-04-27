@@ -70,11 +70,11 @@ export function AnalysisLoadingScene({
             const state = index < tick ? 'done' : index === tick ? 'active' : 'idle'
             return (
               <div key={step.label} className={cx('ic-progress-step', `ic-progress-step-${state}`)}>
-                <div className={cx('ic-progress-icon', `ic-progress-icon-${state}`)}>
+                <div aria-hidden="true" className={cx('ic-progress-icon', `ic-progress-icon-${state}`)}>
                   {state === 'done'
                     ? '✓'
                     : state === 'active'
-                      ? <span className="ic-progress-spinner" aria-hidden="true">◌</span>
+                      ? <span className="ic-progress-spinner">◌</span>
                       : index + 1}
                 </div>
                 <div>
@@ -197,11 +197,11 @@ export function InterviewLoadingScene({
           const state = index < tick ? 'done' : index === tick ? 'active' : 'idle'
           return (
             <div key={step} className={cx('ic-prep-step', `ic-prep-step-${state}`)}>
-              <div className={cx('ic-prep-step-icon', `ic-prep-step-icon-${state}`)}>
+              <div aria-hidden="true" className={cx('ic-prep-step-icon', `ic-prep-step-icon-${state}`)}>
                 {state === 'done'
                   ? '✓'
                   : state === 'active'
-                    ? <span className="ic-progress-spinner" aria-hidden="true">◌</span>
+                    ? <span className="ic-progress-spinner">◌</span>
                     : index + 1}
               </div>
               <span>{step}</span>
@@ -277,7 +277,7 @@ export function WritingLoadingScene({
             <div className="ic-orbit-ring ic-orbit-ring-1" />
             <div className="ic-orbit-ring ic-orbit-ring-2" />
             <div className="ic-orbit-ring ic-orbit-ring-3" />
-            <div className="ic-orbit-center">✦</div>
+            <div aria-hidden="true" className="ic-orbit-center">✦</div>
           </div>
         </div>
 
