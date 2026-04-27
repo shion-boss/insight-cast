@@ -83,6 +83,7 @@ async function saveArticle(input: {
   interviewerType?: string | null
   content: string
   userEmail?: string | null
+  theme?: string | null
 }) {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
   const title = titleMatch?.[1]?.trim() ?? '記事'
@@ -118,6 +119,7 @@ async function saveArticle(input: {
       title,
       excerpt,
       content: cleanContent,
+      source_theme: input.theme ?? null,
     })
     .select('id')
     .single()
@@ -426,7 +428,7 @@ ${conversation}${summaryContext}${extractedThemesContext}${themeInstruction}${in
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email })
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
     }

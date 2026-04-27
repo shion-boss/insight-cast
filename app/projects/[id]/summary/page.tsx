@@ -23,6 +23,7 @@ type ArticleRow = {
   title: string | null
   article_type: string | null
   created_at: string
+  source_theme: string | null
 }
 
 function parseSummaryValues(summary: string | null) {
@@ -175,7 +176,7 @@ export default function SummaryPage() {
 
       const { data: articleRows } = await supabase
         .from('articles')
-        .select('id, title, article_type, created_at')
+        .select('id, title, article_type, created_at, source_theme')
         .eq('interview_id', interviewId)
         .order('created_at', { ascending: false })
 
@@ -376,22 +377,38 @@ export default function SummaryPage() {
               </div>
               {data?.themes && data.themes.length > 0 ? (
                 <div className="space-y-2.5">
-                  {data.themes.map((t, i) => (
-                    <div
-                      key={i}
-                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-center justify-between gap-4"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>
-                      </div>
-                      <Link
-                        href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                        className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
+                  {data.themes.map((t, i) => {
+                    const articlesByTheme = articles.filter((a) => a.source_theme === t)
+                    return (
+                      <div
+                        key={i}
+                        className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-start justify-between gap-4"
                       >
-                        この記事を作る →
-                      </Link>
-                    </div>
-                  ))}
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>
+                          {articlesByTheme.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {articlesByTheme.map((a) => (
+                                <Link
+                                  key={a.id}
+                                  href={`/projects/${projectId}/articles/${a.id}`}
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2 py-0.5 rounded-full hover:opacity-75 transition-opacity"
+                                >
+                                  ✓ {a.article_type === 'interviewer' ? '会話形式' : '通常'} {new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <Link
+                          href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
+                          className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
+                        >
+                          {articlesByTheme.length > 0 ? 'また作る →' : 'この記事を作る →'}
+                        </Link>
+                      </div>
+                    )
+                  })}
                 </div>
               ) : (
                 <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4">
