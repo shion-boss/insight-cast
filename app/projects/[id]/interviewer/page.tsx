@@ -128,7 +128,7 @@ export default async function InterviewerPage({
               href="/pricing?reason=project_over_limit"
               className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              プランをアップグレードする →
+              プランをアップグレードする <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/projects"
@@ -173,7 +173,7 @@ export default async function InterviewerPage({
                 href="/pricing?reason=free_plan_locked"
                 className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                プランを見る →
+                プランを見る <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href={`/projects/${id}`}
@@ -208,7 +208,7 @@ export default async function InterviewerPage({
                 href="/pricing?reason=interview_limit"
                 className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                プランを見る →
+                プランを見る <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -256,7 +256,7 @@ export default async function InterviewerPage({
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
                 <div className="mt-4 text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-lg">
-                  このキャストと話す →
+                  このキャストと話す <span aria-hidden="true">→</span>
                 </div>
               </Link>
             ))}

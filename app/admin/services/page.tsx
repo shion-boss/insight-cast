@@ -170,7 +170,7 @@ export default function AdminServicesPage() {
                 rel="noopener noreferrer"
                 className="shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
               >
-                ダッシュボード →
+                ダッシュボード <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

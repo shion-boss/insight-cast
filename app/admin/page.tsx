@@ -138,7 +138,7 @@ export default async function AdminDashboardPage() {
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-[var(--text)]">最近の記事</h2>
             <Link href="/admin/posts" className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors">
-              すべて見る →
+              すべて見る <span aria-hidden="true">→</span>
             </Link>
           </div>
 
@@ -212,7 +212,7 @@ export default async function AdminDashboardPage() {
               href="/"
               className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
-              公開サイトを確認 →
+              公開サイトを確認 <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
