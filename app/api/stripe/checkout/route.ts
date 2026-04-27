@@ -1,27 +1,27 @@
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
 
+const CheckoutBodySchema = z.object({ priceId: z.string() })
+
 export async function POST(request: Request) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
+  if (authError) {
+    return NextResponse.json({ code: 'AUTH_ERROR', message: '認証エラーが発生しました' }, { status: 500 })
+  }
   if (!user) {
     return NextResponse.json({ code: 'UNAUTHORIZED', message: '認証が必要です' }, { status: 401 })
   }
 
   const body: unknown = await request.json()
-  const priceId =
-    body !== null &&
-    typeof body === 'object' &&
-    'priceId' in body &&
-    typeof (body as Record<string, unknown>).priceId === 'string'
-      ? (body as Record<string, string>).priceId
-      : null
-
-  if (!priceId) {
+  const parsed = CheckoutBodySchema.safeParse(body)
+  if (!parsed.success) {
     return NextResponse.json({ code: 'INVALID_INPUT', message: 'priceId が不正です' }, { status: 400 })
   }
+  const { priceId } = parsed.data
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '')
   const stripe = getStripe()
 

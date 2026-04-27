@@ -14,7 +14,7 @@ export default function PrivacyPage() {
   return (
     <LegalPageTemplate
       title="プライバシーポリシー"
-      updatedAt="2026年4月18日"
+      updatedAt="2026年4月27日"
       summary="取得する情報の範囲、利用目的、外部サービスとの関係、Cookie 利用など、個人情報の取り扱い方針を記載しています。"
     >
       <section>
@@ -57,15 +57,29 @@ export default function PrivacyPage() {
       <section>
         <h2>5. 情報の管理</h2>
         <p>
-          当サービスは、データベースに Supabase、ホスティングに Vercel を利用しています。
-          各サービスのセキュリティポリシーに準拠した形で情報を管理します。
+          当サービスは、以下の外部サービスを利用して情報を管理・処理しています。
+          各サービスのセキュリティポリシーに準拠した形で情報を取り扱います。
         </p>
         <ul>
           <li>
-            Supabase Privacy Policy: <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>
+            <strong>Supabase</strong>（データベース）: ユーザー情報・利用データの保存に使用。
+            詳細: <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>
           </li>
           <li>
-            Vercel Privacy Policy: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a>
+            <strong>Vercel</strong>（ホスティング）: アプリケーションの配信に使用。
+            詳細: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a>
+          </li>
+          <li>
+            <strong>Anthropic</strong>（AIインタビュー機能）: AIインタビュー機能の処理に使用。インタビューへの入力内容は Anthropic の API に送信されます。
+            詳細: <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer">anthropic.com/privacy</a>
+          </li>
+          <li>
+            <strong>Stripe</strong>（決済処理）: 有料プランのお支払い処理に使用。クレジットカード情報は Stripe が管理し、当サービスは保持しません。
+            詳細: <a href="https://stripe.com/jp/privacy" target="_blank" rel="noopener noreferrer">stripe.com/jp/privacy</a>
+          </li>
+          <li>
+            <strong>Resend</strong>（メール配信）: サービスに関するメールの送信に使用。
+            詳細: <a href="https://resend.com/privacy" target="_blank" rel="noopener noreferrer">resend.com/privacy</a>
           </li>
         </ul>
       </section>
