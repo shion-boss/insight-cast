@@ -20,8 +20,9 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
   const max = Math.max(...data.map((d) => d.n), 1)
   const W = 340, H = 80, BAR = 28, GAP = 16, PAD = 20
 
+  const totalLabel = data.map((d) => `${d.m}:${d.n}本`).join(', ')
   return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H + 30}`} style={{ overflow: 'visible', display: 'block' }}>
+    <svg width="100%" viewBox={`0 0 ${W} ${H + 30}`} style={{ overflow: 'visible', display: 'block' }} role="img" aria-label={`月別記事素材作成数。${totalLabel}`}>
       {data.map((d, i) => {
         const x = PAD + i * (BAR + GAP)
         const barH = d.n === 0 ? 3 : Math.max(8, (d.n / max) * (H - 10))
