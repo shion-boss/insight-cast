@@ -224,9 +224,17 @@ export default async function DashboardPage() {
             </Link>
           )}
           <div className="text-sm text-[var(--text2)]">
-            今月の取材: <strong>{thisMonthInterviews} 回</strong>
+            今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong>
             {totalArticles > 0 && <> · 累計記事素材 <strong>{totalArticles} 件</strong></>}
           </div>
+          {planLimits.monthlyInterviewLimit < 9999 && (
+            <div className="mt-2 w-48 h-1.5 rounded-full bg-[rgba(0,0,0,0.08)] overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${isInterviewLimitReached ? 'bg-[var(--err)]' : 'bg-[var(--accent)]'}`}
+                style={{ width: `${Math.min((thisMonthInterviews / planLimits.monthlyInterviewLimit) * 100, 100)}%` }}
+              />
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-4 flex-shrink-0">
           {isInterviewLimitReached ? (
