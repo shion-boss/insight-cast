@@ -5,7 +5,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="relative min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <PublicHeader />
-      {children}
+      <div id="main-content">
+        {children}
+      </div>
       <PublicFooter />
     </div>
   )

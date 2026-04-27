@@ -28,6 +28,13 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname()
 
   return (
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--r-sm)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        メインコンテンツへ
+      </a>
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex h-[62px] items-center justify-between gap-4">
@@ -90,5 +97,6 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         </nav>
       </div>
     </header>
+    </>
   )
 }
