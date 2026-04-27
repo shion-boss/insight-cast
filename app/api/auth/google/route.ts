@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'OAuth is not configured' }, { status: 500 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? `https://${req.headers.get('host')}`
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? `https://${req.headers.get('host')}`).replace(/\/$/, '')
   const redirectUri = `${appUrl}/api/auth/google/callback`
   const state = JSON.stringify({ projectId })
 

@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'project not found' }, { status: 404 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? `https://${req.headers.get('host')}`
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? `https://${req.headers.get('host')}`).replace(/\/$/, '')
   const redirectUri = `${appUrl}/api/auth/google/callback`
 
   // code → tokens 交換
