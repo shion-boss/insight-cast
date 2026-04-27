@@ -423,7 +423,7 @@ export default function ArticlePage() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="leading-[1.5]">{item}</span>
-                        {theme === item && <span className="ml-2 flex-shrink-0">✓</span>}
+                        {theme === item && <span aria-hidden="true" className="ml-2 flex-shrink-0">✓</span>}
                       </div>
                     </button>
                   ))}
@@ -604,7 +604,7 @@ export default function ArticlePage() {
                         className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         <span>{typeLabel}</span>
-                        <span className="text-[var(--text3)]">·</span>
+                        <span aria-hidden="true" className="text-[var(--text3)]">·</span>
                         <span className="text-[var(--text3)]">{dateLabel}</span>
                       </Link>
                     )
