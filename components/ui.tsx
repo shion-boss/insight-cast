@@ -325,12 +325,14 @@ export function CharacterAvatar({
   emoji,
   size = 40,
   className,
+  priority = false,
 }: {
   src?: StaticImageData
   alt: string
   emoji?: string
   size?: number
   className?: string
+  priority?: boolean
 }) {
   return (
     <div
@@ -341,7 +343,7 @@ export function CharacterAvatar({
       style={{ width: size, height: size }}
     >
       {src ? (
-        <Image src={src} alt={alt} width={size} height={size} className="h-full w-full object-cover" />
+        <Image src={src} alt={alt} width={size} height={size} className="h-full w-full object-cover" priority={priority} />
       ) : (
         <span className="text-lg" aria-hidden="true">{emoji ?? '🙂'}</span>
       )}

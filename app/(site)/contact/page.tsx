@@ -42,6 +42,7 @@ export default function ContactPage() {
                   alt="ミントのアイコン"
                   emoji={mint?.emoji}
                   size={56}
+                  priority
                 />
               }
               name="ミント"

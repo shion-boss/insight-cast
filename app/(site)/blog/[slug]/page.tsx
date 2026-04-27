@@ -85,6 +85,11 @@ export default async function BlogDetailPage({
   const relatedPosts = getRelatedPostsFromList(allPosts, post, 3)
   const interviewer = post.interviewer ? CHARACTERS.find((c) => c.id === post.interviewer) : undefined
 
+  // 日付降順で並んでいる前提で prev/next を求める（新しい記事が前）
+  const currentIdx = allPosts.findIndex((p) => p.slug === slug)
+  const prevPost = currentIdx > 0 ? allPosts[currentIdx - 1] : null
+  const nextPost = currentIdx >= 0 && currentIdx < allPosts.length - 1 ? allPosts[currentIdx + 1] : null
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -261,8 +266,32 @@ export default async function BlogDetailPage({
             <p className="text-[var(--text3)]">本文を準備中です。</p>
           )}
 
+          {/* 前後記事ナビゲーション */}
+          {(prevPost ?? nextPost) && (
+            <nav aria-label="前後の記事" className="mt-14 grid gap-3 sm:grid-cols-2">
+              {prevPost ? (
+                <Link
+                  href={`/blog/${prevPost.slug}`}
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">← 新しい記事</span>
+                  <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{prevPost.title}</span>
+                </Link>
+              ) : <div />}
+              {nextPost ? (
+                <Link
+                  href={`/blog/${nextPost.slug}`}
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">古い記事 →</span>
+                  <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{nextPost.title}</span>
+                </Link>
+              ) : <div />}
+            </nav>
+          )}
+
           {/* 記事末尾 */}
-          <div className="mt-14 flex flex-col gap-8">
+          <div className="mt-8 flex flex-col gap-8">
             <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[rgba(255,253,249,0.94)] px-6 py-6">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text3)]">
                 Continue Reading
