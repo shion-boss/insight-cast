@@ -146,14 +146,14 @@ export function PricingBottomCTA() {
 
   if (isLoggedIn === null) {
     return (
-      <>
+      <div aria-busy="true" aria-label="読み込み中">
         <div className="h-10 w-64 mx-auto rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse mb-4" />
         <div className="h-5 w-80 mx-auto rounded bg-[var(--border)] animate-pulse" />
         <div className="mt-8 flex flex-wrap gap-3 justify-center">
           <div className="h-[52px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
           <div className="h-[52px] w-36 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
         </div>
-      </>
+      </div>
     )
   }
 
