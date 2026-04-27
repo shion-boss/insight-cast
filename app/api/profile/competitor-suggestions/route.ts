@@ -17,7 +17,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
-  const { industry, location, url } = await req.json()
+  const body = await req.json().catch(() => null)
+  if (!body || typeof body !== 'object') return Response.json({ error: 'invalid json' }, { status: 400 })
+  const { industry, location, url } = body as Record<string, unknown>
   const normalizedUrl = normalizeAnalysisUrl(typeof url === 'string' ? url : '')
   const normalizedIndustry = typeof industry === 'string' ? industry.trim() : ''
   const normalizedLocation = typeof location === 'string' ? location.trim() : ''

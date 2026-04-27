@@ -61,12 +61,13 @@ export async function POST(
     })
   }
 
-  // 会話履歴取得
+  // 会話履歴取得（最新100件に制限して過大なコンテキスト送信を防ぐ）
   const { data: history } = await supabase
     .from('interview_messages')
     .select('role, content')
     .eq('interview_id', interviewId)
     .order('created_at', { ascending: true })
+    .limit(100)
 
   if (isGreeting && history && history.length > 0) {
     return new Response('', {

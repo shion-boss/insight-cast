@@ -185,7 +185,7 @@ export async function POST(
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
-  const body = await req.json()
+  const body = await req.json().catch(() => null)
   const parsed = z.object({
     interviewId: z.string().uuid(),
     articleType: z.enum(['client', 'interviewer', 'conversation']),

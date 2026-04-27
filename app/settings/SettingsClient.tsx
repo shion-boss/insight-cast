@@ -152,7 +152,7 @@ export function SettingsClient({
     setProfileError(null)
     setProfileSaving(true)
 
-    const nextName = name.trim()
+    const nextName = name.trim().slice(0, 100)
     if (!nextName) {
       setProfileError('表示名を入力してください。')
       setProfileSaving(false)
