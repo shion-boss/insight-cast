@@ -68,7 +68,7 @@ const orgJsonLd = {
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer support',
-    email: 'contact@insight-cast.jp',
+    email: 'info@insight-cast.jp',
     availableLanguage: 'Japanese',
     url: `${APP_URL}/contact`,
   },

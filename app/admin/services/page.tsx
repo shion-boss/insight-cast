@@ -50,6 +50,15 @@ const SERVICES: Service[] = [
     envKeys: ['FIRECRAWL_API_KEY'],
   },
   {
+    name: 'Stripe',
+    description: '決済・サブスク管理',
+    role: 'クレジットカード決済・サブスクリプション管理・Webhook受信',
+    status: 'active',
+    plan: '従量課金（2.9% + ¥30/件）',
+    dashboardUrl: 'https://dashboard.stripe.com',
+    envKeys: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_PRICE_ID_PERSONAL', 'STRIPE_PRICE_ID_BUSINESS'],
+  },
+  {
     name: 'Resend',
     description: 'メール送信',
     role: '問い合わせ受信通知・（将来）分析完了通知',
