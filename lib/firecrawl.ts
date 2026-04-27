@@ -3,10 +3,15 @@ import { logApiUsage } from '@/lib/api-usage'
 // Starter plan ($16/3,000 credits) ≒ $0.0053/scrape
 const FIRECRAWL_COST_PER_SCRAPE = 0.0053
 
+// SSRF 対策: ループバック・プライベートIPアドレスへのアクセスを拒否する
+const BLOCKED_HOSTNAME_PATTERN = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|::1|0\.0\.0\.0)/
+
 export function isSafeUrl(url: string): boolean {
   try {
     const parsed = new URL(url)
-    return parsed.protocol === 'https:'
+    if (parsed.protocol !== 'https:') return false
+    if (BLOCKED_HOSTNAME_PATTERN.test(parsed.hostname)) return false
+    return true
   } catch {
     return false
   }
