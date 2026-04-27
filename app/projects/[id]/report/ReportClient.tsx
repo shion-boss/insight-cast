@@ -427,7 +427,7 @@ export default function ReportClient({
             <ul className="space-y-1">
               {audit.strengths.map((item, i) => (
                 <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                  <span className="text-[var(--ok)] flex-shrink-0">✓</span>{item}
+                  <span aria-hidden="true" className="text-[var(--ok)] flex-shrink-0">✓</span>{item}
                 </li>
               ))}
             </ul>
@@ -522,7 +522,7 @@ export default function ReportClient({
         href={interviewerPath}
         className={getButtonClass('primary', 'w-full')}
       >
-        取材を始める →
+        取材を始める <span aria-hidden="true">→</span>
       </Link>
     </div>
   )

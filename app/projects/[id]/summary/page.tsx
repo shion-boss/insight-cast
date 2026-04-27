@@ -401,7 +401,7 @@ export default function SummaryPage() {
                           href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
                           className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
                         >
-                          この記事を作る →
+                          この記事を作る <span aria-hidden="true">→</span>
                         </Link>
                       </div>
                     )
@@ -460,7 +460,7 @@ export default function SummaryPage() {
                 href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
                 className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
               >
-                記事素材を受け取る →
+                記事素材を受け取る <span aria-hidden="true">→</span>
               </Link>
             </div>
 

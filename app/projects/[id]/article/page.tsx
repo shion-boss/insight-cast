@@ -547,7 +547,7 @@ export default function ArticlePage() {
               ) : isBusyWithAnotherTab && activeGenerationLabel ? (
                 <>{activeGenerationLabel}を作成中...</>
               ) : (
-                <>記事素材を作成する →</>
+                <>記事素材を作成する <span aria-hidden="true">→</span></>
               )}
             </button>
             {availableThemes.length === 0 && !isGenerating && (
@@ -726,7 +726,7 @@ export default function ArticlePage() {
                       <p className="truncate text-sm font-medium text-[var(--text)]">{a.title ?? '記事'}</p>
                       <div className="flex flex-shrink-0 items-center gap-3">
                         <span className="text-xs text-[var(--text3)]">{dateLabel}</span>
-                        <span className="text-xs font-medium text-[var(--accent)]">確認する →</span>
+                        <span className="text-xs font-medium text-[var(--accent)]">確認する <span aria-hidden="true">→</span></span>
                       </div>
                     </Link>
                   )
