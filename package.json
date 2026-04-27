@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test __tests__/**/*.test.ts",
     "screenshot": "tsx scripts/screenshot.ts"
   },
   "dependencies": {
