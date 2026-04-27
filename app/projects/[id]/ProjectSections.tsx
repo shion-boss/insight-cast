@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef, useLayoutEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import InterviewStatusPills from '@/components/interview-status-pills'
@@ -51,18 +51,24 @@ export function PaginatedUncreatedThemes({
   projectId: string
 }) {
   const [page, setPage] = useState(1)
+  const [bodyMinHeight, setBodyMinHeight] = useState(0)
+  const bodyRef = useRef<HTMLDivElement>(null)
+
   const totalPages = Math.ceil(items.length / PER_PAGE)
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-
   const placeholderCount = PER_PAGE - visible.length
 
-  // 1行あたりの高さ目安: py-3.5(28px上下) + アイコン28px = 約56px
-  // PER_PAGE 行ぶんの最小高さを確保してページ間で高さが変わらないようにする
-  const minBodyHeight = PER_PAGE * 56
+  // ページ描画後に実際の高さを計測し、これまでの最大値を minHeight として保持する。
+  // テーマ文字が長くて行高が増えても、最初のページの高さに固定できる。
+  useLayoutEffect(() => {
+    if (!bodyRef.current) return
+    const h = bodyRef.current.offsetHeight
+    setBodyMinHeight((prev) => Math.max(prev, h))
+  }, [visible])
 
   return (
     <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
-      <div style={{ minHeight: minBodyHeight }}>
+      <div ref={bodyRef} style={{ minHeight: bodyMinHeight || undefined }}>
         {visible.map((item, i) => (
           <div key={i} className="flex items-center gap-3 px-5 py-3.5">
             <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
