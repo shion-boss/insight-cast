@@ -98,6 +98,17 @@ const PLANS = [
     highlight: false,
   },
   {
+    id: 'lightning',
+    name: 'ライト',
+    price: '¥1,980',
+    period: '/ 月',
+    desc: '月5回から、HPを育てはじめる',
+    features: ['取材 5回 / 月', '記事素材 20本 / 月', '取材先 1件', '自社HP調査', '通常サポート'],
+    cta: 'ライトプランで始める',
+    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=lightning',
+    highlight: false,
+  },
+  {
     id: 'personal',
     name: '個人向け',
     price: '¥4,980',
@@ -209,6 +220,7 @@ export default async function LandingPage() {
   const blogCount = Math.max(dbBlogCount, staticBlogCount)
 
   const priceIds = {
+    lightning: process.env.STRIPE_PRICE_ID_LIGHTNING ?? '',
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
@@ -679,7 +691,7 @@ export default async function LandingPage() {
               まず無料で体験してください。<br />2回まで、カード不要で使えます。
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
-            <div className="mt-11 grid gap-6 lg:grid-cols-3">
+            <div className="mt-11 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {PLANS.map((plan) => (
                 <div
                   key={plan.name}
@@ -717,7 +729,11 @@ export default async function LandingPage() {
                     )
                   ) : isLoggedIn ? (
                     <CheckoutButton
-                      priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
+                      priceId={
+                        plan.id === 'lightning' ? priceIds.lightning
+                        : plan.id === 'personal' ? priceIds.personal
+                        : priceIds.business
+                      }
                       label={plan.cta}
                       featured={plan.highlight}
                     />
