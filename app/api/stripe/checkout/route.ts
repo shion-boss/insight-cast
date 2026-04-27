@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
 
-const CheckoutBodySchema = z.object({ priceId: z.string() })
+const CheckoutBodySchema = z.object({ priceId: z.string().min(1) })
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -70,7 +70,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ url: session.url })
-  } catch {
+  } catch (err) {
+    console.error('[stripe/checkout]', err)
     return NextResponse.json({ code: 'STRIPE_ERROR', message: 'お支払いページを開けませんでした' }, { status: 500 })
   }
 }
