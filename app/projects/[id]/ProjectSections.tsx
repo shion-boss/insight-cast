@@ -262,6 +262,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
       {/* PC: テーブル */}
       <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
         <table className="w-full">
+          <caption className="sr-only">記事素材一覧</caption>
           <thead className="bg-[var(--bg2)]">
             <tr>
               <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>

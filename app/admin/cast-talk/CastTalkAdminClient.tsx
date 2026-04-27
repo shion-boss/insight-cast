@@ -212,6 +212,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     <Link
                       href={`/cast-talk/${item.slug}`}
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
                     >
                       公開ページ ↗
@@ -233,6 +234,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
           {/* PC: テーブル */}
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
             <table className="w-full text-sm">
+              <caption className="sr-only">Cast Talk 記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
                   <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">タイトル</th>
@@ -290,6 +292,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                           <Link
                             href={`/cast-talk/${item.slug}`}
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                           >
                             公開ページ ↗

@@ -654,6 +654,7 @@ export default async function LandingPage() {
             {/* PC: テーブル */}
             <div className="hidden sm:block mt-11 rounded-[20px] border border-[var(--border)] overflow-hidden">
               <table className="w-full border-collapse">
+                <caption className="sr-only">Insight Cast と他の方法との比較</caption>
                 <thead>
                   <tr>
                     <th scope="col" className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"><span className="sr-only">比較項目</span></th>

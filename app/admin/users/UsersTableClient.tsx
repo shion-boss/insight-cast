@@ -229,6 +229,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
       {/* PC: テーブル */}
       <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
         <table className="w-full text-sm">
+          <caption className="sr-only">ユーザー一覧</caption>
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--bg2)] text-left">
               <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">メールアドレス</th>

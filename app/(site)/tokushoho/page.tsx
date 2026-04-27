@@ -31,6 +31,7 @@ export default function TokushohoPage() {
     >
       <section>
         <table>
+          <caption className="sr-only">特定商取引法に基づく表記</caption>
           <tbody>
             {rows.map((row) => (
               <tr key={row.label}>

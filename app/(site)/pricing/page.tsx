@@ -390,6 +390,7 @@ export default async function PricingPage({
             {/* PC: テーブル */}
             <div className="mt-10 hidden overflow-hidden rounded-[20px] border border-[var(--border)] sm:block">
               <table className="w-full border-collapse">
+                <caption className="sr-only">プランごとの機能比較</caption>
                 <thead>
                   <tr>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[25%]"><span className="sr-only">機能</span></th>

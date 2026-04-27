@@ -167,6 +167,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                   <Link
                     href={`/blog/${post.slug}`}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                   >
                     公開ページ ↗
@@ -188,6 +189,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
         {/* PC: テーブル */}
         <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
           <table className="w-full text-sm">
+            <caption className="sr-only">ブログ記事一覧</caption>
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
                 <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase">タイトル</th>
@@ -239,6 +241,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                         <Link
                           href={`/blog/${post.slug}`}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="inline-block w-24 text-center text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
                         >
                           公開ページ ↗
