@@ -15,14 +15,20 @@ export async function POST(
   const { interviewId, content } = body as { interviewId?: string; content?: string }
   if (!interviewId || !content) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
 
-  // ownership check
+  // ownership check: verify interview belongs to a project the current user owns
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, project_id')
+    .select('id, project_id, interviews_project:projects(user_id)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .single()
   if (!interview) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  const joinedProject = interview.interviews_project as { user_id: string } | { user_id: string }[] | null
+  const projectOwner = Array.isArray(joinedProject) ? (joinedProject[0] ?? null) : joinedProject
+  if (projectOwner?.user_id !== user.id) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  }
 
   await supabase.from('interview_messages').insert({
     interview_id: interviewId,
