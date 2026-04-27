@@ -4,10 +4,26 @@ import Link from 'next/link'
 import { PublicHero } from '@/components/public-layout'
 import { getButtonClass } from '@/components/ui'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export const metadata: Metadata = {
   title: 'AI時代の発信について | Insight Cast',
   description:
     'AI検索時代に一次情報が重要な理由、インタビューが効く理由、ホームページ更新が止まる理由。Insight Cast の思想を伝えるページです。',
+  alternates: { canonical: `${APP_URL}/philosophy` },
+  openGraph: {
+    title: 'AI時代の発信について | Insight Cast',
+    description: 'AI検索時代に一次情報が重要な理由、インタビューが効く理由。Insight Cast の思想を伝えるページです。',
+    url: `${APP_URL}/philosophy`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI時代の発信について | Insight Cast',
+    description: 'AI検索時代に一次情報が重要な理由、インタビューが効く理由。Insight Cast の思想を伝えるページです。',
+  },
 }
 
 const articles = [

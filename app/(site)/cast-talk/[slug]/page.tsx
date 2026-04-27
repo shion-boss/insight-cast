@@ -49,6 +49,8 @@ function formatDate(iso: string | null): string {
   return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
 export async function generateMetadata({
   params,
 }: {
@@ -57,9 +59,25 @@ export async function generateMetadata({
   const { slug } = await params
   const talk = await getCastTalk(slug)
   if (!talk) return { title: 'Cast Talk | Insight Cast' }
+  const title = `${talk.title} | Cast Talk | Insight Cast`
+  const description = talk.summary ?? 'Insight CastのAIキャストによる対話記事。'
   return {
-    title: `${talk.title} | Cast Talk | Insight Cast`,
-    description: talk.summary ?? undefined,
+    title,
+    description,
+    alternates: { canonical: `${APP_URL}/cast-talk/${slug}` },
+    openGraph: {
+      title,
+      description,
+      url: `${APP_URL}/cast-talk/${slug}`,
+      siteName: 'Insight Cast',
+      locale: 'ja_JP',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   }
 }
 

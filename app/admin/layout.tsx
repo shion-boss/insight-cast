@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminMobileNav } from '@/components/admin-mobile-nav'
@@ -66,7 +67,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
-              <Link href="/"><img src="/logo.jpg" alt="Insight Cast" className="h-8 w-auto" /></Link>
+              <Link href="/"><Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" /></Link>
               <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
             </div>
             {/* PC: 管理画面ラベル + メール */}
