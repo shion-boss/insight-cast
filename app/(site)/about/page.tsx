@@ -45,7 +45,7 @@ export default function AboutPage() {
           aside={(
             <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg2)] p-4 sm:p-6">
               <div className="grid grid-cols-3 gap-3">
-                {allCasts.map((char) => (
+                {allCasts.map((char, idx) => (
                   <div key={char.id} className={`text-center ${!char.available ? 'opacity-70' : ''}`}>
                     <div className="mb-2.5 overflow-hidden rounded-[16px] border-[1.5px] border-[var(--border)] bg-[var(--surface)]">
                       <Image
@@ -54,6 +54,7 @@ export default function AboutPage() {
                         width={80}
                         height={80}
                         className="w-full object-contain"
+                        priority={idx < 3}
                       />
                     </div>
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</div>
