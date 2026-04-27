@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useMemo, useState } from 'react'
 
 import { CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
@@ -9,7 +9,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
 }
 
-function AiBadge({ label }: { label: string }) {
+function AiBadge({ label }: { label: ReactNode }) {
   return (
     <span className="ic-loading-badge">
       <span className="ic-loading-badge-dot" aria-hidden="true" />
@@ -170,7 +170,7 @@ export function InterviewLoadingScene({
       <div className="text-center">
         <p className="font-serif text-[26px] font-bold text-[var(--text)]">{character?.name ?? 'AIキャスト'}</p>
         <div className="mt-1 inline-flex">
-          <AiBadge label={`${castRole} · 準備中`} />
+          <AiBadge label={<>{castRole}<span aria-hidden="true"> · </span>準備中</>} />
         </div>
       </div>
 

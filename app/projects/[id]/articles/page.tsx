@@ -121,7 +121,7 @@ export default async function ProjectArticlesPage({
           </h1>
           <p className="mt-2 text-sm text-[var(--text3)]">
             {interview
-              ? `${interviewer?.name ?? 'AIキャスト'} · ${formatDate(interview.created_at)} の取材から作成した記事`
+              ? <>{interviewer?.name ?? 'AIキャスト'}<span aria-hidden="true"> · </span>{formatDate(interview.created_at)} の取材から作成した記事</>
               : 'この取材先から作成した記事をまとめて確認できます。'}
           </p>
         </div>
