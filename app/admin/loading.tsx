@@ -1,6 +1,6 @@
 export default function AdminLoading() {
   return (
-    <div className="animate-pulse space-y-6">
+    <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-6">
       <div className="flex items-start justify-between">
         <div className="space-y-2">
           <div className="h-7 w-44 rounded bg-[var(--bg2)]" />

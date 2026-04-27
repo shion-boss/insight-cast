@@ -3,7 +3,7 @@ import { AppShell } from '@/components/app-shell'
 export default function DashboardLoading() {
   return (
     <AppShell title="ダッシュボード" active="dashboard" accountLabel="設定" isAdmin={false}>
-      <div className="animate-pulse space-y-6">
+      <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-6">
         {/* Greeting bar skeleton */}
         <div className="h-[88px] rounded-[var(--r-lg)] bg-[var(--bg2)]" />
         {/* Stats skeleton */}

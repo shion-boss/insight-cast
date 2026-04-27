@@ -3,7 +3,7 @@ import { AppShell } from '@/components/app-shell'
 export default function InterviewsLoading() {
   return (
     <AppShell title="取材メモ一覧" active="interviews" accountLabel="設定" isAdmin={false}>
-      <div className="animate-pulse space-y-4">
+      <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-4">
         <div className="flex items-center justify-between">
           <div className="h-4 w-16 rounded bg-[var(--bg2)]" />
         </div>
