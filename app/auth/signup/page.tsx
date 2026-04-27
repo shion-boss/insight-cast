@@ -22,7 +22,7 @@ function SignupForm() {
     try {
       const inner = new URLSearchParams(new URL(nextParam, 'http://x').search)
       const p = inner.get('plan')
-      return p === 'personal' || p === 'business' ? p : null
+      return p === 'lightning' || p === 'personal' || p === 'business' ? p : null
     } catch { return null }
   })()
   const [email, setEmail] = useState('')
@@ -137,7 +137,7 @@ function SignupForm() {
       <div className="bg-white flex items-center justify-center p-[60px]">
         <div className="max-w-[420px] w-full">
           <h1 className="font-serif text-[28px] font-bold text-[var(--text)] mb-2">
-            {effectivePlan === 'personal' ? '個人向けプランに申し込む' : effectivePlan === 'business' ? '法人向けプランに申し込む' : '無料で始める'}
+            {effectivePlan === 'lightning' ? 'ライトプランに申し込む' : effectivePlan === 'personal' ? '個人向けプランに申し込む' : effectivePlan === 'business' ? '法人向けプランに申し込む' : '無料で始める'}
           </h1>
           <p className="text-[14px] text-[var(--text2)] mb-8">
             {effectivePlan && <span className="block mb-2 text-[var(--accent)] font-semibold">アカウント登録後、そのままお申し込み画面に進みます。</span>}

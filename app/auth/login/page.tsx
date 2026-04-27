@@ -22,7 +22,7 @@ function LoginForm() {
   const rawNext = searchParams.get('next') ?? ''
   const nextPath = /^\/(?!\/)/.test(rawNext) ? rawNext : '/dashboard'
   const isPaidFlow = nextPath.includes('checkout-redirect')
-  const paidPlan = nextPath.includes('plan=business') ? '法人向け' : nextPath.includes('plan=personal') ? '個人向け' : null
+  const paidPlan = nextPath.includes('plan=business') ? '法人向け' : nextPath.includes('plan=personal') ? '個人向け' : nextPath.includes('plan=lightning') ? 'ライト' : null
   const mint = getCharacter('mint')
   const oauthErrorMessage = searchParams.get('message')
   const oauthError = searchParams.get('error') === 'oauth_callback'

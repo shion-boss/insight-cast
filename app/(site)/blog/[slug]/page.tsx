@@ -381,7 +381,7 @@ export default async function BlogDetailPage({
                     className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
                     <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${relColor}18` }}>
-                      {relChar && <Image src={relChar.icon48} alt={relChar.name} fill className="object-cover" />}
+                      {relChar && <Image src={relChar.icon48} alt={relChar.name} fill sizes="40px" className="object-cover" />}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2">

@@ -185,6 +185,7 @@ export default async function CastTalkDetailPage({
                   alt={`${interviewer?.name ?? ''}と${guest?.name ?? ''}の対話`}
                   fill
                   className="object-cover"
+                  sizes="(min-width: 768px) 720px, 100vw"
                   placeholder="blur"
                 />
               </div>
