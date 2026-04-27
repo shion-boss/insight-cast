@@ -65,6 +65,35 @@
 
 ### 今週やったこと
 
+#### 2026-04-27（日次品質改善サイクル 第7回・ブログマイルストーン達成）
+
+**テーマ**: ブログ10本達成・SEO/パフォーマンス/アクセシビリティ改善・ブログCTA追加
+
+**修正内容**
+- ブログ記事9・10・11本目を追加 → **中間マイルストーン「ブログ累計10本」達成 ✅**
+  - 記事9: AI文章生成と一次情報インタビュー記事の違い（why-ai-cant-write-your-story）
+  - 記事10: 動物キャラ設計の本音 — 動物にした理由（why-animal-character-design）
+  - 記事11: AI検索時代に中小企業のHPで起きていること（ai-search-era-for-small-business）
+- `app/(site)/blog/[slug]/page.tsx`: 記事末尾に無料体験・お問い合わせCTA（ミントアイコン付き）を追加
+- `app/auth/login/page.tsx` / `app/auth/signup/page.tsx`: ライトプランの導線ラベルを追加
+- `lib/firecrawl.ts`: `isSafeUrl` に SSRF 対策を追加（ループバック・プライベートIP範囲をブロック）
+- `app/(site)/loading.tsx` / `app/(site)/error.tsx`: (site) グループに共通ロード中・エラー画面を追加
+- `app/(site)/privacy/page.tsx` 等: 法的ページの meta description 充実（SEO改善）
+- `components/ui.tsx`: `role=switch` ボタンに `aria-label` を追加（アクセシビリティ改善）
+- 静的インポート画像に `placeholder="blur"` 追加（LCP改善）
+- Geist Mono フォントに `display: swap` 追加（FOIT解消）
+- テーブルに `caption` を追加（スクリーンリーダー改善）
+- `--text3` のコントラスト比を改善（#b8a898 → #8f7d6d、WCAG AA 水準改善）
+- ルートメタデータに OGP 画像を設定（SNSシェア改善）
+- `target="_blank"` リンクに `rel="noopener noreferrer"` を追加（セキュリティ修正）
+- 削除確認ダイアログを `ConfirmDialog` に共通化し、フォーカストラップを追加（アクセシビリティ）
+- Next.js Image の `fill` 使用箇所に `sizes` props を追加（画像パフォーマンス改善）
+
+**今回のレビューで見つかった初出パターン**
+- 特になし（継続的な品質改善サイクル）
+
+---
+
 #### 2026-04-27（日次品質改善サイクル 第6回）
 
 **テーマ**: SEO・法的ページ・セキュリティ修正のレビューと課金導線の脆弱性対応
