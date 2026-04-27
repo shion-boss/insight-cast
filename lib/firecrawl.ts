@@ -4,7 +4,11 @@ import { logApiUsage } from '@/lib/api-usage'
 const FIRECRAWL_COST_PER_SCRAPE = 0.0053
 
 // SSRF 対策: ループバック・プライベートIPアドレスへのアクセスを拒否する
-const BLOCKED_HOSTNAME_PATTERN = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|::1|0\.0\.0\.0)/
+// URL オブジェクトは IPv6 アドレスを "[::1]" のようにブラケット付きで返すため、
+// "::1" と "[::1]" の両パターンをカバーする。
+// また "[" で始まる hostname（= IPv6 リテラル全般）を拒否することで
+// fc00::/7 などプライベート IPv6 範囲も一括ブロックする。
+const BLOCKED_HOSTNAME_PATTERN = /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|::1|\[::1\]|0\.0\.0\.0|\[)/
 
 export function isSafeUrl(url: string): boolean {
   try {
