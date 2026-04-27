@@ -143,7 +143,7 @@ export default async function BillingPage({
                   個人向けプランにアップグレードすると、月15回の取材と競合調査（3社）が使えます。
                 </p>
                 <Link
-                  href="/settings?section=ご利用プラン"
+                  href="/api/stripe/checkout-redirect?plan=personal"
                   className={getButtonClass('primary', 'mt-3 px-4 py-2 text-sm')}
                 >
                   アップグレードを確認する
