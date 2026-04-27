@@ -145,6 +145,18 @@ export const POSTS: Post[] = [
     icon: '🎙️',
     featured: false,
   },
+  {
+    slug: 'why-hp-update-stops-not-time-but-ideas',
+    title: 'HPが更新できないのは、時間がないからじゃなかった',
+    excerpt:
+      '「忙しいから更新できない」と思っていませんか。実は多くの事業者さんが、時間を作っても手が止まる状態になっています。その根本原因は、意欲でも時間でもありませんでした。',
+    category: 'philosophy',
+    type: 'normal',
+    date: '2026-04-28',
+    coverColor: 'bg-[#eef2ed]',
+    icon: '🖊️',
+    featured: false,
+  },
 ]
 
 export function getPost(slug: string): Post | undefined {

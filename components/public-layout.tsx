@@ -20,7 +20,7 @@ export function PublicPageFrame({
   return (
     <div
       className={cx(
-        'relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]',
+        'relative min-h-dvh overflow-x-hidden bg-[var(--bg)] text-[var(--text)]',
         className,
       )}
     >

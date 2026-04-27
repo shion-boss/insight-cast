@@ -19,7 +19,7 @@ export function AppShellSkeleton({
   children?: ReactNode
 } = {}) {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <div className="min-h-dvh bg-[var(--bg)] text-[var(--text)]">
       {/* sidebar */}
       <aside className="border-b border-[var(--border)] bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[236px] lg:border-b-0 lg:border-r">
         <div className="mx-auto flex max-w-6xl flex-col lg:h-full lg:max-w-none">

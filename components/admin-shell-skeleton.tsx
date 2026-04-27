@@ -4,7 +4,7 @@ const NAV_LINKS = [
 
 export function AdminShellSkeleton() {
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
+    <div className="min-h-dvh bg-[var(--bg)]">
       {/* sidebar */}
       <aside className="border-b border-white/8 bg-[#1c1410] lg:fixed lg:inset-y-0 lg:left-0 lg:w-[220px] lg:border-b-0 lg:border-r lg:border-r-white/8">
         {/* loading bar — サイドバー最上部にホワイト */}

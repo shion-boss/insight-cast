@@ -9,7 +9,7 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
-  description: 'Insight Cast の3ステップを紹介。取材先を登録し、AIキャストが話を聞き、記事の素材が届きます。書くより先に話す。会話から記事が生まれる流れをご紹介します。',
+  description: 'Insight Cast の使い方を3ステップで紹介します。取材先を登録するとAIがHP分析・競合比較を行い、AIキャストが取材して記事素材が届きます。書くより先に話す。会話から記事が生まれる流れです。',
   alternates: { canonical: `${APP_URL}/service` },
   openGraph: {
     title: 'サービス紹介 | Insight Cast',

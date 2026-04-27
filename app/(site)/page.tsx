@@ -105,7 +105,7 @@ const PLANS = [
     desc: '月5回から、HPを育てはじめる',
     features: ['取材 5回 / 月', '記事素材 20本 / 月', '取材先 1件', '自社HP調査', '通常サポート'],
     cta: 'ライトプランで始める',
-    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=lightning',
+    href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dlightning',
     highlight: false,
   },
   {
@@ -116,7 +116,7 @@ const PLANS = [
     desc: '週1〜2本ペースでHPを育てたい方へ',
     features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
     cta: '月額プランを始める',
-    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=personal',
+    href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dpersonal',
     highlight: true,
   },
   {
@@ -127,7 +127,7 @@ const PLANS = [
     desc: '複数の取材先や担当者でHPを強化したい方へ',
     features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中', '優先サポート'],
     cta: '月額プランを始める',
-    href: '/auth/login?next=/api/stripe/checkout-redirect?plan=business',
+    href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dbusiness',
     highlight: false,
   },
 ] as const

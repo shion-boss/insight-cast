@@ -4,7 +4,7 @@ const NAV_LINKS = [
 
 export function PublicShellSkeleton() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
+    <div className="relative min-h-dvh overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
       {/* header — loading bar は header 全体の最下部 */}
       <header className="relative sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
         <div className="mx-auto max-w-6xl px-6">
