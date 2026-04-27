@@ -56,27 +56,33 @@ export function PaginatedUncreatedThemes({
 
   const placeholderCount = PER_PAGE - visible.length
 
+  // 1行あたりの高さ目安: py-3.5(28px上下) + アイコン28px = 約56px
+  // PER_PAGE 行ぶんの最小高さを確保してページ間で高さが変わらないようにする
+  const minBodyHeight = PER_PAGE * 56
+
   return (
     <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
-      {visible.map((item, i) => (
-        <div key={i} className="flex items-center gap-3 px-5 py-3.5">
-          <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-          <p className="flex-1 text-sm text-[var(--text)]">{item.theme}</p>
-          <Link
-            href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
-            className={getButtonClass('secondary', 'text-xs px-3 py-1.5 flex-shrink-0')}
-          >
-            記事を作る
-          </Link>
-        </div>
-      ))}
-      {Array.from({ length: placeholderCount }).map((_, i) => (
-        <div key={`ph-${i}`} aria-hidden className="flex items-center gap-3 px-5 py-3.5 invisible">
-          <div className="h-7 w-7 rounded-full" />
-          <div className="flex-1" />
-          <div className="h-8 w-16 rounded" />
-        </div>
-      ))}
+      <div style={{ minHeight: minBodyHeight }}>
+        {visible.map((item, i) => (
+          <div key={i} className="flex items-center gap-3 px-5 py-3.5">
+            <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
+            <p className="flex-1 text-sm text-[var(--text)]">{item.theme}</p>
+            <Link
+              href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
+              className={getButtonClass('secondary', 'text-xs px-3 py-1.5 flex-shrink-0')}
+            >
+              記事を作る
+            </Link>
+          </div>
+        ))}
+        {Array.from({ length: placeholderCount }).map((_, i) => (
+          <div key={`ph-${i}`} aria-hidden className="flex items-center gap-3 px-5 py-3.5 invisible">
+            <div className="h-7 w-7 rounded-full" />
+            <div className="flex-1" />
+            <div className="h-8 w-16 rounded" />
+          </div>
+        ))}
+      </div>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
