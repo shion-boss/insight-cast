@@ -27,9 +27,27 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const posts = await getBlogPostsFromDB()
 
+  const blogListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Insight Cast ブログ',
+    url: `${APP_URL}/blog`,
+    description: 'Insight Castのブログ。インタビュー記事、事例、取材の記録など、ホームページを一次情報で育てるヒントをお届けします。',
+    blogPost: posts.slice(0, 10).map((post) => ({
+      '@type': 'BlogPosting',
+      headline: post.title,
+      url: `${APP_URL}/blog/${post.slug}`,
+      datePublished: post.date,
+      description: post.excerpt,
+    })),
+  }
+
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero

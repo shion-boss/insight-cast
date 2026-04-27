@@ -217,6 +217,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [hasChanges, setHasChanges] = useState(false)
+  const handleSaveRef = useRef<(() => void) | null>(null)
 
   const today = new Date().toISOString().split('T')[0]
   const defaultSlug = defaultValues?.slug ?? (mode === 'new' ? slugify('') : '')
@@ -274,6 +275,19 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
       }
     })
   }
+
+  handleSaveRef.current = handleSave
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault()
+        handleSaveRef.current?.()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   function handleDelete() {
     if (!id) return
@@ -344,7 +358,12 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div>
-            <FieldLabel htmlFor="post-excerpt">抜粋（一覧ページに表示されます）</FieldLabel>
+            <div className="flex items-center justify-between mb-1">
+              <FieldLabel htmlFor="post-excerpt">抜粋（一覧ページに表示されます）</FieldLabel>
+              <span className={`text-[11px] tabular-nums ${form.excerpt.length > 150 ? 'text-[var(--err)]' : 'text-[var(--text3)]'}`}>
+                {form.excerpt.length} / 150
+              </span>
+            </div>
             <textarea
               id="post-excerpt"
               value={form.excerpt}
@@ -466,6 +485,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                     ? '変更を保存する'
                     : '保存済み'}
             </PrimaryButton>
+            <p className="text-center text-[11px] text-[var(--text3)]">Ctrl+S / ⌘S でも保存できます</p>
 
             {mode === 'edit' && (
               <SecondaryButton

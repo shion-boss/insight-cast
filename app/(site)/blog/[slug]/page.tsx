@@ -33,7 +33,10 @@ export async function generateMetadata({
       description: post.excerpt ?? undefined,
       url: postUrl,
       siteName: 'Insight Cast',
+      locale: 'ja_JP',
       type: 'article',
+      publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+      authors: ['Insight Cast'],
     },
     twitter: {
       card: 'summary_large_image',

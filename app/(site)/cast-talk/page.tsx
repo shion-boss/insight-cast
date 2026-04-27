@@ -77,9 +77,30 @@ export default async function CastTalkPage({
   const { featured, total } = await getFeaturedAndTotal()
   const initialListTalks = await getListPage(initialPage)
 
+  const castTalkListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Cast Talk | Insight Cast',
+    url: `${APP_URL}/cast-talk`,
+    description: 'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
+    ...(featured
+      ? {
+          mainEntity: {
+            '@type': 'Article',
+            headline: featured.title,
+            url: `${APP_URL}/cast-talk/${featured.slug}`,
+            datePublished: featured.published_at,
+          },
+        }
+      : {}),
+  }
+
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(castTalkListJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero

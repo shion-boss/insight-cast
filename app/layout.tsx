@@ -46,10 +46,17 @@ export const metadata: Metadata = {
     title: 'Insight Cast',
     description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
   },
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: '#c2722a',
+  colorScheme: 'light',
 };
 
 const orgJsonLd = {

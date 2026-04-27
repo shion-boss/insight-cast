@@ -17,7 +17,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
   } catch { /* ignore */ }
 
   return (
-    <footer className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
+    <footer aria-label="サイトフッター" className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
       {showPromo && (
         <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
           <div className="mx-auto max-w-3xl">
@@ -68,7 +68,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
             <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
             <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
           </div>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+          <nav aria-label="フッターナビゲーション" className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {[
               { heading: 'サービス', links: [{ href: '/service', label: 'サービス内容' }, { href: '/pricing', label: '料金プラン' }, { href: '/cast', label: 'キャスト紹介' }] },
               { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/cast-talk', label: 'Cast Talk（対話録）' }, { href: '/about', label: 'Insight Castについて' }, { href: '/philosophy', label: 'AI時代の発信について' }, { href: '/faq', label: 'よくある質問' }] },
@@ -93,7 +93,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                 </ul>
               </div>
             ))}
-          </div>
+          </nav>
         </div>
         <div className="mt-8 border-t border-[var(--border)] pt-6">
           <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>

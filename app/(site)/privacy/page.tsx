@@ -2,7 +2,14 @@ import type { Metadata } from 'next'
 
 import { LegalPageTemplate } from '@/components/public-layout'
 
-export const metadata: Metadata = { title: 'プライバシーポリシー | Insight Cast' }
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
+export const metadata: Metadata = {
+  title: 'プライバシーポリシー | Insight Cast',
+  description: '取得する情報の範囲、利用目的、外部サービスとの関係、Cookie利用など、個人情報の取り扱い方針を記載しています。',
+  alternates: { canonical: `${APP_URL}/privacy` },
+  robots: { index: false },
+}
 
 export default function PrivacyPage() {
   return (

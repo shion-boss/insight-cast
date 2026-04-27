@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { POSTS } from '@/lib/blog-posts'
+import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast-nu.vercel.app'
@@ -13,11 +14,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/cast`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
     { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
     { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/philosophy`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
     { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.6 },
   ]
 
-  const blogRoutes: MetadataRoute.Sitemap = POSTS.map((post) => ({
+  let allBlogPosts = POSTS
+  try {
+    const dbPosts = await getBlogPostsFromDB()
+    if (dbPosts.length > 0) allBlogPosts = dbPosts
+  } catch {
+    // fallback to static posts
+  }
+
+  const blogRoutes: MetadataRoute.Sitemap = allBlogPosts.map((post) => ({
     url: `${BASE_URL}/blog/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: 'monthly' as const,

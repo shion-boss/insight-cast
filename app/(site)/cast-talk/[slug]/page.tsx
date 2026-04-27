@@ -72,6 +72,8 @@ export async function generateMetadata({
       siteName: 'Insight Cast',
       locale: 'ja_JP',
       type: 'article',
+      publishedTime: talk.published_at ? new Date(talk.published_at).toISOString() : undefined,
+      authors: ['Insight Cast'],
     },
     twitter: {
       card: 'summary_large_image',
