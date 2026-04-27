@@ -61,6 +61,7 @@ export default async function InterviewsPage() {
         .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
         .in('project_id', projects.map((project) => project.id))
         .order('created_at', { ascending: false })
+        .limit(500)
     : { data: [] }
 
   const interviews = (interviewRows ?? []) as Interview[]

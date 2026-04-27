@@ -5,6 +5,23 @@ import { useState } from 'react'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import InterviewStatusPills from '@/components/interview-status-pills'
 
+const PER_PAGE = 20
+
+function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+  if (totalPages <= 1) return null
+  return (
+    <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
+      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+        ← 前へ
+      </button>
+      <span className="text-sm text-[var(--text3)]">{page} / {totalPages} ページ</span>
+      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+        次へ →
+      </button>
+    </div>
+  )
+}
+
 type InterviewItem = {
   id: string
   projectId: string
@@ -48,6 +65,7 @@ export function InterviewsFilterClient({
   const [projectId, setProjectId] = useState('all')
   const [interviewer, setInterviewer] = useState('all')
   const [status, setStatus] = useState('all')
+  const [page, setPage] = useState(1)
   const projectOptions = getUniqueProjectOptions(items)
   const interviewerOptions = getUniqueInterviewerOptions(items)
   const showProjectFilter = alwaysShowProjectFilter || projectOptions.length > 1
@@ -60,12 +78,21 @@ export function InterviewsFilterClient({
     return true
   })
 
+  const totalPages = Math.ceil(filtered.length / PER_PAGE)
+  const paginatedItems = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
   const hasFilter = projectId !== 'all' || interviewer !== 'all' || status !== 'all'
+
+  function changePage(p: number) {
+    setPage(p)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   function resetFilters() {
     setProjectId('all')
     setInterviewer('all')
     setStatus('all')
+    setPage(1)
   }
 
   return (
@@ -80,7 +107,7 @@ export function InterviewsFilterClient({
               <select
                 id="filter-project"
                 value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
+                onChange={(e) => { setProjectId(e.target.value); setPage(1) }}
                 className={selectClassName()}
               >
                 <option value="all">すべて</option>
@@ -98,7 +125,7 @@ export function InterviewsFilterClient({
             <select
               id="filter-interviewer"
               value={interviewer}
-              onChange={(e) => setInterviewer(e.target.value)}
+              onChange={(e) => { setInterviewer(e.target.value); setPage(1) }}
               className={selectClassName()}
             >
               <option value="all">すべて</option>
@@ -115,7 +142,7 @@ export function InterviewsFilterClient({
             <select
               id="filter-status"
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => { setStatus(e.target.value); setPage(1) }}
               className={selectClassName()}
             >
               <option value="all">すべて</option>
@@ -126,7 +153,10 @@ export function InterviewsFilterClient({
         </div>
 
         <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
-          <p>{filtered.length} / {items.length} 件を表示中</p>
+          <p>
+            {filtered.length} / {items.length} 件
+            {totalPages > 1 && <span className="ml-1.5">（{page} / {totalPages} ページ）</span>}
+          </p>
           {hasFilter && (
             <button
               type="button"
@@ -146,7 +176,7 @@ export function InterviewsFilterClient({
         </section>
       ) : (
         <div className="space-y-3">
-          {filtered.map((item) => (
+          {paginatedItems.map((item) => (
             <Link
               key={item.id}
               href={item.href}
@@ -217,6 +247,7 @@ export function InterviewsFilterClient({
               </div>
             </Link>
           ))}
+          <Pagination page={page} totalPages={totalPages} onPageChange={changePage} />
         </div>
       )}
     </>

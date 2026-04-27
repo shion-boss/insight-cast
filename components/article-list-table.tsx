@@ -17,8 +17,25 @@ type ArticleListItem = {
   interviewerLabel?: string
 }
 
+const PER_PAGE = 20
+
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
+}
+
+function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+  if (totalPages <= 1) return null
+  return (
+    <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
+      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+        ← 前へ
+      </button>
+      <span className="text-sm text-[var(--text3)]">{page} / {totalPages} ページ</span>
+      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+        次へ →
+      </button>
+    </div>
+  )
 }
 
 function getUniqueOptions(values: string[]) {
@@ -58,6 +75,7 @@ export function ArticleListTable({
   const [articleType, setArticleType] = useState('all')
   const [interviewerLabel, setInterviewerLabel] = useState(initialInterviewerLabel ?? 'all')
   const [projectLabel, setProjectLabel] = useState(initialProjectLabel ?? 'all')
+  const [page, setPage] = useState(1)
 
   const deferredQuery = useDeferredValue(query)
   const normalizedQuery = deferredQuery.trim().toLowerCase()
@@ -85,6 +103,14 @@ export function ArticleListTable({
 
   const hasActiveFilters = query.trim().length > 0 || articleType !== 'all' || interviewerLabel !== 'all' || projectLabel !== 'all'
 
+  const totalPages = Math.ceil(filteredItems.length / PER_PAGE)
+  const paginatedItems = filteredItems.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
+  function changePage(p: number) {
+    setPage(p)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <>
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
@@ -97,7 +123,7 @@ export function ArticleListTable({
               id="article-filter-query"
               type="search"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => { setQuery(event.target.value); setPage(1) }}
               placeholder={searchPlaceholder}
             />
           </div>
@@ -110,7 +136,7 @@ export function ArticleListTable({
               <select
                 id="article-filter-project"
                 value={projectLabel}
-                onChange={(event) => setProjectLabel(event.target.value)}
+                onChange={(event) => { setProjectLabel(event.target.value); setPage(1) }}
                 className={selectClassName()}
               >
                 <option value="all">すべて</option>
@@ -128,7 +154,7 @@ export function ArticleListTable({
             <select
               id="article-filter-type"
               value={articleType}
-              onChange={(event) => setArticleType(event.target.value)}
+              onChange={(event) => { setArticleType(event.target.value); setPage(1) }}
               className={selectClassName()}
             >
               <option value="all">すべて</option>
@@ -148,7 +174,7 @@ export function ArticleListTable({
               <select
                 id="article-filter-interviewer"
                 value={interviewerLabel}
-                onChange={(event) => setInterviewerLabel(event.target.value)}
+                onChange={(event) => { setInterviewerLabel(event.target.value); setPage(1) }}
                 className={selectClassName()}
                 disabled={interviewerOptions.length === 0}
               >
@@ -165,7 +191,8 @@ export function ArticleListTable({
 
         <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
           <p>
-            {filteredItems.length} / {items.length} 件を表示中
+            {filteredItems.length} / {items.length} 件
+            {totalPages > 1 && <span className="ml-1.5">（{page} / {totalPages} ページ）</span>}
           </p>
           {hasActiveFilters && (
             <button
@@ -175,6 +202,7 @@ export function ArticleListTable({
                 setArticleType('all')
                 setInterviewerLabel('all')
                 setProjectLabel('all')
+                setPage(1)
               }}
               className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
             >
@@ -195,7 +223,7 @@ export function ArticleListTable({
         <>
           {/* モバイル: カードリスト */}
           <div className="space-y-3 sm:hidden">
-            {filteredItems.map((item) => (
+            {paginatedItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.detailHref}
@@ -219,6 +247,7 @@ export function ArticleListTable({
                 </div>
               </Link>
             ))}
+            <Pagination page={page} totalPages={totalPages} onPageChange={changePage} />
           </div>
 
           {/* PC: テーブル */}
@@ -242,14 +271,14 @@ export function ArticleListTable({
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.map((item, index) => (
+                {paginatedItems.map((item, index) => (
                   <tr
                     key={item.id}
                     tabIndex={0}
                     aria-label={item.title}
                     className={cx(
                       'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
-                      index < filteredItems.length - 1 && 'border-b border-[var(--border)]',
+                      index < paginatedItems.length - 1 && 'border-b border-[var(--border)]',
                     )}
                     onClick={() => router.push(item.detailHref)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(item.detailHref) } }}
@@ -286,6 +315,9 @@ export function ArticleListTable({
                 ))}
               </tbody>
             </table>
+            <div className="px-5 pb-4">
+              <Pagination page={page} totalPages={totalPages} onPageChange={changePage} />
+            </div>
           </div>
         </>
       )}

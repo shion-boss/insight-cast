@@ -65,7 +65,8 @@ export default async function ArticlesPage({
     supabase
       .from('articles')
       .select('id, title, content, article_type, created_at, project_id, interview_id')
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(500),
     getUserPlan(supabase, user.id),
   ])
 
