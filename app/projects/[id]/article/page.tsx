@@ -32,6 +32,7 @@ type SavedArticle = {
 type SavedArticleRow = SavedArticle & {
   article_type: string | null
   created_at: string
+  source_theme: string | null
 }
 
 type ArticleFailureMap = Partial<Record<ArticleType, string>>
@@ -81,6 +82,7 @@ export default function ArticlePage() {
   const [theme, setTheme] = useState(initialTheme)
   const [polishAnswers, setPolishAnswers] = useState(true)
 
+  const [allArticles, setAllArticles] = useState<SavedArticleRow[]>([])
   const [startingArticleType, setStartingArticleType] = useState<ArticleType | null>(null)
   const currentSavedArticle = savedArticles[tab] ?? null
   const currentPendingJobId = pendingArticleJobIdByType[tab] ?? null
@@ -122,7 +124,7 @@ export default function ArticlePage() {
         .single(),
       supabase
         .from('articles')
-        .select('id, title, article_type, created_at')
+        .select('id, title, article_type, created_at, source_theme')
         .eq('interview_id', interviewId)
         .order('created_at', { ascending: false }),
     ])
@@ -173,6 +175,7 @@ export default function ArticlePage() {
       : []
 
     setSavedArticles(nextSavedArticles)
+    setAllArticles((articleRows ?? []) as SavedArticleRow[])
     setPendingArticleJobIdByType(nextPending)
     setFailedArticleMessages((prev) => {
       const next = { ...prev }
@@ -425,6 +428,34 @@ export default function ArticlePage() {
                 </div>
               )}
             </div>
+
+            {(() => {
+              const themeArticles = theme ? allArticles.filter((a) => a.source_theme === theme) : []
+              if (themeArticles.length === 0) return null
+              return (
+                <div className="mb-5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">
+                    このテーマの作成済み記事 ({themeArticles.length}件)
+                  </p>
+                  <div className="space-y-1.5">
+                    {themeArticles.map((a) => {
+                      const typeLabel = a.article_type === 'interviewer' ? 'インタビュー' : a.article_type === 'conversation' ? '会話込み' : 'ブログ'
+                      const dateLabel = new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
+                      return (
+                        <Link
+                          key={a.id}
+                          href={`/projects/${projectId}/articles/${a.id}`}
+                          className="flex items-center justify-between gap-2 rounded-[var(--r-sm)] px-2.5 py-2 text-xs hover:bg-[var(--surface)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        >
+                          <span className="truncate text-[var(--text2)]">{a.title ?? '記事'}</span>
+                          <span className="flex-shrink-0 text-[var(--text3)]">{typeLabel} · {dateLabel}</span>
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
 
             {tab === 'client' && (
               <div className="mb-5">
