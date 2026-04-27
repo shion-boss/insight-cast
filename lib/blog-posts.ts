@@ -194,6 +194,19 @@ export const POSTS: Post[] = [
     icon: '🦉',
     featured: false,
   },
+  {
+    slug: 'what-to-write-on-hp-starting-point',
+    title: '「HPに何を書けばいいか分からない」は、書く前の問題ではなく、引き出す前の問題だった',
+    excerpt:
+      '「書きたいことがない」のではなく、「まだ言葉になっていないだけ」かもしれません。ホームページ更新が止まる本当の理由と、そこから抜け出すための最初の一歩を考えます。',
+    category: 'howto',
+    type: 'normal',
+    date: '2026-05-01',
+    interviewer: 'mint',
+    coverColor: 'bg-[#f5f0eb]',
+    icon: '🐱',
+    featured: false,
+  },
 ]
 
 export function getPost(slug: string): Post | undefined {
