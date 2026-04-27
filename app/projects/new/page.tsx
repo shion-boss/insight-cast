@@ -69,7 +69,7 @@ export default async function NewProjectPage({
               href="/pricing?reason=project_limit"
               className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              プランを見る →
+              プランを見る <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/dashboard"

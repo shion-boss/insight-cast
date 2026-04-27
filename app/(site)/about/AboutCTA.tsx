@@ -20,14 +20,14 @@ export function AboutBottomCTA() {
           href="/dashboard"
           className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
-          ダッシュボードへ →
+          ダッシュボードへ <span aria-hidden="true">→</span>
         </Link>
       ) : (
         <Link
           href="/auth/signup"
           className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
-          カード不要・無料で体験する →
+          カード不要・無料で体験する <span aria-hidden="true">→</span>
         </Link>
       )}
       <Link

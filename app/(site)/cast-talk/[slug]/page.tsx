@@ -266,7 +266,7 @@ export default async function CastTalkDetailPage({
               href={backHref}
               className="group flex items-center gap-2 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
             >
-              <span className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
+              <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
               <span>Cast Talk の記事一覧へ</span>
             </Link>
           </div>

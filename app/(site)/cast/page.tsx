@@ -170,13 +170,13 @@ export default async function CastPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">どのキャストを選べばいいですか？</h2>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {[
-                { q: '自社の雰囲気や人柄を伝えたい', a: '→ ミント' },
-                { q: '技術・専門性の違いを言語化したい', a: '→ クラウス' },
-                { q: '選ばれる理由・差別化を整理したい', a: '→ レイン' },
+                { q: '自社の雰囲気や人柄を伝えたい', a: 'ミント' },
+                { q: '技術・専門性の違いを言語化したい', a: 'クラウス' },
+                { q: '選ばれる理由・差別化を整理したい', a: 'レイン' },
               ].map((item) => (
                 <div key={item.q} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5">
                   <div className="text-sm text-[var(--text2)] mb-2">{item.q}</div>
-                  <div className="text-sm font-bold text-[var(--accent)]">{item.a}</div>
+                  <div className="text-sm font-bold text-[var(--accent)]"><span aria-hidden="true">→ </span>{item.a}</div>
                 </div>
               ))}
             </div>
@@ -272,7 +272,7 @@ export default async function CastPage() {
                             )}
                           </div>
                           <span className="shrink-0 text-[12px] font-bold text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1 inline-block mt-0.5">
-                            読む →
+                            読む <span aria-hidden="true">→</span>
                           </span>
                         </Link>
                       )}
@@ -299,7 +299,7 @@ export default async function CastPage() {
                 href="/cast-talk"
                 className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                Cast Talk を読む →
+                Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

@@ -123,14 +123,14 @@ export function FreeBannerCTA() {
       href="/dashboard"
       className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
     >
-      ダッシュボードへ →
+      ダッシュボードへ <span aria-hidden="true">→</span>
     </Link>
   ) : (
     <Link
       href="/auth/signup"
       className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
     >
-      無料で始める →
+      無料で始める <span aria-hidden="true">→</span>
     </Link>
   )
 }
@@ -176,14 +176,14 @@ export function PricingBottomCTA() {
             href="/dashboard"
             className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            ダッシュボードへ →
+            ダッシュボードへ <span aria-hidden="true">→</span>
           </Link>
         ) : (
           <Link
             href="/auth/signup"
             className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            無料で始める →
+            無料で始める <span aria-hidden="true">→</span>
           </Link>
         )}
         <Link

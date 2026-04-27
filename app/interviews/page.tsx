@@ -69,7 +69,7 @@ export default async function InterviewsPage({
           tone="soft"
         />
         <div className="mt-4">
-          <ButtonLink href="/projects/new">最初の取材先を登録する →</ButtonLink>
+          <ButtonLink href="/projects/new">最初の取材先を登録する <span aria-hidden="true">→</span></ButtonLink>
         </div>
       </AppShell>
     )
@@ -155,7 +155,7 @@ export default async function InterviewsPage({
         />
         <div className="mt-4">
           <ButtonLink href={`/projects/${projects[0].id}/interviewer`}>
-            取材を始める →
+            取材を始める <span aria-hidden="true">→</span>
           </ButtonLink>
         </div>
       </AppShell>

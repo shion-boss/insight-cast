@@ -265,7 +265,7 @@ export default async function LandingPage() {
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                    {isLoggedIn ? 'ダッシュボードへ →' : 'カード不要・無料で体験する →'}
+                    {isLoggedIn ? <>ダッシュボードへ <span aria-hidden="true">→</span></> : <>カード不要・無料で体験する <span aria-hidden="true">→</span></>}
                   </Link>
                   <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                     キャストを見る
@@ -365,7 +365,7 @@ export default async function LandingPage() {
                 href={isLoggedIn ? '/dashboard' : '/auth/signup'}
                 className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                {isLoggedIn ? 'ダッシュボードへ →' : '無料で体験する →'}
+                {isLoggedIn ? <>ダッシュボードへ <span aria-hidden="true">→</span></> : <>無料で体験する <span aria-hidden="true">→</span></>}
               </Link>
             </div>
           </div>
@@ -621,7 +621,7 @@ export default async function LandingPage() {
             )}
             <div className="text-center mt-8">
               <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                キャストをすべて見る →
+                キャストをすべて見る <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -781,7 +781,7 @@ export default async function LandingPage() {
                 href="/blog"
                 className="border-[1.5px] border-[var(--accent)] text-[var(--accent)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold hover:bg-[var(--accent)] hover:text-white transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                運営ブログを読む →
+                運営ブログを読む <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -831,7 +831,7 @@ export default async function LandingPage() {
             </div>
             <div className="text-center mt-8">
               <Link href="/blog" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                記事をもっと読む →
+                記事をもっと読む <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -895,7 +895,7 @@ export default async function LandingPage() {
               </div>
               <div className="text-center mt-8">
                 <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                  Cast Talk をもっと読む →
+                  Cast Talk をもっと読む <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
@@ -914,7 +914,7 @@ export default async function LandingPage() {
             </div>
             <div className="text-center mt-8">
               <Link href="/faq" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                よくある質問をすべて見る →
+                よくある質問をすべて見る <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -946,7 +946,7 @@ export default async function LandingPage() {
                     href="/contact"
                     className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    問い合わせる（無料・返信は2営業日以内） →
+                    問い合わせる（無料・返信は2営業日以内） <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </div>

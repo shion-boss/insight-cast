@@ -227,7 +227,7 @@ export default async function DashboardPage() {
           </div>
           {!profile?.name && (
             <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              名前を設定する →
+              名前を設定する <span aria-hidden="true">→</span>
             </Link>
           )}
           <div className="text-sm text-[var(--text2)]">
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
               href={interviewerHref}
               className={getButtonClass('primary', 'text-sm px-4 py-2')}
             >
-              {projectList.length > 1 ? '取材先を選ぶ →' : '取材を始める →'}
+              {projectList.length > 1 ? <>取材先を選ぶ <span aria-hidden="true">→</span></> : <>取材を始める <span aria-hidden="true">→</span></>}
             </Link>
           )}
         </div>
@@ -309,7 +309,7 @@ export default async function DashboardPage() {
             tone="soft"
           />
           <div className="mt-4">
-            <ButtonLink href="/projects/new">最初の取材先を登録する →</ButtonLink>
+            <ButtonLink href="/projects/new">最初の取材先を登録する <span aria-hidden="true">→</span></ButtonLink>
           </div>
         </div>
       ) : (
@@ -345,7 +345,7 @@ export default async function DashboardPage() {
                     <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
                     <div className="text-sm font-semibold text-[var(--text3)]">取材を始める</div>
-                    <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る →</div>
+                    <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る <span aria-hidden="true">→</span></div>
                   </Link>
                 ) : (
                   <Link

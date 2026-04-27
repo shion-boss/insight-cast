@@ -18,7 +18,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
         disabled={page <= 1}
         className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
       >
-        ← 前へ
+        <span aria-hidden="true">←</span> 前へ
       </button>
       <span>{page} / {totalPages}</span>
       <button
@@ -27,7 +27,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
         disabled={page >= totalPages}
         className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
       >
-        次へ →
+        次へ <span aria-hidden="true">→</span>
       </button>
     </div>
   )

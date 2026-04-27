@@ -241,7 +241,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
             href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
             className={getButtonClass('primary', 'flex-shrink-0 text-sm px-4 py-2')}
           >
-            取材する →
+            取材する <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

@@ -84,7 +84,7 @@ export default async function ArticlesPage({
           tone="soft"
         />
         <div className="mt-4">
-          <ButtonLink href="/dashboard">取材先を確認する →</ButtonLink>
+          <ButtonLink href="/dashboard">取材先を確認する <span aria-hidden="true">→</span></ButtonLink>
         </div>
       </AppShell>
     )
@@ -192,7 +192,7 @@ export default async function ArticlesPage({
           tone="soft"
         />
         <div className="mt-4">
-          <ButtonLink href="/dashboard">取材先を確認する →</ButtonLink>
+          <ButtonLink href="/dashboard">取材先を確認する <span aria-hidden="true">→</span></ButtonLink>
         </div>
       </AppShell>
     )

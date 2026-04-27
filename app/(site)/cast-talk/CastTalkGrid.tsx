@@ -123,7 +123,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
         {/* 日付 + 続きを読む */}
         <div className="mt-3.5 flex items-center justify-between">
           <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
-          <span className="inline-block text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1" style={{ color: theme.color }}>続きを読む →</span>
+          <span className="inline-block text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1" style={{ color: theme.color }}>続きを読む <span aria-hidden="true">→</span></span>
         </div>
       </div>
     </Link>
@@ -181,7 +181,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
       {/* 下段: 日付 + 続きを読む */}
       <div className="mt-3 flex items-center justify-between">
         <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
-        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む →</span>
+        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む <span aria-hidden="true">→</span></span>
       </div>
     </Link>
   )
@@ -253,7 +253,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 disabled={listPage === 0 || loading}
                 className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                ← 前へ
+                <span aria-hidden="true">←</span> 前へ
               </button>
               <span className="min-w-[80px] text-center text-sm text-[#7a6555]">
                 {listPage + 1} / {listTotalPages}
@@ -264,7 +264,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 disabled={listPage >= listTotalPages - 1 || loading}
                 className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                次へ →
+                次へ <span aria-hidden="true">→</span>
               </button>
             </div>
           )}
