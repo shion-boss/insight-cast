@@ -152,7 +152,7 @@ export function PaginatedInterviewHistory({
             </div>
             <div className="min-w-0">
               <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
-                {item.charName} · {formatDateTime(item.createdAt)}
+                {item.charName}<span aria-hidden="true"> · </span>{formatDateTime(item.createdAt)}
               </div>
               <div className="text-[12px] text-[var(--text3)] truncate">
                 {item.themes && item.themes.length > 0

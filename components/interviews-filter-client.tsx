@@ -198,7 +198,7 @@ function FilterContent({
                     <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">途中</span>
                   )}
                 </div>
-                <p className="text-xs text-[var(--text2)] mb-3">{item.interviewerName} · {item.createdAtLabel}</p>
+                <p className="text-xs text-[var(--text2)] mb-3">{item.interviewerName}<span aria-hidden="true"> · </span>{item.createdAtLabel}</p>
                 <div className="flex flex-wrap gap-2">
                   <InterviewStatusPills
                     interviewId={item.id}

@@ -235,7 +235,7 @@ export default async function DashboardPage() {
               ? <>生涯取材: <strong>{totalInterviewCount} / {planLimits.lifetimeInterviewLimit} 回</strong></>
               : <>今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong></>
             }
-            {totalArticles > 0 && <> · 累計記事素材 <strong>{totalArticles} 件</strong></>}
+            {totalArticles > 0 && <><span aria-hidden="true"> · </span>累計記事素材 <strong>{totalArticles} 件</strong></>}
           </div>
           {(isFreePlan ? planLimits.lifetimeInterviewLimit !== null : planLimits.monthlyInterviewLimit < 9999) && (
             <div
@@ -372,7 +372,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
-                <Link href="/projects" aria-label="取材先をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
+                <Link href="/projects" aria-label="取材先をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -426,7 +426,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" aria-label="取材履歴をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る →</Link>
+                <Link href="/interviews" aria-label="取材履歴をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech
@@ -464,7 +464,7 @@ export default async function DashboardPage() {
                             {project.name || project.hp_url}
                           </div>
                           <div className="text-[12px] text-[var(--text3)]">
-                            {char?.name ?? 'インタビュアー'} · {formatShortDateTime(interview.created_at)}
+                            {char?.name ?? 'インタビュアー'}<span aria-hidden="true"> · </span>{formatShortDateTime(interview.created_at)}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

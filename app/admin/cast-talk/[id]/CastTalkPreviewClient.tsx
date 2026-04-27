@@ -156,7 +156,7 @@ function CastTalkReviewForm({
         </div>
         {saved && (
           <span role="status" className="shrink-0 rounded-full bg-[var(--ok-l)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ok)]">
-            評価済み ✓
+            評価済み <span aria-hidden="true">✓</span>
           </span>
         )}
       </div>
@@ -235,7 +235,7 @@ function CastTalkReviewForm({
         disabled={saving || saved || overallScore === null}
         className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
       >
-        {saving ? '保存中...' : saved ? '保存済み ✓' : '評価を保存'}
+        {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '評価を保存'}
       </button>
     </form>
   )
@@ -413,7 +413,7 @@ export function CastTalkPreviewClient({
           disabled={saving || saved}
           className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
         >
-          {saving ? '保存中...' : saved ? '保存済み ✓' : '保存する'}
+          {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '保存する'}
         </button>
         <button
           type="button"

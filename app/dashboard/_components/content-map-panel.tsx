@@ -84,7 +84,7 @@ export function ContentMapPanel({
               コンテンツマップ
             </h2>
             <p className="text-[12px] text-[var(--text3)] mt-0.5">
-              {projectName} · 既存記事 {blogPostCount} 件
+              {projectName}<span aria-hidden="true"> · </span>既存記事 {blogPostCount} 件
             </p>
           </div>
         </div>
