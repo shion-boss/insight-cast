@@ -19,7 +19,8 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
-  const nextPath = searchParams.get('next') ?? '/dashboard'
+  const rawNext = searchParams.get('next') ?? ''
+  const nextPath = /^\/(?!\/)/.test(rawNext) ? rawNext : '/dashboard'
   const isPaidFlow = nextPath.includes('checkout-redirect')
   const paidPlan = nextPath.includes('plan=business') ? '法人向け' : nextPath.includes('plan=personal') ? '個人向け' : null
   const mint = getCharacter('mint')
