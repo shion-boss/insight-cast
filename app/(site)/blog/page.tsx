@@ -28,6 +28,15 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const posts = await getBlogPostsFromDB()
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+      { '@type': 'ListItem', position: 2, name: 'ブログ', item: `${APP_URL}/blog` },
+    ],
+  }
+
   const blogListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -45,6 +54,10 @@ export default async function BlogPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListJsonLd) }}

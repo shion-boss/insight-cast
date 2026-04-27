@@ -8,6 +8,15 @@ import { AboutBottomCTA } from './AboutCTA'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
 
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+    { '@type': 'ListItem', position: 2, name: 'About', item: `${APP_URL}/about` },
+  ],
+}
+
 const aboutJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'AboutPage',
@@ -59,6 +68,10 @@ export default function AboutPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}

@@ -158,6 +158,15 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
   )
 }
 
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+    { '@type': 'ListItem', position: 2, name: 'サービス紹介', item: `${APP_URL}/service` },
+  ],
+}
+
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -183,6 +192,10 @@ const serviceJsonLd = {
 export default function ServicePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}

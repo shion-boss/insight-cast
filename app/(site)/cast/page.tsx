@@ -85,6 +85,15 @@ async function getLatestTalkByCharacter(characterId: string): Promise<TalkPrevie
   return data ?? null
 }
 
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+    { '@type': 'ListItem', position: 2, name: 'AIキャスト紹介', item: `${APP_URL}/cast` },
+  ],
+}
+
 const castJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
@@ -111,6 +120,10 @@ export default async function CastPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(castJsonLd) }}

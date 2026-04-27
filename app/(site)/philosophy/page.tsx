@@ -115,6 +115,15 @@ const articles = [
   },
 ]
 
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+    { '@type': 'ListItem', position: 2, name: 'AI時代の発信について', item: `${APP_URL}/philosophy` },
+  ],
+}
+
 const philosophyJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
@@ -131,6 +140,10 @@ const philosophyJsonLd = {
 export default function PhilosophyPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(philosophyJsonLd) }}

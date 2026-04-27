@@ -77,6 +77,15 @@ export default async function CastTalkPage({
   const { featured, total } = await getFeaturedAndTotal()
   const initialListTalks = await getListPage(initialPage)
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+      { '@type': 'ListItem', position: 2, name: 'Cast Talk', item: `${APP_URL}/cast-talk` },
+    ],
+  }
+
   const castTalkListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
@@ -97,6 +106,10 @@ export default async function CastTalkPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(castTalkListJsonLd) }}

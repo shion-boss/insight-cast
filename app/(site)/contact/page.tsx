@@ -1,10 +1,20 @@
+import type { Metadata } from 'next'
 import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { ContactForm } from './_components/contact-form'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
 
-export const metadata = {
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+    { '@type': 'ListItem', position: 2, name: 'お問い合わせ', item: `${APP_URL}/contact` },
+  ],
+}
+
+export const metadata: Metadata = {
   title: 'お問い合わせ | Insight Cast',
   description: 'Insight Cast へのご質問・ご相談はこちらから。まず気になることを聞かせてください。',
   alternates: { canonical: `${APP_URL}/contact` },
@@ -28,7 +38,10 @@ export default function ContactPage() {
 
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
 
       <main className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[72px] sm:pb-24 sm:pt-[108px]">
         <div className="mx-auto max-w-lg">

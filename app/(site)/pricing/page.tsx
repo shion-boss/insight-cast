@@ -152,6 +152,15 @@ export default async function PricingPage({
   const guideChars = SELECTION_GUIDE.map((g) => ({ ...g, char: getCharacter(g.charId) }))
   const mint = getCharacter('mint')
 
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
+      { '@type': 'ListItem', position: 2, name: '料金プラン', item: `${APP_URL}/pricing` },
+    ],
+  }
+
   const pricingFaqJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -193,6 +202,10 @@ export default async function PricingPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingFaqJsonLd) }}

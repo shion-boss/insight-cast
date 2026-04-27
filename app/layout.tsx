@@ -61,6 +61,22 @@ export const viewport: Viewport = {
 
 const orgJsonLd = {
   '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Insight Cast',
+  url: APP_URL,
+  description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。更新が止まったHPを、一次情報で少しずつ強くします。',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'contact@insight-cast.jp',
+    availableLanguage: 'Japanese',
+    url: `${APP_URL}/contact`,
+  },
+  inLanguage: 'ja',
+}
+
+const softwareAppJsonLd = {
+  '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'Insight Cast',
   url: APP_URL,
@@ -103,6 +119,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppJsonLd) }}
         />
         <script
           type="application/ld+json"
