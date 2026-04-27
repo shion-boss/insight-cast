@@ -70,7 +70,7 @@ export default function PrivacyPage() {
             詳細: <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">vercel.com/legal/privacy-policy</a>
           </li>
           <li>
-            <strong>Anthropic</strong>（AIインタビュー機能）: AIインタビュー機能の処理に使用。インタビューへの入力内容は Anthropic の API に送信されます。
+            <strong>Anthropic</strong>（AIインタビュー応答）: AIインタビューの応答を生成するために使用。インタビューへの入力内容は、応答の生成を目的として Anthropic の API に送信されます。Anthropic は API 経由で受け取ったデータをAIモデルの学習に使用しません（Anthropic 利用規約に基づく）。
             詳細: <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener noreferrer">anthropic.com/privacy</a>
           </li>
           <li>
