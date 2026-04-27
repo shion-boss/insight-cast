@@ -225,7 +225,10 @@ export async function POST(
     .from('projects')
     .select('name, hp_url')
     .eq('id', projectId)
+    .eq('user_id', user.id)
     .single()
+
+  if (!project) return new Response('Forbidden', { status: 403 })
 
   const { data: messages } = await supabase
     .from('interview_messages')
