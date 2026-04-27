@@ -277,7 +277,7 @@ export default async function PricingPage({
         <section className="py-10 sm:py-[56px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[13px] font-semibold text-[var(--text2)] mb-5">どれを選べばいいか迷ったら</div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {guideChars.map((item) => (
                 <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-center">
                   <div className="flex-shrink-0">
