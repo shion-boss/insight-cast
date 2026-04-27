@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { unstable_cache } from 'next/cache'
 
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
@@ -72,18 +73,22 @@ const castDetails: Record<string, { desc: string; specialty: string; strengths: 
 
 type TalkPreview = { slug: string; title: string | null; summary: string | null; interviewer_id: string | null; guest_id: string | null } | null
 
-async function getLatestTalkByCharacter(characterId: string): Promise<TalkPreview> {
-  const supabase = createAdminClient()
-  const { data } = await supabase
-    .from('cast_talks')
-    .select('slug, title, summary, interviewer_id, guest_id')
-    .eq('status', 'published')
-    .or(`interviewer_id.eq.${characterId},guest_id.eq.${characterId}`)
-    .order('published_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-  return data ?? null
-}
+const getLatestTalkByCharacter = unstable_cache(
+  async (characterId: string): Promise<TalkPreview> => {
+    const supabase = createAdminClient()
+    const { data } = await supabase
+      .from('cast_talks')
+      .select('slug, title, summary, interviewer_id, guest_id')
+      .eq('status', 'published')
+      .or(`interviewer_id.eq.${characterId},guest_id.eq.${characterId}`)
+      .order('published_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    return data ?? null
+  },
+  ['cast-page-latest-talk'],
+  { revalidate: 300 },
+)
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
