@@ -14,7 +14,7 @@ export default function PrivacyPage() {
   return (
     <LegalPageTemplate
       title="プライバシーポリシー"
-      updatedAt="2026年4月27日"
+      updatedAt="2026年4月28日"
       summary="取得する情報の範囲、利用目的、外部サービスとの関係、Cookie 利用など、個人情報の取り扱い方針を記載しています。"
     >
       <section>
@@ -31,7 +31,7 @@ export default function PrivacyPage() {
         <p>当サービスでは、以下の情報を収集することがあります。</p>
         <ul>
           <li>メールアドレス（アカウント登録時）</li>
-          <li>ホームページURL（プロジェクト作成時）</li>
+          <li>ホームページURL（取材先として登録する際）</li>
           <li>インタビューの入力内容（テキスト）</li>
           <li>サービス利用状況（アクセスログ、操作履歴等）</li>
         </ul>

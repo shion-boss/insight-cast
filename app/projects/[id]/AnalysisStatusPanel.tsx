@@ -18,6 +18,59 @@ type Props = {
   reanalysisNextAvailableAt: string | null
 }
 
+function GscDisconnectModal({
+  onConfirm,
+  onCancel,
+  isDeleting,
+  claus,
+}: {
+  onConfirm: () => void
+  onCancel: () => void
+  isDeleting: boolean
+  claus: ReturnType<typeof import('@/lib/characters').getCharacter>
+}) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="gsc-disconnect-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+    >
+      <div className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl">
+        <div className="flex items-start gap-3 mb-4">
+          <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={40} className="flex-shrink-0 mt-0.5" />
+          <div>
+            <p id="gsc-disconnect-title" className="text-[15px] font-bold text-[var(--text)] mb-1">
+              連携を解除しますか？
+            </p>
+            <p className="text-sm text-[var(--text2)] leading-relaxed">
+              Google Search Console の連携を解除します。解除後は検索データが調査に使われなくなります。
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-3 justify-end mt-5">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={isDeleting}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            やめておく
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+          >
+            {isDeleting ? '解除中...' : '解除する'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function AnalysisStatusPanel({
   projectId,
   projectName,
@@ -31,6 +84,7 @@ export default function AnalysisStatusPanel({
   const [gscSiteUrl, setGscSiteUrl] = useState<string | null>(null)
   const [gscToast, setGscToast] = useState<'connected' | 'error' | 'no_property' | null>(null)
   const [gscDeleting, setGscDeleting] = useState(false)
+  const [showDisconnectModal, setShowDisconnectModal] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -100,27 +154,46 @@ export default function AnalysisStatusPanel({
     ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))
     : null
 
-  const handleGscDisconnect = async () => {
-    if (!window.confirm('Google Search Console の連携を解除しますか？')) return
+  const handleGscDisconnectRequest = () => {
+    setShowDisconnectModal(true)
+  }
+
+  const handleGscDisconnectConfirm = async () => {
     setGscDeleting(true)
     try {
       const res = await fetch(`/api/projects/${projectId}/gsc`, { method: 'DELETE' })
       if (res.ok) {
         setGscStatus('disconnected')
         setGscSiteUrl(null)
+        setShowDisconnectModal(false)
       } else {
-        alert('解除に失敗しました。もう一度お試しください。')
+        setShowDisconnectModal(false)
+        setGscToast('error')
       }
     } catch {
-      alert('解除に失敗しました。もう一度お試しください。')
+      setShowDisconnectModal(false)
+      setGscToast('error')
     } finally {
       setGscDeleting(false)
     }
   }
 
+  const handleGscDisconnectCancel = () => {
+    setShowDisconnectModal(false)
+  }
+
   const claus = getCharacter('claus')
 
   return (
+    <>
+    {showDisconnectModal && (
+      <GscDisconnectModal
+        onConfirm={() => void handleGscDisconnectConfirm()}
+        onCancel={handleGscDisconnectCancel}
+        isDeleting={gscDeleting}
+        claus={claus}
+      />
+    )}
     <div className="mt-8 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 space-y-6">
       {/* HP調査・競合比較 セクション */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -139,7 +212,7 @@ export default function AnalysisStatusPanel({
             <>
               <div role="status" className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--warn)]">調査中です。数分ほどお待ちください</p>
+                <p className="text-sm text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
               </div>
               <button type="button" disabled className={`${getButtonClass('secondary')} opacity-40 cursor-not-allowed`}>
                 この取材先を再調査する
@@ -248,7 +321,7 @@ export default function AnalysisStatusPanel({
             {gscStatus === 'connected' && (
               <button
                 type="button"
-                onClick={() => void handleGscDisconnect()}
+                onClick={handleGscDisconnectRequest}
                 disabled={gscDeleting}
                 className={`${getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')} disabled:opacity-40`}
               >
@@ -267,5 +340,6 @@ export default function AnalysisStatusPanel({
         </div>
       </div>
     </div>
+    </>
   )
 }

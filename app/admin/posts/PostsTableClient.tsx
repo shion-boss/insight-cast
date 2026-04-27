@@ -50,6 +50,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
   const [isPending, startTransition] = useTransition()
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [confirmTarget, setConfirmTarget] = useState<PostRow | null>(null)
   const router = useRouter()
 
   function handleToggle(id: string, current: boolean) {
@@ -67,8 +68,14 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
     })
   }
 
-  async function handleDelete(post: PostRow) {
-    if (!confirm(`「${post.title}」を削除しますか？この操作は取り消せません。`)) return
+  function handleDeleteRequest(post: PostRow) {
+    setConfirmTarget(post)
+  }
+
+  async function handleDeleteConfirm() {
+    if (!confirmTarget) return
+    const post = confirmTarget
+    setConfirmTarget(null)
     setDeletingId(post.id)
     setErrorMsg(null)
     try {
@@ -86,6 +93,24 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
 
   return (
     <div>
+      {/* 削除確認ダイアログ */}
+      {confirmTarget && (
+        <div role="dialog" aria-modal="true" aria-labelledby="post-delete-title" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="w-full max-w-sm rounded-[var(--r-lg)] bg-white border border-gray-200 p-6 shadow-xl">
+            <p id="post-delete-title" className="text-[15px] font-bold text-gray-900 mb-2">この記事を削除しますか？</p>
+            <p className="text-sm text-gray-600 mb-1 line-clamp-2">「{confirmTarget.title}」</p>
+            <p className="text-sm text-gray-500 mb-5">この操作は元に戻せません。</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => setConfirmTarget(null)} className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400/40">
+                やめる
+              </button>
+              <button type="button" onClick={() => void handleDeleteConfirm()} className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-red-500 bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40">
+                削除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {errorMsg && (
         <div role="alert" className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
           <span className="mt-0.5 shrink-0">⚠</span>
@@ -149,7 +174,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                 )}
                 <button
                   type="button"
-                  onClick={() => handleDelete(post)}
+                  onClick={() => handleDeleteRequest(post)}
                   disabled={deletingId === post.id}
                   className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-red-200 px-4 py-2 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
                 >
@@ -223,7 +248,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                       )}
                       <button
                         type="button"
-                        onClick={() => handleDelete(post)}
+                        onClick={() => handleDeleteRequest(post)}
                         disabled={deletingId === post.id}
                         className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
                       >

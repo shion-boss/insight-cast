@@ -96,7 +96,7 @@ function LoginForm() {
               disabled={loading || googleLoading}
               className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {googleLoading ? 'Googleに移動中...' : 'Googleでログイン'}
+              {googleLoading ? 'Googleのページを開いています...' : 'Googleでログイン'}
             </button>
 
             <div className="flex items-center gap-3">
@@ -148,7 +148,7 @@ function LoginForm() {
               disabled={loading}
               className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {loading ? 'ログイン中...' : 'ログインする'}
+              {loading ? 'ログインしています...' : 'ログインする'}
             </button>
           </form>
         </div>

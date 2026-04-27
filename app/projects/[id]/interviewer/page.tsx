@@ -9,6 +9,7 @@ import {
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { InterviewSubmitButton } from '@/components/interview-submit-button'
 import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
 
@@ -330,14 +331,13 @@ export default async function InterviewerPage({
                       <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                       <input type="hidden" name="focusThemeMode" value="suggested" />
                       <input type="hidden" name="focusTheme" value={theme} />
-                      <button
-                        type="submit"
+                      <InterviewSubmitButton
                         className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--warn)]/40 hover:bg-[var(--warn-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--warn)]">Recommended</p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{theme}</p>
                         <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
-                      </button>
+                      </InterviewSubmitButton>
                     </form>
                   ))}
                 </div>
@@ -363,8 +363,7 @@ export default async function InterviewerPage({
                       <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                       <input type="hidden" name="focusThemeMode" value="suggested" />
                       <input type="hidden" name="focusTheme" value={suggestion.theme} />
-                      <button
-                        type="submit"
+                      <InterviewSubmitButton
                         className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--ok)]/40 hover:bg-[var(--ok-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ok)]">Competitive Signal</p>
@@ -380,7 +379,7 @@ export default async function InterviewerPage({
                           ))}
                         </div>
                         <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
-                      </button>
+                      </InterviewSubmitButton>
                     </form>
                   ))}
                 </div>
@@ -409,12 +408,12 @@ export default async function InterviewerPage({
                     className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
                   />
                 </label>
-                <button
-                  type="submit"
+                <InterviewSubmitButton
                   className="w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  pendingLabel="取材を準備しています..."
                 >
                   このテーマでインタビューを始める
-                </button>
+                </InterviewSubmitButton>
               </form>
             </section>
 
@@ -429,12 +428,12 @@ export default async function InterviewerPage({
               <form action={createInterview.bind(null, id)}>
                 <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                 <input type="hidden" name="focusThemeMode" value="omakase" />
-                <button
-                  type="submit"
+                <InterviewSubmitButton
                   className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  pendingLabel="取材を準備しています..."
                 >
                   お任せでインタビューを始める
-                </button>
+                </InterviewSubmitButton>
               </form>
             </section>
           </div>

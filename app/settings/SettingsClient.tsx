@@ -323,9 +323,6 @@ export function SettingsClient({
       return
     }
 
-    const confirmed = window.confirm('アカウントを完全に削除します。この操作は取り消せません。本当に削除しますか？')
-    if (!confirmed) return
-
     setDeletePending(true)
 
     try {
