@@ -158,15 +158,13 @@ export default function StartAnalysisButton({
       disabled={isBusy}
       className={className}
     >
-      <DevAiLabel>
-        {phase === 'preparing'
-          ? (force ? '再調査の準備をしています...' : '調査の準備をしています...')
-          : phase === 'requesting'
-            ? (force ? '再調査を依頼しています...' : '調査を依頼しています...')
-          : force
-            ? (compact ? '再調査する' : 'この取材先を再調査する')
-            : (compact ? '調査を開始する' : 'この取材先の調査を開始する')}
-      </DevAiLabel>
+      {phase === 'preparing'
+        ? (force ? '再調査の準備をしています...' : '調査の準備をしています...')
+        : phase === 'requesting'
+          ? (force ? '再調査を依頼しています...' : '調査を依頼しています...')
+        : force
+          ? (compact ? '再調査する' : 'この取材先を再調査する')
+          : (compact ? '調査を開始する' : 'この取材先の調査を開始する')}
     </button>
   )
 }

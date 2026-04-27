@@ -205,7 +205,7 @@ export default function CompetitorSelectionFields({
           disabled={suggesting || !canSuggest}
           className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer"
         >
-          {suggesting ? '候補を探しています...' : <DevAiLabel>おすすめを見る</DevAiLabel>}
+          {suggesting ? '候補を探しています...' : 'おすすめを見る'}
         </button>
       </div>
 
