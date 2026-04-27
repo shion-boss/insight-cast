@@ -446,11 +446,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* Interview history */}
       <div className="mt-8">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4">
           <h2 className="text-[16px] font-bold text-[var(--text)]">取材履歴</h2>
-          <Link href={`/projects/${id}/interviewer`} className={getButtonClass('primary', 'text-sm px-4 py-2')}>
-            + 新しく取材する
-          </Link>
         </div>
 
         {interviews.length === 0 ? (
