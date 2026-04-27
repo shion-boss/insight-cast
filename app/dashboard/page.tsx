@@ -174,7 +174,12 @@ export default async function DashboardPage() {
   const projectDelta = thisMonthProjects - lastMonthProjectCount
 
   const mint = getCharacter('mint')
-  const nextProject = projectList[0] ?? null
+  const interviewerHref =
+    projectList.length === 0
+      ? '/projects/new'
+      : projectList.length === 1
+        ? `/projects/${projectList[0].id}/interviewer`
+        : '/projects'
 
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
@@ -233,10 +238,10 @@ export default async function DashboardPage() {
             </Link>
           ) : (
             <Link
-              href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+              href={interviewerHref}
               className={getButtonClass('primary', 'text-sm px-4 py-2')}
             >
-              次の取材を開く →
+              {projectList.length > 1 ? '取材先を選ぶ →' : '次の取材を開く →'}
             </Link>
           )}
         </div>
@@ -314,11 +319,11 @@ export default async function DashboardPage() {
                   </Link>
                 ) : (
                   <Link
-                    href={nextProject ? `/projects/${nextProject.id}/interviewer` : '/projects/new'}
+                    href={interviewerHref}
                     className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
-                    <div className="text-sm font-semibold text-[var(--text2)]">取材画面を開く</div>
+                    <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? '取材先を選ぶ' : '取材画面を開く'}</div>
                   </Link>
                 )}
                 <Link
