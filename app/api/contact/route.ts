@@ -132,7 +132,19 @@ export async function POST(req: Request) {
       { status: 422 },
     )
   }
+  if (name.trim().length > 100) {
+    return NextResponse.json(
+      { code: 'VALIDATION_ERROR', message: 'お名前は100文字以内で入力してください' },
+      { status: 422 },
+    )
+  }
   if (typeof email !== 'string' || !email.trim() || !isValidEmail(email)) {
+    return NextResponse.json(
+      { code: 'VALIDATION_ERROR', message: '正しいメールアドレスを入力してください' },
+      { status: 422 },
+    )
+  }
+  if (email.trim().length > 254) {
     return NextResponse.json(
       { code: 'VALIDATION_ERROR', message: '正しいメールアドレスを入力してください' },
       { status: 422 },
@@ -141,6 +153,12 @@ export async function POST(req: Request) {
   if (typeof message !== 'string' || !message.trim()) {
     return NextResponse.json(
       { code: 'VALIDATION_ERROR', message: 'ご相談内容を入力してください' },
+      { status: 422 },
+    )
+  }
+  if (message.trim().length > 5000) {
+    return NextResponse.json(
+      { code: 'VALIDATION_ERROR', message: 'ご相談内容は5000文字以内で入力してください' },
       { status: 422 },
     )
   }

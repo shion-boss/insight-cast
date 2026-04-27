@@ -21,6 +21,9 @@ export async function POST(
   if (!interviewId || typeof question !== 'string' || !question.trim()) {
     return NextResponse.json({ error: 'missing fields' }, { status: 400 })
   }
+  if (question.length > 500) {
+    return NextResponse.json({ error: 'question too long' }, { status: 400 })
+  }
 
   const { data: interview } = await supabase
     .from('interviews')

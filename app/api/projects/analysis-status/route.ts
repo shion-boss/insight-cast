@@ -10,6 +10,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ projects: [] })
   }
 
+  if (ids.length > 50) {
+    return NextResponse.json({ error: 'too many ids' }, { status: 400 })
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
@@ -20,20 +24,26 @@ export async function GET(request: NextRequest) {
     .eq('user_id', user.id)
     .in('id', ids)
 
+  const ownedIds = (projects ?? []).map((p) => p.id)
+
+  if (ownedIds.length === 0) {
+    return NextResponse.json({ projects: [] })
+  }
+
   const { data: audits } = await supabase
     .from('hp_audits')
     .select('id, project_id, raw_data')
-    .in('project_id', ids)
+    .in('project_id', ownedIds)
 
   const { data: competitors } = await supabase
     .from('competitors')
     .select('id, project_id, url')
-    .in('project_id', ids)
+    .in('project_id', ownedIds)
 
   const { data: competitorAnalyses } = await supabase
     .from('competitor_analyses')
     .select('project_id, competitor_id, raw_data')
-    .in('project_id', ids)
+    .in('project_id', ownedIds)
 
   const resolvedProjects = (projects ?? []).map((project) => {
     const readiness = isProjectAnalysisReady({

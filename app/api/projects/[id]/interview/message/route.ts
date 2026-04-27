@@ -14,6 +14,9 @@ export async function POST(
   if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
   const { interviewId, content } = body as { interviewId?: string; content?: string }
   if (!interviewId || !content) return NextResponse.json({ error: 'missing fields' }, { status: 400 })
+  if (typeof content === 'string' && content.length > 5000) {
+    return NextResponse.json({ error: 'content too long' }, { status: 400 })
+  }
 
   // ownership check: verify interview belongs to a project the current user owns
   const { data: interview } = await supabase
