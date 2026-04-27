@@ -85,6 +85,25 @@ async function getLatestTalkByCharacter(characterId: string): Promise<TalkPrevie
   return data ?? null
 }
 
+const castJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Insight Cast AIキャスト一覧',
+  description: '6名のAIキャストがそれぞれ異なる角度から取材を行います。',
+  url: `${APP_URL}/cast`,
+  itemListElement: CHARACTERS.map((char, idx) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    item: {
+      '@type': 'Person',
+      name: char.name,
+      jobTitle: 'AIインタビュアー',
+      description: char.specialty ?? char.label,
+      url: `${APP_URL}/cast#${char.id}`,
+    },
+  })),
+}
+
 export default async function CastPage() {
   const talksByChar = Object.fromEntries(
     await Promise.all(freeCasts.map(async (c) => [c.id, await getLatestTalkByCharacter(c.id)]))
@@ -92,7 +111,10 @@ export default async function CastPage() {
 
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(castJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero
