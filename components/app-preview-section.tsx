@@ -12,10 +12,10 @@ const TABS = ['ダッシュボード', 'インタビュー', '取材メモ', '�
 type Tab = (typeof TABS)[number]
 
 const SCREENSHOTS: Record<Tab, { src: typeof screenshotDashboard; alt: string; url: string }> = {
-  'ダッシュボード': { src: screenshotDashboard, alt: 'ダッシュボード画面', url: 'app.insightcast.jp/dashboard' },
-  'インタビュー':   { src: screenshotInterview, alt: 'インタビュー画面', url: 'app.insightcast.jp/projects/1/interview' },
-  '取材メモ':       { src: screenshotMemo, alt: '取材メモ画面', url: 'app.insightcast.jp/projects/1/summary' },
-  '記事素材':       { src: screenshotArticle, alt: '記事素材画面', url: 'app.insightcast.jp/projects/1/articles/1' },
+  'ダッシュボード': { src: screenshotDashboard, alt: 'ダッシュボード画面', url: 'insight-cast.jp/dashboard' },
+  'インタビュー':   { src: screenshotInterview, alt: 'インタビュー画面', url: 'insight-cast.jp/projects/1/interview' },
+  '取材メモ':       { src: screenshotMemo, alt: '取材メモ画面', url: 'insight-cast.jp/projects/1/summary' },
+  '記事素材':       { src: screenshotArticle, alt: '記事素材画面', url: 'insight-cast.jp/projects/1/articles/1' },
 }
 
 export default function AppPreviewSection() {

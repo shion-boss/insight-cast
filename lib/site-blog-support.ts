@@ -350,7 +350,7 @@ async function fetchSitemapEntries(
     try {
       const res = await fetch(sitemapUrl, {
         signal: AbortSignal.timeout(5000),
-        headers: { 'User-Agent': 'InsightCast/1.0 (+https://insightcast.jp)' },
+        headers: { 'User-Agent': 'InsightCast/1.0 (+https://insight-cast.jp)' },
       })
       if (!res.ok) continue
       const xml = await res.text()
@@ -362,7 +362,7 @@ async function fetchSitemapEntries(
           try {
             const childRes = await fetch(childUrl, {
               signal: AbortSignal.timeout(5000),
-              headers: { 'User-Agent': 'InsightCast/1.0 (+https://insightcast.jp)' },
+              headers: { 'User-Agent': 'InsightCast/1.0 (+https://insight-cast.jp)' },
             })
             if (!childRes.ok) continue
             const childXml = await childRes.text()
@@ -412,7 +412,7 @@ async function fetchRssUrls(siteUrl: string): Promise<string[]> {
     try {
       const res = await fetch(feedUrl, {
         signal: AbortSignal.timeout(5000),
-        headers: { 'User-Agent': 'InsightCast/1.0 (+https://insightcast.jp)' },
+        headers: { 'User-Agent': 'InsightCast/1.0 (+https://insight-cast.jp)' },
       })
       if (!res.ok) continue
       const xml = await res.text()
