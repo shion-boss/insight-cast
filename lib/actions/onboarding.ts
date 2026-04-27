@@ -19,7 +19,7 @@ export async function completeOnboarding(formData: FormData) {
     })
 
   const rawNext = formData.get('next')
-  const next = typeof rawNext === 'string' && rawNext.startsWith('/') ? rawNext : '/dashboard'
+  const next = typeof rawNext === 'string' && /^\/(?!\/)/.test(rawNext) ? rawNext : '/dashboard'
 
   if (error) redirect(`/onboarding?error=1&next=${encodeURIComponent(next)}`)
 
