@@ -37,11 +37,13 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
       authors: ['Insight Cast'],
+      images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `${post.title} | Insight Cast`,
       description: post.excerpt ?? undefined,
+      images: ['/logo.jpg'],
     },
   }
 }
