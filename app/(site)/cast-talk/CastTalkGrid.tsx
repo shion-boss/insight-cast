@@ -69,6 +69,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
             fill
             className="object-cover brightness-95 saturate-90"
             sizes="(min-width: 640px) 40vw, 100vw"
+            placeholder="blur"
             priority
           />
         ) : (
