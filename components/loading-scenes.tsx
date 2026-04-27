@@ -42,7 +42,7 @@ export function AnalysisLoadingScene({
   return (
     <div className="ic-loading-card w-full max-w-[520px]">
       <div className="ic-loading-card-header">
-        <AiBadge label="AI分析中" />
+        <AiBadge label="調査中" />
         <div className="min-w-0 flex-1">
           <p className="font-serif text-[15px] font-bold text-[var(--text)]">ホームページを分析しています</p>
           <p className="mt-0.5 truncate text-xs text-[var(--text3)]">{projectName}</p>

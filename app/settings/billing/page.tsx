@@ -58,7 +58,7 @@ export default async function BillingPage({
     : null
 
   return (
-    <AppShell title="プラン・請求" active="settings" accountLabel={user.email ?? '設定'}>
+    <AppShell title="ご利用プラン" active="settings" accountLabel={user.email ?? '設定'}>
       <div className="max-w-2xl space-y-5">
         {isSuccess && (
           <div className="rounded-[var(--r-lg)] border border-[var(--teal)] bg-[color-mix(in_srgb,var(--teal)_8%,transparent)] p-5">
