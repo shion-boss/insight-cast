@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CHARACTERS, getCastName } from '@/lib/characters'
@@ -249,15 +249,14 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
   )
 }
 
-export function CastTalkGrid({ initialTalks, total, initialPage = 0 }: {
-  initialTalks: Talk[]
+export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage = 0, total }: {
+  featuredTalk: Talk | null
+  initialListTalks: Talk[]
+  initialListPage?: number
   total: number
-  pageSize?: number
-  initialPage?: number
 }) {
-  const [featuredTalk] = useState<Talk | null>(initialTalks[0] ?? null)
-  const [listTalks, setListTalks] = useState<Talk[]>(initialTalks.slice(1))
-  const [listPage, setListPage] = useState(initialPage)
+  const [listTalks, setListTalks] = useState<Talk[]>(initialListTalks)
+  const [listPage, setListPage] = useState(initialListPage)
   const [loading, setLoading] = useState(false)
 
   // featured を除いたリスト件数
@@ -276,15 +275,6 @@ export function CastTalkGrid({ initialTalks, total, initialPage = 0 }: {
     setLoading(false)
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
-
-  // initialPage > 0 の場合、サーバーから渡された initialTalks は page 0 のデータなので
-  // マウント時に正しいページのデータを取得する
-  useEffect(() => {
-    if (initialPage > 0) {
-      void goToPage(initialPage)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   if (!featuredTalk && listTotalCount === 0) {
     return (

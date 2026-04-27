@@ -12,22 +12,44 @@ export const metadata: Metadata = {
     'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントを、キャストの視点でお届けします。',
 }
 
-const PAGE_SIZE = 11
+const LIST_PAGE_SIZE = 10
 
-const getInitialTalks = unstable_cache(
-  async () => {
+type Talk = {
+  id: string
+  title: string | null
+  summary: string | null
+  interviewer_id: string | null
+  guest_id: string | null
+  slug: string
+  published_at: string | null
+}
+
+const getFeaturedAndTotal = unstable_cache(
+  async (): Promise<{ featured: Talk | null; total: number }> => {
     const supabase = createAdminClient()
     const { data, count } = await supabase
       .from('cast_talks')
       .select('id, title, summary, interviewer_id, guest_id, slug, published_at', { count: 'exact' })
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .range(0, PAGE_SIZE - 1)
-    return { talks: data ?? [], total: count ?? 0 }
+      .range(0, 0)
+    return { featured: data?.[0] ?? null, total: count ?? 0 }
   },
-  ['cast-talks-initial'],
+  ['cast-talks-featured'],
   { revalidate: 120 },
 )
+
+async function getListPage(page: number): Promise<Talk[]> {
+  const offset = 1 + page * LIST_PAGE_SIZE
+  const supabase = createAdminClient()
+  const { data } = await supabase
+    .from('cast_talks')
+    .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .range(offset, offset + LIST_PAGE_SIZE - 1)
+  return data ?? []
+}
 
 export default async function CastTalkPage({
   searchParams,
@@ -36,7 +58,8 @@ export default async function CastTalkPage({
 }) {
   const { page: pageParam } = await searchParams
   const initialPage = Math.max(0, Number(pageParam ?? '0'))
-  const { talks, total } = await getInitialTalks()
+  const { featured, total } = await getFeaturedAndTotal()
+  const initialListTalks = await getListPage(initialPage)
 
   return (
     <>
@@ -79,7 +102,12 @@ export default async function CastTalkPage({
         />
 
         <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
-          <CastTalkGrid initialTalks={talks} total={total} pageSize={PAGE_SIZE} initialPage={initialPage} />
+          <CastTalkGrid
+            featuredTalk={featured}
+            initialListTalks={initialListTalks}
+            initialListPage={initialPage}
+            total={total}
+          />
         </section>
       </main>
 
