@@ -156,7 +156,7 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
           <label htmlFor="create-password" className="block text-xs font-semibold text-[var(--text2)] mb-1">パスワード（8文字以上）</label>
           <input
             id="create-password"
-            type="text"
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
