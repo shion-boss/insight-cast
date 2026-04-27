@@ -175,7 +175,7 @@ export default async function LandingPage() {
       .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .limit(3),
+      .limit(5),
   ])
 
   const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
@@ -768,66 +768,54 @@ export default async function LandingPage() {
         {/* ⑭ Cast Talk Preview */}
         {latestTalks && latestTalks.length > 0 && (
           <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
-            <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="mx-auto max-w-[760px] px-6 sm:px-8 lg:px-12">
               <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
                 キャストの対話
               </h2>
               <p className="text-base text-[var(--text2)] mt-3">ミント・クラウス・レインが語り合う対話記事。ホームページを育てるヒントをキャスト視点でお届けします。</p>
-              <div className="mt-11 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8 divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[#e2d5c3] bg-[#fffdf9]">
                 {latestTalks.map((talk) => {
                   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
                   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-                  const storyImg = getStoryImage(talk.interviewer_id ?? '', talk.guest_id ?? '')
                   const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+                  const dateStr = talk.published_at
+                    ? (() => { const d = new Date(talk.published_at); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}` })()
+                    : ''
                   return (
                     <Link
                       key={talk.id}
                       href={`/cast-talk/${talk.slug}`}
-                      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-[transform,box-shadow] duration-[250ms] hover:-translate-y-[3px] hover:shadow-[0_14px_36px_rgba(0,0,0,0.13)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      className="group block px-5 py-5 transition-colors duration-200 hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                     >
-                      <div className="relative h-[180px] overflow-hidden">
-                        {storyImg ? (
-                          <Image
-                            src={storyImg}
-                            alt={`${interviewer?.name ?? talk.interviewer_id} × ${guest?.name ?? talk.guest_id}`}
-                            fill
-                            className="object-cover brightness-95 saturate-90 transition-transform duration-300 group-hover:scale-[1.03]"
-                          />
-                        ) : (
-                          <div className="h-full bg-[var(--accent-l)]" />
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#fffdf9] to-transparent" />
-                        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-[#fffdf9] px-2.5 py-[5px]">
+                      <div className="mb-3 flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2 py-[4px]">
                           <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
                           <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
                         </div>
-                      </div>
-                      <div className="flex flex-1 flex-col px-5 pb-[22px] pt-1">
-                        <div className="mb-3 flex items-center gap-1.5">
-                          {[interviewer, guest].map((c, i) =>
-                            c ? (
-                              <div key={i} className="h-6 w-6 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
-                                <Image src={c.icon48} alt={c.name} width={24} height={24} className="h-full w-full object-cover" />
-                              </div>
-                            ) : null,
-                          )}
-                          <span className="text-[11px] font-semibold text-[#7a6555]">
-                            {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
-                          </span>
-                        </div>
-                        <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[16px] font-bold leading-[1.5] text-[#1c1410] mb-2.5">
-                          {talk.title}
-                        </h3>
-                        <div className="h-px bg-[#e8ddd0] my-2.5" />
-                        {talk.summary && (
-                          <p className="flex-1 border-l-2 pl-3 text-[12px] italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
-                            「{talk.summary}」
-                          </p>
+                        {[interviewer, guest].map((c, i) =>
+                          c ? (
+                            <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                              <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" />
+                            </div>
+                          ) : null,
                         )}
-                        <div className="mt-3.5 flex items-center justify-end">
-                          <span className="text-[11px] font-bold" style={{ color: theme.color }}>続きを読む →</span>
-                        </div>
+                        <span className="text-[11px] font-semibold text-[#7a6555]">
+                          {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
+                        </span>
+                      </div>
+                      <h3 className="text-[15px] font-bold leading-[1.5] text-[#1c1410] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
+                        {talk.title}
+                      </h3>
+                      <div className="h-px bg-[#e8ddd0] my-2.5" />
+                      {talk.summary && (
+                        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+                          「{talk.summary}」
+                        </p>
+                      )}
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-[11px] text-[#b8a898]">{dateStr}</span>
+                        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む →</span>
                       </div>
                     </Link>
                   )
