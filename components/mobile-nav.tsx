@@ -100,7 +100,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
             {/* ドロワーヘッダー */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
               <Link href="/" onClick={() => setOpen(false)}>
-                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" />
+                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" />
               </Link>
               <button
                 type="button"

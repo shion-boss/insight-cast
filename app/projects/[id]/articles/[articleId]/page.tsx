@@ -7,9 +7,9 @@ import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
-  client: '解説・まとめ形式',
-  interviewer: 'インタビュアー視点',
-  conversation: 'インタビュー形式',
+  client: 'ブログ記事',
+  interviewer: 'インタビュー形式',
+  conversation: '会話込み',
 }
 
 function formatDateTime(value: string) {

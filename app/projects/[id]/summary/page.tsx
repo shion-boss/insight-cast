@@ -391,7 +391,7 @@ export default function SummaryPage() {
                                   href={`/projects/${projectId}/articles/${a.id}`}
                                   className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2 py-0.5 rounded-full hover:opacity-75 transition-opacity"
                                 >
-                                  ✓ {a.article_type === 'interviewer' ? '会話形式' : '通常'} {new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))}
+                                  ✓ {a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'} {new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))}
                                 </Link>
                               ))}
                             </div>

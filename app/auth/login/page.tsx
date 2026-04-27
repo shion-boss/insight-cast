@@ -67,7 +67,7 @@ function LoginForm() {
       <div className="w-full max-w-[440px]">
         {/* ブランド */}
         <div className="mb-8 flex justify-center">
-          <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" priority />
+          <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" sizes="120px" priority />
         </div>
 
         {/* 有料プラン文脈の案内 */}

@@ -42,7 +42,7 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
             href="/"
             className="transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" priority />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" priority />
           </Link>
 
           {/* PC用ボタン群 */}
