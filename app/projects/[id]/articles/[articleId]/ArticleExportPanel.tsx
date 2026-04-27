@@ -474,9 +474,9 @@ export function ArticleExportPanel({
               <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
                 リセット
               </button>
-              <div className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
-                <button type="button" onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
-                <button type="button" onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
+              <div role="tablist" aria-label="表示形式" className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
+                <button type="button" role="tab" aria-selected={!htmlPreview} onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
+                <button type="button" role="tab" aria-selected={htmlPreview}  onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
               </div>
             </div>
           </div>
