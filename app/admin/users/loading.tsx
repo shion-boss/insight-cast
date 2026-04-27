@@ -1,6 +1,6 @@
 export default function AdminUsersLoading() {
   return (
-    <div className="animate-pulse space-y-6">
+    <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-6">
       <div className="h-7 w-32 rounded bg-[var(--bg2)]" />
 
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">

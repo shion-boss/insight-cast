@@ -3,7 +3,7 @@ import { AppShell } from '@/components/app-shell'
 export default function ArticleDetailLoading() {
   return (
     <AppShell title="記事素材" active="projects" accountLabel="設定" isAdmin={false}>
-      <div className="animate-pulse space-y-6 max-w-3xl">
+      <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-6 max-w-3xl">
         <div className="h-5 w-64 rounded bg-[var(--bg2)]" />
         <div className="h-8 w-48 rounded bg-[var(--bg2)]" />
         <div className="space-y-2">

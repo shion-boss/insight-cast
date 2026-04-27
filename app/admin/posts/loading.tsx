@@ -1,6 +1,6 @@
 export default function AdminPostsLoading() {
   return (
-    <div className="animate-pulse space-y-6">
+    <div aria-busy="true" aria-label="読み込み中" className="animate-pulse space-y-6">
       <div className="flex items-center justify-between">
         <div className="h-7 w-24 rounded bg-[var(--bg2)]" />
         <div className="h-10 w-28 rounded-[var(--r-sm)] bg-[var(--bg2)]" />

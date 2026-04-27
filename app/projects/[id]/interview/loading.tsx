@@ -1,7 +1,7 @@
 export default function InterviewLoading() {
   return (
     <div className="bg-[var(--bg)] h-dvh flex items-center justify-center px-6">
-      <div className="w-full max-w-[520px] space-y-4">
+      <div aria-busy="true" aria-label="読み込み中" className="w-full max-w-[520px] space-y-4">
         <div className="flex items-start gap-4 animate-pulse">
           {/* キャラアイコンのスケルトン */}
           <div className="w-12 h-12 rounded-full bg-[var(--bg2)] flex-shrink-0" />
