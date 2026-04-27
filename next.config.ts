@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     config.output.hashSalt = "v3";
     return config;
   },
+  async redirects() {
+    return [
+      { source: '/casts', destination: '/cast', permanent: true },
+    ]
+  },
   async headers() {
     const isDev = process.env.NODE_ENV === 'development'
     const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL

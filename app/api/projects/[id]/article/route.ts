@@ -75,6 +75,46 @@ async function markArticleGenerationFailed(input: {
   revalidateArticlePaths(input.projectId)
 }
 
+async function generateBlogSlug(
+  supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
+  title: string,
+  today: string,
+): Promise<string> {
+  let baseSlug = ''
+  try {
+    const msg = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 30,
+      messages: [{
+        role: 'user',
+        content: `次の記事タイトルを英語のケバブケーススラッグ（3〜5単語、小文字英数字とハイフンのみ）に変換してください。スラッグだけを返してください。\n\nタイトル: ${title}`,
+      }],
+    })
+    const raw = msg.content[0].type === 'text' ? msg.content[0].text.trim() : ''
+    baseSlug = raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)
+    logApiUsage({ route: 'article/slug', model: 'claude-haiku-4-5-20251001', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
+  } catch {
+    // fallback to date-only slug on LLM error
+  }
+
+  const candidate = baseSlug || `${today}-article`
+  const { data: existing } = await supabase
+    .from('blog_posts')
+    .select('slug')
+    .eq('slug', candidate)
+    .maybeSingle()
+  if (!existing) return candidate
+
+  // 衝突時は日付サフィックスを付ける
+  const withDate = `${candidate}-${today}`
+  const { data: existing2 } = await supabase
+    .from('blog_posts')
+    .select('slug')
+    .eq('slug', withDate)
+    .maybeSingle()
+  return existing2 ? `${candidate}-${today}-${crypto.randomUUID().slice(0, 6)}` : withDate
+}
+
 async function saveArticle(input: {
   supabase: Awaited<ReturnType<typeof createClient>>
   projectId: string
@@ -134,7 +174,7 @@ async function saveArticle(input: {
   const isAdmin = !!input.userEmail && adminEmails.includes(input.userEmail)
   if (isAdmin) {
     const today = new Date().toISOString().slice(0, 10)
-    const slug = `${today}-${crypto.randomUUID().slice(0, 8)}`
+    const slug = await generateBlogSlug(input.supabase, title, today)
     const isInterviewStyle = input.articleType === 'interviewer'
     const blogCategory = isInterviewStyle ? 'interview' : 'insight-cast'
 
