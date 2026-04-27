@@ -27,11 +27,11 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
   if (totalPages <= 1) return null
   return (
     <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
-      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         ← 前へ
       </button>
       <span className="text-sm text-[var(--text3)]">{page} / {totalPages} ページ</span>
-      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className={getButtonClass('secondary', 'px-4 py-2 text-sm disabled:opacity-40')}>
+      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         次へ →
       </button>
     </div>

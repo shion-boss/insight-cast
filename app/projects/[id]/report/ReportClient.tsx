@@ -511,7 +511,7 @@ export default function ReportClient({
           <ul className="space-y-2">
             {audit.suggested_themes.map((theme, i) => (
               <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
-                <span className="text-[rgba(255,255,255,0.56)] flex-shrink-0">💬</span>{theme}
+                <span aria-hidden="true" className="text-[var(--text3)] flex-shrink-0">💬</span>{theme}
               </li>
             ))}
           </ul>

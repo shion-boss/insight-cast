@@ -165,7 +165,7 @@ export default function CompetitorSelectionFields({
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-[var(--border)] p-6 space-y-4">
+    <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-4">
       <div className="space-y-4">
         <div>
           <FieldLabel htmlFor="competitor-industry">業界情報</FieldLabel>
@@ -290,7 +290,7 @@ export default function CompetitorSelectionFields({
                 className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
                   selected
                     ? 'border-[var(--text)] bg-[var(--text)] text-white'
-                    : 'border-[var(--border)] bg-white text-[var(--text2)] hover:border-[var(--border2)]'
+                    : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] hover:border-[var(--border2)]'
                 } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 <div className="flex items-start justify-between gap-3">
