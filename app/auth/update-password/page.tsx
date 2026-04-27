@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
@@ -40,9 +41,9 @@ export default function UpdatePasswordPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
-        <div className="mb-8 text-center">
-          <Link href="/" className="font-serif text-[22px] font-bold text-[var(--text)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-            Insight <span className="text-[var(--accent)]">Cast</span>
+        <div className="mb-8 flex justify-center">
+          <Link href="/" className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" sizes="120px" priority />
           </Link>
         </div>
 
