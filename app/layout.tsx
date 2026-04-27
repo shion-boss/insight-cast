@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono, M_PLUS_1p } from "next/font/google";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
@@ -46,6 +46,10 @@ export const metadata: Metadata = {
     title: 'Insight Cast',
     description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#c2722a',
 };
 
 const orgJsonLd = {
