@@ -21,11 +21,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AIキャスト紹介 | Insight Cast',
     description: '6名のAIキャストを紹介。ミント・クラウス・レインの3名は無料で使えます。',
+    images: ['/logo.jpg'],
   },
 }
 

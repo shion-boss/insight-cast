@@ -17,11 +17,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'AI時代の発信について | Insight Cast',
     description: 'AI検索時代に一次情報が重要な理由、インタビューが効く理由。Insight Cast の思想を伝えるページです。',
+    images: ['/logo.jpg'],
   },
 }
 

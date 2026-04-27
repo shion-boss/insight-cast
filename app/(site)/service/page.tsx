@@ -18,11 +18,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'サービス紹介 | Insight Cast',
     description: '取材先を登録 → AIキャストが取材 → 記事素材を受け取る。3ステップでHPを継続的に強くするサービスです。',
+    images: ['/logo.jpg'],
   },
 }
 

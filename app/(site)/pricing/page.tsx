@@ -18,11 +18,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: '料金プラン | Insight Cast',
     description: 'カード不要で無料体験。ライト ¥1,980/月、個人向け ¥4,980/月、法人向け ¥14,800/月。',
+    images: ['/logo.jpg'],
   },
 }
 

@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'About | Insight Cast',
     description: 'Insight Cast がインタビューを起点にする理由、AIキャストの役割を紹介します。',
+    images: ['/logo.jpg'],
   },
 }
 
