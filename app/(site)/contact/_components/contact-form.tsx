@@ -137,6 +137,7 @@ export function ContactForm() {
           value={name}
           onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: undefined })) }}
           placeholder="山田 花子"
+          maxLength={100}
           autoComplete="name"
           aria-invalid={!!fieldErrors.name}
           aria-describedby={fieldErrors.name ? 'err-name' : undefined}
@@ -214,6 +215,7 @@ export function ContactForm() {
           value={message}
           onChange={(e) => { setMessage(e.target.value); setFieldErrors((p) => ({ ...p, message: undefined })) }}
           rows={5}
+          maxLength={5000}
           placeholder="どんな小さなことでも大丈夫です。気になっていることを教えてください。"
           aria-invalid={!!fieldErrors.message}
           aria-describedby={fieldErrors.message ? 'err-message' : undefined}

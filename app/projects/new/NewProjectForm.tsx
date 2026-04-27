@@ -91,6 +91,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
               type="text"
               name="name"
               required
+              maxLength={200}
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="例: 山田工務店"

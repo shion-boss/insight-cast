@@ -446,6 +446,7 @@ export function SettingsClient({
                       value={name}
                       onChange={(event) => setName(event.target.value)}
                       placeholder="例: 山田 太郎"
+                      maxLength={100}
                       disabled={profileInputsDisabled}
                     />
                   </div>

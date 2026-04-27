@@ -32,6 +32,7 @@ export function OnboardingForm({ next, hasError }: { next: string; hasError: boo
           type="text"
           name="name"
           required
+          maxLength={100}
           placeholder="例: 山田さん"
           aria-describedby={hasError ? 'onboarding-error' : undefined}
         />
