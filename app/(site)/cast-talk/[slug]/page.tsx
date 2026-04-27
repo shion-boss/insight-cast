@@ -74,11 +74,13 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: talk.published_at ? new Date(talk.published_at).toISOString() : undefined,
       authors: ['Insight Cast'],
+      images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
+      images: ['/logo.jpg'],
     },
   }
 }
