@@ -522,7 +522,7 @@ export default function ReportClient({
         href={interviewerPath}
         className={getButtonClass('primary', 'w-full')}
       >
-        AIキャストを呼んで取材を始める →
+        取材を始める →
       </Link>
     </div>
   )

@@ -155,7 +155,7 @@ export default async function InterviewsPage({
         />
         <div className="mt-4">
           <ButtonLink href={`/projects/${projects[0].id}/interviewer`}>
-            AIキャストを呼んで取材を始める →
+            取材を始める →
           </ButtonLink>
         </div>
       </AppShell>
