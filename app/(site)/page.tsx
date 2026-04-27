@@ -16,11 +16,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
+    images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
     description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。',
+    images: ['/logo.jpg'],
   },
 }
 import { CharacterAvatar } from '@/components/ui'
