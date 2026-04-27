@@ -1,4 +1,4 @@
-export type PlanKey = 'free' | 'personal' | 'business'
+export type PlanKey = 'free' | 'lightning' | 'personal' | 'business'
 
 export const PLANS = {
   free: {
@@ -12,6 +12,18 @@ export const PLANS = {
     monthlyArticleLimit: null, // lifetimeArticleLimit が有効なため使用しない
     maxCompetitorsPerProject: 0,
     supportLabel: 'コミュニティサポート',
+  },
+  lightning: {
+    key: 'lightning' as const,
+    label: 'ライト',
+    maxProjects: 1,
+    additionalProjectAllowed: false,
+    monthlyInterviewLimit: 5,
+    lifetimeInterviewLimit: null,
+    lifetimeArticleLimit: null,
+    monthlyArticleLimit: 20,
+    maxCompetitorsPerProject: 0,
+    supportLabel: '通常サポート',
   },
   personal: {
     key: 'personal' as const,
@@ -112,6 +124,6 @@ export async function getUserPlan(
     .eq('user_id', userId)
     .maybeSingle()
   const plan = data?.plan as string | undefined
-  if (plan === 'personal' || plan === 'business') return plan
+  if (plan === 'lightning' || plan === 'personal' || plan === 'business') return plan
   return 'free'
 }

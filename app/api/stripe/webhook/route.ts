@@ -99,8 +99,9 @@ export async function POST(request: Request) {
   return NextResponse.json({ received: true })
 }
 
-function resolvePlan(priceId?: string): 'free' | 'personal' | 'business' {
+function resolvePlan(priceId?: string): 'free' | 'lightning' | 'personal' | 'business' {
   if (!priceId) return 'free'
+  if (priceId === process.env.STRIPE_PRICE_ID_LIGHTNING) return 'lightning'
   if (priceId === process.env.STRIPE_PRICE_ID_PERSONAL) return 'personal'
   if (priceId === process.env.STRIPE_PRICE_ID_BUSINESS) return 'business'
   return 'free'

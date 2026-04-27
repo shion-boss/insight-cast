@@ -11,14 +11,14 @@ type Plan = {
   featured: boolean
 }
 
-const PLAN_RANK: Record<string, number> = { free: 0, personal: 1, business: 2 }
+const PLAN_RANK: Record<string, number> = { free: 0, lightning: 1, personal: 2, business: 3 }
 
 export function PlanCardCTA({
   plan,
   priceIds,
 }: {
   plan: Plan
-  priceIds: { personal: string; business: string }
+  priceIds: { lightning: string; personal: string; business: string }
 }) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string>('free')
@@ -77,9 +77,14 @@ export function PlanCardCTA({
       )
     }
 
+    const priceId =
+      plan.id === 'lightning' ? priceIds.lightning
+      : plan.id === 'personal' ? priceIds.personal
+      : priceIds.business
+
     return (
       <CheckoutButton
-        priceId={plan.id === 'personal' ? priceIds.personal : priceIds.business}
+        priceId={priceId}
         label={plan.cta}
         featured={plan.featured}
       />

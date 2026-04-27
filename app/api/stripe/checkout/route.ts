@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
   try {
     // 同じプランまたは上位プランへの再購入を防ぐ
-    const PLAN_RANK: Record<string, number> = { free: 0, personal: 1, business: 2 }
+    const PLAN_RANK: Record<string, number> = { free: 0, lightning: 1, personal: 2, business: 3 }
     const priceIdToPlan = getPriceIdToPlan()
     const requestedPlan = priceIdToPlan[priceId]
 

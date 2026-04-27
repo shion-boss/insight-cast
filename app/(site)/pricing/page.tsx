@@ -50,6 +50,27 @@ const PLANS = [
     href: '/auth/signup',
   },
   {
+    id: 'lightning',
+    name: 'ライト',
+    price: 1980,
+    note: 'クレジットカードで簡単お申し込み',
+    catch: '月5回から、HPを育てはじめる',
+    featured: false,
+    features: [
+      { ok: true, label: '取材回数：月5回まで' },
+      { ok: true, label: '記事素材作成：月20回まで' },
+      { ok: true, label: 'フリーキャスト 3名' },
+      { ok: true, label: '取材先登録：1件' },
+      { ok: true, label: '自社HP調査あり' },
+      { ok: false, label: '競合調査なし' },
+      { ok: true, label: '取材メモを受け取れる' },
+      { ok: false, label: '追加キャスト：準備中' },
+      { ok: false, label: '優先サポート' },
+    ],
+    cta: 'ライトプランで始める',
+    href: '/auth/signup',
+  },
+  {
     id: 'personal',
     name: '個人向け',
     price: 4980,
@@ -92,14 +113,15 @@ const PLANS = [
 ] as const
 
 const TABLE_ROWS = [
-  { label: '取材回数', free: '2回（単発）', personal: '月15回', business: '月60回' },
-  { label: '記事素材作成', free: '3回（単発）', personal: '月60回', business: '月240回' },
-  { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
-  { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
-  { label: '競合調査', free: 'なし', personal: '3社', business: '各取材先3社' },
-  { label: '取材メモを受け取れる', free: 'あり', personal: 'あり', business: 'あり' },
-  { label: '追加キャスト', free: '準備中', personal: '準備中', business: '準備中' },
-  { label: '優先サポート', free: 'なし', personal: 'なし', business: 'あり' },
+  { label: '取材回数', free: '2回（単発）', lightning: '月5回', personal: '月15回', business: '月60回' },
+  { label: '記事素材作成', free: '3回（単発）', lightning: '月20回', personal: '月60回', business: '月240回' },
+  { label: 'フリーキャスト', free: '3名', lightning: '3名', personal: '3名', business: '3名' },
+  { label: '取材先登録', free: '1件', lightning: '1件', personal: '1件', business: '最大3件' },
+  { label: '自社HP調査', free: 'なし', lightning: 'あり', personal: 'あり', business: 'あり' },
+  { label: '競合調査', free: 'なし', lightning: 'なし', personal: '3社', business: '各取材先3社' },
+  { label: '取材メモを受け取れる', free: 'あり', lightning: 'あり', personal: 'あり', business: 'あり' },
+  { label: '追加キャスト', free: '準備中', lightning: '準備中', personal: '準備中', business: '準備中' },
+  { label: '優先サポート', free: 'なし', lightning: 'なし', personal: 'なし', business: 'あり' },
 ] as const
 
 const ADDON_CASTS = [
@@ -125,6 +147,7 @@ const ADDON_CASTS = [
 
 const SELECTION_GUIDE = [
   { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', charId: 'mint' },
+  { plan: 'ライト', desc: '月に数回、ゆっくりHPを育てたい個人事業主・小規模店舗の方', charId: 'mint' },
   { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', charId: 'rain' },
   { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', charId: 'claus' },
 ] as const
@@ -146,6 +169,7 @@ export default async function PricingPage({
   const reason = Array.isArray(query.reason) ? query.reason[0] : query.reason
 
   const priceIds = {
+    lightning: process.env.STRIPE_PRICE_ID_LIGHTNING ?? '',
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
@@ -277,7 +301,7 @@ export default async function PricingPage({
         {/* Plan cards */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="mt-0 grid gap-6 lg:grid-cols-3 lg:items-start">
+            <div className="mt-0 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:items-start">
               {PLANS.map((plan) => (
                 <div
                   key={plan.id}
@@ -327,9 +351,9 @@ export default async function PricingPage({
             </h2>
             {/* モバイル: プランごとのカード比較 */}
             <div className="mt-8 grid grid-cols-1 gap-4 sm:hidden">
-              {(['free', 'personal', 'business'] as const).map((plan) => {
+              {(['free', 'lightning', 'personal', 'business'] as const).map((plan) => {
                 const isPersonal = plan === 'personal'
-                const planLabel = plan === 'free' ? 'お試し' : plan === 'personal' ? '個人向け' : '法人向け'
+                const planLabel = plan === 'free' ? 'お試し' : plan === 'lightning' ? 'ライト' : plan === 'personal' ? '個人向け' : '法人向け'
                 return (
                   <div key={plan} className={`rounded-[16px] border p-5 ${isPersonal ? 'border-[var(--accent)] bg-[var(--accent-l)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
                     <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--accent)]' : 'text-[var(--text2)]'}`}>{planLabel}</div>
@@ -351,19 +375,21 @@ export default async function PricingPage({
               <table className="w-full border-collapse">
                 <thead>
                   <tr>
-                    <th scope="col" className="px-5 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[30%]"><span className="sr-only">機能</span></th>
-                    <th scope="col" className="px-5 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">お試し</th>
-                    <th scope="col" className="px-5 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">個人向け</th>
-                    <th scope="col" className="px-5 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">法人向け</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[25%]"><span className="sr-only">機能</span></th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">お試し</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">ライト</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">個人向け</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">法人向け</th>
                   </tr>
                 </thead>
                 <tbody>
                   {TABLE_ROWS.map((row) => (
                     <tr key={row.label}>
-                      <td className="px-5 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-5 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.free}</td>
-                      <td className="px-5 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{row.personal}</td>
-                      <td className="px-5 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.business}</td>
+                      <td className="px-4 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.free}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.lightning}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{row.personal}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.business}</td>
                     </tr>
                   ))}
                 </tbody>

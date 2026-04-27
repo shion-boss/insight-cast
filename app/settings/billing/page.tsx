@@ -11,6 +11,7 @@ import { PortalButton } from '@/app/settings/PortalButton'
 
 const PLAN_LABELS: Record<string, string> = {
   free: 'お試し（無料）',
+  lightning: 'ライト',
   personal: '個人向け',
   business: '法人向け',
 }
@@ -49,7 +50,7 @@ export default async function BillingPage({
   const mint = getCharacter('mint')
   const planLabel = PLAN_LABELS[sub?.plan ?? 'free'] ?? 'お試し（無料）'
   const statusLabel = STATUS_LABELS[sub?.status ?? 'active'] ?? '有効'
-  const isPaid = sub?.plan === 'personal' || sub?.plan === 'business'
+  const isPaid = sub?.plan === 'lightning' || sub?.plan === 'personal' || sub?.plan === 'business'
   const hasCustomer = Boolean(sub?.stripe_customer_id)
 
   const periodEnd = sub?.current_period_end

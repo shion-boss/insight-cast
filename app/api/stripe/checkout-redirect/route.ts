@@ -8,11 +8,13 @@ export async function GET(request: NextRequest) {
   const plan = searchParams.get('plan')
 
   const priceId =
-    plan === 'personal'
-      ? process.env.STRIPE_PRICE_ID_PERSONAL
-      : plan === 'business'
-        ? process.env.STRIPE_PRICE_ID_BUSINESS
-        : null
+    plan === 'lightning'
+      ? process.env.STRIPE_PRICE_ID_LIGHTNING
+      : plan === 'personal'
+        ? process.env.STRIPE_PRICE_ID_PERSONAL
+        : plan === 'business'
+          ? process.env.STRIPE_PRICE_ID_BUSINESS
+          : null
 
   if (!priceId) {
     return NextResponse.redirect(`${origin}/pricing`)
@@ -50,7 +52,7 @@ export async function GET(request: NextRequest) {
       // webhook は非同期で遅延するため、リダイレクト前に DB を即時更新する
       await createAdminClient()
         .from('subscriptions')
-        .update({ plan: plan as 'personal' | 'business', stripe_price_id: priceId })
+        .update({ plan: plan as 'lightning' | 'personal' | 'business', stripe_price_id: priceId })
         .eq('user_id', user.id)
       return NextResponse.redirect(`${appUrl}/settings/billing?success=1`)
     } catch {

@@ -13,12 +13,14 @@ export type UserRow = {
 
 const PLAN_OPTIONS: { value: PlanKey; label: string }[] = [
   { value: 'free', label: '無料' },
+  { value: 'lightning', label: 'ライト' },
   { value: 'personal', label: '個人向け' },
   { value: 'business', label: '法人向け' },
 ]
 
 const PLAN_BADGE: Record<PlanKey, string> = {
   free: 'bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)]',
+  lightning: 'bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] text-[var(--accent)]',
   personal: 'bg-[var(--accent-l)] text-[var(--accent)]',
   business: 'bg-[var(--teal-l)] text-[var(--teal)]',
 }

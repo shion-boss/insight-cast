@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import type { PlanKey } from '@/lib/plans'
 
-const VALID_PLANS: PlanKey[] = ['free', 'personal', 'business']
+const VALID_PLANS: PlanKey[] = ['free', 'lightning', 'personal', 'business']
 
 async function isAdmin(): Promise<boolean> {
   const supabase = await createClient()
