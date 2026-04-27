@@ -175,7 +175,7 @@ export default async function LandingPage() {
       .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
       .eq('status', 'published')
       .order('published_at', { ascending: false })
-      .limit(5),
+      .limit(3),
   ])
 
   const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
