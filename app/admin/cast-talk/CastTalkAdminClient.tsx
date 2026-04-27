@@ -30,6 +30,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
   const [generating, setGenerating] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmTarget, setConfirmTarget] = useState<CastTalk | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [themeInput, setThemeInput] = useState('')
 
@@ -79,14 +80,20 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
         prev.map((t) => (t.id === item.id ? { ...t, status: newStatus } : t)),
       )
     } catch (e) {
-      setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
+      setError(e instanceof Error ? e.message : 'うまくいきませんでした。時間をおいてもう一度お試しください。')
     } finally {
       setTogglingId(null)
     }
   }
 
-  async function handleDelete(item: CastTalk) {
-    if (!confirm(`「${item.title}」を削除しますか？この操作は取り消せません。`)) return
+  function handleDeleteRequest(item: CastTalk) {
+    setConfirmTarget(item)
+  }
+
+  async function handleDeleteConfirm() {
+    if (!confirmTarget) return
+    const item = confirmTarget
+    setConfirmTarget(null)
     setDeletingId(item.id)
     setError(null)
     try {
@@ -97,7 +104,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       }
       setItems((prev) => prev.filter((t) => t.id !== item.id))
     } catch (e) {
-      setError(e instanceof Error ? e.message : '不明なエラーが発生しました')
+      setError(e instanceof Error ? e.message : 'うまくいきませんでした。時間をおいてもう一度お試しください。')
     } finally {
       setDeletingId(null)
     }
@@ -105,6 +112,24 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
 
   return (
     <div className="space-y-6">
+      {/* 削除確認ダイアログ */}
+      {confirmTarget && (
+        <div role="dialog" aria-modal="true" aria-labelledby="cast-talk-delete-title" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="w-full max-w-sm rounded-[var(--r-lg)] bg-white border border-gray-200 p-6 shadow-xl">
+            <p id="cast-talk-delete-title" className="text-[15px] font-bold text-gray-900 mb-2">この記事を削除しますか？</p>
+            <p className="text-sm text-gray-600 mb-1 line-clamp-2">「{confirmTarget.title}」</p>
+            <p className="text-sm text-gray-500 mb-5">この操作は取り消せません。</p>
+            <div className="flex gap-3 justify-end">
+              <button type="button" onClick={() => setConfirmTarget(null)} className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400/40">
+                やめる
+              </button>
+              <button type="button" onClick={() => void handleDeleteConfirm()} className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-red-500 bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40">
+                削除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">
@@ -194,7 +219,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                   )}
                   <button
                     type="button"
-                    onClick={() => handleDelete(item)}
+                    onClick={() => handleDeleteRequest(item)}
                     disabled={deletingId === item.id}
                     className="min-h-[44px] rounded-[var(--r-sm)] border border-red-200 px-4 py-2 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
                   >
@@ -274,7 +299,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         )}
                         <button
                           type="button"
-                          onClick={() => handleDelete(item)}
+                          onClick={() => handleDeleteRequest(item)}
                           disabled={deletingId === item.id}
                           className="rounded-[var(--r-sm)] border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
                         >
