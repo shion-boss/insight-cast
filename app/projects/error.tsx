@@ -1,6 +1,7 @@
 'use client'
 
-import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
+import Link from 'next/link'
+import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { AppShell } from '@/components/app-shell'
 
@@ -31,13 +32,21 @@ export default function ProjectsError({
             description="一時的な問題が起きています。ページを再読み込みしてもう一度お試しください。"
             tone="soft"
           />
-          <button
-            type="button"
-            onClick={reset}
-            className="inline-block rounded-xl bg-[var(--accent)] text-white px-6 py-3 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            もう一度試す
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <button
+              type="button"
+              onClick={reset}
+              className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+            >
+              もう一度試す
+            </button>
+            <Link
+              href="/dashboard"
+              className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+            >
+              ダッシュボードへ
+            </Link>
+          </div>
         </div>
       </div>
     </AppShell>
