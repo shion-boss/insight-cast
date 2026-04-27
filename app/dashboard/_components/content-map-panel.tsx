@@ -96,7 +96,7 @@ export function ContentMapPanel({
               type="button"
               onClick={runClassification}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white bg-[var(--accent)] hover:bg-[var(--accent-h)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-[var(--r-sm)] text-sm font-semibold text-white bg-[var(--accent)] hover:bg-[var(--accent-h)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
               {loading ? (
                 <>

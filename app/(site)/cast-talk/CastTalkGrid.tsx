@@ -123,7 +123,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
 
         {/* 日付 + 続きを読む */}
         <div className="mt-3.5 flex items-center justify-between">
-          <span className="text-[11px] text-[#b8a898]">{formatDate(talk.published_at)}</span>
+          <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
           <span className="inline-block text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1" style={{ color: theme.color }}>続きを読む →</span>
         </div>
       </div>
@@ -181,7 +181,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
 
       {/* 下段: 日付 + 続きを読む */}
       <div className="mt-3 flex items-center justify-between">
-        <span className="text-[11px] text-[#b8a898]">{formatDate(talk.published_at)}</span>
+        <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
         <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む →</span>
       </div>
     </Link>

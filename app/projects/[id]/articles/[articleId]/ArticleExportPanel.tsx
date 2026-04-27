@@ -74,7 +74,7 @@ function initial(name: string | null): string {
   return name ? name.slice(0, 1) : '?'
 }
 
-const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
+const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8f7d6d;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
 
 function buildClientHtml(opts: { title: string; date: string; content: string }): string {
   const { title, date, content } = opts
@@ -89,7 +89,7 @@ function buildClientHtml(opts: { title: string; date: string; content: string })
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
 <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材記事</div>
 <h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 12px;">${escapeHtml(title)}</h1>
-<div style="font-size:12px;color:#b8a898;margin-bottom:32px;">${escapeHtml(date)}</div>
+<div style="font-size:12px;color:#8f7d6d;margin-bottom:32px;">${escapeHtml(date)}</div>
 <div>${styledBody}</div>
 ${FOOTER_HTML}
 </div>`
@@ -119,7 +119,7 @@ function buildInterviewerHtml(opts: {
   <div style="width:10px;height:10px;border-radius:50%;background:${escapeHtml(interviewerColor)};flex-shrink:0;"></div>
   <div style="flex:1;min-width:0;">
     <div style="font-size:13px;font-weight:700;color:#1c1410;">${escapeHtml(interviewerName)}<span style="font-size:11px;font-weight:400;color:#7a6555;margin-left:8px;">${escapeHtml(interviewerLabel)}</span></div>
-    <div style="font-size:11px;color:#b8a898;margin-top:2px;">${escapeHtml(date)} 取材</div>
+    <div style="font-size:11px;color:#8f7d6d;margin-top:2px;">${escapeHtml(date)} 取材</div>
   </div>
 </div>
 <div>${styledBody}</div>
@@ -149,7 +149,7 @@ function buildConversationHtml(opts: {
 
   const imgStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;'
   const divStyle = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;'
-  const nameStyle = 'font-size:10px;color:#b8a898;margin-bottom:4px;white-space:nowrap;'
+  const nameStyle = 'font-size:10px;color:#8f7d6d;margin-bottom:4px;white-space:nowrap;'
 
   const userIconHtml = showClientIcon
     ? (userAvatarUrl
@@ -200,7 +200,7 @@ function buildConversationHtml(opts: {
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 4px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
 ${bubblesHtml.join('\n')}
-<div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#b8a898;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
+<div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8f7d6d;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
 <div style="height:1px;background:#e2d5c3;"></div>
 </div>`
 }

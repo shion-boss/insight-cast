@@ -167,7 +167,7 @@ export default function CompetitorsForm({
           type="button"
           disabled={isBusy || !canSubmit}
           onClick={handleSaveAndAnalyze}
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         >
           {submitState === 'requesting' ? '再調査を依頼しています...' : '保存して再調査する'}
         </button>
