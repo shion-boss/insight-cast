@@ -202,6 +202,7 @@ export default async function CastPage() {
                           height={340}
                           className="h-full w-full object-contain"
                           priority={index === 0}
+                          sizes="(min-width: 1024px) 340px, 100vw"
                         />
                       </div>
                       <div className="mt-4 flex gap-2 flex-wrap">
@@ -318,6 +319,7 @@ export default async function CastPage() {
                           width={200}
                           height={200}
                           className="h-full w-full object-contain grayscale-[15%]"
+                          sizes="(min-width: 1024px) 200px, 100vw"
                         />
                       </div>
                       <div className="mt-3 flex gap-2">
