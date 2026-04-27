@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
@@ -29,14 +29,66 @@ function GscDisconnectModal({
   isDeleting: boolean
   claus: ReturnType<typeof import('@/lib/characters').getCharacter>
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // フォーカストラップ: モーダルが開いたら最初のボタンにフォーカス
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+
+    // 最初のフォーカス可能要素にフォーカス
+    const focusable = dialog.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    focusable[0]?.focus()
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onCancel()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const focusableEls = Array.from(
+        dialog!.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      )
+      if (focusableEls.length === 0) return
+
+      const first = focusableEls[0]
+      const last = focusableEls[focusableEls.length - 1]
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onCancel])
+
   return (
     <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="gsc-disconnect-title"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
     >
-      <div className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="gsc-disconnect-title"
+        tabIndex={-1}
+        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl focus-visible:outline-none"
+      >
         <div className="flex items-start gap-3 mb-4">
           <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={40} className="flex-shrink-0 mt-0.5" />
           <div>
