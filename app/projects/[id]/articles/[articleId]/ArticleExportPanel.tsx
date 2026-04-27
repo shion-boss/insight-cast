@@ -471,12 +471,12 @@ export function ArticleExportPanel({
                 className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
               />
               <span className="font-mono text-[var(--text3)]">{themeColor}</span>
-              <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors">
+              <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
                 リセット
               </button>
               <div className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
-                <button type="button" onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
-                <button type="button" onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
+                <button type="button" onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
+                <button type="button" onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
               </div>
             </div>
           </div>
@@ -500,10 +500,10 @@ export function ArticleExportPanel({
                     }} />
                   </label>
                   {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
-                    <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                    <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
                   )}
                   <input type="text" aria-label="インタビュアーの表示名" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                  <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                  <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
@@ -542,10 +542,10 @@ export function ArticleExportPanel({
                     }} />
                   </label>
                   {clientAvatarUrl && (
-                    <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">削除</button>
+                    <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
                   )}
                   <input type="text" aria-label="取材先の表示名" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                  <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors">リセット</button>
+                  <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
