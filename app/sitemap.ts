@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next'
 import { POSTS } from '@/lib/blog-posts'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast-nu.vercel.app'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
@@ -23,5 +24,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
-  return [...staticRoutes, ...blogRoutes]
+  let castTalkRoutes: MetadataRoute.Sitemap = []
+  try {
+    const supabase = createAdminClient()
+    const { data } = await supabase
+      .from('cast_talks')
+      .select('slug, published_at')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+    castTalkRoutes = (data ?? []).map((talk) => ({
+      url: `${BASE_URL}/cast-talk/${talk.slug}`,
+      lastModified: talk.published_at ? new Date(talk.published_at) : new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.75,
+    }))
+  } catch {
+    // DB unavailable at build time — skip dynamic routes
+  }
+
+  return [...staticRoutes, ...blogRoutes, ...castTalkRoutes]
 }
