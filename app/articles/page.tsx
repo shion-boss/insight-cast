@@ -9,7 +9,6 @@ import { ArticlesServerFilter } from '@/components/articles-server-filter'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { getCharacter, getCastName } from '@/lib/characters'
-import { getUserPlan } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 
 const PAGE_SIZE = 20
@@ -65,15 +64,13 @@ export default async function ArticlesPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const [{ data: profile }, { data: projectRows }, plan] = await Promise.all([
+  const [{ data: profile }, { data: projectRows }] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
     supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id),
-    getUserPlan(supabase, user.id),
   ])
 
   const projects = (projectRows ?? []) as ProjectRow[]
   const projectIds = projects.map((p) => p.id)
-  const projectMap = new Map(projects.map((p) => [p.id, p]))
 
   if (projectIds.length === 0) {
     const rain = getCharacter('rain')
