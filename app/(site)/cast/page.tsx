@@ -199,15 +199,6 @@ export default async function CastPage() {
                           <span className="text-sm text-[var(--text2)]">{detail.input}</span>
                         </div>
                       </div>
-                      <div className="mt-6 flex flex-wrap items-center gap-3">
-                        <Link
-                          href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                          className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                        >
-                          {isLoggedIn ? 'ダッシュボードへ →' : 'このキャストで取材を始める →'}
-                        </Link>
-                      </div>
-
                       {/* Cast Talk 対話記事プレビュー */}
                       {talksByChar[char.id] && (
                         <Link
