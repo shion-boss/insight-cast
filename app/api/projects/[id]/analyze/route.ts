@@ -626,7 +626,7 @@ async function sendAnalysisCompleteEmail(
     if (!toEmail) return
 
     const projectName = project.name || hpUrl
-    const reportUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'}/projects/${projectId}/report`
+    const reportUrl = `${(process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')}/projects/${projectId}/report`
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',

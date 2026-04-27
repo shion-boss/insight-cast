@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     .eq('user_id', user.id)
     .single()
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? origin
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? origin).replace(/\/$/, '')
 
   // アクティブなサブスクがある場合はプラン変更（新規作成すると二重請求になる）
   const isActive = sub?.status === 'active' || sub?.status === 'trialing'

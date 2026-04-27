@@ -3,7 +3,7 @@ import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { ContactForm } from './_components/contact-form'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',

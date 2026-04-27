@@ -6,7 +6,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import { CastTalkGrid } from './CastTalkGrid'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'Cast Talk | Insight Cast',

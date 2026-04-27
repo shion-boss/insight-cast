@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   if (!priceId) {
     return NextResponse.json({ code: 'INVALID_INPUT', message: 'priceId が不正です' }, { status: 400 })
   }
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '')
   const stripe = getStripe()
 
   const { data: sub } = await supabase

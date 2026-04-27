@@ -7,7 +7,7 @@ import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'AIキャスト紹介 | Insight Cast',

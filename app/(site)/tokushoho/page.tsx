@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 import { LegalPageTemplate } from '@/components/public-layout'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: '特定商取引法に基づく表記 | Insight Cast',

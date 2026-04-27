@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import Image from 'next/image'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',

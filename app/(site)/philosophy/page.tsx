@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { PublicHero } from '@/components/public-layout'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'AI時代の発信について | Insight Cast',

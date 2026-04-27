@@ -5,7 +5,7 @@ import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',

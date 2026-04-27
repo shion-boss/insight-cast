@@ -3,7 +3,7 @@ import { PublicHero } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'ブログ | Insight Cast',

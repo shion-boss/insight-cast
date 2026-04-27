@@ -69,7 +69,7 @@ function NormalBodySection({ section }: { section: NormalSection }) {
   }
 }
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export default async function BlogDetailPage({
   params,

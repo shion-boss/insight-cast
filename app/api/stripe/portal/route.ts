@@ -20,7 +20,7 @@ export async function POST() {
     return NextResponse.json({ code: 'NO_CUSTOMER', message: 'Stripeの顧客情報が見つかりません' }, { status: 400 })
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').replace(/\/$/, '')
   try {
     const session = await getStripe().billingPortal.sessions.create({
       customer: sub.stripe_customer_id,

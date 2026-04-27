@@ -321,7 +321,7 @@ export function ArticleExportPanel({
   const isDirty = editedContent !== content
 
   const char = getCharacter(interviewerId ?? 'mint')
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
   const defaultInterviewerAvatarUrl = char?.icon48?.src ? `${appUrl}${char.icon48.src}` : null
   const [interviewerAvatarUrl, setInterviewerAvatarUrl] = useState<string>(defaultInterviewerAvatarUrl ?? '')
   const [interviewerDisplayName, setInterviewerDisplayName] = useState<string>(interviewerName ?? '')

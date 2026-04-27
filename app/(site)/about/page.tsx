@@ -6,7 +6,7 @@ import { CharacterAvatar } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
 import { AboutBottomCTA } from './AboutCTA'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',

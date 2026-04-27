@@ -5,7 +5,7 @@ import { ServiceHeroCTA, ServiceBottomCTA } from './ServiceCTA'
 import { CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
