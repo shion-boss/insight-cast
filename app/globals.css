@@ -35,6 +35,8 @@
   --r: 12px; --r-sm: 8px; --r-lg: 20px; --r-xl: 28px;
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Shippori Mincho 廃止: --font-noto-serif-jp を M PLUS 1p にリマップ */
+  --font-noto-serif-jp: var(--font-noto-sans-jp);
 }
 
 @theme inline {

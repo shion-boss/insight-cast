@@ -65,10 +65,15 @@ export async function generateMetadata({
 
 export default async function CastTalkDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ from?: string }>
 }) {
   const { slug } = await params
+  const { from } = await searchParams
+  const fromPage = Math.max(0, Number(from ?? '0'))
+  const backHref = fromPage > 0 ? `/cast-talk?page=${fromPage}` : '/cast-talk'
   const talk = await getCastTalk(slug)
   if (!talk) notFound()
 
@@ -187,6 +192,19 @@ export default async function CastTalkDetailPage({
                 詳しく見る
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Cast Talk 一覧へ */}
+        <section className="border-t border-[var(--border)]">
+          <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
+            <Link
+              href={backHref}
+              className="group flex items-center gap-2 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+            >
+              <span className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
+              <span>Cast Talk の記事一覧へ</span>
+            </Link>
           </div>
         </section>
 

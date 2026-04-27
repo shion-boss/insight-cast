@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CHARACTERS, getCastName } from '@/lib/characters'
@@ -47,6 +47,85 @@ type Talk = {
   guest_id: string | null
   slug: string
   published_at: string | null
+}
+
+function FeaturedTalkCard({ talk }: { talk: Talk }) {
+  const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
+  const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+  const storyImg = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+
+  return (
+    <Link
+      href={`/cast-talk/${talk.slug}`}
+      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 sm:flex-row"
+    >
+      {/* 左: 画像エリア */}
+      <div className="relative aspect-video overflow-hidden sm:aspect-auto sm:w-2/5">
+        {storyImg ? (
+          <Image
+            src={storyImg}
+            alt={`${getCastName(talk.interviewer_id ?? '')} × ${getCastName(talk.guest_id ?? '')}`}
+            fill
+            className="object-cover brightness-95 saturate-90"
+          />
+        ) : (
+          <div className="h-full bg-[var(--accent-l)]" />
+        )}
+        {/* LATEST バッジ */}
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-[#fffdf9] px-2.5 py-[5px]">
+          <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
+          <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">LATEST</span>
+        </div>
+      </div>
+
+      {/* 右: コンテンツエリア */}
+      <div className="flex flex-1 flex-col px-5 pb-[22px] pt-4 sm:py-6 sm:px-7">
+        {/* テーマバッジ */}
+        <div className="mb-3 flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2.5 py-[5px]">
+            <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
+            <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+          </div>
+        </div>
+
+        {/* キャラアイコン + 名前 */}
+        <div className="mb-3 flex items-center gap-1.5">
+          {[interviewer, guest].map((c, i) =>
+            c ? (
+              <div key={i} className="h-8 w-8 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                <Image src={c.icon48} alt={c.name} width={32} height={32} className="h-full w-full object-cover" />
+              </div>
+            ) : null,
+          )}
+          <span className="text-[11px] font-semibold text-[#7a6555]">
+            {getCastName(talk.interviewer_id ?? '')} &amp; {getCastName(talk.guest_id ?? '')}
+          </span>
+        </div>
+
+        {/* タイトル */}
+        <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold leading-[1.5] text-[#1c1410] mb-2.5 sm:text-[20px] transition-colors duration-200 group-hover:text-[var(--accent)]">
+          {talk.title}
+        </h2>
+
+        {/* 区切り線 */}
+        <div className="h-px bg-[#e8ddd0] my-2.5" />
+
+        {/* summary */}
+        {talk.summary && (
+          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+            「{talk.summary}」
+          </p>
+        )}
+
+        {/* 日付 + 続きを読む */}
+        <div className="mt-3.5 flex items-center justify-between">
+          <span className="text-[11px] text-[#b8a898]">{formatDate(talk.published_at)}</span>
+          <span className="inline-block text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1" style={{ color: theme.color }}>続きを読む →</span>
+        </div>
+      </div>
+    </Link>
+  )
 }
 
 function TalkCard({ talk }: { talk: Talk }) {
@@ -113,28 +192,101 @@ function TalkCard({ talk }: { talk: Talk }) {
   )
 }
 
-export function CastTalkGrid({ initialTalks, total, pageSize }: {
+const LIST_PAGE_SIZE = 10
+
+function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number }) {
+  const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
+  const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+  const href = fromPage > 0 ? `/cast-talk/${talk.slug}?from=${fromPage}` : `/cast-talk/${talk.slug}`
+
+  return (
+    <Link
+      href={href}
+      className="group block min-h-[44px] px-5 py-5 transition-colors duration-200 hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+    >
+      {/* 上段: テーマバッジ + キャラアイコン + 名前 */}
+      <div className="mb-3 flex items-center gap-2 flex-wrap">
+        {/* テーマバッジ */}
+        <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2 py-[4px]">
+          <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
+          <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+        </div>
+        {/* キャラアイコン */}
+        {[interviewer, guest].map((c, i) =>
+          c ? (
+            <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3]">
+              <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" />
+            </div>
+          ) : null,
+        )}
+        <span className="text-[11px] font-semibold text-[#7a6555]">
+          {getCastName(talk.interviewer_id ?? '')} &amp; {getCastName(talk.guest_id ?? '')}
+        </span>
+      </div>
+
+      {/* タイトル */}
+      <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.5] text-[#1c1410] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
+        {talk.title}
+      </h3>
+
+      {/* 区切り線 */}
+      <div className="h-px bg-[#e8ddd0] my-2.5" />
+
+      {/* summary */}
+      {talk.summary && (
+        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+          「{talk.summary}」
+        </p>
+      )}
+
+      {/* 下段: 日付 + 続きを読む */}
+      <div className="mt-3 flex items-center justify-between">
+        <span className="text-[11px] text-[#b8a898]">{formatDate(talk.published_at)}</span>
+        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む →</span>
+      </div>
+    </Link>
+  )
+}
+
+export function CastTalkGrid({ initialTalks, total, initialPage = 0 }: {
   initialTalks: Talk[]
   total: number
-  pageSize: number
+  pageSize?: number
+  initialPage?: number
 }) {
-  const [talks, setTalks] = useState<Talk[]>(initialTalks)
+  const [featuredTalk] = useState<Talk | null>(initialTalks[0] ?? null)
+  const [listTalks, setListTalks] = useState<Talk[]>(initialTalks.slice(1))
+  const [listPage, setListPage] = useState(initialPage)
   const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState(0)
 
-  const hasMore = talks.length < total
+  // featured を除いたリスト件数
+  const listTotalCount = Math.max(0, total - 1)
+  const listTotalPages = Math.ceil(listTotalCount / LIST_PAGE_SIZE)
 
-  async function loadMore() {
+  async function goToPage(nextPage: number) {
+    if (nextPage < 0 || nextPage >= listTotalPages) return
+    // offset 1 は featured 分をスキップ
+    const offset = 1 + nextPage * LIST_PAGE_SIZE
     setLoading(true)
-    const nextPage = page + 1
-    const res = await fetch(`/api/cast-talk/list?page=${nextPage}`)
-    const json = await res.json()
-    setTalks((prev) => [...prev, ...json.talks])
-    setPage(nextPage)
+    const res = await fetch(`/api/cast-talk/list?offset=${offset}&limit=${LIST_PAGE_SIZE}`)
+    const json = (await res.json()) as { talks: Talk[] }
+    setListTalks(json.talks)
+    setListPage(nextPage)
     setLoading(false)
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
-  if (talks.length === 0) {
+  // initialPage > 0 の場合、サーバーから渡された initialTalks は page 0 のデータなので
+  // マウント時に正しいページのデータを取得する
+  useEffect(() => {
+    if (initialPage > 0) {
+      void goToPage(initialPage)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  if (!featuredTalk && listTotalCount === 0) {
     return (
       <div className="py-20 text-center">
         <p className="text-sm text-[var(--text3)]">まだ公開中の記事がありません</p>
@@ -143,21 +295,51 @@ export function CastTalkGrid({ initialTalks, total, pageSize }: {
   }
 
   return (
-    <div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {talks.map((talk) => <TalkCard key={talk.id} talk={talk} />)}
-      </div>
+    <div className="space-y-10">
+      {/* featured card */}
+      {featuredTalk && listPage === 0 && (
+        <FeaturedTalkCard talk={featuredTalk} />
+      )}
 
-      {hasMore && (
-        <div className="mt-12 flex justify-center">
-          <button
-            type="button"
-            onClick={loadMore}
-            disabled={loading}
-            className="rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-8 py-3 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+      {/* リストセクション */}
+      {listTotalCount > 0 && (
+        <div>
+          <div
+            className={[
+              'divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[#e2d5c3] bg-[#fffdf9]',
+              'transition-opacity duration-300',
+              loading ? 'opacity-40' : 'opacity-100',
+            ].join(' ')}
           >
-            {loading ? '読み込み中...' : `もっと見る（残り ${total - talks.length} 件）`}
-          </button>
+            {listTalks.map((talk) => (
+              <TalkListItem key={talk.id} talk={talk} fromPage={listPage} />
+            ))}
+          </div>
+
+          {/* ページネーション */}
+          {listTotalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => goToPage(listPage - 1)}
+                disabled={listPage === 0 || loading}
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              >
+                ← 前へ
+              </button>
+              <span className="min-w-[80px] text-center text-sm text-[#7a6555]">
+                {listPage + 1} / {listTotalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => goToPage(listPage + 1)}
+                disabled={listPage >= listTotalPages - 1 || loading}
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              >
+                次へ →
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

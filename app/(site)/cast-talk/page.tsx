@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントを、キャストの視点でお届けします。',
 }
 
-const PAGE_SIZE = 12
+const PAGE_SIZE = 11
 
 const getInitialTalks = unstable_cache(
   async () => {
@@ -29,7 +29,13 @@ const getInitialTalks = unstable_cache(
   { revalidate: 120 },
 )
 
-export default async function CastTalkPage() {
+export default async function CastTalkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
+  const { page: pageParam } = await searchParams
+  const initialPage = Math.max(0, Number(pageParam ?? '0'))
   const { talks, total } = await getInitialTalks()
 
   return (
@@ -73,7 +79,7 @@ export default async function CastTalkPage() {
         />
 
         <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
-          <CastTalkGrid initialTalks={talks} total={total} pageSize={PAGE_SIZE} />
+          <CastTalkGrid initialTalks={talks} total={total} pageSize={PAGE_SIZE} initialPage={initialPage} />
         </section>
       </main>
 

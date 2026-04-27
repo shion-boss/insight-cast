@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, M_PLUS_1p, Shippori_Mincho } from "next/font/google";
+import { Geist_Mono, M_PLUS_1p } from "next/font/google";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
 import { PageTransitionOverlay } from "@/components/page-transition-overlay";
@@ -21,13 +21,6 @@ const mplus1p = M_PLUS_1p({
   display: "swap",
 });
 
-const shipporiMincho = Shippori_Mincho({
-  variable: "--font-noto-serif-jp",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
     default: 'Insight Cast',
@@ -44,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${mplus1p.variable} ${geistMono.variable} ${shipporiMincho.variable} antialiased`}
+        className={`${mplus1p.variable} ${geistMono.variable} antialiased`}
       >
         <ProjectAnalysisNotifier />
         <ToastViewport />
