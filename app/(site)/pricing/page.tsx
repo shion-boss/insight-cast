@@ -38,11 +38,11 @@ const PLANS = [
     featured: false,
     features: [
       { ok: true, label: '取材：2回まで（単発）' },
+      { ok: true, label: '記事素材作成：3回まで（単発）' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: false, label: '競合調査なし' },
       { ok: true, label: '取材メモを受け取れる' },
-      { ok: true, label: '記事素材を受け取れる' },
       { ok: false, label: '追加キャスト：準備中' },
       { ok: false, label: '優先サポート' },
     ],
@@ -58,11 +58,11 @@ const PLANS = [
     featured: true,
     features: [
       { ok: true, label: '取材回数：月15回まで' },
+      { ok: true, label: '記事素材作成：月60回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: true, label: '競合調査：3社' },
       { ok: true, label: '取材メモを受け取れる' },
-      { ok: true, label: '記事素材を受け取れる' },
       { ok: false, label: '追加キャスト：準備中' },
       { ok: false, label: '優先サポート' },
     ],
@@ -78,11 +78,11 @@ const PLANS = [
     featured: false,
     features: [
       { ok: true, label: '取材回数：月60回まで' },
+      { ok: true, label: '記事素材作成：月240回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：最大3件' },
       { ok: true, label: '競合調査：各取材先3社' },
       { ok: true, label: '取材メモを受け取れる' },
-      { ok: true, label: '記事素材を受け取れる' },
       { ok: false, label: '追加キャスト：準備中' },
       { ok: true, label: '優先サポート' },
     ],
@@ -93,11 +93,11 @@ const PLANS = [
 
 const TABLE_ROWS = [
   { label: '取材回数', free: '2回（単発）', personal: '月15回', business: '月60回' },
+  { label: '記事素材作成', free: '3回（単発）', personal: '月60回', business: '月240回' },
   { label: 'フリーキャスト', free: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', free: '1件', personal: '1件', business: '最大3件' },
   { label: '競合調査', free: 'なし', personal: '3社', business: '各取材先3社' },
   { label: '取材メモを受け取れる', free: 'あり', personal: 'あり', business: 'あり' },
-  { label: '記事素材を受け取れる', free: 'あり', personal: 'あり', business: 'あり' },
   { label: '追加キャスト', free: '準備中', personal: '準備中', business: '準備中' },
   { label: '優先サポート', free: 'なし', personal: 'なし', business: 'あり' },
 ] as const
