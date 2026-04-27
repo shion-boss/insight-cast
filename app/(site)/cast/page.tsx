@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export const metadata: Metadata = {
@@ -71,15 +70,6 @@ async function getLatestTalkByCharacter(characterId: string): Promise<TalkPrevie
 }
 
 export default async function CastPage() {
-  let isLoggedIn = false
-  try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    isLoggedIn = Boolean(user)
-  } catch {
-    // 認証失敗時も表示する
-  }
-
   const talksByChar = Object.fromEntries(
     await Promise.all(freeCasts.map(async (c) => [c.id, await getLatestTalkByCharacter(c.id)]))
   ) as Record<string, TalkPreview>
@@ -297,22 +287,6 @@ export default async function CastPage() {
               })}
             </div>
 
-            {/* CTA */}
-            <div className="mt-14 rounded-[24px] bg-[var(--surface)] border border-[var(--border)] px-8 py-10 text-center">
-              <p className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)] mb-3">
-                まず無料キャストで、話してみませんか
-              </p>
-              <p className="text-sm text-[var(--text2)] mb-7 leading-relaxed">
-                ミント・クラウス・レインの3名は今すぐ無料でお試しいただけます。<br />
-                どのキャストが合うか、実際に話してみてから決めてください。
-              </p>
-              <Link
-                href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {isLoggedIn ? 'ダッシュボードへ →' : '無料で取材を始める →'}
-              </Link>
-            </div>
           </div>
         </section>
       </main>
