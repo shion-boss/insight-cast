@@ -94,6 +94,33 @@ const SERVICES: Service[] = [
     dashboardUrl: 'https://analytics.google.com',
     envKeys: ['NEXT_PUBLIC_GA_ID'],
   },
+  {
+    name: 'Google Search Console',
+    description: '検索パフォーマンス計測・連携',
+    role: '取材先HPの検索流入データ取得（キーワード・表示回数・CTR）',
+    status: 'active',
+    plan: '無料',
+    dashboardUrl: 'https://search.google.com/search-console',
+    envKeys: ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'],
+  },
+  {
+    name: 'OpenAI',
+    description: 'GPT API',
+    role: '記事生成・テキスト処理の補助（Anthropicと併用）',
+    status: 'active',
+    plan: '従量課金（API）',
+    dashboardUrl: 'https://platform.openai.com',
+    envKeys: ['OPENAI_API_KEY'],
+  },
+  {
+    name: 'お名前.com',
+    description: 'ドメイン管理',
+    role: 'insight-cast.jp ドメインの登録・DNS管理・更新',
+    status: 'active',
+    plan: '年額課金',
+    dashboardUrl: 'https://www.onamae.com',
+    envKeys: [],
+  },
 ]
 
 const STATUS_STYLES: Record<ServiceStatus, { badge: string; label: string }> = {
