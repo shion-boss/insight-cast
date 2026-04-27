@@ -1,5 +1,8 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
+export const metadata: Metadata = { robots: { index: false, follow: false } }
+
 import { redirect } from 'next/navigation'
 
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'

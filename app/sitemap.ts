@@ -3,7 +3,7 @@ import { POSTS } from '@/lib/blog-posts'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast-nu.vercel.app'
+const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast-nu.vercel.app').replace(/\/$/, '')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [

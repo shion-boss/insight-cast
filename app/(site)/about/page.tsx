@@ -24,6 +24,20 @@ const aboutJsonLd = {
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
   description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。会話から記事へ。あなたの当たり前を言葉にするために存在するサービスです。',
+  alternates: { canonical: `${APP_URL}/about` },
+  openGraph: {
+    title: 'About | Insight Cast',
+    description: 'Insight Cast がインタビューを起点にする理由、AIキャストの役割を紹介します。',
+    url: `${APP_URL}/about`,
+    siteName: 'Insight Cast',
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'About | Insight Cast',
+    description: 'Insight Cast がインタビューを起点にする理由、AIキャストの役割を紹介します。',
+  },
 }
 
 const PRINCIPLES = [

@@ -76,6 +76,22 @@ const orgJsonLd = {
   inLanguage: 'ja',
 }
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Insight Cast',
+  url: APP_URL,
+  inLanguage: 'ja',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: `${APP_URL}/blog?q={search_term_string}`,
+    },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -87,6 +103,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body
