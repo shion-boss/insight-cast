@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
-import { getStripe } from '@/lib/stripe'
+import { getStripe, getPriceIdToPlan } from '@/lib/stripe'
 
 const CheckoutBodySchema = z.object({ priceId: z.string().min(1) })
 
@@ -33,10 +33,7 @@ export async function POST(request: Request) {
 
   // 同じプランまたは上位プランへの再購入を防ぐ
   const PLAN_RANK: Record<string, number> = { free: 0, personal: 1, business: 2 }
-  const priceIdToPlan: Record<string, string> = {
-    [process.env.STRIPE_PRICE_ID_PERSONAL ?? '']: 'personal',
-    [process.env.STRIPE_PRICE_ID_BUSINESS ?? '']: 'business',
-  }
+  const priceIdToPlan = getPriceIdToPlan()
   const requestedPlan = priceIdToPlan[priceId]
 
   // ホワイトリスト外の priceId は拒否（環境変数に登録されていない任意の price_id 送り込みを防ぐ）
