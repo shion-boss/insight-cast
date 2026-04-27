@@ -75,7 +75,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                   className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)] sm:h-10 sm:w-10"
                   style={{ background: `${themeColor}18` }}
                 >
-                  <Image src={char.icon48} alt={char.name} fill className="object-cover" />
+                  <Image src={char.icon48} alt={char.name} fill sizes="40px" className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
