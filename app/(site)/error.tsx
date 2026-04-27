@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 export default function SiteError({
@@ -34,13 +34,13 @@ export default function SiteError({
           <button
             type="button"
             onClick={reset}
-            className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className={getButtonClass('primary', 'px-6 py-3 text-sm')}
           >
             もう一度試す
           </button>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
           >
             トップへ戻る
           </Link>
