@@ -92,7 +92,7 @@ function SignupForm() {
       <div className="grid min-h-screen lg:grid-cols-2">
         <LeftPanel mint={mint} claus={claus} rain={rain} />
 
-        <div className="bg-white flex items-center justify-center p-[60px]">
+        <div className="bg-white flex items-center justify-center px-6 py-12 sm:px-10 lg:p-[60px]">
           <div className="max-w-[420px] w-full">
             <div className="flex items-start gap-4 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--accent-l)] px-6 py-5 mb-8">
               {mint?.icon48 ? (
@@ -144,7 +144,7 @@ function SignupForm() {
             すでにアカウントをお持ちの方は{' '}
             <Link
               href={`/auth/login${nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''}`}
-              className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
+              className="whitespace-nowrap text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
             >
               ログイン
             </Link>

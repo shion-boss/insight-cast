@@ -186,7 +186,11 @@ export default async function DashboardPage() {
 
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
-  const isInterviewLimitReached = thisMonthInterviews >= planLimits.monthlyInterviewLimit
+  const totalInterviewCount = interviews.length
+  const isFreePlan = planLimits.lifetimeInterviewLimit !== null
+  const isInterviewLimitReached = isFreePlan
+    ? totalInterviewCount >= (planLimits.lifetimeInterviewLimit ?? Infinity)
+    : thisMonthInterviews >= planLimits.monthlyInterviewLimit
 
   const deltaLabel = (n: number) =>
     n === 0 ? '先月と同じ' : n > 0 ? `先月比 +${n}` : `先月比 ${n}`
@@ -227,14 +231,21 @@ export default async function DashboardPage() {
             </Link>
           )}
           <div className="text-sm text-[var(--text2)]">
-            今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong>
+            {isFreePlan
+              ? <>生涯取材: <strong>{totalInterviewCount} / {planLimits.lifetimeInterviewLimit} 回</strong></>
+              : <>今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong></>
+            }
             {totalArticles > 0 && <> · 累計記事素材 <strong>{totalArticles} 件</strong></>}
           </div>
-          {planLimits.monthlyInterviewLimit < 9999 && (
+          {(isFreePlan ? planLimits.lifetimeInterviewLimit !== null : planLimits.monthlyInterviewLimit < 9999) && (
             <div className="mt-2 w-48 h-1.5 rounded-full bg-[rgba(0,0,0,0.08)] overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all ${isInterviewLimitReached ? 'bg-[var(--err)]' : 'bg-[var(--accent)]'}`}
-                style={{ width: `${Math.min((thisMonthInterviews / planLimits.monthlyInterviewLimit) * 100, 100)}%` }}
+                style={{
+                  width: isFreePlan
+                    ? `${Math.min((totalInterviewCount / (planLimits.lifetimeInterviewLimit ?? 1)) * 100, 100)}%`
+                    : `${Math.min((thisMonthInterviews / planLimits.monthlyInterviewLimit) * 100, 100)}%`,
+                }}
               />
             </div>
           )}
@@ -441,11 +452,11 @@ export default async function DashboardPage() {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
+                          <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                             {project.name || project.hp_url}
                           </div>
                           <div className="text-[12px] text-[var(--text3)]">
-                            {char?.name ?? 'インタビュアー'} · {formatDate(interview.created_at)}
+                            {char?.name ?? 'インタビュアー'} · {formatShortDateTime(interview.created_at)}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

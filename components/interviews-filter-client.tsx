@@ -93,7 +93,7 @@ export function InterviewsFilterClient({
 
           <div>
             <label htmlFor="filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-              担当
+              キャスト
             </label>
             <select
               id="filter-interviewer"

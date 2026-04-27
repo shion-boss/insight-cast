@@ -143,7 +143,7 @@ export function ArticleListTable({
           {showInterviewerColumn && (
             <div>
               <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-                取材メモ
+                インタビュアー
               </label>
               <select
                 id="article-filter-interviewer"
@@ -235,7 +235,7 @@ export function ArticleListTable({
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
                   {showInterviewerColumn && (
                     <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">
-                      取材メモ
+                      インタビュアー
                     </th>
                   )}
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>
