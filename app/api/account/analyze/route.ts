@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server'
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 import { discoverSiteBlogPosts } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
-import { logApiUsage } from '@/lib/api-usage'
+import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
+import { isFreePlanLocked } from '@/lib/plans'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -104,6 +105,12 @@ export async function POST() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
+  if (!(await checkRateLimit(user.id, '/api/account/analyze')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
+  }
 
   const { data: profile } = await supabase
     .from('profiles')
