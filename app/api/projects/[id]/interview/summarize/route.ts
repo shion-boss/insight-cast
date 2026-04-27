@@ -34,12 +34,18 @@ export async function POST(
 
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, status, summary, themes, project_id, focus_theme_mode, focus_theme, interviews_project:projects(name, hp_url)')
+    .select('id, interviewer_type, status, summary, themes, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .single()
 
   if (!interview) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  const joinedProject = interview.interviews_project as { user_id: string; name: string | null; hp_url: string | null } | { user_id: string; name: string | null; hp_url: string | null }[] | null
+  const projectInfo = Array.isArray(joinedProject) ? (joinedProject[0] ?? null) : joinedProject
+  if (projectInfo?.user_id !== user.id) {
+    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+  }
 
   if (interview.summary) {
     return NextResponse.json({ summary: interview.summary, themes: interview.themes })
@@ -57,8 +63,6 @@ export async function POST(
 
   const char = getCharacter(interview.interviewer_type)
   const charName = char?.name ?? 'インタビュアー'
-  const projectData = interview.interviews_project as { name: string | null; hp_url: string | null } | { name: string | null; hp_url: string | null }[] | null
-  const projectInfo = Array.isArray(projectData) ? (projectData[0] ?? null) : projectData
   const conversation = formatConversationForPrompt(
     messages.map((message) => ({
       role: message.role === 'user' ? 'user' : 'interviewer',

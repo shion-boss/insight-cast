@@ -1,6 +1,7 @@
 'use server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getIsAdmin } from '@/lib/actions/auth'
 
 export type PostFormData = {
   slug: string
@@ -38,6 +39,8 @@ function validatePost(data: PostFormData): string | null {
 }
 
 export async function createPost(data: PostFormData): Promise<CreateResult> {
+  if (!(await getIsAdmin())) return { error: '権限がありません' }
+
   const validationError = validatePost(data)
   if (validationError) return { error: validationError }
 
@@ -73,6 +76,7 @@ export async function createPost(data: PostFormData): Promise<CreateResult> {
 }
 
 export async function updatePost(id: string, data: Partial<PostFormData>): Promise<MutateResult> {
+  if (!(await getIsAdmin())) return { error: '権限がありません' }
   if (!id) return { error: 'IDが不正です' }
 
   const supabase = createAdminClient()
@@ -101,6 +105,7 @@ export async function updatePost(id: string, data: Partial<PostFormData>): Promi
 }
 
 export async function togglePublished(id: string, published: boolean): Promise<MutateResult> {
+  if (!(await getIsAdmin())) return { error: '権限がありません' }
   if (!id) return { error: 'IDが不正です' }
 
   const supabase = createAdminClient()
@@ -114,6 +119,7 @@ export async function togglePublished(id: string, published: boolean): Promise<M
 }
 
 export async function deletePost(id: string): Promise<MutateResult> {
+  if (!(await getIsAdmin())) return { error: '権限がありません' }
   if (!id) return { error: 'IDが不正です' }
 
   const supabase = createAdminClient()
