@@ -241,7 +241,7 @@ export default function SummaryPage() {
   if (loading) {
     return (
       <AppShell title="取材メモ" active="interviews" accountLabel={accountLabel} isAdmin={isAdmin} headerRight={headerRight}>
-        <div className="max-w-lg space-y-3 py-2">
+        <div aria-busy="true" aria-label="読み込み中" className="max-w-lg space-y-3 py-2">
           {[100, 80, 60].map((w) => (
             <div key={w} className="h-14 animate-pulse rounded-[var(--r-lg)] bg-[var(--bg2)]" style={{ maxWidth: `${w}%` }} />
           ))}

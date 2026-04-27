@@ -39,7 +39,7 @@ export function PlanCardCTA({
 
   if (isLoggedIn === null) {
     return (
-      <div className="w-full h-[46px] rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
+      <div aria-busy="true" aria-label="読み込み中" className="w-full h-[46px] rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
     )
   }
 
@@ -115,7 +115,7 @@ export function FreeBannerCTA() {
   }, [])
 
   if (isLoggedIn === null) {
-    return <div className="h-[46px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
+    return <div aria-busy="true" aria-label="読み込み中" className="h-[46px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
   }
 
   return isLoggedIn ? (
