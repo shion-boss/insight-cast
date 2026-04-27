@@ -8,11 +8,13 @@ export async function completeOnboarding(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const name = ((formData.get('name') as string) ?? '').trim().slice(0, 100) || null
+
   const { error } = await supabase
     .from('profiles')
     .upsert({
       id:        user.id,
-      name:      formData.get('name') as string,
+      name,
       onboarded: true,
     })
 

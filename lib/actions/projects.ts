@@ -42,9 +42,9 @@ export async function createProject(formData: FormData) {
   if (!user) redirect('/')
 
   const hp_url = normalizeUrl(formData.get('url') as string)
-  const name   = (formData.get('name') as string)?.trim() || null
-  const industryMemo = (formData.get('industry_memo') as string)?.trim() || null
-  const location = (formData.get('location') as string)?.trim() || null
+  const name   = (formData.get('name') as string)?.trim().slice(0, 200) || null
+  const industryMemo = (formData.get('industry_memo') as string)?.trim().slice(0, 500) || null
+  const location = (formData.get('location') as string)?.trim().slice(0, 200) || null
   const rawCompetitorUrls = formData
     .getAll('competitor_urls')
     .map((value) => String(value))
@@ -141,8 +141,8 @@ export async function saveCompetitors(
     return { error: 'competitor_self' }
   }
 
-  const industryMemo = input.industryMemo?.trim() || null
-  const location = input.location?.trim() || null
+  const industryMemo = input.industryMemo?.trim().slice(0, 500) || null
+  const location = input.location?.trim().slice(0, 200) || null
 
   const { error: deleteCompetitorError } = await supabase
     .from('competitors')

@@ -25,6 +25,9 @@ export async function POST(req: NextRequest) {
   if (!normalizedUrl || !normalizedIndustry) {
     return Response.json({ suggestions: [] }, { status: 400 })
   }
+  if (normalizedIndustry.length > 200 || normalizedLocation.length > 200) {
+    return Response.json({ error: 'input too long' }, { status: 400 })
+  }
 
   const inputSignature = buildCompetitorSuggestionSignature({
     url: normalizedUrl,
