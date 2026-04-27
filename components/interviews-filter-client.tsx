@@ -217,17 +217,17 @@ function FilterContent({
               <div className="hidden sm:flex flex-col items-end gap-2">
                 <p className="text-xs text-[var(--text3)]">記事素材 {item.articleCount}本</p>
                 {item.isDone ? (
-                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る →</span>
+                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                 ) : (
-                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する →</span>
+                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
                 )}
               </div>
               <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
                 <p className="text-xs text-[var(--text3)]">記事素材 {item.articleCount}本</p>
                 {item.isDone ? (
-                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る →</span>
+                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                 ) : (
-                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する →</span>
+                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
                 )}
               </div>
             </Link>

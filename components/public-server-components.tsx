@@ -32,7 +32,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                     href="/dashboard"
                     className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
-                    ダッシュボードへ →
+                    ダッシュボードへ <span aria-hidden="true">→</span>
                   </Link>
                 </div>
               </>
@@ -47,7 +47,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                     href="/auth/signup"
                     className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
-                    無料で取材を始める →
+                    無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>
                   <Link
                     href="/cast"

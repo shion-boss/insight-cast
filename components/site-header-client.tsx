@@ -64,7 +64,7 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
                   ログイン
                 </Link>
                 <Link href="/auth/signup" className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
-                  無料で試す →
+                  無料で試す <span aria-hidden="true">→</span>
                 </Link>
               </>
             )}

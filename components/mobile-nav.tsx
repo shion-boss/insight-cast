@@ -149,7 +149,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
                     onClick={() => setOpen(false)}
                     className={getButtonClass('primary', 'w-full justify-center px-5 py-3 text-[15px]')}
                   >
-                    無料で試す →
+                    無料で試す <span aria-hidden="true">→</span>
                   </Link>
                   <Link
                     href="/auth/login"
