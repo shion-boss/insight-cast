@@ -8,6 +8,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
 import { CastTalkContent } from './CastTalkContent'
+import { ShareButtons } from '@/app/(site)/blog/[slug]/ShareButtons'
 import mintXClaus from '@/assets/story/mint-x-claus.png'
 import mintXRain from '@/assets/story/mint-x-rain.jpg'
 import clausXRain from '@/assets/story/claus-x-rain.jpg'
@@ -103,6 +104,25 @@ export default async function CastTalkDetailPage({
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
   const storyImage = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
 
+  const talkUrl = `${APP_URL}/cast-talk/${slug}`
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: talk.title,
+    description: talk.summary ?? undefined,
+    datePublished: talk.published_at ?? undefined,
+    url: talkUrl,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Insight Cast',
+      url: APP_URL,
+    },
+    ...(interviewer && {
+      author: { '@type': 'Person', name: interviewer.name },
+    }),
+  }
+
   const raw = Array.isArray(talk.messages) ? talk.messages : []
   const messages: Message[] = raw.filter(
     (m): m is Message =>
@@ -114,7 +134,10 @@ export default async function CastTalkDetailPage({
 
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
 
       <main className="relative z-10">
         {/* ヒーロー */}
@@ -182,6 +205,11 @@ export default async function CastTalkDetailPage({
         {/* 会話コンテンツ */}
         <section className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
           <CastTalkContent messages={messages} characterMap={characterMap} interviewerId={talk.interviewer_id} />
+        </section>
+
+        {/* シェアボタン */}
+        <section className="mx-auto max-w-3xl px-6 pb-4 sm:px-8">
+          <ShareButtons title={talk.title} url={talkUrl} />
         </section>
 
         {/* CTA */}
