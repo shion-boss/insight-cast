@@ -66,6 +66,13 @@ export default function InterviewPage() {
     bottomRef.current?.scrollIntoView({ behavior: streamingMessage ? 'instant' : 'smooth' })
   }, [messages, loading, streamingMessage])
 
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, 200)}px`
+  }, [input])
+
   const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean }) => {
     setSubmitError(null)
     setLoading(true)
@@ -539,9 +546,8 @@ export default function InterviewPage() {
               }}
               placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事素材にまとめられます。' : 'ここに話しかけてください'}
               disabled={loading || hasReachedTurnLimit}
-              rows={3}
               autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[80px]"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
             />
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <DevAiLabel>AI送信</DevAiLabel>
