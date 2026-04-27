@@ -9,10 +9,15 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 )
 
+// パスワードは環境変数 TEST_ACCOUNT_PASSWORD から読み込む
+// 設定例: TEST_ACCOUNT_PASSWORD=MyTestPass1234! npx tsx scripts/create-test-accounts.ts
+const DEFAULT_TEST_PASSWORD = 'TestInsightCast1234!'
+const testPassword = process.env.TEST_ACCOUNT_PASSWORD ?? DEFAULT_TEST_PASSWORD
+
 const TEST_ACCOUNTS = [
-  { email: 'test-free@insightcast.dev',     password: 'TestFree1234!',     plan: 'free',     name: 'テスト（無料）' },
-  { email: 'test-personal@insightcast.dev', password: 'TestPersonal1234!', plan: 'personal', name: 'テスト（個人向け）' },
-  { email: 'test-business@insightcast.dev', password: 'TestBusiness1234!', plan: 'business', name: 'テスト（法人向け）' },
+  { email: 'test-free@insightcast.dev',     password: testPassword, plan: 'free',     name: 'テスト（無料）' },
+  { email: 'test-personal@insightcast.dev', password: testPassword, plan: 'personal', name: 'テスト（個人向け）' },
+  { email: 'test-business@insightcast.dev', password: testPassword, plan: 'business', name: 'テスト（法人向け）' },
 ]
 
 async function main() {
