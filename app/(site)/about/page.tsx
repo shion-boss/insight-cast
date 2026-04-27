@@ -6,6 +6,21 @@ import { CharacterAvatar } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
 import { AboutBottomCTA } from './AboutCTA'
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp'
+
+const aboutJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  url: `${APP_URL}/about`,
+  name: 'About | Insight Cast',
+  description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Insight Cast',
+    url: APP_URL,
+  },
+}
+
 export const metadata: Metadata = {
   title: 'About | Insight Cast',
   description: 'Insight Cast がインタビューを起点にする理由、大切にしていること、AIキャストの役割を紹介します。会話から記事へ。あなたの当たり前を言葉にするために存在するサービスです。',
@@ -30,7 +45,10 @@ export default function AboutPage() {
 
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero

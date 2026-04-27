@@ -115,10 +115,26 @@ const articles = [
   },
 ]
 
+const philosophyJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'AI時代に、なぜ一次情報なのか。',
+  description: 'AI検索時代に一次情報が重要な理由、インタビューが効く理由、ホームページ更新が止まる理由。Insight Cast の思想を伝えます。',
+  url: `${APP_URL}/philosophy`,
+  publisher: {
+    '@type': 'Organization',
+    name: 'Insight Cast',
+    url: APP_URL,
+  },
+}
+
 export default function PhilosophyPage() {
   return (
     <>
-
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(philosophyJsonLd) }}
+      />
 
       <main className="relative z-10">
         <PublicHero
