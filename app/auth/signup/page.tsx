@@ -14,7 +14,8 @@ import { getCharacter } from '@/lib/characters'
 function SignupForm() {
   const searchParams = useSearchParams()
   const plan = searchParams.get('plan')
-  const nextParam = searchParams.get('next')
+  const rawNext = searchParams.get('next')
+  const nextParam = rawNext && /^\/(?!\/)/.test(rawNext) ? rawNext : null
   // next パラメータ内に plan が埋め込まれているケース（ログイン→サインアップ経由）も検出
   const effectivePlan = plan ?? (() => {
     if (!nextParam) return null

@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) return NextResponse.json({ error: 'auth_error' }, { status: 500 })
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
   const { data: projects } = await supabase

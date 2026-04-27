@@ -85,7 +85,9 @@ export async function middleware(request: NextRequest) {
     }
 
     if (!user) {
-      return NextResponse.redirect(new URL('/auth/login', request.url))
+      const loginUrl = new URL('/auth/login', request.url)
+      loginUrl.searchParams.set('next', pathname + request.nextUrl.search)
+      return NextResponse.redirect(loginUrl)
     }
     const adminEmails = (process.env.ADMIN_EMAILS ?? '')
       .split(',')
