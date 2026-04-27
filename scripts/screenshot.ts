@@ -122,29 +122,19 @@ async function capturePages(
   context: BrowserContext,
   pages: string[],
   outputDir: string,
-  label: string,
+  viewport: ViewportKey,
 ): Promise<{ success: number; failure: number }> {
   let success = 0
   let failure = 0
 
   for (const pagePath of pages) {
-    for (const viewport of Object.keys(VIEWPORTS) as ViewportKey[]) {
-      // ビューポートをページごとに設定
-      await context.setDefaultTimeout(30_000)
-
-      const page = await context.newPage()
-      await page.setViewportSize(VIEWPORTS[viewport])
-      await page.close()
-
-      const result = await screenshotPage(context, pagePath, outputDir, viewport)
-
-      if (result.success) {
-        success++
-        console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
-      } else {
-        failure++
-        console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
-      }
+    const result = await screenshotPage(context, pagePath, outputDir, viewport)
+    if (result.success) {
+      success++
+      console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
+    } else {
+      failure++
+      console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
     }
   }
 
@@ -183,23 +173,12 @@ async function main() {
   // --- 公開・認証ページ ---
   console.log('\n公開ページ / 認証ページを撮影します...')
 
+  const allPublic = [...PUBLIC_PAGES, ...AUTH_PAGES]
   for (const viewport of Object.keys(VIEWPORTS) as ViewportKey[]) {
-    const context = await browser.newContext({
-      viewport: VIEWPORTS[viewport],
-    })
-
-    const allPublic = [...PUBLIC_PAGES, ...AUTH_PAGES]
-    for (const pagePath of allPublic) {
-      const result = await screenshotPage(context, pagePath, outputDir, viewport)
-      if (result.success) {
-        totalSuccess++
-        console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
-      } else {
-        totalFailure++
-        console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
-      }
-    }
-
+    const context = await browser.newContext({ viewport: VIEWPORTS[viewport] })
+    const result = await capturePages(context, allPublic, outputDir, viewport)
+    totalSuccess += result.success
+    totalFailure += result.failure
     await context.close()
   }
 
@@ -214,41 +193,24 @@ async function main() {
     console.log('\nツール側ページを撮影します...')
 
     for (const viewport of Object.keys(VIEWPORTS) as ViewportKey[]) {
-      const context = await browser.newContext({
-        viewport: VIEWPORTS[viewport],
-      })
+      const context = await browser.newContext({ viewport: VIEWPORTS[viewport] })
 
       const loggedIn = await login(context, email, password)
       if (!loggedIn) {
         console.warn(`  [${viewport}] ログインに失敗したためツール側ページをスキップします。`)
-        totalFailure += TOOL_PAGES.length
+        totalFailure += TOOL_PAGES.length + ADMIN_PAGES.length
         await context.close()
         continue
       }
 
-      for (const pagePath of TOOL_PAGES) {
-        const result = await screenshotPage(context, pagePath, outputDir, viewport)
-        if (result.success) {
-          totalSuccess++
-          console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
-        } else {
-          totalFailure++
-          console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
-        }
-      }
+      const toolResult = await capturePages(context, TOOL_PAGES, outputDir, viewport)
+      totalSuccess += toolResult.success
+      totalFailure += toolResult.failure
 
-      // --- admin ページ ---
       console.log(`\n管理画面を撮影します... [${viewport}]`)
-      for (const pagePath of ADMIN_PAGES) {
-        const result = await screenshotPage(context, pagePath, outputDir, viewport)
-        if (result.success) {
-          totalSuccess++
-          console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
-        } else {
-          totalFailure++
-          console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
-        }
-      }
+      const adminResult = await capturePages(context, ADMIN_PAGES, outputDir, viewport)
+      totalSuccess += adminResult.success
+      totalFailure += adminResult.failure
 
       await context.close()
     }
