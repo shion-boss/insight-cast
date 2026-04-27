@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     default: 'Insight Cast',
     template: '%s | Insight Cast',
   },
-  description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。更新が止まったHPを、一次情報で少しずつ強くします。',
+  description: '動物モチーフのAIキャストが取材し、ホームページにまだ書けていない事業の価値を引き出すサービスです。更新が止まったHPを一次情報で少しずつ強くします。中小事業者向けのHP継続強化サービスです。',
   metadataBase: new URL(APP_URL),
   alternates: {
     canonical: '/',

@@ -46,6 +46,7 @@ export default async function SettingsPage() {
   const planKey: PlanKey =
     subscription?.plan === 'business' ? 'business'
     : subscription?.plan === 'personal' ? 'personal'
+    : subscription?.plan === 'lightning' ? 'lightning'
     : 'free'
 
   const projectIds = (userProjects ?? []).map((p) => p.id)
