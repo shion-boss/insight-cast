@@ -32,7 +32,7 @@ import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
 import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
 import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
-import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, type PostCategory, POSTS } from '@/lib/blog-posts'
 import { LpFaq } from './LpFaq'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
@@ -142,7 +142,7 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
 export default async function LandingPage() {
   const supabaseAdmin = createAdminClient()
 
-  const [authResult, latestPostsAll, talksResult] = await Promise.allSettled([
+  const [authResult, latestPostsAll, talksResult, interviewCountResult, blogCountResult] = await Promise.allSettled([
     (async () => {
       const supabase = await createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -155,11 +155,33 @@ export default async function LandingPage() {
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(3),
+    supabaseAdmin
+      .from('interviews')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'completed'),
+    supabaseAdmin
+      .from('blog_posts')
+      .select('*', { count: 'exact', head: true })
+      .eq('published', true),
   ])
 
   const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
   const latestPosts = (latestPostsAll.status === 'fulfilled' ? latestPostsAll.value : []).slice(0, 3)
   const latestTalks = talksResult.status === 'fulfilled' ? talksResult.value.data : []
+
+  // 取材回数: completedのinterviews全件
+  const interviewCount =
+    interviewCountResult.status === 'fulfilled'
+      ? (interviewCountResult.value.count ?? 0)
+      : 0
+
+  // ブログ本数: DB公開記事数と静的記事数の大きい方
+  const dbBlogCount =
+    blogCountResult.status === 'fulfilled'
+      ? (blogCountResult.value.count ?? 0)
+      : 0
+  const staticBlogCount = POSTS.length
+  const blogCount = Math.max(dbBlogCount, staticBlogCount)
 
   const priceIds = {
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
@@ -703,7 +725,11 @@ export default async function LandingPage() {
               このサービスは、私たち自身が「HPを更新しなきゃ、でも何を書けばいいか分からない」という状態を経験したことから生まれました。
             </p>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-4 max-w-[560px] mx-auto">
-              Insight Cast は今、自社のホームページ更新をこのツールで進めています。このブログの記事も、実際に取材を重ねながら作っています。売り込みではなく、私たちが先に使って確かめたことを、そのままお届けしています。
+              Insight Cast は今、自社のホームページ更新をこのツールで進めています。
+              {interviewCount > 0 && blogCount > 0
+                ? `代表者への取材を${interviewCount}回重ね、そこから生まれたブログ記事がすでに${blogCount}本あります。`
+                : '代表者への取材を重ね、そこから生まれたブログ記事を公開しています。'}
+              売り込みではなく、私たちが先に使って確かめたことを、そのままお届けしています。
             </p>
             <div className="mt-8">
               <Link
