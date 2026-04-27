@@ -437,7 +437,7 @@ export function ArticleExportPanel({
               disabled={saveState === 'saving'}
               className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? '✓ 保存済み' : saveState === 'error' ? '保存できませんでした' : '保存する'}
+              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存する'}
             </button>
           )}
           <button
@@ -445,7 +445,7 @@ export function ArticleExportPanel({
             onClick={handleCopy}
             className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            {copied ? '✓ コピーしました' : 'コピー'}
+            {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
           </button>
           <button
             type="button"

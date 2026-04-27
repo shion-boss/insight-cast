@@ -887,7 +887,7 @@ export default async function LandingPage() {
                       )}
                       <div className="mt-3 flex items-center justify-between">
                         <span className="text-[11px] text-[var(--text3)]">{dateStr}</span>
-                        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む →</span>
+                        <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む <span aria-hidden="true">→</span></span>
                       </div>
                     </Link>
                   )

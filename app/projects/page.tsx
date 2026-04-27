@@ -45,7 +45,7 @@ function AddProjectCard({ isLocked }: { isLocked: boolean }) {
             </svg>
           </div>
           <div className="text-[14px] font-semibold text-[var(--text3)]">新しい取材先を追加する</div>
-          <div className="text-[12px] text-[var(--accent)] font-semibold">プランをアップグレードする →</div>
+          <div className="text-[12px] text-[var(--accent)] font-semibold">プランをアップグレードする <span aria-hidden="true">→</span></div>
         </>
       ) : (
         <>
@@ -198,7 +198,7 @@ export default async function ProjectsPage() {
               href="/pricing?reason=project_over_limit"
               className="mt-2 inline-block text-sm font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
             >
-              プランを見る →
+              プランを見る <span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default async function ProjectsPage() {
                     href={`/projects/${project.id}/interviewer`}
                     className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
                   >
-                    取材する →
+                    取材する <span aria-hidden="true">→</span>
                   </Link>
                   )}
                   <Link

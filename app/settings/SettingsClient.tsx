@@ -646,7 +646,7 @@ export function SettingsClient({
                         href={`/api/stripe/checkout-redirect?plan=${nextPlan.key}`}
                         className={getButtonClass('primary', 'px-4 py-2 text-sm')}
                       >
-                        {nextPlan.label}にアップグレード →
+                        {nextPlan.label}にアップグレード <span aria-hidden="true">→</span>
                       </Link>
                     </div>
                   </>
