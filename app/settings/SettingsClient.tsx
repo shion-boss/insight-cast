@@ -363,7 +363,10 @@ export function SettingsClient({
   const passwordInputsDisabled = passwordSaving
   const accountInitial = (name.trim() || email || '設').charAt(0).toUpperCase()
   const plan = getPlanLimits(planKey)
-  const nextPlan = planKey === 'free' ? getPlanLimits('personal') : planKey === 'personal' ? getPlanLimits('business') : null
+  const nextPlan = planKey === 'free' ? getPlanLimits('lightning')
+    : planKey === 'lightning' ? getPlanLimits('personal')
+    : planKey === 'personal' ? getPlanLimits('business')
+    : null
 
   return (
     <AppShell title="設定" active="settings" accountLabel={name.trim() || email || '設定'} isAdmin={isAdmin}>

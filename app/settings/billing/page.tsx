@@ -51,6 +51,7 @@ export default async function BillingPage({
   const planLabel = PLAN_LABELS[sub?.plan ?? 'free'] ?? 'お試し（無料）'
   const statusLabel = STATUS_LABELS[sub?.status ?? 'active'] ?? '有効'
   const isPaid = sub?.plan === 'lightning' || sub?.plan === 'personal' || sub?.plan === 'business'
+  const isLightning = sub?.plan === 'lightning'
   const hasCustomer = Boolean(sub?.stripe_customer_id)
 
   const periodEnd = sub?.current_period_end
@@ -133,6 +134,19 @@ export default async function BillingPage({
                   className={getButtonClass('primary', 'mt-3 px-4 py-2 text-sm')}
                 >
                   料金プランを見る
+                </Link>
+              </div>
+            )}
+            {isLightning && (
+              <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[var(--text2)]">
+                <p className="text-sm leading-[1.75]">
+                  個人向けプランにアップグレードすると、月15回の取材と競合調査（3社）が使えます。
+                </p>
+                <Link
+                  href="/settings?section=ご利用プラン"
+                  className={getButtonClass('primary', 'mt-3 px-4 py-2 text-sm')}
+                >
+                  アップグレードを確認する
                 </Link>
               </div>
             )}

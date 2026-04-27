@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getStripe } from '@/lib/stripe'
 
+const PLAN_RANK: Record<string, number> = { free: 0, lightning: 1, personal: 2, business: 3 }
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const plan = searchParams.get('plan')
@@ -31,7 +33,7 @@ export async function GET(request: NextRequest) {
 
   const { data: sub } = await supabase
     .from('subscriptions')
-    .select('stripe_customer_id, stripe_subscription_id, status')
+    .select('stripe_customer_id, stripe_subscription_id, status, plan')
     .eq('user_id', user.id)
     .single()
 
@@ -40,6 +42,14 @@ export async function GET(request: NextRequest) {
   // アクティブなサブスクがある場合はプラン変更（新規作成すると二重請求になる）
   const isActive = sub?.status === 'active' || sub?.status === 'trialing'
   if (sub?.stripe_subscription_id && isActive) {
+    // ダウングレード・同一プランへの変更を防ぐ
+    const currentPlan = (sub?.plan as string | undefined) ?? 'free'
+    const requestedRank = PLAN_RANK[plan ?? ''] ?? -1
+    const currentRank = PLAN_RANK[currentPlan] ?? 0
+    if (requestedRank <= currentRank) {
+      return NextResponse.redirect(`${origin}/pricing`)
+    }
+
     try {
       const existing = await stripe.subscriptions.retrieve(sub.stripe_subscription_id)
       const itemId = existing.items.data[0]?.id
