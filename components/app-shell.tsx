@@ -98,6 +98,12 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--r-sm)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        メインコンテンツへ
+      </a>
       {/* PC サイドバー */}
       <aside aria-label="サイドバーナビゲーション" className="hidden bg-[var(--surface)] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[236px] lg:flex-col lg:border-r lg:border-[var(--border)]">
         <div className="border-b border-[var(--border)] px-5 py-4">
@@ -172,7 +178,7 @@ export function AppShell({
           </div>
         </header>
 
-        <main className={cx('mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8', contentClassName)}>
+        <main id="main-content" className={cx('mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8', contentClassName)}>
           {children}
         </main>
       </div>
