@@ -103,7 +103,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                     </p>
                   )}
                 </div>
-                <span className="flex-shrink-0 text-[12px] font-bold text-[var(--text3)] transition-colors group-hover:text-[var(--accent)]">→</span>
+                <span aria-hidden="true" className="flex-shrink-0 text-[12px] font-bold text-[var(--text3)] transition-colors group-hover:text-[var(--accent)]">→</span>
               </Link>
             )
           })}
