@@ -56,10 +56,7 @@ export function AppShellSkeleton({
           </div>
           <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-6">
             <div className="min-w-0">
-              {title
-                ? <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
-                : <div className="h-6 w-40 animate-pulse rounded bg-[var(--border)]" />
-              }
+              {title && <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>}
             </div>
             <div className="flex items-center gap-3">
               {headerRight && <div className="opacity-50 pointer-events-none">{headerRight}</div>}

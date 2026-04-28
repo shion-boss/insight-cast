@@ -25,10 +25,7 @@ export function AdminShellSkeleton() {
               </div>
             ))}
           </nav>
-          <div className="border-t border-white/8 px-4 py-4 lg:px-3">
-            <div className="h-3 w-32 animate-pulse rounded bg-white/15" />
-            <div className="mt-3 h-10 w-full animate-pulse rounded-[var(--r-sm)] bg-white/8" />
-          </div>
+          <div className="border-t border-white/8 px-4 py-4 lg:px-3" />
         </div>
       </aside>
 
@@ -39,9 +36,8 @@ export function AdminShellSkeleton() {
           <div className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
             <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
           </div>
-          <div className="mx-auto flex h-[64px] max-w-7xl items-center justify-between gap-4 px-6">
+          <div className="mx-auto flex h-[64px] max-w-7xl items-center gap-4 px-6">
             <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
-            <div className="h-3 w-40 rounded bg-[var(--border)]" />
           </div>
         </header>
         <main className="mx-auto min-w-0 max-w-7xl p-8" />
