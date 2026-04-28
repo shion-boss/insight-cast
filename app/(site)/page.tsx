@@ -590,32 +590,39 @@ export default async function LandingPage() {
               Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。<br />
               Googleはコンテンツの質をE-E-A-Tという基準で評価します。
             </p>
-            <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-              <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[150px_1fr_220px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3 gap-4">
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">E-E-A-T</div>
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが重視する基準</div>
-                <div className="hidden sm:block text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">Insight Cast は？</div>
-              </div>
-              {[
-                { badge: 'Experience',        badgeJa: '体験',   criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
-                { badge: 'Expertise',         badgeJa: '専門性', criterion: 'その分野の専門知識・現場知識があるか',   answer: 'あなたの現場知識が素材になる' },
-                { badge: 'Authoritativeness', badgeJa: '権威性', criterion: '信頼される発信者として語られているか',   answer: 'あなた自身の言葉で語られている' },
-                { badge: 'Trustworthiness',   badgeJa: '信頼性', criterion: '情報が正確で誠実か',                     answer: '作り話でなく体験から引き出す' },
-              ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[150px_1fr_220px] border-b last:border-0 border-[var(--border)] gap-0">
-                  <div className="flex flex-col justify-center px-6 py-3 sm:py-4 border-b sm:border-b-0 sm:border-r border-[var(--border)] bg-[var(--bg2)]">
-                    <span className="text-[14px] font-bold text-[var(--text)]">{row.badgeJa}</span>
-                    <span className="text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
-                  </div>
-                  <div className="flex items-center gap-3 px-6 py-3 sm:py-4 text-sm font-medium text-[var(--text)]">
-                    {row.criterion}
-                  </div>
-                  <div className="flex items-center gap-3 px-6 py-3 sm:py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
-                    <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
-                    {row.answer}
-                  </div>
-                </div>
-              ))}
+            <div className="mt-8 rounded-[20px] border border-[var(--border)] overflow-hidden">
+              <table className="w-full border-collapse">
+                <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
+                <thead>
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--accent)] w-[150px]">E-E-A-T</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]">Googleが重視する基準</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--accent)] text-white w-[220px]">Insight Cast は？</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { badge: 'Experience',        badgeJa: '体験',   criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
+                    { badge: 'Expertise',         badgeJa: '専門性', criterion: 'その分野の専門知識・現場知識があるか',   answer: 'あなたの現場知識が素材になる' },
+                    { badge: 'Authoritativeness', badgeJa: '権威性', criterion: '信頼される発信者として語られているか',   answer: 'あなた自身の言葉で語られている' },
+                    { badge: 'Trustworthiness',   badgeJa: '信頼性', criterion: '情報が正確で誠実か',                     answer: '作り話でなく体験から引き出す' },
+                  ].map((row, i) => (
+                    <tr key={i}>
+                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--bg2)] align-middle">
+                        <span className="block text-[14px] font-bold text-[var(--text)]">{row.badgeJa}</span>
+                        <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
+                      </td>
+                      <td className="px-6 py-4 border-b border-[var(--border)] text-sm font-medium text-[var(--text)] align-middle">{row.criterion}</td>
+                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--accent-l)] align-middle">
+                        <span className="flex items-center gap-2.5 text-sm text-[var(--text2)]">
+                          <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
+                          {row.answer}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
             <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6">
               Insight Castは、AIによるあなたへのインタビューの内容に基づいてAIが記事生成をします。ただし、記事の素材はあなた自身の取材回答です。<br />
