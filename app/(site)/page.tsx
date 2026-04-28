@@ -586,6 +586,7 @@ export default async function LandingPage() {
               「AIで記事を作ると、SEOに悪いのでは？」
             </h2>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[640px]">
+              AIが書いた記事は評価が下がる？<br />
               Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。Googleはコンテンツの質をE-E-A-Tという基準で評価します。
             </p>
             <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
