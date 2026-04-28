@@ -76,12 +76,14 @@ export default function ResetPasswordPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     autoComplete="email"
+                    aria-invalid={!!error || undefined}
+                    aria-describedby={error ? 'reset-error' : undefined}
                     className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:border-[var(--accent)] transition-colors"
                   />
                 </div>
 
                 {error && (
-                  <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <div id="reset-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-[var(--err)]">{error}</p>
                   </div>

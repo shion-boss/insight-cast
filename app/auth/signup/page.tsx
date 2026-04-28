@@ -175,6 +175,8 @@ function SignupForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
+                aria-invalid={!!error || undefined}
+                aria-describedby={error ? 'signup-error' : undefined}
               />
             </div>
             <div>
@@ -187,6 +189,8 @@ function SignupForm() {
                 minLength={8}
                 required
                 autoComplete="new-password"
+                aria-invalid={!!error || undefined}
+                aria-describedby={error ? 'signup-error' : undefined}
               />
             </div>
             <div>
@@ -198,11 +202,13 @@ function SignupForm() {
                 onChange={(e) => setConfirm(e.target.value)}
                 required
                 autoComplete="new-password"
+                aria-invalid={!!error || undefined}
+                aria-describedby={error ? 'signup-error' : undefined}
               />
             </div>
 
             {error && (
-              <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+              <div id="signup-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--err)]">{error}</p>
               </div>

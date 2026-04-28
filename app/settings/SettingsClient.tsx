@@ -449,12 +449,14 @@ export function SettingsClient({
                       placeholder="例: 山田 太郎"
                       maxLength={100}
                       disabled={profileInputsDisabled}
+                      aria-invalid={!!profileError || undefined}
+                      aria-describedby={profileError ? 'settings-profile-error' : undefined}
                     />
                   </div>
                 </div>
 
                 {(profileError || avatarError) && (
-                  <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <div id="settings-profile-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-[var(--err)]">{avatarError ?? profileError}</p>
                   </div>
@@ -499,12 +501,14 @@ export function SettingsClient({
                           onChange={(event) => setNewEmail(event.target.value)}
                           placeholder="new@example.com"
                           disabled={emailSaving}
+                          aria-invalid={!!emailError || undefined}
+                          aria-describedby={emailError ? 'settings-email-error' : undefined}
                         />
                       </div>
                     </div>
 
                     {emailError && (
-                      <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                      <div id="settings-email-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                         <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                         <p className="text-sm text-[var(--err)]">{emailError}</p>
                       </div>
@@ -545,10 +549,12 @@ export function SettingsClient({
                     placeholder="削除"
                     className="max-w-xs"
                     disabled={deletePending}
+                    aria-invalid={!!deleteError || undefined}
+                    aria-describedby={deleteError ? 'settings-delete-error' : undefined}
                   />
 
                   {deleteError && (
-                    <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                    <div id="settings-delete-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                       <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                       <p className="text-sm text-[var(--err)]">{deleteError}</p>
                     </div>
@@ -742,6 +748,8 @@ export function SettingsClient({
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder="8文字以上"
                       disabled={passwordInputsDisabled}
+                      aria-invalid={!!passwordError || undefined}
+                      aria-describedby={passwordError ? 'settings-password-error' : undefined}
                     />
                   </div>
                   <div>
@@ -754,6 +762,8 @@ export function SettingsClient({
                       onChange={(event) => setPasswordConfirm(event.target.value)}
                       placeholder="もう一度入力"
                       disabled={passwordInputsDisabled}
+                      aria-invalid={!!passwordError || undefined}
+                      aria-describedby={passwordError ? 'settings-password-error' : undefined}
                     />
                   </div>
                 </div>
@@ -763,7 +773,7 @@ export function SettingsClient({
                 </p>
 
                 {passwordError && (
-                  <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                  <div id="settings-password-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-[var(--err)]">{passwordError}</p>
                   </div>

@@ -114,6 +114,8 @@ function LoginForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
+                aria-invalid={!!(error || oauthError) || undefined}
+                aria-describedby={(error || oauthError) ? 'login-error' : undefined}
               />
             </div>
             <div>
@@ -133,11 +135,13 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 autoComplete="current-password"
+                aria-invalid={!!(error || oauthError) || undefined}
+                aria-describedby={(error || oauthError) ? 'login-error' : undefined}
               />
             </div>
 
             {(error || oauthError) && (
-              <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+              <div id="login-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--err)]">{error ?? oauthError}</p>
               </div>
