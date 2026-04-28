@@ -311,9 +311,9 @@ export default async function LandingPage() {
           <div className="absolute pointer-events-none" style={{ top: '-80px', right: '-80px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, oklch(0.82 0.07 55 / 0.18), transparent 70%)' }} />
           <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6" style={{ color: '#c2722a' }}>Solution</p>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.2] mb-12 relative pl-5" style={{ color: '#1c1410', fontSize: 'clamp(32px,4.5vw,60px)' }}>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.5] mb-12 relative pl-5" style={{ color: '#1c1410', fontSize: 'clamp(32px,4.5vw,60px)' }}>
               <span className="absolute left-0 top-[6px] bottom-[6px] w-[3px] rounded-[2px]" style={{ background: '#c2722a' }} />
-              Insight Castなら、取材に答えるだけ！！
+              Insight Castなら、<br />取材に答えるだけ！！
             </h2>
             <div className="lg:grid lg:grid-cols-[1fr_420px] lg:gap-16 xl:gap-24">
               <ul className="mb-10 lg:mb-0 border-t" style={{ borderColor: '#e2d5c3' }}>
