@@ -225,7 +225,7 @@ export default async function LandingPage() {
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  AI検索時代を生き残るコンテンツは、AIの問いから生まれる。その原石は、あなたの経験の奥底にしまわれている。私たちがその原石を引き出し、磨きます。
+                  AI検索時代、強いコンテンツの素材はあなたの中にある。Insight Castが、それを引き出して記事にします。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
