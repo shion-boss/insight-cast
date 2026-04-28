@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getCharacter } from '@/lib/characters'
 import { CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
@@ -6,6 +7,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Breadcrumb } from '@/components/ui'
 import NewProjectForm from './NewProjectForm'
+
+export const metadata: Metadata = {
+  title: '新しい取材先を登録',
+  robots: { index: false, follow: false },
+}
 
 function getErrorMessage(error: string) {
   if (error === 'name') return '取材先名を入力してから、もう一度登録してください。'

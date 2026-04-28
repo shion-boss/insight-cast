@@ -157,7 +157,7 @@ export default async function CastTalkDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         {/* ヒーロー */}
         <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
           <div className="mx-auto max-w-3xl">

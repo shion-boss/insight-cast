@@ -95,7 +95,7 @@ export function LegalPageTemplate({
   children: ReactNode
 }) {
   return (
-    <main className="relative z-10">
+    <main id="main-content" className="relative z-10">
         <PublicHero
           compact
           eyebrow={title}

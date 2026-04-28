@@ -247,7 +247,7 @@ export default async function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
 
         {/* ① Hero */}
         <section className="pt-[72px] pb-[56px] sm:pt-[88px] sm:pb-[72px] lg:pt-[112px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>

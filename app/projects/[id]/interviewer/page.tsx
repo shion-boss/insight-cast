@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CHARACTERS } from '@/lib/characters'
 import { createInterview } from '@/lib/actions/interviews'
@@ -6,6 +7,11 @@ import {
   getCompetitorInterviewThemeSuggestions,
   getInterviewSuggestedThemes,
 } from '@/lib/interview-focus-theme'
+
+export const metadata: Metadata = {
+  title: 'インタビュアーを選ぶ',
+  robots: { index: false, follow: false },
+}
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'

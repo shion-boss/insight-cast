@@ -92,6 +92,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
               name="name"
               required
               maxLength={200}
+              autoComplete="organization"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="例: 山田工務店"
@@ -104,6 +105,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
               type="text"
               name="url"
               required
+              autoComplete="url"
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value)

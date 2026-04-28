@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ReportClient from './ReportClient'
@@ -5,6 +6,11 @@ import { Breadcrumb, PageHeader } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { buildBlogFreshnessMetrics, getStoredBlogMetrics, getStoredSiteBlogPosts } from '@/lib/site-blog-support'
+
+export const metadata: Metadata = {
+  title: '調査レポート',
+  robots: { index: false, follow: false },
+}
 
 export default async function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

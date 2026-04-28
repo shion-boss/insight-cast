@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { getButtonClass } from '@/components/ui'
 
 type NavLink = { href: string; label: string }
@@ -17,6 +18,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -118,17 +120,21 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
             {/* ナビリンク */}
             <nav className="flex-1 overflow-y-auto px-4 py-4" aria-label="モバイルナビゲーション">
               <ul className="flex flex-col gap-1">
-                {navLinks.map((link) => (
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  return (
                   <li key={link.href + link.label}>
                     <Link
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className="flex items-center rounded-[var(--r-sm)] px-4 py-3 text-[15px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`flex items-center rounded-[var(--r-sm)] px-4 py-3 text-[15px] font-medium transition-colors hover:bg-[var(--bg2)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${isActive ? 'text-[var(--accent)] font-semibold' : 'text-[var(--text2)]'}`}
                     >
                       {link.label}
                     </Link>
                   </li>
-                ))}
+                  )
+                })}
               </ul>
             </nav>
 

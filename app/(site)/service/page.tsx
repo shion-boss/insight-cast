@@ -203,7 +203,7 @@ export default function ServicePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         <PublicHero
           eyebrow="Service"
           title={<>AIが取材して、<br />記事の素材を届けるまで</>}

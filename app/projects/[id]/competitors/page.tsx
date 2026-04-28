@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import CompetitorsForm from './CompetitorsForm'
 import { createClient } from '@/lib/supabase/server'
@@ -5,6 +6,11 @@ import { getCharacter } from '@/lib/characters'
 import { loadProjectCompetitorContext } from '@/lib/project-competitor-context'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
+
+export const metadata: Metadata = {
+  title: '競合サイトの設定',
+  robots: { index: false, follow: false },
+}
 
 export default async function CompetitorsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

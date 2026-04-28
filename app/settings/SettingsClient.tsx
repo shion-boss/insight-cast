@@ -443,6 +443,7 @@ export function SettingsClient({
                     <TextInput
                       id="settings-name"
                       type="text"
+                      autoComplete="name"
                       value={name}
                       onChange={(event) => setName(event.target.value)}
                       placeholder="例: 山田 太郎"
@@ -493,6 +494,7 @@ export function SettingsClient({
                         <TextInput
                           id="settings-new-email"
                           type="email"
+                          autoComplete="email"
                           value={newEmail}
                           onChange={(event) => setNewEmail(event.target.value)}
                           placeholder="new@example.com"

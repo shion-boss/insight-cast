@@ -271,7 +271,7 @@ export function ContentMapPanel({
                   <li key={`${cell.genre}-${cell.effect}`} className="text-[12px] text-[var(--text2)] flex gap-2 items-center">
                     <span className="w-1 h-1 rounded-full flex-shrink-0 bg-[#fb923c]" />
                     <span className="font-medium">{cell.genre}</span>
-                    <span className="text-[var(--text3)]">×</span>
+                    <span className="text-[var(--text3)]" aria-hidden="true">×</span>
                     <span>{cell.effect}</span>
                   </li>
                 ))}

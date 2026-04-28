@@ -45,7 +45,7 @@ export default function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <main className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[72px] sm:pb-24 sm:pt-[108px]">
+      <main id="main-content" className="relative z-10 bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-6 pb-14 pt-[72px] sm:pb-24 sm:pt-[108px]">
         <div className="mx-auto max-w-lg">
           <h1 className="sr-only">お問い合わせ</h1>
           {/* キャラ吹き出し + キャッチ */}

@@ -1,7 +1,13 @@
 export const dynamic = 'force-dynamic'
 
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+
+export const metadata: Metadata = {
+  title: '記事一覧',
+  robots: { index: false, follow: false },
+}
 
 import { ArticleListTable } from '@/components/article-list-table'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'

@@ -117,7 +117,7 @@ export default async function CastTalkPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(castTalkListJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         <PublicHero
           compact
           eyebrow="Cast Talk"

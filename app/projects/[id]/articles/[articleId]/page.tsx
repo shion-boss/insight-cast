@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -5,6 +6,11 @@ import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { Breadcrumb, CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
+
+export const metadata: Metadata = {
+  title: '記事の詳細',
+  robots: { index: false, follow: false },
+}
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'ブログ記事',

@@ -79,7 +79,7 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         <PublicHero
           eyebrow="About"
           title={<>眠っている一次情報を、<br />誰かのために言葉にする</>}

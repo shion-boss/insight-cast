@@ -142,7 +142,7 @@ export default async function BlogDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
+      <main id="main-content" className="relative z-10 mx-auto max-w-6xl px-6 py-12">
         <Breadcrumb items={[
           { label: 'ブログ', href: '/blog' },
           { label: post.title },

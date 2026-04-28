@@ -151,7 +151,7 @@ export default function PhilosophyPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(philosophyJsonLd) }}
       />
 
-      <main className="relative z-10">
+      <main id="main-content" className="relative z-10">
         <PublicHero
           eyebrow="Our Thinking"
           title={<>AI時代に、<br />なぜ一次情報なのか。</>}
