@@ -7,11 +7,11 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-  description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。ホームページを会話で少しずつ育てるサービス。カード不要で無料体験できます。',
+  description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態で届くので、ホームページを会話で少しずつ育てられます。カード不要で無料体験できます。',
   alternates: { canonical: APP_URL },
   openGraph: {
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。',
+    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     url: APP_URL,
     siteName: 'Insight Cast',
     locale: 'ja_JP',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事の素材になります。',
+    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     images: ['/logo.jpg'],
   },
 }
@@ -68,7 +68,7 @@ const PAIN_ITEMS = [
 
 const OUTCOME_ITEMS = [
   { charId: 'mint',  title: '当たり前の中に眠る価値が言葉になる', body: 'AIキャストが丁寧に取材することで、気づかなかった自社の強みが見えてきます。' },
-  { charId: 'claus', title: '記事の素材が手元に届く', body: '取材で引き出した話をもとに、記事の素材が手元に届きます。何を書くか悩む前に、素材が手元にある状態で始められます。' },
+  { charId: 'claus', title: '記事が届く。貼るだけで投稿できる。', body: '取材で引き出した話をもとに、ブログにそのまま貼れる記事が届きます。タイトル・見出し・本文をブロック単位でコピーして、貼るだけで完成します。' },
   { charId: 'rain',  title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ねることで、あなただけの話がホームページに増えていきます。' },
 ] as const
 
@@ -137,7 +137,7 @@ const PLANS = [
 const FAQS = [
   { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を2回（単発）ご利用いただけます。取材メモと記事を受け取るところまで無料で体験できます。' },
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
-  { q: '届いた記事はそのまま使えますか？', a: '少し手を加えることで使える素材が届きます。そのままでも読める状態ですが、ご自身の言葉で調整していただくとより自然な仕上がりになります。' },
+  { q: '届いた記事はそのまま使えますか？', a: 'そのままコピペして投稿できる状態でお届けします。必要であればご自身の言葉に整えていただくことも可能ですが、そのまま使っていただくことを前提に作られています。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種にとらわれない客観的な視点で、あなたの仕事の論理的な価値を引き出します。専門用語を使わずに話していただければ、分かりやすく言語化します。' },
   { q: '途中でキャンセルできますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もデータは保持されます。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
@@ -265,7 +265,7 @@ export default async function LandingPage() {
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  HPはあるけど、何年も更新できていませんか？動物モチーフのインタビュアーが質問するので、答えるだけで記事の素材が届きます。あなたにとっての当たり前は、まだ伝わっていない価値かもしれません。
+                  HPはあるけど、何年も更新できていませんか？動物モチーフのインタビュアーが質問するので、答えるだけで記事が届きます。貼り付けるだけで投稿できる状態なので、更新の手間がなくなります。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
@@ -524,7 +524,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              こんな取材をして、こんな素材が届きます
+              こんな取材をして、こんな記事が届きます
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">
               実際の取材の流れを再現した例です。専門的な準備は何もいりません。このように会話するだけです。

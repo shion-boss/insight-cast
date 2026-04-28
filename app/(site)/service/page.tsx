@@ -206,10 +206,10 @@ export default function ServicePage() {
       <main id="main-content" className="relative z-10">
         <PublicHero
           eyebrow="Service"
-          title={<>AIが取材して、<br />記事の素材を届けるまで</>}
+          title={<>AIが取材して、<br />貼るだけの記事を届けるまで</>}
           description={(
             <>
-              AIキャストが取材し、記事の素材が届くまでの流れをご紹介します。
+              AIキャストが取材し、コピペで投稿できる記事が届くまでの流れをご紹介します。
             </>
           )}
           actions={<ServiceHeroCTA />}
