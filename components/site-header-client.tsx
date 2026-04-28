@@ -28,19 +28,34 @@ function isSitePath(path: string): boolean {
   return !TOOL_PATHS.some((p) => path === p || path.startsWith(p + '/'))
 }
 
+const MIN_MS = 400
+
 export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname()
   const headerRef = useRef<HTMLElement>(null)
   const [navActive, setNavActive] = useState(false)
   const [overlayTop, setOverlayTop] = useState(0)
   const prevPath = useRef(pathname)
+  const hideAt = useRef<number>(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
-    if (prevPath.current !== pathname) {
-      prevPath.current = pathname
+    if (!navActive) return
+    if (prevPath.current === pathname) return
+    prevPath.current = pathname
+
+    const remaining = hideAt.current - Date.now()
+    clearTimeout(timerRef.current)
+    if (remaining > 0) {
+      timerRef.current = setTimeout(() => setNavActive(false), remaining)
+    } else {
       setNavActive(false)
     }
-  }, [pathname])
+  }, [pathname, navActive])
+
+  useEffect(() => {
+    return () => { clearTimeout(timerRef.current) }
+  }, [])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
@@ -54,6 +69,8 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
 
     const bottom = headerRef.current?.getBoundingClientRect().bottom ?? 64
     setOverlayTop(bottom)
+    prevPath.current = location.pathname
+    hideAt.current = Date.now() + MIN_MS
     setNavActive(true)
   }, [])
 
