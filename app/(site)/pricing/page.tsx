@@ -149,8 +149,8 @@ const ADDON_CASTS = [
 
 const SELECTION_GUIDE = [
   { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', charId: 'mint' },
-  { plan: 'ライト', desc: '月に数回、ゆっくりHPを育てたい個人事業主・小規模店舗の方', charId: 'mint' },
-  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', charId: 'rain' },
+  { plan: 'ライト', desc: '月に数回、ゆっくりHPを育てたい個人事業主・小規模店舗の方', charId: 'rain' },
+  { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', charId: 'claus' },
   { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', charId: 'claus' },
 ] as const
 
@@ -322,7 +322,7 @@ export default async function PricingPage({
         {/* Plan cards */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="mt-0 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:items-start">
+            <div className="mt-0 grid gap-6 lg:grid-cols-3">
               {PLANS.filter((plan) => plan.id !== 'free').map((plan) => (
                 <div
                   key={plan.id}
