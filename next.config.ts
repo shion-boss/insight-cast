@@ -42,9 +42,9 @@ const nextConfig: NextConfig = {
     const csp = [
       "default-src 'self'",
       // Next.js の hydration・インライン処理に unsafe-inline が必要
-      // 開発環境では HMR (React Refresh) のため unsafe-eval も必要
+      // gtag.js が new Function() を使うため unsafe-eval も必要（unsafe-inline と同居するため実質的なリスク増なし）
       // 将来的には nonce ベースに移行する
-      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://js.stripe.com https://www.googletagmanager.com https://va.vercel-scripts.com`,
+      `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://va.vercel-scripts.com`,
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
