@@ -585,7 +585,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               「AIで記事を作ると、SEOに悪いのでは？」
             </h2>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[640px]">
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5">
               AIが書いた記事は評価が下がる？<br />
               Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。<br />
               Googleはコンテンツの質をE-E-A-Tという基準で評価します。
@@ -617,7 +617,7 @@ export default async function LandingPage() {
                 </div>
               ))}
             </div>
-            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[600px]">
+            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6">
               Insight Castは、AIによるあなたへのインタビューの内容に基づいてAIが記事生成をします。ただし、記事の素材はあなた自身の取材回答です。情報の出所があなたの体験である以上、E-E-A-Tを満たし、評価は下がりません。
             </p>
             <p className="text-xs text-[var(--text3)] leading-[1.7] mt-3">
