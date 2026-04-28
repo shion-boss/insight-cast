@@ -596,9 +596,13 @@ export function ArticleExportPanel({
 
       {safeFormat === 'blocks' ? (
         <div className="flex flex-col gap-3 p-5">
-          {splitIntoArticleBlocks(editedContent).map((block, idx) => (
-            <BlockCopyCard key={idx} kind={block.kind} text={block.text} />
-          ))}
+          {groupArticleBlocks(splitIntoArticleBlocks(editedContent)).map((group, idx) =>
+            group.type === 'section' ? (
+              <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
+            ) : (
+              <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
+            )
+          )}
         </div>
       ) : safeFormat === 'html' && htmlPreview ? (
         <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output, { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }) }} />
@@ -708,6 +712,84 @@ function splitIntoArticleBlocks(markdown: string): ArticleBlock[] {
 
   flushAcc()
   return blocks.filter((b) => b.text.length > 0)
+}
+
+type RenderGroup =
+  | { type: 'standalone'; block: ArticleBlock }
+  | { type: 'section'; heading: ArticleBlock; body: ArticleBlock | null }
+
+function groupArticleBlocks(blocks: ArticleBlock[]): RenderGroup[] {
+  const groups: RenderGroup[] = []
+  let i = 0
+  while (i < blocks.length) {
+    const block = blocks[i]
+    if (block.kind === 'heading') {
+      const next = blocks[i + 1]
+      if (next?.kind === 'body') {
+        groups.push({ type: 'section', heading: block, body: next })
+        i += 2
+      } else {
+        groups.push({ type: 'section', heading: block, body: null })
+        i += 1
+      }
+    } else {
+      groups.push({ type: 'standalone', block })
+      i += 1
+    }
+  }
+  return groups
+}
+
+function SectionGroupCard({
+  heading,
+  body,
+}: {
+  heading: ArticleBlock
+  body: ArticleBlock | null
+}) {
+  return (
+    <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+      <BlockCopyCardInner kind="heading" text={heading.text} />
+      {body && (
+        <>
+          <div className="border-t border-[var(--border)]" />
+          <BlockCopyCardInner kind="body" text={body.text} />
+        </>
+      )}
+    </div>
+  )
+}
+
+function BlockCopyCardInner({ kind, text }: { kind: ArticleBlockKind; text: string }) {
+  const [copied, setCopied] = useState(false)
+
+  async function handleClick() {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // クリップボードAPIが使えない場合は何もしない
+    }
+  }
+
+  return (
+    <div className="relative p-5">
+      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">
+        {BLOCK_LABEL[kind]}
+      </div>
+      <p className={`pr-24 whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+        {text}
+      </p>
+      <button
+        type="button"
+        onClick={handleClick}
+        className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+      >
+        {copied ? 'コピーしました ✓' : 'コピー'}
+      </button>
+    </div>
+  )
 }
 
 function splitIntoSectionBlocks(markdown: string): { anchor: string; markdown: string }[] {
