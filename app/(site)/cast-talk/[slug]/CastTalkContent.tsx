@@ -16,7 +16,7 @@ export function CastTalkContent({
   interviewerId: string
 }) {
   return (
-    <div className="space-y-6">
+    <div role="log" aria-label="対話の内容" className="space-y-6">
       {messages.map((msg, i) => {
         const char = characterMap[msg.castId]
         const isInterviewer = msg.castId === interviewerId

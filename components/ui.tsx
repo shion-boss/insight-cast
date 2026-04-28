@@ -35,21 +35,24 @@ export function Breadcrumb({ items }: {
 }) {
   return (
     <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-xs text-[var(--text3)]">
-      {items.map((item, i) => (
-        <Fragment key={i}>
-          {i > 0 && <span>/</span>}
-          {item.href ? (
-            <Link
-              href={item.href}
-              className="rounded transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {item.label}
-            </Link>
-          ) : (
-            <span className="text-[var(--text2)]">{item.label}</span>
-          )}
-        </Fragment>
-      ))}
+      {items.map((item, i) => {
+        const isLast = i === items.length - 1
+        return (
+          <Fragment key={i}>
+            {i > 0 && <span aria-hidden="true">/</span>}
+            {item.href ? (
+              <Link
+                href={item.href}
+                className="rounded transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <span className="text-[var(--text2)]" aria-current={isLast ? 'page' : undefined}>{item.label}</span>
+            )}
+          </Fragment>
+        )
+      })}
     </nav>
   )
 }
