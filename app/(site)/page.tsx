@@ -665,19 +665,27 @@ export default async function LandingPage() {
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>忙しさで悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">忙しくて、ブログまで<br />手が回らない</p>
                 </div>
-                <div className="flex flex-1 flex-col px-6 pt-6">
-                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>1記事に必要な時間</p>
+                <div className="flex flex-1 flex-col px-6 pt-7">
+                  {/* Hero number */}
+                  <div className="text-center mb-6">
+                    <div className="flex items-end justify-center gap-1 leading-none">
+                      <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>20</span>
+                      <span className="font-bold pb-1" style={{ fontSize: '22px', color: '#c2722a' }}>分</span>
+                    </div>
+                    <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>Insight Cast の 1記事あたりの時間</p>
+                  </div>
+                  {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: 'AIツールで書く',  width: '90%', value: '1〜2時間', highlight: false },
-                      { name: 'ライター外注',    width: '90%', value: '1〜2時間', highlight: false },
-                      { name: 'Insight Cast',    width: '20%', value: '約20分',   highlight: true  },
+                      { name: 'AIツールで書く', width: '90%', value: '1〜2時間', highlight: false },
+                      { name: 'ライター外注',   width: '90%', value: '1〜2時間', highlight: false },
+                      { name: 'Insight Cast',   width: '20%', value: '約20分',   highlight: true  },
                     ].map((r) => (
                       <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                         style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
                         <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
                         <div className="flex flex-col items-end gap-1">
-                          <div className="h-1 w-20 rounded-[2px] overflow-hidden" style={{ background: '#e2d5c3' }}>
+                          <div className="h-1 w-20 overflow-hidden rounded-[2px]" style={{ background: '#e2d5c3' }}>
                             <div className="h-full rounded-[2px]" style={{ width: r.width, background: r.highlight ? '#c2722a' : '#7a6555' }} />
                           </div>
                           <span className="text-[11px] font-medium whitespace-nowrap" style={{ color: r.highlight ? '#c2722a' : '#1c1410' }}>{r.value}</span>
@@ -697,14 +705,22 @@ export default async function LandingPage() {
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>言語化で悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">自社の強みが、まだ<br />言葉にできていない</p>
                 </div>
-                <div className="flex flex-1 flex-col px-6 pt-6">
-                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>一次情報を引き出せるか</p>
+                <div className="flex flex-1 flex-col px-6 pt-7">
+                  {/* Hero number */}
+                  <div className="text-center mb-6">
+                    <div className="flex items-end justify-center gap-1 leading-none">
+                      <span className="font-bold pb-1" style={{ fontSize: '18px', color: '#c2722a' }}>¥</span>
+                      <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>4,980</span>
+                    </div>
+                    <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>/ 月（取材付き）　取材付きライターは ¥30,000〜/本</p>
+                  </div>
+                  {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: 'AIツール',         value: '自分の頭の中だけ',    muted: true,  highlight: false },
-                      { name: 'クラウドソーシング', value: '業界外で深掘り限界',  muted: true,  highlight: false },
-                      { name: '取材付きライター',   value: 'できるが ¥30,000〜', muted: false, highlight: false },
-                      { name: 'Insight Cast',      value: '業種特化 月¥4,980〜', muted: false, highlight: true  },
+                      { name: 'AIツール',          value: '自分の頭の中だけ',    muted: true,  highlight: false },
+                      { name: 'クラウドソーシング',  value: '業界外で深掘り限界',  muted: true,  highlight: false },
+                      { name: '取材付きライター',    value: 'できるが ¥30,000〜', muted: false, highlight: false },
+                      { name: 'Insight Cast',       value: '業種特化 月¥4,980〜', muted: false, highlight: true  },
                     ].map((r) => (
                       <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                         style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
@@ -719,26 +735,36 @@ export default async function LandingPage() {
                 </div>
               </div>
 
-              {/* Card 3: 予算 */}
+              {/* Card 3: 予算 — 結論カード */}
               <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
-                  <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>予算で悩む方へ</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold tracking-[0.14em] uppercase" style={{ color: '#c2722a' }}>予算で悩む方へ</p>
+                    <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: '#c2722a', color: 'white' }}>コスパ最高</span>
+                  </div>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">月の予算は、できれば<br />1万円以内に</p>
                 </div>
-                <div className="flex flex-1 flex-col px-6 pt-6">
-                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>月¥10,000で得られるもの</p>
+                <div className="flex flex-1 flex-col px-6 pt-7">
+                  {/* Hero number */}
+                  <div className="text-center mb-6">
+                    <div className="flex items-end justify-center gap-1 leading-none">
+                      <span className="font-bold pb-1" style={{ fontSize: '18px', color: '#c2722a' }}>¥</span>
+                      <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>83</span>
+                    </div>
+                    <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>Insight Cast の 1記事あたりのコスト</p>
+                  </div>
+                  {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: 'HP放置',       value: '何も増えない',     muted: true,  highlight: false },
-                      { name: 'AIツール',      value: '月数本の薄い記事', muted: false, highlight: false },
-                      { name: 'ライター発注',  value: '月1〜2本が限界',   muted: false, highlight: false },
+                      { name: 'HP放置',      value: '何も増えない',     muted: true  },
+                      { name: 'AIツール',     value: '月数本の薄い記事', muted: false },
+                      { name: 'ライター発注', value: '月1〜2本が限界',   muted: false },
                     ].map((r) => (
                       <div key={r.name} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b" style={{ borderColor: '#e2d5c3' }}>
                         <span className="text-[12px] leading-[1.5]" style={{ color: '#7a6555' }}>{r.name}</span>
                         <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
                       </div>
                     ))}
-                    {/* Insight Cast highlight row */}
                     <div className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b -mx-6 px-6" style={{ background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' }}>
                       <div>
                         <span className="text-[12px] font-bold leading-none" style={{ color: '#c2722a' }}>Insight Cast</span>
@@ -751,7 +777,7 @@ export default async function LandingPage() {
                     </div>
                   </div>
                   <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
-                    <strong className="font-bold text-[var(--text)]">1記事あたり ¥83。</strong>続けられる価格にこだわりました。
+                    他の選択肢と比べてみてください。<strong className="font-bold text-[var(--text)]">答えはひとつです。</strong>
                   </p>
                 </div>
               </div>
