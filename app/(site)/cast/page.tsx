@@ -198,7 +198,7 @@ export default async function CastPage() {
                   <div
                     key={char.id}
                     id={char.id}
-                    className={`grid gap-8 pb-14 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-14 ${index < freeCasts.length - 1 ? 'mb-14 border-b border-[var(--border)]' : ''}`}
+                    className={`grid gap-8 pb-14 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-14 scroll-mt-24 ${index < freeCasts.length - 1 ? 'mb-14 border-b border-[var(--border)]' : ''}`}
                   >
                     <div>
                       <div className="rounded-[24px] overflow-hidden shadow-[0_16px_48px_var(--shadow)] bg-[var(--bg2)] aspect-square flex items-center justify-center">

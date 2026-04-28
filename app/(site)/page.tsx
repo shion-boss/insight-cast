@@ -28,7 +28,6 @@ export const metadata: Metadata = {
 import { CharacterAvatar } from '@/components/ui'
 import { CopyButton } from '@/components/CopyButton'
 import { CheckoutButton } from '@/app/(site)/pricing/CheckoutButton'
-import AppPreviewSection from '@/components/app-preview-section'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
@@ -66,17 +65,7 @@ const PAIN_ITEMS = [
   { n: '03', title: '「自社の強みを言葉にできない」', body: '「特別なことなんて何もない」——そう感じていませんか。でも、それが一番伝わっていない価値かもしれません。' },
 ] as const
 
-const OUTCOME_ITEMS = [
-  { charId: 'mint',  title: '当たり前の中に眠る価値が言葉になる', body: 'AIキャストが丁寧に取材することで、気づかなかった自社の強みが見えてきます。' },
-  { charId: 'claus', title: '記事が届く。貼るだけで投稿できる。', body: '取材で引き出した話をもとに、ブログにそのまま貼れる記事が届きます。タイトル・見出し・本文をブロック単位でコピーして、貼るだけで完成します。' },
-  { charId: 'rain',  title: 'ホームページが少しずつ育っていく', body: '定期的な取材で情報を積み重ねることで、あなただけの話がホームページに増えていきます。' },
-] as const
 
-const WORKFLOW_ITEMS = [
-  { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいか、最初から見えてきます。' },
-  { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分の会話で、あなたの話が引き出されます。' },
-  { n: '03', title: '記事が届く。貼るだけで投稿できる。', body: '取材内容をもとに、ブログや実績ページにそのまま貼り付けられる記事が届きます。タイトル・見出し・本文をブロック単位でコピーして、自分のブログエディタに貼るだけです。' },
-] as const
 
 const COMPARE_ROWS = [
   { label: '「何を書くか」を考えなくていい',    ai: false, none: false },
@@ -96,7 +85,7 @@ const PAID_PLANS = [
     price: '¥1,980',
     period: '/ 月',
     desc: '月5回から、HPを育てはじめる',
-    features: ['取材 5回 / 月', '記事 20本 / 月', '取材先 1件', '自社HP調査', '通常サポート'],
+    features: ['取材 5回 / 月', '記事作成 月20回まで', '取材先 1件', '自社HP調査', '通常サポート'],
     cta: 'ライトプランで始める',
     highlight: false,
   },
@@ -106,7 +95,7 @@ const PAID_PLANS = [
     price: '¥4,980',
     period: '/ 月',
     desc: '週1〜2本ペースでHPを育てたい方へ',
-    features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中'],
+    features: ['取材回数：月15回まで', '記事作成 月60回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中'],
     cta: '月額プランを始める',
     highlight: true,
   },
@@ -116,7 +105,7 @@ const PAID_PLANS = [
     price: '¥14,800',
     period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
-    features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中', '優先サポート'],
+    features: ['取材回数：月60回まで', '記事作成 月240回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中', '優先サポート'],
     cta: '月額プランを始める',
     highlight: false,
   },
@@ -219,25 +208,8 @@ export default async function LandingPage() {
     business: process.env.STRIPE_PRICE_ID_BUSINESS ?? '',
   }
 
-  const howToJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'HowTo',
-    name: 'Insight Cast の使い方',
-    description: 'HPを登録してAIキャストが取材し、記事が届くまでの3ステップ。',
-    step: WORKFLOW_ITEMS.map((item, i) => ({
-      '@type': 'HowToStep',
-      position: i + 1,
-      name: item.title,
-      text: item.body,
-    })),
-  }
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
-      />
 
       <main id="main-content" className="relative z-10">
 
@@ -322,100 +294,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ③ Outcome */}
-        <section className="py-14 sm:py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">What You Get</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              Insight Cast を使うと、こう変わる
-            </h2>
-            <div className="mt-11 grid gap-5 md:grid-cols-3">
-              {OUTCOME_ITEMS.map((item) => {
-                const char = getCharacter(item.charId)
-                return (
-                  <div key={item.title} className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-8 relative overflow-hidden before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-[var(--accent)]">
-                    <div className="w-10 h-10 rounded-[10px] bg-[var(--accent-l)] flex items-center justify-center mb-5">
-                      <CharacterAvatar src={char?.icon48} alt={char?.name ?? item.charId} emoji={char?.emoji} size={32} />
-                    </div>
-                    <h3 className="text-[17px] font-bold text-[var(--text)] mb-2.5 leading-[1.45]">{item.title}</h3>
-                    <p className="text-sm text-[var(--text2)] leading-[1.8]">{item.body}</p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ③-b Mid CTA */}
-        <section className="py-10 sm:py-14 bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[720px] px-6 sm:px-8 text-center">
-            <p className="text-[15px] font-semibold text-[var(--text)] leading-[1.7]">
-              まず無料で体験してみませんか。カード不要、約20分で取材が終わります。
-            </p>
-            <div className="mt-5">
-              <Link
-                href={isLoggedIn ? '/dashboard' : '/auth/signup'}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {isLoggedIn ? <>ダッシュボードへ <span aria-hidden="true">→</span></> : <>無料で体験する <span aria-hidden="true">→</span></>}
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ④ Workflow */}
-        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">How It Works</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              取材に答えて、記事を貼るだけ。
-            </h2>
-            <p className="text-base text-[var(--text2)] mt-3">ネタ出しも、文章作りも、Insight Cast が引き受けます。</p>
-            <div className="relative mt-14 grid gap-8 md:grid-cols-3">
-              <div className="absolute left-[calc(16.67%+8px)] right-[calc(16.67%+8px)] top-[44px] hidden h-px bg-[var(--border)] md:block" aria-hidden="true" />
-              {WORKFLOW_ITEMS.map((item) => (
-                <div key={item.n} className="text-center px-8">
-                  <div className="w-[88px] h-[88px] rounded-full bg-[var(--surface)] border-[1.5px] border-[var(--border)] flex items-center justify-center mx-auto mb-6 font-[family-name:var(--font-noto-serif-jp)] text-[22px] font-bold text-[var(--accent)] relative z-[1]">
-                    {item.n}
-                  </div>
-                  <h3 className="text-[19px] font-bold text-[var(--text)] mb-3">{item.title}</h3>
-                  <p className="text-sm text-[var(--text2)] leading-[1.85]">{item.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ⑭-c AI記事への懸念に答える */}
-        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある疑問</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              「AIで記事を作ると、<br />SEOに悪いのでは？」
-            </h2>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5">
-              よく聞かれます。答えは「どこから情報が来ているか」によります。
-            </p>
-            <div className="mt-8 space-y-4">
-              <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-6">
-                <p className="text-[13px] font-bold text-[var(--text3)] tracking-[.06em] mb-2">評価が下がるのは「AIが作り出した情報」</p>
-                <p className="text-sm text-[var(--text2)] leading-[1.85]">
-                  問題になっているのは、誰でも書けるキーワード詰め込み記事や、AIが事実の裏づけなしに生成した文章です。「誰が書いたかわからない」「その人にしか語れないものが何もない」コンテンツが対象です。
-                </p>
-              </div>
-              <div className="bg-[var(--accent-l)] border border-[var(--accent)]/20 rounded-[18px] p-6">
-                <p className="text-[13px] font-bold text-[var(--accent)] tracking-[.06em] mb-2">Insight Cast の記事の元は「あなたの体験と言葉」</p>
-                <p className="text-sm text-[var(--text2)] leading-[1.85]">
-                  AIキャストはあなたに質問し、あなたが答えた内容だけを素材にします。「なぜこの仕事を続けているか」「他と何が違うか」「失敗から何を学んだか」——その答えは、大手にも競合にも真似できない一次情報です。AIはその素材を記事の形に整えるだけで、情報を作り出すのはあなた自身です。
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6">
-              Googleが重視しているのは「その人にしか語れない体験があるか」です。取材で引き出した言葉から作られた記事は、その基準を満たします。
-            </p>
-          </div>
-        </section>
-
         {/* ⑤ Competitor Analysis Scene — text left, image right */}
         <section className="py-14 sm:py-[96px] overflow-hidden bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
@@ -465,7 +343,7 @@ export default async function LandingPage() {
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
                   <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" />
                 </div>
-                <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
+                <div className="absolute -top-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
                   <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
                   <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
                 </div>
@@ -492,6 +370,31 @@ export default async function LandingPage() {
                 </ul>
               </div>
             </div>
+            <div className="mt-14 sm:mt-16">
+              <p className="text-[13px] font-semibold text-[var(--text3)] mb-5 tracking-[.04em]">担当するキャストを選ぶ</p>
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[var(--bg)] to-transparent" />
+                <div className="flex gap-4 overflow-x-auto pb-3 pr-24 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {CHARACTERS.map((char) => (
+                    <Link key={char.id} href={`/cast#${char.id}`} className="flex-shrink-0 w-[220px] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-4 gap-3 transition-colors hover:border-[var(--accent)]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,.07)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                      <div className="relative w-full aspect-square rounded-[10px] overflow-hidden bg-[var(--bg2)]">
+                        <Image src={char.portrait} alt={char.name} fill sizes="188px" className="object-cover object-top" />
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
+                        <span className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</span>
+                        <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-5">
+                <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                  キャストをすべて見る <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -509,10 +412,10 @@ export default async function LandingPage() {
                 </p>
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {[
-                    { label: 'HP現状分析', body: '今のホームページで何が足りないかを可視化' },
-                    { label: '競合比較', body: '同業他社との違いを客観的に整理' },
-                    { label: '取材メモ', body: '会話で出てきた話をそのまま記録' },
-                    { label: '記事', body: 'コピペするだけで投稿できる記事' },
+                    { label: '語れることが増える', body: '取材のたびに、自社を説明する言葉の引き出しが一つずつ増えていきます。' },
+                    { label: '競合との差が言葉になる', body: '何度も比較と取材を重ねることで、なぜ選ばれるのかが明確になっていきます。' },
+                    { label: '更新が止まらなくなる', body: 'キャストが毎回準備してくれるので、ネタ切れも書く手間もありません。' },
+                    { label: '一次情報が資産になる', body: '事業者本人の言葉から作られた記事は、大手にも競合にも真似できない蓄積です。' },
                   ].map((item) => (
                     <div key={item.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-4 py-4">
                       <div className="text-[12px] font-bold text-[var(--accent)] mb-1">{item.label}</div>
@@ -534,9 +437,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑧ App Preview */}
-        <AppPreviewSection />
-
         {/* ⑨ Output Example */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
@@ -554,97 +454,74 @@ export default async function LandingPage() {
                   <span className="text-[13px] font-bold text-[var(--text)]">{freeCast[0]?.name ?? 'ミント'}の取材ログ</span>
                   <span className="ml-auto bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">完了</span>
                 </div>
-                <div className="p-[22px]">
+                <div className="p-[22px] flex flex-col gap-4">
                   {[
-                    { q: 'Q. 仕事の時間帯って、どのくらいで動いてることが多いですか？', a: 'うちは戸建てがメインなので、朝8時ごろから15時ごろくらいですかね。早すぎても遅すぎてもお客様に迷惑かかるので、メリハリよく働いてくようにしています。' },
-                    { q: 'Q. 8時〜15時って意識してその時間に収めてるんですね。最初からそうしてたんですか？', a: '父親の代からそうしているので、特にきっかけはないですね。塗り替えは、お客様はもちろん、近所の方の理解があってこそいい仕事ができると思うので、そういう配慮は必要だなとは思っています。' },
-                    { q: 'Q. 近所の方への配慮まで考えてって、なかなかそこまで意識してる業者さんって多くないと思うんですが…', a: '当たり前のことだと思ってましたけど、言われてみるとそうかもしれないですね。父からそう教わってきたので。' },
-                  ].map((item, i) => (
-                    <div key={i}>
-                      <div className="text-[13px] font-semibold text-[var(--accent)] mb-1.5">{item.q}</div>
-                      <div className="text-[13px] text-[var(--text2)] leading-[1.75] mb-5 pl-3.5 border-l-2 border-[var(--border)]">{item.a}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
-                <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
-                  <span className="text-[11px] font-semibold text-[var(--text3)] uppercase tracking-[.08em]">Article</span>
-                  <span className="text-[13px] font-bold text-[var(--text)]">届いた記事</span>
-                  <CopyButton text={`朝8時〜15時、この時間帯を、父の代から守り続けている理由。\n\nうちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。\n\n塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。施工中は騒音もあるし、養生シートで通路が狭くなることもある。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。`} />
-                </div>
-                <div className="p-[22px]">
-                  <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text)] mb-2 leading-[1.45]">朝8時〜15時、この時間帯を、父の代から守り続けている理由。</h3>
-                  <p className="text-sm text-[var(--text)] leading-[1.85] mb-3">うちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。</p>
-                  <p className="text-sm text-[var(--text)] leading-[1.85]">塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ⑩ Cast */}
-        <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              あなたを担当するキャスト
-            </h2>
-            <p className="text-base text-[var(--text2)] mt-3">3名の無料キャストがいます。「誰に頼もうか迷う」場合は、ミントから始めてください。</p>
-            <div className="mt-11 grid gap-[22px] md:grid-cols-2 xl:grid-cols-3">
-              {freeCast.map((char) => (
-                <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                  <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
-                    <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} sizes="(min-width: 1280px) 305px, (min-width: 768px) calc(50vw - 64px), calc(100vw - 64px)" className="h-full w-full object-contain" />
-                  </div>
-                  <div className="px-6 pt-[22px] pb-[26px]">
-                    <div className="flex items-start justify-between mb-2.5">
-                      <div>
-                        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[21px] font-bold text-[var(--text)]">{char.name}</div>
-                        <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mt-0.5">{char.label}</div>
-                      </div>
-                      <span className="bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">無料</span>
-                    </div>
-                    <p className="text-[13px] text-[var(--text2)] leading-[1.7] mb-3.5">{char.description}</p>
-                    {char.specialty && (
-                      <div className="text-[12px] text-[var(--text2)] flex items-baseline gap-1.5 mt-1.5 before:content-['—'] before:text-[var(--accent)] before:flex-shrink-0">
-                        {char.specialty}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-            {addonCast.length > 0 && (
-              <>
-                <div className="flex items-center gap-3 mt-10 mb-4">
-                  <span className="text-[13px] font-semibold text-[var(--text2)] whitespace-nowrap">追加キャスト（近日公開）</span>
-                  <hr className="flex-1 border-none border-t border-[var(--border)] h-px bg-[var(--border)]" />
-                </div>
-                <div className="grid gap-4 md:grid-cols-3">
-                  {addonCast.map((char) => (
-                    <div key={char.id} className="bg-[var(--bg2)] border border-dashed border-[var(--border)] rounded-[18px] overflow-hidden opacity-[0.72]">
-                      <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
-                        <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} sizes="(min-width: 768px) calc(33vw - 48px), calc(100vw - 64px)" className="h-full w-full object-contain grayscale-[25%]" />
-                      </div>
-                      <div className="px-6 pt-[22px] pb-[26px]">
-                        <div className="flex items-start justify-between mb-2.5">
-                          <div>
-                            <div className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">{char.name}</div>
-                            <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mt-0.5">{char.label}</div>
-                          </div>
-                          <span className="bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">準備中</span>
+                    { from: 'cast', text: '仕事の時間帯って、どのくらいで動いてることが多いですか？' },
+                    { from: 'user', text: 'うちは戸建てがメインなんで、朝8時ごろから15時ごろには終わらせるようにしてますね。早すぎても遅すぎてもお客さんに迷惑かかるので。' },
+                    { from: 'cast', text: '15時ごろに終わらせるって、最初からそうしてたんですか？' },
+                    { from: 'user', text: '父の代からそうしてるんで、自分では特に意識したことなかったですね。塗り替えって、お客さんだけじゃなくて近所の方の理解があってこそできる仕事なので、そこは大事にしてます。' },
+                    { from: 'cast', text: '近所の方のことまで考えてるんですね。正直、そこまで意識してる業者さんってなかなかいないと思うんですが。' },
+                    { from: 'user', text: '当たり前のことだと思ってたんですけど、言われてみるとそうかもしれないですね。父から教わってきたんで、自然とそうなってた感じです。' },
+                  ].map((msg, i) => (
+                    msg.from === 'cast' ? (
+                      <div key={i} className="flex items-start gap-2.5">
+                        <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border border-[var(--border)]">
+                          {freeCast[0]?.icon48
+                            ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={28} height={28} className="w-full h-full object-cover" />
+                            : <span className="text-base leading-none">{freeCast[0]?.emoji}</span>}
                         </div>
+                        <div className="max-w-[75%] bg-[var(--bg2)] border border-[var(--border)] rounded-[4px_14px_14px_14px] px-3.5 py-2.5 text-[13px] text-[var(--text2)] leading-[1.75]">{msg.text}</div>
                       </div>
-                    </div>
+                    ) : (
+                      <div key={i} className="flex justify-end">
+                        <div className="max-w-[75%] bg-[var(--accent-l)] rounded-[14px_4px_14px_14px] px-3.5 py-2.5 text-[13px] text-[var(--text)] leading-[1.75]">{msg.text}</div>
+                      </div>
+                    )
                   ))}
                 </div>
-              </>
-            )}
-            <div className="text-center mt-8">
-              <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                キャストをすべて見る <span aria-hidden="true">→</span>
-              </Link>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+                {/* キャラ吹き出しヘッダー */}
+                <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full border border-[var(--border)] overflow-hidden">
+                    {freeCast[0]?.icon48
+                      ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={40} height={40} className="w-full h-full object-cover" />
+                      : <span className="text-lg">{freeCast[0]?.emoji}</span>}
+                  </div>
+                  <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-sm text-[var(--text2)]">
+                    記事をまとめました。好きな形式でお使いください。
+                  </div>
+                </div>
+                {/* ブロック */}
+                <div className="flex flex-col gap-3 p-5 border-t border-[var(--border)]">
+                  {/* タイトル */}
+                  <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
+                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">タイトル</div>
+                    <p className="pr-20 leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
+                    <div className="absolute right-4 top-4"><CopyButton text="創業者の父から受け継いだ思いやり。" /></div>
+                  </div>
+                  {/* 冒頭 */}
+                  <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
+                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">冒頭</div>
+                    <p className="pr-20 text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
+                    <div className="absolute right-4 top-4"><CopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" /></div>
+                  </div>
+                  {/* セクション（小見出し＋本文） */}
+                  <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+                    <div className="relative p-5">
+                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">小見出し</div>
+                      <p className="pr-20 text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
+                      <div className="absolute right-4 top-4"><CopyButton text="近所の方への気遣いも、仕事のうちだと思っています" /></div>
+                    </div>
+                    <div className="border-t border-[var(--border)]" />
+                    <div className="relative p-5">
+                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">本文</div>
+                      <p className="pr-20 text-sm leading-relaxed text-[var(--text)]">塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。<br /><br />自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。</p>
+                      <div className="absolute right-4 top-4"><CopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} /></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -708,101 +585,41 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑫ Pricing */}
-        <section className="py-14 sm:py-[88px]">
+        {/* ⑭-c AI記事への懸念に答える */}
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              まず無料で体験してください。<br />2回まで、カード不要で使えます。
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある疑問</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              「AIで記事を作ると、SEOに悪いのでは？」
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
-            {/* お試し — プランではなく独立した体験導線 */}
-            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-                <div className="flex-1">
-                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
-                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
-                  <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
-                    {FREE_TRIAL_FEATURES.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
-                        <span aria-hidden="true" className="text-[11px] font-bold text-[var(--teal)]">✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="sm:flex-shrink-0">
-                  {isLoggedIn ? (
-                    <Link
-                      href="/dashboard"
-                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      ダッシュボードへ
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/auth/signup"
-                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      無料で始める
-                    </Link>
-                  )}
-                </div>
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[600px]">
+              問題になるのは「どこから情報が来ているか」で決まります。Googleはコンテンツを以下の基準で評価しています。
+            </p>
+            <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+              <div className="hidden sm:grid sm:grid-cols-[1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが評価する基準</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)] pl-6">Insight Cast は？</div>
               </div>
-            </div>
-
-            {/* 月額プラン */}
-            <div className="mt-10 flex items-center gap-4">
-              <div className="flex-1 h-px bg-[var(--border)]" />
-              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
-              <div className="flex-1 h-px bg-[var(--border)]" />
-            </div>
-            <div className="mt-6 grid gap-6 sm:grid-cols-3">
-              {PAID_PLANS.map((plan) => (
-                <div
-                  key={plan.name}
-                  className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
-                >
-                  <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
-                    <span className={`text-sm ${plan.highlight ? 'text-white/70' : 'text-[var(--text2)]'}`}>{plan.period}</span>
+              {[
+                { criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
+                { criterion: 'その人にしか語れない固有の情報があるか', answer: '競合には真似できない一次情報' },
+                { criterion: '誰でも書けるような汎用コンテンツでないか', answer: '取材内容だけを素材にする' },
+                { criterion: '情報の出所が明確か',                     answer: '情報の出所はあなた自身の言葉' },
+              ].map((row, i) => (
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_300px] border-b last:border-0 border-[var(--border)]">
+                  <div className="flex items-center gap-3 px-6 py-4 text-sm font-medium text-[var(--text)]">
+                    <span className="w-5 h-5 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-[var(--text3)]">?</span>
+                    {row.criterion}
                   </div>
-                  <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/80' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
-                  <ul className="space-y-2.5 flex-1 mb-8">
-                    {plan.features.map((f) => (
-                      <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
-                        <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  {isLoggedIn ? (
-                    <CheckoutButton
-                      priceId={
-                        plan.id === 'lightning' ? priceIds.lightning
-                        : plan.id === 'personal' ? priceIds.personal
-                        : priceIds.business
-                      }
-                      label={plan.cta}
-                      featured={plan.highlight}
-                    />
-                  ) : (
-                    <Link
-                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
-                    >
-                      {plan.cta}
-                    </Link>
-                  )}
+                  <div className="flex items-center gap-3 px-6 py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
+                    <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
+                    {row.answer}
+                  </div>
                 </div>
               ))}
             </div>
-            <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
-              料金の詳細は
-              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
-              をご覧ください。
+            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[560px]">
+              AIはあなたの言葉を記事の形に整えるだけで、情報を作り出すのはあなた自身です。取材で引き出した一次情報は、Googleが重視する「その人にしか語れない体験」そのものです。
             </p>
           </div>
         </section>
@@ -949,6 +766,105 @@ export default async function LandingPage() {
             </div>
           </section>
         )}
+
+        {/* ⑫ Pricing */}
+        <section className="py-14 sm:py-[88px]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              まず無料で体験してください。<br />2回まで、カード不要で使えます。
+            </h2>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
+            {/* お試し — プランではなく独立した体験導線 */}
+            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                <div className="flex-1">
+                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
+                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
+                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
+                  <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
+                    {FREE_TRIAL_FEATURES.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                        <span aria-hidden="true" className="text-[11px] font-bold text-[var(--teal)]">✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="sm:flex-shrink-0">
+                  {isLoggedIn ? (
+                    <Link
+                      href="/dashboard"
+                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    >
+                      ダッシュボードへ
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/auth/signup"
+                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    >
+                      無料で始める
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 月額プラン */}
+            <div className="mt-10 flex items-center gap-4">
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              {PAID_PLANS.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+                >
+                  <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
+                  <div className="flex items-baseline gap-1 mb-1">
+                    <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.highlight ? 'text-white/70' : 'text-[var(--text2)]'}`}>{plan.period}</span>
+                  </div>
+                  <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/80' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
+                  <ul className="space-y-2.5 flex-1 mb-8">
+                    {plan.features.map((f) => (
+                      <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
+                        <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  {isLoggedIn ? (
+                    <CheckoutButton
+                      priceId={
+                        plan.id === 'lightning' ? priceIds.lightning
+                        : plan.id === 'personal' ? priceIds.personal
+                        : priceIds.business
+                      }
+                      label={plan.cta}
+                      featured={plan.highlight}
+                    />
+                  ) : (
+                    <Link
+                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
+                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
+              料金の詳細は
+              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
+              をご覧ください。
+            </p>
+          </div>
+        </section>
 
         {/* ⑮ FAQ */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
