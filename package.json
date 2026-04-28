@@ -14,7 +14,10 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test __tests__/**/*.test.ts",
-    "screenshot": "tsx scripts/screenshot.ts"
+    "screenshot": "tsx scripts/screenshot.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
