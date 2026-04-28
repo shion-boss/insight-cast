@@ -594,12 +594,7 @@ export default async function LandingPage() {
             </h3>
 
             {/* E-E-A-T table */}
-            <div className="mt-12 flex justify-end">
-              <p className="text-xs text-[var(--text3)] leading-[1.7]">
-                参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
-              </p>
-            </div>
-            <table className="w-full border-collapse" style={{ borderTop: '1px solid #e2d5c3' }}>
+            <table className="mt-12 w-full border-collapse" style={{ borderTop: '1px solid #e2d5c3' }}>
               <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
               <thead className="max-sm:hidden">
                 <tr>
@@ -643,6 +638,11 @@ export default async function LandingPage() {
                 ))}
               </tbody>
             </table>
+            <div className="mt-2 flex justify-end">
+              <p className="text-xs text-[var(--text3)] leading-[1.7]">
+                参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
+              </p>
+            </div>
 
             {/* Footer card */}
             <div className="mt-9 flex items-center gap-3.5 rounded-[6px] px-6 py-5 text-[13px] leading-[1.8]" style={{ background: '#f5e8d8', color: '#7a6555' }}>
