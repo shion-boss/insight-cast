@@ -595,8 +595,8 @@ export default async function LandingPage() {
                 <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
                 <thead>
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--accent)] w-[140px]">E-E-A-T</th>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]">Googleが重視する基準</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--accent)] w-[140px]">E-E-A-T</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text3)]">Googleが重視する基準</th>
                     <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--accent)] text-white w-[300px]">Insight Cast は？</th>
                   </tr>
                 </thead>
@@ -608,7 +608,7 @@ export default async function LandingPage() {
                     { badge: 'Trustworthiness',   badgeJa: '信頼性', criterion: '情報が正確で誠実か',                     answer: '作り話でなく体験から引き出す' },
                   ].map((row, i) => (
                     <tr key={i}>
-                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--bg2)] align-middle">
+                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--surface)] align-middle">
                         <span className="block text-[14px] font-bold text-[var(--text)]">{row.badgeJa}</span>
                         <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
                       </td>
