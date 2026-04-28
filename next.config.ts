@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    // marked と dompurify はクライアント側で使用されるため tree-shaking を最適化
+    optimizePackageImports: ['marked', 'dompurify'],
+  },
   webpack: (config) => {
     // Node.js 22/24 + webpack WASM hash bug workaround: use sha256 (no WASM dependency)
     config.output.hashFunction = "sha256";
