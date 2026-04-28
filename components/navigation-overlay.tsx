@@ -11,21 +11,33 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
   return 'site'
 }
 
+// React 18 concurrent mode でナビゲーション完了と visible=true が同一バッチになっても
+// 確実にプログレスバーを視認できるよう最低表示時間を設ける
+const MIN_MS = 400
+
 export function NavigationOverlay() {
   const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [headerBottom, setHeaderBottom] = useState(64)
-  // クリック時点のエリアを記録（遷移後に変わる前に使うため ref）
   const areaRef = useRef(classify(pathname))
   const prevPath = useRef(pathname)
+  const hideAt = useRef<number>(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // pathname が変わった = ナビゲーション完了 → オーバーレイを消す
+  // pathname が変わった = ナビゲーション完了 → MIN_MS を消化してから非表示
   useEffect(() => {
-    if (prevPath.current !== pathname) {
-      prevPath.current = pathname
+    if (!visible) return
+    if (prevPath.current === pathname) return
+    prevPath.current = pathname
+
+    const remaining = hideAt.current - Date.now()
+    clearTimeout(timerRef.current)
+    if (remaining > 0) {
+      timerRef.current = setTimeout(() => setVisible(false), remaining)
+    } else {
       setVisible(false)
     }
-  }, [pathname])
+  }, [pathname, visible])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
@@ -42,16 +54,20 @@ export function NavigationOverlay() {
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
 
-    // ヘッダー下端を測定してからオーバーレイを表示
     const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
     setHeaderBottom(h)
     areaRef.current = fromArea
+    prevPath.current = location.pathname
+    hideAt.current = Date.now() + MIN_MS
     setVisible(true)
   }, [])
 
   useEffect(() => {
     document.addEventListener('click', handleClick, true)
-    return () => document.removeEventListener('click', handleClick, true)
+    return () => {
+      document.removeEventListener('click', handleClick, true)
+      clearTimeout(timerRef.current)
+    }
   }, [handleClick])
 
   if (!visible) return null
