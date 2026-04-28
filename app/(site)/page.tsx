@@ -597,7 +597,7 @@ export default async function LandingPage() {
                   <tr className="border-b border-[var(--border)]">
                     <th className="w-[130px] px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] border-r border-[var(--border)]">E-E-A-T 基準</th>
                     <th className="px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)]">内容</th>
-                    <th className="w-[260px] px-6 py-3 text-left text-[11px] font-semibold tracking-[0.1em] border-l border-[var(--border)]" style={{ background: 'rgba(194,114,42,0.12)', color: '#7a4a18' }}>Insight Castで作成した記事</th>
+                    <th className="w-[260px] px-6 py-3 text-left text-[11px] font-semibold tracking-[0.1em] border-l border-[var(--border)]" style={{ background: '#f0fdf4', color: '#15803d' }}>Insight Castで作成した記事</th>
                   </tr>
                 </thead>
                 <tbody>
