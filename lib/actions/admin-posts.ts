@@ -109,9 +109,11 @@ export async function togglePublished(id: string, published: boolean): Promise<M
   if (!id) return { error: 'IDが不正です' }
 
   const supabase = createAdminClient()
+  const updateData: Record<string, unknown> = { published }
+  if (published) updateData.date = new Date().toISOString().slice(0, 10)
   const { error } = await supabase
     .from('blog_posts')
-    .update({ published })
+    .update(updateData)
     .eq('id', id)
 
   if (error) return { error: '更新できませんでした。もう一度お試しください' }

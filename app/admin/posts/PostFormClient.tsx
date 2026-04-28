@@ -409,7 +409,12 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                 role="switch"
                 aria-checked={form.published}
                 aria-label={form.published ? '下書きに戻す' : '公開する'}
-                onClick={() => handleChange('published', !form.published)}
+                onClick={() => {
+                  const next = !form.published
+                  setForm((prev) => ({ ...prev, published: next, ...(next ? { date: today } : {}) }))
+                  setHasChanges(true)
+                  setSuccessMsg(null)
+                }}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${form.published ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
               >
                 <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.published ? 'translate-x-5' : 'translate-x-0.5'}`} />
