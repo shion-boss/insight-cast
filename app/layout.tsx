@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono, M_PLUS_1p } from "next/font/google";
+import Script from "next/script";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
 import { PageTransitionOverlay } from "@/components/page-transition-overlay";
@@ -152,6 +153,18 @@ export default function RootLayout({
         <GoogleAnalytics />
         <SpeedInsights />
         <Analytics />
+        {/* Service Worker 登録（public site のみキャッシュ、認証済みアプリ側はキャッシュしない） */}
+        <Script
+          id="sw-register"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(function() {});
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
