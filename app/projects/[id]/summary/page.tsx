@@ -349,6 +349,7 @@ export default function SummaryPage() {
   }
 
   return (
+    <>
     <AppShell
       title="取材メモ"
       active="interviews"
@@ -569,5 +570,19 @@ export default function SummaryPage() {
         </div>
       </div>
     </AppShell>
+
+    {showDeleteDialog && (
+      <ConfirmDialog
+        dialogId="delete-interview"
+        title="取材メモを削除しますか？"
+        description="取材メモと、ひもづく記事素材がすべて削除されます。30日以内であれば復元できます。"
+        confirmLabel="削除する"
+        confirmingLabel="削除中..."
+        confirming={deleting}
+        onCancel={() => setShowDeleteDialog(false)}
+        onConfirm={() => void handleDeleteInterview()}
+      />
+    )}
+    </>
   )
 }
