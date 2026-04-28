@@ -712,7 +712,7 @@ export default async function LandingPage() {
                       <span className="font-bold pb-1" style={{ fontSize: '18px', color: '#c2722a' }}>¥</span>
                       <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>4,980</span>
                     </div>
-                    <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>/ 月（取材付き）　取材付きライターは ¥30,000〜/本</p>
+                    <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>/ 月　Insight Cast 個人プラン（取材付き）</p>
                   </div>
                   {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
