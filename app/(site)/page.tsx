@@ -289,7 +289,6 @@ export default async function LandingPage() {
                 <span className="absolute bottom-[1px] left-0 right-0 h-[2px] rounded-[1px]" style={{ background: '#c2722a', opacity: 0.6 }} />
               </span>
             </h2>
-            <div className="w-8 h-[2px] rounded-[1px] mb-8" style={{ background: '#c2722a', opacity: 0.5 }} />
             <ul className="flex flex-col gap-5">
               {[
                 '何を書けばいいか分からない',
