@@ -494,10 +494,10 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              こんな取材をして、こんな記事が届きます
+              会話から、記事へ。
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">
-              実際の取材の流れを再現した例です。専門的な準備は何もいりません。このように会話するだけです。
+              取材に答えると、こうして記事が届きます。専門的な準備は何もいりません。
             </p>
             <div className="mt-11 grid gap-8 xl:grid-cols-2">
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
