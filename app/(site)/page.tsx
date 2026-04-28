@@ -585,15 +585,13 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               AIが作った記事は評価されない？
             </h2>
+            <p className="mt-5 text-[15px] leading-[1.8] text-[var(--text2)]">
+              Insight Castの記事は、あなた自身の言葉と体験から生まれます。
+            </p>
             {/* E-E-A-T subheader */}
-            <div className="mt-10 grid items-end gap-4 sm:grid-cols-[1fr_auto] sm:gap-8">
-              <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
-                Googleが重視する4つの基準を、<br />自然にクリアできる。
-              </h3>
-              <p className="text-[14px] leading-[1.7] text-[var(--text2)] sm:text-right">
-                Insight Castの記事は、あなた自身の<br className="hidden sm:block" />言葉と体験から生まれます。
-              </p>
-            </div>
+            <h3 className="mt-10 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
+              Googleが重視する4つの基準を、<br />自然にクリアできる。
+            </h3>
 
             {/* E-E-A-T table */}
             <table className="mt-12 w-full border-collapse" style={{ borderTop: '1px solid #e2d5c3' }}>
