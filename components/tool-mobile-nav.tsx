@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { usePathname } from 'next/navigation'
 import { signOut } from '@/lib/actions/auth'
 
 const IconDashboard = () => (
@@ -55,14 +56,17 @@ const NAV_ITEMS: NavItem[] = [
 ]
 
 export function ToolMobileNav({
-  active,
   accountLabel,
   isAdmin,
 }: {
-  active: string
   accountLabel: string
   isAdmin?: boolean
 }) {
+  const pathname = usePathname()
+  const isActive = (href: string) => {
+    if (href === '/dashboard') return pathname === '/dashboard'
+    return pathname === href || pathname.startsWith(href + '/')
+  }
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
@@ -153,15 +157,15 @@ export function ToolMobileNav({
 
             <nav aria-label="メインナビゲーション" className="flex flex-col gap-1 flex-1 overflow-y-auto px-3 py-3">
               {NAV_ITEMS.map((item) => {
-                const isActive = item.key === active
+                const active = isActive(item.href)
                 return (
                   <Link
                     key={item.key}
                     href={item.href}
-                    aria-current={isActive ? 'page' : undefined}
+                    aria-current={active ? 'page' : undefined}
                     onClick={() => setOpen(false)}
                     className={`flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-3 text-sm font-medium transition-colors ${
-                      isActive
+                      active
                         ? 'bg-[var(--accent-l)] text-[var(--accent)]'
                         : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'
                     } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40`}

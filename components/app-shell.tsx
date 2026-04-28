@@ -3,44 +3,15 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 
-import LogoutButton from '@/app/dashboard/logout-button'
+import LogoutButton from '@/components/tool-logout-button'
 import { signOut } from '@/lib/actions/auth'
 import { ToolMobileNav } from '@/components/tool-mobile-nav'
+import { ToolSidebarNav } from '@/components/tool-sidebar-nav'
 
-type AppSection = 'dashboard' | 'projects' | 'interviews' | 'articles' | 'settings'
+// 後方互換のために AppSection 型はエクスポートを維持
+export type AppSection = 'dashboard' | 'projects' | 'interviews' | 'articles' | 'settings'
 
 export { checkIsAdmin } from '@/lib/auth-utils.server'
-
-// SVGアイコン定義
-const IconDashboard = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </svg>
-)
-
-const IconProjects = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-  </svg>
-)
-
-const IconInterviews = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-)
-
-const IconArticles = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="8" y1="13" x2="16" y2="13" />
-    <line x1="8" y1="17" x2="16" y2="17" />
-  </svg>
-)
 
 const IconSettings = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -49,27 +20,8 @@ const IconSettings = () => (
   </svg>
 )
 
-type NavItem = { href: string; label: string; icon: () => React.JSX.Element; key: AppSection }
-
-const NAV_ITEMS: NavItem[] = [
-  { href: '/dashboard', label: 'ダッシュボード', icon: IconDashboard, key: 'dashboard' },
-  { href: '/projects', label: '取材先一覧', icon: IconProjects, key: 'projects' },
-  { href: '/interviews', label: '取材メモ一覧', icon: IconInterviews, key: 'interviews' },
-  { href: '/articles', label: '記事一覧', icon: IconArticles, key: 'articles' },
-  { href: '/settings', label: '設定', icon: IconSettings, key: 'settings' },
-]
-
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
-}
-
-function navLinkClass(active: boolean) {
-  return cx(
-    'flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40',
-    active
-      ? 'bg-[var(--accent-l)] text-[var(--accent)]'
-      : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]',
-  )
 }
 
 function getAccountInitial(value: string) {
@@ -78,15 +30,16 @@ function getAccountInitial(value: string) {
 
 export function AppShell({
   title,
-  active,
+  // active は後方互換のために受け取るが内部では使用しない（URL から自動判定）
+  active: _active,
   accountLabel,
   isAdmin,
   children,
   headerRight,
   contentClassName,
 }: {
-  title: ReactNode
-  active: AppSection
+  title?: ReactNode
+  active?: AppSection
   accountLabel: string
   isAdmin?: boolean
   children: ReactNode
@@ -115,19 +68,8 @@ export function AppShell({
           </Link>
         </div>
 
-        <nav aria-label="メインナビゲーション" className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.key}
-              href={item.href}
-              aria-current={item.key === active ? 'page' : undefined}
-              className={navLinkClass(item.key === active)}
-            >
-              <item.icon />
-              <span className="whitespace-nowrap">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
+        {/* URL から自動判定するクライアントナビゲーション */}
+        <ToolSidebarNav />
 
         <div className="border-t border-[var(--border)] px-3 py-4 space-y-2">
           {showAdmin && (
@@ -156,14 +98,17 @@ export function AppShell({
                 <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" priority />
               </Link>
               <ToolMobileNav
-                active={active}
                 accountLabel={accountLabel}
                 isAdmin={showAdmin}
               />
             </div>
             {/* PC: タイトル + 右側アクション */}
             <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between lg:gap-4 lg:min-w-0">
-              <h1 className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</h1>
+              {title ? (
+                <h1 className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</h1>
+              ) : (
+                <span className="truncate font-serif text-lg font-bold text-[var(--text)]">Insight Cast</span>
+              )}
               <div className="flex shrink-0 items-center gap-3">
                 {headerRight}
                 <Link
