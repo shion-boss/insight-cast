@@ -33,7 +33,7 @@ import scenePlanning from '@/assets/scene/scene-story-planning.png'
 import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
 import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
 import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
-import { CATEGORY_LABELS, type PostCategory, POSTS } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 import { LpFaq } from './LpFaq'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
@@ -122,34 +122,12 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
 }
 
 // TODO(P-1): LP の Suspense / Streaming 最適化
-// latestPosts・latestTalks・interviewCount など重いフェッチを別 async Server Component に切り出し
-// Suspense でラップすることで TTFB を改善できる。ただし adminUserId → adminProjectIds の
-// 依存チェーンがあるため、分割には慎重な設計が必要。Phase 3 以降で対応を検討。
+// latestPosts・latestTalks を別 async Server Component に切り出し Suspense でラップすることで
+// TTFB を改善できる。Phase 3 以降で対応を検討。
 export default async function LandingPage() {
   const supabaseAdmin = createAdminClient()
 
-  // 管理者のユーザーIDを取得（ADMIN_EMAILS の最初のアドレスを使用）
-  const adminEmail = process.env.ADMIN_EMAILS?.split(',')[0]?.trim()
-  let adminUserId: string | null = null
-  if (adminEmail) {
-    // listUsers でメールアドレスが一致するユーザーを特定する
-    // （service_role では auth.users に直接アクセス可能、ユーザー数が少ない現フェーズで有効）
-    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
-    const adminUser = (usersData?.users ?? []).find((u) => u.email === adminEmail)
-    adminUserId = adminUser?.id ?? null
-  }
-
-  // 管理者の project_id 一覧を取得（ユーザーが見つからない場合は空配列）
-  let adminProjectIds: string[] = []
-  if (adminUserId) {
-    const { data: projectRows } = await supabaseAdmin
-      .from('projects')
-      .select('id')
-      .eq('user_id', adminUserId)
-    adminProjectIds = (projectRows ?? []).map((r: { id: string }) => r.id)
-  }
-
-  const [authResult, latestPostsAll, talksResult, interviewCountResult, blogCountResult] = await Promise.allSettled([
+  const [authResult, latestPostsAll, talksResult] = await Promise.allSettled([
     (async () => {
       const supabase = await createClient()
       const { data: { user } } = await supabase.auth.getUser()
@@ -162,37 +140,11 @@ export default async function LandingPage() {
       .eq('status', 'published')
       .order('published_at', { ascending: false })
       .limit(3),
-    // 取材回数: 管理者アカウントの completed インタビューのみカウント（ドッグフーディング実績）
-    adminProjectIds.length > 0
-      ? supabaseAdmin
-          .from('interviews')
-          .select('*', { count: 'exact', head: true })
-          .in('project_id', adminProjectIds)
-          .eq('status', 'completed')
-      : Promise.resolve({ count: 0, data: null, error: null }),
-    supabaseAdmin
-      .from('blog_posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('published', true),
   ])
 
   const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
   const latestPosts = (latestPostsAll.status === 'fulfilled' ? latestPostsAll.value : []).slice(0, 3)
   const latestTalks = talksResult.status === 'fulfilled' ? talksResult.value.data : []
-
-  // 取材回数: 管理者アカウントの completed インタビュー数
-  const interviewCount =
-    interviewCountResult.status === 'fulfilled'
-      ? (interviewCountResult.value.count ?? 0)
-      : 0
-
-  // ブログ本数: DB公開記事数と静的記事数の大きい方（blog_posts に user_id なし、全件が管理者ブログ）
-  const dbBlogCount =
-    blogCountResult.status === 'fulfilled'
-      ? (blogCountResult.value.count ?? 0)
-      : 0
-  const staticBlogCount = POSTS.length
-  const blogCount = Math.max(dbBlogCount, staticBlogCount)
 
   const priceIds = {
     lightning: process.env.STRIPE_PRICE_ID_LIGHTNING ?? '',
@@ -666,7 +618,6 @@ export default async function LandingPage() {
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>忙しくて、<br />ブログまで手が回らない</p>
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-7">
-                  {/* Hero number */}
                   <div className="text-center mb-6">
                     <div className="flex items-end justify-center gap-1 leading-none">
                       <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>20</span>
@@ -674,26 +625,21 @@ export default async function LandingPage() {
                     </div>
                     <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>Insight Cast の 1記事あたりの時間</p>
                   </div>
-                  {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: 'AIツールで書く', width: '90%', value: '1〜2時間', highlight: false },
-                      { name: 'ライター外注',   width: '90%', value: '1〜2時間', highlight: false },
-                      { name: 'Insight Cast',   width: '20%', value: '約20分',   highlight: true  },
+                      { name: '完全AI任せ',     value: '3分',      muted: true,  highlight: false },
+                      { name: 'AIツールで書く', value: '1〜2時間', muted: false, highlight: false },
+                      { name: 'ライター外注',   value: '1〜2時間', muted: false, highlight: false },
+                      { name: 'Insight Cast',   value: '約20分',   muted: false, highlight: true  },
                     ].map((r) => (
                       <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                         style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
                         <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
-                        <div className="flex flex-col items-end gap-1">
-                          <div className="h-1 w-20 overflow-hidden rounded-[2px]" style={{ background: '#e2d5c3' }}>
-                            <div className="h-full rounded-[2px]" style={{ width: r.width, background: r.highlight ? '#c2722a' : '#7a6555' }} />
-                          </div>
-                          <span className="text-[11px] font-medium whitespace-nowrap" style={{ color: r.highlight ? '#c2722a' : '#1c1410' }}>{r.value}</span>
-                        </div>
+                        <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
                       </div>
                     ))}
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#fdf7f0', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
                     チャットで答えるだけ。<strong className="font-bold text-[var(--text)]">資料も整った言葉も要りません。</strong>
                   </p>
                 </div>
@@ -729,7 +675,7 @@ export default async function LandingPage() {
                       </div>
                     ))}
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#fdf7f0', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
                     「当たり前」と思っていた中から、<strong className="font-bold text-[var(--text)]">伝わっていない価値を引き出します。</strong>
                   </p>
                 </div>
@@ -738,10 +684,7 @@ export default async function LandingPage() {
               {/* Card 3: 予算 — 結論カード */}
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold tracking-[0.14em] uppercase" style={{ color: '#e8954a' }}>予算で悩む方へ</p>
-                    <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: '#c2722a', color: 'white' }}>コスパ最高</span>
-                  </div>
+                  <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#e8954a' }}>予算で悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>月の予算は、<br />できれば1万円以内に</p>
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-7">
@@ -756,28 +699,20 @@ export default async function LandingPage() {
                   {/* Comparison rows */}
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: 'HP放置',      value: '何も増えない',     muted: true  },
-                      { name: 'AIツール',     value: '月数本の薄い記事', muted: false },
-                      { name: 'ライター発注', value: '月1〜2本が限界',   muted: false },
+                      { name: 'HP放置',      value: '何も増えない',     muted: true,  highlight: false },
+                      { name: 'AIツール',     value: '月数本の薄い記事', muted: false, highlight: false },
+                      { name: 'ライター発注', value: '月1〜2本が限界',   muted: false, highlight: false },
+                      { name: 'Insight Cast', value: '月15回・60本の記事', muted: false, highlight: true  },
                     ].map((r) => (
-                      <div key={r.name} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b" style={{ borderColor: '#e2d5c3' }}>
-                        <span className="text-[12px] leading-[1.5]" style={{ color: '#7a6555' }}>{r.name}</span>
-                        <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                      <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
+                        style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
+                        <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                        <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
                       </div>
                     ))}
-                    <div className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b -mx-6 px-6" style={{ background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' }}>
-                      <div>
-                        <span className="text-[12px] font-bold leading-none" style={{ color: '#c2722a' }}>Insight Cast</span>
-                        <span className="block text-[10px] font-bold mt-0.5" style={{ color: '#c2722a' }}>個人プラン</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="block text-[11px] font-bold" style={{ color: '#1c1410' }}>月15回取材</span>
-                        <span className="block text-[10px] font-bold" style={{ color: '#c2722a' }}>60本の記事</span>
-                      </div>
-                    </div>
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#fdf7f0', color: '#7a6555', borderColor: '#e2d5c3' }}>
-                    他の選択肢と比べてみてください。<strong className="font-bold text-[var(--text)]">答えはひとつです。</strong>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
+                    <strong className="font-bold text-[var(--text)]">1記事あたり ¥83。</strong>続けられる価格にこだわりました。
                   </p>
                 </div>
               </div>
@@ -786,31 +721,102 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑬ From the Team — ドッグフーディング開示 */}
-        <section className="py-14 sm:py-[88px]" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
-          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">From the Team</div>
+        {/* ⑫ Pricing */}
+        <section className="py-14 sm:py-[88px]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              私たち自身が、Insight Cast を使っています。
+              まず無料で体験してください。<br />2回まで、カード不要で使えます。
             </h2>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[560px] mx-auto">
-              このサービスは、私たち自身が「HPを更新しなきゃ、でも何を書けばいいか分からない」という状態を経験したことから生まれました。
-            </p>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-4 max-w-[560px] mx-auto">
-              Insight Cast は今、自社のホームページ更新をこのツールで進めています。
-              {interviewCount > 0 && blogCount > 0
-                ? `代表者への取材を${interviewCount}回重ね、そこから生まれたブログ記事がすでに${blogCount}本あります。`
-                : '代表者への取材を重ね、そこから生まれたブログ記事を公開しています。'}
-              売り込みではなく、私たちが先に使って確かめたことを、そのままお届けしています。
-            </p>
-            <div className="mt-8">
-              <Link
-                href="/blog"
-                className="border-[1.5px] border-[var(--accent)] text-[var(--accent)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold hover:bg-[var(--accent)] hover:text-white transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                運営ブログを読む <span aria-hidden="true">→</span>
-              </Link>
+            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
+            {/* お試し — プランではなく独立した体験導線 */}
+            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                <div className="flex-1">
+                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
+                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
+                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
+                  <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
+                    {FREE_TRIAL_FEATURES.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                        <span aria-hidden="true" className="text-[11px] font-bold text-[var(--teal)]">✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="sm:flex-shrink-0">
+                  {isLoggedIn ? (
+                    <Link
+                      href="/dashboard"
+                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    >
+                      ダッシュボードへ
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/auth/signup"
+                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    >
+                      無料で始める
+                    </Link>
+                  )}
+                </div>
+              </div>
             </div>
+
+            {/* 月額プラン */}
+            <div className="mt-10 flex items-center gap-4">
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              {PAID_PLANS.map((plan) => (
+                <div
+                  key={plan.name}
+                  className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+                >
+                  <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
+                  <div className="flex items-baseline gap-1 mb-1">
+                    <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
+                    <span className={`text-sm ${plan.highlight ? 'text-white/70' : 'text-[var(--text2)]'}`}>{plan.period}</span>
+                  </div>
+                  <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/80' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
+                  <ul className="space-y-2.5 flex-1 mb-8">
+                    {plan.features.map((f) => (
+                      <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
+                        <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  {isLoggedIn ? (
+                    <CheckoutButton
+                      priceId={
+                        plan.id === 'lightning' ? priceIds.lightning
+                        : plan.id === 'personal' ? priceIds.personal
+                        : priceIds.business
+                      }
+                      label={plan.cta}
+                      featured={plan.highlight}
+                    />
+                  ) : (
+                    <Link
+                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
+                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                    >
+                      {plan.cta}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
+              料金の詳細は
+              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
+              をご覧ください。
+            </p>
           </div>
         </section>
 
@@ -929,105 +935,6 @@ export default async function LandingPage() {
           </section>
         )}
 
-        {/* ⑫ Pricing */}
-        <section className="py-14 sm:py-[88px]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              まず無料で体験してください。<br />2回まで、カード不要で使えます。
-            </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
-            {/* お試し — プランではなく独立した体験導線 */}
-            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-                <div className="flex-1">
-                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
-                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
-                  <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
-                    {FREE_TRIAL_FEATURES.map((f) => (
-                      <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
-                        <span aria-hidden="true" className="text-[11px] font-bold text-[var(--teal)]">✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="sm:flex-shrink-0">
-                  {isLoggedIn ? (
-                    <Link
-                      href="/dashboard"
-                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      ダッシュボードへ
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/auth/signup"
-                      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                    >
-                      無料で始める
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* 月額プラン */}
-            <div className="mt-10 flex items-center gap-4">
-              <div className="flex-1 h-px bg-[var(--border)]" />
-              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
-              <div className="flex-1 h-px bg-[var(--border)]" />
-            </div>
-            <div className="mt-6 grid gap-6 sm:grid-cols-3">
-              {PAID_PLANS.map((plan) => (
-                <div
-                  key={plan.name}
-                  className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
-                >
-                  <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
-                  <div className="flex items-baseline gap-1 mb-1">
-                    <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
-                    <span className={`text-sm ${plan.highlight ? 'text-white/70' : 'text-[var(--text2)]'}`}>{plan.period}</span>
-                  </div>
-                  <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/80' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
-                  <ul className="space-y-2.5 flex-1 mb-8">
-                    {plan.features.map((f) => (
-                      <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
-                        <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  {isLoggedIn ? (
-                    <CheckoutButton
-                      priceId={
-                        plan.id === 'lightning' ? priceIds.lightning
-                        : plan.id === 'personal' ? priceIds.personal
-                        : priceIds.business
-                      }
-                      label={plan.cta}
-                      featured={plan.highlight}
-                    />
-                  ) : (
-                    <Link
-                      href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-                      className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
-                    >
-                      {plan.cta}
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </div>
-            <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
-              料金の詳細は
-              <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
-              をご覧ください。
-            </p>
-          </div>
-        </section>
-
         {/* ⑮ FAQ */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
@@ -1046,39 +953,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ⑮ Contact CTA */}
-        {(() => {
-          const mint = getCharacter('mint')
-          return (
-            <section className="py-14 sm:py-20" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
-              <div className="mx-auto max-w-[720px] px-6 sm:px-8 text-center">
-                <div className="flex justify-center mb-6">
-                  <CharacterAvatar
-                    src={mint?.icon96}
-                    alt={`${mint?.name ?? 'ミント'}のアイコン`}
-                    emoji={mint?.emoji}
-                    size={72}
-                    className="shadow-[0_4px_16px_rgba(0,0,0,.08)]"
-                  />
-                </div>
-                <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.3]" style={{ fontSize: 'clamp(22px,2.8vw,34px)' }}>
-                  「自社に使えるか」から聞いてください。
-                </h2>
-                <p className="text-[15px] text-[var(--text2)] leading-[1.9] mt-4 max-w-[480px] mx-auto">
-                  業種のことも、ホームページの状況も、何も準備しなくて大丈夫です。「こんな使い方はできますか？」「まず何から始めればいいですか？」そんなところから始めましょう。
-                </p>
-                <div className="mt-8">
-                  <Link
-                    href="/contact"
-                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                  >
-                    問い合わせる（無料・返信は2営業日以内） <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </div>
-            </section>
-          )
-        })()}
 
       </main>
 

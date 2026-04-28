@@ -5,14 +5,15 @@ import { notFound } from 'next/navigation'
 
 import { CharacterAvatar, Breadcrumb } from '@/components/ui'
 import { getCharacter, CHARACTERS } from '@/lib/characters'
-import { POSTS, CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
 import { MarkdownArticleBody } from '@/lib/blog-markdown'
 import { ShareButtons } from './ShareButtons'
 
 export async function generateStaticParams() {
-  return POSTS.map((post) => ({ slug: post.slug }))
+  const posts = await getBlogPostsFromDB()
+  return posts.map((post) => ({ slug: post.slug }))
 }
 
 export async function generateMetadata({
@@ -294,6 +295,48 @@ export default async function BlogDetailPage({
             <p className="text-[var(--text3)]">本文を準備中です。</p>
           )}
 
+          {/* Made with Insight Cast バッジ */}
+          {interviewer && (() => {
+            const castChar = CHARACTERS.find((c) => c.id === post.interviewer)
+            return (
+              <div className="mt-10 rounded-[var(--r-lg)] border border-[var(--accent)]/25 bg-[var(--accent-l)] px-5 py-4">
+                <div className="flex items-start gap-3">
+                  {castChar && (
+                    <CharacterAvatar
+                      src={castChar.icon48}
+                      alt={`${castChar.name}のアイコン`}
+                      emoji={castChar.emoji}
+                      size={36}
+                      className="flex-shrink-0 mt-0.5"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-[var(--accent)] mb-1">Made with Insight Cast</p>
+                    <p className="text-sm leading-[1.7] text-[var(--text2)]">
+                      この記事は、Insight Cast の AI取材を実際に使って作成しました。
+                    </p>
+                    {(post.interviewDurationMin || post.interviewQuestionCount) && (
+                      <p className="mt-1 text-[12px] text-[var(--text3)]">
+                        {post.interviewDurationMin && `取材時間：${post.interviewDurationMin}分`}
+                        {post.interviewDurationMin && post.interviewQuestionCount && '　／　'}
+                        {post.interviewQuestionCount && `質問数：${post.interviewQuestionCount}問`}
+                        {castChar && `　／　キャスト：${castChar.name}`}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-3 pl-[48px]">
+                  <Link
+                    href="/auth/signup"
+                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    あなたも試してみる <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
+            )
+          })()}
+
           {/* SNS シェアボタン */}
           <ShareButtons title={post.title} url={`${APP_URL}/blog/${slug}`} />
 
@@ -321,48 +364,6 @@ export default async function BlogDetailPage({
             </nav>
           )}
 
-          {/* 記事末尾 */}
-          <div className="mt-8 flex flex-col gap-8">
-            <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[rgba(255,253,249,0.94)] px-6 py-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text3)]">
-                Continue Reading
-              </p>
-              <p className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold text-[var(--text)]">
-                このテーマをもう少し見る
-              </p>
-              <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
-                関連する記事やサービス紹介から、次に気になる内容へ進めます。
-              </p>
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                {[
-                  {
-                    href: '/blog',
-                    title: 'ブログ一覧へ',
-                    description: '他の記事を続けて読む',
-                  },
-                  {
-                    href: '/',
-                    title: 'Insight Cast とは',
-                    description: '取材から記事化までの流れを見る',
-                  },
-                  {
-                    href: '/cast',
-                    title: 'キャストを見る',
-                    description: '誰がどんな取材をするか知る',
-                  },
-                ].map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                  >
-                    <p className="text-sm font-semibold text-[var(--text)]">{item.title}</p>
-                    <p className="mt-1 text-xs leading-6 text-[var(--text3)]">{item.description}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* 関連記事 */}
@@ -404,44 +405,6 @@ export default async function BlogDetailPage({
           </div>
         )}
 
-        {/* 記事下CTA */}
-        <div className="mx-auto mt-14 max-w-2xl">
-          {(() => {
-            const mint = getCharacter('mint')
-            return (
-              <div className="rounded-[var(--r-xl)] border border-[var(--accent)]/20 bg-[var(--accent-l)] px-6 py-7 text-center">
-                <div className="mb-3 flex justify-center">
-                  <CharacterAvatar
-                    src={mint?.icon48}
-                    alt="ミントのアイコン"
-                    emoji={mint?.emoji}
-                    size={40}
-                  />
-                </div>
-                <p className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold text-[var(--text)]">
-                  まず、一度試してみませんか？
-                </p>
-                <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
-                  カード不要。メールアドレスだけで、AIキャストの取材を体験できます。
-                </p>
-                <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
-                  <Link
-                    href="/auth/signup"
-                    className="rounded-[var(--r-sm)] bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                  >
-                    無料で体験する <span aria-hidden="true">→</span>
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] px-7 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                  >
-                    まず相談してみる
-                  </Link>
-                </div>
-              </div>
-            )
-          })()}
-        </div>
       </main>
 
 

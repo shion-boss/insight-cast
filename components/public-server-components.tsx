@@ -38,9 +38,10 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
               </>
             ) : (
               <>
-                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">まず話してみてください。記事の素材は、そこから生まれます。</h2>
-                <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
-                  登録はメールアドレスだけ。3名のキャストが今日から無料で使えます。
+                <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">AIキャストの取材を受けてみませんか？</h2>
+                <p className="mt-5 text-sm leading-[2] text-white/85 sm:text-[15px]">
+                  答えるだけで、記事の素材が手元に届きます。<br />
+                  カードも、契約期間も、整った言葉も、いりません。
                 </p>
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
@@ -49,13 +50,10 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                   >
                     無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>
-                  <Link
-                    href="/cast"
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/35 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                  >
-                    キャストを見る
-                  </Link>
                 </div>
+                <p className="mt-4 text-[12px] text-white/60">
+                  登録はメールアドレスだけ　・　2回まで無料　・　いつでも解約OK
+                </p>
               </>
             )}
           </div>

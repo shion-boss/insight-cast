@@ -1,5 +1,4 @@
 import type { MetadataRoute } from 'next'
-import { POSTS } from '@/lib/blog-posts'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
@@ -10,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: BASE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${BASE_URL}/cast-talk`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.85 },
-{ url: `${BASE_URL}/cast`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
+    { url: `${BASE_URL}/cast`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
     { url: `${BASE_URL}/pricing`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.75 },
     { url: `${BASE_URL}/faq`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
     { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
@@ -21,20 +20,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/tokushoho`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.3 },
   ]
 
-  let allBlogPosts = POSTS
+  let blogRoutes: MetadataRoute.Sitemap = []
   try {
-    const dbPosts = await getBlogPostsFromDB()
-    if (dbPosts.length > 0) allBlogPosts = dbPosts
+    const posts = await getBlogPostsFromDB()
+    blogRoutes = posts.map((post) => ({
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    }))
   } catch {
-    // fallback to static posts
+    // DB unavailable at build time — skip
   }
-
-  const blogRoutes: MetadataRoute.Sitemap = allBlogPosts.map((post) => ({
-    url: `${BASE_URL}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }))
 
   let castTalkRoutes: MetadataRoute.Sitemap = []
   try {
@@ -51,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     }))
   } catch {
-    // DB unavailable at build time — skip dynamic routes
+    // DB unavailable at build time — skip
   }
 
   return [...staticRoutes, ...blogRoutes, ...castTalkRoutes]

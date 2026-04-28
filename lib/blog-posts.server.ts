@@ -2,8 +2,7 @@ import 'server-only'
 
 import { unstable_cache } from 'next/cache'
 import type { ArticleBody } from '@/lib/blog-contents'
-import { ARTICLE_BODIES } from '@/lib/blog-contents'
-import { type InterviewerId, type Post, POSTS, type PostType, getPost, normalizePostCategory } from '@/lib/blog-posts'
+import { type InterviewerId, type Post, type PostType, normalizePostCategory } from '@/lib/blog-posts'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export type PostWithBody = Post & { body?: ArticleBody | null }
@@ -30,16 +29,8 @@ function rowToPost(row: Record<string, unknown>): Post {
     coverColor: typeof row.cover_color === 'string' && row.cover_color.length > 0
       ? row.cover_color
       : FALLBACK_COVER_COLOR,
-  }
-}
-
-function getStaticBlogPost(slug: string): PostWithBody | null {
-  const post = getPost(slug)
-  if (!post) return null
-
-  return {
-    ...post,
-    body: ARTICLE_BODIES[slug] ?? null,
+    interviewDurationMin: typeof row.interview_duration_min === 'number' ? row.interview_duration_min : null,
+    interviewQuestionCount: typeof row.interview_question_count === 'number' ? row.interview_question_count : null,
   }
 }
 
@@ -49,17 +40,17 @@ export const getBlogPostsFromDB = unstable_cache(
       const supabase = createAdminClient()
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('slug, title, excerpt, category, type, interviewer, cover_color, date')
+        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, interview_duration_min, interview_question_count')
         .eq('published', true)
         .order('date', { ascending: false })
 
-      if (error || !data || data.length === 0) return POSTS
+      if (error || !data) return []
       return data.map((row) => rowToPost(row as Record<string, unknown>))
     } catch {
-      return POSTS
+      return []
     }
   },
-  ['blog-posts-list'],
+  ['blog-posts-list-v2'],
   { revalidate: 300 },
 )
 
@@ -69,20 +60,20 @@ export const getBlogPostFromDB = unstable_cache(
       const supabase = createAdminClient()
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, body')
+        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, body, interview_duration_min, interview_question_count')
         .eq('slug', slug)
         .eq('published', true)
         .maybeSingle()
 
-      if (error || !data) return getStaticBlogPost(slug)
+      if (error || !data) return null
       return {
         ...rowToPost(data as Record<string, unknown>),
-        body: (data.body as ArticleBody | null) ?? ARTICLE_BODIES[slug] ?? null,
+        body: (data.body as ArticleBody | null) ?? null,
       }
     } catch {
-      return getStaticBlogPost(slug)
+      return null
     }
   },
-  ['blog-post'],
+  ['blog-post-v2'],
   { revalidate: 300 },
 )
