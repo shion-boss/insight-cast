@@ -27,7 +27,8 @@ export async function POST() {
       return_url: `${appUrl}/settings/billing`,
     })
     return NextResponse.json({ url: session.url })
-  } catch {
+  } catch (err) {
+    console.error('[stripe/portal]', err)
     return NextResponse.json({ code: 'STRIPE_ERROR', message: '支払い管理ページを開けませんでした' }, { status: 500 })
   }
 }

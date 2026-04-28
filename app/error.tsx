@@ -1,15 +1,21 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 export default function Error({
+  error,
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useEffect(() => {
+    console.error('Client error:', error)
+  }, [error])
+
   const mint = getCharacter('mint')
 
   return (

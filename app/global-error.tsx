@@ -1,14 +1,19 @@
 'use client'
 
+import { useEffect } from 'react'
 import Image from 'next/image'
 import mintIcon96 from '@/assets/characters/mint/icons/icon-96.png'
 
 export default function GlobalError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useEffect(() => {
+    console.error('Global error:', error)
+  }, [error])
   return (
     <html lang="ja">
       <body style={{ margin: 0, fontFamily: 'sans-serif', background: '#faf6f0' }}>
