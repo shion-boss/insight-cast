@@ -661,7 +661,7 @@ export default async function LandingPage() {
 
               {/* Card 1: 時間 */}
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
-                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5d0a0', borderColor: '#e8c080' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>忙しさで悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">忙しくて、ブログまで<br />手が回らない</p>
                 </div>
@@ -693,7 +693,7 @@ export default async function LandingPage() {
                       </div>
                     ))}
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5d0a0', color: '#7a4a18', borderColor: '#e8c080' }}>
                     チャットで答えるだけ。<strong className="font-bold text-[var(--text)]">資料も整った言葉も要りません。</strong>
                   </p>
                 </div>
@@ -701,7 +701,7 @@ export default async function LandingPage() {
 
               {/* Card 2: 言語化 */}
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
-                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5d0a0', borderColor: '#e8c080' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>言語化で悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">自社の強みが、まだ<br />言葉にできていない</p>
                 </div>
@@ -729,7 +729,7 @@ export default async function LandingPage() {
                       </div>
                     ))}
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5d0a0', color: '#7a4a18', borderColor: '#e8c080' }}>
                     「当たり前」と思っていた中から、<strong className="font-bold text-[var(--text)]">伝わっていない価値を引き出します。</strong>
                   </p>
                 </div>
@@ -737,7 +737,7 @@ export default async function LandingPage() {
 
               {/* Card 3: 予算 — 結論カード */}
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
-                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5d0a0', borderColor: '#e8c080' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[10px] font-bold tracking-[0.14em] uppercase" style={{ color: '#c2722a' }}>予算で悩む方へ</p>
                     <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: '#c2722a', color: 'white' }}>コスパ最高</span>
@@ -776,7 +776,7 @@ export default async function LandingPage() {
                       </div>
                     </div>
                   </div>
-                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5d0a0', color: '#7a4a18', borderColor: '#e8c080' }}>
                     他の選択肢と比べてみてください。<strong className="font-bold text-[var(--text)]">答えはひとつです。</strong>
                   </p>
                 </div>
