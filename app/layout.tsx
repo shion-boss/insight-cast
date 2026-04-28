@@ -135,6 +135,12 @@ export default function RootLayout({
       <body
         className={`${mplus1p.variable} ${geistMono.variable} antialiased`}
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-[var(--r-sm)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none"
+        >
+          メインコンテンツへスキップ
+        </a>
         <ProjectAnalysisNotifier />
         <ToastViewport />
         <PageTransitionOverlay />
