@@ -660,7 +660,7 @@ export default async function LandingPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
 
               {/* Card 1: 時間 */}
-              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+              <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>忙しさで悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">忙しくて、ブログまで<br />手が回らない</p>
@@ -700,7 +700,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Card 2: 言語化 */}
-              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+              <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>言語化で悩む方へ</p>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">自社の強みが、まだ<br />言葉にできていない</p>
@@ -736,7 +736,7 @@ export default async function LandingPage() {
               </div>
 
               {/* Card 3: 予算 — 結論カード */}
-              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+              <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[10px] font-bold tracking-[0.14em] uppercase" style={{ color: '#c2722a' }}>予算で悩む方へ</p>
@@ -772,7 +772,7 @@ export default async function LandingPage() {
                       </div>
                       <div className="text-right">
                         <span className="block text-[11px] font-bold" style={{ color: '#1c1410' }}>月15回取材</span>
-                        <span className="block text-[10px] font-bold" style={{ color: '#c2722a' }}>60本の素材</span>
+                        <span className="block text-[10px] font-bold" style={{ color: '#c2722a' }}>60本の記事</span>
                       </div>
                     </div>
                   </div>
