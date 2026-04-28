@@ -587,21 +587,22 @@ export default async function LandingPage() {
             </h2>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[640px]">
               AIが書いた記事は評価が下がる？<br />
-              Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。Googleはコンテンツの質をE-E-A-Tという基準で評価します。
+              Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。<br />
+              Googleはコンテンツの質をE-E-A-Tという基準で評価します。
             </p>
             <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-              <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[80px_1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3 gap-4">
+              <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[150px_1fr_220px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3 gap-4">
                 <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">E-E-A-T</div>
                 <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが重視する基準</div>
                 <div className="hidden sm:block text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">Insight Cast は？</div>
               </div>
               {[
-                { badge: 'Experience',      criterion: '実際の体験・経験に基づいているか',         answer: '事業者本人が取材に答えている' },
-                { badge: 'Expertise',       criterion: 'その分野の専門知識・現場知識があるか',       answer: 'あなたの現場知識が素材になる' },
+                { badge: 'Experience',        criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
+                { badge: 'Expertise',         criterion: 'その分野の専門知識・現場知識があるか',   answer: 'あなたの現場知識が素材になる' },
                 { badge: 'Authoritativeness', criterion: '信頼される発信者として語られているか',   answer: 'あなた自身の言葉で語られている' },
-                { badge: 'Trustworthiness', criterion: '情報が正確で誠実か',                       answer: '作り話でなく体験から引き出す' },
+                { badge: 'Trustworthiness',   criterion: '情報が正確で誠実か',                     answer: '作り話でなく体験から引き出す' },
               ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[80px_1fr_300px] border-b last:border-0 border-[var(--border)] gap-0">
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[150px_1fr_220px] border-b last:border-0 border-[var(--border)] gap-0">
                   <div className="flex items-center px-6 py-3 sm:py-4 border-b sm:border-b-0 sm:border-r border-[var(--border)] bg-[var(--bg2)]">
                     <span className="text-[10px] font-bold text-[var(--accent)] tracking-[.04em]">{row.badge.charAt(0)}</span>
                     <span className="text-[10px] text-[var(--text3)] ml-0.5">{row.badge.slice(1)}</span>
