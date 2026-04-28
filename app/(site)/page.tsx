@@ -227,7 +227,7 @@ export default async function LandingPage() {
           <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-7" style={{ color: '#c2722a', opacity: 0.8 }}>Pain</p>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.65] mb-10" style={{ color: '#f0e8dc', fontSize: 'clamp(26px,3.8vw,52px)' }}>
-              ホームページが止まっているのは、<br />
+              ホームページが<br className="sm:hidden" />止まっているのは、<br />
               <span className="relative inline-block">
                 やる気がないからではない。
                 <span className="absolute bottom-[1px] left-0 right-0 h-[2px] rounded-[1px]" style={{ background: '#c2722a', opacity: 0.6 }} />
