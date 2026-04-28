@@ -5,6 +5,18 @@ import { getStripe, getPriceIdToPlan } from '@/lib/stripe'
 
 const CheckoutBodySchema = z.object({ priceId: z.string().min(1) })
 
+// Per-user rate limit: max 5 checkout session creations per hour per instance
+const checkoutAttempts = new Map<string, number[]>()
+function isCheckoutRateLimited(userId: string): boolean {
+  const now = Date.now()
+  const windowMs = 3_600_000
+  const max = 5
+  const times = (checkoutAttempts.get(userId) ?? []).filter((t) => now - t < windowMs)
+  if (times.length >= max) return true
+  checkoutAttempts.set(userId, [...times, now])
+  return false
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -14,6 +26,10 @@ export async function POST(request: Request) {
   }
   if (!user) {
     return NextResponse.json({ code: 'UNAUTHORIZED', message: '認証が必要です' }, { status: 401 })
+  }
+
+  if (isCheckoutRateLimited(user.id)) {
+    return NextResponse.json({ code: 'RATE_LIMITED', message: '短時間に多くの操作が行われました。しばらく待ってからお試しください。' }, { status: 429 })
   }
 
   const body: unknown = await request.json()
