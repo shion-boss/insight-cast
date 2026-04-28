@@ -21,7 +21,7 @@ export default async function ToolLayout({ children }: { children: ReactNode }) 
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name')
+    .select('name, avatar_url')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -31,6 +31,7 @@ export default async function ToolLayout({ children }: { children: ReactNode }) 
   return (
     <AppShell
       accountLabel={accountLabel}
+      avatarUrl={profile?.avatar_url ?? null}
       isAdmin={isAdmin}
     >
       {children}

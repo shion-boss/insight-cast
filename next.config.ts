@@ -8,6 +8,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.supabase.co' },
+    ],
+  },
   experimental: {
     // marked と dompurify はクライアント側で使用されるため tree-shaking を最適化
     optimizePackageImports: ['marked', 'dompurify'],

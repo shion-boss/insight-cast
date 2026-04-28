@@ -33,6 +33,7 @@ export function AppShell({
   // active は後方互換のために受け取るが内部では使用しない（URL から自動判定）
   active: _active,
   accountLabel,
+  avatarUrl,
   isAdmin,
   children,
   headerRight,
@@ -41,6 +42,7 @@ export function AppShell({
   title?: ReactNode
   active?: AppSection
   accountLabel: string
+  avatarUrl?: string | null
   isAdmin?: boolean
   children: ReactNode
   headerRight?: ReactNode
@@ -103,18 +105,22 @@ export function AppShell({
               />
             </div>
             {/* PC: タイトル + 右側アクション */}
-            <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between lg:gap-4 lg:min-w-0">
+            <div className="hidden lg:flex lg:flex-1 lg:items-center lg:gap-4 lg:min-w-0">
               {title && (
                 <h1 className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</h1>
               )}
-              <div className="flex shrink-0 items-center gap-3">
+              <div className="ml-auto flex shrink-0 items-center gap-3">
                 {headerRight}
                 <Link
                   href="/settings"
                   aria-label="設定"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] overflow-hidden bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
-                  {accountInitial}
+                  {avatarUrl ? (
+                    <Image src={avatarUrl} alt={accountLabel} width={40} height={40} className="h-full w-full object-cover" />
+                  ) : (
+                    accountInitial
+                  )}
                 </Link>
               </div>
             </div>
