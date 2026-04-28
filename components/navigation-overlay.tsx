@@ -38,8 +38,9 @@ export function NavigationOverlay() {
 
     const fromArea = classify(location.pathname)
     const toArea = classify(toPath)
-    // エリアをまたぐ遷移は PageTransitionOverlay が担当するのでスキップ
+    // site 側は SiteHeaderClient が担当。エリアをまたぐ遷移は PageTransitionOverlay が担当
     if (fromArea !== toArea) return
+    if (fromArea === 'site') return
 
     // ヘッダー下端を測定してからオーバーレイを表示
     const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
@@ -57,21 +58,9 @@ export function NavigationOverlay() {
 
   const area = areaRef.current
 
-  // ヘッダー高さ・サイドバー幅をエリアごとに定義
   // tool: header 64px, sidebar 236px (lg以上)
   // admin: header 64px, sidebar 220px (lg以上)
-  // site: header高さが可変なので fixed top-0 で全画面カバー
-  if (area === 'site') {
-    return (
-      <div aria-hidden="true">
-        <div className="fixed left-0 right-0 z-[31] h-[2px] overflow-hidden" style={{ top: headerBottom }}>
-          <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
-        </div>
-        <div className="fixed inset-0 z-[25] bg-[rgba(250,246,240,0.9)]" />
-      </div>
-    )
-  }
-
+  // site: SiteHeaderClient が担当するため NavigationOverlay では扱わない
   const sidebarClass = area === 'admin' ? 'lg:left-[220px]' : 'lg:left-[236px]'
 
   return (
