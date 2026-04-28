@@ -593,6 +593,13 @@ export default async function LandingPage() {
             <div className="mt-8 rounded-[20px] border border-[var(--border)] overflow-hidden">
               <table className="w-full border-collapse">
                 <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
+                <thead>
+                  <tr className="border-b border-[var(--border)]">
+                    <th className="w-[130px] px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] border-r border-[var(--border)]">E-E-A-T 基準</th>
+                    <th className="px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)]">内容</th>
+                    <th className="w-[260px] px-6 py-3 text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)]" style={{ background: '#f0fdf4', borderLeft: '2px solid rgba(22,163,74,0.2)' }}>Insight Castで作成した記事</th>
+                  </tr>
+                </thead>
                 <tbody>
                   {[
                     { badge: 'Experience',        badgeJa: '体験',   criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
@@ -607,10 +614,10 @@ export default async function LandingPage() {
                         <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
                       </td>
                       <td className="px-6 py-5 bg-[var(--surface)] text-[14px] text-[var(--text)] align-middle">{row.criterion}</td>
-                      <td className="w-[260px] px-6 py-5 align-middle" style={{ background: 'rgba(194,114,42,0.11)', borderLeft: '2px solid rgba(194,114,42,0.3)' }}>
+                      <td className="w-[260px] px-6 py-5 align-middle" style={{ background: 'white', borderLeft: '2px solid rgba(22,163,74,0.25)' }}>
                         <span className="flex items-start gap-2.5">
                           <svg className="flex-shrink-0 mt-[3px]" width="13" height="10" viewBox="0 0 13 10" fill="none">
-                            <path d="M1 5L4.5 8.5L12 1" stroke="#c2722a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M1 5L4.5 8.5L12 1" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                           <span className="text-[14px] font-medium text-[var(--text)] leading-[1.6]">{row.answer}</span>
                         </span>
