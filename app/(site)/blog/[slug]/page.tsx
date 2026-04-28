@@ -341,8 +341,8 @@ export default async function BlogDetailPage({
                     description: '他の記事を続けて読む',
                   },
                   {
-                    href: '/service',
-                    title: 'サービスを見る',
+                    href: '/',
+                    title: 'Insight Cast とは',
                     description: '取材から記事化までの流れを見る',
                   },
                   {

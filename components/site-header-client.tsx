@@ -9,7 +9,6 @@ import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
 
 const NAV_LINKS = [
-  { href: '/service', label: 'サービス' },
   { href: '/pricing', label: '料金' },
   { href: '/cast', label: 'キャスト' },
   { href: '/blog', label: 'ブログ' },
@@ -21,7 +20,6 @@ const DRAWER_NAV_LINKS = [
   { href: '/blog', label: 'ブログ' },
   { href: '/cast-talk', label: 'Cast Talk' },
   { href: '/pricing', label: '料金プラン' },
-  { href: '/service', label: '使い方' },
   { href: '/contact', label: 'お問い合わせ' },
 ]
 
