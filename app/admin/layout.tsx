@@ -63,9 +63,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <Link href="/"><Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" /></Link>
               <AdminMobileNav email={user.email ?? ''} />
             </div>
-            {/* PC: 管理画面ラベル + メール */}
-            <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
-              <p className="font-serif text-base font-bold text-[var(--text)]">管理画面</p>
+            {/* PC: メールアドレス（右寄せ） */}
+            <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-end">
               <span className="text-xs text-[var(--text3)]">{user.email}</span>
             </div>
           </div>
