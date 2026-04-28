@@ -8,9 +8,10 @@ import { getCharacter } from '@/lib/characters'
 import { saveArticleContent } from './actions'
 import type { ArticleSuggestions, ArticleSuggestion } from '@/lib/article-suggestions'
 
-type Format = 'text' | 'markdown' | 'html'
+type Format = 'blocks' | 'text' | 'markdown' | 'html'
 
 const FORMAT_LABELS: Record<Format, string> = {
+  blocks:   'ブロック',
   text:     'テキスト',
   markdown: 'Markdown',
   html:     '埋め込みHTML',
@@ -312,7 +313,7 @@ export function ArticleExportPanel({
   suggestions?: ArticleSuggestions | null
 }) {
   const availableFormats = Object.keys(FORMAT_LABELS) as Format[]
-  const [format, setFormat] = useState<Format>('markdown')
+  const [format, setFormat] = useState<Format>('blocks')
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
@@ -380,13 +381,15 @@ export function ArticleExportPanel({
   }, [output])
 
   const handleDownload = useCallback(() => {
-    const mimeMap: Record<Format, string> = { text: 'text/plain', markdown: 'text/markdown', html: 'text/html' }
-    const extMap: Record<Format, string> = { text: 'txt', markdown: 'md', html: 'html' }
-    const blob = new Blob([output], { type: mimeMap[safeFormat] })
+    type DownloadFormat = Exclude<Format, 'blocks'>
+    const mimeMap: Record<DownloadFormat, string> = { text: 'text/plain', markdown: 'text/markdown', html: 'text/html' }
+    const extMap: Record<DownloadFormat, string> = { text: 'txt', markdown: 'md', html: 'html' }
+    const dlFormat: DownloadFormat = safeFormat === 'blocks' ? 'markdown' : safeFormat
+    const blob = new Blob([output], { type: mimeMap[dlFormat] })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[safeFormat]}`
+    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[dlFormat]}`
     a.click()
     URL.revokeObjectURL(url)
   }, [output, safeFormat, title])
@@ -460,20 +463,24 @@ export function ArticleExportPanel({
               {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存する'}
             </button>
           )}
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
-          </button>
-          <button
-            type="button"
-            onClick={handleDownload}
-            className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            ファイル保存
-          </button>
+          {safeFormat !== 'blocks' && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
+            </button>
+          )}
+          {safeFormat !== 'blocks' && (
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              ファイル保存
+            </button>
+          )}
         </div>
       </div>
 
@@ -587,7 +594,13 @@ export function ArticleExportPanel({
         </div>
       )}
 
-      {safeFormat === 'html' && htmlPreview ? (
+      {safeFormat === 'blocks' ? (
+        <div className="flex flex-col gap-3 p-5">
+          {splitIntoSectionBlocks(editedContent).map((block) => (
+            <BlockCopyCard key={block.anchor} text={toPlainText(block.markdown)} />
+          ))}
+        </div>
+      ) : safeFormat === 'html' && htmlPreview ? (
         <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output, { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }) }} />
       ) : safeFormat === 'html' ? (
         <div className="p-5">
@@ -690,6 +703,33 @@ function SuggestionCard({ item }: { item: ArticleSuggestion }) {
         </p>
         <p className="text-sm text-[var(--text2)] leading-relaxed">{item.text}</p>
       </div>
+    </div>
+  )
+}
+
+function BlockCopyCard({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+
+  async function handleClick() {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // クリップボードAPIが使えない場合は何もしない
+    }
+  }
+
+  return (
+    <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
+      <p className="pr-24 text-sm text-[var(--text)] whitespace-pre-wrap leading-relaxed">{text}</p>
+      <button
+        type="button"
+        onClick={handleClick}
+        className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+      >
+        {copied ? 'コピーしました ✓' : 'コピー'}
+      </button>
     </div>
   )
 }

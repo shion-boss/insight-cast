@@ -75,7 +75,7 @@ const OUTCOME_ITEMS = [
 const WORKFLOW_ITEMS = [
   { n: '01', title: 'HPを分析する', body: '取材先のホームページと競合を登録するだけで、「今のHPで何が足りないか」「どこを強化すべきか」が整理されます。何を取材すればいいか、最初から見えてきます。' },
   { n: '02', title: 'AIキャストが取材する', body: 'ミント、クラウス、レインが質問します。答えるだけでOK。資料も整った言葉も必要ありません。約20分の会話で、あなたの話が引き出されます。' },
-  { n: '03', title: '記事の素材が届く', body: '取材内容をもとに、ブログや実績ページに使える文章の素材がまとまります。「何を書くか」ではなく、「どの素材を使うか」だけを考えてください。' },
+  { n: '03', title: '記事が届く。貼るだけで投稿できる。', body: '取材内容をもとに、ブログや実績ページにそのまま貼り付けられる記事が届きます。タイトル・見出し・本文をブロック単位でコピーして、自分のブログエディタに貼るだけです。' },
 ] as const
 
 const COMPARE_ROWS = [
@@ -494,7 +494,7 @@ export default async function LandingPage() {
                     { label: 'HP現状分析', body: '今のホームページで何が足りないかを可視化' },
                     { label: '競合比較', body: '同業他社との違いを客観的に整理' },
                     { label: '取材メモ', body: '会話で出てきた話をそのまま記録' },
-                    { label: '記事', body: 'ブログや実績ページにそのまま使える文章' },
+                    { label: '記事', body: 'コピペするだけで投稿できる記事' },
                   ].map((item) => (
                     <div key={item.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-4 py-4">
                       <div className="text-[12px] font-bold text-[var(--accent)] mb-1">{item.label}</div>
