@@ -600,8 +600,8 @@ export default async function LandingPage() {
               <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
               <thead className="max-sm:hidden">
                 <tr>
-                  {(['基準', '定義', '確認ポイント', 'Insight Cast の記事'] as const).map((h, i) => (
-                    <th key={i} className={`py-3 text-left text-[10px] font-bold tracking-[0.12em] uppercase${i === 3 ? ' pl-4' : ''}`} style={{ color: '#b8a898', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : i === 3 ? 260 : undefined }}>{h}</th>
+                  {(['基準', '定義', 'Insight Cast の記事'] as const).map((h, i) => (
+                    <th key={i} className={`py-3 text-left text-[10px] font-bold tracking-[0.12em] uppercase${i === 2 ? ' pl-4' : ''}`} style={{ color: '#b8a898', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : 260 }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -625,8 +625,6 @@ export default async function LandingPage() {
                     </td>
                     {/* Criterion */}
                     <td className="w-[160px] py-7 pr-6 align-top text-[13px] leading-[1.7] max-sm:w-auto max-sm:py-0 max-sm:pr-0" style={{ color: '#7a6555' }}>{row.criterion}</td>
-                    {/* Spacer */}
-                    <td className="py-7 align-top max-sm:hidden" />
                     {/* Answer */}
                     <td className="w-[260px] pl-4 py-7 align-top max-sm:w-auto max-sm:pl-0 max-sm:py-0">
                       <span className="inline-flex items-start gap-2 rounded-[5px] px-3.5 py-2.5 text-[13px] font-medium leading-[1.6] text-[var(--text)]" style={{ background: '#fff8f0', border: '1px solid rgba(194,114,42,0.25)' }}>
