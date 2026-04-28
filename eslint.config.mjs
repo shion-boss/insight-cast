@@ -33,6 +33,8 @@ const eslintConfig = [
           destructuredArrayIgnorePattern: "^_",
         },
       ],
+      // console.log は開発時の残留を warn で検出。console.warn / console.error はサーバーログ用として許可
+      "no-console": ["warn", { "allow": ["warn", "error"] }],
     },
   },
 ];
