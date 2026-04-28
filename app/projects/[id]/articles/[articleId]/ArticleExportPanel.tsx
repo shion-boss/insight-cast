@@ -6,6 +6,7 @@ import DOMPurify from 'dompurify'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
 import { saveArticleContent } from './actions'
+import type { ArticleSuggestions, ArticleSuggestion } from '@/lib/article-suggestions'
 
 type Format = 'text' | 'markdown' | 'html'
 
@@ -295,6 +296,7 @@ export function ArticleExportPanel({
   userAvatarUrl,
   articleId,
   projectId,
+  suggestions,
 }: {
   content: string
   title: string
@@ -307,6 +309,7 @@ export function ArticleExportPanel({
   userAvatarUrl: string | null
   articleId: string
   projectId: string
+  suggestions?: ArticleSuggestions | null
 }) {
   const availableFormats = Object.keys(FORMAT_LABELS) as Format[]
   const [format, setFormat] = useState<Format>('markdown')
@@ -319,6 +322,8 @@ export function ArticleExportPanel({
   const [, startTransition] = useTransition()
 
   const isDirty = editedContent !== content
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const hasSuggestions = (suggestions?.items.length ?? 0) > 0
 
   const char = getCharacter(interviewerId ?? 'mint')
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
@@ -430,6 +435,21 @@ export function ArticleExportPanel({
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2 sm:ml-auto sm:border-t-0 sm:py-0">
+          {hasSuggestions && (
+            <button
+              type="button"
+              role="switch"
+              aria-label="クオリティアップ提案を表示"
+              aria-checked={showSuggestions}
+              onClick={() => setShowSuggestions((v) => !v)}
+              className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded min-h-[44px] px-1"
+            >
+              <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-4' : 'translate-x-0.5'}`} />
+              </div>
+              <span className="text-xs text-[var(--text3)] whitespace-nowrap">クオリティアップ提案</span>
+            </button>
+          )}
           {isDirty && (
             <button
               type="button"
@@ -575,6 +595,11 @@ export function ArticleExportPanel({
             {output.replace(/src="data:image\/[^;]+;base64,[^"]+"/g, 'src="[画像データ]"')}
           </pre>
         </div>
+      ) : safeFormat === 'markdown' && showSuggestions ? (
+        <ArticleSectionsWithSuggestions
+          markdown={editedContent}
+          suggestions={suggestions ?? null}
+        />
       ) : (
         <textarea
           aria-label="記事コンテンツ編集エリア"
@@ -589,5 +614,82 @@ export function ArticleExportPanel({
         <p role="alert" className="px-5 pb-3 text-xs text-[var(--err)]">コピーできませんでした。手動でお試しください。</p>
       )}
     </section>
+  )
+}
+
+// セクション分割プレビュー（提案カード付き）
+function ArticleSectionsWithSuggestions({
+  markdown,
+  suggestions,
+}: {
+  markdown: string
+  suggestions: ArticleSuggestions | null
+}) {
+  // ## 見出しでブロックに分割。冒頭ブロックは anchor: 'intro'
+  const blocks = splitIntoSectionBlocks(markdown)
+
+  return (
+    <div className="p-5 space-y-2">
+      {blocks.map((block, idx) => {
+        const blockSuggestions = suggestions?.items.filter((s) => s.anchor === block.anchor) ?? []
+        const html = DOMPurify.sanitize(String(marked.parse(block.markdown, { async: false })))
+        return (
+          <div key={idx}>
+            <div
+              className="prose prose-sm max-w-none text-[var(--text2)] [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mt-4 [&_h2]:mb-2 [&_p]:leading-relaxed [&_a]:text-[var(--accent)] [&_a]:underline"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+            {blockSuggestions.map((item, sIdx) => (
+              <SuggestionCard key={sIdx} item={item} />
+            ))}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function splitIntoSectionBlocks(markdown: string): { anchor: string; markdown: string }[] {
+  // ## 見出しの位置で分割
+  const lines = markdown.split('\n')
+  const blocks: { anchor: string; markdown: string }[] = []
+  let currentAnchor = 'intro'
+  let currentLines: string[] = []
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^## (.+)$/)
+    if (headingMatch) {
+      // 前のブロックを確定
+      if (currentLines.length > 0) {
+        blocks.push({ anchor: currentAnchor, markdown: currentLines.join('\n').trim() })
+      }
+      currentAnchor = headingMatch[1].trim()
+      currentLines = [line]
+    } else {
+      currentLines.push(line)
+    }
+  }
+
+  // 最後のブロック
+  if (currentLines.length > 0) {
+    blocks.push({ anchor: currentAnchor, markdown: currentLines.join('\n').trim() })
+  }
+
+  return blocks.filter((b) => b.markdown.length > 0)
+}
+
+function SuggestionCard({ item }: { item: ArticleSuggestion }) {
+  return (
+    <div className="my-3 flex gap-3 rounded-[var(--r-sm)] border border-dashed border-[var(--accent)]/40 bg-[var(--warn-l)] px-4 py-3">
+      <span aria-hidden="true" className="shrink-0 text-base">
+        {item.type === 'image' ? '📷' : '✏️'}
+      </span>
+      <div>
+        <p className="text-xs font-semibold text-[var(--accent)] mb-0.5">
+          {item.type === 'image' ? '写真・画像の提案' : '内容追加の提案'}
+        </p>
+        <p className="text-sm text-[var(--text2)] leading-relaxed">{item.text}</p>
+      </div>
+    </div>
   )
 }

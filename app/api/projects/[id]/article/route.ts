@@ -2,6 +2,7 @@ import { z } from 'zod'
 import Anthropic from '@anthropic-ai/sdk'
 import { formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
+import { generateArticleSuggestions } from '@/lib/article-suggestions'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -471,6 +472,25 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
     const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
+      return
+    }
+
+    // 提案生成（失敗しても記事保存はブロックしない）
+    try {
+      const suggestionsResult = await generateArticleSuggestions({
+        articleMarkdown: fullText,
+        conversation,
+        projectId,
+        userId: user?.id,
+      })
+      if (suggestionsResult) {
+        await adminSupabase
+          .from('articles')
+          .update({ suggestions: suggestionsResult })
+          .eq('id', saved.id)
+      }
+    } catch (err) {
+      console.warn('[article] suggestions generation failed (non-blocking):', err)
     }
   }
 

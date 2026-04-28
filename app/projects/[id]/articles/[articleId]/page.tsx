@@ -6,6 +6,7 @@ import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { Breadcrumb, CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
 import { getCharacter } from '@/lib/characters'
+import type { ArticleSuggestions } from '@/lib/article-suggestions'
 
 export const metadata: Metadata = {
   title: '記事の詳細',
@@ -46,7 +47,7 @@ export default async function ArticleDetailPage({
     supabase.from('profiles').select('name, avatar_url').eq('id', user.id).maybeSingle(),
     supabase
       .from('articles')
-      .select('id, title, content, article_type, created_at, project_id, interview_id')
+      .select('id, title, content, article_type, created_at, project_id, interview_id, suggestions')
       .eq('id', articleId)
       .eq('project_id', id)
       .single(),
@@ -149,6 +150,7 @@ export default async function ArticleDetailPage({
               userAvatarUrl={profile?.avatar_url ?? null}
               articleId={article.id}
               projectId={id}
+              suggestions={article.suggestions as ArticleSuggestions | null}
             />
           </>
         )}
