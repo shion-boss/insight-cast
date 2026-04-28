@@ -663,7 +663,7 @@ export default async function LandingPage() {
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#e8954a' }}>忙しさで悩む方へ</p>
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>忙しくて、ブログまで<br />手が回らない</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>忙しくて、<br />ブログまで手が回らない</p>
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-7">
                   {/* Hero number */}
@@ -703,7 +703,7 @@ export default async function LandingPage() {
               <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
                 <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
                   <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#e8954a' }}>言語化で悩む方へ</p>
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>自社の強みが、まだ<br />言葉にできていない</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>自社の強みが、<br />まだ言葉にできていない</p>
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-7">
                   {/* Hero number */}
@@ -742,7 +742,7 @@ export default async function LandingPage() {
                     <p className="text-[10px] font-bold tracking-[0.14em] uppercase" style={{ color: '#e8954a' }}>予算で悩む方へ</p>
                     <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: '#c2722a', color: 'white' }}>コスパ最高</span>
                   </div>
-                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>月の予算は、できれば<br />1万円以内に</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>月の予算は、<br />できれば1万円以内に</p>
                 </div>
                 <div className="flex flex-1 flex-col px-6 pt-7">
                   {/* Hero number */}
