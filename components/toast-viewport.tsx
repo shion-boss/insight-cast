@@ -11,6 +11,7 @@ type ToastItem = AppToastDetail & {
 }
 
 const DEFAULT_DURATION_MS = 5000
+const UNDO_DURATION_MS = 8000
 
 function toneClass(tone: ToastItem['tone']) {
   if (tone === 'success') return 'border-[var(--ok-l)] bg-[var(--ok-l)]'
@@ -69,7 +70,16 @@ export default function ToastViewport() {
                 {toast.description && (
                   <p className="mt-1 text-sm leading-relaxed text-[var(--text3)]">{toast.description}</p>
                 )}
-                {toast.href && (
+                {toast.onUndo && (
+                  <button
+                    type="button"
+                    onClick={() => { void toast.onUndo?.() }}
+                    className="mt-3 inline-flex rounded-md text-sm font-medium text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
+                  >
+                    {toast.undoLabel ?? '元に戻す'}
+                  </button>
+                )}
+                {!toast.onUndo && toast.href && (
                   <Link
                     href={toast.href}
                     prefetch={false}

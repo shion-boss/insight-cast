@@ -49,7 +49,7 @@ export default async function InterviewsPage({
 
   const [{ data: profile }, { data: projectRows }, plan] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
-    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id),
+    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id).is('deleted_at', null),
     getUserPlan(supabase, user.id),
   ])
 
@@ -80,6 +80,7 @@ export default async function InterviewsPage({
     .from('interviews')
     .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at', { count: 'exact' })
     .in('project_id', projectIds)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (projectIdParam !== 'all') interviewQuery = interviewQuery.eq('project_id', projectIdParam)
@@ -94,7 +95,7 @@ export default async function InterviewsPage({
     { data: castTypeRows },
     { data: interviewRows, count: filteredCount },
   ] = await Promise.all([
-    supabase.from('interviews').select('interviewer_type').in('project_id', projectIds),
+    supabase.from('interviews').select('interviewer_type').in('project_id', projectIds).is('deleted_at', null),
     interviewQuery.range(start, end),
   ])
 
@@ -105,7 +106,7 @@ export default async function InterviewsPage({
   // 表示中の取材分だけ記事数を取得
   const displayedIds = interviews.map((i) => i.id)
   const { data: articleRows } = displayedIds.length > 0
-    ? await supabase.from('articles').select('interview_id').in('interview_id', displayedIds)
+    ? await supabase.from('articles').select('interview_id').in('interview_id', displayedIds).is('deleted_at', null)
     : { data: [] }
 
   const { articleCountByInterview } = buildArticleCountByInterview((articleRows ?? []) as InterviewArticleRef[])

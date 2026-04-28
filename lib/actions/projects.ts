@@ -60,6 +60,7 @@ export async function createProject(formData: FormData) {
     .from('projects')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)
+    .is('deleted_at', null)
 
   if ((projectCount ?? 0) >= planLimits.maxProjects) {
     redirect('/projects/new?error=plan_limit')

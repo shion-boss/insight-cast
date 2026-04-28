@@ -41,6 +41,7 @@ export default async function InterviewerPage({
     .select('id')
     .eq('id', id)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   if (!project) redirect('/dashboard')
@@ -57,6 +58,7 @@ export default async function InterviewerPage({
     .from('projects')
     .select('id')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .order('updated_at', { ascending: false })
   const userProjectIds = (allUserProjects ?? []).map((p) => p.id as string)
 
@@ -69,6 +71,7 @@ export default async function InterviewerPage({
       .from('interviews')
       .select('id', { count: 'exact', head: true })
       .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+      .is('deleted_at', null)
     isInterviewLimitReached = (lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit
   } else {
     const now = new Date()
@@ -77,6 +80,7 @@ export default async function InterviewerPage({
       .from('interviews')
       .select('id', { count: 'exact', head: true })
       .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+      .is('deleted_at', null)
       .gte('created_at', `${thisMonthKey}-01`)
     isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
   }

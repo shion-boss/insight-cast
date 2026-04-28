@@ -18,6 +18,7 @@ export async function POST(
     .select('id, status')
     .eq('id', id)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })

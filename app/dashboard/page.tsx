@@ -93,6 +93,7 @@ export default async function DashboardPage() {
       .from('projects')
       .select('id, name, hp_url, status, created_at, updated_at')
       .eq('user_id', user.id)
+      .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
     getUserPlan(supabase, user.id),
   ])
@@ -113,10 +114,10 @@ export default async function DashboardPage() {
       ? supabase.from('competitor_analyses').select('project_id, competitor_id, raw_data').in('project_id', projectIds)
       : Promise.resolve({ data: [] }),
     projectList.length > 0
-      ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
+      ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
     projectList.length > 0
-      ? supabase.from('articles').select('id, interview_id, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
+      ? supabase.from('articles').select('id, interview_id, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
   ])
 

@@ -43,6 +43,7 @@ export async function POST(
     .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
+    .is('deleted_at', null)
     .single()
 
   if (!interview) return new Response('Not found', { status: 404 })

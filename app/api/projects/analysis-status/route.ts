@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     .from('projects')
     .select('id, name, hp_url, status')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .in('id', ids)
 
   const ownedIds = (projects ?? []).map((p) => p.id)

@@ -17,6 +17,7 @@ export async function saveArticleContent(
     .from('articles')
     .update({ content: corrected })
     .eq('id', articleId)
+    .is('deleted_at', null)
 
   if (error) throw new Error(error.message)
 

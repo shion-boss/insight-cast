@@ -126,6 +126,7 @@ export default function SummaryPage() {
         .from('interviews')
         .select('interviewer_type, summary, themes')
         .eq('id', interviewId)
+        .is('deleted_at', null)
         .single()
 
       setLastCheckedAt(formatCheckTime(new Date()))
@@ -178,6 +179,7 @@ export default function SummaryPage() {
         .from('articles')
         .select('id, title, article_type, created_at, source_theme')
         .eq('interview_id', interviewId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
 
       setData({

@@ -50,6 +50,7 @@ export default async function ArticleDetailPage({
       .select('id, title, content, article_type, created_at, project_id, interview_id, suggestions')
       .eq('id', articleId)
       .eq('project_id', id)
+      .is('deleted_at', null)
       .single(),
   ])
 
@@ -57,7 +58,7 @@ export default async function ArticleDetailPage({
 
   // article が取れてから project と interview を並列取得
   const [{ data: project }, { data: interview }] = await Promise.all([
-    supabase.from('projects').select('id, user_id, name, hp_url').eq('id', id).single(),
+    supabase.from('projects').select('id, user_id, name, hp_url').eq('id', id).is('deleted_at', null).single(),
     article.interview_id
       ? supabase.from('interviews').select('interviewer_type').eq('id', article.interview_id).single()
       : Promise.resolve({ data: null }),

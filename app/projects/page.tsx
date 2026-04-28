@@ -81,6 +81,7 @@ export default async function ProjectsPage() {
       .from('projects')
       .select('id, name, hp_url, status, updated_at')
       .eq('user_id', user.id)
+      .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
     getUserPlan(supabase, user.id),
   ])
@@ -115,10 +116,11 @@ export default async function ProjectsPage() {
           .from('interviews')
           .select('id, project_id, created_at')
           .in('project_id', projectIds)
+          .is('deleted_at', null)
           .order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
     projectList.length > 0
-      ? supabase.from('articles').select('interview_id').in('project_id', projectIds)
+      ? supabase.from('articles').select('interview_id').in('project_id', projectIds).is('deleted_at', null)
       : Promise.resolve({ data: [] }),
   ])
 

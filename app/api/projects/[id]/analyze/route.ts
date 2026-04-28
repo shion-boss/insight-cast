@@ -289,6 +289,7 @@ export async function GET(
     .select('status, hp_url')
     .eq('id', id)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   const { data: audit } = await supabase

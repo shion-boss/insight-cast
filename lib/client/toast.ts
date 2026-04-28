@@ -8,6 +8,8 @@ export type AppToastDetail = {
   href?: string
   hrefLabel?: string
   characterId?: string
+  undoLabel?: string
+  onUndo?: () => void | Promise<void>
 }
 
 export function showToast(detail: AppToastDetail) {

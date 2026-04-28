@@ -243,6 +243,7 @@ export async function POST(
     .select('id, interviewer_type, summary, themes, project_id, article_status')
     .eq('id', interviewId)
     .eq('project_id', projectId)
+    .is('deleted_at', null)
     .single()
 
   if (!interview) return new Response('Not found', { status: 404 })
@@ -267,6 +268,7 @@ export async function POST(
     .select('name, hp_url')
     .eq('id', projectId)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   if (!project) return new Response('Forbidden', { status: 403 })

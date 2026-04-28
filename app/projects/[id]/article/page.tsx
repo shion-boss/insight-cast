@@ -132,11 +132,13 @@ export default function ArticlePage() {
         .from('interviews')
         .select('themes, article_status, article_error')
         .eq('id', interviewId)
+        .is('deleted_at', null)
         .single(),
       supabase
         .from('articles')
         .select('id, title, article_type, created_at, source_theme')
         .eq('interview_id', interviewId)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false }),
     ])
 

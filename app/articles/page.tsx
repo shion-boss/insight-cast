@@ -66,7 +66,7 @@ export default async function ArticlesPage({
 
   const [{ data: profile }, { data: projectRows }] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
-    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id),
+    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id).is('deleted_at', null),
   ])
 
   const projects = (projectRows ?? []) as ProjectRow[]
@@ -96,6 +96,7 @@ export default async function ArticlesPage({
     .from('articles')
     .select('id, title, content, article_type, created_at, project_id, interview_id', { count: 'exact' })
     .in('project_id', projectIds)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
   if (projectIdParam !== 'all') articlesQuery = articlesQuery.eq('project_id', projectIdParam)
@@ -110,8 +111,8 @@ export default async function ArticlesPage({
     { count: totalArticleCount },
   ] = await Promise.all([
     articlesQuery.range(start, end),
-    supabase.from('articles').select('interview_id').in('project_id', projectIds).not('interview_id', 'is', null),
-    supabase.from('articles').select('id', { count: 'exact', head: true }).in('project_id', projectIds),
+    supabase.from('articles').select('interview_id').in('project_id', projectIds).not('interview_id', 'is', null).is('deleted_at', null),
+    supabase.from('articles').select('id', { count: 'exact', head: true }).in('project_id', projectIds).is('deleted_at', null),
   ])
 
   const articles = (articleRows ?? []) as ArticleRow[]
@@ -129,13 +130,13 @@ export default async function ArticlesPage({
 
   const [{ data: displayProjectRows }, { data: displayInterviewRows }, { data: dropdownInterviewRows }] = await Promise.all([
     displayProjectIds.length > 0
-      ? supabase.from('projects').select('id, name, hp_url').in('id', displayProjectIds)
+      ? supabase.from('projects').select('id, name, hp_url').in('id', displayProjectIds).is('deleted_at', null)
       : Promise.resolve({ data: [] }),
     displayInterviewIds.length > 0
-      ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', displayInterviewIds)
+      ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', displayInterviewIds).is('deleted_at', null)
       : Promise.resolve({ data: [] }),
     allInterviewIds.length > 0
-      ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', allInterviewIds)
+      ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', allInterviewIds).is('deleted_at', null)
       : Promise.resolve({ data: [] }),
   ])
 

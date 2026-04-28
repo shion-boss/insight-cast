@@ -24,6 +24,7 @@ export async function POST(
     .select('id, project_id, interviews_project:projects(user_id)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
+    .is('deleted_at', null)
     .single()
   if (!interview) return NextResponse.json({ error: 'not found' }, { status: 404 })
 

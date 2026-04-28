@@ -71,6 +71,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .select('id, name, hp_url, status, updated_at')
       .eq('id', id)
       .eq('user_id', user.id)
+      .is('deleted_at', null)
       .single(),
   ])
 
@@ -88,6 +89,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .from('interviews')
       .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
       .eq('project_id', id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false }),
     supabase
       .from('hp_audits')
@@ -102,6 +104,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .from('articles')
       .select('id, interview_id, article_type, title, created_at')
       .eq('project_id', id)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false }),
   ])
 

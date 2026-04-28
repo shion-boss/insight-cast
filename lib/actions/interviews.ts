@@ -34,6 +34,7 @@ export async function createInterview(projectId: string, formData: FormData) {
     .select('id')
     .eq('id', projectId)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   if (!project) redirect('/dashboard')
@@ -42,6 +43,7 @@ export async function createInterview(projectId: string, formData: FormData) {
     .from('projects')
     .select('id')
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .order('updated_at', { ascending: false })
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
 
@@ -60,6 +62,7 @@ export async function createInterview(projectId: string, formData: FormData) {
       .from('interviews')
       .select('id', { count: 'exact', head: true })
       .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+      .is('deleted_at', null)
     if ((lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit) {
       redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=lifetime_limit`)
     }
@@ -71,6 +74,7 @@ export async function createInterview(projectId: string, formData: FormData) {
       .from('interviews')
       .select('id', { count: 'exact', head: true })
       .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+      .is('deleted_at', null)
       .gte('created_at', monthStart)
     if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
       redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=monthly_limit`)

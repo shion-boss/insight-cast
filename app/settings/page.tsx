@@ -34,7 +34,8 @@ export default async function SettingsPage() {
     supabase
       .from('projects')
       .select('id')
-      .eq('user_id', user.id),
+      .eq('user_id', user.id)
+      .is('deleted_at', null),
     supabase
       .from('subscriptions')
       .select('plan')
@@ -60,6 +61,7 @@ export default async function SettingsPage() {
       .from('interviews')
       .select('id', { count: 'exact', head: true })
       .in('project_id', projectIds)
+      .is('deleted_at', null)
       .gte('created_at', monthStart)
     interviewCount = count ?? 0
   }

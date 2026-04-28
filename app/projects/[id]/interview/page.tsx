@@ -150,6 +150,7 @@ export default function InterviewPage() {
         .from('interviews')
         .select('interviewer_type, focus_theme_mode, focus_theme')
         .eq('id', interviewId)
+        .is('deleted_at', null)
         .single()
 
       if (interview) {

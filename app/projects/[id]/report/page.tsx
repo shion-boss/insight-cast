@@ -23,6 +23,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     .select('id, name, hp_url, status')
     .eq('id', id)
     .eq('user_id', user.id)
+    .is('deleted_at', null)
     .single()
 
   if (!project) redirect('/dashboard')
