@@ -594,7 +594,12 @@ export default async function LandingPage() {
             </h3>
 
             {/* E-E-A-T table */}
-            <table className="mt-12 w-full border-collapse" style={{ borderTop: '1px solid #e2d5c3' }}>
+            <div className="mt-12 flex justify-end">
+              <p className="text-xs text-[var(--text3)] leading-[1.7]">
+                参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
+              </p>
+            </div>
+            <table className="w-full border-collapse" style={{ borderTop: '1px solid #e2d5c3' }}>
               <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
               <thead className="max-sm:hidden">
                 <tr>
@@ -651,9 +656,6 @@ export default async function LandingPage() {
               <p>AIが生成した一般的な記事では満たせない基準を、<strong className="font-bold text-[var(--text)]">あなたへの取材</strong>というプロセスが自然にクリアします。</p>
             </div>
 
-            <p className="text-xs text-[var(--text3)] leading-[1.7] mt-4">
-              参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
-            </p>
           </div>
         </section>
 
