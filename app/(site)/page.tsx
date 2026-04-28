@@ -595,9 +595,9 @@ export default async function LandingPage() {
                 <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
                 <thead>
                   <tr>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--accent)] w-[150px]">E-E-A-T</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--accent)] w-[140px]">E-E-A-T</th>
                     <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]">Googleが重視する基準</th>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--accent)] text-white w-[220px]">Insight Cast は？</th>
+                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--accent)] text-white w-[300px]">Insight Cast は？</th>
                   </tr>
                 </thead>
                 <tbody>
