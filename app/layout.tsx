@@ -151,8 +151,8 @@ export default function RootLayout({
         <NavigationOverlay />
         {children}
         <GoogleAnalytics />
-        <SpeedInsights />
-        <Analytics />
+        {process.env.NODE_ENV === 'production' && <SpeedInsights />}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
         {/* Service Worker 登録（public site のみキャッシュ、認証済みアプリ側はキャッシュしない） */}
         <Script
           id="sw-register"
