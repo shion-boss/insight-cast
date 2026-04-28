@@ -10,6 +10,7 @@ import { AppShell } from '@/components/app-shell'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
 import { getIsAdmin } from '@/lib/actions/auth'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 
 type SummaryData = {
   values: string[]
@@ -64,6 +65,59 @@ export default function SummaryPage() {
   const [accountLabel, setAccountLabel] = useState('設定')
   const [isAdmin, setIsAdmin] = useState(false)
   const pollCountRef = useRef(0)
+
+  // 削除ダイアログ
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleDeleteInterview() {
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/interviews/${interviewId}`, { method: 'DELETE' })
+      if (!res.ok) {
+        showToast({
+          title: 'うまく削除できませんでした。もう一度お試しください。',
+          tone: 'warning',
+          characterId: 'mint',
+        })
+        setDeleting(false)
+        setShowDeleteDialog(false)
+        return
+      }
+
+      setShowDeleteDialog(false)
+      router.push(backHref)
+      router.refresh()
+
+      showToast({
+        title: '取材メモを削除しました。30日以内に復元できます。',
+        tone: 'default',
+        characterId: data?.interviewerType ?? 'mint',
+        undoLabel: '元に戻す',
+        onUndo: async () => {
+          const restoreRes = await fetch(`/api/interviews/${interviewId}/restore`, { method: 'POST' })
+          if (restoreRes.ok) {
+            router.push(`/projects/${projectId}/summary?interviewId=${interviewId}`)
+            router.refresh()
+          } else {
+            showToast({
+              title: '復元できませんでした。時間をおいてお試しください。',
+              tone: 'warning',
+              characterId: 'mint',
+            })
+          }
+        },
+      })
+    } catch {
+      showToast({
+        title: 'うまく削除できませんでした。もう一度お試しください。',
+        tone: 'warning',
+        characterId: 'mint',
+      })
+      setDeleting(false)
+      setShowDeleteDialog(false)
+    }
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -234,6 +288,13 @@ export default function SummaryPage() {
           この取材の記事一覧
         </Link>
       )}
+      <button
+        type="button"
+        onClick={() => setShowDeleteDialog(true)}
+        className={getButtonClass('secondary', 'px-4 py-2 text-sm border-[var(--err)]/40 text-[var(--err)] hover:bg-[var(--err-l)]')}
+      >
+        取材メモを削除
+      </button>
       <Link href={backHref} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         {backLabel}
       </Link>

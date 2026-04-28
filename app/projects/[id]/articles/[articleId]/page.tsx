@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { AppShell, checkIsAdmin } from '@/components/app-shell'
 import { Breadcrumb, CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
+import { DeleteArticleButton } from './DeleteArticleButton'
 import { getCharacter } from '@/lib/characters'
 import type { ArticleSuggestions } from '@/lib/article-suggestions'
 
@@ -101,16 +102,22 @@ export default async function ArticleDetailPage({
           <p className="mt-2 text-sm text-[var(--text3)]">
             {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
           </p>
-          {article.interview_id && (
-            <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            {article.interview_id && (
               <Link
                 href={`/projects/${id}/summary?interviewId=${article.interview_id}`}
                 className={getButtonClass('secondary')}
               >
                 元の取材メモを見る
               </Link>
-            </div>
-          )}
+            )}
+            <DeleteArticleButton
+              articleId={article.id}
+              projectId={id}
+              articleTitle={article.title ?? '記事'}
+              backHref={backHref}
+            />
+          </div>
         </section>
 
         {!article.content ? (
