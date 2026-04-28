@@ -8,6 +8,7 @@ import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/anal
 import { normalizeCompetitorThemeSummary, normalizeInterviewFocusTheme } from '@/lib/interview-focus-theme'
 import { buildClassificationSummary } from '@/lib/content-map'
 import { classifyBlogPosts } from '@/lib/content-map.server'
+import { FROM_NOREPLY, getResend } from '@/lib/resend'
 import { buildBlogFreshnessMetrics, discoverNewBlogPosts, discoverSiteBlogPosts, getStoredSiteBlogPosts, COMPETITOR_BLOG_POST_LIMIT } from '@/lib/site-blog-support'
 import { fetchMarkdown } from '@/lib/firecrawl'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
@@ -606,14 +607,12 @@ async function sendAnalysisCompleteEmail(
   projectId: string,
   hpUrl: string,
 ) {
-  const resendApiKey = process.env.RESEND_API_KEY
-  if (!resendApiKey) {
+  if (!process.env.RESEND_API_KEY) {
     console.warn('[analyze:email] RESEND_API_KEY が未設定のためメール送信をスキップします')
     return
   }
 
   try {
-    // プロジェクト名とユーザーのメールアドレスを取得
     const { data: project } = await supabase
       .from('projects')
       .select('name, user_id')
@@ -629,33 +628,21 @@ async function sendAnalysisCompleteEmail(
     const projectName = project.name || hpUrl
     const reportUrl = `${(process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')}/projects/${projectId}/report`
 
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Insight Cast <noreply@insight-cast.jp>',
-        to: [toEmail],
-        subject: `[Insight Cast] ${projectName} の調査が完了しました`,
-        text: [
-          `${projectName} の調査が完了しました。`,
-          '',
-          '調査レポートを確認して、インタビューを始めましょう。',
-          '',
-          `レポートを見る: ${reportUrl}`,
-          '',
-          '---',
-          'Insight Cast',
-        ].join('\n'),
-      }),
+    await getResend().emails.send({
+      from: FROM_NOREPLY,
+      to: [toEmail],
+      subject: `[Insight Cast] ${projectName} の調査が完了しました`,
+      text: [
+        `${projectName} の調査が完了しました。`,
+        '',
+        '調査レポートを確認して、インタビューを始めましょう。',
+        '',
+        `レポートを見る: ${reportUrl}`,
+        '',
+        '---',
+        'Insight Cast',
+      ].join('\n'),
     })
-
-    if (!response.ok) {
-      const body = await response.text().catch(() => '')
-      console.error('[analyze:email] Resend API error', response.status, body)
-    }
   } catch (err) {
     // メール送信失敗は分析結果に影響させない
     console.error('[analyze:email]', err)

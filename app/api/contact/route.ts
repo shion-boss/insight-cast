@@ -2,6 +2,7 @@ import { createHash } from 'crypto'
 import { NextResponse } from 'next/server'
 
 import { createAdminClient } from '@/lib/supabase/admin'
+import { FROM_INFO, getResend } from '@/lib/resend'
 
 const REFERRAL_LABELS: Record<string, string> = {
   search: '検索（Google など）',
@@ -25,8 +26,7 @@ async function sendAdminNotification({
   industry?: string
   hpUrl?: string
 }) {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
+  if (!process.env.RESEND_API_KEY) {
     console.warn('[contact] RESEND_API_KEY が未設定のためメール通知をスキップします')
     return
   }
@@ -39,9 +39,6 @@ async function sendAdminNotification({
     console.warn('[contact] ADMIN_EMAIL / ADMIN_EMAILS が未設定のためメール通知をスキップします')
     return
   }
-
-  const { Resend } = await import('resend')
-  const resend = new Resend(apiKey)
 
   const referralLabel = referralSource ? REFERRAL_LABELS[referralSource] ?? referralSource : ''
   const text = [
@@ -58,8 +55,8 @@ async function sendAdminNotification({
   ].join('\n')
 
   try {
-    await resend.emails.send({
-      from: 'Insight Cast <info@insight-cast.jp>',
+    await getResend().emails.send({
+      from: FROM_INFO,
       to: adminEmail,
       subject: '【Insight Cast】お問い合わせが届きました',
       text,
