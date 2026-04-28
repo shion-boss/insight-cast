@@ -49,6 +49,9 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // POST など GET 以外はキャッシュ不可 — Cache API は GET のみサポート
+  if (request.method !== 'GET') return
+
   // 静的アセット: キャッシュファースト
   event.respondWith(
     caches.match(request).then((cached) => {
