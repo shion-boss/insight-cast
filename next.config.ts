@@ -6,11 +6,15 @@ import type { NextConfig } from "next";
 // const withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: process.env.ANALYZE === 'true' })
 // export default withBundleAnalyzer(nextConfig)
 
+const supabaseHostname = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : '*.supabase.co'
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: supabaseHostname },
     ],
   },
   experimental: {
