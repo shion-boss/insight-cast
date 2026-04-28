@@ -607,14 +607,12 @@ export default async function LandingPage() {
                         <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
                       </td>
                       <td className="px-6 py-5 bg-[var(--surface)] text-[14px] text-[var(--text)] align-middle">{row.criterion}</td>
-                      <td className="w-[280px] px-6 py-5 align-middle" style={{ background: 'rgba(194,114,42,0.06)', borderLeft: '1px solid rgba(194,114,42,0.15)' }}>
-                        <span className="flex items-center gap-3 text-[13px] text-[var(--text2)]">
-                          <span className="flex-shrink-0 w-[20px] h-[20px] rounded-full flex items-center justify-center" style={{ background: 'rgba(194,114,42,0.15)' }}>
-                            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                              <path d="M1 3.5L3.5 6.5L9 1" stroke="#c2722a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          </span>
-                          {row.answer}
+                      <td className="w-[260px] px-6 py-5 align-middle" style={{ background: 'rgba(194,114,42,0.11)', borderLeft: '2px solid rgba(194,114,42,0.3)' }}>
+                        <span className="flex items-start gap-2.5">
+                          <svg className="flex-shrink-0 mt-[3px]" width="13" height="10" viewBox="0 0 13 10" fill="none">
+                            <path d="M1 5L4.5 8.5L12 1" stroke="#c2722a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span className="text-[14px] font-medium text-[var(--text)] leading-[1.6]">{row.answer}</span>
                         </span>
                       </td>
                     </tr>
