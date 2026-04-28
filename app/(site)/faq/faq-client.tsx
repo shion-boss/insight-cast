@@ -41,11 +41,13 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
                 <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>
                 <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
               </button>
-              {open && (
-                <div id={`${group.id}-answer-${index}`} className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]">
-                  {item.a}
-                </div>
-              )}
+              <div
+                id={`${group.id}-answer-${index}`}
+                hidden={!open}
+                className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]"
+              >
+                {item.a}
+              </div>
             </div>
           )
         })}

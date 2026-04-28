@@ -39,7 +39,13 @@ export async function POST(
     return Response.json({ classifications: [] })
   }
 
-  const classifications = await classifyBlogPosts(blogPosts)
+  let classifications: Awaited<ReturnType<typeof classifyBlogPosts>>
+  try {
+    classifications = await classifyBlogPosts(blogPosts)
+  } catch (err) {
+    console.error('[classify-content] AI classification failed', err)
+    return Response.json({ error: 'classification_failed' }, { status: 502 })
+  }
 
   const updatedRawData = {
     ...(rawData ?? {}),

@@ -32,9 +32,7 @@ export function LpFaq({ faqs }: { faqs: readonly FaqItem[] }) {
               <span>{faq.q}</span>
               <span className={`text-[var(--text3)] transition-transform flex-shrink-0 ${open ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
             </button>
-            {open && (
-              <div id={answerId} className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
-            )}
+            <div id={answerId} hidden={!open} className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
           </div>
         )
       })}

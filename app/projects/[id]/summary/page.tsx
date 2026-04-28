@@ -428,8 +428,7 @@ export default function SummaryPage() {
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
               </div>
-              {showMessages && (
-                <div id="summary-interview-log" className="mt-4 space-y-0 max-h-80 overflow-y-auto">
+              <div id="summary-interview-log" hidden={!showMessages} className="mt-4 space-y-0 max-h-80 overflow-y-auto">
                   {data?.messages.map((m, i) => (
                     <div
                       key={i}
@@ -445,8 +444,7 @@ export default function SummaryPage() {
                       <p className="text-sm text-[var(--text)] leading-[1.78] flex-1 whitespace-pre-wrap">{m.content}</p>
                     </div>
                   ))}
-                </div>
-              )}
+              </div>
             </section>
           </div>
 
