@@ -105,36 +105,6 @@ export function PlanCardCTA({
   )
 }
 
-export function FreeBannerCTA() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    createClient().auth.getUser().then(({ data }) => {
-      setIsLoggedIn(Boolean(data.user))
-    })
-  }, [])
-
-  if (isLoggedIn === null) {
-    return <div aria-busy="true" aria-label="読み込み中" className="h-[46px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
-  }
-
-  return isLoggedIn ? (
-    <Link
-      href="/dashboard"
-      className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
-    >
-      ダッシュボードへ <span aria-hidden="true">→</span>
-    </Link>
-  ) : (
-    <Link
-      href="/auth/signup"
-      className="inline-flex items-center justify-center bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 whitespace-nowrap"
-    >
-      無料で始める <span aria-hidden="true">→</span>
-    </Link>
-  )
-}
-
 export function PricingBottomCTA() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
@@ -163,12 +133,12 @@ export function PricingBottomCTA() {
         className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]"
         style={{ fontSize: 'clamp(24px,3vw,38px)' }}
       >
-        {isLoggedIn ? 'ダッシュボードから始めましょう' : 'まず、無料で試してみませんか？'}
+        {isLoggedIn ? 'ダッシュボードから始めましょう' : 'ご不明な点はお気軽にどうぞ'}
       </h2>
       <p className="mt-4 text-[15px] text-[var(--text2)] leading-relaxed">
         {isLoggedIn
           ? 'ご登録ありがとうございます。ダッシュボードから取材を始めてください。'
-          : 'クレジットカード不要。メールアドレスだけで始められます。'}
+          : 'プランの選び方や機能についてのご質問など、どんなことでもご相談ください。'}
       </p>
       <div className="mt-8 flex flex-wrap gap-3 justify-center">
         {isLoggedIn ? (
@@ -179,19 +149,21 @@ export function PricingBottomCTA() {
             ダッシュボードへ <span aria-hidden="true">→</span>
           </Link>
         ) : (
-          <Link
-            href="/auth/signup"
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-          >
-            無料で始める <span aria-hidden="true">→</span>
-          </Link>
+          <>
+            <Link
+              href="/contact"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              相談してみる <span aria-hidden="true">→</span>
+            </Link>
+            <Link
+              href="/auth/signup"
+              className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              無料で始める
+            </Link>
+          </>
         )}
-        <Link
-          href="/contact"
-          className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          まず相談してみる
-        </Link>
       </div>
     </>
   )
