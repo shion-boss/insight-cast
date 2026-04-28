@@ -152,6 +152,10 @@ const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
   news: 'mint',
 }
 
+// TODO(P-1): LP の Suspense / Streaming 最適化
+// latestPosts・latestTalks・interviewCount など重いフェッチを別 async Server Component に切り出し
+// Suspense でラップすることで TTFB を改善できる。ただし adminUserId → adminProjectIds の
+// 依存チェーンがあるため、分割には慎重な設計が必要。Phase 3 以降で対応を検討。
 export default async function LandingPage() {
   const supabaseAdmin = createAdminClient()
 
