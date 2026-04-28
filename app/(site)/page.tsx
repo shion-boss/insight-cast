@@ -67,14 +67,6 @@ const PAIN_ITEMS = [
 
 
 
-const COMPARE_ROWS = [
-  { label: '「何を書くか」を考えなくていい',    ai: false, none: false },
-  { label: '自分では気づかない強みが言葉になる', ai: false, none: false },
-  { label: '専門知識がなくても使える',           ai: true,  none: false },
-  { label: 'ネタ切れせず継続できる',             ai: false, none: false },
-  { label: 'ホームページの現状分析つき',         ai: false, none: false },
-  { label: '無料で体験してから始められる',       ai: false, none: false },
-] as const
 
 const FREE_TRIAL_FEATURES = ['取材回数：2回まで（単発）', 'フリーキャスト 3名', '取材先登録：1件', '取材メモ・記事を受け取れる'] as const
 
@@ -658,59 +650,112 @@ export default async function LandingPage() {
 
         {/* ⑪ Compare */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Why Insight Cast</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              他の方法と、比べてみてください。
+          <div className="mx-auto max-w-[1080px] px-6 sm:px-8 lg:px-12">
+            <p className="text-center text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-3">Comparison</p>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-center mb-12" style={{ fontSize: 'clamp(20px,2.4vw,28px)', lineHeight: 1.65 }}>
+              あなたの「悩み」に、どう応えるか。
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3 max-w-[560px]">AIツールも、記事代行も、「すでに書く材料を持っている人」向けに作られています。Insight Cast はその前の段階——「何が自社の強みか、まだ言葉にできていない」という根本から引き出すことが、仕事の核心です。</p>
-            {/* モバイル: カードリスト */}
-            <div className="mt-8 sm:hidden space-y-2.5">
-              <div className="grid grid-cols-3 gap-1 px-1 mb-1">
-                <div className="text-[10px] font-semibold text-[var(--text3)] text-center">AIツール</div>
-                <div className="text-[10px] font-semibold text-[var(--text3)] text-center">自分で書く</div>
-                <div className="text-[10px] font-semibold text-[var(--accent)] text-center">Insight Cast</div>
-              </div>
-              {COMPARE_ROWS.map((row) => (
-                <div key={row.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[12px] px-4 py-3">
-                  <p className="text-[13px] font-medium text-[var(--text)] mb-2.5">{row.label}</p>
-                  <div className="grid grid-cols-3 gap-1">
-                    <div className="text-center text-[15px]">{row.ai ? <span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}</div>
-                    <div className="text-center text-[15px]">{row.none ? <span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}</div>
-                    <div className="text-center text-[17px]"><span className="text-[var(--teal)] font-bold" aria-label="対応">✓</span></div>
-                  </div>
+
+            {/* Card grid */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
+
+              {/* Card 1: 時間 */}
+              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                  <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>忙しさで悩む方へ</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">忙しくて、ブログまで<br />手が回らない</p>
                 </div>
-              ))}
-            </div>
-            {/* PC: テーブル */}
-            <div className="hidden sm:block mt-11 rounded-[20px] border border-[var(--border)] overflow-hidden">
-              <table className="w-full border-collapse">
-                <caption className="sr-only">Insight Cast と他の方法との比較</caption>
-                <thead>
-                  <tr>
-                    <th scope="col" className="px-[22px] py-4 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] w-[34%]"><span className="sr-only">比較項目</span></th>
-                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">AIツールで書いてもらう</th>
-                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">自分や社員で書く</th>
-                    <th scope="col" className="px-[16px] py-4 text-[12px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">Insight Cast</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {COMPARE_ROWS.map((row) => (
-                    <tr key={row.label}>
-                      <td className="px-[22px] py-[15px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.ai ? <span className="text-[var(--teal)] text-[17px] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}
-                      </td>
-                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] text-[var(--text3)]">
-                        {row.none ? <span className="text-[var(--teal)] text-[17px] font-bold" aria-label="対応">✓</span> : <span className="text-[var(--text3)]" aria-label="非対応">✕</span>}
-                      </td>
-                      <td className="px-[16px] py-[15px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)]">
-                        <span className="text-[var(--teal)] text-lg font-bold" aria-label="対応">✓</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                <div className="flex flex-1 flex-col px-6 pt-6">
+                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>1記事に必要な時間</p>
+                  <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
+                    {[
+                      { name: 'AIツールで書く',  width: '90%', value: '1〜2時間', highlight: false },
+                      { name: 'ライター外注',    width: '90%', value: '1〜2時間', highlight: false },
+                      { name: 'Insight Cast',    width: '20%', value: '約20分',   highlight: true  },
+                    ].map((r) => (
+                      <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
+                        style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
+                        <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                        <div className="flex flex-col items-end gap-1">
+                          <div className="h-1 w-20 rounded-[2px] overflow-hidden" style={{ background: '#e2d5c3' }}>
+                            <div className="h-full rounded-[2px]" style={{ width: r.width, background: r.highlight ? '#c2722a' : '#7a6555' }} />
+                          </div>
+                          <span className="text-[11px] font-medium whitespace-nowrap" style={{ color: r.highlight ? '#c2722a' : '#1c1410' }}>{r.value}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                    チャットで答えるだけ。<strong className="font-bold text-[var(--text)]">資料も整った言葉も要りません。</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 2: 言語化 */}
+              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                  <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>言語化で悩む方へ</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">自社の強みが、まだ<br />言葉にできていない</p>
+                </div>
+                <div className="flex flex-1 flex-col px-6 pt-6">
+                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>一次情報を引き出せるか</p>
+                  <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
+                    {[
+                      { name: 'AIツール',         value: '自分の頭の中だけ',    muted: true,  highlight: false },
+                      { name: 'クラウドソーシング', value: '業界外で深掘り限界',  muted: true,  highlight: false },
+                      { name: '取材付きライター',   value: 'できるが ¥30,000〜', muted: false, highlight: false },
+                      { name: 'Insight Cast',      value: '業種特化 月¥4,980〜', muted: false, highlight: true  },
+                    ].map((r) => (
+                      <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
+                        style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
+                        <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                        <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                    「当たり前」と思っていた中から、<strong className="font-bold text-[var(--text)]">伝わっていない価値を引き出します。</strong>
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 3: 予算 */}
+              <div className="flex flex-col overflow-hidden rounded-[2px]" style={{ background: '#fdf7f0' }}>
+                <div className="border-b px-6 py-6" style={{ background: '#f5e8d8', borderColor: '#e2d5c3' }}>
+                  <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: '#c2722a' }}>予算で悩む方へ</p>
+                  <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7] text-[var(--text)]">月の予算は、できれば<br />1万円以内に</p>
+                </div>
+                <div className="flex flex-1 flex-col px-6 pt-6">
+                  <p className="text-[10px] font-bold tracking-[0.12em] uppercase mb-4" style={{ color: '#b8a898' }}>月¥10,000で得られるもの</p>
+                  <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
+                    {[
+                      { name: 'HP放置',       value: '何も増えない',     muted: true,  highlight: false },
+                      { name: 'AIツール',      value: '月数本の薄い記事', muted: false, highlight: false },
+                      { name: 'ライター発注',  value: '月1〜2本が限界',   muted: false, highlight: false },
+                    ].map((r) => (
+                      <div key={r.name} className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b" style={{ borderColor: '#e2d5c3' }}>
+                        <span className="text-[12px] leading-[1.5]" style={{ color: '#7a6555' }}>{r.name}</span>
+                        <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                      </div>
+                    ))}
+                    {/* Insight Cast highlight row */}
+                    <div className="grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b -mx-6 px-6" style={{ background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' }}>
+                      <div>
+                        <span className="text-[12px] font-bold leading-none" style={{ color: '#c2722a' }}>Insight Cast</span>
+                        <span className="block text-[10px] font-bold mt-0.5" style={{ color: '#c2722a' }}>個人プラン</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="block text-[11px] font-bold" style={{ color: '#1c1410' }}>月15回取材</span>
+                        <span className="block text-[10px] font-bold" style={{ color: '#c2722a' }}>60本の素材</span>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75] border-t" style={{ background: '#f5e8d8', color: '#7a6555', borderColor: '#e2d5c3' }}>
+                    <strong className="font-bold text-[var(--text)]">1記事あたり ¥83。</strong>続けられる価格にこだわりました。
+                  </p>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
