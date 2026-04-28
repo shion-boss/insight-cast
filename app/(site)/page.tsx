@@ -587,7 +587,7 @@ export default async function LandingPage() {
             </h2>
             {/* E-E-A-T subheader */}
             <h3 className="mt-6 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
-              あなた自身の言葉と体験が素材だから、<br />Googleが重視する4つの基準を自然にクリアできる。
+              <span style={{ color: '#c2722a' }}>あなた自身の言葉と体験</span>が素材だから、<br />Googleが重視する4つの基準を<span style={{ color: '#c2722a' }}>自然にクリアできる。</span>
             </h3>
 
             {/* E-E-A-T table */}
