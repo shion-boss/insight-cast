@@ -618,7 +618,7 @@ export default async function LandingPage() {
               ))}
             </div>
             <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[600px]">
-              Insight Castは、AIに書かせるのではなく<strong className="font-semibold text-[var(--text)]">「あなたの体験をAIが引き出す」</strong>アプローチです。情報の出所はあなた自身なので、E-E-A-Tの核心である「Experience（実体験）」を満たします。
+              Insight Castは、AIによるあなたへのインタビューの内容に基づいてAIが記事生成をします。ただし、記事の素材はあなた自身の取材回答です。情報の出所があなたの体験である以上、E-E-A-Tを満たし、評価は下がりません。
             </p>
             <p className="text-xs text-[var(--text3)] leading-[1.7] mt-3">
               参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
