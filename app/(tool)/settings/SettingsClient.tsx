@@ -579,7 +579,7 @@ export function SettingsClient({
                                   setProjectDeleteInput('')
                                   setProjectDeleteError(null)
                                 }}
-                                className={getButtonClass('secondary', 'px-3 py-1.5 text-xs shrink-0 border-[var(--err)]/40 text-[var(--err)] hover:bg-[var(--err-l)]')}
+                                className="inline-flex shrink-0 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                               >
                                 削除する
                               </button>
