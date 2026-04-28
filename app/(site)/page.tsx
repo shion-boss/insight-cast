@@ -497,7 +497,7 @@ export default async function LandingPage() {
               会話から、記事へ。
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[520px]">
-              取材に答えると、こうして記事が届きます。専門的な準備は何もいりません。
+              会話から引き出した価値をもとにテーマを作成し、複数の形式で記事をお届けします。あとは投稿先でコピー&ペーストするだけで完了です。
             </p>
             <div className="mt-11 grid gap-8 xl:grid-cols-2">
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
