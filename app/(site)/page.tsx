@@ -578,6 +578,45 @@ export default async function LandingPage() {
           </div>
         </section>
 
+        {/* ⑭-c AI記事への懸念に答える */}
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある疑問</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              「AIで記事を作ると、SEOに悪いのでは？」
+            </h2>
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[600px]">
+              問題になるのは「どこから情報が来ているか」で決まります。Googleはコンテンツを以下の基準で評価しています。
+            </p>
+            <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+              <div className="hidden sm:grid sm:grid-cols-[1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが評価する基準</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)] pl-6">Insight Cast は？</div>
+              </div>
+              {[
+                { criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
+                { criterion: 'その人にしか語れない固有の情報があるか', answer: '競合には真似できない一次情報' },
+                { criterion: '誰でも書けるような汎用コンテンツでないか', answer: '取材内容だけを素材にする' },
+                { criterion: '情報の出所が明確か',                     answer: '情報の出所はあなた自身の言葉' },
+              ].map((row, i) => (
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_300px] border-b last:border-0 border-[var(--border)]">
+                  <div className="flex items-center gap-3 px-6 py-4 text-sm font-medium text-[var(--text)]">
+                    <span className="w-5 h-5 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-[var(--text3)]">?</span>
+                    {row.criterion}
+                  </div>
+                  <div className="flex items-center gap-3 px-6 py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
+                    <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
+                    {row.answer}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[560px]">
+              AIはあなたの言葉を記事の形に整えるだけで、情報を作り出すのはあなた自身です。取材で引き出した一次情報は、Googleが重視する「その人にしか語れない体験」そのものです。
+            </p>
+          </div>
+        </section>
+
         {/* ⑪ Compare */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
@@ -634,45 +673,6 @@ export default async function LandingPage() {
                 </tbody>
               </table>
             </div>
-          </div>
-        </section>
-
-        {/* ⑭-c AI記事への懸念に答える */}
-        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある疑問</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              「AIで記事を作ると、SEOに悪いのでは？」
-            </h2>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[600px]">
-              問題になるのは「どこから情報が来ているか」で決まります。Googleはコンテンツを以下の基準で評価しています。
-            </p>
-            <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-              <div className="hidden sm:grid sm:grid-cols-[1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが評価する基準</div>
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)] pl-6">Insight Cast は？</div>
-              </div>
-              {[
-                { criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
-                { criterion: 'その人にしか語れない固有の情報があるか', answer: '競合には真似できない一次情報' },
-                { criterion: '誰でも書けるような汎用コンテンツでないか', answer: '取材内容だけを素材にする' },
-                { criterion: '情報の出所が明確か',                     answer: '情報の出所はあなた自身の言葉' },
-              ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_300px] border-b last:border-0 border-[var(--border)]">
-                  <div className="flex items-center gap-3 px-6 py-4 text-sm font-medium text-[var(--text)]">
-                    <span className="w-5 h-5 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-[var(--text3)]">?</span>
-                    {row.criterion}
-                  </div>
-                  <div className="flex items-center gap-3 px-6 py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
-                    <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
-                    {row.answer}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[560px]">
-              AIはあなたの言葉を記事の形に整えるだけで、情報を作り出すのはあなた自身です。取材で引き出した一次情報は、Googleが重視する「その人にしか語れない体験」そのものです。
-            </p>
           </div>
         </section>
 
