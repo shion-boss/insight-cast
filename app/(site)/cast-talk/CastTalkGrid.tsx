@@ -246,27 +246,29 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
 
           {/* ページネーション */}
           {listTotalPages > 1 && (
-            <div className="mt-6 flex items-center justify-center gap-3">
+            <nav aria-label="ページネーション" className="mt-6 flex items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => goToPage(listPage - 1)}
                 disabled={listPage === 0 || loading}
+                aria-label="前のページへ"
                 className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <span aria-hidden="true">←</span> 前へ
               </button>
-              <span className="min-w-[80px] text-center text-sm text-[#7a6555]">
+              <span className="min-w-[80px] text-center text-sm text-[#7a6555]" aria-live="polite">
                 {listPage + 1} / {listTotalPages}
               </span>
               <button
                 type="button"
                 onClick={() => goToPage(listPage + 1)}
                 disabled={listPage >= listTotalPages - 1 || loading}
+                aria-label="次のページへ"
                 className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 次へ <span aria-hidden="true">→</span>
               </button>
-            </div>
+            </nav>
           )}
         </div>
       )}

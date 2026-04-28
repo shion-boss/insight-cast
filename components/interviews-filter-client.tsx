@@ -43,15 +43,15 @@ function selectClassName() {
 function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
   if (totalPages <= 1) return null
   return (
-    <div className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
-      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
+    <nav aria-label="ページネーション" className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
+      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} aria-label="前のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         <span aria-hidden="true">←</span> 前へ
       </button>
-      <span className="text-sm text-[var(--text3)]">{page} / {totalPages} ページ</span>
-      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
+      <span className="text-sm text-[var(--text3)]" aria-live="polite">{page} / {totalPages} ページ</span>
+      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} aria-label="次のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         次へ <span aria-hidden="true">→</span>
       </button>
-    </div>
+    </nav>
   )
 }
 
