@@ -3,16 +3,20 @@
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { usePathname } from 'next/navigation'
+import { NAV_LINKS } from '@/components/admin-sidebar-nav'
 
-type NavLink = { href: string; label: string }
+function isActive(pathname: string, href: string) {
+  if (href === '/admin') return pathname === '/admin'
+  return pathname === href || pathname.startsWith(href + '/')
+}
 
 export function AdminMobileNav({
-  navLinks,
   email,
 }: {
-  navLinks: NavLink[]
   email: string
 }) {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
@@ -103,16 +107,24 @@ export function AdminMobileNav({
             </div>
 
             <nav aria-label="管理ナビゲーション" className="flex-1 overflow-y-auto px-3 py-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="flex rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium text-white/58 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const active = isActive(pathname, link.href)
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={active ? 'page' : undefined}
+                    onClick={() => setOpen(false)}
+                    className={`flex rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      active
+                        ? 'bg-white/12 text-white'
+                        : 'text-white/58 hover:bg-white/8 hover:text-white'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             <div className="border-t border-white/8 px-4 py-4">

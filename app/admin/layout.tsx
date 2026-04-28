@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminMobileNav } from '@/components/admin-mobile-nav'
+import { AdminSidebarNav } from '@/components/admin-sidebar-nav'
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
@@ -15,15 +16,6 @@ async function getAdminUser() {
   const { data: { user } } = await supabase.auth.getUser()
   return user
 }
-
-const NAV_LINKS = [
-  { href: '/admin', label: 'ダッシュボード' },
-  { href: '/admin/posts', label: '記事管理' },
-  { href: '/admin/cast-talk', label: 'Cast Talk' },
-  { href: '/admin/users', label: 'ユーザー管理' },
-  { href: '/admin/costs', label: 'コスト管理' },
-  { href: '/admin/services', label: '関連サービス' },
-]
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await getAdminUser()
@@ -51,11 +43,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <span className="text-[11px] text-white/50">Admin</span>
           </Link>
         </div>
-        <nav aria-label="管理ナビゲーション" className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
-          {NAV_LINKS.map((link) => (
-            <AdminNavLink key={link.href} href={link.href} label={link.label} />
-          ))}
-        </nav>
+        <AdminSidebarNav />
         <div className="border-t border-white/8 px-3 py-4">
           <p className="truncate text-xs text-white/50">{user.email}</p>
           <Link
@@ -73,7 +61,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
               <Link href="/"><Image src="/logo.jpg" alt="Insight Cast" width={120} height={32} className="h-8 w-auto" /></Link>
-              <AdminMobileNav navLinks={NAV_LINKS} email={user.email ?? ''} />
+              <AdminMobileNav email={user.email ?? ''} />
             </div>
             {/* PC: 管理画面ラベル + メール */}
             <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-between">
@@ -91,15 +79,4 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   )
 }
 
-// サイドバーリンク（クライアント不要・シンプルにhrefで管理）
-function AdminNavLink({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="flex rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium text-white/58 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-    >
-      {label}
-    </Link>
-  )
-}
 
