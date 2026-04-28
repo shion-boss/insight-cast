@@ -102,6 +102,7 @@ type Props = {
   interviewCount: number
   projectCount: number
   isEmailUser: boolean
+  projects: Array<{ id: string; name: string | null; hp_url: string }>
 }
 
 export function SettingsClient({
@@ -115,6 +116,7 @@ export function SettingsClient({
   interviewCount,
   projectCount,
   isEmailUser,
+  projects,
 }: Props) {
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
@@ -146,6 +148,11 @@ export function SettingsClient({
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [deletePending, setDeletePending] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [projectList, setProjectList] = useState(projects)
+  const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null)
+  const [projectDeleteInput, setProjectDeleteInput] = useState('')
+  const [projectDeleteError, setProjectDeleteError] = useState<string | null>(null)
+  const [projectDeleting, setProjectDeleting] = useState(false)
 
   async function handleProfileSave() {
     setProfileError(null)
@@ -348,6 +355,29 @@ export function SettingsClient({
     }
   }
 
+  async function handleProjectDelete(projectId: string, expectedName: string) {
+    if (projectDeleteInput.trim() !== expectedName) {
+      setProjectDeleteError(`「${expectedName}」と正確に入力してください。`)
+      return
+    }
+    setProjectDeleting(true)
+    setProjectDeleteError(null)
+    try {
+      const res = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' })
+      if (!res.ok) {
+        setProjectDeleteError('削除できませんでした。時間をおいてもう一度お試しください。')
+        setProjectDeleting(false)
+        return
+      }
+      setProjectList((prev) => prev.filter((p) => p.id !== projectId))
+      setDeletingProjectId(null)
+      setProjectDeleteInput('')
+    } catch {
+      setProjectDeleteError('削除できませんでした。通信状況を確認してください。')
+      setProjectDeleting(false)
+    }
+  }
+
   const mint = getCharacter('mint')
   const hasUnsavedProfileChanges = name.trim() !== savedName.trim()
   const hasUnsavedNotificationChanges = !areNotificationPreferencesEqual(
@@ -525,6 +555,84 @@ export function SettingsClient({
                   </>
                 )}
               </section>}
+
+              <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">取材先の削除</h2>
+                <p className="mb-5 text-xs text-[var(--text3)]">削除すると取材メモ・記事も含めて論理削除されます</p>
+
+                {projectList.length === 0 ? (
+                  <p className="text-sm text-[var(--text3)]">登録済みの取材先はありません。</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {projectList.map((project) => {
+                      const displayName = project.name || project.hp_url
+                      const isConfirming = deletingProjectId === project.id
+                      return (
+                        <li key={project.id} className="rounded-[var(--r)] border border-[var(--border)] p-4">
+                          <div className="flex items-center justify-between gap-4">
+                            <span className="truncate text-sm font-medium text-[var(--text)]">{displayName}</span>
+                            {!isConfirming && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDeletingProjectId(project.id)
+                                  setProjectDeleteInput('')
+                                  setProjectDeleteError(null)
+                                }}
+                                className={getButtonClass('secondary', 'px-3 py-1.5 text-xs shrink-0 border-[var(--err)]/40 text-[var(--err)] hover:bg-[var(--err-l)]')}
+                              >
+                                削除する
+                              </button>
+                            )}
+                          </div>
+
+                          {isConfirming && (
+                            <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
+                              <p className="text-sm text-[var(--text2)]">
+                                確認のため、取材先名 <span className="font-semibold text-[var(--text)]">「{displayName}」</span> を入力してください。
+                              </p>
+                              <label htmlFor={`delete-project-${project.id}`} className="sr-only">取材先名を入力</label>
+                              <TextInput
+                                id={`delete-project-${project.id}`}
+                                type="text"
+                                value={projectDeleteInput}
+                                onChange={(e: ChangeEvent<HTMLInputElement>) => setProjectDeleteInput(e.target.value)}
+                                placeholder={displayName}
+                                disabled={projectDeleting}
+                                aria-invalid={!!projectDeleteError || undefined}
+                              />
+                              {projectDeleteError && (
+                                <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
+                                  <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
+                                  <p className="text-sm text-[var(--err)]">{projectDeleteError}</p>
+                                </div>
+                              )}
+                              <div className="flex flex-wrap gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => void handleProjectDelete(project.id, displayName)}
+                                  disabled={projectDeleting || projectDeleteInput.trim() !== displayName}
+                                  className="inline-flex min-h-10 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                                >
+                                  {projectDeleting ? '削除中...' : '削除を確定する'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => { setDeletingProjectId(null); setProjectDeleteInput(''); setProjectDeleteError(null) }}
+                                  disabled={projectDeleting}
+                                  className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+                                >
+                                  キャンセル
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </li>
+                      )
+                    })}
+                  </ul>
+                )}
+              </section>
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">

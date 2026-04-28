@@ -33,9 +33,10 @@ export default async function SettingsPage() {
       .single(),
     supabase
       .from('projects')
-      .select('id')
+      .select('id, name, hp_url')
       .eq('user_id', user.id)
-      .is('deleted_at', null),
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true }),
     supabase
       .from('subscriptions')
       .select('plan')
@@ -50,7 +51,8 @@ export default async function SettingsPage() {
     : subscription?.plan === 'lightning' ? 'lightning'
     : 'free'
 
-  const projectIds = (userProjects ?? []).map((p) => p.id)
+  const userProjectList = (userProjects ?? []) as Array<{ id: string; name: string | null; hp_url: string }>
+  const projectIds = userProjectList.map((p) => p.id)
   const projectCount = projectIds.length
 
   let interviewCount = 0
@@ -78,6 +80,7 @@ export default async function SettingsPage() {
       interviewCount={interviewCount}
       projectCount={projectCount}
       isEmailUser={user.app_metadata?.provider === 'email'}
+      projects={userProjectList.map((p) => ({ id: p.id, name: p.name as string | null, hp_url: p.hp_url as string }))}
     />
   )
 }
