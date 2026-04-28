@@ -40,7 +40,7 @@ export function AnalysisLoadingScene({
   }, [steps.length])
 
   return (
-    <div className="ic-loading-card w-full max-w-[520px]">
+    <div role="status" aria-label="ホームページを分析中" className="ic-loading-card w-full max-w-[520px]">
       <div className="ic-loading-card-header">
         <AiBadge label="調査中" />
         <div className="min-w-0 flex-1">
@@ -153,7 +153,7 @@ export function InterviewLoadingScene({
   const complete = tick >= steps.length
 
   return (
-    <div className="ic-loading-card ic-prep-card w-full max-w-[480px]">
+    <div role="status" aria-label={title} className="ic-loading-card ic-prep-card w-full max-w-[480px]">
       <div className="ic-prep-avatar-stage">
         <span className="ic-prep-ring ic-prep-ring-1" aria-hidden="true" />
         <span className="ic-prep-ring ic-prep-ring-2" aria-hidden="true" />
@@ -254,7 +254,7 @@ export function WritingLoadingScene({
   const phaseIndex = progress < 34 ? 0 : progress < 68 ? 1 : 2
 
   return (
-    <div className="ic-loading-card w-full max-w-[560px]">
+    <div role="status" aria-label={title} className="ic-loading-card w-full max-w-[560px]">
       <div className="ic-loading-card-header">
         <CharacterAvatar
           src={mint?.icon48}
