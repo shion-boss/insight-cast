@@ -585,34 +585,41 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               「AIで記事を作ると、SEOに悪いのでは？」
             </h2>
-            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[600px]">
-              問題になるのは「どこから情報が来ているか」で決まります。検索で評価されやすいコンテンツには、共通した特徴があります。
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[640px]">
+              Googleが評価を下げるのは「AI使用」ではなく、<strong className="font-semibold text-[var(--text)]">「実体験のないコンテンツ」</strong>です。Googleはコンテンツの質をE-E-A-Tという基準で評価します。
             </p>
             <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-              <div className="hidden sm:grid sm:grid-cols-[1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3">
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが評価する基準</div>
-                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)] pl-6">Insight Cast は？</div>
+              <div className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[80px_1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3 gap-4">
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">E-E-A-T</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--text3)]">Googleが重視する基準</div>
+                <div className="hidden sm:block text-[11px] font-semibold uppercase tracking-[.1em] text-[var(--accent)]">Insight Cast は？</div>
               </div>
               {[
-                { criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
-                { criterion: 'その人にしか語れない固有の情報があるか', answer: '競合には真似できない一次情報' },
-                { criterion: '誰でも書けるような汎用コンテンツでないか', answer: '取材内容だけを素材にする' },
-                { criterion: '情報の出所が明確か',                     answer: '情報の出所はあなた自身の言葉' },
+                { badge: 'Experience',      criterion: '実際の体験・経験に基づいているか',         answer: '事業者本人が取材に答えている' },
+                { badge: 'Expertise',       criterion: 'その分野の専門知識・現場知識があるか',       answer: 'あなたの現場知識が素材になる' },
+                { badge: 'Authoritativeness', criterion: '信頼される発信者として語られているか',   answer: 'あなた自身の言葉で語られている' },
+                { badge: 'Trustworthiness', criterion: '情報が正確で誠実か',                       answer: '作り話でなく体験から引き出す' },
               ].map((row, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_300px] border-b last:border-0 border-[var(--border)]">
-                  <div className="flex items-center gap-3 px-6 py-4 text-sm font-medium text-[var(--text)]">
-                    <span className="w-5 h-5 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-[var(--text3)]">?</span>
+                <div key={i} className="grid grid-cols-1 sm:grid-cols-[80px_1fr_300px] border-b last:border-0 border-[var(--border)] gap-0">
+                  <div className="flex items-center px-6 py-3 sm:py-4 border-b sm:border-b-0 sm:border-r border-[var(--border)] bg-[var(--bg2)]">
+                    <span className="text-[10px] font-bold text-[var(--accent)] tracking-[.04em]">{row.badge.charAt(0)}</span>
+                    <span className="text-[10px] text-[var(--text3)] ml-0.5">{row.badge.slice(1)}</span>
+                  </div>
+                  <div className="flex items-center gap-3 px-6 py-3 sm:py-4 text-sm font-medium text-[var(--text)]">
                     {row.criterion}
                   </div>
-                  <div className="flex items-center gap-3 px-6 py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
+                  <div className="flex items-center gap-3 px-6 py-3 sm:py-4 text-sm text-[var(--text2)] bg-[var(--accent-l)] border-t sm:border-t-0 sm:border-l border-[var(--accent)]/20">
                     <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
                     {row.answer}
                   </div>
                 </div>
               ))}
             </div>
-            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[560px]">
-              AIはあなたの言葉を記事の形に整えるだけで、情報を作り出すのはあなた自身です。取材で引き出した一次情報は、Googleが重視する「その人にしか語れない体験」そのものです。
+            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6 max-w-[600px]">
+              Insight Castは、AIに書かせるのではなく<strong className="font-semibold text-[var(--text)]">「あなたの体験をAIが引き出す」</strong>アプローチです。情報の出所はあなた自身なので、E-E-A-Tの核心である「Experience（実体験）」を満たします。
+            </p>
+            <p className="text-xs text-[var(--text3)] leading-[1.7] mt-3">
+              参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
             </p>
           </div>
         </section>
