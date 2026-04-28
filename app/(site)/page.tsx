@@ -302,7 +302,7 @@ export default async function LandingPage() {
               ))}
             </ul>
             <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold mt-12" style={{ color: '#c2722a', fontSize: 'clamp(18px,2.4vw,30px)' }}>
-              引き出す問いが、なかっただけ。
+              価値を引き出す問いが足りなかったから。
             </p>
           </div>
         </section>
