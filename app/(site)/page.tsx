@@ -314,7 +314,7 @@ export default async function LandingPage() {
               <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6" style={{ color: '#c2722a' }}>Solution</p>
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.2] mb-10 relative pl-4" style={{ color: '#1c1410', fontSize: 'clamp(32px,4.5vw,56px)' }}>
                 <span className="absolute left-0 top-[6px] bottom-[6px] w-[3px] rounded-[2px]" style={{ background: '#c2722a' }} />
-                答えるだけでいい。
+                Insight Castなら、取材に答えるだけ！！
               </h2>
               <ul className="mb-10 border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
