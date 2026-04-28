@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+// TODO(P-3): Bundle Analyzer の設定
+// @next/bundle-analyzer をインストール後、以下を有効化する:
+//   npm install --save-dev @next/bundle-analyzer
+// const withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: process.env.ANALYZE === 'true' })
+// export default withBundleAnalyzer(nextConfig)
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   experimental: {
