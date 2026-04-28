@@ -102,7 +102,7 @@ export function AdminMobileNav({
               </button>
             </div>
 
-            <nav className="flex-1 overflow-y-auto px-3 py-3">
+            <nav aria-label="管理ナビゲーション" className="flex-1 overflow-y-auto px-3 py-3">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

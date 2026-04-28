@@ -95,7 +95,7 @@ export default async function ArticleDetailPage({
         ]} />
         <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
           <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
-          <h1 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h1>
+          <h2 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h2>
           <p className="mt-2 text-sm text-[var(--text3)]">
             {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
           </p>

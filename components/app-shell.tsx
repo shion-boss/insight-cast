@@ -163,7 +163,7 @@ export function AppShell({
             </div>
             {/* PC: タイトル + 右側アクション */}
             <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-between lg:gap-4 lg:min-w-0">
-              <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>
+              <h1 className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</h1>
               <div className="flex shrink-0 items-center gap-3">
                 {headerRight}
                 <Link

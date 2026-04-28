@@ -51,7 +51,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <span className="text-[11px] text-white/50">Admin</span>
           </Link>
         </div>
-        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
+        <nav aria-label="管理ナビゲーション" className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-3">
           {NAV_LINKS.map((link) => (
             <AdminNavLink key={link.href} href={link.href} label={link.label} />
           ))}

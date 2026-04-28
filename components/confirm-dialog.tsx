@@ -98,6 +98,7 @@ export function ConfirmDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby={`${dialogId}-title`}
+        aria-describedby={description ? `${dialogId}-desc` : undefined}
         className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl"
       >
         <p id={`${dialogId}-title`} className="text-[15px] font-bold text-[var(--text)] mb-2">
@@ -107,7 +108,7 @@ export function ConfirmDialog({
           <p className="text-sm text-[var(--text2)] mb-1 line-clamp-2">「{subject}」</p>
         )}
         {description && (
-          <p className="text-sm text-[var(--text3)] mb-5">{description}</p>
+          <p id={`${dialogId}-desc`} className="text-sm text-[var(--text3)] mb-5">{description}</p>
         )}
         <div className="flex gap-3 justify-end">
           <button

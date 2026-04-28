@@ -63,31 +63,29 @@ export function NavigationOverlay() {
   // site: header高さが可変なので fixed top-0 で全画面カバー
   if (area === 'site') {
     return (
-      <>
+      <div aria-hidden="true">
         <div className="fixed left-0 right-0 z-[31] h-[2px] overflow-hidden" style={{ top: headerBottom }}>
           <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
         </div>
         <div className="fixed inset-0 z-[25] bg-[rgba(250,246,240,0.9)]" />
-      </>
+      </div>
     )
   }
 
   const sidebarClass = area === 'admin' ? 'lg:left-[220px]' : 'lg:left-[236px]'
 
   return (
-    <>
-      {/* プログレスバー — ヘッダー下端に貼り付け */}
+    <div aria-hidden="true">
       <div
         className={`fixed left-0 right-0 z-[31] h-[2px] overflow-hidden ${sidebarClass}`}
         style={{ top: headerBottom }}
       >
         <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
       </div>
-      {/* コンテンツ領域ブランク — ヘッダーの下からサイドバーの右側のみ */}
       <div
         className={`fixed left-0 right-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.9)] ${sidebarClass}`}
         style={{ top: headerBottom }}
       />
-    </>
+    </div>
   )
 }
