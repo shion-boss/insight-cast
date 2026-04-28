@@ -585,12 +585,9 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               AIが作った記事は評価されない？
             </h2>
-            <p className="mt-5 text-[15px] leading-[1.8] text-[var(--text2)]">
-              あなた自身の言葉と体験が素材だから。
-            </p>
             {/* E-E-A-T subheader */}
-            <h3 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
-              Googleが重視する4つの基準を、<br />自然にクリアできる。
+            <h3 className="mt-6 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
+              あなた自身の言葉と体験が素材だから、<br />Googleが重視する4つの基準を自然にクリアできる。
             </h3>
 
             {/* E-E-A-T table */}
