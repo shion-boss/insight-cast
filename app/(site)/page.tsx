@@ -586,7 +586,7 @@ export default async function LandingPage() {
               「AIで記事を作ると、SEOに悪いのでは？」
             </h2>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[600px]">
-              問題になるのは「どこから情報が来ているか」で決まります。Googleはコンテンツを以下の基準で評価しています。
+              問題になるのは「どこから情報が来ているか」で決まります。検索で評価されやすいコンテンツには、共通した特徴があります。
             </p>
             <div className="mt-8 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               <div className="hidden sm:grid sm:grid-cols-[1fr_300px] border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-3">
