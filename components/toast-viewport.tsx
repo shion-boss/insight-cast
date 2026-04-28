@@ -30,9 +30,10 @@ export default function ToastViewport() {
 
       setToasts((prev) => [...prev, { ...detail, id }])
 
+      const duration = detail.onUndo ? UNDO_DURATION_MS : DEFAULT_DURATION_MS
       window.setTimeout(() => {
         setToasts((prev) => prev.filter((toast) => toast.id !== id))
-      }, DEFAULT_DURATION_MS)
+      }, duration)
     }
 
     window.addEventListener('app-toast', handleToast as EventListener)

@@ -27,6 +27,7 @@ import {
   type InterviewHistoryItem,
   type ArticleSectionItem,
 } from './ProjectSections'
+import { DeleteProjectButton } from './DeleteProjectButton'
 
 type InterviewRow = {
   id: string
@@ -318,8 +319,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 </div>
               ))}
             </div>
-            <div className="text-[11px] text-[var(--text3)] text-right">
-              最終更新: {formatDateTime(project.updated_at)}
+            <div className="flex items-center justify-between">
+              <div className="text-[11px] text-[var(--text3)]">
+                最終更新: {formatDateTime(project.updated_at)}
+              </div>
+              <DeleteProjectButton
+                projectId={id}
+                projectName={project.name || project.hp_url}
+              />
             </div>
           </div>
         </div>
