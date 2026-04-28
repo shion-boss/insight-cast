@@ -169,7 +169,7 @@ export default async function LandingPage() {
                   会話から、記事へ。<br /><em className="text-[var(--accent)] not-italic">あなたの当たり前を言葉に。</em>
                 </h1>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-6 max-w-[420px]">
-                  AI検索時代を勝ち抜く強いコンテンツの素材はあなたの中に。Insight Castが、その価値を引き出して記事にします。
+                  AI検索の時代でも、あなた自身の言葉だけは、真似できない。Insight Castが、その価値を引き出して記事にします。
                 </p>
                 <div className="flex gap-3 mt-8 flex-wrap">
                   <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
@@ -259,7 +259,7 @@ export default async function LandingPage() {
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6" style={{ color: '#c2722a' }}>Solution</p>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.5] mb-12 relative pl-5" style={{ color: '#1c1410', fontSize: 'clamp(32px,4.5vw,60px)' }}>
               <span className="absolute left-0 top-[6px] bottom-[6px] w-[3px] rounded-[2px]" style={{ background: '#c2722a' }} />
-              Insight Castなら、<br />取材に答えるだけ！！
+              Insight Castなら、<br />取材に答えるだけ。
             </h2>
             <div className="lg:grid lg:grid-cols-[1fr_420px] lg:gap-16 xl:gap-24">
               <ul className="mb-10 lg:mb-0 border-t" style={{ borderColor: '#e2d5c3' }}>
@@ -627,7 +627,7 @@ export default async function LandingPage() {
                   </div>
                   <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                     {[
-                      { name: '完全AI任せ',     value: '3分',      muted: true,  highlight: false },
+                      { name: 'ChatGPTに丸投げ', value: '3分',      muted: true,  highlight: false },
                       { name: 'AIツールで書く', value: '1〜2時間', muted: false, highlight: false },
                       { name: 'ライター外注',   value: '1〜2時間', muted: false, highlight: false },
                       { name: 'Insight Cast',   value: '約20分',   muted: false, highlight: true  },
@@ -827,7 +827,7 @@ export default async function LandingPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               最新の記事
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">会話から言葉にした経験や、発信のヒントをお届けしています。</p>
+            <p className="text-base text-[var(--text2)] mt-3">Insight Cast の考え方や、発信にまつわる話を長文の記事で読む。</p>
             <div className="mt-11 flex flex-col divide-y divide-[var(--border)] rounded-[20px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {latestPosts.map((post) => {
                 const char = getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!
@@ -878,7 +878,7 @@ export default async function LandingPage() {
               <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
                 キャストの対話
               </h2>
-              <p className="text-base text-[var(--text2)] mt-3">ミント・クラウス・レインが語り合う対話記事。ホームページを育てるヒントをキャスト視点でお届けします。</p>
+              <p className="text-base text-[var(--text2)] mt-3">キャスト同士の対話で、ホームページの育て方を学ぶ。</p>
               <div className="mt-8 divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[#e2d5c3] bg-[#fffdf9]">
                 {latestTalks.map((talk) => {
                   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)

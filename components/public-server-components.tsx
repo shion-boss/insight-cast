@@ -38,7 +38,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
               </>
             ) : (
               <>
-                <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">AIキャストの取材を受けてみませんか？</h2>
+                <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">まず、話してみてください。</h2>
                 <p className="mt-5 text-sm leading-[2] text-white/85 sm:text-[15px]">
                   答えるだけで、記事の素材が手元に届きます。<br />
                   カードも、契約期間も、整った言葉も、いりません。
