@@ -368,7 +368,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">How It Works</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              やることは、ただ「答えるだけ」。
+              取材に答えて、記事を貼るだけ。
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">ネタ出しも、文章作りも、Insight Cast が引き受けます。</p>
             <div className="relative mt-14 grid gap-8 md:grid-cols-3">
@@ -919,6 +919,36 @@ export default async function LandingPage() {
             </div>
           </section>
         )}
+
+        {/* ⑭-c AI記事への懸念に答える */}
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある疑問</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              「AIで記事を作ると、<br />SEOに悪いのでは？」
+            </h2>
+            <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5">
+              よく聞かれます。答えは「どこから情報が来ているか」によります。
+            </p>
+            <div className="mt-8 space-y-4">
+              <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-6">
+                <p className="text-[13px] font-bold text-[var(--text3)] tracking-[.06em] mb-2">評価が下がるのは「AIが作り出した情報」</p>
+                <p className="text-sm text-[var(--text2)] leading-[1.85]">
+                  問題になっているのは、誰でも書けるキーワード詰め込み記事や、AIが事実の裏づけなしに生成した文章です。「誰が書いたかわからない」「その人にしか語れないものが何もない」コンテンツが対象です。
+                </p>
+              </div>
+              <div className="bg-[var(--accent-l)] border border-[var(--accent)]/20 rounded-[18px] p-6">
+                <p className="text-[13px] font-bold text-[var(--accent)] tracking-[.06em] mb-2">Insight Cast の記事の元は「あなたの体験と言葉」</p>
+                <p className="text-sm text-[var(--text2)] leading-[1.85]">
+                  AIキャストはあなたに質問し、あなたが答えた内容だけを素材にします。「なぜこの仕事を続けているか」「他と何が違うか」「失敗から何を学んだか」——その答えは、大手にも競合にも真似できない一次情報です。AIはその素材を記事の形に整えるだけで、情報を作り出すのはあなた自身です。
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-[var(--text2)] leading-[1.85] mt-6">
+              Googleが重視しているのは「その人にしか語れない体験があるか」です。取材で引き出した言葉から作られた記事は、その基準を満たします。
+            </p>
+          </div>
+        </section>
 
         {/* ⑮ FAQ */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
