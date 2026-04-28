@@ -593,13 +593,6 @@ export default async function LandingPage() {
             <div className="mt-8 rounded-[20px] border border-[var(--border)] overflow-hidden">
               <table className="w-full border-collapse">
                 <caption className="sr-only">E-E-A-T基準とInsight Castの対応</caption>
-                <thead>
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--accent)] w-[140px]">E-E-A-T</th>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--surface)] text-[var(--text3)]">Googleが重視する基準</th>
-                    <th scope="col" className="px-6 py-3 text-[11px] font-semibold uppercase tracking-[.1em] text-left border-b border-[var(--border)] bg-[var(--accent)] text-white w-[300px]">Insight Cast は？</th>
-                  </tr>
-                </thead>
                 <tbody>
                   {[
                     { badge: 'Experience',        badgeJa: '体験',   criterion: '実際の体験・経験に基づいているか',       answer: '事業者本人が取材に答えている' },
@@ -607,15 +600,20 @@ export default async function LandingPage() {
                     { badge: 'Authoritativeness', badgeJa: '権威性', criterion: '信頼される発信者として語られているか',   answer: 'あなた自身の言葉で語られている' },
                     { badge: 'Trustworthiness',   badgeJa: '信頼性', criterion: '情報が正確で誠実か',                     answer: '作り話でなく体験から引き出す' },
                   ].map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--surface)] align-middle">
-                        <span className="block text-[14px] font-bold text-[var(--text)]">{row.badgeJa}</span>
+                    <tr key={i} className="border-b last:border-0 border-[var(--border)]">
+                      <td className="w-[130px] px-6 py-5 bg-[var(--surface)] align-middle border-r border-[var(--border)]">
+                        <span className="block font-bold leading-none" style={{ fontSize: '28px', color: '#c2722a' }}>{row.badge.charAt(0)}</span>
+                        <span className="block text-[13px] font-bold text-[var(--text)] mt-2">{row.badgeJa}</span>
                         <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
                       </td>
-                      <td className="px-6 py-4 border-b border-[var(--border)] text-sm font-medium text-[var(--text)] align-middle">{row.criterion}</td>
-                      <td className="px-6 py-4 border-b border-[var(--border)] bg-[var(--accent-l)] align-middle">
-                        <span className="flex items-center gap-2.5 text-sm text-[var(--text2)]">
-                          <span className="text-[var(--teal)] font-bold text-base flex-shrink-0" aria-label="クリア">✓</span>
+                      <td className="px-6 py-5 bg-[var(--surface)] text-[14px] text-[var(--text)] align-middle">{row.criterion}</td>
+                      <td className="w-[280px] px-6 py-5 align-middle" style={{ background: 'rgba(194,114,42,0.06)', borderLeft: '1px solid rgba(194,114,42,0.15)' }}>
+                        <span className="flex items-center gap-3 text-[13px] text-[var(--text2)]">
+                          <span className="flex-shrink-0 w-[20px] h-[20px] rounded-full flex items-center justify-center" style={{ background: 'rgba(194,114,42,0.15)' }}>
+                            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                              <path d="M1 3.5L3.5 6.5L9 1" stroke="#c2722a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </span>
                           {row.answer}
                         </span>
                       </td>
