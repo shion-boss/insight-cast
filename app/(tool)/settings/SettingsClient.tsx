@@ -324,8 +324,8 @@ export function SettingsClient({
   async function handleDeleteAccount() {
     setDeleteError(null)
 
-    if (deleteConfirmation.trim() !== '削除') {
-      setDeleteError('確認のため「削除」と入力してください。')
+    if (deleteConfirmation.trim().toLowerCase() !== email.toLowerCase()) {
+      setDeleteError('確認のためメールアドレスを正確に入力してください。')
       return
     }
 
@@ -642,17 +642,21 @@ export function SettingsClient({
 
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
-                  <p className="mb-4 text-sm leading-[1.75] text-[var(--text2)]">
-                    取材先、取材メモ、記事、プロフィール情報を含むアカウント全体を完全に削除します。確認のため、下に「削除」と入力してください。
-                  </p>
+                  <ul className="mb-4 space-y-1 text-sm leading-[1.75] text-[var(--text2)] list-disc list-inside">
+                    <li>取材先・取材メモ・記事・プロフィール情報を含むアカウント全体が完全に削除されます</li>
+                    <li>有料プランご利用中の場合、サブスクリプションは即時解約されます</li>
+                    <li>残りの契約期間分の返金はありません</li>
+                    <li>この操作は取り消せません</li>
+                  </ul>
+                  <p className="mb-4 text-sm text-[var(--text2)]">確認のため、登録メールアドレス（{email}）を入力してください。</p>
 
-                  <label htmlFor="settings-delete-confirm" className="sr-only">「削除」と入力して確認</label>
+                  <label htmlFor="settings-delete-confirm" className="sr-only">メールアドレスを入力して確認</label>
                   <TextInput
                     id="settings-delete-confirm"
                     type="text"
                     value={deleteConfirmation}
                     onChange={(event) => setDeleteConfirmation(event.target.value)}
-                    placeholder="削除"
+                    placeholder={email}
                     className="max-w-xs"
                     disabled={deletePending}
                     aria-invalid={!!deleteError || undefined}

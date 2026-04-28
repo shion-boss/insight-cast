@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import { getStripe } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
-const DELETE_CONFIRMATION = '削除'
-
 export async function POST(request: Request) {
+  const traceId = crypto.randomUUID()
   const supabase = await createClient()
   const {
     data: { user },
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   const confirmation =
     typeof body?.confirmation === 'string' ? body.confirmation.trim() : ''
 
-  if (confirmation !== DELETE_CONFIRMATION) {
+  if (!user.email || confirmation.toLowerCase() !== user.email.toLowerCase()) {
     return NextResponse.json(
       { error: 'invalid_confirmation' },
       { status: 422 },
@@ -47,6 +47,33 @@ export async function POST(request: Request) {
 
       if (removeError) {
         console.error('[account/delete] failed to remove avatars', removeError)
+      }
+    }
+  }
+
+  // Stripe サブスクリプションをキャンセル（有料プランのみ）
+  const { data: sub } = await admin
+    .from('subscriptions')
+    .select('stripe_subscription_id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (sub?.stripe_subscription_id) {
+    try {
+      const stripe = getStripe()
+      await stripe.subscriptions.cancel(sub.stripe_subscription_id)
+    } catch (stripeErr) {
+      const status = (stripeErr as { statusCode?: number }).statusCode
+      // 404 or 400 → すでにキャンセル済みとみなして続行
+      if (status === 404 || status === 400) {
+        console.warn('[account/delete] stripe cancel 4xx (already cancelled?)', { traceId, status })
+      } else {
+        // 429, 5xx, ネットワークエラーなど → 削除を止める
+        console.error('[account/delete] stripe cancel failed', { traceId, error: String(stripeErr) })
+        return NextResponse.json(
+          { code: 'STRIPE_ERROR', message: 'しばらく時間をおいてからもう一度お試しください', traceId },
+          { status: 503 },
+        )
       }
     }
   }
