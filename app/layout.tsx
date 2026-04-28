@@ -33,6 +33,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   alternates: {
     canonical: '/',
+    languages: {
+      'ja': 'https://insight-cast.jp',
+    },
   },
   openGraph: {
     title: 'Insight Cast',
