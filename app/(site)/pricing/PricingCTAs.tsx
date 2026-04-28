@@ -105,6 +105,38 @@ export function PlanCardCTA({
   )
 }
 
+export function FreePlanBannerCTA() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data }) => {
+      setIsLoggedIn(Boolean(data.user))
+    })
+  }, [])
+
+  if (isLoggedIn === null) {
+    return (
+      <div aria-busy="true" aria-label="読み込み中" className="w-[160px] h-[46px] rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
+    )
+  }
+
+  return isLoggedIn ? (
+    <Link
+      href="/dashboard"
+      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+    >
+      ダッシュボードへ
+    </Link>
+  ) : (
+    <Link
+      href="/auth/signup"
+      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+    >
+      無料で始める
+    </Link>
+  )
+}
+
 export function PricingBottomCTA() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 

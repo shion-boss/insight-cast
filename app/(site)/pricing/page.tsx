@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
-import { PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
+import { FreePlanBannerCTA, PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -29,6 +29,14 @@ export const metadata: Metadata = {
 }
 
 const paidCharacters = CHARACTERS.filter((c) => !c.available)
+
+const FREE_TRIAL_FEATURES = [
+  '取材：2回まで（単発）',
+  '記事作成：3回まで（単発）',
+  'フリーキャスト 3名',
+  '取材先登録：1件',
+  '取材メモを受け取れる',
+] as const
 
 const PLANS = [
   {
@@ -305,7 +313,37 @@ export default async function PricingPage({
         {/* Plan cards */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="mt-0 grid gap-6 lg:grid-cols-3">
+            {/* お試し — 独立したバナー */}
+            <div className="rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+                <div className="flex-1">
+                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
+                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
+                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
+                  <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
+                    {FREE_TRIAL_FEATURES.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
+                        <span aria-hidden="true" className="text-[11px] font-bold text-[var(--teal)]">✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="sm:flex-shrink-0">
+                  <FreePlanBannerCTA />
+                </div>
+              </div>
+            </div>
+
+            {/* 続けて使うなら、月額プランへ */}
+            <div className="mt-10 flex items-center gap-4">
+              <div className="flex-1 h-px bg-[var(--border)]" />
+              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
+              <div className="flex-1 h-px bg-[var(--border)]" />
+            </div>
+
+            {/* 月額プランカード */}
+            <div className="mt-6 grid gap-6 lg:grid-cols-3">
               {PLANS.filter((plan) => plan.id !== 'free').map((plan) => (
                 <div
                   key={plan.id}
