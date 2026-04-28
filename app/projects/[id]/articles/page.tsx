@@ -141,7 +141,7 @@ export default async function ProjectArticlesPage({
         <StateCard
           icon={<CharacterAvatar src={mintChar?.icon48} alt={mintChar?.name ?? 'ミント'} emoji={mintChar?.emoji} size={48} />}
           title={interview ? 'この取材から作成した記事はまだありません。' : 'まだ記事はありません。'}
-          description={interview ? '取材メモから記事素材を受け取ると、ここに一覧で並びます。' : '記事素材が届くと、ここに一覧で並びます。'}
+          description={interview ? '取材メモから記事を受け取ると、ここに一覧で並びます。' : '記事が届くと、ここに一覧で並びます。'}
           align="left"
           action={(
             <ButtonLink href={interview ? `/projects/${id}/article?interviewId=${interview.id}` : `/projects/${id}`}>

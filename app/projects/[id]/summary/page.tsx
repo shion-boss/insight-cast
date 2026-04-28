@@ -514,22 +514,22 @@ export default function SummaryPage() {
 
           {/* サイドバー */}
           <aside className="space-y-4">
-            {/* 記事素材を受け取る */}
+            {/* 記事を受け取る */}
             <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <p className="font-bold text-[var(--text)] text-sm mb-2">記事素材を受け取る</p>
-              <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事素材を作ります。種類・文字量を設定できます。</p>
+              <p className="font-bold text-[var(--text)] text-sm mb-2">記事を受け取る</p>
+              <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
               <Link
                 href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
                 className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
               >
-                記事素材を受け取る <span aria-hidden="true">→</span>
+                記事を受け取る <span aria-hidden="true">→</span>
               </Link>
             </div>
 
             {/* このインタビューから作った記事 */}
             <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
               <div className="flex items-center justify-between gap-2 mb-4">
-                <p className="font-bold text-[var(--text)] text-sm">この取材の記事素材</p>
+                <p className="font-bold text-[var(--text)] text-sm">この取材の記事</p>
                 <Link
                   href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
                   className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
@@ -575,7 +575,7 @@ export default function SummaryPage() {
       <ConfirmDialog
         dialogId="delete-interview"
         title="取材メモを削除しますか？"
-        description="取材メモと、ひもづく記事素材がすべて削除されます。30日以内であれば復元できます。"
+        description="取材メモと、ひもづく記事がすべて削除されます。30日以内であれば復元できます。"
         confirmLabel="削除する"
         confirmingLabel="削除中..."
         confirming={deleting}

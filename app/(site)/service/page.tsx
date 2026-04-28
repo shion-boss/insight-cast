@@ -9,11 +9,11 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: 'サービス紹介 | Insight Cast',
-  description: 'Insight Cast の使い方を3ステップで紹介します。取材先を登録するとAIがHP分析・競合比較を行い、AIキャストが取材して記事素材が届きます。書くより先に話す。会話から記事が生まれる流れです。',
+  description: 'Insight Cast の使い方を3ステップで紹介します。取材先を登録するとAIがHP分析・競合比較を行い、AIキャストが取材して記事が届きます。書くより先に話す。会話から記事が生まれる流れです。',
   alternates: { canonical: `${APP_URL}/service` },
   openGraph: {
     title: 'サービス紹介 | Insight Cast',
-    description: '取材先を登録 → AIキャストが取材 → 記事素材を受け取る。3ステップでHPを継続的に強くするサービスです。',
+    description: '取材先を登録 → AIキャストが取材 → 記事を受け取る。3ステップでHPを継続的に強くするサービスです。',
     url: `${APP_URL}/service`,
     siteName: 'Insight Cast',
     locale: 'ja_JP',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'サービス紹介 | Insight Cast',
-    description: '取材先を登録 → AIキャストが取材 → 記事素材を受け取る。3ステップでHPを継続的に強くするサービスです。',
+    description: '取材先を登録 → AIキャストが取材 → 記事を受け取る。3ステップでHPを継続的に強くするサービスです。',
     images: ['/logo.jpg'],
   },
 }
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const STEP_SUMMARY = [
   { step: 'STEP 01', title: 'HPを分析する', body: '取材先を登録すると、AIが現状と競合の情報を整理。' },
   { step: 'STEP 02', title: 'AIが取材する', body: 'キャストがチャットで質問。ふだん通りに答えるだけ。' },
-  { step: 'STEP 03', title: '記事素材を届ける', body: '取材メモをもとに、記事に使える材料を整えます。' },
+  { step: 'STEP 03', title: '記事を届ける', body: '取材メモをもとに、記事に使える材料を整えます。' },
 ] as const
 
 const STEP_DETAILS = [
@@ -57,12 +57,12 @@ const STEP_DETAILS = [
   },
   {
     step: '03',
-    title: '記事素材として届ける',
+    title: '記事として届ける',
     paragraphs: [
-      '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事素材」が届きます。',
+      '取材が終わると、内容を整理した「取材メモ」と、ホームページやブログに使える「記事」が届きます。',
       '記事の形式（インタビュー形式・通常記事から選べます）や長さも選べます。下書きとして整った状態で受け取れるので、少し手を加えるだけで掲載に進めます。',
     ],
-    badges: ['取材メモ', '記事素材', 'そのまま使える素材'],
+    badges: ['取材メモ', '記事', 'そのまま使える素材'],
     visual: 'article' as const,
   },
 ] as const
@@ -79,7 +79,7 @@ const DELIVERABLES = [
     charId: 'mint',
   },
   {
-    title: '記事素材',
+    title: '記事',
     body: '取材メモをもとに整えた記事のテキスト。ブログ・採用ページ・実績ページなどに使えます。',
     charId: 'rain',
   },
@@ -144,7 +144,7 @@ function VisualPanel({ type }: { type: (typeof STEP_DETAILS)[number]['visual'] }
   return (
     <div className="flex flex-col gap-3 rounded-[20px] border border-[var(--border)] bg-[var(--bg2)] p-8 min-h-[280px] justify-center">
       <div className="rounded-[12px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <div className="text-[12px] font-bold text-[var(--accent)] mb-2">届いた記事素材</div>
+        <div className="text-[12px] font-bold text-[var(--accent)] mb-2">届いた記事</div>
         <div className="font-[family-name:var(--font-noto-serif-jp)] text-[14px] font-bold text-[var(--text)] mb-2 leading-[1.45]">
           「また頼みたい」と言われる外壁塗装業者のこだわり
         </div>
@@ -174,7 +174,7 @@ const serviceJsonLd = {
   '@type': 'Service',
   name: 'Insight Cast',
   url: `${APP_URL}/service`,
-  description: '動物モチーフのAIインタビュアーが取材し、ホームページを継続的に強くするサービス。HP分析・競合比較・AIインタビュー・記事素材提供の4ステップ。',
+  description: '動物モチーフのAIインタビュアーが取材し、ホームページを継続的に強くするサービス。HP分析・競合比較・AIインタビュー・記事提供の4ステップ。',
   provider: {
     '@type': 'Organization',
     name: 'Insight Cast',
@@ -218,7 +218,7 @@ export default function ServicePage() {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">Flow</p>
                 <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
-                  HP分析、AI取材、記事素材化までを一気通貫で進めます。
+                  HP分析、AI取材、記事化までを一気通貫で進めます。
                 </p>
               </div>
               <div className="space-y-3">

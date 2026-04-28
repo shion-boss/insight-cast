@@ -14,7 +14,7 @@ export default function ArticleGenerationError({
   const mint = getCharacter('mint')
 
   return (
-    <AppShell title="記事素材を作る" active="projects" accountLabel="設定" isAdmin={false}>
+    <AppShell title="記事を作る" active="projects" accountLabel="設定" isAdmin={false}>
       <div className="flex min-h-[60vh] items-center justify-center px-6">
         <div className="w-full max-w-sm space-y-8 text-center">
           <InterviewerSpeech
@@ -28,7 +28,7 @@ export default function ArticleGenerationError({
               />
             }
             name={mint?.name ?? 'ミント'}
-            title="記事素材の画面を開けませんでした"
+            title="記事の画面を開けませんでした"
             description="一時的な問題が起きています。再読み込みするか、取材先に戻ってもう一度お試しください。"
             tone="soft"
           />

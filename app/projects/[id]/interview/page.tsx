@@ -546,7 +546,7 @@ export default function InterviewPage() {
                   handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
                 }
               }}
-              placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事素材にまとめられます。' : 'ここに話しかけてください'}
+              placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事にまとめられます。' : 'ここに話しかけてください'}
               disabled={loading || hasReachedTurnLimit}
               autoFocus
               className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
@@ -647,7 +647,7 @@ export default function InterviewPage() {
                   onClick={handleFinish}
                   className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
                 >
-                  記事素材へまとめる
+                  記事にまとめる
                 </button>
               </>
             )}

@@ -319,7 +319,7 @@ export default function ProjectAnalysisNotifier() {
           router.refresh()
           showToast({
             id: `article-ready-${jobId}`,
-            title: '記事素材の作成が完了しました',
+            title: '記事が完成しました',
             description: `${job.projectName} の${job.articleLabel}を確認できます。`,
             tone: 'success',
             href: `/projects/${job.projectId}/articles/${matchedArticle.id}`,
@@ -334,7 +334,7 @@ export default function ProjectAnalysisNotifier() {
           clearPendingArticleGeneration(jobId)
           showToast({
             id: `article-error-${jobId}`,
-            title: '記事素材を作成できませんでした',
+            title: '記事を作れませんでした',
             description: interview.article_error || '少し待ってから、もう一度お試しください。',
             tone: 'warning',
             characterId: 'mint',

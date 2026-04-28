@@ -14,7 +14,7 @@ export default function ArticleDetailError({
   const mint = getCharacter('mint')
 
   return (
-    <AppShell title="記事素材" active="projects" accountLabel="設定" isAdmin={false}>
+    <AppShell title="記事" active="projects" accountLabel="設定" isAdmin={false}>
       <div className="flex min-h-[60vh] items-center justify-center px-6">
         <div className="w-full max-w-sm text-center space-y-8">
           <InterviewerSpeech

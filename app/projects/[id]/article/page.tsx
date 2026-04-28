@@ -173,7 +173,7 @@ export default function ArticlePage() {
       if (interview?.article_status === 'failed') {
         failedMessages[articleType] = typeof interview.article_error === 'string'
           ? interview.article_error
-          : '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。'
+          : '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。'
         clearPendingArticleGeneration(jobId)
         continue
       }
@@ -227,7 +227,7 @@ export default function ArticlePage() {
 
   useEffect(() => {
     void loadPageState(true, true).catch(() => {
-      setError('記事素材の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
+      setError('記事の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
       setLoadingThemes(false)
       setAvailableThemes([])
       setPendingArticleJobIdByType({})
@@ -254,7 +254,7 @@ export default function ArticlePage() {
       return next
     })
     const jobId = `${interviewId}:${tab}:${Date.now()}`
-    const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事素材'
+    const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事'
     const requestedAt = new Date().toISOString()
 
     trackPendingArticleGeneration({
@@ -323,7 +323,7 @@ export default function ArticlePage() {
       showToast({
         id: `article-started-${jobId}`,
         title: `${articleLabel}の作成を開始しました`,
-        description: '記事素材を作成中です。別の作業を進めながら待てます。',
+        description: '記事を作成中です。別の作業を進めながら待てます。',
         characterId: 'mint',
       })
       void loadPageState().catch(() => null)
@@ -336,12 +336,12 @@ export default function ArticlePage() {
       })
       setStartingArticleType(null)
       setArticleStatus('failed')
-      const failureMessage = '記事素材の作成を開始できませんでした。少し待ってから、もう一度お試しください。'
+      const failureMessage = '記事の作成を開始できませんでした。少し待ってから、もう一度お試しください。'
       setArticleErrorMessage(failureMessage)
       setFailedArticleMessages((prev) => ({ ...prev, [tab]: failureMessage }))
       showToast({
         id: `article-error-${jobId}`,
-        title: '記事素材の作成を開始できませんでした',
+        title: '記事の作成を開始できませんでした',
         description: '少し待ってから、もう一度お試しください。',
         tone: 'warning',
         characterId: 'mint',
@@ -351,13 +351,13 @@ export default function ArticlePage() {
 
   const statusDescription = (() => {
     if (currentTabStatus === 'generating') {
-      return 'この形式の記事素材を作成中です。しばらくお待ちください。'
+      return 'この形式の記事を作成中です。しばらくお待ちください。'
     }
     if (currentTabStatus === 'ready') {
       return 'このテーマとこの形式の組み合わせで作成済みです。条件を変えて作り直すこともできます。'
     }
     if (currentTabStatus === 'failed') {
-      return currentFailureMessage ?? articleErrorMessage ?? '記事素材を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
+      return currentFailureMessage ?? articleErrorMessage ?? '記事を仕上げきれませんでした。条件を変えずにもう一度お試しください。'
     }
     if (isBusyWithAnotherTab && activeGenerationLabel) {
       return `いまは「${activeGenerationLabel}」を作成中です。完了したらこの形式も続けて作れます。`
@@ -374,7 +374,7 @@ export default function ArticlePage() {
           { label: '取材先一覧', href: '/projects' },
           { label: '取材先の管理', href: `/projects/${projectId}` },
           { label: '取材メモ', href: `/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}` },
-          { label: '記事素材を作成' },
+          { label: '記事を作成' },
         ]} />
 
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[320px_1fr]">
@@ -549,7 +549,7 @@ export default function ArticlePage() {
               ) : isBusyWithAnotherTab && activeGenerationLabel ? (
                 <>{activeGenerationLabel}を作成中...</>
               ) : (
-                <>記事素材を作成する <span aria-hidden="true">→</span></>
+                <>記事を作成する <span aria-hidden="true">→</span></>
               )}
             </button>
             {availableThemes.length === 0 && !isGenerating && (
@@ -621,7 +621,7 @@ export default function ArticlePage() {
                   <div role="alert">
                     <StateCard
                       icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
-                      title="いまは記事素材の状態を確認できません。"
+                      title="いまは記事の状態を確認できません。"
                       description={error}
                       tone="warning"
                       align="left"
@@ -663,7 +663,7 @@ export default function ArticlePage() {
                   <InterviewerSpeech
                     icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
                     name="ミント"
-                    title="現在の設定を選んで記事素材を作成してください"
+                    title="現在の設定を選んで記事を作成してください"
                     description="記事の種類とテーマの組み合わせで、まだこのパターンは作成されていません。左の設定を確認して作成を始めてください。"
                     tone="soft"
                   />
@@ -674,7 +674,7 @@ export default function ArticlePage() {
             {isCurrentTabGenerating && (
               <div className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <WritingLoadingScene
-                  title="記事素材を作成しています"
+                  title="記事を作成しています"
                   description="作成中です。そのまま待っても、別の画面に移っても大丈夫です。"
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -695,7 +695,7 @@ export default function ArticlePage() {
               <div role="alert" className="flex min-h-[420px] flex-col items-center justify-center gap-5 p-8">
                 <StateCard
                   icon={<CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={48} />}
-                  title="記事素材を仕上げきれませんでした"
+                  title="記事を仕上げきれませんでした"
                   description={currentFailureMessage ?? articleErrorMessage ?? '少し時間をおいて、もう一度お試しください。'}
                   tone="warning"
                   align="left"

@@ -8,14 +8,14 @@ import screenshotInterview from '@/assets/screenshots/interview.png'
 import screenshotMemo from '@/assets/screenshots/memo.png'
 import screenshotArticle from '@/assets/screenshots/article.png'
 
-const TABS = ['ダッシュボード', 'インタビュー', '取材メモ', '記事素材'] as const
+const TABS = ['ダッシュボード', 'インタビュー', '取材メモ', '記事'] as const
 type Tab = (typeof TABS)[number]
 
 const SCREENSHOTS: Record<Tab, { src: typeof screenshotDashboard; alt: string; url: string }> = {
   'ダッシュボード': { src: screenshotDashboard, alt: 'ダッシュボード画面', url: 'insight-cast.jp/dashboard' },
   'インタビュー':   { src: screenshotInterview, alt: 'インタビュー画面', url: 'insight-cast.jp/projects/1/interview' },
   '取材メモ':       { src: screenshotMemo, alt: '取材メモ画面', url: 'insight-cast.jp/projects/1/summary' },
-  '記事素材':       { src: screenshotArticle, alt: '記事素材画面', url: 'insight-cast.jp/projects/1/articles/1' },
+  '記事':       { src: screenshotArticle, alt: '記事画面', url: 'insight-cast.jp/projects/1/articles/1' },
 }
 
 export default function AppPreviewSection() {

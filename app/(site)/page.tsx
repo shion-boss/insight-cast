@@ -94,7 +94,7 @@ const PLANS = [
     price: '¥0',
     period: '',
     desc: 'まず体験してみてください',
-    features: ['取材回数：2回まで（単発）', 'フリーキャスト 3名', '取材先登録：1件', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
+    features: ['取材回数：2回まで（単発）', 'フリーキャスト 3名', '取材先登録：1件', '取材メモ・記事を受け取れる', '追加キャスト：準備中'],
     cta: '無料で始める',
     href: '/auth/signup',
     highlight: false,
@@ -105,7 +105,7 @@ const PLANS = [
     price: '¥1,980',
     period: '/ 月',
     desc: '月5回から、HPを育てはじめる',
-    features: ['取材 5回 / 月', '記事素材 20本 / 月', '取材先 1件', '自社HP調査', '通常サポート'],
+    features: ['取材 5回 / 月', '記事 20本 / 月', '取材先 1件', '自社HP調査', '通常サポート'],
     cta: 'ライトプランで始める',
     href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dlightning',
     highlight: false,
@@ -116,7 +116,7 @@ const PLANS = [
     price: '¥4,980',
     period: '/ 月',
     desc: '週1〜2本ペースでHPを育てたい方へ',
-    features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中'],
+    features: ['取材回数：月15回まで', 'フリーキャスト 3名', '取材先登録：1件', '競合調査：3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中'],
     cta: '月額プランを始める',
     href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dpersonal',
     highlight: true,
@@ -127,7 +127,7 @@ const PLANS = [
     price: '¥14,800',
     period: '/ 月',
     desc: '複数の取材先や担当者でHPを強化したい方へ',
-    features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事素材を受け取れる', '追加キャスト：準備中', '優先サポート'],
+    features: ['取材回数：月60回まで', 'フリーキャスト 3名', '取材先登録：最大3件', '競合調査：各取材先3社', '取材メモ・記事を受け取れる', '追加キャスト：準備中', '優先サポート'],
     cta: '月額プランを始める',
     href: '/auth/login?next=%2Fapi%2Fstripe%2Fcheckout-redirect%3Fplan%3Dbusiness',
     highlight: false,
@@ -135,9 +135,9 @@ const PLANS = [
 ] as const
 
 const FAQS = [
-  { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を2回（単発）ご利用いただけます。取材メモと記事素材を受け取るところまで無料で体験できます。' },
+  { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を2回（単発）ご利用いただけます。取材メモと記事を受け取るところまで無料で体験できます。' },
   { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
-  { q: '届いた記事素材はそのまま使えますか？', a: '少し手を加えることで使える素材が届きます。そのままでも読める状態ですが、ご自身の言葉で調整していただくとより自然な仕上がりになります。' },
+  { q: '届いた記事はそのまま使えますか？', a: '少し手を加えることで使える素材が届きます。そのままでも読める状態ですが、ご自身の言葉で調整していただくとより自然な仕上がりになります。' },
   { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種にとらわれない客観的な視点で、あなたの仕事の論理的な価値を引き出します。専門用語を使わずに話していただければ、分かりやすく言語化します。' },
   { q: '途中でキャンセルできますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もデータは保持されます。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
@@ -235,7 +235,7 @@ export default async function LandingPage() {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: 'Insight Cast の使い方',
-    description: 'HPを登録してAIキャストが取材し、記事素材が届くまでの3ステップ。',
+    description: 'HPを登録してAIキャストが取材し、記事が届くまでの3ステップ。',
     step: WORKFLOW_ITEMS.map((item, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
@@ -464,7 +464,7 @@ export default async function LandingPage() {
                   {[
                     '話すだけで、自社の強みが言葉になる',
                     '構えずに話せる、やさしい取材スタイル',
-                    '取材後、記事素材づくりに進める',
+                    '取材後、記事づくりに進める',
                   ].map((text) => (
                     <li key={text} className="flex items-start gap-3 text-[14px] text-[var(--text2)] leading-[1.7]">
                       <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--accent)] text-[10px] font-bold">✓</span>
@@ -494,7 +494,7 @@ export default async function LandingPage() {
                     { label: 'HP現状分析', body: '今のホームページで何が足りないかを可視化' },
                     { label: '競合比較', body: '同業他社との違いを客観的に整理' },
                     { label: '取材メモ', body: '会話で出てきた話をそのまま記録' },
-                    { label: '記事素材', body: 'ブログや実績ページにそのまま使える文章' },
+                    { label: '記事', body: 'ブログや実績ページにそのまま使える文章' },
                   ].map((item) => (
                     <div key={item.label} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-4 py-4">
                       <div className="text-[12px] font-bold text-[var(--accent)] mb-1">{item.label}</div>
@@ -552,7 +552,7 @@ export default async function LandingPage() {
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
                 <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
                   <span className="text-[11px] font-semibold text-[var(--text3)] uppercase tracking-[.08em]">Article</span>
-                  <span className="text-[13px] font-bold text-[var(--text)]">届いた記事素材</span>
+                  <span className="text-[13px] font-bold text-[var(--text)]">届いた記事</span>
                   <CopyButton text={`朝8時〜15時、この時間帯を、父の代から守り続けている理由。\n\nうちは戸建てがメインなので、朝8時ごろから15時ごろまでを基本にしています。早すぎても遅すぎてもお客様に迷惑がかかるので、父親の代からずっとそうしてきました。\n\n塗り替えって、お客様はもちろんですが、近所の方の理解があってこそちゃんとした仕事ができると思っていて。施工中は騒音もあるし、養生シートで通路が狭くなることもある。だから時間帯への気遣いは当たり前のことだと思っています。言われてみると、そこまで意識している業者さんは多くないのかもしれませんが。`} />
                 </div>
                 <div className="p-[22px]">

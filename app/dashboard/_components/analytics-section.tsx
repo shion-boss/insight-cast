@@ -22,7 +22,7 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
 
   const totalLabel = data.map((d) => `${d.m}:${d.n}本`).join(', ')
   return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H + 30}`} style={{ overflow: 'visible', display: 'block' }} role="img" aria-label={`月別記事素材作成数。${totalLabel}`}>
+    <svg width="100%" viewBox={`0 0 ${W} ${H + 30}`} style={{ overflow: 'visible', display: 'block' }} role="img" aria-label={`月別記事作成数。${totalLabel}`}>
       {data.map((d, i) => {
         const x = PAD + i * (BAR + GAP)
         const barH = d.n === 0 ? 3 : Math.max(8, (d.n / max) * (H - 10))
@@ -198,9 +198,9 @@ function ScoreRing({ score }: { score: number }) {
 /* ─── Analytics section (exported) ───────────── */
 export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore, nextProjectId }: Props) {
   const scoreDesc = continuityScore >= 80
-    ? '月4本以上のペースで記事素材を積み上げられています。この調子で続けましょう。'
+    ? '月4本以上のペースで記事を積み上げられています。この調子で続けましょう。'
     : continuityScore >= 50
-      ? '月2〜3本のペースで記事素材を作れています。月4本以上を目指すとスコアが上がります。'
+      ? '月2〜3本のペースで記事を作れています。月4本以上を目指すとスコアが上がります。'
       : '記事づくりの頻度を上げると継続スコアが伸びます。まずは月2本を目標にしましょう。'
 
   return (
@@ -208,8 +208,8 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事素材づくりの進み具合</div>
-            <div className="text-[12px] text-[var(--text3)]">取材から作った記事素材の継続ペース</div>
+            <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事づくりの進み具合</div>
+            <div className="text-[12px] text-[var(--text3)]">取材から作った記事の継続ペース</div>
           </div>
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去6ヶ月</span>
         </div>

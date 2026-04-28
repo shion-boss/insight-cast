@@ -254,7 +254,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
   const perks = [
     'クレジットカード不要',
     '取材は20分、チャット形式で気軽に',
-    '記事素材を管理画面ですぐ確認できる',
+    '記事を管理画面ですぐ確認できる',
   ]
 
   return (

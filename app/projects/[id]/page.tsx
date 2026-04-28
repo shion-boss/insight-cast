@@ -232,7 +232,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     }
   })
 
-  // 記事素材アイテム
+  // 記事アイテム
   const articleSectionItems: ArticleSectionItem[] = articles.map((article) => ({
     id: article.id,
     title: article.title,
@@ -311,7 +311,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <div className="grid gap-3 sm:grid-cols-2">
               {[
                 { n: interviews.length, l: '取材回数' },
-                { n: articles.length, l: '記事素材' },
+                { n: articles.length, l: '記事' },
               ].map((s) => (
                 <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center bg-white/60">
                   <div className="font-bold text-[22px] text-[var(--text)]">{s.n}</div>
@@ -476,7 +476,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               )}
               name={mint?.name ?? 'インタビュアー'}
               title="AIキャストを呼んで、取材を始めましょう。"
-              description="インタビューを重ねるたびに、ここに履歴と記事素材がまとまっていきます。"
+              description="インタビューを重ねるたびに、ここに履歴と記事がまとまっていきます。"
               tone="soft"
             />
             <div className="mt-4">
@@ -492,7 +492,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {articles.length > 0 && (
         <div id="articles" className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-bold text-[var(--text)]">記事素材</h2>
+            <h2 className="text-[16px] font-bold text-[var(--text)]">記事</h2>
           </div>
           <PaginatedArticles items={articleSectionItems} />
         </div>

@@ -236,7 +236,7 @@ export default async function DashboardPage() {
               ? <>生涯取材: <strong>{totalInterviewCount} / {planLimits.lifetimeInterviewLimit} 回</strong></>
               : <>今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong></>
             }
-            {totalArticles > 0 && <><span aria-hidden="true"> · </span>累計記事素材 <strong>{totalArticles} 件</strong></>}
+            {totalArticles > 0 && <><span aria-hidden="true"> · </span>累計記事 <strong>{totalArticles} 件</strong></>}
           </div>
           {(isFreePlan ? planLimits.lifetimeInterviewLimit !== null : planLimits.monthlyInterviewLimit < 9999) && (
             <div
@@ -283,7 +283,7 @@ export default async function DashboardPage() {
         {[
           { n: projectList.length,  l: '取材先',      delta: deltaLabel(projectDelta) },
           { n: interviews.filter((iv) => iv.status === 'done' || iv.summary).length, l: '完了した取材', delta: deltaLabel(interviewDelta) },
-          { n: totalArticles,       l: '記事素材',    delta: deltaLabel(articleDelta) },
+          { n: totalArticles,       l: '記事',    delta: deltaLabel(articleDelta) },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
             <div className="text-[34px] font-bold tabular-nums text-[var(--text)] leading-none">{stat.n}</div>
@@ -362,7 +362,7 @@ export default async function DashboardPage() {
                   className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   <CharacterAvatar src={rain?.icon48} alt={rain?.name ?? 'レイン'} emoji={rain?.emoji} size={40} />
-                  <div className="text-sm font-semibold text-[var(--text2)]">記事素材を確認する</div>
+                  <div className="text-sm font-semibold text-[var(--text2)]">記事を確認する</div>
                 </Link>
               </div>
             )

@@ -80,7 +80,7 @@ export function DeleteProjectButton({ projectId, projectName }: Props) {
           dialogId="delete-project"
           title="取材先を削除しますか？"
           subject={projectName}
-          description="取材先と、ひもづく取材メモ・記事素材がすべて削除されます。30日以内であれば復元できます。"
+          description="取材先と、ひもづく取材メモ・記事がすべて削除されます。30日以内であれば復元できます。"
           confirmLabel="削除する"
           confirmingLabel="削除中..."
           confirming={deleting}

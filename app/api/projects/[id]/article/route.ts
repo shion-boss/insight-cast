@@ -67,7 +67,7 @@ async function markArticleGenerationFailed(input: {
     .from('interviews')
     .update({
       article_status: 'failed',
-      article_error: input.message ?? '記事素材を作成できませんでした。',
+      article_error: input.message ?? '記事を作成できませんでした。',
       article_completed_at: null,
     })
     .eq('id', input.interviewId)
@@ -464,16 +464,16 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
       }
     } catch (err) {
       console.error('[article] background stream error:', err)
-      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
     if (!fullText.trim()) {
-      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
     const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null })
     if (!saved) {
-      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事素材を保存できませんでした。少し待ってから、もう一度お試しください。' })
+      await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を保存できませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
 
@@ -502,7 +502,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
       supabase: adminSupabase,
       projectId,
       interviewId,
-      message: '記事素材を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
+      message: '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。',
     })
   }))
   return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })

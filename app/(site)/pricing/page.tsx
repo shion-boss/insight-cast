@@ -9,7 +9,7 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: '料金プラン | Insight Cast',
-  description: 'まずカード不要の無料プランでAI取材を体験できます。毎月継続して記事素材を作りたい方向けに、ライト（¥1,980/月）・個人（¥4,980/月）・法人（¥14,800/月）の有料プランもご用意しています。',
+  description: 'まずカード不要の無料プランでAI取材を体験できます。毎月継続して記事を作りたい方向けに、ライト（¥1,980/月）・個人（¥4,980/月）・法人（¥14,800/月）の有料プランもご用意しています。',
   alternates: { canonical: `${APP_URL}/pricing` },
   openGraph: {
     title: '料金プラン | Insight Cast',
@@ -40,7 +40,7 @@ const PLANS = [
     featured: false,
     features: [
       { ok: true, label: '取材：2回まで（単発）' },
-      { ok: true, label: '記事素材作成：3回まで（単発）' },
+      { ok: true, label: '記事作成：3回まで（単発）' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: false, label: '競合調査なし' },
@@ -60,7 +60,7 @@ const PLANS = [
     featured: false,
     features: [
       { ok: true, label: '取材回数：月5回まで' },
-      { ok: true, label: '記事素材作成：月20回まで' },
+      { ok: true, label: '記事作成：月20回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: true, label: '自社HP調査あり' },
@@ -81,7 +81,7 @@ const PLANS = [
     featured: true,
     features: [
       { ok: true, label: '取材回数：月15回まで' },
-      { ok: true, label: '記事素材作成：月60回まで' },
+      { ok: true, label: '記事作成：月60回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：1件' },
       { ok: true, label: '自社HP調査あり' },
@@ -102,7 +102,7 @@ const PLANS = [
     featured: false,
     features: [
       { ok: true, label: '取材回数：月60回まで' },
-      { ok: true, label: '記事素材作成：月240回まで' },
+      { ok: true, label: '記事作成：月240回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
       { ok: true, label: '取材先登録：最大3件' },
       { ok: true, label: '自社HP調査あり' },
@@ -118,7 +118,7 @@ const PLANS = [
 
 const TABLE_ROWS = [
   { label: '取材回数', lightning: '月5回', personal: '月15回', business: '月60回' },
-  { label: '記事素材作成', lightning: '月20回', personal: '月60回', business: '月240回' },
+  { label: '記事作成', lightning: '月20回', personal: '月60回', business: '月240回' },
   { label: 'フリーキャスト', lightning: '3名', personal: '3名', business: '3名' },
   { label: '取材先登録', lightning: '1件', personal: '1件', business: '最大3件' },
   { label: '自社HP調査', lightning: 'あり', personal: 'あり', business: 'あり' },
@@ -161,7 +161,7 @@ const FAQS = [
   { q: '追加キャストはどのプランで使えますか？', a: '追加キャストは現在準備中です。正式提供後は、お試し・ライト・個人向け・法人向けの各プランで使える形を予定しています。' },
   { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
   { q: 'プランはいつでも変更できますか？', a: 'アップグレード（上位プランへの変更）はマイページの「設定 → ご利用プラン」からお申し込みいただけます。ダウングレードは現在対応しておりません。' },
-  { q: '解約するとデータはどうなりますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もこれまでの取材メモや記事素材はそのまま保持されます。' },
+  { q: '解約するとデータはどうなりますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もこれまでの取材メモや記事はそのまま保持されます。' },
 ] as const
 
 export default async function PricingPage({

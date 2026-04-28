@@ -286,7 +286,7 @@ export default async function ProjectsPage() {
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   {[
                     { n: ivCount, l: '取材回数' },
-                    { n: articleCount, l: '記事素材' },
+                    { n: articleCount, l: '記事' },
                     { n: latestInterview ? formatShortDateTime(latestInterview.created_at) : '—', l: '最終取材' },
                   ].map((s) => (
                     <div key={s.l} className="bg-[var(--bg2)] rounded-[var(--r-sm)] p-2.5 text-center">

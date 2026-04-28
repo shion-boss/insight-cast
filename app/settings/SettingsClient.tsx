@@ -35,8 +35,8 @@ const NOTIFICATIONS: Array<{
   },
   {
     key: 'articleReady',
-    label: '記事素材のお知らせ',
-    desc: '記事素材が届いたときにメールを受け取る',
+    label: '記事のお知らせ',
+    desc: '記事が届いたときにメールを受け取る',
   },
   {
     key: 'monthlyReport',
@@ -537,7 +537,7 @@ export function SettingsClient({
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
                   <p className="mb-4 text-sm leading-[1.75] text-[var(--text2)]">
-                    取材先、取材メモ、記事素材、プロフィール情報を含むアカウント全体を完全に削除します。確認のため、下に「削除」と入力してください。
+                    取材先、取材メモ、記事、プロフィール情報を含むアカウント全体を完全に削除します。確認のため、下に「削除」と入力してください。
                   </p>
 
                   <label htmlFor="settings-delete-confirm" className="sr-only">「削除」と入力して確認</label>

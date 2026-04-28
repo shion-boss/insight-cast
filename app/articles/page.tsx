@@ -79,7 +79,7 @@ export default async function ArticlesPage({
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}
-          title="記事素材がまだありません。"
+          title="記事がまだありません。"
           description="取材メモから記事を作ると、ここに一覧で並びます。まずは取材を始めてみましょう。"
           tone="soft"
         />
@@ -188,7 +188,7 @@ export default async function ArticlesPage({
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}
-          title="記事素材がまだありません。"
+          title="記事がまだありません。"
           description="取材メモから記事を作ると、ここに一覧で並びます。まずは取材を始めてみましょう。"
           tone="soft"
         />
