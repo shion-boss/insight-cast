@@ -597,7 +597,7 @@ export default async function LandingPage() {
                   <tr className="border-b border-[var(--border)]">
                     <th className="w-[130px] px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] border-r border-[var(--border)]">E-E-A-T 基準</th>
                     <th className="px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)]">内容</th>
-                    <th className="w-[260px] px-6 py-3 text-left text-[11px] font-semibold tracking-[0.1em] border-l border-[var(--border)]" style={{ background: '#f0fdf4', color: '#15803d' }}>Insight Castで作成した記事</th>
+                    <th className="w-[260px] px-6 py-3 bg-[var(--bg2)] text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] border-l border-[var(--border)]">Insight Castで作成した記事</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -614,12 +614,12 @@ export default async function LandingPage() {
                         <span className="block text-[10px] text-[var(--text3)] tracking-[.04em] mt-0.5">{row.badge}</span>
                       </td>
                       <td className="px-6 py-5 bg-[var(--surface)] text-[14px] text-[var(--text)] align-middle">{row.criterion}</td>
-                      <td className="w-[260px] px-6 py-5 align-middle bg-white border-l border-[var(--border)]">
+                      <td className="w-[260px] px-6 py-5 align-middle border-l border-[var(--border)]" style={{ background: '#f0fdf4' }}>
                         <span className="flex items-start gap-2.5">
                           <svg className="flex-shrink-0 mt-[3px]" width="13" height="10" viewBox="0 0 13 10" fill="none">
                             <path d="M1 5L4.5 8.5L12 1" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
-                          <span className="text-[14px] font-medium text-[var(--text)] leading-[1.6]">{row.answer}</span>
+                          <span className="text-[14px] font-medium leading-[1.6]" style={{ color: '#15803d' }}>{row.answer}</span>
                         </span>
                       </td>
                     </tr>
