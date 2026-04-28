@@ -596,8 +596,8 @@ export function ArticleExportPanel({
 
       {safeFormat === 'blocks' ? (
         <div className="flex flex-col gap-3 p-5">
-          {splitIntoSectionBlocks(editedContent).map((block) => (
-            <BlockCopyCard key={block.anchor} text={toPlainText(block.markdown)} />
+          {splitIntoArticleBlocks(editedContent).map((block, idx) => (
+            <BlockCopyCard key={idx} kind={block.kind} text={block.text} />
           ))}
         </div>
       ) : safeFormat === 'html' && htmlPreview ? (
@@ -662,6 +662,54 @@ function ArticleSectionsWithSuggestions({
   )
 }
 
+type ArticleBlockKind = 'title' | 'intro' | 'heading' | 'body'
+type ArticleBlock = { kind: ArticleBlockKind; text: string }
+
+const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
+  title:   'タイトル',
+  intro:   '冒頭',
+  heading: '小見出し',
+  body:    '本文',
+}
+
+function splitIntoArticleBlocks(markdown: string): ArticleBlock[] {
+  const lines = markdown.split('\n')
+  const blocks: ArticleBlock[] = []
+  let hasH1 = false
+  let pastFirstHeading = false
+  let accLines: string[] = []
+
+  function flushAcc() {
+    const text = toPlainText(accLines.join('\n').trim())
+    if (text) blocks.push({ kind: pastFirstHeading ? 'body' : 'intro', text })
+    accLines = []
+  }
+
+  for (const line of lines) {
+    const h1 = line.match(/^# (.+)$/)
+    const h2 = line.match(/^## (.+)$/)
+
+    if (h1 && !hasH1) {
+      flushAcc()
+      hasH1 = true
+      blocks.push({ kind: 'title', text: h1[1].trim() })
+      continue
+    }
+
+    if (h2) {
+      flushAcc()
+      pastFirstHeading = true
+      blocks.push({ kind: 'heading', text: h2[1].trim() })
+      continue
+    }
+
+    accLines.push(line)
+  }
+
+  flushAcc()
+  return blocks.filter((b) => b.text.length > 0)
+}
+
 function splitIntoSectionBlocks(markdown: string): { anchor: string; markdown: string }[] {
   // ## 見出しの位置で分割
   const lines = markdown.split('\n')
@@ -707,7 +755,7 @@ function SuggestionCard({ item }: { item: ArticleSuggestion }) {
   )
 }
 
-function BlockCopyCard({ text }: { text: string }) {
+function BlockCopyCard({ kind, text }: { kind: ArticleBlockKind; text: string }) {
   const [copied, setCopied] = useState(false)
 
   async function handleClick() {
@@ -722,7 +770,12 @@ function BlockCopyCard({ text }: { text: string }) {
 
   return (
     <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
-      <p className="pr-24 text-sm text-[var(--text)] whitespace-pre-wrap leading-relaxed">{text}</p>
+      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">
+        {BLOCK_LABEL[kind]}
+      </div>
+      <p className={`pr-24 whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+        {text}
+      </p>
       <button
         type="button"
         onClick={handleClick}
