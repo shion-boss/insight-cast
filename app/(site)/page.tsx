@@ -586,10 +586,10 @@ export default async function LandingPage() {
               AIが作った記事は評価されない？
             </h2>
             <p className="mt-5 text-[15px] leading-[1.8] text-[var(--text2)]">
-              Insight Castの記事は、あなた自身の言葉と体験から生まれます。
+              あなた自身の言葉と体験が素材だから。
             </p>
             {/* E-E-A-T subheader */}
-            <h3 className="mt-10 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
+            <h3 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
               Googleが重視する4つの基準を、<br />自然にクリアできる。
             </h3>
 
