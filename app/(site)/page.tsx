@@ -573,7 +573,7 @@ export default async function LandingPage() {
               {freeCast.map((char) => (
                 <Link key={char.id} href={`/cast#${char.id}`} className="block bg-[var(--surface)] border border-[var(--border)] rounded-[22px] overflow-hidden transition-transform duration-[250ms] hover:-translate-y-1.5 hover:shadow-[0_20px_56px_rgba(0,0,0,.09)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
-                    <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} className="h-full w-full object-contain" />
+                    <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} sizes="(min-width: 1280px) 305px, (min-width: 768px) calc(50vw - 64px), calc(100vw - 64px)" className="h-full w-full object-contain" />
                   </div>
                   <div className="px-6 pt-[22px] pb-[26px]">
                     <div className="flex items-start justify-between mb-2.5">
@@ -603,7 +603,7 @@ export default async function LandingPage() {
                   {addonCast.map((char) => (
                     <div key={char.id} className="bg-[var(--bg2)] border border-dashed border-[var(--border)] rounded-[18px] overflow-hidden opacity-[0.72]">
                       <div className="bg-[var(--bg2)] aspect-square overflow-hidden">
-                        <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} className="h-full w-full object-contain grayscale-[25%]" />
+                        <Image src={char.portrait} alt={`${char.name}のポートレート`} width={305} height={305} sizes="(min-width: 768px) calc(33vw - 48px), calc(100vw - 64px)" className="h-full w-full object-contain grayscale-[25%]" />
                       </div>
                       <div className="px-6 pt-[22px] pb-[26px]">
                         <div className="flex items-start justify-between mb-2.5">
