@@ -181,7 +181,12 @@ export function FieldLabel({
   return (
     <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-[var(--text2)]">
       {children}
-      {required && <span className="text-[var(--err)]"> *</span>}
+      {required && (
+        <>
+          <span className="text-[var(--err)]" aria-hidden="true"> *</span>
+          <span className="sr-only">（必須）</span>
+        </>
+      )}
     </label>
   )
 }
