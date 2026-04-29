@@ -25,7 +25,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="X（Twitter）でシェア"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="inline-flex min-h-[44px] w-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.213 5.567L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
@@ -35,7 +35,7 @@ export function ShareButtons({ title, url }: { title: string; url: string }) {
         type="button"
         onClick={copyLink}
         aria-label="リンクをコピー"
-        className="inline-flex h-9 items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-[11px] font-semibold text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 text-[11px] font-semibold text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
       >
         {copied ? (
           <>

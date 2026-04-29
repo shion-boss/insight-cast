@@ -35,7 +35,7 @@ export default function TokushohoPage() {
           <tbody>
             {rows.map((row) => (
               <tr key={row.label}>
-                <th>{row.label}</th>
+                <th scope="row">{row.label}</th>
                 <td style={row.breakAll ? { wordBreak: 'break-all', overflowWrap: 'anywhere' } : undefined}>{row.value}</td>
               </tr>
             ))}
