@@ -36,6 +36,7 @@ export async function fetchMarkdown(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ url, formats: ['markdown'], waitFor: 2000 }),
+    signal: AbortSignal.timeout(30000),
   })
   if (!res.ok) {
     console.error('[firecrawl] fetchMarkdown failed', url, res.status)

@@ -68,6 +68,7 @@ export async function refreshGscToken(
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: body.toString(),
+    signal: AbortSignal.timeout(10000),
   })
 
   if (!res.ok) {
@@ -114,6 +115,7 @@ export async function fetchGscSearchData(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ...baseBody, dimensions: ['query'] }),
+        signal: AbortSignal.timeout(15000),
       },
     ),
     fetch(
@@ -125,6 +127,7 @@ export async function fetchGscSearchData(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ ...baseBody, dimensions: ['page'] }),
+        signal: AbortSignal.timeout(15000),
       },
     ),
   ])
@@ -246,6 +249,7 @@ export async function exchangeCodeForTokens(
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: body.toString(),
+    signal: AbortSignal.timeout(10000),
   })
 
   if (!res.ok) {
@@ -282,6 +286,7 @@ export async function findMatchingSiteUrl(
 ): Promise<{ siteUrl: string | null; sitesRaw: GoogleSiteEntry[]; apiError?: boolean }> {
   const res = await fetch('https://www.googleapis.com/webmasters/v3/sites', {
     headers: { Authorization: `Bearer ${accessToken}` },
+    signal: AbortSignal.timeout(10000),
   })
 
   if (!res.ok) {
