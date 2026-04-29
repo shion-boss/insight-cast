@@ -104,18 +104,18 @@ async function fetchSitemapUrls(siteUrl: string): Promise<string[]> {
         signal: AbortSignal.timeout(8000),
         headers: { 'User-Agent': 'InsightCast/1.0' },
       })
-      if (!res.ok) { console.log(`  sitemap ${sitemapUrl} → ${res.status}`); continue }
+      if (!res.ok) { console.info(`  sitemap ${sitemapUrl} → ${res.status}`); continue }
       const xml = await res.text()
       const locPattern = /<loc[^>]*>\s*(https?:\/\/[^<\s]+)\s*<\/loc>/gi
       const urls: string[] = []
       let m
       while ((m = locPattern.exec(xml)) !== null) urls.push(m[1].trim())
       if (urls.length > 0) {
-        console.log(`  sitemap ${sitemapUrl} → ${res.status}, ${urls.length} URLs`)
+        console.info(`  sitemap ${sitemapUrl} → ${res.status}, ${urls.length} URLs`)
         return urls
       }
     } catch (e) {
-      console.log(`  sitemap ${sitemapUrl} → error: ${e}`)
+      console.info(`  sitemap ${sitemapUrl} → error: ${e}`)
     }
   }
   return []
@@ -137,34 +137,34 @@ async function mapSiteLinks(url: string): Promise<string[]> {
 }
 
 function printUrlList(label: string, urls: string[], max = 20) {
-  console.log(`\n--- ${label} (${urls.length}件) ---`)
+  console.info(`\n--- ${label} (${urls.length}件) ---`)
   urls.slice(0, max).forEach((url) => {
     const score = scoreBlogUrl(url)
-    console.log(`  [${score}] ${url}`)
+    console.info(`  [${score}] ${url}`)
   })
-  if (urls.length > max) console.log(`  ... and ${urls.length - max} more`)
+  if (urls.length > max) console.info(`  ... and ${urls.length - max} more`)
 }
 
 async function testSite(siteUrl: string, limit = 30) {
-  console.log(`\n${'='.repeat(60)}`)
-  console.log(`テスト対象: ${siteUrl}`)
-  console.log('='.repeat(60))
+  console.info(`\n${'='.repeat(60)}`)
+  console.info(`テスト対象: ${siteUrl}`)
+  console.info('='.repeat(60))
 
   // 1. sitemap
-  console.log('\n[1] sitemap.xml')
+  console.info('\n[1] sitemap.xml')
   let candidates = await fetchSitemapUrls(siteUrl)
 
   // 2. Firecrawl /map
   if (candidates.length === 0) {
-    console.log('\n[2] Firecrawl /map')
+    console.info('\n[2] Firecrawl /map')
     candidates = await mapSiteLinks(siteUrl)
-    console.log(`  /map → ${candidates.length} URLs`)
+    console.info(`  /map → ${candidates.length} URLs`)
   } else {
-    console.log(`  → ${candidates.length} URLs (Firecrawl /mapはスキップ)`)
+    console.info(`  → ${candidates.length} URLs (Firecrawl /mapはスキップ)`)
   }
 
   if (candidates.length === 0) {
-    console.log('  → 0件。発見できず。')
+    console.info('  → 0件。発見できず。')
     return
   }
 
@@ -174,11 +174,11 @@ async function testSite(siteUrl: string, limit = 30) {
   const blogLike = scored.filter((url) => scoreBlogUrl(url) >= 2)
   const toFetch = (blogLike.length > 0 ? blogLike : scored).slice(0, limit)
 
-  console.log(`\n[フィルタ結果]`)
-  console.log(`  同一ホスト: ${sameHost.length}件`)
-  console.log(`  isNotMedia通過: ${filtered.length}件`)
-  console.log(`  スコア2以上: ${blogLike.length}件`)
-  console.log(`  スクレイプ対象(limit=${limit}): ${toFetch.length}件`)
+  console.info(`\n[フィルタ結果]`)
+  console.info(`  同一ホスト: ${sameHost.length}件`)
+  console.info(`  isNotMedia通過: ${filtered.length}件`)
+  console.info(`  スコア2以上: ${blogLike.length}件`)
+  console.info(`  スクレイプ対象(limit=${limit}): ${toFetch.length}件`)
 
   printUrlList('スクレイプ予定URL (score降順)', toFetch, 30)
 

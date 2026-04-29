@@ -131,7 +131,7 @@ async function capturePages(
     const result = await screenshotPage(context, pagePath, outputDir, viewport)
     if (result.success) {
       success++
-      console.log(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
+      console.info(`  [OK] ${viewport.padEnd(7)} ${pagePath}`)
     } else {
       failure++
       console.warn(`  [NG] ${viewport.padEnd(7)} ${pagePath} — ${result.error}`)
@@ -171,7 +171,7 @@ async function main() {
   let totalFailure = 0
 
   // --- 公開・認証ページ ---
-  console.log('\n公開ページ / 認証ページを撮影します...')
+  console.info('\n公開ページ / 認証ページを撮影します...')
 
   const allPublic = [...PUBLIC_PAGES, ...AUTH_PAGES]
   for (const viewport of Object.keys(VIEWPORTS) as ViewportKey[]) {
@@ -187,10 +187,10 @@ async function main() {
   const password = process.env.SCREENSHOT_PASSWORD
 
   if (!email || !password) {
-    console.log('\nログイン情報未設定のためツール側ページをスキップします。')
-    console.log('  撮影するには SCREENSHOT_EMAIL と SCREENSHOT_PASSWORD を設定してください。')
+    console.info('\nログイン情報未設定のためツール側ページをスキップします。')
+    console.info('  撮影するには SCREENSHOT_EMAIL と SCREENSHOT_PASSWORD を設定してください。')
   } else {
-    console.log('\nツール側ページを撮影します...')
+    console.info('\nツール側ページを撮影します...')
 
     for (const viewport of Object.keys(VIEWPORTS) as ViewportKey[]) {
       const context = await browser.newContext({ viewport: VIEWPORTS[viewport] })
@@ -207,7 +207,7 @@ async function main() {
       totalSuccess += toolResult.success
       totalFailure += toolResult.failure
 
-      console.log(`\n管理画面を撮影します... [${viewport}]`)
+      console.info(`\n管理画面を撮影します... [${viewport}]`)
       const adminResult = await capturePages(context, ADMIN_PAGES, outputDir, viewport)
       totalSuccess += adminResult.success
       totalFailure += adminResult.failure
@@ -218,8 +218,8 @@ async function main() {
 
   await browser.close()
 
-  console.log(`\n撮影完了: ${totalSuccess}件成功、${totalFailure}件失敗`)
-  console.log(`保存先: ${path.resolve(outputDir)}`)
+  console.info(`\n撮影完了: ${totalSuccess}件成功、${totalFailure}件失敗`)
+  console.info(`保存先: ${path.resolve(outputDir)}`)
 }
 
 main().catch((err) => {

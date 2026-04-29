@@ -61,7 +61,7 @@ async function main() {
       continue
     }
 
-    console.log(`✅ ${account.email} (${account.plan}) — パスワード: ${account.password}`)
+    console.info(`✅ ${account.email} (${account.plan}) — パスワード: ${account.password}`)
   }
 }
 
