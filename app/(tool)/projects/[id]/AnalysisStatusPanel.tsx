@@ -386,12 +386,12 @@ export default function AnalysisStatusPanel({
               </button>
             )}
             {gscStatus === 'disconnected' && (
-              <Link
+              <a
                 href={`/api/auth/google?project_id=${projectId}`}
                 className={getButtonClass('secondary', 'text-sm')}
               >
                 Google Search Console を連携する
-              </Link>
+              </a>
             )}
           </div>
         </div>
