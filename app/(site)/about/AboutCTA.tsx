@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export function AboutBottomCTA() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data: { user } }) => {
@@ -15,7 +15,9 @@ export function AboutBottomCTA() {
 
   return (
     <div className="mt-7 flex flex-wrap justify-center gap-3">
-      {isLoggedIn ? (
+      {isLoggedIn === null ? (
+        <div aria-busy="true" aria-label="読み込み中" className="h-[52px] w-48 rounded-[var(--r-sm)] bg-[var(--border)] animate-pulse" />
+      ) : isLoggedIn ? (
         <Link
           href="/dashboard"
           className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[0_4px_24px_rgba(0,0,0,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
