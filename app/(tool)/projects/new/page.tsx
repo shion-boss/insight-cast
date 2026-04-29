@@ -39,6 +39,7 @@ export default async function NewProjectPage({
     .from('projects')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)
+    .is('deleted_at', null)
 
   const isAtLimit = (projectCount ?? 0) >= planLimits.maxProjects
 

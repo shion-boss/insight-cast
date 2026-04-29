@@ -137,7 +137,7 @@ export async function POST() {
       competitorResults.push({ url: compUrl, ...result })
     }
 
-    await supabase
+    const { error: updateError } = await supabase
       .from('profiles')
       .update({
         hp_audit_result:       {
@@ -148,6 +148,11 @@ export async function POST() {
         audit_updated_at:      new Date().toISOString(),
       })
       .eq('id', user.id)
+
+    if (updateError) {
+      console.error('[account/analyze] profiles update failed:', updateError.message)
+      return NextResponse.json({ error: 'save failed' }, { status: 500 })
+    }
 
     return NextResponse.json({ ok: true, audit, competitorResults })
   } catch (err) {

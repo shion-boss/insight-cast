@@ -22,11 +22,15 @@ export async function saveArticleContent(
   if (error) throw new Error(error.message)
 
   if (original !== corrected) {
-    await supabase.from('article_corrections').insert({
+    const { error: correctionError } = await supabase.from('article_corrections').insert({
       article_id: articleId,
       original,
       corrected,
     })
+    // 差分ログの保存失敗はメインの保存には影響させない（ログのみ）
+    if (correctionError) {
+      console.error('[saveArticleContent] article_corrections insert failed:', correctionError.message)
+    }
   }
 
   revalidatePath(`/projects/${projectId}/articles/${articleId}`)
