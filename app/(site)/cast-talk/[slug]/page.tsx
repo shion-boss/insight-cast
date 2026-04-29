@@ -45,8 +45,12 @@ async function getCastTalk(slug: string) {
 
 function formatDate(iso: string | null): string {
   if (!iso) return ''
-  const d = new Date(iso)
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+  return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(new Date(iso))
 }
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')

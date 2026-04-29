@@ -34,8 +34,14 @@ const THEME_PALETTE: Record<string, { color: string; label: string }> = {
 
 function formatDate(iso: string | null): string {
   if (!iso) return ''
-  const d = new Date(iso)
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  const formatter = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+  // ja-JP は "YYYY/MM/DD" 形式で返すため "." に変換
+  return formatter.format(new Date(iso)).replace(/\//g, '.')
 }
 
 type Talk = {
