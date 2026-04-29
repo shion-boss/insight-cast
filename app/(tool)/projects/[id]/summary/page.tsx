@@ -36,6 +36,7 @@ function parseSummaryValues(summary: string | null) {
 
 function formatCheckTime(date: Date) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -411,7 +412,7 @@ export default function SummaryPage() {
                                   href={`/projects/${projectId}/articles/${a.id}`}
                                   className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2 py-0.5 rounded-full hover:opacity-75 transition-opacity"
                                 >
-                                  <span aria-hidden="true">✓</span> {a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'} {new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))}
+                                  <span aria-hidden="true">✓</span> {a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'} {new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))}
                                 </Link>
                               ))}
                             </div>
@@ -505,7 +506,7 @@ export default function SummaryPage() {
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
                       <span className="text-[var(--text3)] flex-shrink-0 text-[11px]">
-                        {new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(article.created_at))}
+                        {new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(article.created_at))}
                       </span>
                     </Link>
                   ))}

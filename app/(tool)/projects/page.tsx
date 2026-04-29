@@ -54,6 +54,7 @@ function AddProjectCard({ isLocked }: { isLocked: boolean }) {
 
 function formatShortDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',

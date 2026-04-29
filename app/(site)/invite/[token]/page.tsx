@@ -35,6 +35,7 @@ async function getInvitation(token: string): Promise<InvitationInfo | null> {
 
 function formatExpiry(isoDate: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'long',
     day: 'numeric',

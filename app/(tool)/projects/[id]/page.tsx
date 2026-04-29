@@ -49,6 +49,7 @@ type ArticleRow = {
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -160,7 +161,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return Array.from({ length: 6 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      const label = new Intl.DateTimeFormat('ja-JP', { month: 'short' }).format(d)
+      const label = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'short' }).format(d)
       return { m: label, n: articles.filter((a) => a.created_at.slice(0, 7) === key).length }
     })
   })()

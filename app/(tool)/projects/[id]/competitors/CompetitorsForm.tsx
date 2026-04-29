@@ -43,6 +43,7 @@ export default function CompetitorsForm({
     }
 
     const label = new Intl.DateTimeFormat('ja-JP', {
+      timeZone: 'Asia/Tokyo',
       month: 'long',
       day: 'numeric',
     }).format(new Date(rawNextAvailableAt))

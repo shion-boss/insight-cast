@@ -598,7 +598,7 @@ export default function ArticlePage() {
                 <div className="flex flex-wrap gap-2">
                   {themeArticles.map((a) => {
                     const typeLabel = a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'
-                    const dateLabel = new Intl.DateTimeFormat('ja-JP', { month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
+                    const dateLabel = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
                     return (
                       <Link
                         key={a.id}
@@ -718,7 +718,7 @@ export default function ArticlePage() {
             {comboArticles.length > 0 && !isCurrentTabGenerating && currentTabStatus !== 'failed' && (
               <div className="p-6 space-y-3">
                 {comboArticles.map((a) => {
-                  const dateLabel = new Intl.DateTimeFormat('ja-JP', { year: 'numeric', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
+                  const dateLabel = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
                   return (
                     <Link
                       key={a.id}

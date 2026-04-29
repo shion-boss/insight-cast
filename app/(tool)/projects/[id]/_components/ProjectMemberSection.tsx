@@ -34,6 +34,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
@@ -42,6 +43,7 @@ function formatDate(value: string) {
 
 function formatExpiry(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',

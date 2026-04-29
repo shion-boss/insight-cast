@@ -21,6 +21,7 @@ const ARTICLE_TYPE_LABEL: Record<string, string> = {
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'long',
     day: 'numeric',

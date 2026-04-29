@@ -55,6 +55,7 @@ export default async function BillingPage({
 
   const periodEnd = sub?.current_period_end
     ? new Date(sub.current_period_end).toLocaleDateString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
         year: 'numeric',
         month: 'long',
         day: 'numeric',

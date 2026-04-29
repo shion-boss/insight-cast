@@ -203,7 +203,7 @@ export default function AnalysisStatusPanel({
   }, [status, router])
 
   const nextAvailableLabel = reanalysisNextAvailableAt
-    ? new Intl.DateTimeFormat('ja-JP', { month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))
+    ? new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))
     : null
 
   const handleGscDisconnectRequest = () => {

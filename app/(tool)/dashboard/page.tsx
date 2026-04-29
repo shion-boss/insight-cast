@@ -106,6 +106,7 @@ function getProjectContinueHref(project: { id: string; status: string | null }) 
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -114,6 +115,7 @@ function formatDate(value: string) {
 
 function formatShortDateTime(value: string) {
   return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
