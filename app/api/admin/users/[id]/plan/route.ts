@@ -23,7 +23,8 @@ export async function PATCH(
   const traceId = crypto.randomUUID()
 
   if (!(await isAdmin())) {
-    return NextResponse.json({ code: 'UNAUTHORIZED', message: '権限がありません', traceId }, { status: 401 })
+    // 認証済みだが管理権限がない → 403 Forbidden
+    return NextResponse.json({ code: 'FORBIDDEN', message: '権限がありません', traceId }, { status: 403 })
   }
 
   const { id: userId } = await params
