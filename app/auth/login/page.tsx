@@ -21,6 +21,7 @@ function LoginForm() {
   const supabase = createClient()
   const rawNext = searchParams.get('next') ?? ''
   const nextPath = /^\/(?!\/)/.test(rawNext) ? rawNext : '/dashboard'
+  const inviteToken = searchParams.get('invite_token') ?? ''
   const isPaidFlow = nextPath.includes('checkout-redirect')
   const paidPlan = nextPath.includes('plan=business') ? '法人向け' : nextPath.includes('plan=personal') ? '個人向け' : nextPath.includes('plan=lightning') ? 'ライト' : null
   const mint = getCharacter('mint')
@@ -41,6 +42,35 @@ function LoginForm() {
       return
     }
 
+    // invite_token がある場合は accept API 経由でメンバー登録してから遷移する
+    if (inviteToken) {
+      try {
+        const acceptRes = await fetch(`/api/invitations/${inviteToken}/accept`, { method: 'POST' })
+        if (!acceptRes.ok) {
+          const json = await acceptRes.json().catch(() => ({})) as { error?: string }
+          const code = json.error
+          if (code === 'email_mismatch') {
+            setError('このメールアドレスは招待されていません。招待先のメールアドレスでログインしてください。')
+          } else if (code === 'invalid_or_expired') {
+            setError('招待リンクが無効か期限切れです。招待者に再招待を依頼してください。')
+          } else {
+            setError('招待の処理に失敗しました。しばらく待ってから再度お試しください。')
+          }
+          setLoading(false)
+          return
+        }
+        const json = await acceptRes.json() as { ok?: boolean; projectId?: string }
+        if (json.projectId) {
+          router.push(`/projects/${json.projectId}`)
+          router.refresh()
+          return
+        }
+      } catch {
+        setError('招待の処理に失敗しました。もう一度お試しください。')
+        setLoading(false)
+        return
+      }
+    }
     router.push(nextPath)
     router.refresh()
   }
@@ -50,10 +80,13 @@ function LoginForm() {
     setError(null)
 
     const origin = window.location.origin
+    const callbackParams = new URLSearchParams({ next: nextPath })
+    // invite_token がある場合はコールバックに引き継ぎ、OAuth完了後にメンバー登録処理を実行する
+    if (inviteToken) callbackParams.set('invite_token', inviteToken)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+        redirectTo: `${origin}/auth/callback?${callbackParams.toString()}`,
       },
     })
 
@@ -80,7 +113,7 @@ function LoginForm() {
             <p className="text-sm text-[var(--text2)] leading-[1.7]">
               <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />
               ログイン後、そのままお支払い画面に進みます。<br />
-              アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>
+              アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}${inviteToken ? `&invite_token=${encodeURIComponent(inviteToken)}` : ''}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>
             </p>
           </div>
         )}
@@ -160,7 +193,13 @@ function LoginForm() {
         <p className="mt-5 text-center text-sm text-[var(--text3)]">
           アカウントをお持ちでない方は{' '}
           <Link
-            href={`/auth/signup${nextPath !== '/dashboard' ? `?next=${encodeURIComponent(nextPath)}` : ''}`}
+            href={(() => {
+              const params = new URLSearchParams()
+              if (nextPath !== '/dashboard') params.set('next', nextPath)
+              if (inviteToken) params.set('invite_token', inviteToken)
+              const qs = params.toString()
+              return `/auth/signup${qs ? `?${qs}` : ''}`
+            })()}
             className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
           >
             新規登録

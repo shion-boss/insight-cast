@@ -29,28 +29,31 @@ export async function createInterview(projectId: string, formData: FormData) {
     redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=theme-required`)
   }
 
+  // プロジェクトを取得（RLSでオーナー・メンバー両方がアクセス可）
   const { data: project } = await supabase
     .from('projects')
-    .select('id')
+    .select('id, user_id')
     .eq('id', projectId)
-    .eq('user_id', user.id)
     .is('deleted_at', null)
     .single()
 
   if (!project) redirect('/dashboard')
 
+  // オーナーのuser_idを取得して上限チェック（メンバーが使ってもオーナーの枠から消費）
+  const ownerUserId = project.user_id
+
   const { data: userProjects } = await supabase
     .from('projects')
     .select('id')
-    .eq('user_id', user.id)
+    .eq('user_id', ownerUserId)
     .is('deleted_at', null)
     .order('updated_at', { ascending: false })
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
 
-  const userPlan = await getUserPlan(supabase, user.id)
+  const userPlan = await getUserPlan(supabase, ownerUserId)
   const planLimits = getPlanLimits(userPlan)
 
-  // プランダウングレード時: 上限を超えた取材先からのインタビューを防ぐ
+  // プランダウングレード時: 上限を超えた取材先からのインタビューを防ぐ（オーナーのプラン基準）
   const activeProjectIds = new Set(projectIds.slice(0, planLimits.maxProjects))
   if (!activeProjectIds.has(projectId)) {
     redirect(`/projects/${projectId}/interviewer?error=project_over_limit`)

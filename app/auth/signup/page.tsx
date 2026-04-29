@@ -16,6 +16,7 @@ function SignupForm() {
   const plan = searchParams.get('plan')
   const rawNext = searchParams.get('next')
   const nextParam = rawNext && /^\/(?!\/)/.test(rawNext) ? rawNext : null
+  const inviteToken = searchParams.get('invite_token') ?? ''
   // next パラメータ内に plan が埋め込まれているケース（ログイン→サインアップ経由）も検出
   const effectivePlan = plan ?? (() => {
     if (!nextParam) return null
@@ -51,7 +52,10 @@ function SignupForm() {
     const afterNext = plan
       ? `/api/stripe/checkout-redirect?plan=${plan}`
       : nextParam ?? '/dashboard'
-    const emailRedirectTo = `${origin}/auth/callback?next=${encodeURIComponent(afterNext)}`
+    const callbackParams = new URLSearchParams({ next: afterNext })
+    // invite_token がある場合はコールバックに引き継ぎ、メール確認後にメンバー登録処理を実行する
+    if (inviteToken) callbackParams.set('invite_token', inviteToken)
+    const emailRedirectTo = `${origin}/auth/callback?${callbackParams.toString()}`
 
     const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo } })
     if (error) {
@@ -74,10 +78,14 @@ function SignupForm() {
     setError(null)
 
     const origin = window.location.origin
+    const googleNext = effectivePlan ? `/api/stripe/checkout-redirect?plan=${effectivePlan}` : nextParam ?? '/dashboard'
+    const googleCallbackParams = new URLSearchParams({ next: googleNext })
+    // invite_token がある場合はコールバックに引き継ぎ、OAuth完了後にメンバー登録処理を実行する
+    if (inviteToken) googleCallbackParams.set('invite_token', inviteToken)
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(effectivePlan ? `/api/stripe/checkout-redirect?plan=${effectivePlan}` : nextParam ?? '/dashboard')}`,
+        redirectTo: `${origin}/auth/callback?${googleCallbackParams.toString()}`,
       },
     })
 

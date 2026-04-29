@@ -1,10 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   const requestedNext = searchParams.get('next')
+  const inviteToken = searchParams.get('invite_token')
   // '//' から始まるプロトコル相対URLによるオープンリダイレクトを防ぐ
   const next = requestedNext && /^\/(?!\/)/.test(requestedNext) ? requestedNext : '/dashboard'
 
@@ -16,15 +18,48 @@ export async function GET(request: NextRequest) {
       const forwardedHost = request.headers.get('x-forwarded-host')
       const isLocalEnv = process.env.NODE_ENV === 'development'
 
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`)
+      const baseOrigin = isLocalEnv ? origin : forwardedHost ? `https://${forwardedHost}` : origin
+
+      // 招待トークンがある場合、メンバー登録処理
+      if (inviteToken) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser()
+          if (user) {
+            const adminSupabase = createAdminClient()
+            const { data: inv } = await adminSupabase
+              .from('project_invitations')
+              .select('id, project_id, email, role, invited_by, accepted, expires_at')
+              .eq('token', inviteToken)
+              .eq('accepted', false)
+              .gt('expires_at', new Date().toISOString())
+              .maybeSingle()
+
+            if (inv && inv.email === user.email) {
+              // メンバー追加（既に存在する場合は無視）
+              const { error: memberError } = await adminSupabase
+                .from('project_members')
+                .insert({
+                  project_id: inv.project_id,
+                  user_id: user.id,
+                  role: inv.role,
+                  invited_by: inv.invited_by,
+                })
+              if (!memberError) {
+                await adminSupabase
+                  .from('project_invitations')
+                  .update({ accepted: true })
+                  .eq('id', inv.id)
+              }
+              return NextResponse.redirect(new URL(`/projects/${inv.project_id}`, baseOrigin))
+            }
+          }
+        } catch (err) {
+          // 招待処理に失敗してもログイン自体は成功とみなしてダッシュボードへ
+          console.error('[callback] invite token processing error:', err)
+        }
       }
 
-      if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
-      }
-
-      return NextResponse.redirect(`${origin}${next}`)
+      return NextResponse.redirect(`${baseOrigin}${next}`)
     }
 
     console.error('Supabase OAuth callback error:', error.message)
@@ -32,8 +67,9 @@ export async function GET(request: NextRequest) {
     const errorUrl = new URL('/auth/login', origin)
     errorUrl.searchParams.set('error', 'oauth_callback')
     errorUrl.searchParams.set('message', 'ログインに失敗しました。もう一度お試しください。')
+    if (inviteToken) errorUrl.searchParams.set('invite_token', inviteToken)
     return NextResponse.redirect(errorUrl)
   }
 
-  return NextResponse.redirect(`${origin}/auth/login?error=oauth_callback`)
+  return NextResponse.redirect(`${origin}/auth/login?error=oauth_callback${inviteToken ? `&invite_token=${inviteToken}` : ''}`)
 }

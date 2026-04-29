@@ -7,6 +7,67 @@ import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagement
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import type { Character } from '@/lib/characters'
+
+async function SharedProjectsZeroState({
+  userId,
+  mint,
+}: {
+  userId: string
+  mint: Character | undefined
+}) {
+  const supabase = await createClient()
+  const { count: sharedCount } = await supabase
+    .from('project_members')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+
+  if ((sharedCount ?? 0) > 0) {
+    return (
+      <div className="mt-4">
+        <InterviewerSpeech
+          icon={(
+            <CharacterAvatar
+              src={mint?.icon48}
+              alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={mint?.emoji}
+              size={48}
+            />
+          )}
+          name={mint?.name ?? 'インタビュアー'}
+          title="招待された取材先があります。"
+          description="取材先一覧からアクセスできます。自分の取材先を登録することもできます。"
+          tone="soft"
+        />
+        <div className="mt-4">
+          <ButtonLink href="/projects">取材先一覧を見る <span aria-hidden="true">→</span></ButtonLink>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4">
+      <InterviewerSpeech
+        icon={(
+          <CharacterAvatar
+            src={mint?.icon48}
+            alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
+            emoji={mint?.emoji}
+            size={48}
+          />
+        )}
+        name={mint?.name ?? 'インタビュアー'}
+        title="AIキャストが取材の準備をして待っています。"
+        description="まずは取材先を登録してみましょう。登録するとインタビューを始められます。"
+        tone="soft"
+      />
+      <div className="mt-4">
+        <ButtonLink href="/projects/new">最初の取材先を登録する <span aria-hidden="true">→</span></ButtonLink>
+      </div>
+    </div>
+  )
+}
 
 type Project = {
   id: string
@@ -80,7 +141,8 @@ export default async function DashboardPage() {
   if (!supabase) redirect('/')
   if (!user) redirect('/')
 
-  // profile・projects・plan を並列取得
+  // profile・projects（オーナー所有のみ）・plan を並列取得
+  // ダッシュボードはオーナーとしての自分のプロジェクトを中心に表示する
   const [{ data: profile }, { data: projects }, userPlan] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
     supabase
@@ -288,25 +350,7 @@ export default async function DashboardPage() {
       </div>
 
       {projectList.length === 0 ? (
-        <div className="mt-4">
-          <InterviewerSpeech
-            icon={(
-              <CharacterAvatar
-                src={mint?.icon48}
-                alt={`${mint?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={mint?.emoji}
-                size={48}
-              />
-            )}
-            name={mint?.name ?? 'インタビュアー'}
-            title="AIキャストが取材の準備をして待っています。"
-            description="まずは取材先を登録してみましょう。登録するとインタビューを始められます。"
-            tone="soft"
-          />
-          <div className="mt-4">
-            <ButtonLink href="/projects/new">最初の取材先を登録する <span aria-hidden="true">→</span></ButtonLink>
-          </div>
-        </div>
+        <SharedProjectsZeroState userId={user.id} mint={mint} />
       ) : (
         <div className="flex flex-col gap-6">
 

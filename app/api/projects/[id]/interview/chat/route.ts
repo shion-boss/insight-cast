@@ -5,6 +5,7 @@ import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
+import { getMemberRole } from '@/lib/project-members'
 import { NextRequest, NextResponse } from 'next/server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
@@ -18,9 +19,6 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
-  if (await isFreePlanLocked(supabase, user.id)) {
-    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
-  }
   if (!(await checkRateLimit(user.id, '/api/projects/[id]/interview/chat')).allowed) {
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
@@ -51,7 +49,21 @@ export async function POST(
   const projectData = !interview.interviews_project || Array.isArray(interview.interviews_project)
     ? null
     : interview.interviews_project as { user_id: string; name: string | null; hp_url: string }
-  if (projectData?.user_id !== user.id) return new Response('Forbidden', { status: 403 })
+
+  // role-based アクセスチェック: オーナーまたはeditorのみ
+  const isOwner = projectData?.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, projectId, user.id)
+    if (memberRole !== 'editor') {
+      return new Response('Forbidden', { status: 403 })
+    }
+  }
+
+  // 月次上限チェックはオーナーのuser_idで判定（メンバーが使ってもオーナーの枠から消費）
+  const ownerUserId = projectData?.user_id ?? user.id
+  if (await isFreePlanLocked(supabase, ownerUserId)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
 
   // ユーザーメッセージ保存
   if (!isGreeting && !isPassQuestion) {

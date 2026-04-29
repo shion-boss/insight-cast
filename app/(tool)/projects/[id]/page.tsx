@@ -9,9 +9,11 @@ import { Breadcrumb, ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill 
 import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
+import { getMemberRole } from '@/lib/project-members'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
 import { AnalyticsSection, type HeatmapEntry, type MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
 import AnalysisStatusPanel from './AnalysisStatusPanel'
+import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import {
   PaginatedUncreatedThemes,
   PaginatedInterviewHistory,
@@ -55,18 +57,24 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  // project を取得
+  // project を取得（RLSでオーナー・メンバー両方がアクセス可）
   const [{ data: project }] = await Promise.all([
     supabase
       .from('projects')
-      .select('id, name, hp_url, status, updated_at')
+      .select('id, name, hp_url, status, updated_at, user_id')
       .eq('id', id)
-      .eq('user_id', user.id)
       .is('deleted_at', null)
       .single(),
   ])
 
   if (!project) redirect('/dashboard')
+
+  // オーナーかメンバーかを判定
+  const isOwner = project.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+
+  // オーナーでもメンバーでもない場合はリダイレクト
+  if (!isOwner && memberRole === null) redirect('/dashboard')
 
   // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得
   const [
@@ -452,9 +460,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               description="インタビューを重ねるたびに、ここに履歴と記事がまとまっていきます。"
               tone="soft"
             />
-            <div className="mt-4">
-              <ButtonLink href={`/projects/${id}/interviewer`}>取材を始める <span aria-hidden="true">→</span></ButtonLink>
-            </div>
+            {/* viewer は取材開始ボタンを非表示 */}
+            {memberRole !== 'viewer' && (
+              <div className="mt-4">
+                <ButtonLink href={`/projects/${id}/interviewer`}>取材を始める <span aria-hidden="true">→</span></ButtonLink>
+              </div>
+            )}
           </>
         ) : (
           <PaginatedInterviewHistory items={interviewHistoryItems} />
@@ -468,6 +479,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事</h2>
           </div>
           <PaginatedArticles items={articleSectionItems} />
+        </div>
+      )}
+
+      {/* メンバー共有セクション（オーナーのみ表示） */}
+      {isOwner && (
+        <div className="mt-8">
+          <ProjectMemberSection projectId={id} />
         </div>
       )}
     </>

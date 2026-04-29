@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
+import { getMemberRole } from '@/lib/project-members'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -254,24 +255,40 @@ export async function POST(
     return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
   }
 
-  if (await isFreePlanLocked(supabase, user.id)) {
+  // プロジェクト取得（RLSでオーナー・メンバー両方がアクセス可）
+  const { data: projectWithOwner } = await supabase
+    .from('projects')
+    .select('name, hp_url, user_id')
+    .eq('id', projectId)
+    .is('deleted_at', null)
+    .single()
+
+  if (!projectWithOwner) return new Response('Not found', { status: 404 })
+
+  // role-based アクセスチェック: オーナーまたはeditorのみ記事生成可
+  const isOwner = projectWithOwner.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, projectId, user.id)
+    if (memberRole !== 'editor') {
+      return new Response('Forbidden', { status: 403 })
+    }
+  }
+
+  // 月次上限チェックはオーナーのuser_idで判定
+  const ownerUserId = projectWithOwner.user_id
+
+  // 月次上限チェックは adminSupabase で実行し、将来の RLS 変更による無音の緩みを防ぐ
+  const adminForLimitCheck = createAdminClient()
+  if (await isFreePlanLocked(adminForLimitCheck, ownerUserId)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
-  const monthlyCheck = await checkMonthlyArticleLimit(supabase, user.id)
+  const monthlyCheck = await checkMonthlyArticleLimit(adminForLimitCheck, ownerUserId)
   if (!monthlyCheck.allowed) {
     return NextResponse.json({ error: 'monthly_article_limit_reached', limit: monthlyCheck.limit, count: monthlyCheck.count }, { status: 403 })
   }
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('name, hp_url')
-    .eq('id', projectId)
-    .eq('user_id', user.id)
-    .is('deleted_at', null)
-    .single()
-
-  if (!project) return new Response('Forbidden', { status: 403 })
+  const project = projectWithOwner
 
   const { data: messages } = await supabase
     .from('interview_messages')
@@ -429,6 +446,12 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 
   await markArticleGenerationStarted({ supabase, projectId, interviewId })
 
+  // adminSupabase を使う理由:
+  // waitUntil で非同期実行する際、元の supabase セッションが切れる可能性がある。
+  // RLS バイパスになるが、role チェック（getMemberRole）はこの下で実行済みであるため
+  // API 側のチェックが主防壁として機能している。
+  // articles テーブルの INSERT ポリシーは adminClient には効かないが、
+  // ここに到達する前に isOwner または memberRole === 'editor' の検証が完了していることを保証する。
   const adminSupabase = createAdminClient()
 
   async function generateAndSaveWithAdmin() {

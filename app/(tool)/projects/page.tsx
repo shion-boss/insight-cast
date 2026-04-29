@@ -68,23 +68,27 @@ export default async function ProjectsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  // projects, userPlan を並列取得
+  // projects（オーナー所有 + メンバーとして参加中の両方）, userPlan を並列取得
   const [{ data: projects }, userPlan] = await Promise.all([
     supabase
       .from('projects')
-      .select('id, name, hp_url, status, updated_at')
-      .eq('user_id', user.id)
+      .select('id, name, hp_url, status, updated_at, user_id')
       .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
     getUserPlan(supabase, user.id),
   ])
 
-  const projectList = (projects ?? []) as Project[]
+  const allProjects = (projects ?? []) as (Project & { user_id: string })[]
+  // オーナーのプロジェクトのみでプラン上限を計算
+  const ownedProjects = allProjects.filter((p) => p.user_id === user.id)
+  // sharedProjects: メンバーとして参加しているプロジェクト（現在は isShared フラグで判別）
+
+  const projectList = allProjects as Project[]
 
   const planLimits = getPlanLimits(userPlan)
-  const isProjectLimitReached = projectList.length >= planLimits.maxProjects
+  const isProjectLimitReached = ownedProjects.length >= planLimits.maxProjects
   // updated_at 降順で先頭 maxProjects 件が有効。それ以降はダウングレードによるロック中
-  const lockedProjectIds = new Set(projectList.slice(planLimits.maxProjects).map((p) => p.id))
+  const lockedProjectIds = new Set(ownedProjects.slice(planLimits.maxProjects).map((p) => p.id))
 
   // projects が取れてから audits, competitors, competitorAnalyses, interviews を並列取得
   const projectIds = projectList.map((project) => project.id)
@@ -227,6 +231,8 @@ export default async function ProjectsPage() {
               articleCount,
             })
             const isLocked = lockedProjectIds.has(project.id)
+            // メンバーとして参加しているプロジェクト（オーナーでない）
+            const isShared = (project as Project & { user_id?: string }).user_id !== user.id
 
             return (
               <div
@@ -256,6 +262,11 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="flex-shrink-0">
                     <div className="flex flex-wrap justify-end gap-2">
+                      {isShared && (
+                        <StatusPill tone="info" className="px-2.5 py-1 text-[11px] font-semibold">
+                          共有
+                        </StatusPill>
+                      )}
                       {isLocked && (
                         <StatusPill tone="warning" className="px-2.5 py-1 text-[11px] font-semibold">
                           ロック中
