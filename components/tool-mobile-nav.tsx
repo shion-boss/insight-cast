@@ -195,7 +195,7 @@ export function ToolMobileNav({
                 </Link>
               )}
               <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>
-              <form action={signOut}>
+              <form action={signOut} data-cross-area-nav>
                 <button
                   type="submit"
                   className="w-full rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"

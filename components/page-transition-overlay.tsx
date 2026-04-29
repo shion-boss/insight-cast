@@ -61,9 +61,20 @@ export function PageTransitionOverlay() {
       }
     }
 
+    // サーバーアクション（ログアウト等）による cross-area フォーム送信を検知
+    const handleSubmit = (e: Event) => {
+      const form = e.target as HTMLFormElement
+      if (!form.hasAttribute('data-cross-area-nav')) return
+      prevPath.current = window.location.pathname
+      hideAt.current = Date.now() + MIN_MS
+      flushSync(() => setVisible(true))
+    }
+
     document.addEventListener('click', handleClick, true)
+    document.addEventListener('submit', handleSubmit, true)
     return () => {
       document.removeEventListener('click', handleClick, true)
+      document.removeEventListener('submit', handleSubmit, true)
       clearTimeout(timerRef.current)
     }
   }, [])
