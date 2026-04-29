@@ -6,11 +6,18 @@ import type { NextConfig } from "next";
 // const withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: process.env.ANALYZE === 'true' })
 // export default withBundleAnalyzer(nextConfig)
 
+// ワイルドカード **.supabase.co は任意のサブドメインを許可するためセキュリティリスクがある。
+// 環境変数からプロジェクト固有のホスト名を取得して限定する。
+// 環境変数が未設定の場合（CI など）はフォールバックとしてワイルドカードを使う。
+const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : '**.supabase.co'
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: '**.supabase.co' },
+      { protocol: 'https', hostname: supabaseImageHost },
     ],
   },
   experimental: {
