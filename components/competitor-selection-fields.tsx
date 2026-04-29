@@ -324,6 +324,7 @@ export default function CompetitorSelectionFields({
           <TextInput
             key={index}
             type="text"
+            inputMode="url"
             aria-label={`競合URL ${index + 1}`}
             value={manualUrls[index] ?? ''}
             onChange={(e) => updateManualUrl(index, e.target.value)}

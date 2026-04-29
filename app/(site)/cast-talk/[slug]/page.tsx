@@ -193,6 +193,7 @@ export default async function CastTalkDetailPage({
                   className="object-cover"
                   sizes="(min-width: 768px) 720px, 100vw"
                   placeholder="blur"
+                  priority
                 />
               </div>
             )}

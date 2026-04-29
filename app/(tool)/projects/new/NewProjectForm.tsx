@@ -103,6 +103,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
             <TextInput
               id="new-project-url"
               type="text"
+              inputMode="url"
               name="url"
               required
               autoComplete="url"
