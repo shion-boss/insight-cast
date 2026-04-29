@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
+import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 
 export default function OnboardingError({

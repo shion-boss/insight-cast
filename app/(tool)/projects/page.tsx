@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
   if (!user) redirect('/')
 
   // projects（オーナー所有 + メンバーとして参加中の両方）, userPlan を並列取得
-  const [{ data: projects, error: projectsError }, userPlan] = await Promise.all([
+  const [{ data: projects }, userPlan] = await Promise.all([
     supabase
       .from('projects')
       .select('id, name, hp_url, status, updated_at, user_id')

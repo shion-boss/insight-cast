@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { CharacterAvatar, Breadcrumb } from '@/components/ui'
-import { getCharacter, CHARACTERS } from '@/lib/characters'
+import { CHARACTERS } from '@/lib/characters'
 import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, getRelatedPostsFromList } from '@/lib/blog-posts'
 import { getBlogPostFromDB, getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import type { NormalSection } from '@/lib/blog-contents'
