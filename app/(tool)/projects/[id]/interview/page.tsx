@@ -147,36 +147,41 @@ export default function InterviewPage() {
     if (!interviewId) { router.push(`/projects/${projectId}/interviewer`); return }
 
     async function init() {
-      const supabase = supabaseRef.current
-      const { data: interview } = await supabase
-        .from('interviews')
-        .select('interviewer_type, focus_theme_mode, focus_theme')
-        .eq('id', interviewId)
-        .is('deleted_at', null)
-        .single()
+      try {
+        const supabase = supabaseRef.current
+        const { data: interview } = await supabase
+          .from('interviews')
+          .select('interviewer_type, focus_theme_mode, focus_theme')
+          .eq('id', interviewId)
+          .is('deleted_at', null)
+          .single()
 
-      if (interview) {
-        setCharacterId(interview.interviewer_type)
-        setFocusThemeLabel(getInterviewFocusThemeLabel(interview.focus_theme_mode, interview.focus_theme))
-      }
-
-      const { data: history } = await supabase
-        .from('interview_messages')
-        .select('role, content')
-        .eq('interview_id', interviewId)
-        .order('created_at', { ascending: true })
-
-      if (history && history.length > 0) {
-        setMessages(history as Message[])
-        setUserTurns(history.filter(m => m.role === 'user').length)
-      } else {
-        const result = await sendMessageToAI(null)
-        if (!result.ok) {
-          setSubmitError('取材を始められませんでした。ページを再読み込みしてもう一度お試しください。')
+        if (interview) {
+          setCharacterId(interview.interviewer_type)
+          setFocusThemeLabel(getInterviewFocusThemeLabel(interview.focus_theme_mode, interview.focus_theme))
         }
+
+        const { data: history } = await supabase
+          .from('interview_messages')
+          .select('role, content')
+          .eq('interview_id', interviewId)
+          .order('created_at', { ascending: true })
+
+        if (history && history.length > 0) {
+          setMessages(history as Message[])
+          setUserTurns(history.filter(m => m.role === 'user').length)
+        } else {
+          const result = await sendMessageToAI(null)
+          if (!result.ok) {
+            setSubmitError('取材を始められませんでした。ページを再読み込みしてもう一度お試しください。')
+          }
+        }
+      } catch {
+        setSubmitError('取材画面を開けませんでした。ページを再読み込みしてもう一度お試しください。')
+      } finally {
+        setInitializing(false)
+        setTimeout(() => textareaRef.current?.focus(), 50)
       }
-      setInitializing(false)
-      setTimeout(() => textareaRef.current?.focus(), 50)
     }
     init()
   }, [interviewId, projectId, router, sendMessageToAI])

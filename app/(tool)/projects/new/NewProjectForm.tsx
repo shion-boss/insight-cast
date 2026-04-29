@@ -117,7 +117,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
               placeholder="https://example.com"
             />
             {urlError ? (
-              <p id="url-error" className="mt-1 text-[12px] text-[var(--err)]">{urlError}</p>
+              <p id="url-error" role="alert" className="mt-1 text-[12px] text-[var(--err)]">{urlError}</p>
             ) : (
               <p id="url-hint" className="mt-1 text-[12px] text-[var(--text3)]">https:// がなくても大丈夫です</p>
             )}
