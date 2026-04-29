@@ -34,7 +34,11 @@ ${markdown.slice(0, 8000)}
   const text = msg.content[0].type === 'text' ? msg.content[0].text : ''
   const m = text.match(/\{[\s\S]*\}/)
   if (!m) throw new Error('JSON parse failed')
-  return JSON.parse(m[0])
+  try {
+    return JSON.parse(m[0])
+  } catch {
+    throw new Error('JSON parse failed')
+  }
 }
 
 async function compareCompetitor(mainMarkdown: string, competitorMarkdown: string, logCtx?: { userId?: string }) {
@@ -70,10 +74,11 @@ ${competitorMarkdown.slice(0, 4000)}
   const m = text.match(/\{[\s\S]*\}/)
   if (!m) return { gaps: [], advantages: [], influential_topics: [] }
 
-  const parsed = JSON.parse(m[0]) as {
-    gaps?: unknown
-    advantages?: unknown
-    influential_topics?: unknown
+  let parsed: { gaps?: unknown; advantages?: unknown; influential_topics?: unknown }
+  try {
+    parsed = JSON.parse(m[0]) as { gaps?: unknown; advantages?: unknown; influential_topics?: unknown }
+  } catch {
+    return { gaps: [], advantages: [], influential_topics: [] }
   }
 
   const normalizeStringList = (input: unknown) =>

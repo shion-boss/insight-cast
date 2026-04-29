@@ -71,7 +71,12 @@ ${anchorListText}
   const arrayMatch = rawText.match(/\[[\s\S]*\]/)
   if (!arrayMatch) return null
 
-  const parsed: unknown = JSON.parse(arrayMatch[0])
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(arrayMatch[0])
+  } catch {
+    return null
+  }
   if (!Array.isArray(parsed)) return null
 
   const validTypes = new Set<string>(['image', 'content'])
