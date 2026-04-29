@@ -10,8 +10,14 @@ import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { getMemberRole } from '@/lib/project-members'
+import dynamic from 'next/dynamic'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
-import { AnalyticsSection, type HeatmapEntry, type MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
+import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
+
+const AnalyticsSection = dynamic(
+  () => import('@/app/(tool)/dashboard/_components/analytics-section').then((m) => ({ default: m.AnalyticsSection })),
+  { ssr: false },
+)
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import {
