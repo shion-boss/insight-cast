@@ -16,7 +16,16 @@ import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_compone
 
 const AnalyticsSection = dynamic(
   () => import('@/app/(tool)/dashboard/_components/analytics-section').then((m) => ({ default: m.AnalyticsSection })),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => (
+      <div className="mb-6 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 animate-pulse">
+        <div className="h-4 w-32 rounded bg-[var(--border)] mb-4" />
+        <div className="h-24 w-full rounded bg-[var(--border)] mb-4" />
+        <div className="h-16 w-full rounded bg-[var(--border)]" />
+      </div>
+    ),
+  },
 )
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
@@ -156,21 +165,35 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const classifications = getStoredClassifications(rawData)
   const blogPosts = getStoredSiteBlogPosts(rawData)
 
+  // JST ベースの日付キー生成ヘルパー
+  const jstMonthKey = (date: Date) => {
+    const parts = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit' }).formatToParts(date)
+    return `${parts.find((p) => p.type === 'year')?.value ?? ''}-${parts.find((p) => p.type === 'month')?.value ?? ''}`
+  }
+  const jstDayKey = (date: Date) => {
+    const parts = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date)
+    return `${parts.find((p) => p.type === 'year')?.value ?? ''}-${parts.find((p) => p.type === 'month')?.value ?? ''}-${parts.find((p) => p.type === 'day')?.value ?? ''}`
+  }
+
   const monthlyArticles: MonthlyPoint[] = (() => {
     const now = new Date()
+    const nowKey = jstMonthKey(now)
+    const [nY, nM] = nowKey.split('-').map(Number)
     return Array.from({ length: 6 }, (_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1)
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-      const label = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'short' }).format(d)
-      return { m: label, n: articles.filter((a) => a.created_at.slice(0, 7) === key).length }
+      const offset = 5 - i
+      const m = nM - offset
+      const y = nY + Math.floor((m - 1) / 12)
+      const mo = ((m - 1 + 120) % 12) + 1
+      const key = `${y}-${String(mo).padStart(2, '0')}`
+      const label = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'short' }).format(new Date(y, mo - 1, 1))
+      return { m: label, n: articles.filter((a) => jstMonthKey(new Date(a.created_at)) === key).length }
     })
   })()
 
   const heatmapData: HeatmapEntry[] = (() => {
     const countMap = new Map<string, number>()
     for (const a of articles) {
-      const d = new Date(a.created_at)
-      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+      const key = jstDayKey(new Date(a.created_at))
       countMap.set(key, (countMap.get(key) ?? 0) + 1)
     }
     return [...countMap.entries()].map(([date, count]) => ({ date, count }))

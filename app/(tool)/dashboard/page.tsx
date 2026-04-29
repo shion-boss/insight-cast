@@ -123,8 +123,15 @@ function formatShortDateTime(value: string) {
   }).format(new Date(value))
 }
 
-function monthKey(date: Date) {
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`
+function jstMonthKey(date: Date): string {
+  const parts = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+  }).formatToParts(date)
+  const y = parts.find((p) => p.type === 'year')?.value ?? ''
+  const m = parts.find((p) => p.type === 'month')?.value ?? ''
+  return `${y}-${m}`
 }
 
 
@@ -220,19 +227,23 @@ export default async function DashboardPage() {
 
   // Previous-month deltas
   const now = new Date()
-  const thisMonthKey = monthKey(now)
-  const lastMonthKey = monthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1))
+  const thisMonthKey = jstMonthKey(now)
+  // JST 前月キーを文字列演算で導出（Date コンストラクタのタイムゾーン依存を排除）
+  const [kmY, kmM] = thisMonthKey.split('-').map(Number)
+  const prevM = kmM === 1 ? 12 : kmM - 1
+  const prevY = kmM === 1 ? kmY - 1 : kmY
+  const lastMonthKey = `${prevY}-${String(prevM).padStart(2, '0')}`
 
-  const thisMonthInterviews = interviews.filter((iv) => iv.created_at.slice(0, 7) === thisMonthKey).length
-  const lastMonthInterviews = interviews.filter((iv) => iv.created_at.slice(0, 7) === lastMonthKey).length
+  const thisMonthInterviews = interviews.filter((iv) => jstMonthKey(new Date(iv.created_at)) === thisMonthKey).length
+  const lastMonthInterviews = interviews.filter((iv) => jstMonthKey(new Date(iv.created_at)) === lastMonthKey).length
   const interviewDelta = thisMonthInterviews - lastMonthInterviews
 
-  const thisMonthArticles = allArticles.filter((a) => a.created_at.slice(0, 7) === thisMonthKey).length
-  const lastMonthArticles = allArticles.filter((a) => a.created_at.slice(0, 7) === lastMonthKey).length
+  const thisMonthArticles = allArticles.filter((a) => jstMonthKey(new Date(a.created_at)) === thisMonthKey).length
+  const lastMonthArticles = allArticles.filter((a) => jstMonthKey(new Date(a.created_at)) === lastMonthKey).length
   const articleDelta = thisMonthArticles - lastMonthArticles
 
-  const thisMonthProjects = projectList.filter((p) => p.created_at.slice(0, 7) === thisMonthKey).length
-  const lastMonthProjectCount = projectList.filter((p) => p.created_at.slice(0, 7) === lastMonthKey).length
+  const thisMonthProjects = projectList.filter((p) => jstMonthKey(new Date(p.created_at)) === thisMonthKey).length
+  const lastMonthProjectCount = projectList.filter((p) => jstMonthKey(new Date(p.created_at)) === lastMonthKey).length
   const projectDelta = thisMonthProjects - lastMonthProjectCount
 
   const mint = getCharacter('mint')
