@@ -153,7 +153,7 @@ export default async function CastTalkPage({
           }
         />
 
-        <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
+        <section aria-label="Cast Talk 記事一覧" className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
           <CastTalkGrid
             featuredTalk={featured}
             initialListTalks={initialListTalks}
