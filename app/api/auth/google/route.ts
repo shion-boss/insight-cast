@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
     scope: 'https://www.googleapis.com/auth/webmasters.readonly',
     access_type: 'offline',
     prompt: 'consent', // 必ず refresh_token を返させる
+    login_hint: user.email ?? '', // ログイン中のアカウントを Google に伝えて誤選択を防ぐ
     state,
   })
 

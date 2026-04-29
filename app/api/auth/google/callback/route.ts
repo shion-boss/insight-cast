@@ -72,10 +72,9 @@ export async function GET(req: NextRequest) {
   console.log('[google callback] GSC sites:', JSON.stringify(sitesRaw), '→ matched:', siteUrl)
 
   if (!siteUrl) {
-    console.warn('[google callback] no GSC property found for', project.hp_url)
-    const debugInfo = encodeURIComponent(JSON.stringify(sitesRaw.map(s => s.siteUrl)))
+    console.warn('[google callback] no GSC property found for', project.hp_url, 'sites:', JSON.stringify(sitesRaw))
     return NextResponse.redirect(
-      new URL(`/projects/${projectId}?gsc=no_property&debug=${debugInfo}`, req.url),
+      new URL(`/projects/${projectId}?gsc=no_property`, req.url),
     )
   }
 
