@@ -55,10 +55,15 @@ export async function POST(
     blog_classification_summary: buildClassificationSummary(classifications),
   }
 
-  await supabase
+  const { error: updateError } = await supabase
     .from('hp_audits')
     .update({ raw_data: updatedRawData })
     .eq('id', auditRow.id)
+
+  if (updateError) {
+    console.error('[classify-content] hp_audits update failed:', updateError.message)
+    // 分類結果は返せるので更新失敗でもレスポンスをブロックしない
+  }
 
   return Response.json({ classifications })
 }
