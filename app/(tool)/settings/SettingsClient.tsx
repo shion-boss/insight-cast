@@ -425,9 +425,9 @@ export function SettingsClient({
                 <p className="mb-6 text-xs text-[var(--text3)]">表示名、メールアドレス、アイコンを管理します</p>
 
                 <div className="mb-6 flex flex-col gap-5 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
                     <div
-                      className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] text-2xl font-bold text-[var(--accent)]"
+                      className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] text-2xl font-bold text-[var(--accent)]"
                       aria-label={avatarUrl ? '現在のアイコン画像' : '現在のアイコン'}
                       role="img"
                       style={avatarUrl ? {
@@ -439,9 +439,9 @@ export function SettingsClient({
                     >
                       {accountInitial}
                     </div>
-                    <div>
-                      <p className="mb-1 font-semibold text-[var(--text)]">{name.trim() || '名前未設定'}</p>
-                      <p className="text-xs text-[var(--text3)]">{email || 'メールアドレス未設定'}</p>
+                    <div className="min-w-0">
+                      <p className="mb-1 truncate font-semibold text-[var(--text)]">{name.trim() || '名前未設定'}</p>
+                      <p className="truncate text-xs text-[var(--text3)]">{email || 'メールアドレス未設定'}</p>
                     </div>
                   </div>
 
@@ -509,7 +509,7 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   メールアドレスの変更
                 </h2>
-                <p className="mb-5 text-xs text-[var(--text3)]">現在: {email || '未設定'}</p>
+                <p className="mb-5 break-all text-xs text-[var(--text3)]">現在: {email || '未設定'}</p>
 
                 {emailSaved ? (
                   <div className="rounded-xl bg-[var(--accent-l)] border border-[rgba(194,114,42,0.25)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
