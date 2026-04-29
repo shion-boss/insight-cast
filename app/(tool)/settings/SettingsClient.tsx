@@ -366,7 +366,6 @@ export function SettingsClient({
       const res = await fetch(`/api/projects/${projectId}`, { method: 'DELETE' })
       if (!res.ok) {
         setProjectDeleteError('削除できませんでした。時間をおいてもう一度お試しください。')
-        setProjectDeleting(false)
         return
       }
       setProjectList((prev) => prev.filter((p) => p.id !== projectId))
@@ -374,6 +373,7 @@ export function SettingsClient({
       setProjectDeleteInput('')
     } catch {
       setProjectDeleteError('削除できませんでした。通信状況を確認してください。')
+    } finally {
       setProjectDeleting(false)
     }
   }
