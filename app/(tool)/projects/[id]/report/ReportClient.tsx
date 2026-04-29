@@ -250,10 +250,10 @@ export default function ReportClient({
       />
 
       {(siteEvaluation.length > 0 || blogMetrics) && (
-        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+        <section aria-labelledby="section-site-eval" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-sm font-medium text-[var(--text2)]">HPの評価サマリー</h2>
+              <h2 id="section-site-eval" className="text-sm font-medium text-[var(--text2)]">HPの評価サマリー</h2>
               <p className="mt-1 text-xs text-[var(--text3)]">深掘り分析と、ホームページ上の更新傾向をまとめて確認できます。</p>
             </div>
             {freshnessBadge && (
@@ -300,9 +300,9 @@ export default function ReportClient({
         const maxCount = Math.max(...postFrequency.map(e => e.count))
         const scrollable = postFrequency.length > 12
         return (
-          <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
+          <section aria-labelledby="section-post-freq" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
             <div>
-              <h2 className="text-sm font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
+              <h2 id="section-post-freq" className="text-sm font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
               <p className="text-xs text-[var(--text3)] mt-1">URLやタイトルから推定できた投稿日を月別に集計しています。</p>
             </div>
             <div className={scrollable ? 'overflow-x-auto' : ''}>
@@ -345,8 +345,8 @@ export default function ReportClient({
       })()}
 
       {(effectSummary.length > 0 || trustSignals.length > 0 || conversionObstacles.length > 0 || priorityActions.length > 0) && (
-        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-          <h2 className="text-sm font-medium text-[var(--text2)]">改善とコンテンツの観点</h2>
+        <section aria-labelledby="section-improvement" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+          <h2 id="section-improvement" className="text-sm font-medium text-[var(--text2)]">改善とコンテンツの観点</h2>
 
           {effectSummary.length > 0 && (
             <div>
@@ -406,8 +406,8 @@ export default function ReportClient({
       )}
 
       {/* 自社HP現状 */}
-      <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-        <h2 className="text-sm font-medium text-[var(--text2)]">いまのホームページで伝えていること</h2>
+      <section aria-labelledby="section-hp-current" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+        <h2 id="section-hp-current" className="text-sm font-medium text-[var(--text2)]">いまのホームページで伝えていること</h2>
 
         {audit.current_content && audit.current_content.length > 0 && (
           <div>
@@ -451,8 +451,8 @@ export default function ReportClient({
 
       {/* 競合比較 */}
       {competitorAnalyses.length > 0 && (
-        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-          <h2 className="text-sm font-medium text-[var(--text2)]">競合と比べてみると</h2>
+        <section aria-labelledby="section-competitors" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
+          <h2 id="section-competitors" className="text-sm font-medium text-[var(--text2)]">競合と比べてみると</h2>
           {competitorAnalyses.map((ca, i) => {
             const hasData = (ca.gaps?.length ?? 0) > 0 || (ca.advantages?.length ?? 0) > 0 || ca.influentialTopics.length > 0
             return (
@@ -507,8 +507,8 @@ export default function ReportClient({
 
       {/* インタビューテーマ */}
       {audit.suggested_themes && audit.suggested_themes.length > 0 && (
-        <section className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
-          <h2 className="text-sm font-medium text-[var(--text2)]">インタビューで深めたいテーマ</h2>
+        <section aria-labelledby="section-themes" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
+          <h2 id="section-themes" className="text-sm font-medium text-[var(--text2)]">インタビューで深めたいテーマ</h2>
           <ul className="space-y-2">
             {audit.suggested_themes.map((theme, i) => (
               <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
