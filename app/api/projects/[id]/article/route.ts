@@ -188,7 +188,7 @@ async function saveArticle(input: {
         excerpt,
         category: blogCategory,
         type: isInterviewStyle ? 'interview' : 'normal',
-        interviewer: isInterviewStyle ? (input.interviewerType ?? null) : null,
+        interviewer: input.interviewerType ?? null,
         cover_color: 'bg-gradient-to-br from-stone-200 to-stone-300',
         date: today,
         published: false,
