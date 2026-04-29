@@ -136,7 +136,8 @@ export async function fetchGscSearchData(
     const errText = !queryRes.ok
       ? await queryRes.text().catch(() => '')
       : await pageRes.text().catch(() => '')
-    console.error('[gsc] searchAnalytics API error:', errText)
+    const status = !queryRes.ok ? queryRes.status : pageRes.status
+    console.error('[gsc] searchAnalytics API error:', status, errText)
     return null
   }
 
@@ -211,7 +212,11 @@ export async function getValidGscToken(
 
       return { accessToken: access_token, siteUrl: row.site_url }
     } catch (err) {
-      console.error('[gsc] token refresh failed:', err)
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.warn('[gsc] token refresh timed out')
+      } else {
+        console.error('[gsc] token refresh failed:', err)
+      }
       return null
     }
   }

@@ -257,21 +257,30 @@ export function buildBlogFreshnessMetrics(
 }
 
 async function firecrawlRequest<T>(path: string, body: Record<string, unknown>): Promise<T | null> {
-  const res = await fetch(`${FIRECRAWL_API_BASE}${path}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.FIRECRAWL_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(30000),
-  })
+  try {
+    const res = await fetch(`${FIRECRAWL_API_BASE}${path}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.FIRECRAWL_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(30000),
+    })
 
-  if (!res.ok) {
-    console.error('[firecrawl] firecrawlRequest failed', path, res.status)
+    if (!res.ok) {
+      console.error('[firecrawl] firecrawlRequest failed', path, res.status)
+      return null
+    }
+    return await res.json() as T
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      console.warn('[firecrawl] firecrawlRequest timed out', path)
+    } else {
+      console.error('[firecrawl] firecrawlRequest error', path, err)
+    }
     return null
   }
-  return await res.json() as T
 }
 
 // scrape は共通の fetchMarkdown を使う（waitFor: 2000 を含む）
