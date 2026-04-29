@@ -90,9 +90,13 @@ export async function createProject(formData: FormData) {
   if (error || !data) redirect('/projects/new?error=1')
 
   if (competitorUrls.length > 0) {
-    await supabase
+    const { error: competitorError } = await supabase
       .from('competitors')
       .insert(competitorUrls.map((url) => ({ project_id: data.id, url })))
+    if (competitorError) {
+      console.error('[createProject] competitors insert error', { projectId: data.id, error: competitorError.message })
+      // 競合URL保存失敗はプロジェクト自体の作成を妨げない（後から設定画面で追加可能）
+    }
   }
 
   if (industryMemo || location) {

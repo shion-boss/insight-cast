@@ -145,11 +145,19 @@ ${conversation}
     ? themes
     : values.slice(0, 3)
 
-  await supabase.from('interviews').update({
+  const { error: updateError } = await supabase.from('interviews').update({
     status: 'completed',
     summary: values.map((value) => `・${value}`).join('\n'),
     themes: nextThemes,
   }).eq('id', interviewId)
+
+  if (updateError) {
+    console.error('[POST /api/projects/[id]/interview/summarize] interviews update error', {
+      interviewId,
+      error: updateError.message,
+    })
+    return NextResponse.json({ error: 'db_error' }, { status: 500 })
+  }
 
   await syncProjectContentStatus(supabase, projectId)
   revalidatePath('/dashboard')

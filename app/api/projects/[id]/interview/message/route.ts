@@ -34,11 +34,19 @@ export async function POST(
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  await supabase.from('interview_messages').insert({
+  const { error: insertError } = await supabase.from('interview_messages').insert({
     interview_id: interviewId,
     role: 'user',
     content,
   })
+
+  if (insertError) {
+    console.error('[POST /api/projects/[id]/interview/message] insert error', {
+      interviewId,
+      error: insertError.message,
+    })
+    return NextResponse.json({ error: 'db_error' }, { status: 500 })
+  }
 
   return NextResponse.json({ ok: true })
 }

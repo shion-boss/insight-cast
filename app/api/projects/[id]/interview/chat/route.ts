@@ -67,11 +67,18 @@ export async function POST(
 
   // ユーザーメッセージ保存
   if (!isGreeting && !isPassQuestion) {
-    await supabase.from('interview_messages').insert({
+    const { error: msgInsertError } = await supabase.from('interview_messages').insert({
       interview_id: interviewId,
       role: 'user',
       content: userMessage,
     })
+    if (msgInsertError) {
+      console.error('[POST /api/projects/[id]/interview/chat] user message insert error', {
+        interviewId,
+        error: msgInsertError.message,
+      })
+      return NextResponse.json({ error: 'db_error' }, { status: 500 })
+    }
   }
 
   // 会話履歴取得（最新100件に制限して過大なコンテキスト送信を防ぐ）
