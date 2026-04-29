@@ -68,8 +68,12 @@ function toPlainText(md: string): string {
 }
 
 function formatDateShort(iso: string): string {
-  const d = new Date(iso)
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(iso)).replace(/\//g, '.')
 }
 
 function initial(name: string | null): string {

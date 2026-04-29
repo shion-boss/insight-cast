@@ -27,8 +27,12 @@ type ProjectRow = { id: string; name: string | null; hp_url: string }
 type InterviewRow = { id: string; interviewer_type: string; created_at: string }
 
 function formatDate(value: string) {
-  const d = new Date(value)
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+  return new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(value)).replace(/\//g, '.')
 }
 
 export default async function ArticlesPage({
