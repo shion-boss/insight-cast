@@ -44,14 +44,14 @@ export function ConfirmDialog({
   const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
+    if (!dialogRef.current) return
+    const dialogEl: HTMLDivElement = dialogRef.current
 
     const focusableSelector =
       'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
 
     // 最初のフォーカス可能要素にフォーカス
-    const first = dialog.querySelector<HTMLElement>(focusableSelector)
+    const first = dialogEl.querySelector<HTMLElement>(focusableSelector)
     first?.focus()
 
     function handleKeyDown(e: KeyboardEvent) {
@@ -62,7 +62,7 @@ export function ConfirmDialog({
       if (e.key !== 'Tab') return
 
       const focusableEls = Array.from(
-        dialog!.querySelectorAll<HTMLElement>(focusableSelector),
+        dialogEl.querySelectorAll<HTMLElement>(focusableSelector),
       )
       if (focusableEls.length === 0) return
 

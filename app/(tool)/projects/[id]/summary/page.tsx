@@ -117,8 +117,6 @@ export default function SummaryPage() {
   }
 
   useEffect(() => {
-    let _cancelled = false
-
     void (async () => {
       const supabase = supabaseRef.current
       const {
@@ -130,10 +128,6 @@ export default function SummaryPage() {
         return
       }
     })()
-
-    return () => {
-      _cancelled = true
-    }
   }, [router])
 
   const loadSummary = useCallback(async (options?: { manual?: boolean }) => {

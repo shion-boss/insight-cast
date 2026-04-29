@@ -309,13 +309,13 @@ export default function InterviewPage() {
   // モーダルフォーカストラップ
   useEffect(() => {
     if (!showComplete) return
-    const modal = modalRef.current
-    if (!modal) return
-    const el = modal.querySelector<HTMLElement>('button,[tabindex]:not([tabindex="-1"])')
+    if (!modalRef.current) return
+    const modalEl: HTMLDivElement = modalRef.current
+    const el = modalEl.querySelector<HTMLElement>('button,[tabindex]:not([tabindex="-1"])')
     el?.focus()
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key !== 'Tab') return
-      const focusable = Array.from(modal!.querySelectorAll<HTMLElement>('button:not([disabled]),[tabindex]:not([tabindex="-1"])'))
+      const focusable = Array.from(modalEl.querySelectorAll<HTMLElement>('button:not([disabled]),[tabindex]:not([tabindex="-1"])'))
       if (focusable.length === 0) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]

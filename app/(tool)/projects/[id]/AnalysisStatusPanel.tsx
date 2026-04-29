@@ -33,11 +33,11 @@ function GscDisconnectModal({
 
   // フォーカストラップ: モーダルが開いたら最初のボタンにフォーカス
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
+    if (!dialogRef.current) return
+    const dialogEl: HTMLDivElement = dialogRef.current
 
     // 最初のフォーカス可能要素にフォーカス
-    const focusable = dialog.querySelectorAll<HTMLElement>(
+    const focusable = dialogEl.querySelectorAll<HTMLElement>(
       'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     )
     focusable[0]?.focus()
@@ -50,7 +50,7 @@ function GscDisconnectModal({
       if (e.key !== 'Tab') return
 
       const focusableEls = Array.from(
-        dialog!.querySelectorAll<HTMLElement>(
+        dialogEl.querySelectorAll<HTMLElement>(
           'button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
       )
