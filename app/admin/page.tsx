@@ -56,8 +56,12 @@ async function getStats() {
 }
 
 function formatDate(date: string): string {
-  const d = new Date(date)
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+  return new Date(date).toLocaleDateString('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
 
 export default async function AdminDashboardPage() {

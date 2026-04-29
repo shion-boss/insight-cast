@@ -37,7 +37,7 @@ function slugify(text: string): string {
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
   if (ascii) return ascii
-  const date = new Date().toISOString().slice(0, 10)
+  const date = new Date().toLocaleDateString('sv', { timeZone: 'Asia/Tokyo' })
   const suffix = crypto.randomUUID().slice(0, 8)
   return `${date}-${suffix}`
 }
@@ -221,7 +221,8 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const handleSaveRef = useRef<(() => void) | null>(null)
 
-  const today = new Date().toISOString().split('T')[0]
+  // JST での今日の日付（UTC のまま計算すると 0〜8 時台に前日になる）
+  const today = new Date().toLocaleDateString('sv', { timeZone: 'Asia/Tokyo' })
   const defaultSlug = defaultValues?.slug ?? (mode === 'new' ? slugify('') : '')
 
   const [form, setForm] = useState<PostFormData>({

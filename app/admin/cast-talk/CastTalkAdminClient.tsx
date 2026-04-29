@@ -22,8 +22,12 @@ const FORMAT_LABELS: Record<string, string> = {
 }
 
 function formatDate(iso: string): string {
-  const d = new Date(iso)
-  return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`
+  return new Date(iso).toLocaleDateString('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 }
 
 export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[] }) {
