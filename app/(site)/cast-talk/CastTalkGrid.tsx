@@ -206,12 +206,18 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
     // offset 1 は featured 分をスキップ
     const offset = 1 + nextPage * LIST_PAGE_SIZE
     setLoading(true)
-    const res = await fetch(`/api/cast-talk/list?offset=${offset}&limit=${LIST_PAGE_SIZE}`)
-    const json = (await res.json()) as { talks: Talk[] }
-    setListTalks(json.talks)
-    setListPage(nextPage)
-    setLoading(false)
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    try {
+      const res = await fetch(`/api/cast-talk/list?offset=${offset}&limit=${LIST_PAGE_SIZE}`)
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      const json = (await res.json()) as { talks: Talk[] }
+      setListTalks(json.talks)
+      setListPage(nextPage)
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    } catch {
+      // ネットワークエラー時はページ状態を変えない
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!featuredTalk && listTotalCount === 0) {
