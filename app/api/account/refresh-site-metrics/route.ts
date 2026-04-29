@@ -61,7 +61,11 @@ export async function POST() {
         .update({ raw_data: refreshed.rawData })
         .eq('id', audit.id)
 
-      if (!error) refreshedCount += 1
+      if (error) {
+        console.error('[account/refresh-site-metrics] hp_audits update failed:', project.id, error.message)
+      } else {
+        refreshedCount += 1
+      }
     } catch (error) {
       console.error('[account/refresh-site-metrics]', project.id, error)
     }

@@ -43,6 +43,7 @@ export async function POST(
       .eq('id', audit.id)
 
     if (error) {
+      console.error('[refresh-site-metrics] hp_audits update failed:', error.message)
       return NextResponse.json({ error: 'internal_error' }, { status: 500 })
     }
 
