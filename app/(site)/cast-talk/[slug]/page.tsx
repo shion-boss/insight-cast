@@ -163,7 +163,7 @@ export default async function CastTalkDetailPage({
 
       <main id="main-content" className="relative z-10">
         {/* ヒーロー */}
-        <section className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
+        <section aria-label="記事タイトルと登場キャスト" className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
           <div className="mx-auto max-w-3xl">
             <Breadcrumb items={[
               { label: 'Cast Talk', href: '/cast-talk' },
@@ -226,17 +226,17 @@ export default async function CastTalkDetailPage({
         </section>
 
         {/* 会話コンテンツ */}
-        <section className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
+        <section aria-label="会話コンテンツ" className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
           <CastTalkContent messages={messages} characterMap={characterMap} interviewerId={talk.interviewer_id} />
         </section>
 
         {/* シェアボタン */}
-        <section className="mx-auto max-w-3xl px-6 pb-4 sm:px-8">
+        <section aria-label="記事をシェアする" className="mx-auto max-w-3xl px-6 pb-4 sm:px-8">
           <ShareButtons title={talk.title} url={talkUrl} />
         </section>
 
         {/* CTA */}
-        <section className="border-t border-[var(--border)] bg-[var(--surface)]">
+        <section aria-label="取材を始めるご案内" className="border-t border-[var(--border)] bg-[var(--surface)]">
           <div className="mx-auto max-w-3xl px-6 py-12 sm:px-8">
             <div className="flex items-center gap-4">
               {interviewer && (
@@ -264,7 +264,7 @@ export default async function CastTalkDetailPage({
         </section>
 
         {/* Cast Talk 一覧へ */}
-        <section className="border-t border-[var(--border)]">
+        <section aria-label="記事一覧へ戻る" className="border-t border-[var(--border)]">
           <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
             <Link
               href={backHref}
