@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
 type MemberInfo = {
@@ -71,7 +71,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
   const [confirmCancelInvite, setConfirmCancelInvite] = useState<{ id: string; email: string } | null>(null)
   const [cancelingInvite, setCancelingInvite] = useState(false)
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       const res = await fetch(`/api/projects/${projectId}/members`)
       if (!res.ok) throw new Error('failed')
@@ -82,12 +82,11 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [projectId])
 
   useEffect(() => {
-    fetchMembers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId])
+    void fetchMembers()
+  }, [fetchMembers])
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -141,13 +140,15 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
     if (!confirmDelete) return
     setDeleting(true)
     try {
-      await fetch(`/api/projects/${projectId}/members/${confirmDelete.userId}`, {
+      const res = await fetch(`/api/projects/${projectId}/members/${confirmDelete.userId}`, {
         method: 'DELETE',
       })
+      if (!res.ok) throw new Error('failed')
       setConfirmDelete(null)
       await fetchMembers()
     } catch {
-      // サイレントエラー
+      setError('メンバーを削除できませんでした。もう一度お試しください。')
+      setConfirmDelete(null)
     } finally {
       setDeleting(false)
     }
@@ -157,13 +158,15 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
     if (!confirmCancelInvite) return
     setCancelingInvite(true)
     try {
-      await fetch(`/api/projects/${projectId}/invitations/${confirmCancelInvite.id}`, {
+      const res = await fetch(`/api/projects/${projectId}/invitations/${confirmCancelInvite.id}`, {
         method: 'DELETE',
       })
+      if (!res.ok) throw new Error('failed')
       setConfirmCancelInvite(null)
       await fetchMembers()
     } catch {
-      // サイレントエラー
+      setError('招待をキャンセルできませんでした。もう一度お試しください。')
+      setConfirmCancelInvite(null)
     } finally {
       setCancelingInvite(false)
     }
