@@ -1,6 +1,6 @@
 // Insight Cast Service Worker
 // public site のみキャッシュ。認証済みアプリ側（/dashboard 等）はキャッシュしない。
-const CACHE_NAME = 'insight-cast-v1'
+const CACHE_NAME = 'insight-cast-v2'
 const OFFLINE_URL = '/offline'
 
 const PRECACHE_URLS = ['/', '/offline', '/logo.jpg']
