@@ -49,7 +49,7 @@ export function AppShellSkeleton({
       {/* main area */}
       <div className="lg:pl-[236px]">
         {/* header */}
-        <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
+        <header className="sticky top-0 z-[35] border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
           <div className="mx-auto flex h-[64px] max-w-6xl items-center justify-between gap-4 px-6">
             <div className="min-w-0">
               {title && <p className="truncate font-serif text-lg font-bold text-[var(--text)]">{title}</p>}
