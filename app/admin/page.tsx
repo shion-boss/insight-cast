@@ -4,6 +4,15 @@ import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { ButtonLink } from '@/components/ui'
 
+type RecentPost = {
+  id: string
+  slug: string
+  title: string
+  published: boolean
+  date: string
+  category: string
+}
+
 async function getStats() {
   const adminClient = createAdminClient()
 
@@ -42,7 +51,7 @@ async function getStats() {
     total: totalCount ?? 0,
     published: publishedCount ?? 0,
     draft: (totalCount ?? 0) - (publishedCount ?? 0),
-    recentPosts: recentPosts ?? [],
+    recentPosts: (recentPosts ?? []) as RecentPost[],
     userCount: usersData?.users?.length ?? 0,
     projects: {
       total: projectTotal ?? 0,
@@ -157,14 +166,14 @@ export default async function AdminDashboardPage() {
             <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
               {stats.recentPosts.map((post, i) => (
                 <div
-                  key={post.id as string}
+                  key={post.id}
                   className={`flex items-center gap-4 px-5 py-4 ${
                     i < stats.recentPosts.length - 1 ? 'border-b border-[var(--border)]' : ''
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--text)]">{post.title as string}</p>
-                    <p className="mt-0.5 text-xs text-[var(--text3)]">{formatDate(post.date as string)}</p>
+                    <p className="truncate text-sm font-medium text-[var(--text)]">{post.title}</p>
+                    <p className="mt-0.5 text-xs text-[var(--text3)]">{formatDate(post.date)}</p>
                   </div>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
@@ -176,7 +185,7 @@ export default async function AdminDashboardPage() {
                     {post.published ? '公開中' : '下書き'}
                   </span>
                   <Link
-                    href={`/admin/posts/${post.id as string}/edit`}
+                    href={`/admin/posts/${post.id}/edit`}
                     className="shrink-0 rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     編集
