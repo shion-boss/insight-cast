@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { FullPageLoading } from './full-page-loading'
 
 const TOOL_PREFIXES = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
@@ -54,7 +55,9 @@ export function PageTransitionOverlay() {
       if (fromArea !== toArea) {
         prevPath.current = window.location.pathname
         hideAt.current = Date.now() + MIN_MS
-        setVisible(true)
+        // React 18 の自動バッチングで pathname 変更と同一バッチになると
+        // ローディングが画面にコミットされないため flushSync で強制描画する
+        flushSync(() => setVisible(true))
       }
     }
 

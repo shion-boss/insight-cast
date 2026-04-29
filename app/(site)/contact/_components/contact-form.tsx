@@ -79,6 +79,7 @@ export function ContactForm() {
         throw new Error(apiMessage)
       }
       setStatus('success')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (error) {
       const message =
         error instanceof Error && error.name === 'AbortError'
