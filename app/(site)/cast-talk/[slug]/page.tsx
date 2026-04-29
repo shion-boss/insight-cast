@@ -196,23 +196,23 @@ export default async function CastTalkDetailPage({
             {/* プロフィールカード */}
             {(interviewer ?? guest) && (
               <div className="mt-4 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-4">
-                {[interviewer, guest].filter(Boolean).map((char) => (
-                  <div key={char!.id} className="flex gap-3 rounded-xl border border-[var(--border)] bg-white/60 p-3 backdrop-blur-sm sm:p-4">
+                {([interviewer, guest] as Array<Character | undefined>).filter((c): c is Character => Boolean(c)).map((char) => (
+                  <div key={char.id} className="flex gap-3 rounded-xl border border-[var(--border)] bg-white/60 p-3 backdrop-blur-sm sm:p-4">
                     <Image
-                      src={char!.icon96}
-                      alt={char!.name}
+                      src={char.icon96}
+                      alt={char.name}
                       width={96}
                       height={96}
                       className="h-10 w-10 shrink-0 rounded-full border-2 border-white object-cover shadow-sm sm:h-12 sm:w-12"
                     />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                        <span className="font-semibold text-[var(--text)]">{char!.name}</span>
+                        <span className="font-semibold text-[var(--text)]">{char.name}</span>
                         <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--accent)]">
-                          {char!.label}
+                          {char.label}
                         </span>
                       </div>
-                      <p className="mt-1 text-[12px] leading-relaxed text-[var(--text2)] sm:text-[13px]">{char!.description}</p>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[var(--text2)] sm:text-[13px]">{char.description}</p>
                     </div>
                   </div>
                 ))}

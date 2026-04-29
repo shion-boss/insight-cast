@@ -105,10 +105,11 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
       })
       const data = (await res.json()) as { ok?: boolean; user?: { id: string; email: string; created_at: string }; plan?: PlanKey; message?: string }
       if (!res.ok) throw new Error(data.message ?? '作成に失敗しました')
+      if (!data.user) throw new Error('ユーザー情報を取得できませんでした')
       onCreated({
-        id: data.user!.id,
-        email: data.user!.email ?? null,
-        created_at: data.user!.created_at,
+        id: data.user.id,
+        email: data.user.email ?? null,
+        created_at: data.user.created_at,
         last_sign_in_at: null,
         plan: data.plan ?? 'free',
       })

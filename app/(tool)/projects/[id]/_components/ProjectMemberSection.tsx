@@ -125,14 +125,16 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
 
   const handleRoleChange = async (userId: string, role: 'editor' | 'viewer') => {
     try {
-      await fetch(`/api/projects/${projectId}/members/${userId}`, {
+      const res = await fetch(`/api/projects/${projectId}/members/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role }),
       })
+      if (!res.ok) throw new Error('failed')
       await fetchMembers()
     } catch {
-      // サイレントエラー（再取得で整合）
+      setError('権限の変更に失敗しました。もう一度お試しください。')
+      await fetchMembers()
     }
   }
 
