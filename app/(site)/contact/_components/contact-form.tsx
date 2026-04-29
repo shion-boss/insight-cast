@@ -144,7 +144,7 @@ export function ContactForm() {
           aria-describedby={fieldErrors.name ? 'err-name' : undefined}
         />
         {fieldErrors.name && (
-          <p id="err-name" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.name}</p>
+          <p id="err-name" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.name}</p>
         )}
       </div>
 
@@ -162,7 +162,7 @@ export function ContactForm() {
           aria-describedby={fieldErrors.email ? 'err-email' : undefined}
         />
         {fieldErrors.email && (
-          <p id="err-email" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.email}</p>
+          <p id="err-email" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.email}</p>
         )}
       </div>
 
@@ -225,7 +225,7 @@ export function ContactForm() {
           )}
         />
         {fieldErrors.message && (
-          <p id="err-message" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.message}</p>
+          <p id="err-message" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.message}</p>
         )}
       </div>
 

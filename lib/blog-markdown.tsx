@@ -36,7 +36,7 @@ function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
           key={`${keyPrefix}-link-${match.index}`}
           href={linkMatch[2]}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="font-medium text-[var(--accent)] underline underline-offset-2"
         >
           {linkMatch[1]}

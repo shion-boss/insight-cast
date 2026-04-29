@@ -238,8 +238,7 @@ export default function InterviewPage() {
     }
   }, [interviewId, latestInterviewerMessage, projectId])
 
-  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
-    e.preventDefault()
+  async function submitMessage() {
     if (!input.trim() || loading) return
     if (hasReachedTurnLimit) {
       setShowComplete(true)
@@ -541,7 +540,7 @@ export default function InterviewPage() {
               この質問はパス
             </button>
           </div>
-          <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3 items-end">
+          <form onSubmit={(e) => { e.preventDefault(); void submitMessage() }} className="flex gap-2 sm:gap-3 items-end">
             <textarea
               aria-label="インタビューへの回答を入力"
               ref={textareaRef}
@@ -551,7 +550,7 @@ export default function InterviewPage() {
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
                   e.preventDefault()
-                  handleSubmit(e as unknown as React.SyntheticEvent<HTMLFormElement>)
+                  void submitMessage()
                 }
               }}
               placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事にまとめられます。' : 'ここに話しかけてください'}
