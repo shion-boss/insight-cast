@@ -10,9 +10,9 @@ import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { getMemberRole } from '@/lib/project-members'
-import dynamic from 'next/dynamic'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
 import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
+import { AnalyticsSectionDynamic } from './_components/AnalyticsSectionDynamic'
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import {
@@ -24,19 +24,7 @@ import {
   type ArticleSectionItem,
 } from './ProjectSections'
 
-const AnalyticsSection = dynamic(
-  () => import('@/app/(tool)/dashboard/_components/analytics-section').then((m) => ({ default: m.AnalyticsSection })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="mb-6 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 animate-pulse">
-        <div className="h-4 w-32 rounded bg-[var(--border)] mb-4" />
-        <div className="h-24 w-full rounded bg-[var(--border)] mb-4" />
-        <div className="h-16 w-full rounded bg-[var(--border)]" />
-      </div>
-    ),
-  },
-)
+
 type InterviewRow = {
   id: string
   project_id: string
@@ -345,7 +333,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       {/* Analytics */}
       <div className="mt-8">
-        <AnalyticsSection
+        <AnalyticsSectionDynamic
           monthlyArticles={monthlyArticles}
           heatmapData={heatmapData}
           continuityScore={continuityScore}
