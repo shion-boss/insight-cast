@@ -20,7 +20,11 @@ export async function GET(req: NextRequest) {
     .order('published_at', { ascending: false })
     .range(offset, offset + limit - 1)
 
-  if (error) return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+  if (error) {
+    const traceId = crypto.randomUUID()
+    console.error('[cast-talk/list] DB error', { traceId, error: error.message })
+    return NextResponse.json({ code: 'DB_ERROR', message: 'データ取得に失敗しました', traceId }, { status: 500 })
+  }
 
   return NextResponse.json(
     { talks: data ?? [], total: count ?? 0, pageSize: limit },
