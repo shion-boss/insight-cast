@@ -459,7 +459,8 @@ export default function InterviewPage() {
       </div>
 
       {/* 会話ログ */}
-      <div role="log" aria-label="インタビューの会話" aria-live="polite" className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
+      {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
+      <div role="log" aria-label="インタビューの会話" aria-live="polite" tabIndex={0} className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
         {messages.map((msg, i) => (
           <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'interviewer' && (

@@ -121,7 +121,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
 
         {/* summary */}
         {talk.summary && (
-          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555] line-clamp-3" style={{ borderColor: theme.color }}>
             「{talk.summary}」
           </p>
         )}
@@ -179,7 +179,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
 
       {/* summary */}
       {talk.summary && (
-        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555] line-clamp-3" style={{ borderColor: theme.color }}>
           「{talk.summary}」
         </p>
       )}

@@ -443,7 +443,8 @@ export default function SummaryPage() {
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
               </div>
-              <div id="summary-interview-log" hidden={!showMessages} className="mt-4 space-y-0 max-h-80 overflow-y-auto">
+              {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
+              <div id="summary-interview-log" hidden={!showMessages} tabIndex={showMessages ? 0 : -1} className="mt-4 space-y-0 max-h-80 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)]">
                   {data?.messages.map((m, i) => (
                     <div
                       key={i}
