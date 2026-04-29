@@ -96,7 +96,11 @@ export default async function ArticlesPage({
   if (projectIdParam !== 'all') articlesQuery = articlesQuery.eq('project_id', projectIdParam)
   if (articleTypeParam !== 'all') articlesQuery = articlesQuery.eq('article_type', articleTypeParam)
   if (interviewIdParam !== 'all') articlesQuery = articlesQuery.eq('interview_id', interviewIdParam)
-  if (q) articlesQuery = articlesQuery.or(`title.ilike.%${q}%,content.ilike.%${q}%`)
+  if (q) {
+    // ilike のワイルドカード文字 (%, _) をエスケープして意図しないパターンマッチを防ぐ
+    const escapedQ = q.replace(/[%_\\]/g, (c) => `\\${c}`)
+    articlesQuery = articlesQuery.or(`title.ilike.%${escapedQ}%,content.ilike.%${escapedQ}%`)
+  }
 
   // フィルター済みページネーション記事 / インタビュアードロップダウン用全件 / 全記事件数 を並列取得
   const [
