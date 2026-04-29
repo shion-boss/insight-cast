@@ -279,7 +279,7 @@ export async function exchangeCodeForTokens(
 export async function findMatchingSiteUrl(
   accessToken: string,
   hpUrl: string,
-): Promise<string | null> {
+): Promise<{ siteUrl: string | null; sitesRaw: GoogleSiteEntry[] }> {
   const res = await fetch('https://www.googleapis.com/webmasters/v3/sites', {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
@@ -287,24 +287,30 @@ export async function findMatchingSiteUrl(
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     console.error('[gsc] sites.list error:', res.status, text)
-    return null
+    return { siteUrl: null, sitesRaw: [] }
   }
 
   const data = (await res.json()) as { siteEntry?: GoogleSiteEntry[] }
   const sites = data.siteEntry ?? []
 
-  if (sites.length === 0) return null
+  if (sites.length === 0) return { siteUrl: null, sitesRaw: [] }
 
   // 正規化: trailing slash を除いた形で比較
+  // sc-domain: プロパティはドメイン全体をカバーするため、ドメイン部分で照合する
   const normalizedHp = hpUrl.replace(/\/$/, '').toLowerCase()
+  const hpHostname = (() => { try { return new URL(hpUrl).hostname } catch { return '' } })()
 
-  // 完全前方一致するものを優先
   const matched = sites.find((s) => {
     const normalized = s.siteUrl.replace(/\/$/, '').toLowerCase()
+    // sc-domain: 形式（ドメインプロパティ）
+    if (normalized.startsWith('sc-domain:')) {
+      const domain = normalized.replace('sc-domain:', '')
+      return hpHostname === domain || hpHostname.endsWith('.' + domain)
+    }
     return normalizedHp.startsWith(normalized) || normalized.startsWith(normalizedHp)
   })
 
-  return matched?.siteUrl ?? sites[0]?.siteUrl ?? null
+  return { siteUrl: matched?.siteUrl ?? sites[0]?.siteUrl ?? null, sitesRaw: sites }
 }
 
 // ----------------------------------------------------------------

@@ -68,7 +68,8 @@ export async function GET(req: NextRequest) {
   }
 
   // GSC サイト一覧から HP URL に合うプロパティを自動選択
-  const siteUrl = await findMatchingSiteUrl(tokens.access_token, project.hp_url)
+  const { siteUrl, sitesRaw } = await findMatchingSiteUrl(tokens.access_token, project.hp_url)
+  console.log('[google callback] GSC sites:', JSON.stringify(sitesRaw), '→ matched:', siteUrl)
 
   if (!siteUrl) {
     console.warn('[google callback] no GSC property found for', project.hp_url)
