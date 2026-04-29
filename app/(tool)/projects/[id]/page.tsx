@@ -13,6 +13,16 @@ import { getMemberRole } from '@/lib/project-members'
 import dynamic from 'next/dynamic'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
 import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
+import AnalysisStatusPanel from './AnalysisStatusPanel'
+import { ProjectMemberSection } from './_components/ProjectMemberSection'
+import {
+  PaginatedUncreatedThemes,
+  PaginatedInterviewHistory,
+  PaginatedArticles,
+  type UncreatedThemeItem,
+  type InterviewHistoryItem,
+  type ArticleSectionItem,
+} from './ProjectSections'
 
 const AnalyticsSection = dynamic(
   () => import('@/app/(tool)/dashboard/_components/analytics-section').then((m) => ({ default: m.AnalyticsSection })),
@@ -27,16 +37,6 @@ const AnalyticsSection = dynamic(
     ),
   },
 )
-import AnalysisStatusPanel from './AnalysisStatusPanel'
-import { ProjectMemberSection } from './_components/ProjectMemberSection'
-import {
-  PaginatedUncreatedThemes,
-  PaginatedInterviewHistory,
-  PaginatedArticles,
-  type UncreatedThemeItem,
-  type InterviewHistoryItem,
-  type ArticleSectionItem,
-} from './ProjectSections'
 type InterviewRow = {
   id: string
   project_id: string
