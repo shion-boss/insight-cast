@@ -68,8 +68,16 @@ export async function GET(req: NextRequest) {
   }
 
   // GSC サイト一覧から HP URL に合うプロパティを自動選択
-  const { siteUrl, sitesRaw } = await findMatchingSiteUrl(tokens.access_token, project.hp_url)
-  console.log('[google callback] GSC sites:', JSON.stringify(sitesRaw), '→ matched:', siteUrl)
+  const { siteUrl, sitesRaw, apiError } = await findMatchingSiteUrl(tokens.access_token, project.hp_url)
+  console.log('[google callback] GSC sites:', JSON.stringify(sitesRaw), '→ matched:', siteUrl, 'apiError:', apiError)
+
+  if (apiError) {
+    // API呼び出し自体が失敗（403=API未有効化 or スコープ不足、500=サーバーエラー等）
+    console.error('[google callback] GSC API error for', project.hp_url)
+    return NextResponse.redirect(
+      new URL(`/projects/${projectId}?gsc=error`, req.url),
+    )
+  }
 
   if (!siteUrl) {
     console.warn('[google callback] no GSC property found for', project.hp_url, 'sites:', JSON.stringify(sitesRaw))

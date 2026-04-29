@@ -279,7 +279,7 @@ export async function exchangeCodeForTokens(
 export async function findMatchingSiteUrl(
   accessToken: string,
   hpUrl: string,
-): Promise<{ siteUrl: string | null; sitesRaw: GoogleSiteEntry[] }> {
+): Promise<{ siteUrl: string | null; sitesRaw: GoogleSiteEntry[]; apiError?: boolean }> {
   const res = await fetch('https://www.googleapis.com/webmasters/v3/sites', {
     headers: { Authorization: `Bearer ${accessToken}` },
   })
@@ -287,7 +287,7 @@ export async function findMatchingSiteUrl(
   if (!res.ok) {
     const text = await res.text().catch(() => '')
     console.error('[gsc] sites.list error:', res.status, text)
-    return { siteUrl: null, sitesRaw: [] }
+    return { siteUrl: null, sitesRaw: [], apiError: true }
   }
 
   const data = (await res.json()) as { siteEntry?: GoogleSiteEntry[] }
