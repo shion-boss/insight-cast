@@ -33,6 +33,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
+  // 外部オリジン（GTM・Stripe・Supabase等）はサービスワーカーで触らない
+  if (url.origin !== self.location.origin) return
+
   // 認証済みアプリ側（/dashboard, /projects, /settings, /admin 等）はキャッシュしない
   const privatePathPrefixes = ['/dashboard', '/projects', '/settings', '/admin', '/auth', '/api']
   if (privatePathPrefixes.some((prefix) => url.pathname.startsWith(prefix))) {

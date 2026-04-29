@@ -357,9 +357,14 @@ export default function AnalysisStatusPanel({
                 </div>
               )}
               {gscStatus === 'disconnected' && (
-                <p className="text-sm text-[var(--text2)]">
-                  連携すると、検索データをもとにより詳しい調査ができます。
-                </p>
+                <div className="space-y-1">
+                  <p className="text-sm text-[var(--text2)]">
+                    連携すると、検索データをもとにより詳しい調査ができます。
+                  </p>
+                  <p className="text-xs text-[var(--text3)]">
+                    ホームページを登録している Google アカウントで連携してください。
+                  </p>
+                </div>
               )}
             </div>
           </div>
