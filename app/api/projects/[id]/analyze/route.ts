@@ -324,11 +324,14 @@ export async function GET(
   resolvedStatus = resolveProjectAnalysisStatus(resolvedStatus, readiness.isReady)
 
   if (project?.status !== resolvedStatus) {
-    await supabase
+    const { error: statusSyncError } = await supabase
       .from('projects')
       .update({ status: resolvedStatus })
       .eq('id', id)
       .eq('user_id', user.id)
+    if (statusSyncError) {
+      console.error('[analyze/GET] failed to sync status:', statusSyncError.message)
+    }
   }
 
   return NextResponse.json({ status: resolvedStatus })

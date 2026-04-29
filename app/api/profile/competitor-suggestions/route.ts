@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       .filter((item): item is Suggestion => item !== null)
       .slice(0, 5)
 
-    await supabase
+    const { error: cacheError } = await supabase
       .from('competitor_suggestion_caches')
       .upsert({
         user_id: user.id,
@@ -118,6 +118,10 @@ export async function POST(req: NextRequest) {
       }, {
         onConflict: 'user_id,input_signature',
       })
+    if (cacheError) {
+      // キャッシュ保存の失敗はレスポンスをブロックしない
+      console.warn('[competitor-suggestions] cache upsert failed:', cacheError.message)
+    }
 
     return Response.json({ suggestions, cached: false })
   } catch {
