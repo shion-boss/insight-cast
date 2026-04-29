@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
 
@@ -59,7 +60,9 @@ export function NavigationOverlay() {
     areaRef.current = fromArea
     prevPath.current = location.pathname
     hideAt.current = Date.now() + MIN_MS
-    setVisible(true)
+    // React 18 の自動バッチングで pathname 変更と同一バッチになると
+    // オーバーレイが画面にコミットされないため flushSync で強制描画する
+    flushSync(() => setVisible(true))
   }, [])
 
   useEffect(() => {

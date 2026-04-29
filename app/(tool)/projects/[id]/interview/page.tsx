@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getCharacter } from '@/lib/characters'
@@ -57,6 +58,7 @@ export default function InterviewPage() {
     error: null,
   })
   const [isSupportPanelOpen, setIsSupportPanelOpen] = useState(false)
+  const [finishing, setFinishing] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
@@ -282,7 +284,8 @@ export default function InterviewPage() {
     }
   }
 
-  async function handleFinish() {
+  function handleFinish() {
+    flushSync(() => setFinishing(true))
     router.push(`/projects/${projectId}/summary?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`)
   }
 
@@ -645,9 +648,10 @@ export default function InterviewPage() {
                 <button
                   type="button"
                   onClick={handleFinish}
-                  className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  disabled={finishing}
+                  className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  記事にまとめる
+                  {finishing ? 'まとめています...' : '記事にまとめる'}
                 </button>
               </>
             )}
@@ -660,14 +664,16 @@ export default function InterviewPage() {
                   <button
                     type="button"
                     onClick={handleFinish}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                    disabled={finishing}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    はい、まとめてください
+                    {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>
                   <button
                     type="button"
                     onClick={handleContinue}
-                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     もう少し話す
                   </button>
@@ -690,9 +696,10 @@ export default function InterviewPage() {
                   <button
                     type="button"
                     onClick={handleFinish}
-                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
-                    ここまでの内容でまとめる
+                    {finishing ? 'まとめています...' : 'ここまでの内容でまとめる'}
                   </button>
                 </div>
               </>
@@ -706,14 +713,16 @@ export default function InterviewPage() {
                   <button
                     type="button"
                     onClick={handleFinish}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                    disabled={finishing}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    はい、まとめてください
+                    {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>
                   <button
                     type="button"
                     onClick={handleContinue}
-                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors"
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まだ話す
                   </button>
