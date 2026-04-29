@@ -31,13 +31,15 @@ export function AnalysisLoadingScene({
     { label: '取材テーマを提案中', subLabel: 'インタビューの切り口を整えています' },
   ]), [])
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setTick((current) => (current + 1) % steps.length)
-    }, 1400)
+  // ステップごとの滞在時間（ms）。最後のステップは止まったまま
+  const STEP_DURATIONS = [3000, 4500, 8000]
 
-    return () => window.clearInterval(intervalId)
-  }, [steps.length])
+  useEffect(() => {
+    if (tick >= steps.length - 1) return
+    const id = window.setTimeout(() => setTick((t) => t + 1), STEP_DURATIONS[tick] ?? 4000)
+    return () => window.clearTimeout(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tick, steps.length])
 
   return (
     <div role="status" aria-label="ホームページを分析中" className="ic-loading-card w-full max-w-[520px]">

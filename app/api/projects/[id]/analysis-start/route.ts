@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { isFreePlanLocked } from '@/lib/plans'
+import { checkRateLimit } from '@/lib/api-usage'
 
 export async function POST(
   req: NextRequest,
@@ -31,6 +33,14 @@ export async function POST(
   const isFetchFailed = project.status === 'fetch_failed'
 
   // force 再調査の月1回制限（analyzing に書く前に弾く）
+  if (await isFreePlanLocked(supabase, user.id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
+
+  if (!(await checkRateLimit(user.id, '/api/projects/[id]/analyze')).allowed) {
+    return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
+  }
+
   if (force && !isFetchFailed) {
     const { data: auditRow } = await supabase
       .from('hp_audits')

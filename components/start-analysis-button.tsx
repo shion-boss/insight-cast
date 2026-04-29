@@ -67,6 +67,18 @@ export default function StartAnalysisButton({
         body: JSON.stringify(force ? { force: true } : {}),
       })
 
+      if (res.status === 403) {
+        clearPendingProjectAnalysis(projectId)
+        showToast({
+          id: `analysis-plan-locked-${projectId}`,
+          title: '調査を開始できませんでした',
+          description: '無料プランの上限に達しています。プランをアップグレードすると続けられます。',
+          tone: 'warning',
+          characterId: 'claus',
+        })
+        return
+      }
+
       if (res.status === 429) {
         const json = await res.json().catch(() => null)
         showReanalysisLimitToast(json?.next_available_at)
