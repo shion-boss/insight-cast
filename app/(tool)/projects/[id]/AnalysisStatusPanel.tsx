@@ -267,7 +267,7 @@ export default function AnalysisStatusPanel({
                 <p className="text-sm text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
               </div>
               <button type="button" disabled className={getButtonClass('secondary')}>
-                この取材先を再調査する
+                このプロジェクトを再調査する
               </button>
             </>
           ) : status === 'fetch_failed' ? (

@@ -65,7 +65,7 @@ export default function ArticlePage() {
   const searchParams = useSearchParams()
   const interviewId = searchParams.get('interviewId') ?? ''
   const initialTheme = searchParams.get('theme') ?? ''
-  const projectName = searchParams.get('projectName') ?? 'この取材先'
+  const projectName = searchParams.get('projectName') ?? 'このプロジェクト'
   const from = searchParams.get('from') ?? ''
   const supabaseRef = useRef(createClient())
 

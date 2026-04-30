@@ -151,7 +151,7 @@ export default function ReportClient({
             href={`/projects/${projectId}`}
             className={getButtonClass('primary')}
           >
-            取材先の管理へ戻る
+            プロジェクトに戻る
           </Link>
         </div>
       </div>
@@ -223,7 +223,7 @@ export default function ReportClient({
           icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
           name="クラウス"
           title="まだ表示できる調査結果がありません。"
-          description="この取材先では、まだ確認できる調査データがありません。取材先の管理画面から必要に応じて調査を開始してください。"
+          description="このプロジェクトでは、まだ確認できる調査データがありません。プロジェクトの管理画面から必要に応じて調査を開始してください。"
           tone="soft"
         />
         <div className="flex justify-center">
@@ -231,7 +231,7 @@ export default function ReportClient({
             href={`/projects/${projectId}`}
             className={getButtonClass('primary')}
           >
-            取材先の管理へ戻る
+            プロジェクトに戻る
           </Link>
         </div>
       </div>
