@@ -574,14 +574,20 @@ export function SettingsClient({
                             {!isConfirming && (
                               <button
                                 type="button"
+                                aria-label={`${displayName}を削除`}
                                 onClick={() => {
                                   setDeletingProjectId(project.id)
                                   setProjectDeleteInput('')
                                   setProjectDeleteError(null)
                                 }}
-                                className="inline-flex shrink-0 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                                className="flex shrink-0 min-h-[2rem] min-w-[2rem] items-center justify-center rounded-lg border border-[var(--err)]/30 bg-[var(--surface)] text-[var(--err)] opacity-50 transition-all hover:opacity-100 hover:bg-[var(--err-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                               >
-                                削除する
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                  <path d="M10 11v6M14 11v6" />
+                                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                                </svg>
                               </button>
                             )}
                           </div>
