@@ -606,13 +606,22 @@ export function ArticleExportPanel({
 
       {safeFormat === 'blocks' ? (
         <div className="flex flex-col gap-3 p-5">
-          {groupArticleBlocks(splitIntoArticleBlocks(editedContent)).map((group, idx) =>
-            group.type === 'section' ? (
-              <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
-            ) : (
-              <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
-            )
-          )}
+          {articleType === 'conversation'
+            ? buildConversationRenderGroups(editedContent).map((group, idx) =>
+                group.type === 'conversation'
+                  ? <ConversationBlockCard key={idx} text={group.text} onSwitchToHtml={() => setFormat('html')} />
+                  : group.type === 'section'
+                  ? <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
+                  : <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
+              )
+            : groupArticleBlocks(splitIntoArticleBlocks(editedContent)).map((group, idx) =>
+                group.type === 'section' ? (
+                  <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
+                ) : (
+                  <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
+                )
+              )
+          }
         </div>
       ) : safeFormat === 'html' && htmlPreview ? (
         <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output, { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }) }} />
@@ -686,6 +695,73 @@ const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
   body:    '本文',
 }
 
+// 会話込み記事専用のレンダーグループ
+type ConvRenderGroup =
+  | { type: 'standalone'; block: ArticleBlock }
+  | { type: 'section'; heading: ArticleBlock; body: ArticleBlock | null }
+  | { type: 'conversation'; text: string }
+
+function buildConversationRenderGroups(markdown: string): ConvRenderGroup[] {
+  const lines = markdown.split('\n')
+  const groups: ConvRenderGroup[] = []
+  let phase: 'before' | 'conv' | 'after' = 'before'
+  let hasH1 = false
+  let currentHeading: ArticleBlock | null = null
+  let accLines: string[] = []
+  let convLines: string[] = []
+
+  const isConvLine = (l: string) => /^\*\*.+?\*\*[:：]\s*\S/.test(l)
+
+  function flushGroup() {
+    const text = toPlainText(accLines.join('\n').trim())
+    if (currentHeading) {
+      groups.push({ type: 'section', heading: currentHeading, body: text ? { kind: 'body', text } : null })
+      currentHeading = null
+    } else if (text) {
+      groups.push({ type: 'standalone', block: { kind: hasH1 ? 'body' : 'intro', text } })
+    }
+    accLines = []
+  }
+
+  for (const line of lines) {
+    if (phase === 'before') {
+      if (isConvLine(line)) {
+        flushGroup()
+        phase = 'conv'
+        convLines.push(line)
+        continue
+      }
+      const h1 = line.match(/^# (.+)$/)
+      const h2 = line.match(/^## (.+)$/)
+      if (h1 && !hasH1) {
+        flushGroup(); hasH1 = true
+        groups.push({ type: 'standalone', block: { kind: 'title', text: h1[1].trim() } })
+        continue
+      }
+      if (h2) { flushGroup(); currentHeading = { kind: 'heading', text: h2[1].trim() }; continue }
+      accLines.push(line)
+    } else if (phase === 'conv') {
+      if (isConvLine(line) || line.trim() === '') { convLines.push(line); continue }
+      const convText = convLines.join('\n').trim()
+      if (convText) groups.push({ type: 'conversation', text: convText })
+      convLines = []; phase = 'after'
+      const h2 = line.match(/^## (.+)$/)
+      if (h2) { currentHeading = { kind: 'heading', text: h2[1].trim() } } else { accLines.push(line) }
+    } else {
+      const h2 = line.match(/^## (.+)$/)
+      if (h2) { flushGroup(); currentHeading = { kind: 'heading', text: h2[1].trim() }; continue }
+      accLines.push(line)
+    }
+  }
+  if (phase === 'conv' && convLines.length > 0) {
+    const convText = convLines.join('\n').trim()
+    if (convText) groups.push({ type: 'conversation', text: convText })
+  } else {
+    flushGroup()
+  }
+  return groups
+}
+
 function splitIntoArticleBlocks(markdown: string): ArticleBlock[] {
   const lines = markdown.split('\n')
   const blocks: ArticleBlock[] = []
@@ -748,6 +824,44 @@ function groupArticleBlocks(blocks: ArticleBlock[]): RenderGroup[] {
     }
   }
   return groups
+}
+
+function ConversationBlockCard({ text, onSwitchToHtml }: { text: string; onSwitchToHtml: () => void }) {
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch { /* ignore */ }
+  }
+
+  return (
+    <div className="rounded-[14px] border border-[var(--accent)]/40 bg-[var(--surface)] overflow-hidden">
+      <div className="relative p-5">
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--accent)] mb-2">会話本文</div>
+        <p className="pr-24 text-sm text-[var(--text2)] whitespace-pre-wrap leading-relaxed line-clamp-4">{text}</p>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+        >
+          {copied ? 'コピーしました ✓' : 'コピー'}
+        </button>
+      </div>
+      <div className="border-t border-[var(--border)] px-5 py-3 flex items-center justify-between gap-3">
+        <p className="text-[11px] text-[var(--text3)]">埋め込みHTMLに差し替え可能</p>
+        <button
+          type="button"
+          onClick={onSwitchToHtml}
+          className="shrink-0 text-[11px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+        >
+          HTMLを生成 →
+        </button>
+      </div>
+    </div>
+  )
 }
 
 function SectionGroupCard({
