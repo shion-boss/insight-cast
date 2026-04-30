@@ -178,6 +178,7 @@ export function ToolMobileNav({
             </nav>
 
             <div className="border-t border-[var(--border)] px-4 py-4 space-y-2">
+              <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>
               {isAdmin && (
                 <Link
                   href="/admin"
@@ -194,7 +195,6 @@ export function ToolMobileNav({
                   <span className="rounded bg-stone-700/60 px-1.5 py-0.5 text-xs font-bold text-stone-400 uppercase">Admin</span>
                 </Link>
               )}
-              <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>
               <form action={signOut} data-cross-area-nav>
                 <button
                   type="submit"

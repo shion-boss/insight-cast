@@ -115,7 +115,7 @@ const SERVICES: Service[] = [
   {
     name: 'お名前.com',
     description: 'ドメイン管理',
-    role: 'insight-cast.jp ドメインの登録・DNS管理・更新',
+    role: 'insight-cast.jp ドメインの登録・DNS管理・更新（お名前ID: 63799576）',
     status: 'active',
     plan: '年額課金',
     dashboardUrl: 'https://www.onamae.com',
