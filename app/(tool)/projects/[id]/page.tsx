@@ -10,11 +10,13 @@ import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { getMemberRole } from '@/lib/project-members'
+import { getUserPlan, getPlanLimits } from '@/lib/plans'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
 import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
 import { AnalyticsSectionDynamic } from './_components/AnalyticsSectionDynamic'
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
+import { ExternalInterviewLinkSection } from './_components/ExternalInterviewLinkSection'
 import {
   PaginatedUncreatedThemes,
   PaginatedInterviewHistory,
@@ -76,6 +78,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   // オーナーかメンバーかを判定
   const isOwner = project.user_id === user.id
   const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+
+  // プラン確認（オーナーのみ外部取材リンク機能の表示判定に使用）
+  const ownerPlan = isOwner ? await getUserPlan(supabase, user.id) : null
+  const ownerPlanLimits = ownerPlan ? getPlanLimits(ownerPlan) : null
+  const externalInterviewLinksAllowed = ownerPlanLimits?.externalInterviewLinksAllowed ?? false
 
   // オーナーでもメンバーでもない場合はリダイレクト
   if (!isOwner && memberRole === null) redirect('/dashboard')
@@ -504,6 +511,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {isOwner && (
         <div className="mt-8">
           <ProjectMemberSection projectId={id} />
+        </div>
+      )}
+
+      {/* 外部取材リンクセクション（オーナーかつ法人プランのみ表示） */}
+      {isOwner && externalInterviewLinksAllowed && (
+        <div className="mt-8">
+          <ExternalInterviewLinkSection projectId={id} />
         </div>
       )}
     </>

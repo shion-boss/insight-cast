@@ -12,6 +12,7 @@ export const PLANS = {
     monthlyArticleLimit: null, // lifetimeArticleLimit が有効なため使用しない
     maxCompetitorsPerProject: 0,
     supportLabel: 'コミュニティサポート',
+    externalInterviewLinksAllowed: false,
   },
   lightning: {
     key: 'lightning' as const,
@@ -24,6 +25,7 @@ export const PLANS = {
     monthlyArticleLimit: 20,
     maxCompetitorsPerProject: 0,
     supportLabel: '通常サポート',
+    externalInterviewLinksAllowed: false,
   },
   personal: {
     key: 'personal' as const,
@@ -36,6 +38,7 @@ export const PLANS = {
     monthlyArticleLimit: 60,
     maxCompetitorsPerProject: 3,
     supportLabel: '通常サポート',
+    externalInterviewLinksAllowed: false,
   },
   business: {
     key: 'business' as const,
@@ -48,6 +51,7 @@ export const PLANS = {
     monthlyArticleLimit: 240,
     maxCompetitorsPerProject: 3,
     supportLabel: '優先サポート',
+    externalInterviewLinksAllowed: true,
   },
 } satisfies Record<PlanKey, {
   key: PlanKey
@@ -60,6 +64,7 @@ export const PLANS = {
   monthlyArticleLimit: number | null
   maxCompetitorsPerProject: number
   supportLabel: string
+  externalInterviewLinksAllowed: boolean
 }>
 
 export function getPlanLimits(planKey: PlanKey | null | undefined) {

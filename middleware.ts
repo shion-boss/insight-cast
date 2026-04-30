@@ -56,7 +56,8 @@ export async function middleware(request: NextRequest) {
     pathname === '/contact' ||
     pathname.startsWith('/auth/') ||
     pathname === '/sitemap.xml' ||
-    pathname === '/robots.txt'
+    pathname === '/robots.txt' ||
+    pathname.startsWith('/interview/ext/')
 
   // /admin へのアクセス制御: ベーシック認証 + ADMIN_EMAILS チェック
   if (pathname.startsWith('/admin')) {
