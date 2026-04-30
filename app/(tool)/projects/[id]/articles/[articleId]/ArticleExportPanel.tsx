@@ -443,54 +443,6 @@ export function ArticleExportPanel({
             </button>
           ))}
         </div>
-        {/* アクションボタン行 — ボタンがある時のみ表示 */}
-        {(hasSuggestions || isDirty || safeFormat !== 'blocks') && (
-          <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2">
-            {hasSuggestions && (
-              <button
-                type="button"
-                role="switch"
-                aria-label="クオリティアップ提案を表示"
-                aria-checked={showSuggestions}
-                onClick={() => setShowSuggestions((v) => !v)}
-                className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded min-h-[44px] px-1"
-              >
-                <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                </div>
-                <span className="text-xs text-[var(--text3)] whitespace-nowrap">クオリティアップ提案</span>
-              </button>
-            )}
-            {isDirty && (
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saveState === 'saving'}
-                className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存する'}
-              </button>
-            )}
-            {safeFormat !== 'blocks' && (
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
-              </button>
-            )}
-            {safeFormat !== 'blocks' && (
-              <button
-                type="button"
-                onClick={handleDownload}
-                className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-              >
-                ファイル保存
-              </button>
-            )}
-          </div>
-        )}
       </div>
 
       {safeFormat === 'html' && (
@@ -599,6 +551,55 @@ export function ArticleExportPanel({
                 </div>
               </div>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* アクションボタン行 — ボタンがある時のみ表示 */}
+      {(hasSuggestions || isDirty || safeFormat !== 'blocks') && (
+        <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2">
+          {hasSuggestions && (
+            <button
+              type="button"
+              role="switch"
+              aria-label="クオリティアップ提案を表示"
+              aria-checked={showSuggestions}
+              onClick={() => setShowSuggestions((v) => !v)}
+              className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded min-h-[44px] px-1"
+            >
+              <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-4' : 'translate-x-0.5'}`} />
+              </div>
+              <span className="text-xs text-[var(--text3)] whitespace-nowrap">クオリティアップ提案</span>
+            </button>
+          )}
+          {isDirty && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saveState === 'saving'}
+              className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存する'}
+            </button>
+          )}
+          {safeFormat !== 'blocks' && (
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
+            </button>
+          )}
+          {safeFormat !== 'blocks' && (
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            >
+              ファイル保存
+            </button>
           )}
         </div>
       )}
