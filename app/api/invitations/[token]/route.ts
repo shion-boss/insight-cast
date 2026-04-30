@@ -41,7 +41,7 @@ export async function GET(
     .eq('id', invitation.project_id)
     .single()
 
-  const projectName = project?.name ?? project?.hp_url ?? '取材先'
+  const projectName = project?.name ?? project?.hp_url ?? 'プロジェクト'
 
   return NextResponse.json({
     projectName,

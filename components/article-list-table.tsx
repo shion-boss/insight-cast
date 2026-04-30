@@ -131,7 +131,7 @@ export function ArticleListTable({
           {showProjectColumn && (alwaysShowProjectFilter || projectOptions.length > 1) && (
             <div>
               <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-                取材先
+                プロジェクト
               </label>
               <select
                 id="article-filter-project"
@@ -259,7 +259,7 @@ export function ArticleListTable({
                   <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
                   {showProjectColumn && (
                     <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">
-                      取材先
+                      プロジェクト
                     </th>
                   )}
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>

@@ -162,7 +162,7 @@ function ArticlesFilterContent({
           {showProjectColumn && projectOptions.length > 0 && (
             <div>
               <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-                取材先
+                プロジェクト
               </label>
               <select
                 id="article-filter-project"
@@ -268,7 +268,7 @@ function ArticlesFilterContent({
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
                   <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
                   {showProjectColumn && (
-                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">取材先</th>
+                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">プロジェクト</th>
                   )}
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
                   {showInterviewerColumn && (

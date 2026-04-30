@@ -212,7 +212,7 @@ export async function POST(
   const total = (memberCount ?? 0) + (pendingCount ?? 0)
   if (total >= MAX_MEMBERS_PER_PROJECT) {
     return NextResponse.json(
-      { error: 'member_limit_reached', message: `取材先あたりのメンバー上限（${MAX_MEMBERS_PER_PROJECT}名）に達しています。` },
+      { error: 'member_limit_reached', message: `プロジェクトあたりのメンバー上限（${MAX_MEMBERS_PER_PROJECT}名）に達しています。` },
       { status: 400 },
     )
   }
@@ -255,9 +255,9 @@ export async function POST(
   await resend.emails.send({
     from: FROM_INFO,
     to: email,
-    subject: `【Insight Cast】${project.name ?? '取材先'}への取材チーム招待`,
+    subject: `【Insight Cast】${project.name ?? 'プロジェクト'}への取材チーム招待`,
     html: [
-      `<p>${ownerName}さんから <strong>${project.name ?? '取材先'}</strong> の取材チームに招待されました。</p>`,
+      `<p>${ownerName}さんから <strong>${project.name ?? 'プロジェクト'}</strong> の取材チームに招待されました。</p>`,
       `<p>以下のリンクから参加できます（7日間有効）：</p>`,
       `<p><a href="${inviteUrl}">${inviteUrl}</a></p>`,
       `<p>このメールに心当たりがない場合は、無視してください。</p>`,

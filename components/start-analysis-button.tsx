@@ -155,7 +155,7 @@ export default function StartAnalysisButton({
         title={`次回の再調査は ${nextAvailableLabel} 以降に可能です`}
       >
         <span className="opacity-50">
-          {compact ? '再調査する' : 'この取材先を再調査する'}
+          {compact ? '再調査する' : 'このプロジェクトを再調査する'}
         </span>
         <span className="ml-2 text-[11px] opacity-60">{nextAvailableLabel}〜</span>
       </button>
@@ -174,8 +174,8 @@ export default function StartAnalysisButton({
         : phase === 'requesting'
           ? (force ? '再調査を依頼しています...' : '調査を依頼しています...')
         : force
-          ? (compact ? '再調査する' : 'この取材先を再調査する')
-          : (compact ? '調査を開始する' : 'この取材先の調査を開始する')}
+          ? (compact ? '再調査する' : 'このプロジェクトを再調査する')
+          : (compact ? '調査を開始する' : 'このプロジェクトの調査を開始する')}
     </button>
   )
 }

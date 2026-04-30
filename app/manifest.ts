@@ -34,7 +34,7 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         name: '新しい取材',
         url: '/projects/new',
-        description: '取材先を登録する',
+        description: 'プロジェクトを登録する',
       },
     ],
   }

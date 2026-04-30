@@ -31,7 +31,7 @@ export async function POST(
 
   if (!project) {
     return NextResponse.json(
-      { code: 'NOT_FOUND', message: '取材先が見つかりません', traceId },
+      { code: 'NOT_FOUND', message: 'プロジェクトが見つかりません', traceId },
       { status: 404 },
     )
   }

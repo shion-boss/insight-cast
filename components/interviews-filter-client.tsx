@@ -99,7 +99,7 @@ function FilterContent({
           {showProjectFilter && (
             <div>
               <label htmlFor="filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
-                取材先
+                プロジェクト
               </label>
               <select
                 id="filter-project"

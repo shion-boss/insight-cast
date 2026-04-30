@@ -45,7 +45,7 @@ type NavItem = { href: string; label: string; icon: () => React.JSX.Element }
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/dashboard', label: 'ダッシュボード', icon: IconDashboard },
-  { href: '/projects', label: '取材先一覧', icon: IconProjects },
+  { href: '/projects', label: 'プロジェクト一覧', icon: IconProjects },
   { href: '/interviews', label: '取材メモ一覧', icon: IconInterviews },
   { href: '/articles', label: '記事一覧', icon: IconArticles },
   { href: '/settings', label: '設定', icon: IconSettings },

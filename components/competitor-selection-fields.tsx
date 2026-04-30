@@ -66,7 +66,7 @@ export default function CompetitorSelectionFields({
   onSelectionStateChange,
 }: Props) {
   const MAX_COMPETITORS = maxCompetitors
-  const defaultHelperText = `おすすめと手入力を合わせて最大${MAX_COMPETITORS}件までです。あとから取材先の管理画面でも見直せます。`
+  const defaultHelperText = `おすすめと手入力を合わせて最大${MAX_COMPETITORS}件までです。あとからプロジェクトの管理画面でも見直せます。`
   const resolvedHelperText = helperText ?? defaultHelperText
   const claus = getCharacter('claus')
   const [industryMemo, setIndustryMemo] = useState(initialIndustryMemo)

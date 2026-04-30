@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 const NAV_ITEMS = [
   { label: 'ダッシュボード', icon: '⊡' },
-  { label: '取材先一覧', icon: '◫' },
+  { label: 'プロジェクト一覧', icon: '◫' },
   { label: '取材メモ一覧', icon: '◎' },
   { label: '記事一覧', icon: '≡' },
   { label: '設定', icon: '⚙' },

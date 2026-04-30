@@ -43,7 +43,7 @@ const SERVICES: Service[] = [
   {
     name: 'Firecrawl',
     description: 'Webスクレイピング',
-    role: '取材先・競合HPのMarkdown取得（HP分析の入力データ）',
+    role: 'プロジェクト・競合HPのMarkdown取得（HP分析の入力データ）',
     status: 'active',
     plan: '従量課金',
     dashboardUrl: 'https://www.firecrawl.dev/app',
@@ -97,7 +97,7 @@ const SERVICES: Service[] = [
   {
     name: 'Google Search Console',
     description: '検索パフォーマンス計測・連携',
-    role: '取材先HPの検索流入データ取得（キーワード・表示回数・CTR）',
+    role: 'プロジェクトHPの検索流入データ取得（キーワード・表示回数・CTR）',
     status: 'active',
     plan: '無料',
     dashboardUrl: 'https://search.google.com/search-console',
