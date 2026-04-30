@@ -148,7 +148,7 @@ function buildConversationHtml(opts: {
   showClientIcon: boolean
   showClientName: boolean
 }): string {
-  const { content, interviewerName, interviewerDisplayName, interviewerAvatarUrl, clientDisplayName, clientInitial, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
+  const { content, interviewerName, clientName, interviewerDisplayName, interviewerAvatarUrl, clientDisplayName, clientInitial, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
   const questionBg = lighten(themeColor, 0.78)
   const answerBg   = lighten(themeColor, 0.88)
   const badgeBg    = themeColor
@@ -182,8 +182,9 @@ function buildConversationHtml(opts: {
   for (const line of content.split('\n')) {
     const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
     if (!match) continue
+    // interviewerName・clientName 以外の行（メタデータ等）はスキップ
+    if (match[1] !== interviewerName && match[1] !== clientName) continue
     const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
-    // マッチングは元のinterviewerName（コンテンツ内の名前）で行う
     if (match[1] === interviewerName) {
       bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;${iconGapInterviewer}margin-bottom:20px;">
   <div style="display:flex;flex-direction:column;align-items:flex-end;${iconMarginTopInterviewer}flex:1;min-width:0;">
