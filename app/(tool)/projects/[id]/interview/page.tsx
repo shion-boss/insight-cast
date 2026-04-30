@@ -340,22 +340,6 @@ export default function InterviewPage() {
     }
   }, [hasReachedTurnLimit, initializing])
 
-  if (initializing) {
-    return (
-      <div className="h-dvh flex items-center justify-center bg-[var(--bg)] px-6">
-        <div className="w-full max-w-[520px] space-y-4">
-          <InterviewerSpeech
-            icon={<CharacterAvatar src={char?.icon48} alt={`${char?.name ?? 'インタビュアー'}のアイコン`} emoji={char?.emoji} size={48} />}
-            name={char?.name ?? 'インタビュアー'}
-            title="取材画面を開いています"
-            description="会話履歴と設定を読み込んでいます。通常はすぐに始まります。"
-            tone="soft"
-          />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="bg-[var(--bg)] h-dvh flex flex-col overflow-hidden">
       {/* ヘッダー */}
@@ -535,7 +519,7 @@ export default function InterviewPage() {
             <button
               type="button"
               onClick={handlePassQuestion}
-              disabled={loading || hasReachedTurnLimit}
+              disabled={loading || initializing || hasReachedTurnLimit}
               className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
             >
               この質問はパス
@@ -555,7 +539,7 @@ export default function InterviewPage() {
                 }
               }}
               placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事にまとめられます。' : 'ここに話しかけてください'}
-              disabled={loading || hasReachedTurnLimit}
+              disabled={loading || initializing || hasReachedTurnLimit}
               autoFocus
               className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
             />
@@ -563,7 +547,7 @@ export default function InterviewPage() {
               <DevAiLabel>AI送信</DevAiLabel>
               <button
                 type="submit"
-                disabled={loading || !input.trim() || hasReachedTurnLimit}
+                disabled={loading || initializing || !input.trim() || hasReachedTurnLimit}
                 className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}

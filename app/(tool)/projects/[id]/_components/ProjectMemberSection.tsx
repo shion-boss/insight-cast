@@ -190,9 +190,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
       </div>
 
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-        {loading ? (
-          <div className="p-6 text-sm text-[var(--text3)]">読み込み中...</div>
-        ) : error ? (
+        {loading ? null : error ? (
           <div className="p-6 text-sm text-[var(--err)]">{error}</div>
         ) : (
           <>
