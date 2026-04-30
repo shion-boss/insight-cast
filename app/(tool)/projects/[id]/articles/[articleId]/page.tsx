@@ -45,7 +45,7 @@ export default async function ArticleDetailPage({
 
   // profile (avatar_url のみ) と article を並列取得
   const [{ data: profile }, { data: article }] = await Promise.all([
-    supabase.from('profiles').select('avatar_url').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('avatar_url, name').eq('id', user.id).maybeSingle(),
     supabase
       .from('articles')
       .select('id, title, content, article_type, created_at, project_id, interview_id, suggestions')
@@ -143,7 +143,7 @@ export default async function ArticleDetailPage({
               interviewerId={interview?.interviewer_type ?? null}
               interviewerName={interviewer?.name ?? null}
               interviewerLabel={interviewer?.label ?? null}
-              clientName={project.name ?? project.hp_url ?? null}
+              clientName={profile?.name ?? '事業者'}
               userAvatarUrl={profile?.avatar_url ?? null}
               articleId={article.id}
               projectId={id}
