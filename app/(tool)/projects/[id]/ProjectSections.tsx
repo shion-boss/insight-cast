@@ -262,8 +262,14 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
 
       {/* PC: テーブル */}
       <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <caption className="sr-only">記事一覧</caption>
+          <colgroup>
+            <col className="w-[50%]" />
+            <col className="w-[20%]" />
+            <col className="w-[20%]" />
+            <col className="w-[10%]" />
+          </colgroup>
           <thead className="bg-[var(--bg2)]">
             <tr>
               <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
@@ -275,8 +281,8 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
           <tbody className="bg-[var(--surface)]">
             {visible.map((article, i) => (
               <tr key={article.id} className={i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}>
-                <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] max-w-[320px]">
-                  <div className="overflow-hidden text-ellipsis whitespace-nowrap">{article.title || '記事'}</div>
+                <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate">
+                  {article.title || '記事'}
                 </td>
                 <td className="px-5 py-3">
                   <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
@@ -293,7 +299,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
             ))}
             {Array.from({ length: placeholderCount }).map((_, i) => (
               <tr key={`ph-${i}`} aria-hidden className="invisible">
-                <td className="px-5 py-3"><div className="h-5 max-w-[320px]" /></td>
+                <td className="px-5 py-3"><div className="h-5" /></td>
                 <td className="px-5 py-3"><div className="h-5 w-16" /></td>
                 <td className="px-5 py-3"><div className="h-5 w-24" /></td>
                 <td className="px-5 py-3"><div className="h-8 w-10" /></td>
