@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
   if (!user) redirect('/')
 
   // projects（オーナー所有 + メンバーとして参加中の両方）, userPlan を並列取得
-  const [{ data: projects }, userPlan] = await Promise.all([
+  const [{ data: projects, error: projectsError }, userPlan] = await Promise.all([
     supabase
       .from('projects')
       .select('id, name, hp_url, status, updated_at, user_id')
@@ -78,6 +78,17 @@ export default async function ProjectsPage() {
       .order('updated_at', { ascending: false }),
     getUserPlan(supabase, user.id),
   ])
+
+  if (projectsError) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-20">
+        <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={48} />
+        <p className="text-sm text-[var(--text2)]">
+          取材先の読み込みに失敗しました。ページを再読み込みしてください。
+        </p>
+      </div>
+    )
+  }
 
   const allProjects = (projects ?? []) as (Project & { user_id: string })[]
   // オーナーのプロジェクトのみでプラン上限を計算
