@@ -1,30 +1,14 @@
 'use client'
 
-import { useState, useCallback, useTransition } from 'react'
+import { useState, useCallback, useTransition, useMemo, useEffect, useRef, Fragment } from 'react'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { saveArticleContent } from './actions'
 import type { ArticleSuggestions, ArticleSuggestion } from '@/lib/article-suggestions'
 
-type Format = 'blocks' | 'text' | 'markdown' | 'html'
-
-const FORMAT_LABELS: Record<Format, string> = {
-  blocks:   'ブロック',
-  text:     'テキスト',
-  markdown: 'Markdown',
-  html:     '埋め込みHTML',
-}
-
-const CAST_COLORS: Record<string, string> = {
-  mint:  '#c2722a',
-  claus: '#0f766e',
-  rain:  '#7c3aed',
-  hal:   '#1d4ed8',
-  mogro: '#065f46',
-  cocco: '#be185d',
-}
 
 const DEFAULT_THEME_COLOR = '#c2722a'
 
@@ -67,76 +51,80 @@ function toPlainText(md: string): string {
     .trim()
 }
 
-function formatDateShort(iso: string): string {
-  return new Intl.DateTimeFormat('ja-JP', {
-    timeZone: 'Asia/Tokyo',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(new Date(iso)).replace(/\//g, '.')
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
+
+function applyBlockEdit(md: string, kind: string, oldText: string, newText: string): string {
+  if (!oldText || oldText === newText) return md
+  if (kind === 'title') return md.replace(new RegExp(`^(# )${escapeRegex(oldText)}`, 'm'), `$1${newText}`)
+  if (kind === 'heading') return md.replace(new RegExp(`^(## )${escapeRegex(oldText)}`, 'm'), `$1${newText}`)
+  return md.replace(oldText, newText)
+}
+
+
+function applyConvEdit(md: string, interviewerName: string, clientName: string, exchanges: { speaker: string; content: string }[]): string {
+  const writeable = exchanges.filter(e => e.content !== '')
+  const lines = md.split('\n')
+  const result: string[] = []
+  let convInserted = false
+  let inConv = false
+  for (const line of lines) {
+    const m = line.match(/^\*\*(.+?)\*\*[:：]\s*(.*)$/)
+    const isQA = m && (m[1] === interviewerName || m[1] === clientName)
+    if (isQA) {
+      if (!inConv && !convInserted) {
+        result.push(...writeable.map(e => `**${e.speaker}**: ${e.content}`))
+        convInserted = true
+      }
+      inConv = true
+    } else {
+      inConv = false
+      result.push(line)
+    }
+  }
+  return result.join('\n')
+}
+
+
 
 function initial(name: string | null): string {
   return name ? name.slice(0, 1) : '?'
 }
 
-const FOOTER_HTML = `<div style="height:1px;background:#e2d5c3;margin-top:40px;"></div><div style="padding-top:16px;text-align:right;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8f7d6d;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>`
+const PURIFY_OPTS = { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }
 
-function buildClientHtml(opts: { title: string; date: string; content: string }): string {
-  const { title, date, content } = opts
-  const bodyHtml = String(marked.parse(content, { async: false }))
-  const styledBody = bodyHtml
-    .replace(/<h2>/g, '<h2 style="font-size:18px;font-weight:700;border-left:3px solid #c2722a;padding-left:12px;color:#1c1410;margin:32px 0 16px;">')
-    .replace(/<h3>/g, '<h3 style="font-size:16px;font-weight:700;color:#1c1410;margin:24px 0 12px;">')
-    .replace(/<p>/g, '<p style="font-size:15px;line-height:1.8;color:#7a6555;margin:0 0 16px;">')
-    .replace(/<ul>/g, '<ul style="font-size:15px;line-height:1.8;color:#7a6555;margin:0 0 16px;padding-left:20px;">')
-    .replace(/<ol>/g, '<ol style="font-size:15px;line-height:1.8;color:#7a6555;margin:0 0 16px;padding-left:20px;">')
 
-  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
-<div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材記事</div>
-<h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 12px;">${escapeHtml(title)}</h1>
-<div style="font-size:12px;color:#8f7d6d;margin-bottom:32px;">${escapeHtml(date)}</div>
-<div>${styledBody}</div>
-${FOOTER_HTML}
-</div>`
-}
-
-function buildInterviewerHtml(opts: {
-  title: string
-  date: string
-  content: string
-  interviewerName: string
-  interviewerLabel: string
-  interviewerColor: string
+function buildIntroHtml(opts: {
+  interviewerDisplayName: string
+  interviewerLabel: string | null
+  interviewerAvatarUrl: string | null
+  themeColor: string
 }): string {
-  const { title, date, content, interviewerName, interviewerLabel, interviewerColor } = opts
-  const bodyHtml = String(marked.parse(content, { async: false }))
-  const styledBody = bodyHtml
-    .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;margin-top:32px;margin-bottom:14px;color:#1c1410;">')
-    .replace(/<h3>/g, '<h3 style="font-size:15px;font-weight:700;color:#1c1410;margin:20px 0 10px;">')
-    .replace(/<p>/g, '<p style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 16px;">')
-    .replace(/<ul>/g, '<ul style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 16px;padding-left:20px;">')
-    .replace(/<ol>/g, '<ol style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 16px;padding-left:20px;">')
-
-  return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;background:#fdf7f0;padding:40px 32px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;border-radius:4px;">
-<div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材レポート</div>
-<h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 20px;">${escapeHtml(title)}</h1>
-<div style="background:#f5e8d8;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:32px;box-sizing:border-box;">
-  <div style="width:10px;height:10px;border-radius:50%;background:${escapeHtml(interviewerColor)};flex-shrink:0;"></div>
-  <div style="flex:1;min-width:0;">
-    <div style="font-size:13px;font-weight:700;color:#1c1410;">${escapeHtml(interviewerName)}<span style="font-size:11px;font-weight:400;color:#7a6555;margin-left:8px;">${escapeHtml(interviewerLabel)}</span></div>
-    <div style="font-size:11px;color:#8f7d6d;margin-top:2px;">${escapeHtml(date)} 取材</div>
+  const { interviewerDisplayName, interviewerLabel, interviewerAvatarUrl, themeColor } = opts
+  const iconHtml = interviewerAvatarUrl
+    ? `<img src="${escapeHtml(interviewerAvatarUrl)}" alt="${escapeHtml(interviewerDisplayName)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
+    : `<div style="width:44px;height:44px;border-radius:50%;background:${escapeHtml(themeColor)};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0;">${escapeHtml(interviewerDisplayName.slice(0, 1))}</div>`
+  const labelText = interviewerLabel ? `AIインタビュアー · ${escapeHtml(interviewerLabel)}` : 'AIインタビュアー'
+  return `<div style="background:${escapeHtml(lighten(themeColor, 0.88))};border-radius:14px;padding:16px 20px;box-sizing:border-box;margin-bottom:24px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+    ${iconHtml}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;color:#1c1410;">${escapeHtml(interviewerDisplayName)}</div>
+      <div style="font-size:11px;color:#8f7d6d;margin-top:2px;">${labelText}</div>
+    </div>
   </div>
-</div>
-<div>${styledBody}</div>
-${FOOTER_HTML}
+  <p style="font-size:13px;line-height:1.7;color:#5a4a3a;margin:0;">この記事は <a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="color:${escapeHtml(themeColor)};text-decoration:none;font-weight:600;">Insight Cast</a> のAIインタビュアーが取材・構成しました。</p>
 </div>`
 }
 
 function buildConversationHtml(opts: {
+  title?: string
+  date?: string
   content: string
   interviewerName: string
   interviewerDisplayName: string
+  interviewerLabel: string | null
   interviewerAvatarUrl: string | null
   clientName: string
   clientDisplayName: string
@@ -147,8 +135,9 @@ function buildConversationHtml(opts: {
   showName: boolean
   showClientIcon: boolean
   showClientName: boolean
+  showIntro: boolean
 }): string {
-  const { content, interviewerName, clientName, interviewerDisplayName, interviewerAvatarUrl, clientDisplayName, clientInitial, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
+  const { title, date, content, interviewerName, clientName, interviewerDisplayName, interviewerLabel, interviewerAvatarUrl, clientDisplayName, clientInitial, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName, showIntro } = opts
   const questionBg = lighten(themeColor, 0.78)
   const answerBg   = lighten(themeColor, 0.88)
   const badgeBg    = themeColor
@@ -177,9 +166,12 @@ function buildConversationHtml(opts: {
   const iconMarginTopInterviewer = showIcon       ? 'margin-top:8px;' : ''
   const iconMarginTopClient      = showClientIcon ? 'margin-top:8px;' : ''
 
+  const introHtml = showIntro ? buildIntroHtml({ interviewerDisplayName, interviewerLabel, interviewerAvatarUrl, themeColor }) : ''
+
+  const contentLines = content.split('\n')
   const bubblesHtml: string[] = []
 
-  for (const line of content.split('\n')) {
+  for (const line of contentLines) {
     const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
     if (!match) continue
     // interviewerName・clientName 以外の行（メタデータ等）はスキップ
@@ -204,97 +196,85 @@ function buildConversationHtml(opts: {
     }
   }
 
+  // 全体エクスポート（title あり）: タイトル・前後セクションを含む完全な記事HTMLを生成
+  if (title) {
+    let firstQaIdx = -1
+    let lastQaIdx = -1
+    for (let i = 0; i < contentLines.length; i++) {
+      const m = contentLines[i].match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+      if (m && (m[1] === interviewerName || m[1] === clientName)) {
+        if (firstQaIdx === -1) firstQaIdx = i
+        lastQaIdx = i
+      }
+    }
+    const beforeMd = contentLines
+      .slice(0, firstQaIdx > 0 ? firstQaIdx : 0)
+      .filter(l => {
+        if (/^# /.test(l)) return false
+        if (/^-{3,}$/.test(l.trim())) return false
+        const m = l.match(/^\*\*(.+?)\*\*[:：]/)
+        if (m && m[1] !== interviewerName && m[1] !== clientName) return false
+        return true
+      })
+      .join('\n')
+      .trim()
+    const afterMd = lastQaIdx >= 0 && lastQaIdx < contentLines.length - 1
+      ? contentLines.slice(lastQaIdx + 1).join('\n').trim()
+      : ''
+
+    const separatorColor = lighten(themeColor, 0.82)
+    const styledSection = (md: string): string => {
+      if (!md) return ''
+      return String(marked.parse(md, { async: false }))
+        .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;margin:24px 0 12px;color:#1c1410;border-left:3px solid #c2722a;padding-left:12px;">')
+        .replace(/<h3>/g, '<h3 style="font-size:15px;font-weight:700;color:#1c1410;margin:18px 0 8px;">')
+        .replace(/<p>/g, '<p style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 14px;">')
+        .replace(/<ul>/g, '<ul style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 14px;padding-left:20px;">')
+        .replace(/<ol>/g, '<ol style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 14px;padding-left:20px;">')
+        .replace(/<li>/g, '<li style="margin-bottom:6px;">')
+        .replace(/<hr>/g, `<hr style="border:none;height:1px;background:${separatorColor};margin:24px 0;">`)
+    }
+
+    const beforeSection = beforeMd
+      ? `\n<div style="padding:24px 32px 0;box-sizing:border-box;">${styledSection(beforeMd)}</div>`
+      : ''
+    const afterSection = afterMd
+      ? `\n<div style="padding:0 32px;box-sizing:border-box;">${styledSection(afterMd)}</div>`
+      : ''
+
+    const convSeparator = `<div style="height:1px;background:${separatorColor};margin-bottom:28px;"></div>\n`
+    return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
+<div style="padding:40px 32px 0;box-sizing:border-box;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材インタビュー</div>
+  <h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 12px;">${escapeHtml(title)}</h1>
+  <div style="font-size:12px;color:#8f7d6d;">${escapeHtml(date ?? '')}</div>
+</div>${beforeSection}
+<div style="padding:24px 4px 0;box-sizing:border-box;">
+${introHtml}${convSeparator}${bubblesHtml.join('\n')}
+</div>${afterSection}
+<div style="padding:28px 4px 28px;box-sizing:border-box;">
+<div style="height:1px;background:${separatorColor};margin-bottom:16px;"></div>
+<div style="text-align:right;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8f7d6d;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
+</div>
+</div>`
+  }
+
+  // ブロックコピー用（title なし）: 会話部分のみ
+  const blockSepColor = lighten(themeColor, 0.82)
   return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;padding:28px 4px;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
-<div style="height:1px;background:#e2d5c3;margin-bottom:28px;"></div>
-${bubblesHtml.join('\n')}
+<div style="height:1px;background:${blockSepColor};margin-bottom:28px;"></div>
+${introHtml}${bubblesHtml.join('\n')}
 <div style="text-align:right;margin-bottom:12px;"><a href="https://insight-cast.jp" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#8f7d6d;text-decoration:none;letter-spacing:0.05em;">Powered by Insight Cast ↗</a></div>
-<div style="height:1px;background:#e2d5c3;"></div>
+<div style="height:1px;background:${blockSepColor};"></div>
 </div>`
 }
 
-function buildHtml(opts: {
-  articleType: string
-  title: string
-  date: string
-  content: string
-  interviewerName: string | null
-  interviewerLabel: string | null
-  interviewerId: string | null
-  interviewerAvatarUrl: string | null
-  interviewerDisplayName: string | null
-  clientName: string | null
-  clientDisplayName: string | null
-  userAvatarUrl: string | null
-  themeColor: string
-  showIcon: boolean
-  showName: boolean
-  showClientIcon: boolean
-  showClientName: boolean
-}): string {
-  const { articleType, title, date, content, interviewerName, interviewerLabel, interviewerId, interviewerAvatarUrl, interviewerDisplayName, clientName, userAvatarUrl, themeColor, showIcon, showName, showClientIcon, showClientName } = opts
-  const interviewerColor = CAST_COLORS[interviewerId ?? ''] ?? '#c2722a'
-  const dateStr = formatDateShort(date)
-  const resolvedInterviewerName = interviewerDisplayName || interviewerName
 
-  if (articleType === 'conversation' && interviewerName !== null) {
-    return buildConversationHtml({
-      content,
-      interviewerName,
-      interviewerDisplayName: resolvedInterviewerName ?? interviewerName,
-      interviewerAvatarUrl,
-      clientName: clientName ?? '事業者',
-      clientDisplayName: opts.clientDisplayName ?? clientName ?? '事業者',
-      clientInitial: initial(opts.clientDisplayName ?? clientName),
-      userAvatarUrl,
-      themeColor,
-      showIcon,
-      showName,
-      showClientIcon,
-      showClientName,
-    })
-  }
-  if (articleType === 'interviewer') {
-    return buildInterviewerHtml({
-      title, date: dateStr, content,
-      interviewerName: interviewerName ?? 'インタビュアー',
-      interviewerLabel: interviewerLabel ?? '',
-      interviewerColor,
-    })
-  }
-  return buildClientHtml({ title, date: dateStr, content })
-}
-
-function getContent(opts: {
-  format: Format
-  articleType: string
-  title: string
-  date: string
-  content: string
-  interviewerName: string | null
-  interviewerLabel: string | null
-  interviewerId: string | null
-  interviewerAvatarUrl: string | null
-  interviewerDisplayName: string | null
-  clientName: string | null
-  clientDisplayName: string | null
-  userAvatarUrl: string | null
-  themeColor: string
-  showIcon: boolean
-  showName: boolean
-  showClientIcon: boolean
-  showClientName: boolean
-}): string {
-  const { format, ...rest } = opts
-  if (format === 'text') return toPlainText(rest.content)
-  if (format === 'html') return buildHtml(rest)
-  return rest.content
-}
 
 export function ArticleExportPanel({
   content,
   title,
   articleType,
-  date,
   interviewerId,
   interviewerName,
   interviewerLabel,
@@ -307,7 +287,6 @@ export function ArticleExportPanel({
   content: string
   title: string
   articleType: string
-  date: string
   interviewerId: string | null
   interviewerName: string | null
   interviewerLabel: string | null
@@ -317,17 +296,15 @@ export function ArticleExportPanel({
   projectId: string
   suggestions?: ArticleSuggestions | null
 }) {
-  const availableFormats = Object.keys(FORMAT_LABELS) as Format[]
-  const [format, setFormat] = useState<Format>('blocks')
-  const [copied, setCopied] = useState(false)
+  const [copiedText, setCopiedText] = useState(false)
+  const [copiedMd, setCopiedMd] = useState(false)
   const [copyError, setCopyError] = useState(false)
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
-  const [htmlPreview, setHtmlPreview] = useState(false)
   const [editedContent, setEditedContent] = useState(content)
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [isEditing, setIsEditing] = useState(false)
   const [, startTransition] = useTransition()
 
-  const isDirty = editedContent !== content
   const [showSuggestions, setShowSuggestions] = useState(false)
   const hasSuggestions = (suggestions?.items.length ?? 0) > 0
 
@@ -342,62 +319,100 @@ export function ArticleExportPanel({
   const [showInterviewerName, setShowInterviewerName] = useState(true)
   const [showClientIcon, setShowClientIcon] = useState(true)
   const [showClientName, setShowClientName] = useState(true)
+  const [showIntro, setShowIntro] = useState(true)
 
-  const safeFormat = availableFormats.includes(format) ? format : 'markdown'
-  const output = getContent({
-    format: safeFormat, articleType, title, date, content: editedContent,
-    interviewerName, interviewerLabel, interviewerId,
-    interviewerAvatarUrl: interviewerAvatarUrl || null,
-    interviewerDisplayName: interviewerDisplayName || null,
-    clientName,
-    clientDisplayName: clientDisplayName || null,
-    userAvatarUrl: clientAvatarUrl || userAvatarUrl,
-    themeColor,
-    showIcon: showInterviewerIcon,
-    showName: showInterviewerName,
-    showClientIcon,
-    showClientName,
-  })
+  const makeConvOnlyHtml = useCallback((text: string) =>
+    buildConversationHtml({
+      content: text,
+      interviewerName: interviewerName ?? 'インタビュアー',
+      interviewerDisplayName: interviewerDisplayName || interviewerName || 'インタビュアー',
+      interviewerLabel,
+      interviewerAvatarUrl: interviewerAvatarUrl || null,
+      clientName: clientName ?? '事業者',
+      clientDisplayName: clientDisplayName || clientName || '事業者',
+      clientInitial: initial(clientDisplayName || clientName),
+      userAvatarUrl: clientAvatarUrl || userAvatarUrl || null,
+      themeColor,
+      showIcon: showInterviewerIcon,
+      showName: showInterviewerName,
+      showClientIcon,
+      showClientName,
+      showIntro: false,
+    }),
+    [themeColor, interviewerName, interviewerLabel, interviewerDisplayName, interviewerAvatarUrl, clientName, clientDisplayName, clientAvatarUrl, userAvatarUrl, showInterviewerIcon, showInterviewerName, showClientIcon, showClientName]
+  )
 
-  const handleSave = useCallback(() => {
+  const makeIntroHtml = useCallback(() =>
+    buildIntroHtml({
+      interviewerDisplayName: interviewerDisplayName || interviewerName || 'インタビュアー',
+      interviewerLabel,
+      interviewerAvatarUrl: interviewerAvatarUrl || null,
+      themeColor,
+    }),
+    [themeColor, interviewerName, interviewerLabel, interviewerDisplayName, interviewerAvatarUrl]
+  )
+
+  const handleCopyText = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(toPlainText(editedContent))
+      setCopiedText(true)
+      setCopyError(false)
+      setTimeout(() => setCopiedText(false), 2000)
+    } catch {
+      setCopyError(true)
+      setTimeout(() => setCopyError(false), 3000)
+    }
+  }, [editedContent])
+
+  const handleCopyMd = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(editedContent)
+      setCopiedMd(true)
+      setCopyError(false)
+      setTimeout(() => setCopiedMd(false), 2000)
+    } catch {
+      setCopyError(true)
+      setTimeout(() => setCopyError(false), 3000)
+    }
+  }, [editedContent])
+
+  const handleDownload = useCallback((fmt: 'text' | 'markdown') => {
+    const blob = new Blob(
+      [fmt === 'text' ? toPlainText(editedContent) : editedContent],
+      { type: fmt === 'text' ? 'text/plain' : 'text/markdown' }
+    )
+    const ext = fmt === 'text' ? 'txt' : 'md'
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${ext}`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [editedContent, title])
+
+  function handleStartEdit() {
+    setIsEditing(true)
+  }
+
+  function handleSaveAndExit() {
     setSaveState('saving')
     startTransition(async () => {
       try {
         await saveArticleContent(articleId, projectId, content, editedContent)
+        setEditedContent(editedContent)
         setSaveState('saved')
-        setTimeout(() => setSaveState('idle'), 2000)
+        setTimeout(() => { setIsEditing(false); setSaveState('idle') }, 800)
       } catch {
         setSaveState('error')
         setTimeout(() => setSaveState('idle'), 3000)
       }
     })
-  }, [articleId, projectId, content, editedContent])
+  }
 
-  const handleCopy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(output)
-      setCopied(true)
-      setCopyError(false)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopyError(true)
-      setTimeout(() => setCopyError(false), 3000)
-    }
-  }, [output])
-
-  const handleDownload = useCallback(() => {
-    type DownloadFormat = Exclude<Format, 'blocks'>
-    const mimeMap: Record<DownloadFormat, string> = { text: 'text/plain', markdown: 'text/markdown', html: 'text/html' }
-    const extMap: Record<DownloadFormat, string> = { text: 'txt', markdown: 'md', html: 'html' }
-    const dlFormat: DownloadFormat = safeFormat === 'blocks' ? 'markdown' : safeFormat
-    const blob = new Blob([output], { type: mimeMap[dlFormat] })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${title.slice(0, 40).replace(/[^\w぀-ゟ゠-ヿ一-鿿]/g, '_')}.${extMap[dlFormat]}`
-    a.click()
-    URL.revokeObjectURL(url)
-  }, [output, safeFormat, title])
+  function handleCancel() {
+    setEditedContent(content)
+    setIsEditing(false)
+  }
 
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
@@ -423,229 +438,285 @@ export function ArticleExportPanel({
         </div>
       </div>
 
-      <div className="border-b border-[var(--border)]">
-        {/* タブ行 — 常に全幅・横スクロール */}
-        <div role="tablist" aria-label="出力フォーマット" className="flex overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {availableFormats.map((f) => (
-            <button
-              key={f}
-              type="button"
-              role="tab"
-              aria-selected={safeFormat === f}
-              onClick={() => setFormat(f)}
-              className={`shrink-0 whitespace-nowrap px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 border-b-2 ${
-                safeFormat === f
-                  ? 'bg-[var(--surface)] text-[var(--text)] border-[var(--accent)]'
-                  : 'text-[var(--text3)] hover:text-[var(--text2)] border-transparent'
-              }`}
-            >
-              {FORMAT_LABELS[f]}
+      {/* アクションボタン行 */}
+      <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-col gap-1.5">
+
+        {/* コピー・書き出し行（非編集時） */}
+        {!isEditing && (
+          <div className="flex flex-wrap items-center gap-1">
+            <button type="button" onClick={handleCopyText}
+              className="relative min-h-[44px] min-w-[7.5rem] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              <span className={copiedText ? 'opacity-0' : ''}>テキストでコピー</span>
+              <span className={`absolute inset-0 flex items-center justify-center ${copiedText ? '' : 'opacity-0'}`}>✓ コピーしました</span>
             </button>
-          ))}
-        </div>
-      </div>
-
-      {safeFormat === 'html' && (
-        <div className="border-b border-[var(--border)] divide-y divide-[var(--border)] text-xs">
-          {/* テーマカラー */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 px-5 py-3">
-            <span className="sm:w-28 shrink-0 text-[var(--text3)]">テーマカラー</span>
-            <div className="flex flex-wrap items-center gap-3">
-              <input
-                type="color"
-                aria-label="テーマカラーを選択"
-                value={themeColor}
-                onChange={(e) => setThemeColor(e.target.value)}
-                className="h-7 w-10 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5"
-              />
-              <span className="font-mono text-[var(--text3)]">{themeColor}</span>
-              <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-                リセット
-              </button>
-              <div role="tablist" aria-label="表示形式" className="flex rounded-lg border border-[var(--border)] overflow-hidden font-semibold">
-                <button type="button" role="tab" aria-selected={!htmlPreview} onClick={() => setHtmlPreview(false)} className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${!htmlPreview ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>コード</button>
-                <button type="button" role="tab" aria-selected={htmlPreview}  onClick={() => setHtmlPreview(true)}  className={`px-3 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${htmlPreview  ? 'bg-[var(--accent)] text-white' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}>プレビュー</button>
-              </div>
-            </div>
+            <button type="button" onClick={handleCopyMd}
+              className="relative min-h-[44px] min-w-[7.5rem] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              <span className={copiedMd ? 'opacity-0' : ''}>MDでコピー</span>
+              <span className={`absolute inset-0 flex items-center justify-center ${copiedMd ? '' : 'opacity-0'}`}>✓ コピーしました</span>
+            </button>
+            <span aria-hidden="true" className="mx-0.5 h-4 w-px bg-[var(--border)]" />
+            <button type="button" onClick={() => handleDownload('text')}
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              .txt
+            </button>
+            <button type="button" onClick={() => handleDownload('markdown')}
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              .md
+            </button>
           </div>
-          {/* インタビュアー（会話形式のみ） */}
-          {articleType === 'conversation' && (
-            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
-              <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">インタビュアー</span>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
-                    {interviewerAvatarUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={interviewerAvatarUrl} alt="インタビュアーのアイコンプレビュー" className="h-full w-full object-cover" />
-                    )}
-                  </div>
-                  <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
-                    画像を選ぶ
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                      const file = e.target.files?.[0]; if (!file) return
-                      const reader = new FileReader(); reader.onload = () => setInterviewerAvatarUrl(reader.result as string); reader.readAsDataURL(file)
-                    }} />
-                  </label>
-                  {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
-                    <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
-                  )}
-                  <input type="text" aria-label="インタビュアーの表示名" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                  <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                      <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </div>
-                    <span className="text-[var(--text3)]">アイコン</span>
-                  </button>
-                  <button type="button" role="switch" aria-label="インタビュアー名を表示" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                      <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </div>
-                    <span className="text-[var(--text3)]">名前</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          {/* 取材先（会話形式のみ） */}
-          {articleType === 'conversation' && (
-            <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
-              <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">取材先</span>
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
-                    {clientAvatarUrl && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={clientAvatarUrl} alt="取材先のアイコンプレビュー" className="h-full w-full object-cover" />
-                    )}
-                  </div>
-                  <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
-                    画像を選ぶ
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => {
-                      const file = e.target.files?.[0]; if (!file) return
-                      const reader = new FileReader(); reader.onload = () => setClientAvatarUrl(reader.result as string); reader.readAsDataURL(file)
-                    }} />
-                  </label>
-                  {clientAvatarUrl && (
-                    <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
-                  )}
-                  <input type="text" aria-label="取材先の表示名" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                  <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                      <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </div>
-                    <span className="text-[var(--text3)]">アイコン</span>
-                  </button>
-                  <button type="button" role="switch" aria-label="取材先の名前を表示" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-                    <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                      <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </div>
-                    <span className="text-[var(--text3)]">名前</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        )}
 
-      {/* アクションボタン行 — ボタンがある時のみ表示 */}
-      {(hasSuggestions || isDirty || safeFormat !== 'blocks') && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] px-4 py-2">
+        {/* 編集・提案・テーマカラー行 */}
+        <div className="flex flex-wrap items-center gap-2">
+          {isEditing ? (
+            <div className="flex gap-2">
+              <button type="button" onClick={handleSaveAndExit} disabled={saveState === 'saving'}
+                className="min-h-[44px] rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存'}
+              </button>
+              <button type="button" onClick={handleCancel} disabled={saveState === 'saving'}
+                className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                キャンセル
+              </button>
+            </div>
+          ) : (
+            <button type="button" onClick={handleStartEdit}
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+              編集する
+            </button>
+          )}
           {hasSuggestions && (
-            <button
-              type="button"
-              role="switch"
-              aria-label="クオリティアップ提案を表示"
-              aria-checked={showSuggestions}
+            <button type="button" role="switch" aria-label="クオリティアップ提案を表示" aria-checked={showSuggestions}
               onClick={() => setShowSuggestions((v) => !v)}
-              className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded min-h-[44px] px-1"
-            >
+              className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded min-h-[44px] px-1">
               <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                 <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-4' : 'translate-x-0.5'}`} />
               </div>
               <span className="text-xs text-[var(--text3)] whitespace-nowrap">クオリティアップ提案</span>
             </button>
           )}
-          {isDirty && (
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saveState === 'saving'}
-              className="min-w-24 min-h-[44px] rounded-lg bg-[var(--accent)] px-3 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存する'}
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs text-[var(--text3)] hidden sm:inline">テーマカラー</span>
+            <input type="color" aria-label="テーマカラーを選択" value={themeColor} onChange={(e) => setThemeColor(e.target.value)}
+              className="h-7 w-7 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5" />
+            <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
+              className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+              リセット
             </button>
-          )}
-          {safeFormat !== 'blocks' && (
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="min-w-[8rem] min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              {copied ? <><span aria-hidden="true">✓ </span>コピーしました</> : 'コピー'}
-            </button>
-          )}
-          {safeFormat !== 'blocks' && (
-            <button
-              type="button"
-              onClick={handleDownload}
-              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-            >
-              ファイル保存
-            </button>
-          )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* 設定パネル（会話形式のみ） */}
+      {articleType === 'conversation' && (
+        <div className="border-b border-[var(--border)] divide-y divide-[var(--border)] text-xs">
+          {/* インタビュアー */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
+            <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">インタビュアー</span>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden bg-[var(--bg2)]">
+                  {interviewerAvatarUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={interviewerAvatarUrl} alt="インタビュアーのアイコンプレビュー" className="h-full w-full object-cover" />
+                  )}
+                </div>
+                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                  画像を選ぶ
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                    const file = e.target.files?.[0]; if (!file) return
+                    const reader = new FileReader(); reader.onload = () => setInterviewerAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                  }} />
+                </label>
+                {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
+                  <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
+                )}
+                <input type="text" aria-label="インタビュアーの表示名" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
+                <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                  <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  </div>
+                  <span className="text-[var(--text3)]">アイコン</span>
+                </button>
+                <button type="button" role="switch" aria-label="インタビュアー名を表示" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                  <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  </div>
+                  <span className="text-[var(--text3)]">名前</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* 取材先 */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
+            <span className="sm:w-28 shrink-0 text-[var(--text3)] sm:pt-1">取材先</span>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="h-7 w-7 shrink-0 rounded-full border border-[var(--border)] overflow-hidden" style={{ background: clientAvatarUrl ? undefined : themeColor }}>
+                  {clientAvatarUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={clientAvatarUrl} alt="取材先のアイコンプレビュー" className="h-full w-full object-cover" />
+                  )}
+                </div>
+                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                  画像を選ぶ
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                    const file = e.target.files?.[0]; if (!file) return
+                    const reader = new FileReader(); reader.onload = () => setClientAvatarUrl(reader.result as string); reader.readAsDataURL(file)
+                  }} />
+                </label>
+                {clientAvatarUrl && (
+                  <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
+                )}
+                <input type="text" aria-label="取材先の表示名" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
+                <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                  <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  </div>
+                  <span className="text-[var(--text3)]">アイコン</span>
+                </button>
+                <button type="button" role="switch" aria-label="取材先の名前を表示" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                  <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  </div>
+                  <span className="text-[var(--text3)]">名前</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* 紹介文 */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 px-5 py-3">
+            <span className="sm:w-28 shrink-0 text-[var(--text3)]">紹介文</span>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" role="switch" aria-label="AIキャスト紹介文を表示" aria-checked={showIntro} onClick={() => setShowIntro(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showIntro ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
+                  <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showIntro ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                </div>
+                <span className="text-[var(--text3)]">AIキャスト・Insight Cast を紹介する</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {safeFormat === 'blocks' ? (
-        <div className="flex flex-col gap-3 p-5">
-          {articleType === 'conversation'
-            ? buildConversationRenderGroups(editedContent).map((group, idx) =>
-                group.type === 'conversation'
-                  ? <ConversationBlockCard key={idx} text={group.text} onSwitchToHtml={() => setFormat('html')} />
-                  : group.type === 'section'
-                  ? <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
-                  : <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
-              )
-            : groupArticleBlocks(splitIntoArticleBlocks(editedContent)).map((group, idx) =>
-                group.type === 'section' ? (
-                  <SectionGroupCard key={idx} heading={group.heading} body={group.body} />
-                ) : (
-                  <BlockCopyCard key={idx} kind={group.block.kind} text={group.block.text} />
+      {/* コンテンツ描画（blocks のみ） */}
+      <div className="flex flex-col gap-3 p-5">
+        {articleType === 'conversation'
+          ? (() => {
+              const rawGroups = buildConversationRenderGroups(editedContent, interviewerName, clientName)
+              // 概要ブロック（standalone/intro）が会話グループより後ろにある場合、前に移動する
+              // 会話本文と小見出し+本文の上下関係は記事の内容に従う
+              const allGroups = (() => {
+                const convIdx = rawGroups.findIndex(g => g.type === 'conversation')
+                if (convIdx < 0) return rawGroups
+                const lateIntroIdxs = new Set<number>()
+                const lateIntros: ConvRenderGroup[] = []
+                for (let i = convIdx + 1; i < rawGroups.length; i++) {
+                  const g = rawGroups[i]
+                  if (g.type === 'standalone' && g.block.kind === 'intro') {
+                    lateIntros.push(g)
+                    lateIntroIdxs.add(i)
+                  }
+                }
+                if (lateIntros.length === 0) return rawGroups
+                const result: ConvRenderGroup[] = []
+                for (let i = 0; i < rawGroups.length; i++) {
+                  if (lateIntroIdxs.has(i)) continue
+                  if (i === convIdx) result.push(...lateIntros)
+                  result.push(rawGroups[i])
+                }
+                return result
+              })()
+              const firstConvIdx = allGroups.findIndex(g => g.type === 'conversation')
+              return allGroups.map((group, idx) => {
+                const anchor = group.type === 'section' ? group.heading.text
+                  : group.type === 'standalone' && group.block.kind === 'intro' ? 'intro'
+                  : null
+                const groupSuggestions = anchor && showSuggestions
+                  ? (suggestions?.items.filter((s) => s.anchor === anchor) ?? [])
+                  : []
+                return (
+                  <Fragment key={idx}>
+                    {group.type === 'conversation'
+                      ? <InterviewerIntroPanelCard
+                          interviewerDisplayName={interviewerDisplayName || interviewerName || 'インタビュアー'}
+                          interviewerLabel={interviewerLabel}
+                          text={group.text}
+                          interviewerName={interviewerName ?? ''}
+                          clientName={clientName ?? '事業者'}
+                          getIntroHtml={makeIntroHtml}
+                          getConvHtml={() => makeConvOnlyHtml(group.text)}
+                          isEditing={isEditing}
+                          onEditConv={newExchanges => setEditedContent(prev => applyConvEdit(prev, interviewerName ?? '', clientName ?? '事業者', newExchanges))}
+                          themeColor={themeColor}
+                          showIntro={showIntro && idx === firstConvIdx}
+                        />
+                      : group.type === 'meta'
+                      ? null
+                      : group.type === 'section'
+                      ? <SectionGroupCard
+                          heading={group.heading}
+                          body={group.body}
+                          isEditing={isEditing}
+                          onEditHeading={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'heading', o, n))}
+                          onEditBody={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'body', o, n))}
+                        />
+                      : <BlockCopyCard
+                          kind={group.block.kind}
+                          text={group.block.text}
+                          rawText={group.block.rawText}
+                          isEditing={isEditing}
+                          onEditDone={(o, n) => setEditedContent(prev => applyBlockEdit(prev, group.block.kind, o, n))}
+                        />
+                    }
+                    {groupSuggestions.map((item, sIdx) => (
+                      <SuggestionCard key={sIdx} item={item} />
+                    ))}
+                  </Fragment>
                 )
+              })
+            })()
+          : groupArticleBlocks(splitIntoArticleBlocks(editedContent)).map((group, idx) => {
+              const anchor = group.type === 'section' ? group.heading.text
+                : group.type === 'standalone' && group.block.kind === 'intro' ? 'intro'
+                : null
+              const groupSuggestions = anchor && showSuggestions
+                ? (suggestions?.items.filter((s) => s.anchor === anchor) ?? [])
+                : []
+              return (
+                <Fragment key={idx}>
+                  {group.type === 'section' ? (
+                    <SectionGroupCard
+                      heading={group.heading}
+                      body={group.body}
+                      isEditing={isEditing}
+                      onEditHeading={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'heading', o, n))}
+                      onEditBody={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'body', o, n))}
+                    />
+                  ) : (
+                    <BlockCopyCard
+                      kind={group.block.kind}
+                      text={group.block.text}
+                      rawText={group.block.rawText}
+                      isEditing={isEditing}
+                      onEditDone={(o, n) => setEditedContent(prev => applyBlockEdit(prev, group.block.kind, o, n))}
+                    />
+                  )}
+                  {groupSuggestions.map((item, sIdx) => (
+                    <SuggestionCard key={sIdx} item={item} />
+                  ))}
+                </Fragment>
               )
-          }
-        </div>
-      ) : safeFormat === 'html' && htmlPreview ? (
-        <div className="p-5" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(output, { ALLOWED_URI_REGEXP: /^(?:(?:https?|data):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i }) }} />
-      ) : safeFormat === 'html' ? (
-        <div className="p-5">
-          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">
-            {output.replace(/src="data:image\/[^;]+;base64,[^"]+"/g, 'src="[画像データ]"')}
-          </pre>
-        </div>
-      ) : safeFormat === 'markdown' && showSuggestions ? (
-        <ArticleSectionsWithSuggestions
-          markdown={editedContent}
-          suggestions={suggestions ?? null}
-        />
-      ) : (
-        <textarea
-          aria-label="記事コンテンツ編集エリア"
-          value={safeFormat === 'markdown' ? editedContent : output}
-          onChange={safeFormat === 'markdown' ? (e) => setEditedContent(e.target.value) : undefined}
-          readOnly={safeFormat !== 'markdown'}
-          className="w-full resize-none bg-transparent p-5 text-sm leading-relaxed text-[var(--text2)] focus:outline-none"
-          style={{ minHeight: '200px', height: 'auto', fieldSizing: 'content' } as React.CSSProperties}
-        />
-      )}
+            })
+        }
+      </div>
       {copyError && (
         <p role="alert" className="px-5 pb-3 text-xs text-[var(--err)]">コピーできませんでした。手動でお試しください。</p>
       )}
@@ -653,46 +724,81 @@ export function ArticleExportPanel({
   )
 }
 
-// セクション分割プレビュー（提案カード付き）
-function ArticleSectionsWithSuggestions({
-  markdown,
-  suggestions,
-}: {
-  markdown: string
-  suggestions: ArticleSuggestions | null
-}) {
-  // ## 見出しでブロックに分割。冒頭ブロックは anchor: 'intro'
-  const blocks = splitIntoSectionBlocks(markdown)
 
+type ArticleBlockKind = 'title' | 'intro' | 'heading' | 'body'
+type ArticleBlock = { kind: ArticleBlockKind; text: string; rawText?: string }
+type CopyMode = 'text' | 'markdown' | 'html'
+
+const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
+  title:   'タイトル',
+  intro:   '概要',
+  heading: '小見出し',
+  body:    '本文',
+}
+
+function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }: {
+  mode: CopyMode
+  onChange: (v: CopyMode) => void
+  hasMarkdown?: boolean
+  hasHtml?: boolean
+}) {
   return (
-    <div className="p-5 space-y-2">
-      {blocks.map((block, idx) => {
-        const blockSuggestions = suggestions?.items.filter((s) => s.anchor === block.anchor) ?? []
-        const html = DOMPurify.sanitize(String(marked.parse(block.markdown, { async: false })))
-        return (
-          <div key={idx}>
-            <div
-              className="prose prose-sm max-w-none text-[var(--text2)] [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mt-4 [&_h2]:mb-2 [&_p]:leading-relaxed [&_a]:text-[var(--accent)] [&_a]:underline"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
-            {blockSuggestions.map((item, sIdx) => (
-              <SuggestionCard key={sIdx} item={item} />
-            ))}
-          </div>
-        )
-      })}
+    <div
+      className="absolute right-4 top-4 flex items-center select-none"
+      onMouseMove={e => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
+    >
+      <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
+        <button
+          type="button"
+          onClick={e => { e.stopPropagation(); onChange('text') }}
+          className={`px-2.5 py-1 transition-colors cursor-auto ${mode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+        >
+          テキスト
+        </button>
+        {hasMarkdown && (
+          <button
+            type="button"
+            onClick={e => { e.stopPropagation(); onChange('markdown') }}
+            className={`px-2.5 py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+          >
+            MD
+          </button>
+        )}
+        {hasHtml && (
+          <button
+            type="button"
+            onClick={e => { e.stopPropagation(); onChange('html') }}
+            className={`px-2.5 py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'html' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+          >
+            HTML
+          </button>
+        )}
+      </div>
     </div>
   )
 }
 
-type ArticleBlockKind = 'title' | 'intro' | 'heading' | 'body'
-type ArticleBlock = { kind: ArticleBlockKind; text: string }
+function ClipboardIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  )
+}
 
-const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
-  title:   'タイトル',
-  intro:   '冒頭',
-  heading: '小見出し',
-  body:    '本文',
+function ClipboardHint({ copied }: { copied: boolean }) {
+  return (
+    <span className="relative inline-flex">
+      <ClipboardIcon />
+      {copied && (
+        <span className="pointer-events-none absolute z-20 top-1/2 -translate-y-1/2 right-full mr-2 rounded-full bg-[#1c1410] px-3 py-[3px] text-[10px] font-semibold tracking-wide text-white whitespace-nowrap shadow-lg ring-1 ring-white/10">
+          ✓ コピーしました
+        </span>
+      )}
+    </span>
+  )
 }
 
 // 会話込み記事専用のレンダーグループ
@@ -700,65 +806,121 @@ type ConvRenderGroup =
   | { type: 'standalone'; block: ArticleBlock }
   | { type: 'section'; heading: ArticleBlock; body: ArticleBlock | null }
   | { type: 'conversation'; text: string }
+  | { type: 'meta'; key: string; value: string }
 
-function buildConversationRenderGroups(markdown: string): ConvRenderGroup[] {
+function buildConversationRenderGroups(
+  markdown: string,
+  interviewerName?: string | null,
+  clientName?: string | null,
+): ConvRenderGroup[] {
   const lines = markdown.split('\n')
   const groups: ConvRenderGroup[] = []
   let phase: 'before' | 'conv' | 'after' = 'before'
   let hasH1 = false
+  let pastFirstH2 = false
+  let hasSeenQA = false
   let currentHeading: ArticleBlock | null = null
   let accLines: string[] = []
   let convLines: string[] = []
 
-  const isConvLine = (l: string) => /^\*\*.+?\*\*[:：]\s*\S/.test(l)
+  const isConvLine = (l: string) => /^\*\*.+?\*\*[:：]/.test(l)
 
   function flushGroup() {
-    const text = toPlainText(accLines.join('\n').trim())
+    const rawMd = accLines.join('\n').trim()
+    const text = toPlainText(rawMd)
     if (currentHeading) {
-      groups.push({ type: 'section', heading: currentHeading, body: text ? { kind: 'body', text } : null })
+      groups.push({ type: 'section', heading: currentHeading, body: text ? { kind: 'body', text, rawText: rawMd } : null })
       currentHeading = null
     } else if (text) {
-      groups.push({ type: 'standalone', block: { kind: hasH1 ? 'body' : 'intro', text } })
+      groups.push({ type: 'standalone', block: { kind: (hasH1 && pastFirstH2) ? 'body' : 'intro', text, rawText: rawMd } })
     }
     accLines = []
+  }
+
+  function flushConv() {
+    const convText = convLines.join('\n').trim()
+    if (convText) groups.push({ type: 'conversation', text: convText })
+    convLines = []
   }
 
   for (const line of lines) {
     if (phase === 'before') {
       if (isConvLine(line)) {
-        flushGroup()
-        phase = 'conv'
-        convLines.push(line)
+        const bMatch = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+        const bKey = bMatch?.[1] ?? ''
+        const bVal = bMatch?.[2] ?? ''
+        const bIsQA = !interviewerName && !clientName || bKey === interviewerName || bKey === clientName
+        if (bIsQA) {
+          flushGroup()
+          phase = 'conv'
+          convLines.push(line)
+          hasSeenQA = true
+        } else {
+          flushGroup()
+          groups.push({ type: 'meta', key: bKey, value: bVal })
+        }
         continue
       }
       const h1 = line.match(/^# (.+)$/)
       const h2 = line.match(/^## (.+)$/)
       if (h1 && !hasH1) {
         flushGroup(); hasH1 = true
-        groups.push({ type: 'standalone', block: { kind: 'title', text: h1[1].trim() } })
+        groups.push({ type: 'standalone', block: { kind: 'title', text: h1[1].trim(), rawText: `# ${h1[1].trim()}` } })
         continue
       }
-      if (h2) { flushGroup(); currentHeading = { kind: 'heading', text: h2[1].trim() }; continue }
+      if (h2) { flushGroup(); pastFirstH2 = true; currentHeading = { kind: 'heading', text: h2[1].trim(), rawText: `## ${h2[1].trim()}` }; continue }
       accLines.push(line)
     } else if (phase === 'conv') {
-      if (isConvLine(line) || line.trim() === '') { convLines.push(line); continue }
-      const convText = convLines.join('\n').trim()
-      if (convText) groups.push({ type: 'conversation', text: convText })
-      convLines = []; phase = 'after'
+      if (line.trim() === '' || /^-{3,}$/.test(line.trim()) || line.trimStart().startsWith('>')) { convLines.push(line); continue }
+      if (isConvLine(line)) {
+        const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+        const key = match?.[1] ?? ''
+        const value = match?.[2] ?? ''
+        const isQA = !interviewerName && !clientName
+          || key === interviewerName
+          || key === clientName
+        if (isQA) {
+          convLines.push(line)
+          hasSeenQA = true
+        } else if (!hasSeenQA) {
+          // Q&A 前のメタデータ行（**インタビュアー**: xxx 等）
+          flushConv()
+          groups.push({ type: 'meta', key, value })
+        } else {
+          // Q&A 後の非会話行（**まとめ**: xxx 等）→ 別ブロックに分離
+          flushConv()
+          phase = 'after'
+          accLines.push(value)
+        }
+        continue
+      }
+      // 非 conv, 非 blank 行 → 会話終了
+      flushConv()
+      phase = 'after'
       const h2 = line.match(/^## (.+)$/)
-      if (h2) { currentHeading = { kind: 'heading', text: h2[1].trim() } } else { accLines.push(line) }
+      if (h2) { pastFirstH2 = true; currentHeading = { kind: 'heading', text: h2[1].trim() } } else { accLines.push(line) }
     } else {
+      if (isConvLine(line)) {
+        const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+        const key = match?.[1] ?? ''
+        const isQA = !interviewerName && !clientName || key === interviewerName || key === clientName
+        if (isQA) {
+          flushGroup()
+          phase = 'conv'
+          convLines.push(line)
+          hasSeenQA = true
+          continue
+        }
+      }
       const h2 = line.match(/^## (.+)$/)
-      if (h2) { flushGroup(); currentHeading = { kind: 'heading', text: h2[1].trim() }; continue }
+      if (h2) { flushGroup(); pastFirstH2 = true; currentHeading = { kind: 'heading', text: h2[1].trim(), rawText: `## ${h2[1].trim()}` }; continue }
       accLines.push(line)
     }
   }
   if (phase === 'conv' && convLines.length > 0) {
-    const convText = convLines.join('\n').trim()
-    if (convText) groups.push({ type: 'conversation', text: convText })
-  } else {
-    flushGroup()
+    flushConv()
   }
+  flushGroup()
   return groups
 }
 
@@ -770,8 +932,9 @@ function splitIntoArticleBlocks(markdown: string): ArticleBlock[] {
   let accLines: string[] = []
 
   function flushAcc() {
-    const text = toPlainText(accLines.join('\n').trim())
-    if (text) blocks.push({ kind: pastFirstHeading ? 'body' : 'intro', text })
+    const rawMd = accLines.join('\n').trim()
+    const text = toPlainText(rawMd)
+    if (text) blocks.push({ kind: pastFirstHeading ? 'body' : 'intro', text, rawText: rawMd })
     accLines = []
   }
 
@@ -782,14 +945,14 @@ function splitIntoArticleBlocks(markdown: string): ArticleBlock[] {
     if (h1 && !hasH1) {
       flushAcc()
       hasH1 = true
-      blocks.push({ kind: 'title', text: h1[1].trim() })
+      blocks.push({ kind: 'title', text: h1[1].trim(), rawText: `# ${h1[1].trim()}` })
       continue
     }
 
     if (h2) {
       flushAcc()
       pastFirstHeading = true
-      blocks.push({ kind: 'heading', text: h2[1].trim() })
+      blocks.push({ kind: 'heading', text: h2[1].trim(), rawText: `## ${h2[1].trim()}` })
       continue
     }
 
@@ -826,124 +989,366 @@ function groupArticleBlocks(blocks: ArticleBlock[]): RenderGroup[] {
   return groups
 }
 
-function ConversationBlockCard({ text, onSwitchToHtml }: { text: string; onSwitchToHtml: () => void }) {
-  const [copied, setCopied] = useState(false)
+function ConversationBubbleEditor({
+  initialExchanges,
+  interviewerName,
+  clientName,
+  fullMarkdown,
+  onMarkdownChange,
+  onExchangesChange,
+  themeColor,
+}: {
+  initialExchanges: { speaker: string; content: string }[]
+  interviewerName: string
+  clientName: string
+  fullMarkdown?: string
+  onMarkdownChange?: (newMd: string) => void
+  onExchangesChange?: (exchanges: { speaker: string; content: string }[]) => void
+  themeColor: string
+}) {
+  const [exchanges, setExchanges] = useState(initialExchanges)
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [insertAt, setInsertAt] = useState<number | null>(null)
+  const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null)
+  const dragFromHandle = useRef(false)
+  const mdRef = useRef(fullMarkdown ?? '')
+  mdRef.current = fullMarkdown ?? ''
 
-  async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch { /* ignore */ }
+  const questionBg = lighten(themeColor, 0.78)
+  const answerBg   = lighten(themeColor, 0.88)
+
+  function handleChange(next: { speaker: string; content: string }[]) {
+    setExchanges(next)
+    const writeable = next.filter(e => e.content !== '')
+    if (onMarkdownChange) onMarkdownChange(applyConvEdit(mdRef.current, interviewerName, clientName, writeable))
+    // writeableが変わったときだけ親に通知（空バブル追加だけの場合は通知しない）
+    const prevWriteable = exchanges.filter(e => e.content !== '')
+    const changed = writeable.length !== prevWriteable.length ||
+      writeable.some((e, i) => e.speaker !== prevWriteable[i]?.speaker || e.content !== prevWriteable[i]?.content)
+    if (changed) onExchangesChange?.(writeable)
+  }
+
+  function reorder(from: number, before: number) {
+    if (before === from || before === from + 1) return
+    const next = [...exchanges]
+    const [item] = next.splice(from, 1)
+    next.splice(before > from ? before - 1 : before, 0, item)
+    handleChange(next)
+  }
+
+  function calcInsertAt(ev: React.DragEvent, i: number) {
+    const rect = (ev.currentTarget as HTMLElement).getBoundingClientRect()
+    return ev.clientY < rect.top + rect.height / 2 ? i : i + 1
   }
 
   return (
-    <div className="rounded-[14px] border border-[var(--accent)]/40 bg-[var(--surface)] overflow-hidden">
-      <div className="relative p-5">
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--accent)] mb-2">会話本文</div>
-        <p className="pr-24 text-sm text-[var(--text2)] whitespace-pre-wrap leading-relaxed line-clamp-4">{text}</p>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
-        >
-          {copied ? 'コピーしました ✓' : 'コピー'}
-        </button>
+    <div
+      className="flex flex-col gap-3 p-5"
+      onDragOver={ev => ev.preventDefault()}
+      onDrop={ev => { ev.preventDefault(); if (dragIdx !== null && insertAt !== null) reorder(dragIdx, insertAt); setDragIdx(null); setInsertAt(null) }}
+      onDragLeave={ev => { if (!ev.currentTarget.contains(ev.relatedTarget as Node)) setInsertAt(null) }}
+    >
+      {exchanges.map((e, i) => {
+        const isInterviewer = e.speaker === interviewerName
+        return (
+          <div
+            key={i}
+            onDragOver={ev => { ev.stopPropagation(); ev.preventDefault(); setInsertAt(calcInsertAt(ev, i)) }}
+          >
+            <div className={`h-2 rounded-full transition-colors duration-100 mb-1 ${insertAt === i && dragIdx !== null ? 'bg-[var(--accent)]/40' : 'bg-transparent'}`} />
+            <div
+              draggable
+              onDragStart={ev => { if (!dragFromHandle.current) { ev.preventDefault(); return }; setDragIdx(i); ev.dataTransfer.effectAllowed = 'move' }}
+              onDragEnd={() => { dragFromHandle.current = false; setDragIdx(null); setInsertAt(null) }}
+              className={`flex items-start gap-2 ${dragIdx === i ? 'opacity-40' : ''}`}
+            >
+              {/* 並べ替えコントロール */}
+              <div className="flex flex-col items-center shrink-0 pt-1.5 gap-0">
+                <button type="button" onClick={() => { if (i === 0) return; const n = [...exchanges]; [n[i-1], n[i]] = [n[i], n[i-1]]; handleChange(n) }} disabled={i === 0} aria-label="上に移動" className="px-1 py-0.5 text-[10px] text-[var(--text3)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▲</button>
+                <span aria-label="ドラッグして並べ替え" className="cursor-grab active:cursor-grabbing px-1 py-1 text-[var(--text3)] hover:text-[var(--text2)] select-none" onMouseDown={() => { dragFromHandle.current = true }} onMouseUp={() => { dragFromHandle.current = false }}>
+                  <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor"><circle cx="2" cy="2" r="1.3"/><circle cx="6" cy="2" r="1.3"/><circle cx="2" cy="6" r="1.3"/><circle cx="6" cy="6" r="1.3"/><circle cx="2" cy="10" r="1.3"/><circle cx="6" cy="10" r="1.3"/></svg>
+                </span>
+                <button type="button" onClick={() => { if (i === exchanges.length - 1) return; const n = [...exchanges]; [n[i], n[i+1]] = [n[i+1], n[i]]; handleChange(n) }} disabled={i === exchanges.length - 1} aria-label="下に移動" className="px-1 py-0.5 text-[10px] text-[var(--text3)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▼</button>
+              </div>
+              {/* バブル */}
+              <div className={`flex flex-col flex-1 min-w-0 ${isInterviewer ? 'items-end' : 'items-start'}`}>
+                <textarea
+                  value={e.content}
+                  onChange={ev => handleChange(exchanges.map((ex, j) => j === i ? { ...ex, content: ev.target.value } : ex))}
+                  className="w-full max-w-[80%] resize-none px-3.5 py-2.5 text-sm leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  style={{
+                    background: isInterviewer ? questionBg : answerBg,
+                    borderRadius: isInterviewer ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
+                    color: isInterviewer ? '#3d2b1f' : '#2a2a3d',
+                    fieldSizing: 'content',
+                  } as React.CSSProperties}
+                  rows={2}
+                />
+              </div>
+              {/* 削除 */}
+              <button type="button" onClick={() => setPendingDeleteIdx(i)} aria-label="この発言を削除" className={`mt-2 shrink-0 px-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded ${pendingDeleteIdx === i ? 'text-[var(--err)]' : 'text-[var(--text3)] hover:text-[var(--err)]'}`}>×</button>
+            </div>
+          </div>
+        )
+      })}
+      <div
+        className={`h-2 rounded-full transition-colors duration-100 ${insertAt === exchanges.length && dragIdx !== null ? 'bg-[var(--accent)]/40' : 'bg-transparent'}`}
+        onDragOver={ev => { ev.stopPropagation(); ev.preventDefault(); setInsertAt(exchanges.length) }}
+      />
+      <div className="flex gap-2 mt-1 flex-wrap">
+        <button type="button" onClick={() => handleChange([...exchanges, { speaker: clientName, content: '' }])} className="text-[11px] border border-[var(--border)] rounded-full px-3 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors">+ {clientName}</button>
+        <button type="button" onClick={() => handleChange([...exchanges, { speaker: interviewerName, content: '' }])} className="text-[11px] border border-[var(--border)] rounded-full px-3 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors">+ {interviewerName}</button>
       </div>
-      <div className="border-t border-[var(--border)] px-5 py-3 flex items-center justify-between gap-3">
-        <p className="text-[11px] text-[var(--text3)]">埋め込みHTMLに差し替え可能</p>
-        <button
-          type="button"
-          onClick={onSwitchToHtml}
-          className="shrink-0 text-[11px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
-        >
-          HTMLを生成 →
-        </button>
-      </div>
+      {pendingDeleteIdx !== null && (
+        <ConfirmDialog
+          dialogId="bubble-delete"
+          title="この発言を削除しますか？"
+          description="削除すると元に戻せません。"
+          confirmLabel="削除する"
+          onCancel={() => setPendingDeleteIdx(null)}
+          onConfirm={() => {
+            handleChange(exchanges.filter((_, j) => j !== pendingDeleteIdx))
+            setPendingDeleteIdx(null)
+          }}
+        />
+      )}
     </div>
   )
 }
 
+function InterviewerIntroPanelCard({
+  interviewerDisplayName,
+  interviewerLabel,
+  text,
+  interviewerName,
+  clientName,
+  getIntroHtml,
+  getConvHtml,
+  isEditing,
+  onEditConv,
+  themeColor,
+  showIntro,
+}: {
+  interviewerDisplayName: string
+  interviewerLabel: string | null
+  text: string
+  interviewerName: string
+  clientName: string
+  getIntroHtml: () => string
+  getConvHtml: () => string
+  isEditing?: boolean
+  onEditConv?: (exchanges: { speaker: string; content: string }[]) => void
+  themeColor?: string
+  showIntro?: boolean
+}) {
+  const [introMode, setIntroMode] = useState<CopyMode>('text')
+  const [convMode, setConvMode] = useState<CopyMode>('text')
+  const [introCopied, setIntroCopied] = useState(false)
+  const [convCopied, setConvCopied] = useState(false)
+  const labelText = interviewerLabel ? `AIインタビュアー · ${interviewerLabel}` : 'AIインタビュアー'
+  const introText = `${interviewerDisplayName} / ${labelText}`
+  const introMarkdown = `**${interviewerDisplayName}** / ${labelText}\n\nこの記事は [Insight Cast](https://insight-cast.jp) のAIインタビュアーが取材・構成しました。`
+
+  const exchanges = useMemo(() =>
+    text.split('\n').flatMap(line => {
+      const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+      if (!match) return []
+      const [, speaker, content] = match
+      if (speaker !== interviewerName && speaker !== clientName) return []
+      return [{ speaker, content }]
+    }),
+    [text, interviewerName, clientName]
+  )
+
+  const convPlainText = exchanges.map(e => `${e.speaker}:\n${e.content}`).join('\n\n')
+  const convMarkdown = text.replace(/^(\*\*.+?\*\*[:：])\s+/gm, '$1\n')
+
+  async function doIntroCopy() {
+    const content = introMode === 'html' ? getIntroHtml() : introMode === 'markdown' ? introMarkdown : introText
+    try { await navigator.clipboard.writeText(content); setIntroCopied(true); setTimeout(() => setIntroCopied(false), 1500) } catch { /* ignore */ }
+  }
+  async function doConvCopy() {
+    const content = convMode === 'html' ? getConvHtml() : convMode === 'markdown' ? convMarkdown : convPlainText
+    try { await navigator.clipboard.writeText(content); setConvCopied(true); setTimeout(() => setConvCopied(false), 1500) } catch { /* ignore */ }
+  }
+
+  return (
+    <>
+      {/* インタビュアー紹介 */}
+      {showIntro !== false && <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
+        <div
+          role={isEditing ? undefined : 'button'}
+          tabIndex={isEditing ? undefined : 0}
+          onClick={isEditing ? undefined : () => doIntroCopy()}
+          onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doIntroCopy()}
+          className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+        >
+          <div className="px-5 pt-5 pb-3">
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">インタビュアー紹介</div>
+            {introMode === 'html' ? (
+              <div
+                className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getIntroHtml(), PURIFY_OPTS) }}
+              />
+            ) : introMode === 'markdown' ? (
+              <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
+            ) : (
+              <p className="text-sm text-[var(--text2)]">{introText}</p>
+            )}
+            {!isEditing && <HtmlModeToggle mode={introMode} onChange={setIntroMode} hasMarkdown hasHtml />}
+          </div>
+          {!isEditing && (
+            <div className="flex justify-end px-4 pb-3 pt-1">
+              <button type="button" onClick={e => { e.stopPropagation(); doIntroCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
+                <ClipboardHint copied={introCopied} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>}
+      {/* 会話本文 */}
+      <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
+        <div
+          role={isEditing ? undefined : 'button'}
+          tabIndex={isEditing ? undefined : 0}
+          onClick={isEditing ? undefined : () => doConvCopy()}
+          onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doConvCopy()}
+          className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+        >
+          <div className="px-5 pt-5 pb-3">
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-3 text-[var(--text3)]">会話本文</div>
+            {isEditing ? (
+              <ConversationBubbleEditor
+                initialExchanges={exchanges}
+                interviewerName={interviewerName}
+                clientName={clientName}
+                onExchangesChange={newExchanges => onEditConv?.(newExchanges)}
+                themeColor={themeColor ?? DEFAULT_THEME_COLOR}
+              />
+            ) : convMode === 'html' ? (
+              <div
+                className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getConvHtml(), PURIFY_OPTS) }}
+              />
+            ) : convMode === 'markdown' ? (
+              <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {exchanges.map((e, i) => (
+                  <p key={i} className="text-sm leading-relaxed">
+                    <span className="block font-semibold text-[var(--text)]">{e.speaker}:</span>
+                    <span className="block text-[var(--text2)]">{e.content}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+            {!isEditing && <HtmlModeToggle mode={convMode} onChange={setConvMode} hasMarkdown hasHtml />}
+          </div>
+          {!isEditing && (
+            <div className="flex justify-end px-4 pb-3 pt-1">
+              <button type="button" onClick={e => { e.stopPropagation(); doConvCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
+                <ClipboardHint copied={convCopied} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  )
+}
+
+
 function SectionGroupCard({
   heading,
   body,
+  isEditing,
+  onEditHeading,
+  onEditBody,
 }: {
   heading: ArticleBlock
   body: ArticleBlock | null
+  isEditing?: boolean
+  onEditHeading?: (oldText: string, newText: string) => void
+  onEditBody?: (oldText: string, newText: string) => void
 }) {
   return (
-    <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-      <BlockCopyCardInner kind="heading" text={heading.text} />
+    <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
+      <BlockCopyCardInner kind="heading" text={heading.text} markdownCopyText={heading.rawText} isEditing={isEditing} onEditDone={onEditHeading} />
       {body && (
         <>
           <div className="border-t border-[var(--border)]" />
-          <BlockCopyCardInner kind="body" text={body.text} />
+          <BlockCopyCardInner kind="body" text={body.text} markdownCopyText={body.rawText} isEditing={isEditing} onEditDone={onEditBody} />
         </>
       )}
     </div>
   )
 }
 
-function BlockCopyCardInner({ kind, text }: { kind: ArticleBlockKind; text: string }) {
+function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, onEditDone }: {
+  kind: ArticleBlockKind
+  text: string
+  markdownCopyText?: string
+  label?: string
+  isEditing?: boolean
+  onEditDone?: (oldText: string, newText: string) => void
+}) {
+  const [mode, setMode] = useState<CopyMode>('text')
   const [copied, setCopied] = useState(false)
+  const [localText, setLocalText] = useState(text)
+  const origRef = useRef(text)
 
-  async function handleClick() {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // クリップボードAPIが使えない場合は何もしない
-    }
+  useEffect(() => {
+    setLocalText(text)
+    origRef.current = text
+  }, [text])
+
+  async function handleCopy() {
+    if (isEditing) return
+    const copyContent = mode === 'markdown' && markdownCopyText ? markdownCopyText : text
+    try { await navigator.clipboard.writeText(copyContent); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
   }
 
   return (
-    <div className="relative p-5">
-      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">
-        {BLOCK_LABEL[kind]}
+    <div
+      role={isEditing ? undefined : 'button'}
+      tabIndex={isEditing ? undefined : 0}
+      onClick={isEditing ? undefined : handleCopy}
+      onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleCopy()}
+      className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+    >
+      <div className="px-5 pt-5 pb-3">
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">
+          {label ?? BLOCK_LABEL[kind]}
+        </div>
+        {isEditing ? (
+          <textarea
+            value={localText}
+            onChange={e => setLocalText(e.target.value)}
+            onBlur={() => onEditDone?.(origRef.current, localText)}
+            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}
+            style={{ fieldSizing: 'content' } as React.CSSProperties}
+            rows={2}
+          />
+        ) : mode === 'markdown' && markdownCopyText ? (
+          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{markdownCopyText}</pre>
+        ) : (
+          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+            {text}
+          </p>
+        )}
+        {!isEditing && markdownCopyText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
       </div>
-      <p className={`pr-24 whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
-        {text}
-      </p>
-      <button
-        type="button"
-        onClick={handleClick}
-        className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
-      >
-        {copied ? 'コピーしました ✓' : 'コピー'}
-      </button>
+      {!isEditing && (
+        <div className="flex justify-end px-4 pb-3 pt-1">
+          <button type="button" onClick={e => { e.stopPropagation(); handleCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
+            <ClipboardHint copied={copied} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
-function splitIntoSectionBlocks(markdown: string): { anchor: string; markdown: string }[] {
-  // ## 見出しの位置で分割
-  const lines = markdown.split('\n')
-  const blocks: { anchor: string; markdown: string }[] = []
-  let currentAnchor = 'intro'
-  let currentLines: string[] = []
-
-  for (const line of lines) {
-    const headingMatch = line.match(/^## (.+)$/)
-    if (headingMatch) {
-      // 前のブロックを確定
-      if (currentLines.length > 0) {
-        blocks.push({ anchor: currentAnchor, markdown: currentLines.join('\n').trim() })
-      }
-      currentAnchor = headingMatch[1].trim()
-      currentLines = [line]
-    } else {
-      currentLines.push(line)
-    }
-  }
-
-  // 最後のブロック
-  if (currentLines.length > 0) {
-    blocks.push({ anchor: currentAnchor, markdown: currentLines.join('\n').trim() })
-  }
-
-  return blocks.filter((b) => b.markdown.length > 0)
-}
 
 function SuggestionCard({ item }: { item: ArticleSuggestion }) {
   return (
@@ -961,34 +1366,66 @@ function SuggestionCard({ item }: { item: ArticleSuggestion }) {
   )
 }
 
-function BlockCopyCard({ kind, text }: { kind: ArticleBlockKind; text: string }) {
+function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone }: {
+  kind: ArticleBlockKind
+  text: string
+  rawText?: string
+  isEditing?: boolean
+  onEditDone?: (oldText: string, newText: string) => void
+}) {
+  const [mode, setMode] = useState<CopyMode>('text')
   const [copied, setCopied] = useState(false)
+  const [localText, setLocalText] = useState(text)
+  const origRef = useRef(text)
+
+  useEffect(() => {
+    setLocalText(text)
+    origRef.current = text
+  }, [text])
 
   async function handleClick() {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // クリップボードAPIが使えない場合は何もしない
-    }
+    if (isEditing) return
+    const copyContent = mode === 'markdown' && rawText ? rawText : text
+    try { await navigator.clipboard.writeText(copyContent); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
   }
 
   return (
-    <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
-      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">
-        {BLOCK_LABEL[kind]}
+    <div
+      role={isEditing ? undefined : 'button'}
+      tabIndex={isEditing ? undefined : 0}
+      onClick={isEditing ? undefined : handleClick}
+      onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleClick()}
+      className={`relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+    >
+      <div className="px-5 pt-5 pb-3">
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">
+          {BLOCK_LABEL[kind]}
+        </div>
+        {isEditing ? (
+          <textarea
+            value={localText}
+            onChange={e => setLocalText(e.target.value)}
+            onBlur={() => onEditDone?.(origRef.current, localText)}
+            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}
+            style={{ fieldSizing: 'content' } as React.CSSProperties}
+            rows={2}
+          />
+        ) : mode === 'markdown' && rawText ? (
+          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{rawText}</pre>
+        ) : (
+          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+            {text}
+          </p>
+        )}
+        {!isEditing && rawText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
       </div>
-      <p className={`pr-24 whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
-        {text}
-      </p>
-      <button
-        type="button"
-        onClick={handleClick}
-        className="absolute right-4 top-4 text-[12px] font-semibold text-[var(--accent)] hover:opacity-70 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
-      >
-        {copied ? 'コピーしました ✓' : 'コピー'}
-      </button>
+      {!isEditing && (
+        <div className="flex justify-end px-4 pb-3 pt-1">
+          <button type="button" onClick={e => { e.stopPropagation(); handleClick() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
+            <ClipboardHint copied={copied} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }

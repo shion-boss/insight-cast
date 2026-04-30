@@ -85,21 +85,23 @@ export default async function ArticleDetailPage({
           ...(article.interview_id ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${article.interview_id}` }] : []),
           { label: '記事詳細' },
         ]} />
-        <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
+        <section className={getPanelClass('relative rounded-[var(--r-xl)] p-6')}>
           <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h2>
           <p className="mt-2 text-sm text-[var(--text3)]">
             {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
           </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {article.interview_id && (
+          {article.interview_id && (
+            <div className="mt-4">
               <Link
                 href={`/projects/${id}/summary?interviewId=${article.interview_id}`}
                 className={getButtonClass('secondary')}
               >
                 元の取材メモを見る
               </Link>
-            )}
+            </div>
+          )}
+          <div className="absolute bottom-4 right-4">
             <DeleteArticleButton
               articleId={article.id}
               projectId={id}
@@ -139,7 +141,6 @@ export default async function ArticleDetailPage({
               content={article.content}
               title={article.title ?? '記事'}
               articleType={article.article_type ?? 'client'}
-              date={article.created_at}
               interviewerId={interview?.interviewer_type ?? null}
               interviewerName={interviewer?.name ?? null}
               interviewerLabel={interviewer?.label ?? null}
