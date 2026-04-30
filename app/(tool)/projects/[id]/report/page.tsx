@@ -18,33 +18,37 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, name, hp_url, status')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .is('deleted_at', null)
-    .single()
+  const [
+    { data: project },
+    { data: audit },
+    { data: competitors },
+    { data: rawCompetitorAnalyses },
+  ] = await Promise.all([
+    supabase
+      .from('projects')
+      .select('id, name, hp_url, status')
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .is('deleted_at', null)
+      .single(),
+    supabase
+      .from('hp_audits')
+      .select('current_content, strengths, gaps, suggested_themes, raw_data')
+      .eq('project_id', id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('competitors')
+      .select('id, url')
+      .eq('project_id', id),
+    supabase
+      .from('competitor_analyses')
+      .select('gaps, advantages, competitor_id, raw_data, competitors(url)')
+      .eq('project_id', id),
+  ])
 
   if (!project) redirect('/dashboard')
-
-  const { data: audit } = await supabase
-    .from('hp_audits')
-    .select('current_content, strengths, gaps, suggested_themes, raw_data')
-    .eq('project_id', id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  const { data: competitors } = await supabase
-    .from('competitors')
-    .select('id, url')
-    .eq('project_id', id)
-
-  const { data: rawCompetitorAnalyses } = await supabase
-    .from('competitor_analyses')
-    .select('gaps, advantages, competitor_id, raw_data, competitors(url)')
-    .eq('project_id', id)
 
   const readiness = isProjectAnalysisReady({
     project,

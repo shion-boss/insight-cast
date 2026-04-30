@@ -209,6 +209,7 @@ export default async function CastTalkDetailPage({
                       width={96}
                       height={96}
                       className="h-10 w-10 shrink-0 rounded-full border-2 border-white object-cover shadow-sm sm:h-12 sm:w-12"
+                      sizes="48px"
                     />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -247,6 +248,7 @@ export default async function CastTalkDetailPage({
                   width={56}
                   height={56}
                   className="rounded-full border-2 border-[var(--border)]"
+                  sizes="56px"
                 />
               )}
               <div className="min-w-0 flex-1">

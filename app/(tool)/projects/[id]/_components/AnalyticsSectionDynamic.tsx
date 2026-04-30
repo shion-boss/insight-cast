@@ -6,7 +6,7 @@ import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_compone
 const AnalyticsSectionInner = dynamic(
   () => import('@/app/(tool)/dashboard/_components/analytics-section').then((m) => ({ default: m.AnalyticsSection })),
   {
-    ssr: false,
+    ssr: true,
     loading: () => (
       <div className="mb-6 bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 animate-pulse">
         <div className="h-4 w-32 rounded bg-[var(--border)] mb-4" />

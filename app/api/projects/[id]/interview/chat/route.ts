@@ -112,20 +112,45 @@ export async function POST(
           : []),
       ]
 
-  // 取材先情報と調査結果をコンテキストに注入
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .single()
-
-  const { data: auditRow } = await supabase
-    .from('hp_audits')
-    .select('raw_data')
-    .eq('project_id', projectId)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle()
+  // 取材先情報と調査結果をコンテキストに注入（project 取得後に並列実行）
+  const [
+    { data: profile },
+    { data: auditRow },
+    { data: pastInterviews },
+    { data: pastArticles },
+    { data: competitorThemeRows },
+  ] = await Promise.all([
+    supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('hp_audits')
+      .select('raw_data')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from('interviews')
+      .select('focus_theme')
+      .eq('project_id', projectId)
+      .neq('id', interviewId ?? '')
+      .not('focus_theme', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(30),
+    supabase
+      .from('articles')
+      .select('title')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+      .limit(30),
+    supabase
+      .from('competitor_analyses')
+      .select('raw_data, competitors(url)')
+      .eq('project_id', projectId),
+  ])
 
   const auditRawData = (auditRow?.raw_data ?? null) as Record<string, unknown> | null
 
@@ -152,32 +177,9 @@ export async function POST(
       }
     : null
 
-  // 過去インタビューのテーマ・生成済み記事タイトルを取得（現在のインタビューは除く）
-  const [{ data: pastInterviews }, { data: pastArticles }] = await Promise.all([
-    supabase
-      .from('interviews')
-      .select('focus_theme')
-      .eq('project_id', projectId)
-      .neq('id', interviewId ?? '')
-      .not('focus_theme', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(30),
-    supabase
-      .from('articles')
-      .select('title')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false })
-      .limit(30),
-  ])
-
   const pastInterviewThemes = (pastInterviews ?? []).map((r: { focus_theme: string }) => r.focus_theme).filter(Boolean)
   const pastArticleTitles = (pastArticles ?? []).map((r: { title: string }) => r.title).filter(Boolean)
   const pastCoverage = [...pastInterviewThemes, ...pastArticleTitles]
-
-  const { data: competitorThemeRows } = await supabase
-    .from('competitor_analyses')
-    .select('raw_data, competitors(url)')
-    .eq('project_id', projectId)
 
   const competitorRows = (competitorThemeRows ?? []) as Array<{
     raw_data: Record<string, unknown> | null

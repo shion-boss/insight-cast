@@ -110,6 +110,7 @@ function SignupForm() {
                   width={48}
                   height={48}
                   className="flex-shrink-0 rounded-full border border-[var(--border)] object-cover"
+                  sizes="48px"
                 />
               ) : (
                 <span className="text-3xl flex-shrink-0" aria-hidden="true">{mint?.emoji ?? '📬'}</span>
@@ -309,6 +310,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
                     width={40}
                     height={40}
                     className="h-full w-full object-cover"
+                    sizes="40px"
                   />
                 </div>
               ) : (
