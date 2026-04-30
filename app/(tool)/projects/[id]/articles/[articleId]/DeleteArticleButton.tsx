@@ -72,7 +72,7 @@ export function DeleteArticleButton({ articleId, projectId, articleTitle, backHr
         type="button"
         onClick={() => setShowDialog(true)}
         aria-label="記事を削除"
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--err)]/30 bg-[var(--surface)] text-[var(--err)] opacity-50 transition-all hover:opacity-100 hover:bg-[var(--err-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+        className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-[var(--err)]/30 bg-[var(--surface)] text-[var(--err)] opacity-50 transition-all hover:opacity-100 hover:bg-[var(--err-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 sm:min-h-[2rem] sm:min-w-[2rem]"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <polyline points="3 6 5 6 21 6" />

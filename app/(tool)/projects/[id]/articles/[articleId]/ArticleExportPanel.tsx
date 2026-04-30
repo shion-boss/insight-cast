@@ -142,9 +142,9 @@ function buildConversationHtml(opts: {
   const answerBg   = lighten(themeColor, 0.88)
   const badgeBg    = themeColor
 
-  const imgStyle = 'width:36px;height:36px;border-radius:50%;object-fit:cover;display:block;'
-  const divStyle = 'width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;'
-  const nameStyle = 'font-size:10px;color:#8f7d6d;margin-bottom:4px;white-space:nowrap;'
+  const imgStyle = 'width:28px;height:28px;border-radius:50%;object-fit:cover;display:block;'
+  const divStyle = 'width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;'
+  const nameStyle = 'font-size:10px;color:#8f7d6d;margin-bottom:3px;white-space:nowrap;'
 
   const userIconHtml = showClientIcon
     ? (userAvatarUrl
@@ -161,10 +161,10 @@ function buildConversationHtml(opts: {
   const nameHtmlInterviewer = showName      ? `<div style="${nameStyle}">${escapeHtml(interviewerDisplayName)}</div>` : ''
   const nameHtmlClient      = showClientName ? `<div style="${nameStyle}">${escapeHtml(clientDisplayName)}</div>` : ''
 
-  const iconGapInterviewer = showIcon       ? 'gap:8px;' : ''
-  const iconGapClient      = showClientIcon ? 'gap:8px;' : ''
-  const iconMarginTopInterviewer = showIcon       ? 'margin-top:8px;' : ''
-  const iconMarginTopClient      = showClientIcon ? 'margin-top:8px;' : ''
+  const iconGapInterviewer = showIcon       ? 'gap:5px;' : ''
+  const iconGapClient      = showClientIcon ? 'gap:5px;' : ''
+  const iconMarginTopInterviewer = showIcon       ? 'margin-top:4px;' : ''
+  const iconMarginTopClient      = showClientIcon ? 'margin-top:4px;' : ''
 
   const introHtml = showIntro ? buildIntroHtml({ interviewerDisplayName, interviewerLabel, interviewerAvatarUrl, themeColor }) : ''
 
@@ -301,6 +301,7 @@ export function ArticleExportPanel({
   const [copyError, setCopyError] = useState(false)
   const [themeColor, setThemeColor] = useState(DEFAULT_THEME_COLOR)
   const [editedContent, setEditedContent] = useState(content)
+  const savedContentRef = useRef(content)
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [isEditing, setIsEditing] = useState(false)
   const [, startTransition] = useTransition()
@@ -399,7 +400,7 @@ export function ArticleExportPanel({
     startTransition(async () => {
       try {
         await saveArticleContent(articleId, projectId, content, editedContent)
-        setEditedContent(editedContent)
+        savedContentRef.current = editedContent
         setSaveState('saved')
         setTimeout(() => { setIsEditing(false); setSaveState('idle') }, 800)
       } catch {
@@ -410,7 +411,7 @@ export function ArticleExportPanel({
   }
 
   function handleCancel() {
-    setEditedContent(content)
+    setEditedContent(savedContentRef.current)
     setIsEditing(false)
   }
 
@@ -443,7 +444,7 @@ export function ArticleExportPanel({
 
         {/* コピー・書き出し行（非編集時） */}
         {!isEditing && (
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1.5">
             <button type="button" onClick={handleCopyText}
               className="relative min-h-[44px] min-w-[7.5rem] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
               <span className={copiedText ? 'opacity-0' : ''}>テキストでコピー</span>
@@ -454,7 +455,7 @@ export function ArticleExportPanel({
               <span className={copiedMd ? 'opacity-0' : ''}>MDでコピー</span>
               <span className={`absolute inset-0 flex items-center justify-center ${copiedMd ? '' : 'opacity-0'}`}>✓ コピーしました</span>
             </button>
-            <span aria-hidden="true" className="mx-0.5 h-4 w-px bg-[var(--border)]" />
+            <span aria-hidden="true" className="hidden sm:block mx-0.5 h-4 w-px bg-[var(--border)]" />
             <button type="button" onClick={() => handleDownload('text')}
               className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
               .txt
@@ -495,15 +496,17 @@ export function ArticleExportPanel({
               <span className="text-xs text-[var(--text3)] whitespace-nowrap">クオリティアップ提案</span>
             </button>
           )}
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-xs text-[var(--text3)] hidden sm:inline">テーマカラー</span>
-            <input type="color" aria-label="テーマカラーを選択" value={themeColor} onChange={(e) => setThemeColor(e.target.value)}
-              className="h-7 w-7 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5" />
-            <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
-              className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
-              リセット
-            </button>
-          </div>
+          {articleType === 'conversation' && (
+            <div className="ml-auto flex items-center gap-2">
+              <span className="text-xs text-[var(--text3)] hidden sm:inline">テーマカラー</span>
+              <input type="color" aria-label="テーマカラーを選択" value={themeColor} onChange={(e) => setThemeColor(e.target.value)}
+                className="h-8 w-8 sm:h-7 sm:w-7 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5" />
+              <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
+                className="min-h-[44px] px-2 text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0 sm:px-0">
+                リセット
+              </button>
+            </div>
+          )}
         </div>
 
       </div>
@@ -522,7 +525,7 @@ export function ArticleExportPanel({
                     <img src={interviewerAvatarUrl} alt="インタビュアーのアイコンプレビュー" className="h-full w-full object-cover" />
                   )}
                 </div>
-                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 min-h-[44px] inline-flex items-center text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0 sm:min-h-0 sm:py-1">
                   画像を選ぶ
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0]; if (!file) return
@@ -530,19 +533,19 @@ export function ArticleExportPanel({
                   }} />
                 </label>
                 {interviewerAvatarUrl && interviewerAvatarUrl !== (defaultInterviewerAvatarUrl ?? '') && (
-                  <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
+                  <button type="button" onClick={() => setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? '')} className="shrink-0 min-h-[44px] px-2 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0 sm:px-0">削除</button>
                 )}
                 <input type="text" aria-label="インタビュアーの表示名" value={interviewerDisplayName} onChange={(e) => setInterviewerDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
+                <button type="button" onClick={() => { setInterviewerAvatarUrl(defaultInterviewerAvatarUrl ?? ''); setInterviewerDisplayName(interviewerName ?? '') }} className="shrink-0 min-h-[44px] px-2 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0 sm:px-0">リセット</button>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                     <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text3)]">アイコン</span>
                 </button>
-                <button type="button" role="switch" aria-label="インタビュアー名を表示" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                <button type="button" role="switch" aria-label="インタビュアー名を表示" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                     <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
@@ -562,7 +565,7 @@ export function ArticleExportPanel({
                     <img src={clientAvatarUrl} alt="取材先のアイコンプレビュー" className="h-full w-full object-cover" />
                   )}
                 </div>
-                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0">
+                <label className="cursor-pointer rounded border border-[var(--border)] bg-transparent px-2 min-h-[44px] inline-flex items-center text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors shrink-0 sm:min-h-0 sm:py-1">
                   画像を選ぶ
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => {
                     const file = e.target.files?.[0]; if (!file) return
@@ -570,19 +573,19 @@ export function ArticleExportPanel({
                   }} />
                 </label>
                 {clientAvatarUrl && (
-                  <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">削除</button>
+                  <button type="button" onClick={() => setClientAvatarUrl('')} className="shrink-0 min-h-[44px] px-2 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0 sm:px-0">削除</button>
                 )}
                 <input type="text" aria-label="取材先の表示名" value={clientDisplayName} onChange={(e) => setClientDisplayName(e.target.value)} placeholder="名前" className="min-w-0 w-24 rounded border border-[var(--border)] bg-transparent px-2 py-1 text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40" />
-                <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">リセット</button>
+                <button type="button" onClick={() => { setClientAvatarUrl(''); setClientDisplayName(clientName ?? '') }} className="shrink-0 min-h-[44px] px-2 text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0 sm:px-0">リセット</button>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                     <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text3)]">アイコン</span>
                 </button>
-                <button type="button" role="switch" aria-label="取材先の名前を表示" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+                <button type="button" role="switch" aria-label="取材先の名前を表示" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                     <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
                   </div>
@@ -595,7 +598,7 @@ export function ArticleExportPanel({
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0 px-5 py-3">
             <span className="sm:w-28 shrink-0 text-[var(--text3)]">紹介文</span>
             <div className="flex flex-wrap items-center gap-3">
-              <button type="button" role="switch" aria-label="AIキャスト紹介文を表示" aria-checked={showIntro} onClick={() => setShowIntro(v => !v)} className="flex items-center gap-1.5 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded">
+              <button type="button" role="switch" aria-label="AIキャスト紹介文を表示" aria-checked={showIntro} onClick={() => setShowIntro(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded sm:min-h-0">
                 <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showIntro ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                   <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showIntro ? 'translate-x-4' : 'translate-x-0.5'}`} />
                 </div>
@@ -607,7 +610,7 @@ export function ArticleExportPanel({
       )}
 
       {/* コンテンツ描画（blocks のみ） */}
-      <div className="flex flex-col gap-3 p-5">
+      <div className="flex flex-col gap-3 p-4 sm:p-5">
         {articleType === 'conversation'
           ? (() => {
               const rawGroups = buildConversationRenderGroups(editedContent, interviewerName, clientName)
@@ -744,7 +747,7 @@ function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }
 }) {
   return (
     <div
-      className="absolute right-4 top-4 flex items-center select-none"
+      className="flex items-center select-none"
       onMouseMove={e => e.stopPropagation()}
       onClick={e => e.stopPropagation()}
     >
@@ -752,7 +755,7 @@ function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }
         <button
           type="button"
           onClick={e => { e.stopPropagation(); onChange('text') }}
-          className={`px-2.5 py-1 transition-colors cursor-auto ${mode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+          className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto ${mode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
         >
           テキスト
         </button>
@@ -760,7 +763,7 @@ function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }
           <button
             type="button"
             onClick={e => { e.stopPropagation(); onChange('markdown') }}
-            className={`px-2.5 py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+            className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
           >
             MD
           </button>
@@ -769,7 +772,7 @@ function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }
           <button
             type="button"
             onClick={e => { e.stopPropagation(); onChange('html') }}
-            className={`px-2.5 py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'html' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
+            className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'html' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
           >
             HTML
           </button>
@@ -790,7 +793,7 @@ function ClipboardIcon() {
 
 function ClipboardHint({ copied }: { copied: boolean }) {
   return (
-    <span className="relative inline-flex">
+    <span className="relative inline-flex items-center justify-center min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0">
       <ClipboardIcon />
       {copied && (
         <span className="pointer-events-none absolute z-20 top-1/2 -translate-y-1/2 right-full mr-2 rounded-full bg-[#1c1410] px-3 py-[3px] text-[10px] font-semibold tracking-wide text-white whitespace-nowrap shadow-lg ring-1 ring-white/10">
@@ -1181,10 +1184,13 @@ function InterviewerIntroPanelCard({
           tabIndex={isEditing ? undefined : 0}
           onClick={isEditing ? undefined : () => doIntroCopy()}
           onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doIntroCopy()}
-          className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+          className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
         >
-          <div className="px-5 pt-5 pb-3">
-            <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">インタビュアー紹介</div>
+          <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">インタビュアー紹介</div>
+              {!isEditing && <HtmlModeToggle mode={introMode} onChange={setIntroMode} hasMarkdown hasHtml />}
+            </div>
             {introMode === 'html' ? (
               <div
                 className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
@@ -1195,10 +1201,9 @@ function InterviewerIntroPanelCard({
             ) : (
               <p className="text-sm text-[var(--text2)]">{introText}</p>
             )}
-            {!isEditing && <HtmlModeToggle mode={introMode} onChange={setIntroMode} hasMarkdown hasHtml />}
           </div>
           {!isEditing && (
-            <div className="flex justify-end px-4 pb-3 pt-1">
+            <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
               <button type="button" onClick={e => { e.stopPropagation(); doIntroCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
                 <ClipboardHint copied={introCopied} />
               </button>
@@ -1213,10 +1218,13 @@ function InterviewerIntroPanelCard({
           tabIndex={isEditing ? undefined : 0}
           onClick={isEditing ? undefined : () => doConvCopy()}
           onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doConvCopy()}
-          className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+          className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
         >
-          <div className="px-5 pt-5 pb-3">
-            <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-3 text-[var(--text3)]">会話本文</div>
+          <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">会話本文</div>
+              {!isEditing && <HtmlModeToggle mode={convMode} onChange={setConvMode} hasMarkdown hasHtml />}
+            </div>
             {isEditing ? (
               <ConversationBubbleEditor
                 initialExchanges={exchanges}
@@ -1242,10 +1250,9 @@ function InterviewerIntroPanelCard({
                 ))}
               </div>
             )}
-            {!isEditing && <HtmlModeToggle mode={convMode} onChange={setConvMode} hasMarkdown hasHtml />}
           </div>
           {!isEditing && (
-            <div className="flex justify-end px-4 pb-3 pt-1">
+            <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
               <button type="button" onClick={e => { e.stopPropagation(); doConvCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
                 <ClipboardHint copied={convCopied} />
               </button>
@@ -1314,11 +1321,14 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
       tabIndex={isEditing ? undefined : 0}
       onClick={isEditing ? undefined : handleCopy}
       onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleCopy()}
-      className={`relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
-      <div className="px-5 pt-5 pb-3">
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">
-          {label ?? BLOCK_LABEL[kind]}
+      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+            {label ?? BLOCK_LABEL[kind]}
+          </div>
+          {!isEditing && markdownCopyText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
         </div>
         {isEditing ? (
           <textarea
@@ -1336,10 +1346,9 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
             {text}
           </p>
         )}
-        {!isEditing && markdownCopyText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
       </div>
       {!isEditing && (
-        <div className="flex justify-end px-4 pb-3 pt-1">
+        <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
           <button type="button" onClick={e => { e.stopPropagation(); handleCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
             <ClipboardHint copied={copied} />
           </button>
@@ -1395,11 +1404,14 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone }: {
       tabIndex={isEditing ? undefined : 0}
       onClick={isEditing ? undefined : handleClick}
       onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleClick()}
-      className={`relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
-      <div className="px-5 pt-5 pb-3">
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase mb-2 text-[var(--text3)]">
-          {BLOCK_LABEL[kind]}
+      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+            {BLOCK_LABEL[kind]}
+          </div>
+          {!isEditing && rawText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
         </div>
         {isEditing ? (
           <textarea
@@ -1417,10 +1429,9 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone }: {
             {text}
           </p>
         )}
-        {!isEditing && rawText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
       </div>
       {!isEditing && (
-        <div className="flex justify-end px-4 pb-3 pt-1">
+        <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
           <button type="button" onClick={e => { e.stopPropagation(); handleClick() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
             <ClipboardHint copied={copied} />
           </button>
