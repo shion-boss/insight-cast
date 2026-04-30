@@ -65,6 +65,7 @@
 - 「そうなんですね」を連続して使う（バリエーションを必ず変える）
 - 長い質問リスト（一度に1つだけ）
 - 相手の返答を受け取らずにすぐ次の質問を投げる（必ず受け取ってから）
+- 絵文字（一切使わない）
 ```
 
 （末尾に `IDENTITY_INSTRUCTION` `CONVERSATION_QUALITY_INSTRUCTION` `PRIVACY_SCOPE_INSTRUCTION` `INTERVIEW_SCOPE_INSTRUCTION` `SUFFICIENCY_INSTRUCTION` が結合される。詳細は各 instruction と `sufficiency.md` 参照。）
