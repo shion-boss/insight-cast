@@ -108,7 +108,7 @@ function LoginForm() {
         {isPaidFlow && paidPlan && (
           <div className="mb-5 flex items-start gap-3 rounded-[14px] border border-[var(--accent)]/30 bg-[var(--accent-l)] px-4 py-4">
             {mint?.icon48 && (
-              <Image src={mint.icon48} alt={mint.name} width={36} height={36} className="rounded-full flex-shrink-0 mt-0.5" />
+              <Image src={mint.icon48} alt={mint.name} width={36} height={36} className="rounded-full flex-shrink-0 mt-0.5" sizes="36px" />
             )}
             <p className="text-sm text-[var(--text2)] leading-[1.7]">
               <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />

@@ -102,6 +102,7 @@ export default function AboutPage() {
                         height={80}
                         className="w-full object-contain"
                         priority={idx < 3}
+                        sizes="(max-width: 640px) 33vw, 80px"
                       />
                     </div>
                     <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</div>
@@ -194,6 +195,7 @@ export default function AboutPage() {
                       width={120}
                       height={120}
                       className="w-full object-contain"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
                     />
                   </div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)] mb-0.5">{char.name}</div>

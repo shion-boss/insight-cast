@@ -102,7 +102,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
           {[interviewer, guest].map((c, i) =>
             c ? (
               <div key={i} className="h-8 w-8 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
-                <Image src={c.icon48} alt={c.name} width={32} height={32} className="h-full w-full object-cover" />
+                <Image src={c.icon48} alt={c.name} width={32} height={32} className="h-full w-full object-cover" sizes="32px" />
               </div>
             ) : null,
           )}
@@ -160,7 +160,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
         {[interviewer, guest].map((c, i) =>
           c ? (
             <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3]">
-              <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" />
+              <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" sizes="28px" />
             </div>
           ) : null,
         )}
