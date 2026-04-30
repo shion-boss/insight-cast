@@ -45,6 +45,7 @@ export function PageTransitionOverlay() {
       if (!anchor) return
       const href = anchor.getAttribute('href') ?? ''
       if (href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || anchor.download) return
+      if (anchor.target && anchor.target !== '_self') return
 
       const fromArea = getArea(window.location.pathname)
       let toPath = href
