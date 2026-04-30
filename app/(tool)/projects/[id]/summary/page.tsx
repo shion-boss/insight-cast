@@ -245,22 +245,7 @@ export default function SummaryPage() {
   }, [loadSummary, pendingSummary])
 
   const char = data ? getCharacter(data.interviewerType) : null
-  if (loading) {
-    const loadingChar = getCharacter('mint')
-    return (
-      <div className="flex items-center justify-center py-16">
-        <div className="w-full max-w-[520px]">
-          <InterviewerSpeech
-            icon={<CharacterAvatar src={loadingChar?.icon48} alt={`${loadingChar?.name ?? 'ミント'}のアイコン`} emoji={loadingChar?.emoji} size={48} />}
-            name={loadingChar?.name ?? 'ミント'}
-            title="取材メモを読み込んでいます"
-            description="すぐに表示されます。"
-            tone="soft"
-          />
-        </div>
-      </div>
-    )
-  }
+  if (loading) return null
 
   if (pendingSummary) {
     const mint = getCharacter(data?.interviewerType ?? 'mint')
