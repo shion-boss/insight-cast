@@ -61,6 +61,7 @@ function LoginForm() {
         }
         const json = await acceptRes.json() as { ok?: boolean; projectId?: string }
         if (json.projectId) {
+          document.dispatchEvent(new Event('cross-area-navigate'))
           router.push(`/projects/${json.projectId}`)
           router.refresh()
           return
@@ -71,6 +72,7 @@ function LoginForm() {
         return
       }
     }
+    document.dispatchEvent(new Event('cross-area-navigate'))
     router.push(nextPath)
     router.refresh()
   }

@@ -70,11 +70,19 @@ export function PageTransitionOverlay() {
       flushSync(() => setVisible(true))
     }
 
+    const handleCrossAreaNavigate = () => {
+      prevPath.current = window.location.pathname
+      hideAt.current = Date.now() + MIN_MS
+      flushSync(() => setVisible(true))
+    }
+
     document.addEventListener('click', handleClick, true)
     document.addEventListener('submit', handleSubmit, true)
+    document.addEventListener('cross-area-navigate', handleCrossAreaNavigate)
     return () => {
       document.removeEventListener('click', handleClick, true)
       document.removeEventListener('submit', handleSubmit, true)
+      document.removeEventListener('cross-area-navigate', handleCrossAreaNavigate)
       clearTimeout(timerRef.current)
     }
   }, [])
