@@ -74,14 +74,14 @@ export default async function ArticleDetailPage({
   const backHref = from === 'articles'
     ? fromInterviewId ? `/articles?interviewId=${fromInterviewId}&projectId=${id}` : `/articles`
     : `/projects/${id}`
-  const backLabel = from === 'articles' ? '← 記事一覧に戻る' : '← 取材先の管理に戻る'
+  const backLabel = from === 'articles' ? '← 記事一覧に戻る' : '← プロジェクトの管理に戻る'
 
   return (
     <div className="max-w-3xl space-y-6">
       <div className="space-y-6">
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトの管理', href: `/projects/${id}` },
           ...(article.interview_id ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${article.interview_id}` }] : []),
           { label: '記事詳細' },
         ]} />

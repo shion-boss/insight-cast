@@ -42,7 +42,7 @@ export default function DashboardError({
             href="/projects"
             className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
           >
-            取材先一覧へ戻る
+            プロジェクト一覧へ戻る
           </Link>
         </div>
       </div>

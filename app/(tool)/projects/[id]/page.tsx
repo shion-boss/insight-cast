@@ -276,7 +276,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <Breadcrumb items={[
-        { label: '取材先一覧', href: '/projects' },
+        { label: 'プロジェクト一覧', href: '/projects' },
         { label: project.name || project.hp_url },
       ]} />
       {/* Overview panel */}

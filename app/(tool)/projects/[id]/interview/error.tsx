@@ -27,7 +27,7 @@ export default function InterviewError({
             }
             name={mint?.name ?? 'ミント'}
             title="取材の画面を開けませんでした"
-            description="一時的な問題が起きています。再読み込みするか、取材先に戻ってもう一度お試しください。"
+            description="一時的な問題が起きています。再読み込みするか、プロジェクトに戻ってもう一度お試しください。"
             tone="soft"
           />
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
@@ -42,7 +42,7 @@ export default function InterviewError({
               href="/projects"
               className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
             >
-              取材先一覧へ戻る
+              プロジェクト一覧へ戻る
             </Link>
           </div>
         </div>

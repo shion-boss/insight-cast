@@ -9,16 +9,16 @@ import { Breadcrumb } from '@/components/ui'
 import NewProjectForm from './NewProjectForm'
 
 export const metadata: Metadata = {
-  title: '新しい取材先を登録',
+  title: '新しいプロジェクトを登録',
   robots: { index: false, follow: false },
 }
 
 function getErrorMessage(error: string) {
-  if (error === 'name') return '取材先名を入力してから、もう一度登録してください。'
+  if (error === 'name') return 'プロジェクト名を入力してから、もう一度登録してください。'
   if (error === 'url') return '自社HPのURLを入力してから、もう一度登録してください。'
   if (error === 'competitor_limit') return '現在のプランの上限を超えています。競合URLの件数を減らしてから、もう一度登録してください。'
   if (error === 'competitor_self') return '自社HPと同じURLは参考HPに入れられません。別のHPに差し替えてください。'
-  if (error === 'plan_limit') return '現在のプランで登録できる取材先の上限に達しています。複数の取材先を管理したい場合は、プランのアップグレードをご検討ください。'
+  if (error === 'plan_limit') return '現在のプランで登録できるプロジェクトの上限に達しています。複数のプロジェクトを管理したい場合は、プランのアップグレードをご検討ください。'
   if (error === '1') return '登録中に問題が起きました。少し待ってから、もう一度お試しください。'
   return ''
 }
@@ -51,11 +51,11 @@ export default async function NewProjectPage({
   if (isAtLimit) {
     return (
       <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-        <PageHeader title="取材先を登録する" backHref="/projects" backLabel="← 取材先一覧" />
+        <PageHeader title="プロジェクトを登録する" backHref="/projects" backLabel="← プロジェクト一覧" />
         <div className="max-w-lg mx-auto px-6 py-12">
           <Breadcrumb items={[
-            { label: '取材先一覧', href: '/projects' },
-            { label: '取材先を登録する' },
+            { label: 'プロジェクト一覧', href: '/projects' },
+            { label: 'プロジェクトを登録する' },
           ]} />
           <InterviewerSpeech
             icon={(
@@ -67,8 +67,8 @@ export default async function NewProjectPage({
               />
             )}
             name={claus?.name ?? 'クラウス'}
-            title={`現在のプランで登録できる取材先は${planLimits.maxProjects}件までです。`}
-            description="複数の取材先を管理したい場合は、法人向けプランへのアップグレードをご検討ください。"
+            title={`現在のプランで登録できるプロジェクトは${planLimits.maxProjects}件までです。`}
+            description="複数のプロジェクトを管理したい場合は、法人向けプランへのアップグレードをご検討ください。"
             tone="soft"
           />
           <div className="mt-6 flex flex-col gap-3">
@@ -92,12 +92,12 @@ export default async function NewProjectPage({
 
   return (
     <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="取材先を登録する" backHref="/projects" backLabel="← 取材先一覧" />
+      <PageHeader title="プロジェクトを登録する" backHref="/projects" backLabel="← プロジェクト一覧" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先を登録する' },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトを登録する' },
         ]} />
         <div className="mb-8">
           <InterviewerSpeech
@@ -110,8 +110,8 @@ export default async function NewProjectPage({
               />
             )}
             name={claus?.name ?? 'クラウス'}
-            title="まずは、取材先のホームページを教えてください。"
-            description="取材先を登録しながら、参考にしたい競合候補もここで一緒に選べます。"
+            title="まずは、プロジェクトのホームページを教えてください。"
+            description="プロジェクトを登録しながら、参考にしたい競合候補もここで一緒に選べます。"
             tone="soft"
           />
         </div>

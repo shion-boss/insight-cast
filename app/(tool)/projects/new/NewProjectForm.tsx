@@ -25,7 +25,7 @@ function SubmitProjectButton({
       disabled={pending || disabled}
       className="w-full py-3 text-sm"
     >
-      {pending ? '取材先を登録しています...' : '取材先を登録する'}
+      {pending ? 'プロジェクトを登録しています...' : 'プロジェクトを登録する'}
     </PrimaryButton>
   )
 }
@@ -55,7 +55,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
     <div className="max-w-2xl">
       <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">まとめて登録</p>
-        <p className="mt-1 text-sm text-[var(--text2)]">この画面だけで、取材先の基本情報と参考HPをまとめて登録できます。</p>
+        <p className="mt-1 text-sm text-[var(--text2)]">この画面だけで、プロジェクトの基本情報と参考HPをまとめて登録できます。</p>
       </div>
 
       <div className="mb-7">
@@ -69,7 +69,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
             />
           }
           name="ミント"
-          title="取材先の基本情報を教えてください。"
+          title="プロジェクトの基本情報を教えてください。"
           description="URLを入れておくと、あとでホームページを分析して取材テーマを提案しやすくなります。"
           tone="soft"
         />
@@ -85,7 +85,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
       <form action={createProject} className="space-y-6">
         <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-8 space-y-4">
           <div>
-            <FieldLabel required htmlFor="new-project-name">取材先名</FieldLabel>
+            <FieldLabel required htmlFor="new-project-name">プロジェクト名</FieldLabel>
             <TextInput
               id="new-project-name"
               type="text"

@@ -51,7 +51,7 @@ export default function SummaryPage() {
   const router = useRouter()
   const supabaseRef = useRef(createClient())
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
-  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
+  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← プロジェクトの管理'
 
   const [data, setData] = useState<SummaryData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -163,7 +163,7 @@ export default function SummaryPage() {
           .eq('id', projectId)
           .maybeSingle()
 
-        const projectName = project?.name ?? project?.hp_url ?? 'この取材先'
+        const projectName = project?.name ?? project?.hp_url ?? 'このプロジェクト'
 
         if (!hasPendingInterviewSummary(interviewId)) {
           trackPendingInterviewSummary({
@@ -280,8 +280,8 @@ export default function SummaryPage() {
     <>
       <div>
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先の管理', href: `/projects/${projectId}` },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトの管理', href: `/projects/${projectId}` },
           { label: '取材メモ' },
         ]} />
         <div className="mb-4 flex flex-wrap items-center justify-end gap-2">

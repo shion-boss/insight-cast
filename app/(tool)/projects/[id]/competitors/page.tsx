@@ -48,12 +48,12 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
 
   return (
     <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="参考にするHPを見直す" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title="参考にするHPを見直す" backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
 
       <div className="max-w-lg mx-auto px-6 py-12">
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトの管理', href: `/projects/${id}` },
           { label: '参考HPを見直す' },
         ]} />
         <div className="mb-8">

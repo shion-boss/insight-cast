@@ -46,7 +46,7 @@ export default async function OnboardingPage({
             )}
             name={mint?.name ?? 'インタビュアー'}
             title="最初に、分かる範囲だけ教えてください。"
-            description="まずはお呼びするお名前だけで大丈夫です。取材先のホームページは、あとで登録できます。"
+            description="まずはお呼びするお名前だけで大丈夫です。HPはあとで登録できます。"
             tone="soft"
           />
         </div>

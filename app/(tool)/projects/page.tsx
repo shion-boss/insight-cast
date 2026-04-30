@@ -38,13 +38,13 @@ function AddProjectCard({ isLocked }: { isLocked: boolean }) {
               <path d="M5 9V6.5a4 4 0 0 1 8 0V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
             </svg>
           </div>
-          <div className="text-[14px] font-semibold text-[var(--text3)]">新しい取材先を追加する</div>
+          <div className="text-[14px] font-semibold text-[var(--text3)]">新しいプロジェクトを追加する</div>
           <div className="text-[12px] text-[var(--accent)] font-semibold">プランをアップグレードする <span aria-hidden="true">→</span></div>
         </>
       ) : (
         <>
           <div aria-hidden="true" className="text-[36px] text-[var(--text3)]">+</div>
-          <div className="text-[14px] font-semibold text-[var(--text2)]">新しい取材先を追加する</div>
+          <div className="text-[14px] font-semibold text-[var(--text2)]">新しいプロジェクトを追加する</div>
           <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
         </>
       )}
@@ -84,7 +84,7 @@ export default async function ProjectsPage() {
       <div className="flex flex-col items-center justify-center gap-4 py-20">
         <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={48} />
         <p className="text-sm text-[var(--text2)]">
-          取材先の読み込みに失敗しました。ページを再読み込みしてください。
+          プロジェクトの読み込みに失敗しました。ページを再読み込みしてください。
         </p>
       </div>
     )
@@ -174,7 +174,7 @@ export default async function ProjectsPage() {
     <>
       {/* ── ページタイトル + ヘッダーアクション ── */}
       <div className="mb-6 flex items-center justify-between gap-4">
-        <h1 className="font-serif text-xl font-bold text-[var(--text)]">取材先一覧</h1>
+        <h1 className="font-serif text-xl font-bold text-[var(--text)]">プロジェクト一覧</h1>
         <Link
           href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
           className={getButtonClass('primary', `px-4 py-2 text-sm${isProjectLimitReached ? ' opacity-60' : ''}`)}
@@ -185,9 +185,9 @@ export default async function ProjectsPage() {
                 <rect x="1" y="6" width="10" height="8" rx="2" fill="currentColor"/>
                 <path d="M3 6V4a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
               </svg>
-              取材先を追加
+              プロジェクトを追加
             </span>
-          ) : <><span aria-hidden="true">+ </span>取材先を追加</>}
+          ) : <><span aria-hidden="true">+ </span>プロジェクトを追加</>}
         </Link>
       </div>
 
@@ -198,10 +198,10 @@ export default async function ProjectsPage() {
           </svg>
           <div className="flex-1">
             <p className="text-sm font-semibold text-[var(--text)]">
-              プランの上限を超えた取材先があります
+              プランの上限を超えたプロジェクトがあります
             </p>
             <p className="mt-1 text-sm text-[var(--text2)]">
-              現在のプランでは取材先を{planLimits.maxProjects}件まで管理できます。ロック中の取材先を削除するか、プランをアップグレードしてください。
+              現在のプランではプロジェクトを{planLimits.maxProjects}件まで管理できます。ロック中のプロジェクトを削除するか、プランをアップグレードしてください。
             </p>
             <Link
               href="/pricing?reason=project_over_limit"
@@ -216,7 +216,7 @@ export default async function ProjectsPage() {
       {/* Summary */}
       <div className="flex gap-4 mb-7">
         {[
-          { n: projectList.length, l: '取材先' },
+          { n: projectList.length, l: 'プロジェクト' },
           { n: interviews.length, l: '総インタビュー' },
         ].map((s) => (
           <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
@@ -315,7 +315,7 @@ export default async function ProjectsPage() {
                   {isLocked ? (
                     <span
                       className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text3)] cursor-not-allowed"
-                      title="プランの上限を超えているため取材できません"
+                      title="プランの上限を超えているためこのプロジェクトでは取材できません"
                     >
                       <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect x="1" y="6" width="9" height="7" rx="2" fill="currentColor"/>

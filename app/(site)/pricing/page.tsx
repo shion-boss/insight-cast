@@ -34,7 +34,7 @@ const FREE_TRIAL_FEATURES = [
   '取材：2回まで（単発）',
   '記事作成：3回まで（単発）',
   'フリーキャスト 3名',
-  '取材先登録：1件',
+  'プロジェクト登録：1件',
   '取材メモを受け取れる',
 ] as const
 
@@ -50,7 +50,7 @@ const PLANS = [
       { ok: true, label: '取材：2回まで（単発）' },
       { ok: true, label: '記事作成：3回まで（単発）' },
       { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: '取材先登録：1件' },
+      { ok: true, label: 'プロジェクト登録：1件' },
       { ok: false, label: '競合調査なし' },
       { ok: true, label: '取材メモを受け取れる' },
       { ok: false, label: '追加キャスト：準備中' },
@@ -70,7 +70,7 @@ const PLANS = [
       { ok: true, label: '取材回数：月5回まで' },
       { ok: true, label: '記事作成：月20回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: '取材先登録：1件' },
+      { ok: true, label: 'プロジェクト登録：1件' },
       { ok: true, label: '自社HP調査あり' },
       { ok: false, label: '競合調査なし' },
       { ok: true, label: '取材メモを受け取れる' },
@@ -91,7 +91,7 @@ const PLANS = [
       { ok: true, label: '取材回数：月15回まで' },
       { ok: true, label: '記事作成：月60回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: '取材先登録：1件' },
+      { ok: true, label: 'プロジェクト登録：1件' },
       { ok: true, label: '自社HP調査あり' },
       { ok: true, label: '競合調査：3社' },
       { ok: true, label: '取材メモを受け取れる' },
@@ -106,15 +106,15 @@ const PLANS = [
     name: '法人向け',
     price: 14800,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '複数の取材先や担当者でHPを強化したい方へ',
+    catch: '複数のプロジェクトや担当者でHPを強化したい方へ',
     featured: false,
     features: [
       { ok: true, label: '取材回数：月60回まで' },
       { ok: true, label: '記事作成：月240回まで' },
       { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: '取材先登録：最大3件' },
+      { ok: true, label: 'プロジェクト登録：最大3件' },
       { ok: true, label: '自社HP調査あり' },
-      { ok: true, label: '競合調査：各取材先3社' },
+      { ok: true, label: '競合調査：各プロジェクト3社' },
       { ok: true, label: '取材メモを受け取れる' },
       { ok: false, label: '追加キャスト：準備中' },
       { ok: true, label: '優先サポート' },
@@ -128,9 +128,9 @@ const TABLE_ROWS = [
   { label: '取材回数', lightning: '月5回', personal: '月15回', business: '月60回' },
   { label: '記事作成', lightning: '月20回', personal: '月60回', business: '月240回' },
   { label: 'フリーキャスト', lightning: '3名', personal: '3名', business: '3名' },
-  { label: '取材先登録', lightning: '1件', personal: '1件', business: '最大3件' },
+  { label: 'プロジェクト登録', lightning: '1件', personal: '1件', business: '最大3件' },
   { label: '自社HP調査', lightning: 'あり', personal: 'あり', business: 'あり' },
-  { label: '競合調査', lightning: 'なし', personal: '3社', business: '各取材先3社' },
+  { label: '競合調査', lightning: 'なし', personal: '3社', business: '各プロジェクト3社' },
   { label: '取材メモを受け取れる', lightning: 'あり', personal: 'あり', business: 'あり' },
   { label: '追加キャスト', lightning: '準備中', personal: '準備中', business: '準備中' },
   { label: '優先サポート', lightning: 'なし', personal: 'なし', business: 'あり' },
@@ -161,13 +161,13 @@ const SELECTION_GUIDE = [
   { plan: 'お試し', desc: 'まずどんなサービスか確かめたい方', charId: 'mint' },
   { plan: 'ライト', desc: '月に数回、ゆっくりHPを育てたい個人事業主・小規模店舗の方', charId: 'rain' },
   { plan: '個人向け', desc: '1人や家族経営で、月に数回HPを更新したい方', charId: 'claus' },
-  { plan: '法人向け', desc: '複数の取材先をまとめて運用したい方', charId: 'claus' },
+  { plan: '法人向け', desc: '複数のプロジェクトをまとめて運用したい方', charId: 'claus' },
 ] as const
 
 const FAQS = [
   { q: '無料プランにクレジットカードは必要ですか？', a: '不要です。メールアドレスのみで登録できます。' },
   { q: '追加キャストはどのプランで使えますか？', a: '追加キャストは現在準備中です。正式提供後は、お試し・ライト・個人向け・法人向けの各プランで使える形を予定しています。' },
-  { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件の取材先を登録でき、優先サポートが付きます。' },
+  { q: '個人向けと法人向けの違いは何ですか？', a: '個人向けは1人や家族経営で運営されている方向け、法人向けは複数のスタッフや店舗でまとめてご利用になりたい方向けです。法人向けでは最大3件のプロジェクトを登録でき、優先サポートが付きます。' },
   { q: 'プランはいつでも変更できますか？', a: 'アップグレード（上位プランへの変更）はマイページの「設定 → ご利用プラン」からお申し込みいただけます。ダウングレードは現在対応しておりません。' },
   { q: '解約するとデータはどうなりますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もこれまでの取材メモや記事はそのまま保持されます。' },
 ] as const
@@ -256,7 +256,7 @@ export default async function PricingPage({
         {reason === 'project_limit' && (
           <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
-            <span>現在のプランでは取材先を追加できません。プランをアップグレードすると、複数の取材先を管理できます。</span>
+            <span>現在のプランではプロジェクトを追加できません。プランをアップグレードすると、複数のプロジェクトを管理できます。</span>
           </div>
         )}
         {reason === 'interview_limit' && (

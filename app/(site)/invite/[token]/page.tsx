@@ -91,14 +91,14 @@ export default async function InvitePage({
           取材チームに招待されています
         </h1>
         <p className="text-sm text-[var(--text2)]">
-          以下の取材先への参加招待が届いています。
+          以下のプロジェクトへの参加招待が届いています。
         </p>
       </div>
 
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 mb-6">
         <dl className="space-y-4">
           <div>
-            <dt className="text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase mb-1">取材先</dt>
+            <dt className="text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase mb-1">プロジェクト</dt>
             <dd className="text-base font-bold text-[var(--text)]">{invitation.projectName}</dd>
           </div>
           <div>

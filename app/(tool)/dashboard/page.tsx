@@ -35,12 +35,12 @@ async function SharedProjectsZeroState({
             />
           )}
           name={mint?.name ?? 'インタビュアー'}
-          title="招待された取材先があります。"
-          description="取材先一覧からアクセスできます。自分の取材先を登録することもできます。"
+          title="招待されたプロジェクトがあります。"
+          description="プロジェクト一覧からアクセスできます。自分のプロジェクトを登録することもできます。"
           tone="soft"
         />
         <div className="mt-4">
-          <ButtonLink href="/projects">取材先一覧を見る <span aria-hidden="true">→</span></ButtonLink>
+          <ButtonLink href="/projects">プロジェクト一覧を見る <span aria-hidden="true">→</span></ButtonLink>
         </div>
       </div>
     )
@@ -59,11 +59,11 @@ async function SharedProjectsZeroState({
         )}
         name={mint?.name ?? 'インタビュアー'}
         title="AIキャストが取材の準備をして待っています。"
-        description="まずは取材先を登録してみましょう。登録するとインタビューを始められます。"
+        description="まずはプロジェクトを登録してみましょう。登録するとインタビューを始められます。"
         tone="soft"
       />
       <div className="mt-4">
-        <ButtonLink href="/projects/new">最初の取材先を登録する <span aria-hidden="true">→</span></ButtonLink>
+        <ButtonLink href="/projects/new">最初のプロジェクトを登録する <span aria-hidden="true">→</span></ButtonLink>
       </div>
     </div>
   )
@@ -276,11 +276,11 @@ export default async function DashboardPage() {
               href="/pricing?reason=project_limit"
               className={getButtonClass('secondary', 'px-4 py-2 text-sm opacity-60 flex items-center gap-1.5')}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 取材先を追加（上限）
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> プロジェクトを追加（上限）
             </Link>
           ) : (
             <Link href="/projects/new" className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
-              + 取材先を追加
+              + プロジェクトを追加
             </Link>
           )}
         </div>
@@ -341,7 +341,7 @@ export default async function DashboardPage() {
               href={interviewerHref}
               className={getButtonClass('primary', 'text-sm px-4 py-2')}
             >
-              {projectList.length > 1 ? <>取材先を選ぶ <span aria-hidden="true">→</span></> : <>取材を始める <span aria-hidden="true">→</span></>}
+              {projectList.length > 1 ? <>プロジェクトを選ぶ <span aria-hidden="true">→</span></> : <>取材を始める <span aria-hidden="true">→</span></>}
             </Link>
           )}
         </div>
@@ -350,7 +350,7 @@ export default async function DashboardPage() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
-          { n: projectList.length,  l: '取材先',      delta: deltaLabel(projectDelta) },
+          { n: projectList.length,  l: 'プロジェクト',      delta: deltaLabel(projectDelta) },
           { n: interviews.filter((iv) => iv.status === 'done' || iv.summary).length, l: '完了した取材', delta: deltaLabel(interviewDelta) },
           { n: totalArticles,       l: '記事',    delta: deltaLabel(articleDelta) },
         ].map((stat) => (
@@ -375,7 +375,7 @@ export default async function DashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <Link
                   href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
-                  aria-label={isProjectLimitReached ? '取材先を追加（プラン上限 — アップグレードする）' : undefined}
+                  aria-label={isProjectLimitReached ? 'プロジェクトを追加（プラン上限 — アップグレードする）' : undefined}
                   className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                 >
                   {isProjectLimitReached && (
@@ -387,7 +387,7 @@ export default async function DashboardPage() {
                     </div>
                   )}
                   <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} className={isProjectLimitReached ? 'opacity-40' : undefined} />
-                  <div className={`text-sm font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>取材先を追加する</div>
+                  <div className={`text-sm font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>プロジェクトを追加する</div>
                 </Link>
                 {isInterviewLimitReached ? (
                   <Link
@@ -405,7 +405,7 @@ export default async function DashboardPage() {
                     className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
-                    <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? '取材先を選ぶ' : '取材を始める'}</div>
+                    <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? 'プロジェクトを選ぶ' : '取材を始める'}</div>
                   </Link>
                 )}
                 <Link
@@ -423,8 +423,8 @@ export default async function DashboardPage() {
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[18px] font-bold text-[var(--text)]">取材先一覧</h2>
-                <Link href="/projects" aria-label="取材先をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
+                <h2 className="text-[18px] font-bold text-[var(--text)]">プロジェクト一覧</h2>
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -485,7 +485,7 @@ export default async function DashboardPage() {
                   icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
                   name={mint?.name ?? 'インタビュアー'}
                   title="まだ取材は始まっていません。"
-                  description="上の「取材先」から取材先を開き、インタビューを始めてみてください。"
+                  description="上の「プロジェクト一覧」からプロジェクトを開き、インタビューを始めてみてください。"
                   tone="soft"
                 />
               ) : (

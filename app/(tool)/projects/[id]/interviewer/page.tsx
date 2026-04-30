@@ -112,11 +112,11 @@ export default async function InterviewerPage({
   if (isProjectOverLimit) {
     return (
       <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-        <PageHeader title="キャストを選ぶ" backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+        <PageHeader title="キャストを選ぶ" backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
         <div className="max-w-2xl mx-auto px-6 py-10">
           <Breadcrumb items={[
-            { label: '取材先一覧', href: '/projects' },
-            { label: '取材先の管理', href: `/projects/${id}` },
+            { label: 'プロジェクト一覧', href: '/projects' },
+            { label: 'プロジェクトの管理', href: `/projects/${id}` },
             { label: 'キャストを選ぶ' },
           ]} />
           <InterviewerSpeech
@@ -129,8 +129,8 @@ export default async function InterviewerPage({
               />
             )}
             name={mint?.name ?? 'ミント'}
-            title={`現在のプランで取材できる取材先は${planLimits.maxProjects}件までです。`}
-            description="この取材先からの取材はプランの上限を超えているため、いまはご利用いただけません。他の取材先を削除するか、プランをアップグレードしてください。"
+            title={`現在のプランで取材できるプロジェクトは${planLimits.maxProjects}件までです。`}
+            description="このプロジェクトからの取材はプランの上限を超えているため、いまはご利用いただけません。他のプロジェクトを削除するか、プランをアップグレードしてください。"
             tone="soft"
           />
           <div className="mt-6 flex flex-col gap-3">
@@ -144,7 +144,7 @@ export default async function InterviewerPage({
               href="/projects"
               className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-sm font-semibold hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
             >
-              取材先の一覧へ
+              プロジェクト一覧へ
             </Link>
           </div>
         </div>
@@ -154,12 +154,12 @@ export default async function InterviewerPage({
 
   return (
     <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← 取材先の管理" />
+      <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
 
       <div className="max-w-2xl mx-auto px-6 py-10">
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先の管理', href: `/projects/${id}` },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトの管理', href: `/projects/${id}` },
           { label: selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ' },
         ]} />
         {freeLocked && (
@@ -189,7 +189,7 @@ export default async function InterviewerPage({
                 href={`/projects/${id}`}
                 className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
-                取材先に戻る
+                プロジェクトに戻る
               </Link>
             </div>
           </div>
@@ -303,7 +303,7 @@ export default async function InterviewerPage({
               <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--err)]">
-                  この取材先はプランの上限を超えているため、取材を開始できません。他の取材先を削除するか、プランをアップグレードしてください。
+                  このプロジェクトはプランの上限を超えているため、取材を開始できません。他のプロジェクトを削除するか、プランをアップグレードしてください。
                 </p>
               </div>
             )}

@@ -32,7 +32,7 @@ export default function InterviewPage() {
   const router = useRouter()
   const supabaseRef = useRef(createClient())
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
-  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← 取材先の管理'
+  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← プロジェクトの管理'
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')

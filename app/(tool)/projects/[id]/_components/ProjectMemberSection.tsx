@@ -327,7 +327,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
         <ConfirmDialog
           dialogId="delete-member"
           title="メンバーを削除しますか？"
-          description="削除するとこの取材先にアクセスできなくなります。再度招待することで復元できます。"
+          description="削除するとこのプロジェクトにアクセスできなくなります。再度招待することで復元できます。"
           subject={confirmDelete.name}
           confirmLabel="削除する"
           confirmingLabel="削除中..."

@@ -126,7 +126,7 @@ export default async function BillingPage({
             {!isPaid && (
               <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[var(--text2)]">
                 <p className="text-sm leading-[1.75]">
-                  個人向け・法人向けプランにすると、取材回数が増え、より多くの取材先を管理できます。
+                  個人向け・法人向けプランにすると、取材回数が増え、より多くのプロジェクトを管理できます。
                 </p>
                 <Link
                   href="/pricing"

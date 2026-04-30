@@ -557,11 +557,11 @@ export function SettingsClient({
               </section>}
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">取材先の削除</h2>
+                <h2 className="mb-1 text-lg font-bold text-[var(--text)]">プロジェクトの削除</h2>
                 <p className="mb-5 text-xs text-[var(--text3)]">削除すると取材メモ・記事も含めて論理削除されます</p>
 
                 {projectList.length === 0 ? (
-                  <p className="text-sm text-[var(--text3)]">登録済みの取材先はありません。</p>
+                  <p className="text-sm text-[var(--text3)]">登録済みのプロジェクトはありません。</p>
                 ) : (
                   <ul className="space-y-3">
                     {projectList.map((project) => {
@@ -595,9 +595,9 @@ export function SettingsClient({
                           {isConfirming && (
                             <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
                               <p className="text-sm text-[var(--text2)]">
-                                確認のため、取材先名 <span className="font-semibold text-[var(--text)]">「{displayName}」</span> を入力してください。
+                                確認のため、プロジェクト名 <span className="font-semibold text-[var(--text)]">「{displayName}」</span> を入力してください。
                               </p>
-                              <label htmlFor={`delete-project-${project.id}`} className="sr-only">取材先名を入力</label>
+                              <label htmlFor={`delete-project-${project.id}`} className="sr-only">プロジェクト名を入力</label>
                               <TextInput
                                 id={`delete-project-${project.id}`}
                                 type="text"
@@ -649,7 +649,7 @@ export function SettingsClient({
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
                   <ul className="mb-4 space-y-1 text-sm leading-[1.75] text-[var(--text2)] list-disc list-inside">
-                    <li>取材先・取材メモ・記事・プロフィール情報を含むアカウント全体が完全に削除されます</li>
+                    <li>プロジェクト・取材メモ・記事・プロフィール情報を含むアカウント全体が完全に削除されます</li>
                     <li>有料プランご利用中の場合、サブスクリプションは即時解約されます</li>
                     <li>残りの契約期間分の返金はありません</li>
                     <li>この操作は取り消せません</li>
@@ -718,8 +718,8 @@ export function SettingsClient({
                   plan.lifetimeInterviewLimit !== null
                     ? { label: 'お試し取材', value: `${plan.lifetimeInterviewLimit} 回` }
                     : { label: '月間取材上限', value: `${plan.monthlyInterviewLimit} 回` },
-                  { label: '取材先上限', value: `${plan.maxProjects} 件` },
-                  { label: '競合調査', value: `各取材先 ${plan.maxCompetitorsPerProject} 社` },
+                  { label: 'プロジェクト上限', value: `${plan.maxProjects} 件` },
+                  { label: '競合調査', value: `各プロジェクト ${plan.maxCompetitorsPerProject} 社` },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl bg-[var(--bg2)] px-4 py-4">
                     <p className="text-xs text-[var(--text3)]">{item.label}</p>
@@ -734,7 +734,7 @@ export function SettingsClient({
                 <p className="mb-3 text-sm font-semibold text-[var(--text)]">現在の利用状況</p>
                 <div className="space-y-2 text-sm text-[var(--text2)]">
                   <div className="flex items-center justify-between gap-4">
-                    <span>登録済みの取材先</span>
+                    <span>登録済みのプロジェクト</span>
                     <span className="font-semibold text-[var(--text)]">
                       {projectCount} / {plan.maxProjects} 件
                     </span>
@@ -754,9 +754,9 @@ export function SettingsClient({
                   <>
                     <div className="space-y-2">
                       {[
-                        nextPlan.maxProjects !== plan.maxProjects && `取材先を最大 ${nextPlan.maxProjects} 件まで登録`,
+                        nextPlan.maxProjects !== plan.maxProjects && `プロジェクトを最大 ${nextPlan.maxProjects} 件まで登録`,
                         nextPlan.monthlyInterviewLimit !== plan.monthlyInterviewLimit && `月 ${nextPlan.monthlyInterviewLimit} 回まで取材`,
-                        nextPlan.maxCompetitorsPerProject !== plan.maxCompetitorsPerProject && `競合調査を各取材先 ${nextPlan.maxCompetitorsPerProject} 社まで`,
+                        nextPlan.maxCompetitorsPerProject !== plan.maxCompetitorsPerProject && `競合調査を各プロジェクト ${nextPlan.maxCompetitorsPerProject} 社まで`,
                         nextPlan.supportLabel !== plan.supportLabel && `${nextPlan.supportLabel}が利用可能`,
                       ].filter(Boolean).map((feature) => (
                         <div key={String(feature)} className="flex items-center gap-2 text-sm text-[var(--text2)]">

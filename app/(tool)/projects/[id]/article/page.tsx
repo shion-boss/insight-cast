@@ -371,8 +371,8 @@ export default function ArticlePage() {
 
       <div className="mx-auto max-w-6xl px-6 py-8">
         <Breadcrumb items={[
-          { label: '取材先一覧', href: '/projects' },
-          { label: '取材先の管理', href: `/projects/${projectId}` },
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: 'プロジェクトの管理', href: `/projects/${projectId}` },
           { label: '取材メモ', href: `/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}` },
           { label: '記事を作成' },
         ]} />
@@ -679,7 +679,7 @@ export default function ArticlePage() {
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
                   <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
-                    取材先の管理に戻る
+                    プロジェクトの管理に戻る
                   </Link>
                   <Link
                     href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
@@ -709,7 +709,7 @@ export default function ArticlePage() {
                     もう一度作成する
                   </button>
                   <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>
-                    取材先の管理に戻る
+                    プロジェクトの管理に戻る
                   </Link>
                 </div>
               </div>
@@ -738,7 +738,7 @@ export default function ArticlePage() {
                     href={`/projects/${projectId}#articles`}
                     className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
                   >
-                    取材先の管理で確認する
+                    プロジェクトの管理で確認する
                   </Link>
                   <button
                     type="button"
@@ -765,7 +765,7 @@ export default function ArticlePage() {
             href={`/projects/${projectId}`}
             className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
-            取材先の管理に戻る
+            プロジェクトの管理に戻る
           </Link>
         </div>
       </div>

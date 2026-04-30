@@ -103,8 +103,8 @@ export default async function ProjectArticlesPage({
   return (
     <>
       <Breadcrumb items={[
-        { label: '取材先一覧', href: '/projects' },
-        { label: '取材先の管理', href: `/projects/${id}` },
+        { label: 'プロジェクト一覧', href: '/projects' },
+        { label: 'プロジェクトの管理', href: `/projects/${id}` },
         ...(interviewId ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${interviewId}` }] : []),
         { label: interview ? 'この取材の記事一覧' : '記事一覧' },
       ]} />
@@ -117,7 +117,7 @@ export default async function ProjectArticlesPage({
           <p className="mt-2 text-sm text-[var(--text3)]">
             {interview
               ? <>{interviewer?.name ?? 'AIキャスト'}<span aria-hidden="true"> · </span>{formatDate(interview.created_at)} の取材から作成した記事</>
-              : 'この取材先から作成した記事をまとめて確認できます。'}
+              : 'このプロジェクトから作成した記事をまとめて確認できます。'}
           </p>
         </div>
         <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
@@ -133,7 +133,7 @@ export default async function ProjectArticlesPage({
           align="left"
           action={(
             <ButtonLink href={interview ? `/projects/${id}/article?interviewId=${interview.id}` : `/projects/${id}`}>
-              {interview ? 'この取材から記事を作る' : '取材先の管理へ戻る'}
+              {interview ? 'この取材から記事を作る' : 'プロジェクトの管理へ戻る'}
             </ButtonLink>
           )}
         />

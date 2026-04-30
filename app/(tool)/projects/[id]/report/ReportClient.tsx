@@ -143,7 +143,7 @@ export default function ReportClient({
           icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
           name="クラウス"
           title="まだ調査は始まっていません。"
-          description="取材先の管理画面に戻って「調査を開始する」を押すと、バックグラウンドで進みます。"
+          description="プロジェクトの管理画面に戻って「調査を開始する」を押すと、バックグラウンドで進みます。"
           tone="soft"
         />
         <div className="flex justify-center">
@@ -181,7 +181,7 @@ export default function ReportClient({
                 href={`/projects/${projectId}`}
                 className={getButtonClass('secondary')}
               >
-                取材先の管理へ戻る
+                プロジェクトの管理へ戻る
               </Link>
             </div>
           </div>
@@ -200,7 +200,7 @@ export default function ReportClient({
                   href={`/projects/${projectId}`}
                   className={getButtonClass('secondary')}
                 >
-                  取材先の管理へ戻る
+                  プロジェクトの管理へ戻る
                 </Link>
                 <Link
                   href="/dashboard"
