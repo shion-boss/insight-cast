@@ -418,11 +418,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {/* 競合差分ハイライト */}
       {influentialTopics.length > 0 && (
         <div className="mt-6">
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">競合が扱っている注目テーマ</h2>
-            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              詳細レポートを見る <span aria-hidden="true">→</span>
-            </Link>
           </div>
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
             {influentialTopics.map((topic, i) => (
