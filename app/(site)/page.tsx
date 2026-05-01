@@ -158,7 +158,7 @@ export default async function LandingPage() {
       <main id="main-content" className="relative z-10">
 
         {/* ① Hero */}
-        <section className="pt-[72px] pb-[56px] sm:pt-[88px] sm:pb-[72px] lg:pt-[112px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
+        <section className="pt-[52px] pb-[56px] sm:pt-[68px] sm:pb-[72px] lg:pt-[88px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_480px] lg:gap-14">
               <div className="order-2 lg:order-1">
