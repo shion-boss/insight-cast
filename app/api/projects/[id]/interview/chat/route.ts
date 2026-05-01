@@ -309,7 +309,7 @@ export async function POST(
         logApiUsage({
           userId: (await supabase.auth.getUser()).data.user?.id,
           projectId,
-          route: 'interview/chat',
+          route: '/api/projects/[id]/interview/chat',
           model: 'claude-sonnet-4-6',
           inputTokens: finalMsg.usage.input_tokens,
           outputTokens: finalMsg.usage.output_tokens,

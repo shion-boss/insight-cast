@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk'
 import { buildInterviewQualityContext } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
+import { logApiUsage } from '@/lib/api-usage'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -211,6 +212,19 @@ export async function POST(
         console.error('[ext chat] stream error:', err)
         controller.error(err)
         return
+      }
+
+      // トークン使用量をログ（コストはリンク作成者＝プロジェクトオーナーに帰属）
+      const finalMsg = await stream.finalMessage().catch(() => null)
+      if (finalMsg) {
+        logApiUsage({
+          userId: link.created_by,
+          projectId: link.project_id,
+          route: '/api/interview-links/[token]/chat',
+          model: 'claude-sonnet-4-6',
+          inputTokens: finalMsg.usage.input_tokens,
+          outputTokens: finalMsg.usage.output_tokens,
+        }).catch(() => {})
       }
 
       // AIメッセージ保存

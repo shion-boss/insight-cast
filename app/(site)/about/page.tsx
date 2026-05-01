@@ -136,7 +136,7 @@ export default function AboutPage() {
 
         {/* ② WHY */}
         <section className="bg-[var(--bg2)]" style={{ padding: 'clamp(64px,7vw,96px) clamp(32px,6vw,80px)' }}>
-          <div className="max-w-[720px] mx-auto">
+          <div className="max-w-[800px] mx-auto">
             <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">Why We Started</p>
             <h2
               className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-10"
@@ -195,7 +195,7 @@ export default function AboutPage() {
               インタビューを担当するAIキャスト
             </h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-[860px] mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-[800px] mx-auto">
             {CHARACTERS.map((char) => (
               <div
                 key={char.id}

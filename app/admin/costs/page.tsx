@@ -48,16 +48,12 @@ async function getCostData() {
 
   const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1).toISOString()
 
-  const [currentMonth, lastMonth, byRoute, daily, monthly, byUser, adminLogs, nullUserLogs] = await Promise.all([
+  const [currentMonth, lastMonth, byRoute, daily, monthly, adminLogs, nullUserLogs] = await Promise.all([
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', lastMonthStart).lte('created_at', lastMonthEnd),
     supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', monthStart).order('created_at', { ascending: true }),
     supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', twelveMonthsAgo).order('created_at', { ascending: true }),
-    // ユーザー別 × プラン別（管理者・nullを除いた純粋なユーザー分）
-    adminUserIds.length > 0
-      ? supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null).not('user_id', 'in', `(${adminUserIds.join(',')})`)
-      : supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null),
     // 管理者操作のHP運用コスト（全ルート対象）
     adminUserIds.length > 0
       ? supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart).in('user_id', adminUserIds)
@@ -108,29 +104,6 @@ async function getCostData() {
   }
   const monthlyList = Object.entries(monthMap).map(([month, cost]) => ({ month, cost }))
 
-  // ユーザー別コスト集計（user_idごと）
-  const userCostMap: Record<string, number> = {}
-  for (const row of (byUser.data ?? [])) {
-    const uid = row.user_id as string
-    userCostMap[uid] = (userCostMap[uid] ?? 0) + (row.cost_usd ?? 0)
-  }
-
-  // プラン情報を取得
-  const userIds = Object.keys(userCostMap)
-  const { data: profiles } = userIds.length > 0
-    ? await supabase.from('profiles').select('id, email, plan').in('id', userIds)
-    : { data: [] }
-
-  const byPlan: Record<string, { cost: number; userCount: number }> = {}
-  for (const profile of (profiles ?? [])) {
-    const plan = (profile.plan as string) ?? 'individual'
-    const cost = userCostMap[profile.id as string] ?? 0
-    if (!byPlan[plan]) byPlan[plan] = { cost: 0, userCount: 0 }
-    byPlan[plan].cost += cost
-    byPlan[plan].userCount += 1
-  }
-  const byPlanList = Object.entries(byPlan).map(([plan, v]) => ({ plan, ...v })).sort((a, b) => b.cost - a.cost)
-
   // HP運用費: 管理者の全操作 + user_id=null（cron等）を合算
   const siteOpsLogs = [...(adminLogs.data ?? []), ...(nullUserLogs.data ?? [])]
   const blogCost = siteOpsLogs.reduce((acc, r) => acc + (r.cost_usd ?? 0), 0)
@@ -144,12 +117,12 @@ async function getCostData() {
     blogByRoute[row.route].cost += row.cost_usd ?? 0
   }
 
-  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, byPlanList, blogCost, blogByRoute }
+  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, blogCost, blogByRoute }
 }
 
 
 export default async function AdminCostsPage() {
-  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, byPlanList, blogCost, blogByRoute } = await getCostData()
+  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, blogCost, blogByRoute } = await getCostData()
 
   const now = new Date()
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
@@ -234,35 +207,6 @@ export default async function AdminCostsPage() {
           </div>
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
-      </section>
-
-      {/* プラン別コスト */}
-      <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">プラン別コスト（今月・ユーザーAPI使用分）</h2>
-        {byPlanList.length === 0 ? (
-          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
-        ) : (
-          <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-            {byPlanList.map((row, i) => (
-              <div key={row.plan} className={`flex items-center gap-4 px-5 py-3.5 ${i < byPlanList.length - 1 ? 'border-b border-[var(--border)]' : ''}`}>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-[var(--text)]">
-                    {row.plan === 'individual' ? '個人プラン' : row.plan === 'business' ? 'ビジネスプラン' : row.plan}
-                  </p>
-                  <p className="text-xs text-[var(--text3)]">{row.userCount}ユーザー</p>
-                </div>
-                <div className="text-right">
-                  <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
-                  {row.userCount > 0 && (
-                    <p className="text-xs text-[var(--text3)]">
-                      平均 <CostValue usd={row.cost / row.userCount} className="text-xs" /> /人
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* HP運用コスト（管理者） */}
