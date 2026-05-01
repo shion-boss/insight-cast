@@ -82,7 +82,7 @@ export default function AboutPage() {
         {/* ① FV */}
         <section className="grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-[var(--bg)]" style={{ minHeight: '560px' }}>
           <div
-            className="flex flex-col justify-center"
+            className="flex flex-col justify-center items-center text-center"
             style={{ padding: 'clamp(48px,6vw,96px) clamp(40px,5vw,80px)', paddingTop: 'calc(108px + clamp(24px,3vw,48px))' }}
           >
             <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">About</p>
@@ -94,7 +94,7 @@ export default function AboutPage() {
             </h1>
             <div className="w-9 h-0.5 rounded-[1px] bg-[var(--accent)] opacity-45 mb-8" />
             <p
-              className="text-[var(--text2)] leading-[1.9] max-w-[480px]"
+              className="text-[var(--text2)] leading-[1.9] max-w-[480px] mx-auto"
               style={{ fontSize: 'clamp(14px,1.2vw,16px)' }}
             >
               自分では「当たり前」と思っていることに、あなただけの価値が眠っています。Insight Cast は、AIキャストがあなたの話を聞き、その価値を言葉にして、ホームページへ届けていくサービスです。
