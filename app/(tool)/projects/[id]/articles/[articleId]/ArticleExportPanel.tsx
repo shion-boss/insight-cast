@@ -462,26 +462,32 @@ export function ArticleExportPanel({
 
         {/* コピー・書き出し行（非編集時） */}
         {!isEditing && (
-          <div className="flex flex-wrap items-center gap-1.5">
-            <button type="button" onClick={handleCopyText}
-              className="relative min-h-[44px] min-w-[7.5rem] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              <span className={copiedText ? 'opacity-0' : ''}>テキストでコピー</span>
-              <span className={`absolute inset-0 flex items-center justify-center ${copiedText ? '' : 'opacity-0'}`}>✓ コピーしました</span>
-            </button>
-            <button type="button" onClick={handleCopyMd}
-              className="relative min-h-[44px] min-w-[7.5rem] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              <span className={copiedMd ? 'opacity-0' : ''}>MDでコピー</span>
-              <span className={`absolute inset-0 flex items-center justify-center ${copiedMd ? '' : 'opacity-0'}`}>✓ コピーしました</span>
-            </button>
-            <span aria-hidden="true" className="hidden sm:block mx-0.5 h-4 w-px bg-[var(--border)]" />
-            <button type="button" onClick={() => handleDownload('text')}
-              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              .txt
-            </button>
-            <button type="button" onClick={() => handleDownload('markdown')}
-              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              .md
-            </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">全文コピー</span>
+              <button type="button" onClick={handleCopyText}
+                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                <span className={copiedText ? 'opacity-0' : ''}>テキスト</span>
+                <span className={`absolute inset-0 flex items-center justify-center ${copiedText ? '' : 'opacity-0'}`}>✓ コピー</span>
+              </button>
+              <button type="button" onClick={handleCopyMd}
+                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                <span className={copiedMd ? 'opacity-0' : ''}>Markdown</span>
+                <span className={`absolute inset-0 flex items-center justify-center ${copiedMd ? '' : 'opacity-0'}`}>✓ コピー</span>
+              </button>
+            </div>
+            <span aria-hidden="true" className="h-4 w-px bg-[var(--border)]" />
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">書き出し</span>
+              <button type="button" onClick={() => handleDownload('text')}
+                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                .txt
+              </button>
+              <button type="button" onClick={() => handleDownload('markdown')}
+                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                .md
+              </button>
+            </div>
           </div>
         )}
 
@@ -1184,7 +1190,7 @@ function InterviewerIntroPanelCard({
               <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">インタビュアー紹介</div>
               {!isEditing && (
                 <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
-                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
                   埋め込みHTML
                 </button>
               )}
@@ -1223,7 +1229,7 @@ function InterviewerIntroPanelCard({
               <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">会話本文</div>
               {!isEditing && (
                 <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
-                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedConv ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
                   埋め込みHTML
                 </button>
               )}
