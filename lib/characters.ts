@@ -89,7 +89,7 @@ export const CHARACTERS: Character[] = [
   {
     id: 'mogro',
     name: 'モグロ',
-    species: 'もぐら',
+    species: 'モグラ',
     emoji: '🐾',
     label: 'Yes / No Deep Dive',
     description: 'はい / いいえで答えられる質問から、まだ言葉になっていない価値を掘り起こします',
@@ -102,7 +102,7 @@ export const CHARACTERS: Character[] = [
   {
     id: 'cocco',
     name: 'コッコ',
-    species: 'にわとり',
+    species: 'ニワトリ',
     emoji: '🐔',
     label: 'Promotion & Campaign',
     description: '告知・キャンペーンの素材を引き出します',
