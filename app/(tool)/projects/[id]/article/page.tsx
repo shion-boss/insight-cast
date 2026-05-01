@@ -400,32 +400,35 @@ export default function ArticlePage() {
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
               <div className="space-y-3">
-                {ARTICLE_GROUPS.map((group) => (
-                  <div key={group.label}>
-                    <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {group.items.map((t) => (
-                        <button
-                          key={t.type}
-                          type="button"
-                          onClick={() => setTab(t.type)}
-                          aria-pressed={tab === t.type}
-                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
-                            tab === t.type
-                              ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                              : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                          }`}
-                        >
-                          {t.label}
-                        </button>
-                      ))}
+                {ARTICLE_GROUPS.map((group) => {
+                  const selectedInGroup = group.items.find((t) => t.type === tab)
+                  return (
+                    <div key={group.label}>
+                      <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {group.items.map((t) => (
+                          <button
+                            key={t.type}
+                            type="button"
+                            onClick={() => setTab(t.type)}
+                            aria-pressed={tab === t.type}
+                            className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                              tab === t.type
+                                ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                                : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                            }`}
+                          >
+                            {t.label}
+                          </button>
+                        ))}
+                      </div>
+                      {selectedInGroup && (
+                        <p className="mt-1.5 text-[12px] leading-[1.6] text-[var(--text3)]">{selectedInGroup.desc}</p>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
-              <p className="mt-2 text-[12px] leading-[1.6] text-[var(--text3)]">
-                {ARTICLE_ITEMS.find((item) => item.type === tab)?.desc}
-              </p>
             </div>
 
             <div className="mb-5">
