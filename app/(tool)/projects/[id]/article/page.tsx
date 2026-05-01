@@ -38,11 +38,23 @@ type SavedArticleRow = SavedArticle & {
 
 type ArticleFailureMap = Partial<Record<ArticleType, string>>
 
-const TABS: { type: ArticleType; label: string; desc: string }[] = [
-  { type: 'client', label: 'ブログ記事', desc: '事業者の言葉で語る読み物記事' },
-  { type: 'interviewer', label: 'インタビュー形式', desc: 'インタビュアーが伝える紹介記事' },
-  { type: 'conversation', label: '会話込み', desc: 'Q&A形式のインタビュー記事' },
+type ArticleGroupItem = { type: ArticleType; label: string; desc: string }
+const ARTICLE_GROUPS: { label: string; items: ArticleGroupItem[] }[] = [
+  {
+    label: 'ユーザー視点',
+    items: [
+      { type: 'client', label: 'ブログ記事', desc: '事業者の言葉で語る読み物記事' },
+    ],
+  },
+  {
+    label: 'AIキャスト視点',
+    items: [
+      { type: 'conversation', label: '会話込み記事', desc: 'Q&A形式のインタビュー記事' },
+      { type: 'interviewer', label: 'レポート記事', desc: 'AIキャストが伝える紹介記事' },
+    ],
+  },
 ]
+const ARTICLE_ITEMS = ARTICLE_GROUPS.flatMap((g) => g.items)
 
 const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
   { value: 'desu', label: 'ですます体' },
@@ -89,7 +101,7 @@ export default function ArticlePage() {
   const pendingArticleTypes = Object.keys(pendingArticleJobIdByType) as ArticleType[]
   const activeGenerationType = startingArticleType ?? pendingArticleTypes[0] ?? null
   const activeGenerationLabel = activeGenerationType
-    ? (TABS.find((item) => item.type === activeGenerationType)?.label ?? '別の形式')
+    ? (ARTICLE_ITEMS.find((item) => item.type === activeGenerationType)?.label ?? '別の形式')
     : null
   const currentFailureMessage = failedArticleMessages[tab] ?? null
 
@@ -254,7 +266,7 @@ export default function ArticlePage() {
       return next
     })
     const jobId = `${interviewId}:${tab}:${Date.now()}`
-    const articleLabel = TABS.find((item) => item.type === tab)?.label ?? '記事'
+    const articleLabel = ARTICLE_ITEMS.find((item) => item.type === tab)?.label ?? '記事'
     const requestedAt = new Date().toISOString()
 
     trackPendingArticleGeneration({
@@ -383,25 +395,32 @@ export default function ArticlePage() {
 
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
-              <div className="flex flex-wrap gap-2">
-                {TABS.map((t) => (
-                  <button
-                    key={t.type}
-                    type="button"
-                    onClick={() => setTab(t.type)}
-                    aria-pressed={tab === t.type}
-                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
-                      tab === t.type
-                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                        : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                    }`}
-                  >
-                    {t.label}
-                  </button>
+              <div className="space-y-3">
+                {ARTICLE_GROUPS.map((group) => (
+                  <div key={group.label}>
+                    <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.items.map((t) => (
+                        <button
+                          key={t.type}
+                          type="button"
+                          onClick={() => setTab(t.type)}
+                          aria-pressed={tab === t.type}
+                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                            tab === t.type
+                              ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                              : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                          }`}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
               <p className="mt-2 text-[12px] leading-[1.6] text-[var(--text3)]">
-                {TABS.find((item) => item.type === tab)?.desc}
+                {ARTICLE_ITEMS.find((item) => item.type === tab)?.desc}
               </p>
             </div>
 
@@ -566,7 +585,7 @@ export default function ArticlePage() {
             <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-4">
               <div className="flex items-center gap-2.5">
                 <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-xs font-semibold text-[var(--accent)]">
-                  {TABS.find((item) => item.type === tab)?.label ?? tab}
+                  {ARTICLE_ITEMS.find((item) => item.type === tab)?.label ?? tab}
                 </span>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                   currentTabStatus === 'generating'
@@ -597,7 +616,7 @@ export default function ArticlePage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {themeArticles.map((a) => {
-                    const typeLabel = a.article_type === 'interviewer' ? 'インタビュー形式' : a.article_type === 'conversation' ? '会話込み' : 'ブログ記事'
+                    const typeLabel = a.article_type === 'interviewer' ? 'レポート記事' : a.article_type === 'conversation' ? '会話込み記事' : 'ブログ記事'
                     const dateLabel = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
                     return (
                       <Link
