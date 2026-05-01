@@ -87,9 +87,9 @@ export function NavigationOverlay() {
     <div aria-hidden="true">
       <div
         className={`fixed left-0 right-0 z-[31] h-[2px] overflow-hidden ${sidebarClass}`}
-        style={{ top: headerBottom }}
+        style={{ top: headerBottom, backgroundColor: 'color-mix(in srgb, var(--accent) 22%, transparent)' }}
       >
-        <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
+        <div className="absolute inset-0 animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
       </div>
       <div
         className={`fixed left-0 right-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.9)] ${sidebarClass}`}
