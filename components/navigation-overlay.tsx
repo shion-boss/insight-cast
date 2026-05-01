@@ -45,9 +45,10 @@ export function NavigationOverlay() {
     if (!a) return
     const raw = a.getAttribute('href') ?? ''
     if (!raw || raw.startsWith('http') || raw.startsWith('//') || raw.startsWith('#') || a.download) return
-    let toPath = raw
-    try { toPath = new URL(raw, location.href).pathname } catch { return }
-    if (toPath === location.pathname) return
+    let toUrl: URL
+    try { toUrl = new URL(raw, location.href) } catch { return }
+    const toPath = toUrl.pathname
+    if (toPath === location.pathname && toUrl.search === location.search) return
 
     const fromArea = classify(location.pathname)
     const toArea = classify(toPath)

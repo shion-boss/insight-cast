@@ -243,7 +243,7 @@ export default async function InterviewerPage({
               <Link
                 key={char.id}
                 href={`/projects/${id}/interviewer?cast=${char.id}`}
-                className="block rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:border-[var(--border2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="flex flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:border-[var(--border2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
               >
                 <CharacterAvatar
                   src={char.icon96}
@@ -259,7 +259,7 @@ export default async function InterviewerPage({
                 )}
                 <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
-                <div className="mt-4 text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-lg">
+                <div className="mt-auto text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-lg">
                   このキャストと話す <span aria-hidden="true">→</span>
                 </div>
               </Link>
