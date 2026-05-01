@@ -1,10 +1,11 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
+const MIN_MS = 400
 
 function classify(path: string): 'tool' | 'admin' | 'site' {
   if (path.startsWith('/admin')) return 'admin'
@@ -13,16 +14,32 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
 }
 
 export function NavigationOverlay() {
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [headerBottom, setHeaderBottom] = useState(64)
   const areaRef = useRef<'tool' | 'admin' | 'site'>('tool')
+  const prevPath = useRef(pathname)
+  const hideAt = useRef<number>(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // 新ページのレンダリングが完了したらオーバーレイを非表示
+  // pathname が変わった = 遷移完了 → MIN_MS を消化してから非表示
   useEffect(() => {
-    if (!isPending) setVisible(false)
-  }, [isPending])
+    if (!visible) return
+    if (prevPath.current === pathname) return
+    prevPath.current = pathname
+
+    const remaining = hideAt.current - Date.now()
+    clearTimeout(timerRef.current)
+    if (remaining > 0) {
+      timerRef.current = setTimeout(() => setVisible(false), remaining)
+    } else {
+      setVisible(false)
+    }
+  }, [pathname, visible])
+
+  useEffect(() => {
+    return () => { clearTimeout(timerRef.current) }
+  }, [])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
@@ -36,23 +53,16 @@ export function NavigationOverlay() {
 
     const fromArea = classify(location.pathname)
     const toArea = classify(toPath)
-    // site 側は SiteHeaderClient が担当。エリアをまたぐ遷移は PageTransitionOverlay が担当
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
-
-    // <Link> のデフォルト遷移を横取りし startTransition で包む
-    // → isPending が true の間は現ページを維持したままプログレスバーを表示し続ける
-    e.preventDefault()
 
     const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
     setHeaderBottom(h)
     areaRef.current = fromArea
+    prevPath.current = location.pathname
+    hideAt.current = Date.now() + MIN_MS
     flushSync(() => setVisible(true))
-
-    startTransition(() => {
-      router.push(toUrl.pathname + toUrl.search)
-    })
-  }, [router])
+  }, [])
 
   useEffect(() => {
     document.addEventListener('click', handleClick, true)
@@ -62,22 +72,18 @@ export function NavigationOverlay() {
   if (!visible) return null
 
   const area = areaRef.current
-
-  // tool: header 64px, sidebar 236px (lg以上)
-  // admin: header 64px, sidebar 220px (lg以上)
-  // site: SiteHeaderClient が担当するため NavigationOverlay では扱わない
   const sidebarClass = area === 'admin' ? 'lg:left-[220px]' : 'lg:left-[236px]'
 
   return (
     <div aria-hidden="true">
       <div
         className={`fixed left-0 right-0 z-[31] h-[2px] overflow-hidden ${sidebarClass}`}
-        style={{ top: headerBottom, backgroundColor: 'color-mix(in srgb, var(--accent) 22%, transparent)' }}
+        style={{ top: headerBottom }}
       >
-        <div className="absolute inset-0 animate-[page-load_1s_linear_infinite] bg-[var(--accent)]" />
+        <div className="absolute inset-0 animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
       </div>
       <div
-        className={`fixed left-0 right-0 bottom-0 z-[25] bg-[var(--bg)] ${sidebarClass}`}
+        className={`fixed left-0 right-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.9)] ${sidebarClass}`}
         style={{ top: headerBottom }}
       />
     </div>
