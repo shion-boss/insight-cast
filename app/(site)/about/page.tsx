@@ -80,7 +80,7 @@ export default function AboutPage() {
       <main id="main-content" className="relative z-10">
 
         {/* ① FV */}
-        <section className="relative overflow-hidden bg-[var(--bg)]" style={{ minHeight: '560px' }}>
+        <section className="relative overflow-hidden bg-[var(--bg)]" style={{ minHeight: '420px' }}>
           {/* 右半分に画像をフルブリード */}
           <div className="absolute right-0 top-0 h-full w-full md:w-1/2">
             <Image
