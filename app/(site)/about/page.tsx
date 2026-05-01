@@ -81,8 +81,8 @@ export default function AboutPage() {
 
         {/* ① FV */}
         <section className="relative overflow-hidden bg-[var(--bg)]" style={{ minHeight: '420px' }}>
-          {/* 右半分に画像をフルブリード */}
-          <div className="absolute right-0 top-0 h-full w-full md:w-1/2">
+          {/* 右側に画像をフルブリード */}
+          <div className="absolute right-0 top-0 h-full w-full md:w-[38%]">
             <Image
               src={aboutImage}
               alt="Insight CastのAIキャストたちが集まっているオフショット風の様子"
@@ -102,13 +102,13 @@ export default function AboutPage() {
             className="relative z-10 mx-auto max-w-6xl px-6"
             style={{ paddingTop: 'calc(108px + clamp(24px,3vw,48px))', paddingBottom: 'clamp(48px,6vw,96px)' }}
           >
-            <div className="md:w-1/2 md:pr-12">
+            <div className="md:w-[62%] md:pr-12">
               <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">About</p>
               <h1
                 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-7"
                 style={{ fontSize: 'clamp(24px,3vw,40px)' }}
               >
-                毎日の仕事に、まだ言葉に<br />なっていない価値があります。
+                毎日の仕事に、まだ言葉になっていない価値があります。
               </h1>
               <div className="w-9 h-0.5 rounded-[1px] bg-[var(--accent)] opacity-45 mb-8" />
               <p
