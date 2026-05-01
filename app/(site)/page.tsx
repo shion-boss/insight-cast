@@ -245,8 +245,8 @@ export default async function LandingPage() {
                 </li>
               ))}
             </ul>
-            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold mt-12" style={{ color: '#c2722a', fontSize: 'clamp(18px,2.4vw,30px)' }}>
-              価値への<span style={{ fontSize: 'clamp(24px,3.2vw,42px)' }}>"問い"</span>がなかったから。
+            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold mt-12" style={{ color: '#c49a72', fontSize: 'clamp(18px,2.4vw,30px)' }}>
+              価値への<span style={{ fontSize: 'clamp(24px,3.2vw,42px)', color: '#3d1f0a' }}>"問い"</span>がなかったから。
             </p>
           </div>
         </section>
