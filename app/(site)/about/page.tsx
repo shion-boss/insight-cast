@@ -5,6 +5,7 @@ import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { CharacterAvatar } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
 import { AboutBottomCTA } from './AboutCTA'
+import aboutImage from '@/assets/about/about.png'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -90,30 +91,19 @@ export default function AboutPage() {
             </>
           )}
           aside={(
-            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--bg2)] p-4 sm:p-6">
-              <div className="grid grid-cols-3 gap-3">
-                {allCasts.map((char, idx) => (
-                  <div key={char.id} className={`text-center ${!char.available ? 'opacity-70' : ''}`}>
-                    <div className="mb-2.5 overflow-hidden rounded-[16px] border-[1.5px] border-[var(--border)] bg-[var(--surface)]">
-                      <Image
-                        src={char.portrait}
-                        alt={char.available ? `${char.name}のポートレート` : `${char.name}のポートレート（準備中）`}
-                        width={80}
-                        height={80}
-                        className="w-full object-contain"
-                        priority={idx < 3}
-                        sizes="(max-width: 640px) 33vw, 80px"
-                      />
-                    </div>
-                    <div className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</div>
-                    <div className="mt-0.5 text-[11px] font-semibold tracking-[.06em] text-[var(--accent)]">
-                      {char.available ? char.label : '準備中'}
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="rounded-[24px] overflow-hidden shadow-[0_24px_64px_rgba(0,0,0,.13)]">
+              <Image
+                src={aboutImage}
+                alt="Insight CastのAIキャストたちが集まっているオフショット風の様子"
+                width={1672}
+                height={941}
+                className="w-full h-auto object-cover"
+                sizes="(min-width: 1024px) 480px, 100vw"
+                priority
+              />
             </div>
           )}
+          containerClassName="lg:grid-cols-[minmax(0,1fr)_480px]"
           asideClassName="self-stretch border-none bg-transparent p-0 shadow-none"
         />
 
