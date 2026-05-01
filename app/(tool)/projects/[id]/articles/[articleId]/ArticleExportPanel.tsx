@@ -316,6 +316,7 @@ export function ArticleExportPanel({
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [isEditing, setIsEditing] = useState(false)
   const [, startTransition] = useTransition()
+  const [globalMode, setGlobalMode] = useState<'text' | 'markdown'>('text')
 
   const [showSuggestions, setShowSuggestions] = useState(false)
   const hasSuggestions = (suggestions?.items.length ?? 0) > 0
@@ -626,6 +627,17 @@ export function ArticleExportPanel({
         </div>
       )}
 
+      {/* グローバルコピー形式トグル */}
+      {!isEditing && (
+        <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2">
+          <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">コピー形式</span>
+          <div className="flex overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] text-xs">
+            <button type="button" onClick={() => setGlobalMode('text')} className={`px-3 py-1.5 transition-colors ${globalMode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>テキスト</button>
+            <button type="button" onClick={() => setGlobalMode('markdown')} className={`border-l border-[var(--border)] px-3 py-1.5 transition-colors ${globalMode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>Markdown</button>
+          </div>
+        </div>
+      )}
+
       {/* コンテンツ描画（blocks のみ） */}
       <div className="flex flex-col gap-3 p-4 sm:p-5">
         {articleType === 'conversation'
@@ -677,6 +689,7 @@ export function ArticleExportPanel({
                           onEditConv={newExchanges => setEditedContent(prev => applyConvEdit(prev, interviewerName ?? '', effectiveClientName, newExchanges))}
                           themeColor={themeColor}
                           showIntro={showIntro && idx === firstConvIdx}
+                          mode={globalMode}
                         />
                       : group.type === 'meta'
                       ? null
@@ -687,6 +700,7 @@ export function ArticleExportPanel({
                           isEditing={isEditing}
                           onEditHeading={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'heading', o, n))}
                           onEditBody={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'body', o, n))}
+                          mode={globalMode}
                         />
                       : <BlockCopyCard
                           kind={group.block.kind}
@@ -694,6 +708,7 @@ export function ArticleExportPanel({
                           rawText={group.block.rawText}
                           isEditing={isEditing}
                           onEditDone={(o, n) => setEditedContent(prev => applyBlockEdit(prev, group.block.kind, o, n))}
+                          mode={globalMode}
                         />
                     }
                     {groupSuggestions.map((item, sIdx) => (
@@ -719,6 +734,7 @@ export function ArticleExportPanel({
                       isEditing={isEditing}
                       onEditHeading={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'heading', o, n))}
                       onEditBody={(o, n) => setEditedContent(prev => applyBlockEdit(prev, 'body', o, n))}
+                      mode={globalMode}
                     />
                   ) : (
                     <BlockCopyCard
@@ -727,6 +743,7 @@ export function ArticleExportPanel({
                       rawText={group.block.rawText}
                       isEditing={isEditing}
                       onEditDone={(o, n) => setEditedContent(prev => applyBlockEdit(prev, group.block.kind, o, n))}
+                      mode={globalMode}
                     />
                   )}
                   {groupSuggestions.map((item, sIdx) => (
@@ -747,7 +764,6 @@ export function ArticleExportPanel({
 
 type ArticleBlockKind = 'title' | 'intro' | 'heading' | 'body'
 type ArticleBlock = { kind: ArticleBlockKind; text: string; rawText?: string }
-type CopyMode = 'text' | 'markdown' | 'html'
 
 const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
   title:   'タイトル',
@@ -756,48 +772,6 @@ const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
   body:    '本文',
 }
 
-function HtmlModeToggle({ mode, onChange, hasMarkdown = false, hasHtml = false }: {
-  mode: CopyMode
-  onChange: (v: CopyMode) => void
-  hasMarkdown?: boolean
-  hasHtml?: boolean
-}) {
-  return (
-    <div
-      className="flex items-center select-none"
-      onMouseMove={e => e.stopPropagation()}
-      onClick={e => e.stopPropagation()}
-    >
-      <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
-        <button
-          type="button"
-          onClick={e => { e.stopPropagation(); onChange('text') }}
-          className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto ${mode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
-        >
-          テキスト
-        </button>
-        {hasMarkdown && (
-          <button
-            type="button"
-            onClick={e => { e.stopPropagation(); onChange('markdown') }}
-            className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
-          >
-            MD
-          </button>
-        )}
-        {hasHtml && (
-          <button
-            type="button"
-            onClick={e => { e.stopPropagation(); onChange('html') }}
-            className={`min-h-[36px] px-3 py-1.5 sm:min-h-0 sm:px-2.5 sm:py-1 transition-colors cursor-auto border-l border-[var(--border)] ${mode === 'html' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}
-          >
-            HTML
-          </button>
-        )}
-      </div>
-    </div>
-  )
-}
 
 function ClipboardIcon() {
   return (
@@ -1148,6 +1122,7 @@ function InterviewerIntroPanelCard({
   onEditConv,
   themeColor,
   showIntro,
+  mode,
 }: {
   interviewerDisplayName: string
   interviewerLabel: string | null
@@ -1160,9 +1135,10 @@ function InterviewerIntroPanelCard({
   onEditConv?: (exchanges: { speaker: string; content: string }[]) => void
   themeColor?: string
   showIntro?: boolean
+  mode?: 'text' | 'markdown'
 }) {
-  const [introMode, setIntroMode] = useState<CopyMode>('text')
-  const [convMode, setConvMode] = useState<CopyMode>('text')
+  const [embedIntro, setEmbedIntro] = useState(false)
+  const [embedConv, setEmbedConv] = useState(false)
   const [introCopied, setIntroCopied] = useState(false)
   const [convCopied, setConvCopied] = useState(false)
   const labelText = interviewerLabel ? `AIインタビュアー · ${interviewerLabel}` : 'AIインタビュアー'
@@ -1184,11 +1160,11 @@ function InterviewerIntroPanelCard({
   const convMarkdown = text.replace(/^(\*\*.+?\*\*[:：])\s+/gm, '$1\n')
 
   async function doIntroCopy() {
-    const content = introMode === 'html' ? getIntroHtml() : introMode === 'markdown' ? introMarkdown : introText
+    const content = embedIntro ? getIntroHtml() : mode === 'markdown' ? introMarkdown : introText
     try { await navigator.clipboard.writeText(content); setIntroCopied(true); setTimeout(() => setIntroCopied(false), 1500) } catch { /* ignore */ }
   }
   async function doConvCopy() {
-    const content = convMode === 'html' ? getConvHtml() : convMode === 'markdown' ? convMarkdown : convPlainText
+    const content = embedConv ? getConvHtml() : mode === 'markdown' ? convMarkdown : convPlainText
     try { await navigator.clipboard.writeText(content); setConvCopied(true); setTimeout(() => setConvCopied(false), 1500) } catch { /* ignore */ }
   }
 
@@ -1206,14 +1182,19 @@ function InterviewerIntroPanelCard({
           <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">インタビュアー紹介</div>
-              {!isEditing && <HtmlModeToggle mode={introMode} onChange={setIntroMode} hasMarkdown hasHtml />}
+              {!isEditing && (
+                <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
+                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                  埋め込みHTML
+                </button>
+              )}
             </div>
-            {introMode === 'html' ? (
+            {embedIntro ? (
               <div
                 className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getIntroHtml(), PURIFY_OPTS) }}
               />
-            ) : introMode === 'markdown' ? (
+            ) : mode === 'markdown' ? (
               <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
             ) : (
               <p className="text-sm text-[var(--text2)]">{introText}</p>
@@ -1240,7 +1221,12 @@ function InterviewerIntroPanelCard({
           <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
             <div className="flex items-center justify-between mb-3">
               <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">会話本文</div>
-              {!isEditing && <HtmlModeToggle mode={convMode} onChange={setConvMode} hasMarkdown hasHtml />}
+              {!isEditing && (
+                <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
+                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedConv ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                  埋め込みHTML
+                </button>
+              )}
             </div>
             {isEditing ? (
               <ConversationBubbleEditor
@@ -1250,12 +1236,12 @@ function InterviewerIntroPanelCard({
                 onExchangesChange={newExchanges => onEditConv?.(newExchanges)}
                 themeColor={themeColor ?? DEFAULT_THEME_COLOR}
               />
-            ) : convMode === 'html' ? (
+            ) : embedConv ? (
               <div
                 className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm"
                 dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getConvHtml(), PURIFY_OPTS) }}
               />
-            ) : convMode === 'markdown' ? (
+            ) : mode === 'markdown' ? (
               <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
             ) : (
               <div className="flex flex-col gap-4">
@@ -1288,35 +1274,37 @@ function SectionGroupCard({
   isEditing,
   onEditHeading,
   onEditBody,
+  mode,
 }: {
   heading: ArticleBlock
   body: ArticleBlock | null
   isEditing?: boolean
   onEditHeading?: (oldText: string, newText: string) => void
   onEditBody?: (oldText: string, newText: string) => void
+  mode?: 'text' | 'markdown'
 }) {
   return (
     <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
-      <BlockCopyCardInner kind="heading" text={heading.text} markdownCopyText={heading.rawText} isEditing={isEditing} onEditDone={onEditHeading} />
+      <BlockCopyCardInner kind="heading" text={heading.text} markdownCopyText={heading.rawText} isEditing={isEditing} onEditDone={onEditHeading} mode={mode} />
       {body && (
         <>
           <div className="border-t border-[var(--border)]" />
-          <BlockCopyCardInner kind="body" text={body.text} markdownCopyText={body.rawText} isEditing={isEditing} onEditDone={onEditBody} />
+          <BlockCopyCardInner kind="body" text={body.text} markdownCopyText={body.rawText} isEditing={isEditing} onEditDone={onEditBody} mode={mode} />
         </>
       )}
     </div>
   )
 }
 
-function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, onEditDone }: {
+function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, onEditDone, mode }: {
   kind: ArticleBlockKind
   text: string
   markdownCopyText?: string
   label?: string
   isEditing?: boolean
   onEditDone?: (oldText: string, newText: string) => void
+  mode?: 'text' | 'markdown'
 }) {
-  const [mode, setMode] = useState<CopyMode>('text')
   const [copied, setCopied] = useState(false)
   const [localText, setLocalText] = useState(text)
   const origRef = useRef(text)
@@ -1345,7 +1333,6 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
           <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
             {label ?? BLOCK_LABEL[kind]}
           </div>
-          {!isEditing && markdownCopyText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
         </div>
         {isEditing ? (
           <textarea
@@ -1392,14 +1379,14 @@ function SuggestionCard({ item }: { item: ArticleSuggestion }) {
   )
 }
 
-function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone }: {
+function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode }: {
   kind: ArticleBlockKind
   text: string
   rawText?: string
   isEditing?: boolean
   onEditDone?: (oldText: string, newText: string) => void
+  mode?: 'text' | 'markdown'
 }) {
-  const [mode, setMode] = useState<CopyMode>('text')
   const [copied, setCopied] = useState(false)
   const [localText, setLocalText] = useState(text)
   const origRef = useRef(text)
@@ -1428,7 +1415,6 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone }: {
           <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
             {BLOCK_LABEL[kind]}
           </div>
-          {!isEditing && rawText && <HtmlModeToggle mode={mode} onChange={setMode} hasMarkdown />}
         </div>
         {isEditing ? (
           <textarea
