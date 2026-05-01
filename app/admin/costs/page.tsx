@@ -46,11 +46,14 @@ async function getCostData() {
     .in('email', ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS : ['__none__'])
   const adminUserIds = (adminProfiles ?? []).map((p) => p.id as string)
 
-  const [currentMonth, lastMonth, byRoute, daily, byUser, adminLogs, nullUserLogs] = await Promise.all([
+  const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1).toISOString()
+
+  const [currentMonth, lastMonth, byRoute, daily, monthly, byUser, adminLogs, nullUserLogs] = await Promise.all([
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('cost_usd, input_tokens, output_tokens').gte('created_at', lastMonthStart).lte('created_at', lastMonthEnd),
     supabase.from('api_usage_logs').select('route, cost_usd').gte('created_at', monthStart),
     supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', monthStart).order('created_at', { ascending: true }),
+    supabase.from('api_usage_logs').select('created_at, cost_usd').gte('created_at', twelveMonthsAgo).order('created_at', { ascending: true }),
     // ユーザー別 × プラン別（管理者・nullを除いた純粋なユーザー分）
     adminUserIds.length > 0
       ? supabase.from('api_usage_logs').select('user_id, cost_usd').gte('created_at', monthStart).not('user_id', 'is', null).not('user_id', 'in', `(${adminUserIds.join(',')})`)
@@ -92,6 +95,19 @@ async function getCostData() {
   }
   const dailyList = Object.entries(dayMap).map(([day, cost]) => ({ day, cost }))
 
+  // 月別集計（過去12ヶ月）
+  const monthMap: Record<string, number> = {}
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+    monthMap[key] = 0
+  }
+  for (const row of (monthly.data ?? [])) {
+    const key = row.created_at.slice(0, 7)
+    if (key in monthMap) monthMap[key] = (monthMap[key] ?? 0) + (row.cost_usd ?? 0)
+  }
+  const monthlyList = Object.entries(monthMap).map(([month, cost]) => ({ month, cost }))
+
   // ユーザー別コスト集計（user_idごと）
   const userCostMap: Record<string, number> = {}
   for (const row of (byUser.data ?? [])) {
@@ -128,12 +144,12 @@ async function getCostData() {
     blogByRoute[row.route].cost += row.cost_usd ?? 0
   }
 
-  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute }
+  return { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, byPlanList, blogCost, blogByRoute }
 }
 
 
 export default async function AdminCostsPage() {
-  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, byPlanList, blogCost, blogByRoute } = await getCostData()
+  const { currentCost, lastCost, currentTokens, byRouteList, dailyList, monthlyList, byPlanList, blogCost, blogByRoute } = await getCostData()
 
   const now = new Date()
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
@@ -271,6 +287,32 @@ export default async function AdminCostsPage() {
           )}
         </div>
         <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
+      </section>
+
+      {/* 月別推移 */}
+      <section>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">月別推移（過去12ヶ月）</h2>
+        <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
+          <div className="space-y-1.5">
+            {(() => {
+              const maxCost = Math.max(...monthlyList.map((x) => x.cost), 0.001)
+              return monthlyList.map((m) => {
+                const pct = Math.round((m.cost / maxCost) * 100)
+                const [y, mo] = m.month.split('-')
+                const label = `${y}/${mo}`
+                return (
+                  <div key={m.month} className="flex items-center gap-3">
+                    <span className="w-16 shrink-0 text-xs text-[var(--text3)]">{label}</span>
+                    <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
+                      <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
+                    </div>
+                    <CostValue usd={m.cost} className="w-16 text-right text-xs font-medium text-[var(--text)]" />
+                  </div>
+                )
+              })
+            })()}
+          </div>
+        </div>
       </section>
 
       {/* 日別推移 */}
