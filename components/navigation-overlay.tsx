@@ -77,7 +77,7 @@ export function NavigationOverlay() {
         <div className="absolute inset-0 animate-[page-load_1s_linear_infinite] bg-[var(--accent)]" />
       </div>
       <div
-        className={`fixed left-0 right-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.72)] backdrop-blur-sm ${sidebarClass}`}
+        className={`fixed left-0 right-0 bottom-0 z-[25] bg-[var(--bg)] ${sidebarClass}`}
         style={{ top: headerBottom }}
       />
     </div>
