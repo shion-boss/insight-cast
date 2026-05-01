@@ -391,8 +391,6 @@ export default function ArticlePage() {
 
         <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[320px_1fr]">
           <aside className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-20">
-            <p className="mb-5 text-base font-bold text-[var(--text)]">記事の仕上げ方</p>
-
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
               <div className="space-y-3">
