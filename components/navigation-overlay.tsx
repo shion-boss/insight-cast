@@ -1,11 +1,10 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { flushSync } from 'react-dom'
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
-const MIN_MS = 400
 
 function classify(path: string): 'tool' | 'admin' | 'site' {
   if (path.startsWith('/admin')) return 'admin'
@@ -14,32 +13,19 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
 }
 
 export function NavigationOverlay() {
-  const pathname = usePathname()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [visible, setVisible] = useState(false)
   const [headerBottom, setHeaderBottom] = useState(64)
   const areaRef = useRef<'tool' | 'admin' | 'site'>('tool')
-  const prevPath = useRef(pathname)
-  const hideAt = useRef<number>(0)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // pathname が変わった = 遷移完了 → MIN_MS を消化してから非表示
+  // isPending が false になった = React が新ページのレンダリング完了
+  // requestAnimationFrame でブラウザが実際に描画するフレームを待ってからオーバーレイを消す
   useEffect(() => {
-    if (!visible) return
-    if (prevPath.current === pathname) return
-    prevPath.current = pathname
-
-    const remaining = hideAt.current - Date.now()
-    clearTimeout(timerRef.current)
-    if (remaining > 0) {
-      timerRef.current = setTimeout(() => setVisible(false), remaining)
-    } else {
-      setVisible(false)
-    }
-  }, [pathname, visible])
-
-  useEffect(() => {
-    return () => { clearTimeout(timerRef.current) }
-  }, [])
+    if (isPending || !visible) return
+    const id = requestAnimationFrame(() => setVisible(false))
+    return () => cancelAnimationFrame(id)
+  }, [isPending, visible])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
@@ -53,16 +39,21 @@ export function NavigationOverlay() {
 
     const fromArea = classify(location.pathname)
     const toArea = classify(toPath)
+    // site 側は SiteHeaderClient が担当。エリアをまたぐ遷移は PageTransitionOverlay が担当
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
+
+    e.preventDefault()
 
     const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
     setHeaderBottom(h)
     areaRef.current = fromArea
-    prevPath.current = location.pathname
-    hideAt.current = Date.now() + MIN_MS
     flushSync(() => setVisible(true))
-  }, [])
+
+    startTransition(() => {
+      router.push(toUrl.pathname + toUrl.search)
+    })
+  }, [router])
 
   useEffect(() => {
     document.addEventListener('click', handleClick, true)
