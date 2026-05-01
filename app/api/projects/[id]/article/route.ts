@@ -13,6 +13,7 @@ import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
+import { embedConversationBubblesAsHtml } from '@/lib/conversation-bubble-html'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -126,6 +127,8 @@ async function saveArticle(input: {
   content: string
   userEmail?: string | null
   theme?: string | null
+  clientName?: string | null
+  interviewerDisplayName?: string | null
 }) {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
   const title = titleMatch?.[1]?.trim() ?? '記事'
@@ -180,7 +183,17 @@ async function saveArticle(input: {
     const isInterviewStyle = input.articleType === 'interviewer'
     const blogCategory = isInterviewStyle ? 'interview' : 'insight-cast'
 
-    const blogBody = cleanContent.replace(/^#\s+[^\n]*\n?/, '').trimStart()
+    const blogBodyRaw = cleanContent.replace(/^#\s+[^\n]*\n?/, '').trimStart()
+    const isConversationType = input.articleType === 'conversation'
+    const blogBody = isConversationType
+      ? embedConversationBubblesAsHtml({
+          content: blogBodyRaw,
+          interviewerName: input.interviewerDisplayName ?? 'インタビュアー',
+          clientName: input.clientName ?? '事業者',
+          interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
+          clientDisplayName: input.clientName ?? '事業者',
+        })
+      : blogBodyRaw
     await input.supabase
       .from('blog_posts')
       .insert({
@@ -395,7 +408,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 
 ## 執筆ルール
 - 一人称は「私」または「弊社」
-- 語尾スタイル: ${styleLabel}
+- 語尾スタイル: **${styleLabel}で全文を統一すること**（インタビュー記録の話し言葉に引きずられないこと）
 - 文字数: ${volumeLabel}文字程度
 - 見出し（##）を2〜3個つけて構造化する
 - お客様に読んでもらう想定で、温かみのある文体で
@@ -427,17 +440,19 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 最初に導入文（2〜3行）
 - 「## この記事でわかること」の見出しをつけて箇条書き3点
 - インタビュアー紹介（${charName}の紹介を1行）
-- 会話形式で本文: **${charName}**: 発言内容 / **${bizName}**: 発言内容
+- 会話形式で本文: **${charName}**: 発言内容 / **${clientName}**: 発言内容
 - 実際のインタビューから自然な流れで5〜8往復を選んで構成
 - 会話の後に「## まとめ」の見出しをつけ、インタビューを通じて感じた事業者の強みや印象を3〜4行でまとめる
 - 全体の文字数: ${volumeLabel}文字程度（まとめを含む）
 - 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
 - Markdown形式で出力${polishInstruction}
+- 導入文・「この記事でわかること」の見出し直後の文・まとめ等の散文部分は**ですます体**で書くこと
+- インタビュアー（${charName}）の発言は、インタビュー記録の口調に関わらず、**常に丁寧な敬語・ですます体を維持すること**。ため口・省略形・絵文字は使わない
 
 ## 【厳守】会話フォーマットについて
-- 発言者名は必ず \`**${charName}**\` か \`**${bizName}**\` のみを使うこと。括弧・役職・説明を付け加えた変形は不可
+- 発言者名は必ず \`**${charName}**\` か \`**${clientName}**\` のみを使うこと。括弧・役職・説明を付け加えた変形は不可
 - 導入文・インタビュアー紹介・「この記事でわかること」などの導入部に **太字フィールド名**: 値 の形式（例: **取材先**: XXX、**インタビュアー**: YYY）を使わないこと
-- 会話バブルとして表示されるのは \`**${charName}**:\` か \`**${bizName}**:\` で始まる行のみ
+- 会話バブルとして表示されるのは \`**${charName}**:\` か \`**${clientName}**:\` で始まる行のみ
 
 ## 【重要】会話の最初のインタビュアー発言について
 会話バブルとして表示されるとき、インタビュアーの1コメント目は読者にとって最初の接触になります。唐突に質問から入ると文脈がないため、**最初のインタビュアー発言だけ**以下の構造にしてください。
@@ -445,7 +460,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 記事冒頭の導入文（事業者の背景・特徴）を1〜2文で要約したコメント
 - そのまま自然につながる質問
 
-例: **${charName}**: ${bizName}さんは[導入文から引き出した特徴を1文で]。そのきっかけを教えていただけますか？
+例: **${charName}**: ${clientName}さんは[導入文から引き出した特徴を1文で]。そのきっかけを教えていただけますか？
 
 2回目以降のインタビュアー発言は通常どおりの質問形式で構いません。`
   }
@@ -500,7 +515,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null })
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null, clientName, interviewerDisplayName: char?.name ?? 'インタビュアー' })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を保存できませんでした。少し待ってから、もう一度お試しください。' })
       return
