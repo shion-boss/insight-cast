@@ -7,14 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getButtonClass } from '@/components/ui'
 import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
-
-
-const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
-
-function isSitePath(path: string): boolean {
-  if (path.startsWith('/admin')) return false
-  return !TOOL_PATHS.some((p) => path === p || path.startsWith(p + '/'))
-}
+import { isSitePath } from '@/lib/nav-area'
 
 const MIN_MS = 400
 

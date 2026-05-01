@@ -4,14 +4,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { FullPageLoading } from './full-page-loading'
-
-const TOOL_PREFIXES = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
-
-function getArea(pathname: string): 'site' | 'tool' | 'admin' {
-  if (pathname.startsWith('/admin')) return 'admin'
-  if (TOOL_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + '/'))) return 'tool'
-  return 'site'
-}
+import { classifyArea } from '@/lib/nav-area'
 
 const MIN_MS = 2000
 
@@ -47,11 +40,11 @@ export function PageTransitionOverlay() {
       if (href.startsWith('http') || href.startsWith('//') || href.startsWith('#') || anchor.download) return
       if (anchor.target && anchor.target !== '_self') return
 
-      const fromArea = getArea(window.location.pathname)
+      const fromArea = classifyArea(window.location.pathname)
       let toPath = href
       try { toPath = new URL(href, window.location.href).pathname } catch { return }
       if (toPath === window.location.pathname) return
-      const toArea = getArea(toPath)
+      const toArea = classifyArea(toPath)
 
       if (fromArea !== toArea) {
         prevPath.current = window.location.pathname

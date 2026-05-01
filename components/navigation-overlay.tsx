@@ -3,15 +3,9 @@
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { classifyArea } from '@/lib/nav-area'
 
-const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
 const MIN_MS = 400
-
-function classify(path: string): 'tool' | 'admin' | 'site' {
-  if (path.startsWith('/admin')) return 'admin'
-  if (TOOL_PATHS.some((p) => path === p || path.startsWith(p + '/'))) return 'tool'
-  return 'site'
-}
 
 export function NavigationOverlay() {
   const pathname = usePathname()
@@ -52,8 +46,8 @@ export function NavigationOverlay() {
     const toPath = toUrl.pathname
     if (toPath === location.pathname && toUrl.search === location.search) return
 
-    const fromArea = classify(location.pathname)
-    const toArea = classify(toPath)
+    const fromArea = classifyArea(location.pathname)
+    const toArea = classifyArea(toPath)
     // site 側は SiteHeaderClient が担当。エリアをまたぐ遷移は PageTransitionOverlay が担当
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
