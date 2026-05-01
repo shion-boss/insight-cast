@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 }
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { InterviewSubmitButton } from '@/components/interview-submit-button'
 import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
@@ -38,7 +38,7 @@ export default async function InterviewerPage({
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id')
+    .select('id, name, hp_url')
     .eq('id', id)
     .eq('user_id', user.id)
     .is('deleted_at', null)
@@ -111,14 +111,12 @@ export default async function InterviewerPage({
 
   if (isProjectOverLimit) {
     return (
-      <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-        <PageHeader title="キャストを選ぶ" backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
-        <div className="max-w-2xl mx-auto px-6 py-10">
-          <Breadcrumb items={[
-            { label: 'プロジェクト一覧', href: '/projects' },
-            { label: 'プロジェクトの管理', href: `/projects/${id}` },
-            { label: 'キャストを選ぶ' },
-          ]} />
+      <div className="max-w-2xl">
+        <Breadcrumb items={[
+          { label: 'プロジェクト一覧', href: '/projects' },
+          { label: project.name || project.hp_url, href: `/projects/${id}` },
+          { label: 'キャストを選ぶ' },
+        ]} />
           <InterviewerSpeech
             icon={(
               <CharacterAvatar
@@ -147,19 +145,15 @@ export default async function InterviewerPage({
               プロジェクト一覧へ
             </Link>
           </div>
-        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title={selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ'} backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
-
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <Breadcrumb items={[
+    <div className="max-w-2xl">
+      <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクトの管理', href: `/projects/${id}` },
+          { label: project.name || project.hp_url, href: `/projects/${id}` },
           { label: selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ' },
         ]} />
         {freeLocked && (
@@ -470,6 +464,5 @@ export default async function InterviewerPage({
           </div>
         </div>
       </div>
-    </div>
   )
 }

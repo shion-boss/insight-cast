@@ -12,6 +12,24 @@ type Suggestion = {
   summary: string
 }
 
+async function canFetchWithoutJs(url: string): Promise<boolean> {
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; InsightCastBot/1.0)' },
+      signal: AbortSignal.timeout(5000),
+      redirect: 'follow',
+    })
+    if (!res.ok) return false
+    const ct = res.headers.get('content-type') ?? ''
+    if (!ct.includes('text/html')) return false
+    const text = await res.text()
+    return text.length >= 500
+  } catch {
+    return false
+  }
+}
+
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -19,10 +37,11 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null)
   if (!body || typeof body !== 'object') return Response.json({ error: 'invalid json' }, { status: 400 })
-  const { industry, location, url } = body as Record<string, unknown>
+  const { industry, location, url, projectId } = body as Record<string, unknown>
   const normalizedUrl = normalizeAnalysisUrl(typeof url === 'string' ? url : '')
   const normalizedIndustry = typeof industry === 'string' ? industry.trim() : ''
   const normalizedLocation = typeof location === 'string' ? location.trim() : ''
+  const normalizedProjectId = typeof projectId === 'string' ? projectId : null
 
   if (!normalizedUrl || !normalizedIndustry) {
     return Response.json({ suggestions: [] }, { status: 400 })
@@ -56,16 +75,48 @@ export async function POST(req: NextRequest) {
     return Response.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
+  let hpAuditContext = ''
+  if (normalizedProjectId) {
+    const { data: ownedProject } = await supabase
+      .from('projects')
+      .select('id')
+      .eq('id', normalizedProjectId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (ownedProject) {
+      const { data: audit } = await supabase
+        .from('hp_audits')
+        .select('raw_data')
+        .eq('project_id', normalizedProjectId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const raw = audit?.raw_data as Record<string, unknown> | null
+      const toStringList = (v: unknown) =>
+        Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string') : []
+
+      const currentContent = toStringList(raw?.current_content)
+      const strengths = toStringList(raw?.strengths)
+      const gaps = toStringList(raw?.gaps)
+
+      if (currentContent.length > 0 || strengths.length > 0 || gaps.length > 0) {
+        hpAuditContext = `\n\n## 自社HPの現状分析\n現在伝えていること: ${currentContent.join('、') || '不明'}\n強み: ${strengths.join('、') || '不明'}\n伝えきれていないこと: ${gaps.join('、') || '不明'}`
+      }
+    }
+  }
+
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 1024,
     messages: [{
       role: 'user',
-      content: `以下の事業者の競合となりそうなウェブサイトを5件提案してください。
+      content: `以下の事業者の競合となりそうなウェブサイトを8件提案してください。
 
 業種: ${normalizedIndustry || '不明'}
 地域: ${normalizedLocation || '不明'}
-自社HP: ${normalizedUrl || '不明'}
+自社HP: ${normalizedUrl || '不明'}${hpAuditContext}
 
 条件:
 - 実在する可能性が高い具体的なURLを提案する
@@ -104,6 +155,12 @@ export async function POST(req: NextRequest) {
         }
       })
       .filter((item): item is Suggestion => item !== null)
+
+    const settled = await Promise.allSettled(
+      suggestions.map(async (s) => ({ s, ok: await canFetchWithoutJs(s.url) }))
+    )
+    const filtered = settled
+      .flatMap((r) => (r.status === 'fulfilled' && r.value.ok ? [r.value.s] : []))
       .slice(0, 5)
 
     const { error: cacheError } = await supabase
@@ -114,7 +171,7 @@ export async function POST(req: NextRequest) {
         industry: normalizedIndustry,
         location: normalizedLocation || null,
         input_signature: inputSignature,
-        suggestions,
+        suggestions: filtered,
       }, {
         onConflict: 'user_id,input_signature',
       })
@@ -123,7 +180,7 @@ export async function POST(req: NextRequest) {
       console.warn('[competitor-suggestions] cache upsert failed:', cacheError.message)
     }
 
-    return Response.json({ suggestions, cached: false })
+    return Response.json({ suggestions: filtered, cached: false })
   } catch {
     return Response.json({ suggestions: [] })
   }

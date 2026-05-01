@@ -5,6 +5,7 @@ import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import { CastTalkGrid } from './CastTalkGrid'
+import { Breadcrumb } from '@/components/ui'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -154,6 +155,7 @@ export default async function CastTalkPage({
         />
 
         <section aria-label="Cast Talk 記事一覧" className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
+          <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: 'Cast Talk' }]} />
           <CastTalkGrid
             featuredTalk={featured}
             initialListTalks={initialListTalks}

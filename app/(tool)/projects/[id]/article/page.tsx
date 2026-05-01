@@ -372,7 +372,7 @@ export default function ArticlePage() {
       <div className="mx-auto max-w-6xl px-6 py-8">
         <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクトの管理', href: `/projects/${projectId}` },
+          { label: projectName, href: `/projects/${projectId}` },
           { label: '取材メモ', href: `/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}` },
           { label: '記事を作成' },
         ]} />

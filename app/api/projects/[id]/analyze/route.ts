@@ -33,7 +33,7 @@ async function analyzeHp(
   strengths: string[]
   gaps: string[]
   suggested_themes: string[]
-  site_evaluation: Array<{ key: string; label: string; score: number; summary: string }>
+  site_evaluation: Array<{ key: string; label: string; score: number; summary: string; improvement_hint: string }>
   trust_signals: string[]
   conversion_obstacles: string[]
   priority_actions: string[]
@@ -44,7 +44,7 @@ async function analyzeHp(
 
   const msg = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 3000,
+    max_tokens: 3500,
     messages: [{
       role: 'user',
       content: `以下はあるビジネスのホームページの内容と、既存ブログ記事の一覧です。「ブログで一次情報を発信してHPを継続的に育てる」支援をする前提で、日本語で分析してください。
@@ -55,6 +55,8 @@ ${markdown.slice(0, 6000)}
 ${blogSection}
 
 ${gscSection}
+
+improvement_hint は「Insight Castでできること（インタビュー・ブログ起点）」を1文で書くこと。スコア1〜6はブログ・インタビュー起点必須。スコア7〜8はブログ提案またはHP本体の軽微な改善提案可。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社依頼・全面リニューアルは禁止。
 
 ## 出力形式（JSONのみ返してください）
 {
@@ -67,37 +69,43 @@ ${gscSection}
       "key": "positioning",
       "label": "ポジショニングの明確さ",
       "score": 1,
-      "summary": "1文で根拠を説明"
+      "summary": "1文で根拠を説明",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     },
     {
       "key": "offer",
       "label": "提供価値の伝わりやすさ",
       "score": 1,
-      "summary": "1文で根拠を説明"
+      "summary": "1文で根拠を説明",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     },
     {
       "key": "trust",
       "label": "信頼材料の厚み",
       "score": 1,
-      "summary": "1文で根拠を説明"
+      "summary": "1文で根拠を説明",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     },
     {
       "key": "cta",
       "label": "問い合わせ導線",
       "score": 1,
-      "summary": "1文で根拠を説明"
+      "summary": "1文で根拠を説明",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     },
     {
       "key": "blog_coverage",
       "label": "ブログの網羅性",
       "score": 1,
-      "summary": "テーマの偏り・抜けを1文で説明"
+      "summary": "テーマの偏り・抜けを1文で説明",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     },
     {
       "key": "blog_depth",
       "label": "ブログの一次情報度",
       "score": 1,
-      "summary": "自社ならではの情報が出ているかを1文で"
+      "summary": "自社ならではの情報が出ているかを1文で",
+      "improvement_hint": "このスコアを上げるためにInsight Castでできる具体的なアクション（1文）。スコア1〜6はブログ・インタビュー起点で書く。スコア7〜8はブログ起点またはHP本体の軽微な改善でもよい。スコア9〜10は「この調子でブログを続けましょう」。HP制作会社への依頼・全面リニューアルは絶対に書かない"
     }
   ],
   "trust_signals": ["信頼材料として使えている要素（2〜4項目）"],
@@ -165,12 +173,15 @@ ${gscSection}
       const summary = typeof (entry as { summary?: unknown }).summary === 'string'
         ? (entry as { summary: string }).summary.trim()
         : ''
+      const improvement_hint = typeof (entry as { improvement_hint?: unknown }).improvement_hint === 'string'
+        ? (entry as { improvement_hint: string }).improvement_hint.trim()
+        : ''
       const rawScore = typeof (entry as { score?: unknown }).score === 'number'
         ? (entry as { score: number }).score
         : NaN
       const score = Number.isFinite(rawScore) ? Math.min(10, Math.max(1, Math.round(rawScore))) : null
       if (!key || !label || !summary || score === null) return []
-      return [{ key, label, score, summary }]
+      return [{ key, label, score, summary, improvement_hint }]
     })
   }
 

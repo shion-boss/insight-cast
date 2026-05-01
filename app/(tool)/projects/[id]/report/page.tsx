@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ReportClient from './ReportClient'
-import { Breadcrumb, PageHeader } from '@/components/ui'
+import { Breadcrumb } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { buildBlogFreshnessMetrics, getStoredBlogMetrics, getStoredSiteBlogPosts } from '@/lib/site-blog-support'
@@ -80,8 +80,9 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         const label = typeof (entry as { label?: unknown }).label === 'string' ? (entry as { label: string }).label : ''
         const score = typeof (entry as { score?: unknown }).score === 'number' ? (entry as { score: number }).score : null
         const summary = typeof (entry as { summary?: unknown }).summary === 'string' ? (entry as { summary: string }).summary : ''
+        const improvement_hint = typeof (entry as { improvement_hint?: unknown }).improvement_hint === 'string' ? (entry as { improvement_hint: string }).improvement_hint : ''
         if (!key || !label || score === null || !summary) return []
-        return [{ key, label, score, summary }]
+        return [{ key, label, score, summary, improvement_hint }]
       })
     : []
   const toStringList = (value: unknown) =>
@@ -108,16 +109,12 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   }))
 
   return (
-    <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="プロジェクトの調査結果" backHref={`/projects/${id}`} backLabel="← プロジェクトに戻る" />
-      <div className="mx-auto max-w-6xl px-6 pt-5">
-        <Breadcrumb items={[
-          { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクト', href: `/projects/${id}` },
-          { label: '調査結果' },
-        ]} />
-      </div>
-
+    <>
+      <Breadcrumb items={[
+        { label: 'プロジェクト一覧', href: '/projects' },
+        { label: project.name || project.hp_url, href: `/projects/${id}` },
+        { label: '調査結果' },
+      ]} />
       <ReportClient
         projectId={id}
         initialStatus={project.status}
@@ -132,6 +129,6 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         priorityActions={priorityActions}
         classificationSummary={classificationSummary}
       />
-    </div>
+    </>
   )
 }

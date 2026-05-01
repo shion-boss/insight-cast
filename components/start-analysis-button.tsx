@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/client/toast'
 import {
@@ -17,6 +17,7 @@ type Props = {
   compact?: boolean
   force?: boolean
   nextAvailableAt?: string | null
+  autoStart?: boolean
   onStarted?: () => void
 }
 
@@ -27,10 +28,20 @@ export default function StartAnalysisButton({
   compact = false,
   force = false,
   nextAvailableAt = null,
+  autoStart = false,
   onStarted,
 }: Props) {
   const router = useRouter()
   const [phase, setPhase] = useState<StartPhase>('idle')
+  const autoStartedRef = useRef(false)
+
+  useEffect(() => {
+    if (autoStart && !autoStartedRef.current) {
+      autoStartedRef.current = true
+      void startAnalysis()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const isLimited = force && nextAvailableAt !== null && new Date(nextAvailableAt) > new Date()
   const nextAvailableLabel = isLimited

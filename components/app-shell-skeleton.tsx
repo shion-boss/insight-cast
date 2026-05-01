@@ -4,8 +4,8 @@ import type { ReactNode } from 'react'
 const NAV_ITEMS = [
   { label: 'ダッシュボード', icon: '⊡' },
   { label: 'プロジェクト一覧', icon: '◫' },
-  { label: '取材メモ一覧', icon: '◎' },
-  { label: '記事一覧', icon: '≡' },
+  { label: '取材メモを探す', icon: '◎' },
+  { label: '記事を探す', icon: '≡' },
   { label: '設定', icon: '⚙' },
 ]
 

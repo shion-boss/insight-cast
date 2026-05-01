@@ -141,6 +141,7 @@ export default function CompetitorsForm({
         initialIndustryMemo={initialIndustryMemo}
         initialLocation={initialLocation}
         maxCompetitors={maxCompetitors}
+        projectId={projectId}
         helperText={`おすすめと手入力を合わせて最大${maxCompetitors}件までです。空にして保存すると、競合なしで再調査できます。`}
         onSelectionStateChange={(state) => {
           setCanSubmit(state.canSubmit)

@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-
 import { PublicHero } from '@/components/public-layout'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
@@ -235,63 +233,33 @@ export default function PhilosophyPage() {
           </section>
         ))}
 
+
         {/* まとめ */}
-        <section className="px-6 py-[88px]">
+        <section className="px-6 py-14 sm:py-[88px]">
           <div className="mx-auto max-w-6xl">
-            <div className="rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] p-8 text-white sm:p-10">
-              <p className="text-xs font-medium tracking-[0.22em] text-[rgba(255,255,255,0.55)] uppercase">Summary</p>
-              <h2 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                「書く」より「聞く」が先。
-                <br />
-                一次情報が、HPを育てる。
-              </h2>
-              <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                {[
-                  { num: '01', text: 'AI検索時代は、現場の言葉だけが引用される' },
-                  { num: '02', text: 'インタビューは「強みを聞く」のではなく「エピソードから引き出す」' },
-                  { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
-                ].map((item) => (
-                  <div key={item.num} className="rounded-[var(--r-sm)] border border-white/20 bg-white/10 p-5">
-                    <p className="text-xs font-semibold tracking-[0.2em] text-[rgba(255,255,255,0.55)] uppercase">{item.num}</p>
-                    <p className="mt-3 text-sm leading-7 text-[rgba(255,255,255,0.88)]">{item.text}</p>
-                  </div>
-                ))}
-              </div>
+            <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
+              Summary
+            </span>
+            <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
+              「書く」より「聞く」が先。<br />一次情報が、ホームページを育てる。
+            </h2>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {[
+                { num: '01', text: 'AI検索時代は、現場の言葉だけが引用される' },
+                { num: '02', text: 'インタビューは「強みを聞く」のではなく「エピソードから引き出す」' },
+                { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
+              ].map((item) => (
+                <div key={item.num} className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7">
+                  <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
+                    {item.num}
+                  </span>
+                  <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{item.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="px-6 py-[88px]">
-          <div className="mx-auto max-w-6xl overflow-hidden rounded-[var(--r-xl)] border border-[var(--text)]/10 bg-[var(--text)] px-6 py-10 text-white sm:px-10 sm:py-12">
-            <p className="text-xs font-medium tracking-[0.22em] text-[rgba(255,255,255,0.55)] uppercase">Try It</p>
-            <div className="mt-4 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-              <div className="max-w-xl">
-                <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-                  まず一度、AIキャストに話しかけてみてください。
-                </h2>
-                <p className="mt-4 text-sm leading-7 text-[rgba(255,255,255,0.88)]">
-                  ここまで読んでくださった方は、ぜひ一度試してみてください。
-                  登録無料で、ミント・クラウス・レインの取材を試せます。
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/auth/signup"
-                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-[var(--bg)] px-6 py-4 text-sm font-semibold text-[var(--text)] transition-colors duration-150 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-                >
-                  無料で取材を始める
-                </Link>
-                <Link
-                  href="/cast"
-                  className="inline-flex items-center justify-center rounded-[var(--r-sm)] border border-white/80 bg-transparent px-6 py-4 text-sm font-semibold text-white transition-colors duration-150 hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-                >
-                  キャストを見る
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
 

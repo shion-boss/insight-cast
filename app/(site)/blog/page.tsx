@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { PublicHero } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
+import { Breadcrumb } from '@/components/ui'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -101,6 +102,7 @@ export default async function BlogPage() {
         />
 
         <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12">
+          <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: 'ブログ' }]} />
           <BlogClient posts={posts} />
         </section>
 

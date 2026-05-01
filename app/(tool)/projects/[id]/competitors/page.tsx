@@ -4,7 +4,7 @@ import CompetitorsForm from './CompetitorsForm'
 import { createClient } from '@/lib/supabase/server'
 import { getCharacter } from '@/lib/characters'
 import { loadProjectCompetitorContext } from '@/lib/project-competitor-context'
-import { Breadcrumb, CharacterAvatar, InterviewerSpeech, PageHeader } from '@/components/ui'
+import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
 
 export const metadata: Metadata = {
@@ -47,42 +47,38 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
   const claus = getCharacter('claus')
 
   return (
-    <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.2),transparent_24%),radial-gradient(circle_at_82%_10%,rgba(15,118,110,0.12),transparent_22%),linear-gradient(180deg,_#efe4d3_0%,_#f6eee2_28%,_#fbf8f2_100%)]">
-      <PageHeader title="参考にするHPを見直す" backHref={`/projects/${id}`} backLabel="← プロジェクトの管理" />
-
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <Breadcrumb items={[
-          { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクトの管理', href: `/projects/${id}` },
-          { label: '参考HPを見直す' },
-        ]} />
-        <div className="mb-8">
-          <InterviewerSpeech
-            icon={(
-              <CharacterAvatar
-                src={claus?.icon48}
-                alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={claus?.emoji}
-                size={48}
-              />
-            )}
-            name={claus?.name ?? 'インタビュアー'}
-            title="参考にするHPは、あとから何度でも見直せます。"
-            description="おすすめから選ぶこともできますし、URLを直接入力することもできます。"
-            tone="soft"
-          />
-        </div>
-
-        <CompetitorsForm
-          projectId={id}
-          projectName={project.name || project.hp_url}
-          siteUrl={project.hp_url}
-          initialCompetitorUrls={(competitors ?? []).map((competitor) => competitor.url)}
-          initialIndustryMemo={rememberedContext.industryMemo}
-          initialLocation={rememberedContext.location}
-          maxCompetitors={planLimits.maxCompetitorsPerProject}
+    <div className="max-w-lg">
+      <Breadcrumb items={[
+        { label: 'プロジェクト一覧', href: '/projects' },
+        { label: project.name || project.hp_url, href: `/projects/${id}` },
+        { label: '参考HPを見直す' },
+      ]} />
+      <div className="mb-8">
+        <InterviewerSpeech
+          icon={(
+            <CharacterAvatar
+              src={claus?.icon48}
+              alt={`${claus?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={claus?.emoji}
+              size={48}
+            />
+          )}
+          name={claus?.name ?? 'インタビュアー'}
+          title="参考にするHPは、あとから何度でも見直せます。"
+          description="おすすめから選ぶこともできますし、URLを直接入力することもできます。"
+          tone="soft"
         />
       </div>
+
+      <CompetitorsForm
+        projectId={id}
+        projectName={project.name || project.hp_url}
+        siteUrl={project.hp_url}
+        initialCompetitorUrls={(competitors ?? []).map((competitor) => competitor.url)}
+        initialIndustryMemo={rememberedContext.industryMemo}
+        initialLocation={rememberedContext.location}
+        maxCompetitors={planLimits.maxCompetitorsPerProject}
+      />
     </div>
   )
 }

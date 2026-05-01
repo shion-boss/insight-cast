@@ -81,7 +81,7 @@ export default async function ArticleDetailPage({
       <div className="space-y-6">
         <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクトの管理', href: `/projects/${id}` },
+          { label: project.name || project.hp_url, href: `/projects/${id}` },
           ...(article.interview_id ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${article.interview_id}` }] : []),
           { label: '記事詳細' },
         ]} />

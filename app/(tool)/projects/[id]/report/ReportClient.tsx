@@ -23,7 +23,7 @@ type CompetitorAnalysis = {
 }
 
 type PostFrequencyEntry = { month: string; count: number }
-type SiteEvaluationEntry = { key: string; label: string; score: number; summary: string }
+type SiteEvaluationEntry = { key: string; label: string; score: number; summary: string; improvement_hint: string }
 type BlogMetrics = {
   trackedPostCount: number
   datedPostCount: number
@@ -272,6 +272,9 @@ export default function ReportClient({
                     <p className="text-lg font-semibold text-[var(--accent)]">{entry.score}<span className="text-xs text-[var(--text3)]">/10</span></p>
                   </div>
                   <p className="mt-2 text-xs leading-relaxed text-[var(--text3)]">{entry.summary}</p>
+                  {entry.improvement_hint && (
+                    <p className="mt-2 text-xs leading-relaxed text-[var(--accent)] border-t border-[var(--border)] pt-2">→ {entry.improvement_hint}</p>
+                  )}
                 </div>
               ))}
             </div>

@@ -105,10 +105,10 @@ const PAID_PLANS = [
 
 const FAQS = [
   { q: '無料でどこまで使えますか？', a: '3名のキャスト（ミント・クラウス・レイン）によるAI取材を2回（単発）ご利用いただけます。取材メモと記事を受け取るところまで無料で体験できます。' },
-  { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、お話しするだけで価値を引き出します。' },
+  { q: '取材はどんな形式で行われますか？', a: 'チャット形式です。キャストが質問を一つずつ投げかけます。資料の準備や専門知識は不要で、ふだん通りに話すだけで大丈夫です。' },
   { q: '届いた記事はそのまま使えますか？', a: 'そのままコピペして投稿できる状態でお届けします。必要であればご自身の言葉に整えていただくことも可能ですが、そのまま使っていただくことを前提に作られています。' },
-  { q: '専門用語が多い業種でも大丈夫ですか？', a: 'クラウスは業種にとらわれない客観的な視点で、あなたの仕事の論理的な価値を引き出します。専門用語を使わずに話していただければ、分かりやすく言語化します。' },
-  { q: '途中でキャンセルできますか？', a: 'マイページの「ご利用プラン」からいつでも解約できます。解約後もデータは保持されます。' },
+  { q: '専門用語が多い業種でも大丈夫ですか？', a: 'はい。ふだん話すときと同じ言葉で答えていただくだけで大丈夫です。キャストがうまく引き出して、分かりやすい言葉に整えます。' },
+  { q: 'AIが書いた記事はSEO的に大丈夫ですか？', a: 'Insight Cast は「あなた自身の言葉や体験」を素材にするため、Googleが重視する「体験・専門性・信頼性」の基準を自然にクリアできます。どこかから情報を引っ張って書く記事ではなく、あなたにしか語れないことを記事にするので、AI検索の時代でも強い発信になります。' },
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
 ] as const
 
@@ -340,7 +340,7 @@ export default async function LandingPage() {
                 <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
                   <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" />
                 </div>
-                <div className="absolute -top-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
+                <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
                   <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
                   <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
                 </div>
@@ -480,41 +480,89 @@ export default async function LandingPage() {
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                 {/* キャラ吹き出しヘッダー */}
                 <div className="flex items-center gap-3 px-5 pt-5 pb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full border border-[var(--border)] overflow-hidden">
+                  <div className="flex-shrink-0">
                     {freeCast[0]?.icon48
-                      ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={40} height={40} className="w-full h-full object-cover" />
-                      : <span className="text-lg">{freeCast[0]?.emoji}</span>}
+                      ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={40} height={40} className="rounded-full border border-[var(--border)] object-cover" />
+                      : <div aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-lg">{freeCast[0]?.emoji ?? '🐱'}</div>}
                   </div>
                   <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-sm text-[var(--text2)]">
                     記事をまとめました。好きな形式でお使いください。
                   </div>
                 </div>
+                {/* アクションボタン行 */}
+                <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-1.5">
+                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">テキストでコピー</button>
+                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">MDでコピー</button>
+                  <span aria-hidden="true" className="hidden sm:block mx-0.5 h-4 w-px bg-[var(--border)]" />
+                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">.txt</button>
+                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">.md</button>
+                </div>
                 {/* ブロック */}
-                <div className="flex flex-col gap-3 p-5 border-t border-[var(--border)]">
+                <div className="flex flex-col gap-3 p-4 sm:p-5">
                   {/* タイトル */}
-                  <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
-                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">タイトル</div>
-                    <p className="pr-20 leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
-                    <div className="absolute right-4 top-4"><CopyButton text="創業者の父から受け継いだ思いやり。" /></div>
+                  <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
+                    <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">タイトル</div>
+                        <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
+                          <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
+                          <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
+                        </div>
+                      </div>
+                      <p className="whitespace-pre-wrap leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
+                    </div>
+                    <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
+                      <CopyButton text="創業者の父から受け継いだ思いやり。" />
+                    </div>
                   </div>
-                  {/* 冒頭 */}
-                  <div className="relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] p-5">
-                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">冒頭</div>
-                    <p className="pr-20 text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
-                    <div className="absolute right-4 top-4"><CopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" /></div>
+                  {/* 概要 */}
+                  <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
+                    <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">概要</div>
+                        <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
+                          <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
+                          <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
+                        </div>
+                      </div>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
+                    </div>
+                    <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
+                      <CopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" />
+                    </div>
                   </div>
                   {/* セクション（小見出し＋本文） */}
                   <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-                    <div className="relative p-5">
-                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">小見出し</div>
-                      <p className="pr-20 text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
-                      <div className="absolute right-4 top-4"><CopyButton text="近所の方への気遣いも、仕事のうちだと思っています" /></div>
+                    <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
+                      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">小見出し</div>
+                          <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
+                            <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
+                            <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
+                          </div>
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
+                      </div>
+                      <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
+                        <CopyButton text="近所の方への気遣いも、仕事のうちだと思っています" />
+                      </div>
                     </div>
                     <div className="border-t border-[var(--border)]" />
-                    <div className="relative p-5">
-                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] mb-2">本文</div>
-                      <p className="pr-20 text-sm leading-relaxed text-[var(--text)]">塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。<br /><br />自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。</p>
-                      <div className="absolute right-4 top-4"><CopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} /></div>
+                    <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
+                      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">本文</div>
+                          <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
+                            <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
+                            <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
+                          </div>
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
+                      </div>
+                      <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
+                        <CopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} />
+                      </div>
                     </div>
                   </div>
                 </div>

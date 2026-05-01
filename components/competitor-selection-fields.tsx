@@ -18,6 +18,7 @@ type Props = {
   inputName?: string
   helperText?: string
   maxCompetitors?: number
+  projectId?: string
   onSelectionStateChange?: (state: {
     urls: string[]
     canSubmit: boolean
@@ -63,6 +64,7 @@ export default function CompetitorSelectionFields({
   inputName = 'competitor_urls',
   helperText,
   maxCompetitors = 3,
+  projectId,
   onSelectionStateChange,
 }: Props) {
   const MAX_COMPETITORS = maxCompetitors
@@ -120,6 +122,7 @@ export default function CompetitorSelectionFields({
           url: siteUrl.trim(),
           industry: industryMemo.trim(),
           location: location.trim(),
+          projectId: projectId ?? null,
         }),
       })
 

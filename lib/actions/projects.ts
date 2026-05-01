@@ -110,7 +110,7 @@ export async function createProject(formData: FormData) {
     })
   }
 
-  redirect(`/projects/${data.id}`)
+  redirect(`/projects/${data.id}?init=1`)
 }
 
 export async function saveCompetitors(

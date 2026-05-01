@@ -132,6 +132,7 @@ export default function AnalysisStatusPanel({
   reanalysisNextAvailableAt,
 }: Props) {
   const [optimisticAnalyzing, setOptimisticAnalyzing] = useState(false)
+  const [autoStartFired, setAutoStartFired] = useState(false)
   const [gscStatus, setGscStatus] = useState<GscStatus>('loading')
   const [gscSiteUrl, setGscSiteUrl] = useState<string | null>(null)
   const [gscToast, setGscToast] = useState<'connected' | 'error' | 'no_property' | null>(null)
@@ -159,6 +160,16 @@ export default function AnalysisStatusPanel({
   useEffect(() => {
     void fetchGscStatus()
   }, [fetchGscStatus])
+
+  useEffect(() => {
+    const initParam = searchParams.get('init')
+    if (initParam === '1') {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('init')
+      window.history.replaceState(null, '', url.toString())
+      setAutoStartFired(true)
+    }
+  }, [searchParams])
 
   // ?gsc= クエリでトースト表示
   useEffect(() => {
@@ -288,7 +299,7 @@ export default function AnalysisStatusPanel({
           ) : hasAudit ? (
             <StartAnalysisButton projectId={projectId} projectName={projectName} force className={getButtonClass('secondary')} nextAvailableAt={reanalysisNextAvailableAt} onStarted={() => setOptimisticAnalyzing(true)} />
           ) : (
-            <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} onStarted={() => setOptimisticAnalyzing(true)} />
+            <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} autoStart={autoStartFired} onStarted={() => setOptimisticAnalyzing(true)} />
           )}
           <Link href={`/projects/${projectId}/competitors`} className={getButtonClass('secondary')}>
             競合設定を見直す

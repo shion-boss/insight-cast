@@ -104,7 +104,7 @@ export default async function ProjectArticlesPage({
     <>
       <Breadcrumb items={[
         { label: 'プロジェクト一覧', href: '/projects' },
-        { label: 'プロジェクトの管理', href: `/projects/${id}` },
+        { label: project.name || project.hp_url, href: `/projects/${id}` },
         ...(interviewId ? [{ label: '取材メモ', href: `/projects/${id}/summary?interviewId=${interviewId}` }] : []),
         { label: interview ? 'この取材の記事一覧' : '記事一覧' },
       ]} />

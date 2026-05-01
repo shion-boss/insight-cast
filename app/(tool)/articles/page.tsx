@@ -73,7 +73,7 @@ export default async function ArticlesPage({
     const rain = getCharacter('rain')
     return (
       <>
-        <h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}
@@ -187,7 +187,7 @@ export default async function ArticlesPage({
     const rain = getCharacter('rain')
     return (
       <>
-        <h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}

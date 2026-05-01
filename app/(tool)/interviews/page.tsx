@@ -58,7 +58,7 @@ export default async function InterviewsPage({
     const mint = getCharacter('mint')
     return (
       <>
-        <h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
         <InterviewerSpeech
           icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
           name={mint?.name ?? 'インタビュアー'}
@@ -145,7 +145,7 @@ export default async function InterviewsPage({
     const mint = getCharacter('mint')
     return (
       <>
-        <h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
         <InterviewerSpeech
           icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
           name={mint?.name ?? 'インタビュアー'}

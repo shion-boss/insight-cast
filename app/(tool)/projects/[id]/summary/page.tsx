@@ -53,6 +53,7 @@ export default function SummaryPage() {
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
   const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← プロジェクトの管理'
 
+  const [projectName, setProjectName] = useState<string>('プロジェクト')
   const [data, setData] = useState<SummaryData | null>(null)
   const [loading, setLoading] = useState(true)
   const [pendingSummary, setPendingSummary] = useState(false)
@@ -127,8 +128,15 @@ export default function SummaryPage() {
         router.push('/')
         return
       }
+
+      const { data: project } = await supabase
+        .from('projects')
+        .select('name, hp_url')
+        .eq('id', projectId)
+        .maybeSingle()
+      if (project) setProjectName(project.name || project.hp_url || 'プロジェクト')
     })()
-  }, [router])
+  }, [router, projectId])
 
   const loadSummary = useCallback(async (options?: { manual?: boolean }) => {
     if (!interviewId) {
@@ -281,7 +289,7 @@ export default function SummaryPage() {
       <div>
         <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
-          { label: 'プロジェクトの管理', href: `/projects/${projectId}` },
+          { label: projectName, href: `/projects/${projectId}` },
           { label: '取材メモ' },
         ]} />
         <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
