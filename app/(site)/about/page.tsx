@@ -108,14 +108,14 @@ export default function AboutPage() {
                 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-7"
                 style={{ fontSize: 'clamp(24px,3vw,40px)' }}
               >
-                語ることが苦手なのではなく、聞いてくれる人がいなかっただけかもしれません。
+                あなたの話が、ホームページを育てます。
               </h1>
               <div className="w-9 h-0.5 rounded-[1px] bg-[var(--accent)] opacity-45 mb-8" />
               <p
                 className="text-[var(--text2)] leading-[1.9]"
                 style={{ fontSize: 'clamp(14px,1.2vw,16px)' }}
               >
-                何を書けばいいか分からない。自分のことを話すのが苦手。そう思っていた事業者の方ほど、Insight Cast のインタビューで言葉があふれてきます。あなたの中にある話を、動物AIインタビュアーが引き出しにいきます。
+                毎日の仕事の中で当たり前になっていること、積み重ねてきた工夫や判断。それがまだ伝わっていない価値です。Insight Castの動物AIインタビュアーが、その言葉を引き出しにいきます。
               </p>
             </div>
 
