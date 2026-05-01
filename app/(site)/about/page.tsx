@@ -80,9 +80,29 @@ export default function AboutPage() {
       <main id="main-content" className="relative z-10">
 
         {/* ① FV */}
-        <section className="grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-[var(--bg)]" style={{ minHeight: '560px' }}>
-          <div className="flex flex-col justify-center items-center px-6" style={{ paddingTop: 'calc(108px + clamp(24px,3vw,48px))', paddingBottom: 'clamp(48px,6vw,96px)' }}>
-            <div className="w-full max-w-[400px]">
+        <section className="relative overflow-hidden bg-[var(--bg)]" style={{ minHeight: '560px' }}>
+          {/* 右半分に画像をフルブリード */}
+          <div className="absolute right-0 top-0 h-full w-full md:w-1/2">
+            <Image
+              src={aboutImage}
+              alt="Insight CastのAIキャストたちが集まっているオフショット風の様子"
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to right, rgba(253,247,240,0.25), transparent 50%)' }}
+            />
+          </div>
+
+          {/* テキストはヘッダーと同じコンテナ内 */}
+          <div
+            className="relative z-10 mx-auto max-w-6xl px-6"
+            style={{ paddingTop: 'calc(108px + clamp(24px,3vw,48px))', paddingBottom: 'clamp(48px,6vw,96px)' }}
+          >
+            <div className="md:w-1/2 md:pr-12">
               <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">About</p>
               <h1
                 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-7"
@@ -98,22 +118,17 @@ export default function AboutPage() {
                 自分では「当たり前」と思っていることに、あなただけの価値が眠っています。Insight Cast は、AIキャストがあなたの話を聞き、その価値を言葉にして、ホームページへ届けていくサービスです。
               </p>
             </div>
-          </div>
 
-          <div className="relative overflow-hidden h-[280px] md:h-auto order-first md:order-last">
-            <Image
-              src={aboutImage}
-              alt="Insight CastのAIキャストたちが集まっているオフショット風の様子"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 900px) 100vw, 50vw"
-              priority
-            />
-            {/* warm overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: 'linear-gradient(to right, rgba(253,247,240,0.18), transparent 40%)' }}
-            />
+            {/* モバイル用画像（mdより小さい時にインライン表示） */}
+            <div className="mt-8 -mx-6 h-[260px] relative overflow-hidden md:hidden">
+              <Image
+                src={aboutImage}
+                alt="Insight CastのAIキャストたちが集まっているオフショット風の様子"
+                fill
+                className="object-cover object-center"
+                sizes="100vw"
+              />
+            </div>
           </div>
         </section>
 
