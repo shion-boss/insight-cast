@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { CharacterAvatar } from '@/components/ui'
 import { PublicHero } from '@/components/public-layout'
-import { AboutBottomCTA } from './AboutCTA'
+
 import aboutImage from '@/assets/about/about.png'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
@@ -53,16 +53,16 @@ export const metadata: Metadata = {
 }
 
 const PRINCIPLES = [
-  { n: '01', title: '取材なしにコンテンツを語らない', desc: '情報の素材は取材から。AIだけで作った文章を、あなたの言葉として届けません。' },
-  { n: '02', title: '一歩ずつ、確実に前進する', desc: '完璧を目指して止まるより、小さく始めて継続することに価値があります。' },
-  { n: '03', title: '技術ではなく、価値に焦点を当てる', desc: 'どんなに高度な技術も、伝えるべき価値のために使います。技術が目的になりません。' },
-  { n: '04', title: '事業者の言葉を大切にする', desc: '届いた記事はそのまま投稿できる状態でお届けします。自分らしい言葉に整えたい場合は、たたき台としてお使いください。' },
+  { n: '01', title: '取材なしにコンテンツを語らない', desc: '情報の素材は取材から。AIだけが作った文章を、あなたの言葉として届けることはしません。' },
+  { n: '02', title: '一歩ずつ、確実に前進する', desc: '「いつか大きく更新しよう」より、小さく続けることの方が、HPは育ちます。Insight Cast はその積み重ねを支えます。' },
+  { n: '03', title: 'AIは、あなたの話を整える道具として使います', desc: 'AIは話を聞き、言葉を整えるために使います。あなたの経験や判断に置き換わるものではありません。' },
+  { n: '04', title: '事業者の言葉を大切にする', desc: 'あなたが話した言葉を、できるかぎりそのまま活かします。きれいに整えすぎて、あなたらしさが消えないように。' },
 ] as const
 
 const TRUST_POINTS = [
-  { charId: 'mint', title: '取材から始める', desc: '情報をいきなり書くのではなく、まず「引き出す」。あなたの経験・言葉・判断が素材です。' },
-  { charId: 'claus', title: '一次情報の尊重', desc: 'あなた自身の体験にしか語れないことがある。その固有性こそが、信頼につながります。' },
-  { charId: 'rain', title: '継続的に育てる', desc: '一度作って終わりではなく、取材を重ねることでホームページが育っていく仕組みをつくります。' },
+  { charId: 'mint', title: '取材から始める', desc: '情報をいきなり書くのではなく、まず「引き出す」。あなたの経験・言葉・判断が、記事の素材です。' },
+  { charId: 'claus', title: 'あなたの話にしか、語れないことがある', desc: '長年の仕事の中で「当たり前」になっていること。それが、他社には真似できない言葉になります。' },
+  { charId: 'rain', title: '続けることで、HPは育つ', desc: '一度作って終わりではなく、取材を重ねるたびにホームページが少しずつ強くなっていきます。' },
 ] as const
 
 export default function AboutPage() {
@@ -83,11 +83,11 @@ export default function AboutPage() {
       <main id="main-content" className="relative z-10">
         <PublicHero
           eyebrow="About"
-          title={<>眠っている一次情報を、<br />誰かのために言葉にする</>}
+          title={<>毎日の仕事に、まだ言葉に<br />なっていない価値があります。</>}
           description={(
             <>
-              私たちは、小規模事業者が自分の言葉で発信を続けられる世界を目指しています。
-              AIキャストが話を聞き、あなたの経験から発信の土台を育てていく。それが Insight Cast です。
+              自分では「当たり前」と思っていることに、あなただけの価値が眠っています。
+              Insight Cast は、AIキャストがあなたの話を聞き、その価値を言葉にして、ホームページへ届けていくサービスです。
             </>
           )}
           aside={(
@@ -112,13 +112,13 @@ export default function AboutPage() {
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Mission</div>
             <div className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.6] mt-5" style={{ fontSize: 'clamp(22px,3vw,34px)' }}>
-              <span className="text-[var(--accent)]">一次情報こそが、</span>誰にも真似できない差別化の源泉である。<br />
+              <span className="text-[var(--accent)]">あなたの体験にしか、</span>語れないことがあります。<br />
               価値の中心は、きれいに整えられた文章ではなく、<br />
-              取材で引き出した<span className="text-[var(--accent)]">事実と体験</span>そのものにある。
+              取材で引き出した<span className="text-[var(--accent)]">あなた自身の言葉</span>にある。
             </div>
             <div className="w-10 h-0.5 bg-[var(--accent)] mt-8" />
             <p className="text-base text-[var(--text2)] mt-8 leading-[1.9]">
-              大手には真似できないことがあります。それは「あなたが体験した、あの出来事」です。毎日の仕事の中にある価値を掘り起こし、ホームページで伝えられる言葉にすること。それが私たちの仕事です。
+              大手には真似できないことがあります。それは「あなたが体験した、あの出来事」です。毎日の仕事の中で当たり前になっていること、積み重ねてきた判断や工夫。それを言葉にして、ホームページで伝えていくこと。それが私たちの仕事です。
             </p>
           </div>
         </section>
@@ -198,18 +198,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="py-14 sm:py-[88px]">
-          <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12 text-center">
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(22px,2.5vw,32px)' }}>
-              まず、取材を体験してみませんか
-            </h2>
-            <p className="mt-4 text-sm text-[var(--text2)] leading-[1.8]">
-              カード登録不要。無料で3名のキャストによる取材を体験できます。
-            </p>
-            <AboutBottomCTA />
-          </div>
-        </section>
+
       </main>
 
 
