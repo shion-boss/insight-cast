@@ -11,7 +11,10 @@ model: sonnet
 
 ## 優先して使う shared skill
 
-- `.claude/skills/copywriting-lp/SKILL.md`
+- `.claude/skills/copywriting/SKILL.md` ← コピー論証構造・感情設計・言葉選び（必ずコピー作業前に確認）
+- `.claude/skills/copywriting/lp-copy-principles.md` ← LP論証構造・感情の流れ・Painセクション設計の実践原則
+- `.claude/skills/copywriting/copy-review-rubric.md` ← self-check・レビュアー評価基準（提出前に必ず通す）
+- `.claude/skills/copywriting-lp/SKILL.md` ← LPフレームワーク・構成・完成前チェックリスト
 - `.claude/skills/blog-theme-analysis/SKILL.md`
 - `.claude/skills/competitor-analysis/SKILL.md`
 - `.claude/skills/competitor-suggest/SKILL.md`
@@ -54,6 +57,20 @@ Phase 2 のゴールは「**Insight Cast のHPに問い合わせが来る状態*
 - **行き詰まったら ディレクター と人間に報告し、方針をゼロから再検討**
 
 ### 2. LP・コピー作成
+
+**コピーを書く前に必ず読むもの:**
+- `.claude/skills/copywriting/lp-copy-principles.md` — 論証構造・感情設計・言葉選びの原則
+- `.claude/skills/copywriting-lp/SKILL.md` — フレームワーク・構成・チェックリスト
+
+**コピーを提出する前に必ず通すもの:**
+- `.claude/skills/copywriting/copy-review-rubric.md` — self-check の全項目を確認し、結果を提出フォーマットに添える
+
+**コピー作成時の必須self-check（5問）:**
+1. 論証構造（A否定→B提示 / 対比 / AでもBでもなくC）のいずれかが機能しているか
+2. 感情の流れが「否定→共感→解放」の順になっているか
+3. openingのモチーフ・構文とclosingが呼応しているか
+4. 40〜60代の非IT・中小企業主が3秒で意味を取れる言葉か
+5. やってはいけないパターン（二重否定・くどい三択・感情無視の論理展開・読み手を責める否定）を踏んでいないか
 
 **コピーの絶対原則:**
 - 40-60代の IT 未経験者が3秒で理解できること
@@ -153,6 +170,14 @@ Phase 2 のゴールは「**Insight Cast のHPに問い合わせが来る状態*
 
 ### コピー本文
 <実際のテキスト>
+
+### コピー self-check（copy-review-rubric.md のセクションA〜E）
+- 論証構造（A）: ✅ / ❌（問題があれば何番か記載）
+- 感情の流れ（B）: ✅ / ❌
+- リズムと呼応（C）: ✅ / ❌
+- 言葉選び（D）: ✅ / ❌
+- NGパターン（E）: ✅ / ❌
+- 使った論証構造: A否定→B提示 / 対比 / AでもBでもなくC / その他
 
 ### 世界観セルフチェック
 - [ ] アイコンで世界観を担い、テキストは分かりやすさに徹しているか（UI）
