@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getIsAdmin } from '@/lib/actions/auth'
 
@@ -72,6 +73,8 @@ export async function createPost(data: PostFormData): Promise<CreateResult> {
     return { error: '保存できませんでした。もう一度お試しください' }
   }
 
+  revalidatePath('/blog', 'page')
+  revalidatePath('/', 'page')
   return { id: row.id as string }
 }
 
@@ -101,6 +104,8 @@ export async function updatePost(id: string, data: Partial<PostFormData>): Promi
     .eq('id', id)
 
   if (error) return { error: '保存できませんでした。もう一度お試しください' }
+  revalidatePath('/blog', 'layout')
+  revalidatePath('/', 'page')
   return { ok: true }
 }
 
@@ -117,6 +122,8 @@ export async function togglePublished(id: string, published: boolean): Promise<M
     .eq('id', id)
 
   if (error) return { error: '更新できませんでした。もう一度お試しください' }
+  revalidatePath('/blog', 'layout')
+  revalidatePath('/', 'page')
   return { ok: true }
 }
 
@@ -131,5 +138,7 @@ export async function deletePost(id: string): Promise<MutateResult> {
     .eq('id', id)
 
   if (error) return { error: '削除できませんでした。もう一度お試しください' }
+  revalidatePath('/blog', 'layout')
+  revalidatePath('/', 'page')
   return { ok: true }
 }
