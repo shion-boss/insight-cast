@@ -1,47 +1,23 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
-
-const CHAR_ICONS = [
-  { src: '/characters/mint-48.png', alt: 'ミント', emoji: '🐱' },
-  { src: '/characters/claus-48.png', alt: 'クラウス', emoji: '🦉' },
-  { src: '/characters/rain-48.png', alt: 'レイン', emoji: '🦊' },
-]
-
-function CharIcon({ src, alt, emoji, index }: { src: string; alt: string; emoji: string; index: number }) {
-  const [failed, setFailed] = useState(false)
-  return (
-    <div
-      className="flex items-center justify-center overflow-hidden rounded-full border-2 border-[var(--surface)] bg-[var(--surface2)] shadow"
-      style={{ width: 56, height: 56, marginLeft: index === 0 ? 0 : -12, zIndex: 3 - index, flexShrink: 0 }}
-    >
-      {failed ? (
-        <span className="text-[24px]" aria-hidden="true">{emoji}</span>
-      ) : (
-        <Image
-          src={src}
-          alt={alt}
-          width={56}
-          height={56}
-          className="h-full w-full object-cover"
-          onError={() => setFailed(true)}
-        />
-      )}
-    </div>
-  )
-}
+import groupPhoto from '@/assets/loading/all_insight_cast600.jpg'
 
 export function FullPageLoading() {
   return (
-    <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-8 bg-[var(--bg)]">
-      <div className="flex items-center">
-        {CHAR_ICONS.map((c, i) => (
-          <CharIcon key={c.alt} src={c.src} alt={c.alt} emoji={c.emoji} index={i} />
-        ))}
+    <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-6 bg-[var(--bg)] px-6">
+      <div className="w-full max-w-[320px] overflow-hidden rounded-2xl shadow-md">
+        <Image
+          src={groupPhoto}
+          alt="Insight Cast の全メンバー集合写真"
+          width={600}
+          height={500}
+          className="w-full h-auto object-cover"
+          priority
+        />
       </div>
 
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-1.5">
         <p className="font-serif text-2xl font-bold tracking-wide text-[var(--text)]">
           Insight <span className="text-[var(--accent)]">Cast</span>
         </p>
