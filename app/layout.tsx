@@ -31,6 +31,13 @@ export const metadata: Metadata = {
     template: '%s | Insight Cast',
   },
   description: '動物モチーフのAIキャストがあなたに取材し、ホームページにまだ書けていない事業の価値を引き出すサービスです。更新が止まったHPを一次情報で少しずつ強くします。中小事業者向けのHP継続強化サービスです。',
+  icons: {
+    icon: [
+      { url: '/favicon64.ico', sizes: '64x64', type: 'image/x-icon' },
+      { url: '/favicon128.ico', sizes: '128x128', type: 'image/x-icon' },
+    ],
+    apple: { url: '/favicon128.ico', sizes: '128x128', type: 'image/x-icon' },
+  },
   metadataBase: new URL(APP_URL),
   alternates: {
     canonical: '/',
