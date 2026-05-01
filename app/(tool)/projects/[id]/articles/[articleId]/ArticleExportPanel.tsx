@@ -63,6 +63,17 @@ function applyBlockEdit(md: string, kind: string, oldText: string, newText: stri
 }
 
 
+// コンテンツ内の **Name**: 行を走査してインタビュアー以外の最初の話者名を返す。
+// 旧フォーマット（bizName）で生成された記事にも対応するため使用する。
+function detectRespondentName(content: string, interviewerName: string | null): string | null {
+  for (const line of content.split('\n')) {
+    const m = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+    if (!m) continue
+    if (m[1] !== interviewerName) return m[1]
+  }
+  return null
+}
+
 function applyConvEdit(md: string, interviewerName: string, clientName: string, exchanges: { speaker: string; content: string }[]): string {
   const writeable = exchanges.filter(e => e.content !== '')
   const lines = md.split('\n')
@@ -312,9 +323,15 @@ export function ArticleExportPanel({
   const char = getCharacter(interviewerId ?? 'mint')
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
   const defaultInterviewerAvatarUrl = char?.icon48?.src ? `${appUrl}${char.icon48.src}` : null
+
+  // コンテンツ内の実際の respondent 名を検出。旧フォーマット（bizName）の記事にも対応。
+  const detectedClientName = detectRespondentName(content, interviewerName)
+  // マッチングには検出名を優先。表示名は profile.name を優先。
+  const effectiveClientName = detectedClientName ?? clientName ?? '事業者'
+
   const [interviewerAvatarUrl, setInterviewerAvatarUrl] = useState<string>(defaultInterviewerAvatarUrl ?? '')
   const [interviewerDisplayName, setInterviewerDisplayName] = useState<string>(interviewerName ?? '')
-  const [clientDisplayName, setClientDisplayName] = useState<string>(clientName ?? '')
+  const [clientDisplayName, setClientDisplayName] = useState<string>(clientName ?? detectedClientName ?? '')
   const [clientAvatarUrl, setClientAvatarUrl] = useState<string>(userAvatarUrl ?? '')
   const [showInterviewerIcon, setShowInterviewerIcon] = useState(true)
   const [showInterviewerName, setShowInterviewerName] = useState(true)
@@ -329,9 +346,9 @@ export function ArticleExportPanel({
       interviewerDisplayName: interviewerDisplayName || interviewerName || 'インタビュアー',
       interviewerLabel,
       interviewerAvatarUrl: interviewerAvatarUrl || null,
-      clientName: clientName ?? '事業者',
-      clientDisplayName: clientDisplayName || clientName || '事業者',
-      clientInitial: initial(clientDisplayName || clientName),
+      clientName: effectiveClientName,
+      clientDisplayName: clientDisplayName || clientName || effectiveClientName,
+      clientInitial: initial(clientDisplayName || clientName || effectiveClientName),
       userAvatarUrl: clientAvatarUrl || userAvatarUrl || null,
       themeColor,
       showIcon: showInterviewerIcon,
@@ -613,7 +630,7 @@ export function ArticleExportPanel({
       <div className="flex flex-col gap-3 p-4 sm:p-5">
         {articleType === 'conversation'
           ? (() => {
-              const rawGroups = buildConversationRenderGroups(editedContent, interviewerName, clientName)
+              const rawGroups = buildConversationRenderGroups(editedContent, interviewerName, effectiveClientName)
               // 概要ブロック（standalone/intro）が会話グループより後ろにある場合、前に移動する
               // 会話本文と小見出し+本文の上下関係は記事の内容に従う
               const allGroups = (() => {
@@ -653,11 +670,11 @@ export function ArticleExportPanel({
                           interviewerLabel={interviewerLabel}
                           text={group.text}
                           interviewerName={interviewerName ?? ''}
-                          clientName={clientName ?? '事業者'}
+                          clientName={effectiveClientName}
                           getIntroHtml={makeIntroHtml}
                           getConvHtml={() => makeConvOnlyHtml(group.text)}
                           isEditing={isEditing}
-                          onEditConv={newExchanges => setEditedContent(prev => applyConvEdit(prev, interviewerName ?? '', clientName ?? '事業者', newExchanges))}
+                          onEditConv={newExchanges => setEditedContent(prev => applyConvEdit(prev, interviewerName ?? '', effectiveClientName, newExchanges))}
                           themeColor={themeColor}
                           showIntro={showIntro && idx === firstConvIdx}
                         />
