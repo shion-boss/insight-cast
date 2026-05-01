@@ -92,7 +92,7 @@ export function AppShell({
       </aside>
 
       <div className="lg:pl-[236px]">
-        <header className="sticky top-0 z-[35] border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-md">
+        <header data-app-header className="sticky top-0 z-[35] border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-md">
           <div className="mx-auto flex min-h-[64px] max-w-6xl items-center px-4 py-2 sm:px-6">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">

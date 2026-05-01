@@ -1,10 +1,11 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
+import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
+const MIN_MS = 400
 
 function classify(path: string): 'tool' | 'admin' | 'site' {
   if (path.startsWith('/admin')) return 'admin'
@@ -13,19 +14,33 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
 }
 
 export function NavigationOverlay() {
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
-  const [headerBottom, setHeaderBottom] = useState(64)
+  const [headerBottom, setHeaderBottom] = useState(62)
   const areaRef = useRef<'tool' | 'admin' | 'site'>('tool')
+  const prevPath = useRef(pathname)
+  const hideAt = useRef<number>(0)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // isPending が false になった = React が新ページのレンダリング完了
-  // requestAnimationFrame でブラウザが実際に描画するフレームを待ってからオーバーレイを消す
+  // pathname が変わった = Next.js が新ページの React ツリーを更新完了
+  // MIN_MS を消化してからオーバーレイを非表示
   useEffect(() => {
-    if (isPending || !visible) return
-    const id = requestAnimationFrame(() => setVisible(false))
-    return () => cancelAnimationFrame(id)
-  }, [isPending, visible])
+    if (!visible) return
+    if (prevPath.current === pathname) return
+    prevPath.current = pathname
+
+    const remaining = hideAt.current - Date.now()
+    clearTimeout(timerRef.current)
+    if (remaining > 0) {
+      timerRef.current = setTimeout(() => setVisible(false), remaining)
+    } else {
+      setVisible(false)
+    }
+  }, [pathname, visible])
+
+  useEffect(() => {
+    return () => { clearTimeout(timerRef.current) }
+  }, [])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
@@ -43,17 +58,13 @@ export function NavigationOverlay() {
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
 
-    e.preventDefault()
-
-    const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
+    const h = document.querySelector('[data-app-header]')?.getBoundingClientRect().bottom ?? 62
     setHeaderBottom(h)
     areaRef.current = fromArea
+    prevPath.current = location.pathname
+    hideAt.current = Date.now() + MIN_MS
     flushSync(() => setVisible(true))
-
-    startTransition(() => {
-      router.push(toUrl.pathname + toUrl.search)
-    })
-  }, [router])
+  }, [])
 
   useEffect(() => {
     document.addEventListener('click', handleClick, true)

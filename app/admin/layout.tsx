@@ -56,7 +56,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </aside>
 
       <div className="lg:pl-[220px]">
-        <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]">
+        <header data-app-header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]">
           <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
