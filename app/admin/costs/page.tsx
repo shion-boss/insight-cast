@@ -10,7 +10,6 @@ const FIXED_COSTS = [
   { label: 'Vercel', plan: 'Hobby（無料）', usd: 0 },
   { label: 'Supabase', plan: 'Free（無料）', usd: 0 },
   { label: 'Resend', plan: 'Free（無料）', usd: 0 },
-  { label: 'Cast Talk 自動生成', plan: '毎日1記事（Haiku + Sonnet）・月約$0.78', usd: 0.78 },
 ]
 
 const EXCHANGE_RATE = 150 // 1 USD = 150 JPY（概算）
@@ -271,7 +270,7 @@ export default async function AdminCostsPage() {
             <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
           )}
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成・Cast Talk自動生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
+        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
       </section>
 
       {/* 日別推移 */}
