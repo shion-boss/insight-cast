@@ -8,18 +8,6 @@ import { getButtonClass } from '@/components/ui'
 import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
 
-const NAV_LINKS = [
-  { href: '/cast', label: 'キャスト' },
-  { href: '/blog', label: 'ブログ' },
-  { href: '/contact', label: 'お問い合わせ' },
-]
-
-const DRAWER_NAV_LINKS = [
-  { href: '/cast', label: 'キャストを見る' },
-  { href: '/blog', label: 'ブログ' },
-  { href: '/cast-talk', label: 'Cast Talk' },
-  { href: '/contact', label: 'お問い合わせ' },
-]
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
 
@@ -121,31 +109,9 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               )}
             </div>
 
-            <MobileNav navLinks={DRAWER_NAV_LINKS} isLoggedIn={isLoggedIn} />
+            <MobileNav navLinks={[]} isLoggedIn={isLoggedIn} />
           </div>
 
-          <nav
-            className="hidden md:flex gap-2 pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            aria-label="メインナビゲーション"
-          >
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
-                    isActive
-                      ? 'text-[var(--accent)] font-semibold'
-                      : 'text-[var(--text2)] hover:text-[var(--accent)]'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              )
-            })}
-          </nav>
         </div>
 
         {navActive && (
