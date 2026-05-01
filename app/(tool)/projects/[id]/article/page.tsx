@@ -15,7 +15,6 @@ import {
   CharacterAvatar,
   DevAiLabel,
   InterviewerSpeech,
-  PageHeader,
   StateCard,
   getButtonClass,
 } from '@/components/ui'
@@ -379,9 +378,16 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-dvh bg-[var(--bg)]">
-      <PageHeader title="記事を作る" backHref={`/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}`} backLabel="← 取材メモ" hideBrand />
-
       <div className="mx-auto max-w-6xl px-6 py-8">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h1 className="font-semibold text-[var(--text)]">記事を作る</h1>
+          <Link
+            href={`/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}`}
+            className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
+          >
+            ← 取材メモ
+          </Link>
+        </div>
         <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
           { label: projectName, href: `/projects/${projectId}` },
