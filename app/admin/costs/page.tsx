@@ -301,7 +301,7 @@ export default async function AdminCostsPage() {
                 const [y, mo] = m.month.split('-')
                 const label = `${y}/${mo}`
                 return (
-                  <div key={m.month} className="flex items-center gap-3">
+                  <div key={m.month} className="group flex items-center gap-3 cursor-default">
                     <span className="w-16 shrink-0 text-xs text-[var(--text3)]">{label}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
@@ -325,7 +325,7 @@ export default async function AdminCostsPage() {
                 const maxCost = Math.max(...dailyList.map((x) => x.cost), 0.001)
                 const pct = Math.round((d.cost / maxCost) * 100)
                 return (
-                  <div key={d.day} className="flex items-center gap-3">
+                  <div key={d.day} className="group flex items-center gap-3 cursor-default">
                     <span className="w-24 shrink-0 text-xs text-[var(--text3)]">{d.day}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
