@@ -134,6 +134,7 @@ export function PageHeader({
   backLabel = '← 戻る',
   right,
   homeHref = '/dashboard',
+  hideBrand = false,
 }: {
   title: ReactNode
   description?: ReactNode
@@ -141,6 +142,7 @@ export function PageHeader({
   backLabel?: ReactNode
   right?: ReactNode
   homeHref?: string
+  hideBrand?: boolean
 }) {
   return (
     <HeaderSurface
@@ -163,7 +165,7 @@ export function PageHeader({
         </div>
       )}
     >
-      <SiteBrand href={homeHref} />
+      {hideBrand ? <div /> : <SiteBrand href={homeHref} />}
       {right ?? <div />}
     </HeaderSurface>
   )
