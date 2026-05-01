@@ -194,7 +194,6 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
               />
             </div>
           </div>
-          <p className="text-xs text-[var(--text3)]">名前を入力すると、インタビュアーが「○○さん」と呼びかけながら取材を進めます。</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="ext-target-name" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
@@ -210,6 +209,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 disabled={issuing}
                 className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
               />
+              <p className="mt-1.5 text-xs text-[var(--text3)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
             </div>
             <div>
               <label htmlFor="ext-target-industry" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
