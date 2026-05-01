@@ -226,14 +226,14 @@ export default async function LandingPage() {
           <div className="absolute bottom-0 left-0 right-0 h-[120px] pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(194,114,42,0.08), transparent)' }} />
           <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-7" style={{ color: '#c2722a', opacity: 0.8 }}>Pain</p>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.65] mb-10" style={{ color: '#f0e8dc', fontSize: 'clamp(26px,3.8vw,52px)' }}>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.65] mb-14" style={{ color: '#f0e8dc', fontSize: 'clamp(26px,3.8vw,52px)' }}>
               やる気があっても、<br />
               <span className="relative inline-block">
                 問いがなければ始まらない。
                 <span className="absolute bottom-[1px] left-0 right-0 h-[2px] rounded-[1px]" style={{ background: '#c2722a', opacity: 0.6 }} />
               </span>
             </h2>
-            <ul className="flex flex-col gap-5">
+            <ul className="flex flex-col gap-7">
               {[
                 '何を書けばいいか分からない',
                 '自分の強みが言葉にならない',
@@ -245,7 +245,7 @@ export default async function LandingPage() {
                 </li>
               ))}
             </ul>
-            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold mt-12 flex items-end flex-wrap gap-y-2" style={{ color: '#a07858' }}>
+            <p className="font-[family-name:var(--font-noto-serif-jp)] font-bold mt-16 flex items-end flex-wrap gap-y-2" style={{ color: '#a07858' }}>
               <span style={{ fontSize: 'clamp(18px,2.4vw,30px)', lineHeight: 1 }}>問いさえあれば....&nbsp;</span>
               <span style={{ fontSize: 'clamp(24px,3.2vw,42px)', color: '#fde8c0', lineHeight: 1 }}>答えられるのに。</span>
             </p>
