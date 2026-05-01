@@ -1,7 +1,7 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react'
 import { flushSync } from 'react-dom'
 
 const TOOL_PATHS = ['/dashboard', '/projects', '/interviews', '/articles', '/settings', '/onboarding']
@@ -12,39 +12,23 @@ function classify(path: string): 'tool' | 'admin' | 'site' {
   return 'site'
 }
 
-// React 18 concurrent mode でナビゲーション完了と visible=true が同一バッチになっても
-// 確実にプログレスバーを視認できるよう最低表示時間を設ける
-const MIN_MS = 400
-
 export function NavigationOverlay() {
-  const pathname = usePathname()
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [visible, setVisible] = useState(false)
   const [headerBottom, setHeaderBottom] = useState(64)
-  const areaRef = useRef(classify(pathname))
-  const prevPath = useRef(pathname)
-  const hideAt = useRef<number>(0)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const areaRef = useRef<'tool' | 'admin' | 'site'>('tool')
 
-  // pathname が変わった = ナビゲーション完了 → MIN_MS を消化してから非表示
+  // 新ページのレンダリングが完了したらオーバーレイを非表示
   useEffect(() => {
-    if (!visible) return
-    if (prevPath.current === pathname) return
-    prevPath.current = pathname
-
-    const remaining = hideAt.current - Date.now()
-    clearTimeout(timerRef.current)
-    if (remaining > 0) {
-      timerRef.current = setTimeout(() => setVisible(false), remaining)
-    } else {
-      setVisible(false)
-    }
-  }, [pathname, visible])
+    if (!isPending) setVisible(false)
+  }, [isPending])
 
   const handleClick = useCallback((e: MouseEvent) => {
     const a = (e.target as Element).closest('a[href]') as HTMLAnchorElement | null
     if (!a) return
     const raw = a.getAttribute('href') ?? ''
-    if (!raw || raw.startsWith('http') || raw.startsWith('//') || raw.startsWith('#') || a.download) return
+    if (!raw || raw.startsWith('http') || raw.startsWith('//') || raw.startsWith('#') || a.download || a.target === '_blank') return
     let toUrl: URL
     try { toUrl = new URL(raw, location.href) } catch { return }
     const toPath = toUrl.pathname
@@ -56,22 +40,23 @@ export function NavigationOverlay() {
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
 
+    // <Link> のデフォルト遷移を横取りし startTransition で包む
+    // → isPending が true の間は現ページを維持したままプログレスバーを表示し続ける
+    e.preventDefault()
+
     const h = document.querySelector('header')?.getBoundingClientRect().bottom ?? 64
     setHeaderBottom(h)
     areaRef.current = fromArea
-    prevPath.current = location.pathname
-    hideAt.current = Date.now() + MIN_MS
-    // React 18 の自動バッチングで pathname 変更と同一バッチになると
-    // オーバーレイが画面にコミットされないため flushSync で強制描画する
     flushSync(() => setVisible(true))
-  }, [])
+
+    startTransition(() => {
+      router.push(toUrl.pathname + toUrl.search)
+    })
+  }, [router])
 
   useEffect(() => {
     document.addEventListener('click', handleClick, true)
-    return () => {
-      document.removeEventListener('click', handleClick, true)
-      clearTimeout(timerRef.current)
-    }
+    return () => document.removeEventListener('click', handleClick, true)
   }, [handleClick])
 
   if (!visible) return null
