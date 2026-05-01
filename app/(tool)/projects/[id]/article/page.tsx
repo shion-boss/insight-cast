@@ -37,19 +37,19 @@ type SavedArticleRow = SavedArticle & {
 
 type ArticleFailureMap = Partial<Record<ArticleType, string>>
 
-type ArticleGroupItem = { type: ArticleType; label: string; desc: string }
+type ArticleGroupItem = { type: ArticleType; label: string }
 const ARTICLE_GROUPS: { label: string; items: ArticleGroupItem[] }[] = [
   {
     label: 'ユーザー視点',
     items: [
-      { type: 'client', label: 'ブログ記事', desc: '事業者の言葉で語る読み物記事' },
+      { type: 'client', label: 'ブログ記事' },
     ],
   },
   {
     label: 'AIキャスト視点',
     items: [
-      { type: 'conversation', label: '会話込み記事', desc: 'Q&A形式のインタビュー記事' },
-      { type: 'interviewer', label: 'レポート記事', desc: 'AIキャストが伝える紹介記事' },
+      { type: 'conversation', label: '会話込み記事' },
+      { type: 'interviewer', label: 'レポート記事' },
     ],
   },
 ]
@@ -400,34 +400,28 @@ export default function ArticlePage() {
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
               <div className="space-y-3">
-                {ARTICLE_GROUPS.map((group) => {
-                  const selectedInGroup = group.items.find((t) => t.type === tab)
-                  return (
-                    <div key={group.label}>
-                      <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {group.items.map((t) => (
-                          <button
-                            key={t.type}
-                            type="button"
-                            onClick={() => setTab(t.type)}
-                            aria-pressed={tab === t.type}
-                            className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
-                              tab === t.type
-                                ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
-                                : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
-                            }`}
-                          >
-                            {t.label}
-                          </button>
-                        ))}
-                      </div>
-                      {selectedInGroup && (
-                        <p className="mt-1.5 text-[12px] leading-[1.6] text-[var(--text3)]">{selectedInGroup.desc}</p>
-                      )}
+                {ARTICLE_GROUPS.map((group) => (
+                  <div key={group.label}>
+                    <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.items.map((t) => (
+                        <button
+                          key={t.type}
+                          type="button"
+                          onClick={() => setTab(t.type)}
+                          aria-pressed={tab === t.type}
+                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                            tab === t.type
+                              ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                              : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                          }`}
+                        >
+                          {t.label}
+                        </button>
+                      ))}
                     </div>
-                  )
-                })}
+                  </div>
+                ))}
               </div>
             </div>
 
