@@ -81,11 +81,8 @@ export default function AboutPage() {
 
         {/* ① FV */}
         <section className="grid grid-cols-1 md:grid-cols-2 overflow-hidden bg-[var(--bg)]" style={{ minHeight: '560px' }}>
-          <div
-            className="flex flex-col justify-center"
-            style={{ padding: 'clamp(48px,6vw,96px) clamp(40px,5vw,80px)', paddingTop: 'calc(108px + clamp(24px,3vw,48px))' }}
-          >
-            <div className="max-w-[420px] mx-auto">
+          <div className="flex flex-col justify-center items-center px-6" style={{ paddingTop: 'calc(108px + clamp(24px,3vw,48px))', paddingBottom: 'clamp(48px,6vw,96px)' }}>
+            <div className="w-full max-w-[400px]">
               <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">About</p>
               <h1
                 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-7"
