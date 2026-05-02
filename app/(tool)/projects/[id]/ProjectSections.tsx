@@ -227,6 +227,14 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
   const totalPages = Math.ceil(items.length / PER_PAGE)
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const placeholderCount = PER_PAGE - visible.length
+  const [tableMinHeight, setTableMinHeight] = useState(0)
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    if (!tableRef.current) return
+    const h = tableRef.current.offsetHeight
+    setTableMinHeight((prev) => Math.max(prev, h))
+  }, [visible])
 
   return (
     <>
@@ -261,7 +269,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
       </div>
 
       {/* PC: テーブル */}
-      <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
+      <div ref={tableRef} style={{ minHeight: tableMinHeight || undefined }} className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
         <table className="w-full table-fixed">
           <caption className="sr-only">記事一覧</caption>
           <colgroup>
