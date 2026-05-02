@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useDeferredValue, useState } from 'react'
 
 import { TextInput, getButtonClass } from '@/components/ui'
@@ -70,7 +69,6 @@ export function ArticleListTable({
   noResultsTitle?: string
   noResultsDescription?: string
 }) {
-  const router = useRouter()
   const [query, setQuery] = useState('')
   const [articleType, setArticleType] = useState('all')
   const [interviewerLabel, setInterviewerLabel] = useState(initialInterviewerLabel ?? 'all')

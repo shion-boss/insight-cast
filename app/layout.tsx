@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Geist_Mono, M_PLUS_1p } from "next/font/google";
 import Script from "next/script";
 import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
@@ -155,7 +156,7 @@ export default function RootLayout({
         <ProjectAnalysisNotifier />
         <ToastViewport />
         <PageTransitionOverlay />
-        <NavigationOverlay />
+        <Suspense><NavigationOverlay /></Suspense>
         {children}
         <GoogleAnalytics />
         {process.env.NODE_ENV === 'production' && <SpeedInsights />}
