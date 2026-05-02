@@ -29,7 +29,7 @@ export function NavigationOverlay() {
           document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
             el.removeAttribute('data-nav-pending')
           })
-          setVisible(false)
+          timerRef.current = setTimeout(() => setVisible(false), 300)
         })
       })
     }
