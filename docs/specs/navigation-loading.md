@@ -17,7 +17,8 @@
 
 | コンポーネント | 役割 | 配置 |
 |---|---|---|
-| `NavigationOverlay` | 同一エリア内遷移のプログレスバー | `app/layout.tsx`（ルート） |
+| `NavigationOverlay` | tool / admin エリア内遷移のプログレスバー | `app/layout.tsx`（ルート） |
+| `SiteHeaderClient` | site エリア内遷移のプログレスバー（ヘッダー下端） | `components/site-header.tsx` 経由 |
 | `PageTransitionOverlay` | エリア間遷移（site ↔ tool）の全画面ローディング | `app/layout.tsx`（ルート） |
 | `loading.tsx`（各セグメント） | `return null`（意図的に空） | 各ルートセグメント |
 
@@ -68,9 +69,9 @@ admin : /admin/*
 site  : 上記以外（LP・ブログ等）
 ```
 
-- **同一エリア内**: `NavigationOverlay` が担当
-- **エリアをまたぐ遷移**: `PageTransitionOverlay` が担当
+- **tool / admin 内**: `NavigationOverlay` が担当
 - **site 内**: `SiteHeaderClient` が担当（`NavigationOverlay` はスキップ）
+- **エリアをまたぐ遷移**: `PageTransitionOverlay` が担当
 
 ### バーの位置
 
@@ -105,6 +106,56 @@ a[data-nav-pending] {
   cursor: wait;
 }
 ```
+
+---
+
+## SiteHeaderClient の仕組み
+
+### ファイル
+`components/site-header-client.tsx`
+
+### 役割
+site エリア（LP・ブログ等）内のページ間遷移でプログレスバーを表示する。
+`NavigationOverlay` が site 内遷移をスキップするため、site ヘッダー自身が担当する。
+
+### 動作フロー
+
+```
+1. ユーザーが site エリア内の <a> をクリック
+   └─ handleClick (capture フェーズ) が発火
+      ├─ 外部URL / 同一ページ / どちらかが tool/admin → スキップ
+      └─ site → site の遷移 → 続行
+         ├─ prevPath.current = 現在のパス
+         ├─ hideAt.current = Date.now() + MIN_MS（400ms）
+         └─ setNavActive(true) でバーを表示
+
+2. React が新ページを DOM にコミット → usePathname() が変化
+   └─ useEffect([pathname]) が発火
+      ├─ MIN_MS（400ms）が残っていれば残り時間だけ待つ
+      └─ double requestAnimationFrame でブラウザの描画完了を待機
+         └─ setTimeout 300ms 後に setNavActive(false) でバーを消す
+```
+
+### バーの位置
+
+ヘッダー要素（`<header>`）の `bottom` 直下、`sticky top-0` ヘッダーに `absolute` で貼りついている。
+
+```tsx
+{navActive && (
+  <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] overflow-hidden">
+    <div className="h-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
+  </div>
+)}
+```
+
+### NavigationOverlay との違い
+
+| 項目 | NavigationOverlay | SiteHeaderClient |
+|---|---|---|
+| 対象エリア | tool / admin | site |
+| バー位置 | `[data-app-header]` の bottom | ヘッダー `<header>` の bottom 直下 |
+| 即時表示 | `flushSync` | 通常 `setState`（ヘッダーは常時表示で問題なし） |
+| クリックフィードバック | `data-nav-pending` 属性付与 | なし（site ヘッダーは軽量） |
 
 ---
 
@@ -144,9 +195,11 @@ stale content を保持したまま新ページを裏で準備する。
 
 ### エリア別の動作
 
-- [ ] site エリア内（LP・ブログ等）の遷移で `NavigationOverlay` のバーが**出ない**（site は SiteHeaderClient が担当）
+- [ ] site エリア内（LP・ブログ等）の遷移で `NavigationOverlay` のバーが**出ない**（SiteHeaderClient が担当）
+- [ ] site エリア内の遷移でヘッダー下端にプログレスバーが出る（SiteHeaderClient）
 - [ ] site → tool（ログイン後など）の遷移で全画面ローディング（`PageTransitionOverlay`）が出る
-- [ ] admin エリア内の遷移でバーが出る（ヘッダー下端にくっついている）
+- [ ] admin エリア内の遷移でバーが出る（`[data-app-header]` 下端にくっついている）
+- [ ] 遷移中にフッターが持ち上がらない（site 側でコンテンツが消えない）
 
 ### 実装チェック
 
@@ -162,6 +215,8 @@ stale content を保持したまま新ページを裏で準備する。
 - ページ内部に `<Suspense fallback={<何か />}>` で大きなセクションを囲む → 遷移時に中間スピナーが出る
 - `NavigationOverlay` をルートレイアウト以外に移動する → ページ遷移で再マウントされる
 - `data-app-header` 属性をヘッダーから外す → バーの位置がデフォルト値（62px）になる
+- `SiteHeaderClient` の `setNavActive(false)` を double rAF + 300ms を外して即時呼ぶ → site 側でフッターが持ち上がる
+- `SiteHeaderClient` にオーバーレイ div（`fixed` + 背景色）を追加する → サイト遷移中にコンテンツが消えてフッターが浮く
 
 ---
 
@@ -169,7 +224,8 @@ stale content を保持したまま新ページを裏で準備する。
 
 | ファイル | 内容 |
 |---|---|
-| `components/navigation-overlay.tsx` | プログレスバー本体 |
+| `components/navigation-overlay.tsx` | tool / admin エリアのプログレスバー |
+| `components/site-header-client.tsx` | site エリアのプログレスバー（ヘッダー内） |
 | `lib/nav-area.ts` | エリア判定ロジック・TOOL_PATHS |
 | `app/globals.css` | `page-load` アニメーション・`a[data-nav-pending]` スタイル |
 | `components/app-shell.tsx` | tool エリアのヘッダー（`data-app-header` 付与） |
