@@ -269,52 +269,54 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
       </div>
 
       {/* PC: テーブル */}
-      <div ref={tableRef} style={{ minHeight: tableMinHeight || undefined }} className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
-        <table className="w-full table-fixed">
-          <caption className="sr-only">記事一覧</caption>
-          <colgroup>
-            <col className="w-[50%]" />
-            <col className="w-[20%]" />
-            <col className="w-[20%]" />
-            <col className="w-[10%]" />
-          </colgroup>
-          <thead className="bg-[var(--bg2)]">
-            <tr>
-              <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
-              <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
-              <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
-              <th scope="col" className="px-5 py-3"><span className="sr-only">操作</span></th>
-            </tr>
-          </thead>
-          <tbody className="bg-[var(--surface)]">
-            {visible.map((article, i) => (
-              <tr key={article.id} className={i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}>
-                <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate">
-                  {article.title || '記事'}
-                </td>
-                <td className="px-5 py-3">
-                  <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
-                    {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
-                  </span>
-                </td>
-                <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.createdAt)}</td>
-                <td className="px-5 py-3">
-                  <Link href={article.href} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
-                    詳細
-                  </Link>
-                </td>
+      <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
+        <div ref={tableRef} style={{ minHeight: tableMinHeight || undefined }}>
+          <table className="w-full table-fixed">
+            <caption className="sr-only">記事一覧</caption>
+            <colgroup>
+              <col className="w-[50%]" />
+              <col className="w-[20%]" />
+              <col className="w-[20%]" />
+              <col className="w-[10%]" />
+            </colgroup>
+            <thead className="bg-[var(--bg2)]">
+              <tr>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
+                <th scope="col" className="px-5 py-3"><span className="sr-only">操作</span></th>
               </tr>
-            ))}
-            {Array.from({ length: placeholderCount }).map((_, i) => (
-              <tr key={`ph-${i}`} aria-hidden className="invisible">
-                <td className="px-5 py-3"><div className="h-5" /></td>
-                <td className="px-5 py-3"><div className="h-5 w-16" /></td>
-                <td className="px-5 py-3"><div className="h-5 w-24" /></td>
-                <td className="px-5 py-3"><div className="h-8 w-10" /></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-[var(--surface)]">
+              {visible.map((article, i) => (
+                <tr key={article.id} className={i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}>
+                  <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate">
+                    {article.title || '記事'}
+                  </td>
+                  <td className="px-5 py-3">
+                    <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
+                      {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.createdAt)}</td>
+                  <td className="px-5 py-3">
+                    <Link href={article.href} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
+                      詳細
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {Array.from({ length: placeholderCount }).map((_, i) => (
+                <tr key={`ph-${i}`} aria-hidden className="invisible">
+                  <td className="px-5 py-3"><div className="h-5" /></td>
+                  <td className="px-5 py-3"><div className="h-5 w-16" /></td>
+                  <td className="px-5 py-3"><div className="h-5 w-24" /></td>
+                  <td className="px-5 py-3"><div className="h-8 w-10" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
     </>
