@@ -7,6 +7,7 @@ import { ArticleExportPanel } from './ArticleExportPanel'
 import { DeleteArticleButton } from './DeleteArticleButton'
 import { getCharacter } from '@/lib/characters'
 import type { ArticleSuggestions } from '@/lib/article-suggestions'
+import { getMemberRole } from '@/lib/project-members'
 
 export const metadata: Metadata = {
   title: '記事の詳細',
@@ -65,7 +66,11 @@ export default async function ArticleDetailPage({
       : Promise.resolve({ data: null }),
   ])
 
-  if (!project || project.user_id !== user.id) redirect('/dashboard')
+  if (!project) redirect('/dashboard')
+  const isOwner = project.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+  if (!isOwner && !memberRole) redirect('/dashboard')
+  const canEdit = isOwner || memberRole === 'editor'
 
   const interviewer = interview?.interviewer_type ? getCharacter(interview.interviewer_type) : null
   const fallbackChar = getCharacter('mint')
@@ -102,14 +107,16 @@ export default async function ArticleDetailPage({
                 元の取材メモを見る
               </Link>
             )}
-            <div className="ml-auto">
-              <DeleteArticleButton
-                articleId={article.id}
-                projectId={id}
-                articleTitle={article.title ?? '記事'}
-                backHref={backHref}
-              />
-            </div>
+            {isOwner && (
+              <div className="ml-auto">
+                <DeleteArticleButton
+                  articleId={article.id}
+                  projectId={id}
+                  articleTitle={article.title ?? '記事'}
+                  backHref={backHref}
+                />
+              </div>
+            )}
           </div>
         </section>
 
@@ -151,6 +158,7 @@ export default async function ArticleDetailPage({
               articleId={article.id}
               projectId={id}
               suggestions={article.suggestions as ArticleSuggestions | null}
+              canEdit={canEdit}
             />
           </>
         )}

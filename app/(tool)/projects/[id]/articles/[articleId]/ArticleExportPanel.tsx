@@ -294,6 +294,7 @@ export function ArticleExportPanel({
   articleId,
   projectId,
   suggestions,
+  canEdit,
 }: {
   content: string
   title: string
@@ -306,6 +307,7 @@ export function ArticleExportPanel({
   articleId: string
   projectId: string
   suggestions?: ArticleSuggestions | null
+  canEdit?: boolean
 }) {
   const [copiedText, setCopiedText] = useState(false)
   const [copiedMd, setCopiedMd] = useState(false)
@@ -493,7 +495,7 @@ export function ArticleExportPanel({
 
         {/* 編集・提案・テーマカラー行 */}
         <div className="flex flex-wrap items-center gap-2">
-          {isEditing ? (
+          {canEdit !== false && (isEditing ? (
             <div className="flex gap-2">
               <button type="button" onClick={handleSaveAndExit} disabled={saveState === 'saving'}
                 className="min-h-[44px] rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
@@ -509,7 +511,7 @@ export function ArticleExportPanel({
               className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
               編集する
             </button>
-          )}
+          ))}
           {hasSuggestions && (
             <button type="button" role="switch" aria-label="クオリティアップ提案を表示" aria-checked={showSuggestions}
               onClick={() => setShowSuggestions((v) => !v)}

@@ -12,6 +12,7 @@ import { ArticleListTable } from '@/components/article-list-table'
 import { Breadcrumb, ButtonLink, CharacterAvatar, StateCard } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
+import { getMemberRole } from '@/lib/project-members'
 
 type InterviewRow = {
   id: string
@@ -64,12 +65,17 @@ export default async function ProjectArticlesPage({
 
   if (!user) redirect('/')
 
-  // project を取得
+  // project を取得（メンバーも閲覧できるため user_id フィルタを外す）
   const [{ data: project }] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').eq('id', id).eq('user_id', user.id).is('deleted_at', null).single(),
+    supabase.from('projects').select('id, name, hp_url, user_id').eq('id', id).is('deleted_at', null).single(),
   ])
 
   if (!project) redirect('/dashboard')
+  const isOwner = project.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, id, user.id)
+    if (!memberRole) redirect('/dashboard')
+  }
 
   // interview と articles を並列取得
   let articlesQuery = supabase

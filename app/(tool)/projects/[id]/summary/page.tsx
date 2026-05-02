@@ -58,6 +58,7 @@ export default function SummaryPage() {
   const [loading, setLoading] = useState(true)
   const [pendingSummary, setPendingSummary] = useState(false)
   const [showMessages, setShowMessages] = useState(false)
+  const [canEdit, setCanEdit] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [articles, setArticles] = useState<ArticleRow[]>([])
   const [isCheckingNow, setIsCheckingNow] = useState(false)
@@ -131,10 +132,24 @@ export default function SummaryPage() {
 
       const { data: project } = await supabase
         .from('projects')
-        .select('name, hp_url')
+        .select('name, hp_url, user_id')
         .eq('id', projectId)
         .maybeSingle()
       if (project) setProjectName(project.name || project.hp_url || 'プロジェクト')
+      if (project) {
+        const isOwner = project.user_id === user.id
+        if (isOwner) {
+          setCanEdit(true)
+        } else {
+          const { data: member } = await supabase
+            .from('project_members')
+            .select('role')
+            .eq('project_id', projectId)
+            .eq('user_id', user.id)
+            .maybeSingle()
+          setCanEdit(member?.role === 'editor')
+        }
+      }
     })()
   }, [router, projectId])
 
@@ -403,12 +418,14 @@ export default function SummaryPage() {
                             </div>
                           )}
                         </div>
-                        <Link
-                          href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                          className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
-                        >
-                          この記事を作る <span aria-hidden="true">→</span>
-                        </Link>
+                        {canEdit && (
+                          <Link
+                            href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
+                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
+                          >
+                            この記事を作る <span aria-hidden="true">→</span>
+                          </Link>
+                        )}
                       </div>
                     )
                   })}
@@ -501,19 +518,21 @@ export default function SummaryPage() {
             </div>
 
             {/* もう少し話す */}
-            <div className="space-y-2">
-              <Link
-                href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
-              >
-                もう少し話す
-              </Link>
-            </div>
+            {canEdit && (
+              <div className="space-y-2">
+                <Link
+                  href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
+                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
+                >
+                  もう少し話す
+                </Link>
+              </div>
+            )}
           </aside>
         </div>
       </div>
 
-      <div className="mt-16 flex justify-end border-t border-[var(--border)] pt-6">
+      {canEdit && <div className="mt-16 flex justify-end border-t border-[var(--border)] pt-6">
         <button
           type="button"
           onClick={() => setShowDeleteDialog(true)}
@@ -527,7 +546,7 @@ export default function SummaryPage() {
             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
           </svg>
         </button>
-      </div>
+      </div>}
 
     {showDeleteDialog && (
       <ConfirmDialog
