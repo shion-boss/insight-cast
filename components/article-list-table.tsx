@@ -105,6 +105,7 @@ export function ArticleListTable({
 
   const totalPages = Math.ceil(filteredItems.length / PER_PAGE)
   const paginatedItems = filteredItems.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  const placeholderCount = PER_PAGE - paginatedItems.length
 
   function changePage(p: number) {
     setPage(p)
@@ -279,7 +280,7 @@ export function ArticleListTable({
                     aria-label={item.title}
                     className={cx(
                       'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
-                      index < paginatedItems.length - 1 && 'border-b border-[var(--border)]',
+                      (index < paginatedItems.length - 1 || placeholderCount > 0) && 'border-b border-[var(--border)]',
                     )}
                     onClick={(e) => {
                       if ((e.target as Element).closest('a[href]')) return
@@ -322,6 +323,21 @@ export function ArticleListTable({
                     <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text3)]">
                       {item.createdAtLabel}
                     </td>
+                  </tr>
+                ))}
+                {Array.from({ length: placeholderCount }).map((_, i) => (
+                  <tr key={`ph-${i}`} aria-hidden className={cx(
+                    'invisible',
+                    i < placeholderCount - 1 && 'border-b border-[var(--border)]',
+                  )}>
+                    <td className="px-5 py-4">
+                      <div className="mb-1 h-5" />
+                      <div className="h-4" />
+                    </td>
+                    {showProjectColumn && <td className="px-4 py-4" />}
+                    <td className="px-4 py-4"><div className="h-5 w-16" /></td>
+                    {showInterviewerColumn && <td className="px-4 py-4" />}
+                    <td className="px-4 py-4" />
                   </tr>
                 ))}
               </tbody>
