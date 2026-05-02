@@ -281,13 +281,23 @@ export function ArticleListTable({
                       'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
                       index < paginatedItems.length - 1 && 'border-b border-[var(--border)]',
                     )}
-                    onClick={() => router.push(item.detailHref)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(item.detailHref) } }}
+                    onClick={(e) => {
+                      if ((e.target as Element).closest('a[href]')) return
+                      const a = e.currentTarget.querySelector('a[href]') as HTMLAnchorElement | null
+                      if (a) a.click()
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        const a = e.currentTarget.querySelector('a[href]') as HTMLAnchorElement | null
+                        if (a) a.click()
+                      }
+                    }}
                   >
                     <td className="max-w-xs px-5 py-4">
-                      <p className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">
                         {item.title}
-                      </p>
+                      </Link>
                       {item.excerpt && (
                         <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text3)]">
                           {item.excerpt}

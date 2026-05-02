@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'ブログ記事',
-  interviewer: 'インタビュー形式',
-  conversation: '会話込み',
+  interviewer: 'レポート記事',
+  conversation: '会話込み記事',
 }
 
 function formatDateTime(value: string) {

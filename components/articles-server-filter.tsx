@@ -35,8 +35,8 @@ type Props = {
 
 const ARTICLE_TYPE_OPTIONS = [
   { value: 'client', label: 'ブログ記事' },
-  { value: 'interviewer', label: 'インタビュー形式' },
-  { value: 'conversation', label: '会話込み' },
+  { value: 'interviewer', label: 'レポート記事' },
+  { value: 'conversation', label: '会話込み記事' },
 ]
 
 function cx(...classes: Array<string | false | null | undefined>) {
@@ -287,11 +287,21 @@ function ArticlesFilterContent({
                     )}
                     tabIndex={0}
                     aria-label={item.title}
-                    onClick={() => router.push(item.detailHref)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.push(item.detailHref) } }}
+                    onClick={(e) => {
+                      if ((e.target as Element).closest('a[href]')) return
+                      const a = e.currentTarget.querySelector('a[href]') as HTMLAnchorElement | null
+                      if (a) a.click()
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        const a = e.currentTarget.querySelector('a[href]') as HTMLAnchorElement | null
+                        if (a) a.click()
+                      }
+                    }}
                   >
                     <td className="max-w-xs px-5 py-4">
-                      <p className="mb-1 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">{item.title}</p>
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">{item.title}</Link>
                       {item.excerpt && (
                         <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text3)]">{item.excerpt}</p>
                       )}
