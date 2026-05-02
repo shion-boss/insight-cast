@@ -5,7 +5,7 @@ import Image from 'next/image'
 export function FullPageLoading() {
   return (
     <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-6 bg-[var(--bg)] px-6">
-      <div className="w-full max-w-[480px] overflow-hidden rounded-2xl shadow-md">
+      <div className="w-full max-w-[480px] overflow-hidden rounded-2xl">
         <Image
           src="/loading-image.webp"
           alt="Insight Cast の全メンバー集合写真"
