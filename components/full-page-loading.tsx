@@ -7,10 +7,10 @@ export function FullPageLoading() {
     <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-6 bg-[var(--bg)] px-6">
       <div className="w-full max-w-[480px] overflow-hidden rounded-2xl shadow-md">
         <Image
-          src="/og-image.png"
+          src="/loading-image.webp"
           alt="Insight Cast の全メンバー集合写真"
-          width={2816}
-          height={1472}
+          width={960}
+          height={502}
           className="w-full h-auto object-cover"
           priority
         />
