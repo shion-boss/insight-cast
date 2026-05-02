@@ -46,9 +46,11 @@ export type UncreatedThemeItem = {
 export function PaginatedUncreatedThemes({
   items,
   projectId,
+  canEdit = true,
 }: {
   items: UncreatedThemeItem[]
   projectId: string
+  canEdit?: boolean
 }) {
   const [page, setPage] = useState(1)
   const [bodyMinHeight, setBodyMinHeight] = useState(0)
@@ -73,12 +75,14 @@ export function PaginatedUncreatedThemes({
           <div key={i} className="flex items-center gap-3 px-5 py-3.5">
             <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
             <p className="flex-1 text-sm text-[var(--text)]">{item.theme}</p>
-            <Link
-              href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
-              className={getButtonClass('secondary', 'text-xs px-3 py-1.5 flex-shrink-0')}
-            >
-              記事を作る
-            </Link>
+            {canEdit && (
+              <Link
+                href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
+                className={getButtonClass('secondary', 'text-xs px-3 py-1.5 flex-shrink-0')}
+              >
+                記事を作る
+              </Link>
+            )}
           </div>
         ))}
         {Array.from({ length: placeholderCount }).map((_, i) => (

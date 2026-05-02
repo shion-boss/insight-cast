@@ -17,6 +17,7 @@ type Props = {
   competitorCount: number
   hasAudit: boolean
   reanalysisNextAvailableAt: string | null
+  canEdit?: boolean
 }
 
 function GscDisconnectModal({
@@ -131,6 +132,7 @@ export default function AnalysisStatusPanel({
   competitorCount,
   hasAudit,
   reanalysisNextAvailableAt,
+  canEdit = true,
 }: Props) {
   const [optimisticAnalyzing, setOptimisticAnalyzing] = useState(false)
   const [autoStartFired, setAutoStartFired] = useState(false)
@@ -290,9 +292,11 @@ export default function AnalysisStatusPanel({
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
               </div>
-              <button type="button" disabled className={getButtonClass('secondary')}>
-                このプロジェクトを再調査する
-              </button>
+              {canEdit && (
+                <button type="button" disabled className={getButtonClass('secondary')}>
+                  このプロジェクトを再調査する
+                </button>
+              )}
             </>
           ) : status === 'fetch_failed' ? (
             <>
@@ -300,24 +304,34 @@ export default function AnalysisStatusPanel({
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} />
                 <div className="px-1 text-sm text-[var(--err)]">ホームページを取得できませんでした。URLを確認してもう一度お試しください。</div>
               </div>
-              <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} onStarted={() => setOptimisticAnalyzing(true)} />
+              {canEdit && (
+                <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} onStarted={() => setOptimisticAnalyzing(true)} />
+              )}
             </>
           ) : status === 'report_ready' ? (
             <>
               <Link href={`/projects/${projectId}/report`} prefetch={false} className={getButtonClass('secondary')}>
                 調査結果を見る
               </Link>
-              <StartAnalysisButton projectId={projectId} projectName={projectName} force className={getButtonClass('secondary')} nextAvailableAt={reanalysisNextAvailableAt} onStarted={() => setOptimisticAnalyzing(true)} />
+              {canEdit && (
+                <StartAnalysisButton projectId={projectId} projectName={projectName} force className={getButtonClass('secondary')} nextAvailableAt={reanalysisNextAvailableAt} onStarted={() => setOptimisticAnalyzing(true)} />
+              )}
             </>
           ) : hasAudit ? (
-            <StartAnalysisButton projectId={projectId} projectName={projectName} force className={getButtonClass('secondary')} nextAvailableAt={reanalysisNextAvailableAt} onStarted={() => setOptimisticAnalyzing(true)} />
+            canEdit ? (
+              <StartAnalysisButton projectId={projectId} projectName={projectName} force className={getButtonClass('secondary')} nextAvailableAt={reanalysisNextAvailableAt} onStarted={() => setOptimisticAnalyzing(true)} />
+            ) : null
           ) : (
-            <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} autoStart={autoStartFired} onStarted={() => setOptimisticAnalyzing(true)} />
+            canEdit ? (
+              <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} autoStart={autoStartFired} onStarted={() => setOptimisticAnalyzing(true)} />
+            ) : null
           )}
-          <Link href={`/projects/${projectId}/competitors`} className={getButtonClass('secondary')}>
-            競合設定を見直す
-          </Link>
-          {nextAvailableLabel && status === 'report_ready' && (
+          {canEdit && (
+            <Link href={`/projects/${projectId}/competitors`} className={getButtonClass('secondary')}>
+              競合設定を見直す
+            </Link>
+          )}
+          {canEdit && nextAvailableLabel && status === 'report_ready' && (
             <p className="text-xs text-[var(--text3)]">
               次回の再調査は {nextAvailableLabel} 以降に行えます。
             </p>
@@ -393,31 +407,33 @@ export default function AnalysisStatusPanel({
             </div>
           </div>
 
-          <div className="flex-shrink-0">
-            {gscStatus === 'loading' && (
-              <button type="button" disabled className={getButtonClass('secondary', 'text-sm')}>
-                読み込み中
-              </button>
-            )}
-            {gscStatus === 'connected' && (
-              <button
-                type="button"
-                onClick={handleGscDisconnectRequest}
-                disabled={gscDeleting}
-                className={getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')}
-              >
-                {gscDeleting ? '解除中...' : '連携を解除'}
-              </button>
-            )}
-            {gscStatus === 'disconnected' && (
-              <a
-                href={`/api/auth/google?project_id=${projectId}`}
-                className={getButtonClass('secondary', 'text-sm')}
-              >
-                Google Search Console を連携する
-              </a>
-            )}
-          </div>
+          {canEdit && (
+            <div className="flex-shrink-0">
+              {gscStatus === 'loading' && (
+                <button type="button" disabled className={getButtonClass('secondary', 'text-sm')}>
+                  読み込み中
+                </button>
+              )}
+              {gscStatus === 'connected' && (
+                <button
+                  type="button"
+                  onClick={handleGscDisconnectRequest}
+                  disabled={gscDeleting}
+                  className={getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')}
+                >
+                  {gscDeleting ? '解除中...' : '連携を解除'}
+                </button>
+              )}
+              {gscStatus === 'disconnected' && (
+                <a
+                  href={`/api/auth/google?project_id=${projectId}`}
+                  className={getButtonClass('secondary', 'text-sm')}
+                >
+                  Google Search Console を連携する
+                </a>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

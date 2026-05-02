@@ -87,6 +87,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   // オーナーでもメンバーでもない場合はリダイレクト
   if (!isOwner && memberRole === null) redirect('/dashboard')
 
+  const canEdit = isOwner || memberRole === 'editor'
+
   // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得
   const [
     { data: interviewRows },
@@ -317,6 +319,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               {competitors && competitors.length > 0 && (
                 <span className="text-[11px] bg-[rgba(255,255,255,0.5)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">競合 {competitors.length}件</span>
               )}
+              {!isOwner && (
+                <StatusPill tone="info" className="px-2.5 py-1 text-[11px] font-semibold">
+                  {memberRole === 'editor' ? '編集者として参加中' : '閲覧者として参加中'}
+                </StatusPill>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-3 lg:min-w-[260px]">
@@ -445,6 +452,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         competitorCount={competitors?.length ?? 0}
         hasAudit={!!auditRow}
         reanalysisNextAvailableAt={reanalysisNextAvailableAt}
+        canEdit={canEdit}
       />
 
       {/* 未作成テーマ一覧 */}
@@ -456,7 +464,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               {uncreatedThemeItems.length}件
             </span>
           </div>
-          <PaginatedUncreatedThemes items={uncreatedThemeItems} projectId={id} />
+          <PaginatedUncreatedThemes items={uncreatedThemeItems} projectId={id} canEdit={canEdit} />
         </div>
       )}
 
