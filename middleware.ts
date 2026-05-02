@@ -55,6 +55,7 @@ export async function middleware(request: NextRequest) {
     pathname === '/tokushoho' ||
     pathname === '/contact' ||
     pathname.startsWith('/auth/') ||
+    pathname.startsWith('/invite/') ||
     pathname === '/sitemap.xml' ||
     pathname === '/robots.txt' ||
     pathname.startsWith('/interview/ext/')
@@ -108,6 +109,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && (pathname === '/auth/login' || pathname === '/auth/signup')) {
+    const inviteToken = request.nextUrl.searchParams.get('invite_token')
+    if (inviteToken) {
+      return NextResponse.redirect(new URL(`/invite/${inviteToken}`, request.url))
+    }
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

@@ -2,6 +2,8 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getCharacter } from '@/lib/characters'
+import { createClient } from '@/lib/supabase/server'
+import InviteAcceptButton from './_components/InviteAcceptButton'
 
 export const metadata: Metadata = {
   title: '取材チームへの招待 | Insight Cast',
@@ -50,7 +52,11 @@ export default async function InvitePage({
   params: Promise<{ token: string }>
 }) {
   const { token } = await params
-  const invitation = await getInvitation(token)
+  const [invitation, supabase] = await Promise.all([
+    getInvitation(token),
+    createClient(),
+  ])
+  const { data: { user } } = await supabase.auth.getUser()
 
   if (!invitation) {
     return (
@@ -112,20 +118,24 @@ export default async function InvitePage({
         </dl>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <Link
-          href={`/auth/login?invite_token=${token}`}
-          className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          ログインして参加する
-        </Link>
-        <Link
-          href={`/auth/signup?invite_token=${token}`}
-          className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
-        >
-          新規登録して参加する
-        </Link>
-      </div>
+      {user ? (
+        <InviteAcceptButton token={token} />
+      ) : (
+        <div className="flex flex-col gap-3">
+          <Link
+            href={`/auth/login?invite_token=${token}`}
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            ログインして参加する
+          </Link>
+          <Link
+            href={`/auth/signup?invite_token=${token}`}
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
+            新規登録して参加する
+          </Link>
+        </div>
+      )}
 
       <p className="mt-6 text-center text-xs text-[var(--text3)]">
         このメールに心当たりがない場合は、このページを閉じてください。
