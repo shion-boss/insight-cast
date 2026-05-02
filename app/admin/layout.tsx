@@ -8,6 +8,10 @@ import { AdminMobileNav } from '@/components/admin-mobile-nav'
 import { AdminSidebarNav } from '@/components/admin-sidebar-nav'
 
 export const metadata: Metadata = {
+  title: {
+    default: 'Admin | Insight Cast',
+    template: '%s | Admin',
+  },
   robots: { index: false, follow: false },
 }
 

@@ -134,7 +134,6 @@ function jstMonthKey(date: Date): string {
   return `${y}-${m}`
 }
 
-
 export default async function DashboardPage() {
   let supabase
   let user
@@ -150,24 +149,23 @@ export default async function DashboardPage() {
   if (!supabase) redirect('/')
   if (!user) redirect('/')
 
-  // profile・projects（オーナー所有のみ）・plan を並列取得
-  // ダッシュボードはオーナーとしての自分のプロジェクトを中心に表示する
+  const userId = user.id
+
   const [{ data: profile }, { data: projects }, userPlan] = await Promise.all([
-    supabase.from('profiles').select('name').eq('id', user.id).maybeSingle(),
+    supabase.from('profiles').select('name').eq('id', userId).maybeSingle(),
     supabase
       .from('projects')
       .select('id, name, hp_url, status, created_at, updated_at')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
-    getUserPlan(supabase, user.id),
+    getUserPlan(supabase, userId),
   ])
 
   const projectList = (projects ?? []) as Project[]
   const projectMap = Object.fromEntries(projectList.map((p) => [p.id, p]))
   const projectIds = projectList.map((p) => p.id)
 
-  // プロジェクト関連データを並列取得（articles も同時に取得）
   const [auditResult, competitorResult, competitorAnalysisResult, interviewResult, articleResult] = await Promise.all([
     projectList.length > 0
       ? supabase.from('hp_audits').select('id, project_id, raw_data, created_at').in('project_id', projectIds).order('created_at', { ascending: false })
@@ -228,7 +226,6 @@ export default async function DashboardPage() {
   // Previous-month deltas
   const now = new Date()
   const thisMonthKey = jstMonthKey(now)
-  // JST 前月キーを文字列演算で導出（Date コンストラクタのタイムゾーン依存を排除）
   const [kmY, kmM] = thisMonthKey.split('-').map(Number)
   const prevM = kmM === 1 ? 12 : kmM - 1
   const prevY = kmM === 1 ? kmY - 1 : kmY
@@ -363,7 +360,7 @@ export default async function DashboardPage() {
       </div>
 
       {projectList.length === 0 ? (
-        <SharedProjectsZeroState userId={user.id} mint={mint} />
+        <SharedProjectsZeroState userId={userId} mint={mint} />
       ) : (
         <div className="flex flex-col gap-6">
 
@@ -537,3 +534,4 @@ export default async function DashboardPage() {
     </>
   )
 }
+

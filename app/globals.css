@@ -643,3 +643,10 @@ button:disabled,
   font-weight: 600;
   color: var(--text2);
 }
+
+/* ナビゲーション中のリンクフィードバック */
+a[data-nav-pending] {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: wait;
+}

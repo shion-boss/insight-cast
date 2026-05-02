@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 import StartAnalysisButton from '@/components/start-analysis-button'
@@ -209,9 +210,21 @@ export default function AnalysisStatusPanel({
 
   useEffect(() => {
     if (status !== 'analyzing') return
-    const id = setInterval(() => router.refresh(), 5000)
+    const supabase = createClient()
+    const id = setInterval(async () => {
+      const { data } = await supabase
+        .from('projects')
+        .select('analysis_status')
+        .eq('id', projectId)
+        .single()
+      if (!data) return
+      if (data.analysis_status !== 'analyzing') {
+        clearInterval(id)
+        router.refresh()
+      }
+    }, 5000)
     return () => clearInterval(id)
-  }, [status, router])
+  }, [status, router, projectId])
 
   const nextAvailableLabel = reanalysisNextAvailableAt
     ? new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'long', day: 'numeric' }).format(new Date(reanalysisNextAvailableAt))

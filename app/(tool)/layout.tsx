@@ -8,6 +8,10 @@ import { AppShell } from '@/components/app-shell'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
+  title: {
+    default: 'Insight Cast',
+    template: '%s | Insight Cast',
+  },
   robots: { index: false, follow: false },
 }
 

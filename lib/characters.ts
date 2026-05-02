@@ -155,7 +155,7 @@ export const CAST_TALK_VOICE: Record<string, CastTalkVoice> = {
   },
   rain: {
     firstPerson: '僕',
-    speechStyle: '軽めの敬語・観察スタンス。「〜じゃないですか」「〜が気になって」',
+    speechStyle: '軽めの敬語・観察スタンス。「〜じゃないですか」「〜が気になって」「〜ってことですよね（整理形）」',
     prohibited: ['だよね', 'じゃん', 'AIとして', '生成します', '処理します'],
   },
 }

@@ -63,11 +63,12 @@ function formatShortDateTime(value: string) {
 }
 
 export default async function ProjectsPage() {
-  const mint = getCharacter('mint')
-
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
+
+  const userId = user.id
+  const mint = getCharacter('mint')
 
   // projects（オーナー所有 + メンバーとして参加中の両方）, userPlan を並列取得
   const [{ data: projects, error: projectsError }, userPlan] = await Promise.all([
@@ -76,7 +77,7 @@ export default async function ProjectsPage() {
       .select('id, name, hp_url, status, updated_at, user_id')
       .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
-    getUserPlan(supabase, user.id),
+    getUserPlan(supabase, userId),
   ])
 
   if (projectsError) {
@@ -92,8 +93,7 @@ export default async function ProjectsPage() {
 
   const allProjects = (projects ?? []) as (Project & { user_id: string })[]
   // オーナーのプロジェクトのみでプラン上限を計算
-  const ownedProjects = allProjects.filter((p) => p.user_id === user.id)
-  // sharedProjects: メンバーとして参加しているプロジェクト（現在は isShared フラグで判別）
+  const ownedProjects = allProjects.filter((p) => p.user_id === userId)
 
   const projectList = allProjects as Project[]
 
@@ -175,20 +175,21 @@ export default async function ProjectsPage() {
       {/* ── ページタイトル + ヘッダーアクション ── */}
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="font-serif text-xl font-bold text-[var(--text)]">プロジェクト一覧</h1>
-        <Link
-          href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
-          className={getButtonClass('primary', `px-4 py-2 text-sm${isProjectLimitReached ? ' opacity-60' : ''}`)}
-        >
-          {isProjectLimitReached ? (
-            <span className="flex items-center gap-1.5">
-              <svg width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect x="1" y="6" width="10" height="8" rx="2" fill="currentColor"/>
-                <path d="M3 6V4a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-              </svg>
-              プロジェクトを追加
-            </span>
-          ) : <><span aria-hidden="true">+ </span>プロジェクトを追加</>}
-        </Link>
+        {isProjectLimitReached ? (
+          <Link
+            href="/pricing?reason=project_limit"
+            className={getButtonClass('secondary', 'px-4 py-2 text-sm opacity-60 flex items-center gap-1.5')}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> プロジェクトを追加（上限）
+          </Link>
+        ) : (
+          <Link
+            href="/projects/new"
+            className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+          >
+            <><span aria-hidden="true">+ </span>プロジェクトを追加</>
+          </Link>
+        )}
       </div>
 
       {lockedProjectIds.size > 0 && (
@@ -244,7 +245,7 @@ export default async function ProjectsPage() {
             })
             const isLocked = lockedProjectIds.has(project.id)
             // メンバーとして参加しているプロジェクト（オーナーでない）
-            const isShared = (project as Project & { user_id?: string }).user_id !== user.id
+            const isShared = (project as Project & { user_id?: string }).user_id !== userId
 
             return (
               <div
@@ -375,3 +376,4 @@ export default async function ProjectsPage() {
     </>
   )
 }
+

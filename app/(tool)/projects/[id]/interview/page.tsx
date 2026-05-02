@@ -97,7 +97,8 @@ export default function InterviewPage() {
       if (res.status === 403) {
         const body = await res.json().catch(() => ({}))
         if (body.error === 'free_plan_locked') {
-          window.location.href = '/pricing?reason=free_plan_locked'
+          document.dispatchEvent(new Event('cross-area-navigate'))
+          router.push('/pricing?reason=free_plan_locked')
           return { ok: false as const, interviewComplete: false }
         }
         throw new Error('request failed')

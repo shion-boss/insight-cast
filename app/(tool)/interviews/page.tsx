@@ -38,16 +38,19 @@ export default async function InterviewsPage({
   const { page: pageStr, projectId: projectIdParam = 'all', cast: castParam = 'all', status: statusParam = 'all' } = await searchParams
 
   const page = Math.max(1, Number(pageStr ?? '1'))
-  const start = (page - 1) * PAGE_SIZE
-  const end = start + PAGE_SIZE - 1
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const userId = user.id
+
+  const start = (page - 1) * PAGE_SIZE
+  const end = start + PAGE_SIZE - 1
+
   const [{ data: projectRows }, plan] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id).is('deleted_at', null),
-    getUserPlan(supabase, user.id),
+    supabase.from('projects').select('id, name, hp_url').eq('user_id', userId).is('deleted_at', null),
+    getUserPlan(supabase, userId),
   ])
 
   const projects = (projectRows ?? []) as Project[]
@@ -58,7 +61,9 @@ export default async function InterviewsPage({
     const mint = getCharacter('mint')
     return (
       <>
-<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <h1 className="font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+        </div>
         <InterviewerSpeech
           icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
           name={mint?.name ?? 'インタビュアー'}
@@ -145,7 +150,9 @@ export default async function InterviewsPage({
     const mint = getCharacter('mint')
     return (
       <>
-<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <h1 className="font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+        </div>
         <InterviewerSpeech
           icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
           name={mint?.name ?? 'インタビュアー'}
@@ -166,6 +173,8 @@ export default async function InterviewsPage({
     <>
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className="font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
+      </div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
           全 {totalInterviewCount} 件
         </span>
@@ -183,3 +192,4 @@ export default async function InterviewsPage({
     </>
   )
 }
+

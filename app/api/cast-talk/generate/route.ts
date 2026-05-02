@@ -391,71 +391,6 @@ function buildEditFewShot(edits: EditRecord[]): string {
   return lines.join('\n')
 }
 
-// ---------- レビューフィードバック（応急処置・生注入） ----------
-//
-// [応急処置] cast_talk_reviews の生テキストをそのままプロンプトに注入している。
-//
-// この方式は以下の理由で一時的な対処に留める:
-//   1. AIデザイナーによる合成を経ていない生の意見の積み上がりのため、
-//      矛盾したルールや誇張が入り込む可能性がある
-//   2. ai-education-loop スキル（.claude/skills/ai-education-loop/SKILL.md）が
-//      定義する「症例収集→分類→改善案→レビュー→記録」のプロセスをバイパスしている
-//   3. 実インタビュー（lib/characters.ts の SYSTEM_PROMPTS）には届かないため、
-//      フィードバックがキャラ全体に反映されない
-//
-// 正規の改善フロー（.claude/skills/cast-talk-feedback-loop/SKILL.md 参照）:
-//   AIデザイナーがレビューを定期合成 → 合成済みルールを skill file または
-//   DEFAULT_CONVERSATION_SYSTEM に反映 → 人間承認後に生注入を削除または縮小する
-//
-// 合成済みルールが skill file に書かれたら、そちらを優先してこの生注入は削除すること。
-
-type ReviewRecord = {
-  overall_score: number
-  good_points: string | null
-  improve_points: string | null
-}
-
-async function fetchRecentReviews(supabase: ReturnType<typeof createAdminClient>): Promise<ReviewRecord[]> {
-  const { data, error } = await supabase
-    .from('cast_talk_reviews')
-    .select('overall_score, good_points, improve_points')
-    .order('updated_at', { ascending: false })
-    .limit(20)
-
-  if (error) {
-    console.warn('[cast-talk/generate] cast_talk_reviews 取得失敗:', error.message)
-    return []
-  }
-  return (data ?? []) as ReviewRecord[]
-}
-
-function buildReviewContext(reviews: ReviewRecord[]): string {
-  if (reviews.length === 0) return ''
-
-  const improvements = reviews
-    .filter((r) => r.improve_points?.trim())
-    .map((r) => `- ${r.improve_points!.trim()}`)
-    .slice(0, 6)
-
-  const goods = reviews
-    .filter((r) => r.good_points?.trim())
-    .map((r) => `- ${r.good_points!.trim()}`)
-    .slice(0, 4)
-
-  if (improvements.length === 0 && goods.length === 0) return ''
-
-  const lines: string[] = ['【過去の品質評価フィードバック（応急処置・生注入）】']
-  if (improvements.length > 0) {
-    lines.push('繰り返さないようにしてほしい点:')
-    lines.push(...improvements)
-  }
-  if (goods.length > 0) {
-    lines.push('維持してほしい良い点:')
-    lines.push(...goods)
-  }
-  return lines.join('\n')
-}
-
 // ---------- 会話生成 ----------
 
 async function generateConversation(
@@ -469,6 +404,16 @@ async function generateConversation(
   if (promptFile) {
     const systemMatch = /## システムプロンプト\s*```([\s\S]*?)```/m.exec(promptFile)
     systemPrompt = systemMatch ? systemMatch[1].trim() : ''
+
+    const qualityMatch = /## 合成済み品質ルール([\s\S]*)$/.exec(promptFile)
+    if (qualityMatch) {
+      const qualityRules = qualityMatch[1]
+        .replace(/<!--[\s\S]*?-->/g, '')
+        .trim()
+      if (qualityRules) {
+        systemPrompt += `\n\n【合成済み品質ルール（レビュー実績から導出）】\n${qualityRules}`
+      }
+    }
   }
   if (!systemPrompt) {
     systemPrompt = DEFAULT_CONVERSATION_SYSTEM
@@ -486,14 +431,10 @@ async function generateConversation(
   // 全員分を渡さないのは、登場しないキャストの口調が混入するリスクを避けるため。
   const castVoiceContext = buildCastTalkVoiceContext([theme.interviewer, theme.guest])
 
-  const [recentEdits, recentReviews] = await Promise.all([
-    fetchRecentEdits(supabase),
-    fetchRecentReviews(supabase),
-  ])
+  const recentEdits = await fetchRecentEdits(supabase)
   const editFewShot = buildEditFewShot(recentEdits)
-  const reviewContext = buildReviewContext(recentReviews)
 
-  const feedbackSection = [editFewShot, reviewContext].filter(Boolean).join('\n\n')
+  const feedbackSection = editFewShot
 
   const userMessage = `以下のテーマと条件で対話記事を生成してください。
 

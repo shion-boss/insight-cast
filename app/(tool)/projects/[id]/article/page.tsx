@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { WritingLoadingScene } from '@/components/loading-scenes'
@@ -73,6 +73,7 @@ function isFreshEnough(createdAt: string, requestedAt: string) {
 
 export default function ArticlePage() {
   const { id: projectId } = useParams<{ id: string }>()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const interviewId = searchParams.get('interviewId') ?? ''
   const initialTheme = searchParams.get('theme') ?? ''
@@ -308,7 +309,8 @@ export default function ArticlePage() {
             return next
           })
           setStartingArticleType(null)
-          window.location.href = '/pricing?reason=free_plan_locked'
+          document.dispatchEvent(new Event('cross-area-navigate'))
+          router.push('/pricing?reason=free_plan_locked')
           return
         }
         if (body.error === 'monthly_article_limit_reached') {
@@ -319,7 +321,8 @@ export default function ArticlePage() {
             return next
           })
           setStartingArticleType(null)
-          window.location.href = '/pricing?reason=monthly_article_limit'
+          document.dispatchEvent(new Event('cross-area-navigate'))
+          router.push('/pricing?reason=monthly_article_limit')
           return
         }
         throw new Error('failed to start article generation')

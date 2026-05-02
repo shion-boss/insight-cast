@@ -17,11 +17,15 @@ export function NavigationOverlay() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   // pathname が変わった = Next.js が新ページの React ツリーを更新完了
-  // MIN_MS を消化してからオーバーレイを非表示
+  // MIN_MS を消化してからプログレスバーを非表示、クリックフィードバックも解除
   useEffect(() => {
     if (!visible) return
     if (prevPath.current === pathname) return
     prevPath.current = pathname
+
+    document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
+      el.removeAttribute('data-nav-pending')
+    })
 
     const remaining = hideAt.current - Date.now()
     clearTimeout(timerRef.current)
@@ -57,6 +61,7 @@ export function NavigationOverlay() {
     areaRef.current = fromArea
     prevPath.current = location.pathname
     hideAt.current = Date.now() + MIN_MS
+    a.setAttribute('data-nav-pending', 'true')
     flushSync(() => setVisible(true))
   }, [])
 
@@ -78,10 +83,6 @@ export function NavigationOverlay() {
       >
         <div className="absolute inset-0 animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
       </div>
-      <div
-        className={`fixed left-0 right-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.9)] ${sidebarClass}`}
-        style={{ top: headerBottom }}
-      />
     </div>
   )
 }

@@ -55,15 +55,18 @@ export default async function ArticlesPage({
   } = await searchParams
 
   const page = Math.max(1, Number(pageStr ?? '1'))
-  const start = (page - 1) * PAGE_SIZE
-  const end = start + PAGE_SIZE - 1
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const userId = user.id
+
+  const start = (page - 1) * PAGE_SIZE
+  const end = start + PAGE_SIZE - 1
+
   const [{ data: projectRows }] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').eq('user_id', user.id).is('deleted_at', null),
+    supabase.from('projects').select('id, name, hp_url').eq('user_id', userId).is('deleted_at', null),
   ])
 
   const projects = (projectRows ?? []) as ProjectRow[]
@@ -73,7 +76,9 @@ export default async function ArticlesPage({
     const rain = getCharacter('rain')
     return (
       <>
-<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <h1 className="font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+        </div>
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}
@@ -187,7 +192,9 @@ export default async function ArticlesPage({
     const rain = getCharacter('rain')
     return (
       <>
-<h1 className="mb-6 font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <h1 className="font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+        </div>
         <InterviewerSpeech
           icon={<CharacterAvatar src={rain?.icon48} alt={`${rain?.name ?? 'インタビュアー'}のアイコン`} emoji={rain?.emoji} size={48} />}
           name={rain?.name ?? 'インタビュアー'}
@@ -206,6 +213,8 @@ export default async function ArticlesPage({
     <>
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className="font-serif text-xl font-bold text-[var(--text)]">記事一覧</h1>
+      </div>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
           全 {totalArticleCount ?? 0} 件
         </span>
@@ -227,3 +236,4 @@ export default async function ArticlesPage({
     </>
   )
 }
+
