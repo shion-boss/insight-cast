@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 600, height: 452, alt: 'Insight Cast — 動物AIインタビュアーチーム' }],
+    images: [{ url: '/og-image.png', width: 2816, height: 1472, alt: 'Insight Cast — 動物AIインタビュアーチーム' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast',
     description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.png'],
   },
   formatDetection: {
     telephone: false,

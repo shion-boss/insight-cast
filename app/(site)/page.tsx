@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 600, height: 452, alt: 'Insight Cast — 動物AIインタビュアーチーム' }],
+    images: [{ url: '/og-image.png', width: 2816, height: 1472, alt: 'Insight Cast — 動物AIインタビュアーチーム' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
     description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
-    images: ['/og-image.jpg'],
+    images: ['/og-image.png'],
   },
 }
 import { CharacterAvatar } from '@/components/ui'
