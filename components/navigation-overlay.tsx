@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { classifyArea } from '@/lib/nav-area'
@@ -9,19 +9,21 @@ const MIN_MS = 400
 
 export function NavigationOverlay() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const locationKey = pathname + '?' + searchParams.toString()
   const [visible, setVisible] = useState(false)
   const [headerBottom, setHeaderBottom] = useState(62)
   const areaRef = useRef<'tool' | 'admin' | 'site'>('tool')
-  const prevPath = useRef(pathname)
+  const prevPath = useRef(locationKey)
   const hideAt = useRef<number>(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  // pathname が変わった = Next.js が新ページの React ツリーを更新完了
-  // ただし描画は次フレーム以降なので、double rAF でペイント完了を待ってからバーを消す
+  // locationKey (pathname + search) が変わった = Next.js が新ページの React ツリーを更新完了
+  // rAF → setTimeout(0) でそのフレームのペイント完了を待ってからバーを消す
   useEffect(() => {
     if (!visible) return
-    if (prevPath.current === pathname) return
-    prevPath.current = pathname
+    if (prevPath.current === locationKey) return
+    prevPath.current = locationKey
 
     const hide = () => {
       requestAnimationFrame(() => {
@@ -41,7 +43,7 @@ export function NavigationOverlay() {
     } else {
       hide()
     }
-  }, [pathname, visible])
+  }, [locationKey, visible])
 
   useEffect(() => {
     return () => { clearTimeout(timerRef.current) }
@@ -66,7 +68,7 @@ export function NavigationOverlay() {
     const h = document.querySelector('[data-app-header]')?.getBoundingClientRect().bottom ?? 62
     setHeaderBottom(h)
     areaRef.current = fromArea
-    prevPath.current = location.pathname
+    prevPath.current = location.pathname + location.search
     hideAt.current = Date.now() + MIN_MS
     a.setAttribute('data-nav-pending', 'true')
     flushSync(() => setVisible(true))
