@@ -25,12 +25,12 @@ export function NavigationOverlay() {
 
     const hide = () => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
             el.removeAttribute('data-nav-pending')
           })
           timerRef.current = setTimeout(() => setVisible(false), 300)
-        })
+        }, 0)
       })
     }
 

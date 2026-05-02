@@ -26,9 +26,9 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
 
     const hide = () => {
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+        setTimeout(() => {
           timerRef.current = setTimeout(() => setNavActive(false), 300)
-        })
+        }, 0)
       })
     }
 
