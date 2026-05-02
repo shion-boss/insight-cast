@@ -17,22 +17,29 @@ export function NavigationOverlay() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   // pathname が変わった = Next.js が新ページの React ツリーを更新完了
-  // MIN_MS を消化してからプログレスバーを非表示、クリックフィードバックも解除
+  // ただし描画は次フレーム以降なので、double rAF でペイント完了を待ってからバーを消す
   useEffect(() => {
     if (!visible) return
     if (prevPath.current === pathname) return
     prevPath.current = pathname
 
-    document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
-      el.removeAttribute('data-nav-pending')
-    })
+    const hide = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
+            el.removeAttribute('data-nav-pending')
+          })
+          setVisible(false)
+        })
+      })
+    }
 
     const remaining = hideAt.current - Date.now()
     clearTimeout(timerRef.current)
     if (remaining > 0) {
-      timerRef.current = setTimeout(() => setVisible(false), remaining)
+      timerRef.current = setTimeout(hide, remaining)
     } else {
-      setVisible(false)
+      hide()
     }
   }, [pathname, visible])
 
