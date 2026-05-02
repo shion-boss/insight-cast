@@ -15,7 +15,6 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname()
   const headerRef = useRef<HTMLElement>(null)
   const [navActive, setNavActive] = useState(false)
-  const [overlayTop, setOverlayTop] = useState(0)
   const prevPath = useRef(pathname)
   const hideAt = useRef<number>(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -25,12 +24,20 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
     if (prevPath.current === pathname) return
     prevPath.current = pathname
 
+    const hide = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          timerRef.current = setTimeout(() => setNavActive(false), 300)
+        })
+      })
+    }
+
     const remaining = hideAt.current - Date.now()
     clearTimeout(timerRef.current)
     if (remaining > 0) {
-      timerRef.current = setTimeout(() => setNavActive(false), remaining)
+      timerRef.current = setTimeout(hide, remaining)
     } else {
-      setNavActive(false)
+      hide()
     }
   }, [pathname, navActive])
 
@@ -48,8 +55,6 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
     if (toPath === location.pathname) return
     if (!isSitePath(location.pathname) || !isSitePath(toPath)) return
 
-    const bottom = headerRef.current?.getBoundingClientRect().bottom ?? 64
-    setOverlayTop(bottom)
     prevPath.current = location.pathname
     hideAt.current = Date.now() + MIN_MS
     setNavActive(true)
@@ -114,13 +119,6 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         )}
       </header>
 
-      {navActive && (
-        <div
-          aria-hidden="true"
-          className="fixed inset-x-0 bottom-0 z-[25] bg-[rgba(250,246,240,0.9)]"
-          style={{ top: overlayTop }}
-        />
-      )}
     </>
   )
 }
