@@ -1,17 +1,16 @@
 'use client'
 
 import Image from 'next/image'
-import groupPhoto from '@/assets/loading/all_insight_cast600.jpg'
 
 export function FullPageLoading() {
   return (
     <div role="status" aria-label="ページを読み込んでいます" className="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-6 bg-[var(--bg)] px-6">
-      <div className="w-full max-w-[320px] overflow-hidden rounded-2xl shadow-md">
+      <div className="w-full max-w-[480px] overflow-hidden rounded-2xl shadow-md">
         <Image
-          src={groupPhoto}
+          src="/og-image.png"
           alt="Insight Cast の全メンバー集合写真"
-          width={600}
-          height={500}
+          width={2816}
+          height={1472}
           className="w-full h-auto object-cover"
           priority
         />
