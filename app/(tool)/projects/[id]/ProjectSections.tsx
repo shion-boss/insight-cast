@@ -94,7 +94,7 @@ export function PaginatedUncreatedThemes({
   )
 }
 
-// ── 取材履歴 ────────────────────────────────────────────────────
+// ── 取材メモ ────────────────────────────────────────────────────
 
 export type InterviewHistoryItem = {
   id: string

@@ -475,7 +475,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" aria-label="取材履歴をすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
+                <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech

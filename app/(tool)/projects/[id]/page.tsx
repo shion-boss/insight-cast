@@ -225,7 +225,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       }))
     })
 
-  // 取材履歴アイテム
+  // 取材メモアイテム
   const interviewHistoryItems: InterviewHistoryItem[] = interviews.map((interview) => {
     const interviewArticles = articlesByInterview.get(interview.id) ?? []
     const latestInterviewArticle = interviewArticles[0] ?? null
@@ -463,7 +463,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       {/* Interview history */}
       <div className="mt-8">
         <div className="mb-4">
-          <h2 className="text-[16px] font-bold text-[var(--text)]">取材履歴</h2>
+          <h2 className="text-[16px] font-bold text-[var(--text)]">取材メモ</h2>
         </div>
 
         {interviews.length === 0 ? (

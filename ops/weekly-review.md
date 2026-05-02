@@ -160,7 +160,7 @@
 - `app/api/projects/[id]/interview/summarize/route.ts`: `checkRateLimit` の呼び出しを追加
 
 周5:
-- `app/dashboard/page.tsx`: 取材履歴リスト内 `CharacterAvatar` の `emoji={char?.emoji ?? '🎙️'}` を `emoji={char?.emoji}` に統一（フォールバック絵文字の直書きを除去）
+- `app/dashboard/page.tsx`: 取材メモリスト内 `CharacterAvatar` の `emoji={char?.emoji ?? '🎙️'}` を `emoji={char?.emoji}` に統一（フォールバック絵文字の直書きを除去）
 
 **今回の指摘パターン集計**
 
