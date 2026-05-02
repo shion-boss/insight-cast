@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 600, height: 500, alt: 'Insight Cast チーム全員集合' }],
+    images: [{ url: '/og-image.jpg', width: 600, height: 452, alt: 'Insight Cast — 動物AIインタビュアーチーム' }],
   },
   twitter: {
     card: 'summary_large_image',
