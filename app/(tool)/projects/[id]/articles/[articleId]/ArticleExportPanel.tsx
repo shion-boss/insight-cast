@@ -801,7 +801,7 @@ function ClipboardHint({ copied }: { copied: boolean }) {
   )
 }
 
-// 会話込み記事専用のレンダーグループ
+// 会話記事専用のレンダーグループ
 type ConvRenderGroup =
   | { type: 'standalone'; block: ArticleBlock }
   | { type: 'section'; heading: ArticleBlock; body: ArticleBlock | null }

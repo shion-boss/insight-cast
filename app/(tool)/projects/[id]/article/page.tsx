@@ -48,7 +48,7 @@ const ARTICLE_GROUPS: { label: string; items: ArticleGroupItem[] }[] = [
   {
     label: 'AIキャスト視点',
     items: [
-      { type: 'conversation', label: '会話込み記事' },
+      { type: 'conversation', label: '会話記事' },
       { type: 'interviewer', label: 'レポート記事' },
     ],
   },
@@ -620,7 +620,7 @@ export default function ArticlePage() {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {themeArticles.map((a) => {
-                    const typeLabel = a.article_type === 'interviewer' ? 'レポート記事' : a.article_type === 'conversation' ? '会話込み記事' : 'ブログ記事'
+                    const typeLabel = a.article_type === 'interviewer' ? 'レポート記事' : a.article_type === 'conversation' ? '会話記事' : 'ブログ記事'
                     const dateLabel = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(a.created_at))
                     return (
                       <Link

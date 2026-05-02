@@ -10,7 +10,7 @@ const PAGE_SIZE = 20
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'ブログ記事',
   interviewer: 'レポート記事',
-  conversation: '会話込み記事',
+  conversation: '会話記事',
 }
 
 type ArticleRow = {

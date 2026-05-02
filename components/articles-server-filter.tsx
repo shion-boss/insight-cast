@@ -36,7 +36,7 @@ type Props = {
 const ARTICLE_TYPE_OPTIONS = [
   { value: 'client', label: 'ブログ記事' },
   { value: 'interviewer', label: 'レポート記事' },
-  { value: 'conversation', label: '会話込み記事' },
+  { value: 'conversation', label: '会話記事' },
 ]
 
 function cx(...classes: Array<string | false | null | undefined>) {
