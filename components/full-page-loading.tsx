@@ -10,7 +10,7 @@ export function FullPageLoading() {
           src="/loading-image.webp"
           alt="Insight Cast の全メンバー集合写真"
           width={960}
-          height={502}
+          height={491}
           className="w-full h-auto object-cover"
           priority
         />
