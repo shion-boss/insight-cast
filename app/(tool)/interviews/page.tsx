@@ -151,6 +151,7 @@ export default async function InterviewsPage({
       createdAtLabel: formatDate(interview.created_at),
       href,
       canContinue: !viewerProjectIds.has(interview.project_id),
+      isShared: project?.user_id !== userId,
     }
   })
 

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState, useEffect, useRef } from 'react'
-import { TextInput, getButtonClass } from '@/components/ui'
+import { TextInput, StatusPill, getButtonClass } from '@/components/ui'
 
 type ArticleItem = {
   id: string
@@ -14,6 +14,7 @@ type ArticleItem = {
   detailHref: string
   projectLabel?: string
   interviewerLabel?: string
+  isShared?: boolean
 }
 
 type ProjectOption = { id: string; label: string }
@@ -251,7 +252,12 @@ function ArticlesFilterContent({
                   <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                     {item.articleTypeLabel}
                   </span>
-                  {showProjectColumn && item.projectLabel && <span>{item.projectLabel}</span>}
+                  {showProjectColumn && item.projectLabel && (
+                    <span className="flex items-center gap-1.5">
+                      {item.projectLabel}
+                      {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
+                    </span>
+                  )}
                   {showInterviewerColumn && item.interviewerLabel && <span>{item.interviewerLabel}</span>}
                   <span>{item.createdAtLabel}</span>
                 </div>
@@ -307,7 +313,12 @@ function ArticlesFilterContent({
                       )}
                     </td>
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">{item.projectLabel ?? '—'}</td>
+                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">
+                        <span className="flex items-center gap-1.5">
+                          {item.projectLabel ?? '—'}
+                          {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
+                        </span>
+                      </td>
                     )}
                     <td className="px-4 py-4 whitespace-nowrap">
                       <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text3)]">

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-import { CharacterAvatar, getButtonClass } from '@/components/ui'
+import { CharacterAvatar, StatusPill, getButtonClass } from '@/components/ui'
 import InterviewStatusPills from '@/components/interview-status-pills'
 
 type InterviewItem = {
@@ -22,6 +22,7 @@ type InterviewItem = {
   createdAtLabel: string
   href: string
   canContinue?: boolean
+  isShared?: boolean
 }
 
 type ProjectOption = { id: string; label: string }
@@ -189,6 +190,7 @@ function FilterContent({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2.5 mb-1">
                     <p className="truncate font-bold text-[var(--text)] text-base leading-[1.3]">{item.projectLabel}</p>
+                    {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
                     {item.isDone ? (
                       <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">完了</span>
                     ) : (

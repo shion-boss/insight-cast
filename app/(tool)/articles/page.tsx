@@ -23,7 +23,7 @@ type ArticleRow = {
   interview_id: string | null
 }
 
-type ProjectRow = { id: string; name: string | null; hp_url: string }
+type ProjectRow = { id: string; name: string | null; hp_url: string; user_id: string }
 type InterviewRow = { id: string; interviewer_type: string; created_at: string }
 
 function formatDate(value: string) {
@@ -60,11 +60,13 @@ export default async function ArticlesPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const userId = user.id
+
   const start = (page - 1) * PAGE_SIZE
   const end = start + PAGE_SIZE - 1
 
   const [{ data: projectRows }] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').is('deleted_at', null),
+    supabase.from('projects').select('id, name, hp_url, user_id').is('deleted_at', null),
   ])
 
   const projects = (projectRows ?? []) as ProjectRow[]
@@ -135,7 +137,7 @@ export default async function ArticlesPage({
 
   const [{ data: displayProjectRows }, { data: displayInterviewRows }, { data: dropdownInterviewRows }] = await Promise.all([
     displayProjectIds.length > 0
-      ? supabase.from('projects').select('id, name, hp_url').in('id', displayProjectIds).is('deleted_at', null)
+      ? supabase.from('projects').select('id, name, hp_url, user_id').in('id', displayProjectIds).is('deleted_at', null)
       : Promise.resolve({ data: [] }),
     displayInterviewIds.length > 0
       ? supabase.from('interviews').select('id, interviewer_type, created_at').in('id', displayInterviewIds).is('deleted_at', null)
@@ -174,6 +176,7 @@ export default async function ArticlesPage({
       interviewerLabel: interview
         ? `${formatDate(interview.created_at)} · ${getCastName(interview.interviewer_type)}`
         : '—',
+      isShared: project?.user_id !== userId,
     }
   })
 

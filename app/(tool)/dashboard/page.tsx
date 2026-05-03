@@ -78,6 +78,14 @@ type Project = {
   updated_at: string
 }
 
+type SharedProject = {
+  id: string
+  name: string | null
+  hp_url: string
+  status: string
+  updated_at: string
+}
+
 type Interview = {
   id: string
   project_id: string
@@ -151,7 +159,7 @@ export default async function DashboardPage() {
 
   const userId = user.id
 
-  const [{ data: profile }, { data: projects }, userPlan] = await Promise.all([
+  const [{ data: profile }, { data: projects }, userPlan, { data: sharedMemberRows }] = await Promise.all([
     supabase.from('profiles').select('name').eq('id', userId).maybeSingle(),
     supabase
       .from('projects')
@@ -160,7 +168,23 @@ export default async function DashboardPage() {
       .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
     getUserPlan(supabase, userId),
+    supabase
+      .from('project_members')
+      .select('project_id')
+      .eq('user_id', userId),
   ])
+
+  // 共有プロジェクト（メンバーとして参加しているプロジェクト）を取得
+  const sharedProjectIds = (sharedMemberRows ?? []).map((r) => r.project_id as string)
+  const { data: sharedProjectRows } = sharedProjectIds.length > 0
+    ? await supabase
+        .from('projects')
+        .select('id, name, hp_url, status, updated_at')
+        .in('id', sharedProjectIds)
+        .is('deleted_at', null)
+        .order('updated_at', { ascending: false })
+    : { data: [] }
+  const sharedProjects = (sharedProjectRows ?? []) as SharedProject[]
 
   const projectList = (projects ?? []) as Project[]
   const projectMap = Object.fromEntries(projectList.map((p) => [p.id, p]))
@@ -528,6 +552,44 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
+
+          {/* ── Shared Projects ── */}
+          {sharedProjects.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-[18px] font-bold text-[var(--text)]">共有プロジェクト</h2>
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                  すべて見る <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+              <div className="flex flex-col gap-[10px]">
+                {sharedProjects.slice(0, 4).map((project) => (
+                  <Link
+                    key={project.id}
+                    href={`/projects/${project.id}`}
+                    className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  >
+                    <div className="w-11 h-11 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
+                      <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
+                        {project.name || project.hp_url}
+                      </div>
+                      <div className="text-[12px] text-[var(--text3)]">
+                        更新: {formatDate(project.updated_at)}
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <StatusPill tone="info" className="px-2.5 py-1 text-[11px] font-semibold">
+                        共有
+                      </StatusPill>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
       )}
