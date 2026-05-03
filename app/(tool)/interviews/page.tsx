@@ -49,7 +49,7 @@ export default async function InterviewsPage({
   const end = start + PAGE_SIZE - 1
 
   const [{ data: projectRows }, plan] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').eq('user_id', userId).is('deleted_at', null),
+    supabase.from('projects').select('id, name, hp_url').is('deleted_at', null),
     getUserPlan(supabase, userId),
   ])
 
