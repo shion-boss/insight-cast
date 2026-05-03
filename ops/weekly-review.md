@@ -61,6 +61,50 @@
 
 ---
 
+## 週: 2026-05-04 〜（進行中・以下は日次ログ）
+
+### 今週やったこと
+
+#### 2026-05-04（品質改善サイクル・ガバナンス刷新）
+
+**テーマ**: 閲覧メンバー権限制御・共有プロジェクトUI・ガバナンス構造の見直し
+
+**実装内容**
+- `app/(tool)/projects/[id]/interview/page.tsx`: viewer リダイレクト（サーバー側認可）
+- `app/(tool)/projects/[id]/interview/InterviewClient.tsx`: クライアントロジック分離
+- `components/interviews-filter-client.tsx`: 進行中取材の viewer 非活性化・「共有」バッジ追加
+- `app/(tool)/articles/page.tsx` / `components/articles-server-filter.tsx`: 記事カードに「共有」バッジ
+- `app/(tool)/dashboard/page.tsx`: 「共有プロジェクト」セクションを独立追加
+- `app/(tool)/projects/[id]/summary/page.tsx`: `{canEdit && (...)}` で記事受け取りボタンを viewer 非表示化
+
+**ガバナンス刷新**
+- `.claude/settings.json`: Edit/Write をオーケストレーターに復元
+- `CLAUDE.md`: 委任の原則を全面改訂（サブエージェントは並列調査・戦略・専門設計のみ）
+- `.claude/agents/` 全7ファイル: 旧ガバナンスチェーン（Director→Engineer→Reviewer）の残骸を全除去。engineer.md・reviewer.md は全書き直し
+
+**AI教育ケース確認**
+- ケース#1（中盤掘り下げ方向）: `lib/ai-quality.ts` に「直近の会話で出たエピソード」指示が既に実装済み ✅
+- ケース#3（充足判定具体性要件）: `lib/characters.ts` に「抽象語は1点と数えない」定義が既に実装済み ✅
+
+**品質レビュー（今回実装分）**
+- 認可バグ調査: `article/page.tsx`・`interview/page.tsx` いずれもサーバー側で viewer redirect 済み ✅
+- viewer が記事一覧を読める件: 仕様（読取権限あり）。Blocker なし ✅
+- 🟢 Nice-to-have: 「共有」バッジが editor/viewer を区別しない（将来改善候補）
+- 🟢 Nice-to-have: `summary/page.tsx` が full client component → canEdit が useEffect 判定。セキュリティホールはないが、server component への移行が望ましい（大きなリファクタリングのため持ち越し）
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| サブエージェントを役割分担強制に使用（本来は並列化用途） | 繰り返し | 再発 | ✅ CLAUDE.md 委任の原則を全面改訂 |
+| agent.md ファイルへの自己書き込み（ディレクターがdirector.mdを編集） | 1 | 初出 | ✅ CLAUDE.md に agent md は人間のみ更新と明記 |
+
+**CLAUDE.md 更新候補（今回処理済み）**
+- ✅ 委任の原則: サブエージェントは並列調査・戦略・専門設計の3種類のみ
+- ✅ エンジニア・レビュアーは直接 Edit/Write で作業
+
+---
+
 ## 週: 2026-04-22 〜（進行中・以下は日次ログ）
 
 ### 今週やったこと
