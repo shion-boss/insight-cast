@@ -475,16 +475,18 @@ export default function SummaryPage() {
           {/* サイドバー */}
           <aside className="space-y-4">
             {/* 記事を受け取る */}
-            <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <p className="font-bold text-[var(--text)] text-sm mb-2">記事を受け取る</p>
-              <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
-              <Link
-                href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
-              >
-                記事を受け取る <span aria-hidden="true">→</span>
-              </Link>
-            </div>
+            {canEdit && (
+              <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
+                <p className="font-bold text-[var(--text)] text-sm mb-2">記事を受け取る</p>
+                <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
+                <Link
+                  href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
+                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
+                >
+                  記事を受け取る <span aria-hidden="true">→</span>
+                </Link>
+              </div>
+            )}
 
             {/* このインタビューから作った記事 */}
             <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
