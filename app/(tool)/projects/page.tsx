@@ -285,9 +285,11 @@ export default async function ProjectsPage() {
                           ロック中
                         </StatusPill>
                       )}
-                      <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
-                        {analysisBadge.label}
-                      </StatusPill>
+                      {!(isShared && analysisBadge.label === '未調査') && (
+                        <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
+                          {analysisBadge.label}
+                        </StatusPill>
+                      )}
                       {contentBadge && (
                         <StatusPill tone={contentBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
                           {contentBadge.label}
