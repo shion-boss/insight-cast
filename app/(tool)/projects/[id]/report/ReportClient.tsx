@@ -49,6 +49,7 @@ type Props = {
   conversionObstacles:string[]
   priorityActions:    string[]
   classificationSummary: { byEffect?: Array<{ label: string; count: number }> } | null
+  canEdit?:           boolean
 }
 
 function formatCheckTime(date: Date) {
@@ -73,6 +74,7 @@ export default function ReportClient({
   conversionObstacles,
   priorityActions,
   classificationSummary,
+  canEdit = true,
 }: Props) {
   const [analysisError, setAnalysisError] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -522,12 +524,14 @@ export default function ReportClient({
         </section>
       )}
 
-      <Link
-        href={interviewerPath}
-        className={getButtonClass('primary', 'w-full')}
-      >
-        取材を始める <span aria-hidden="true">→</span>
-      </Link>
+      {canEdit && (
+        <Link
+          href={interviewerPath}
+          className={getButtonClass('primary', 'w-full')}
+        >
+          取材を始める <span aria-hidden="true">→</span>
+        </Link>
+      )}
     </div>
   )
 }
