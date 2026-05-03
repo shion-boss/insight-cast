@@ -219,7 +219,7 @@ function FilterContent({
                     <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                   ) : !isViewerInProgress ? (
                     <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                  ) : null}
+                  ) : <span className="text-[var(--text3)] text-[11px]">閲覧のみ</span>}
                 </div>
                 <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
                   <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
@@ -227,7 +227,7 @@ function FilterContent({
                     <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                   ) : !isViewerInProgress ? (
                     <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                  ) : null}
+                  ) : <span className="text-[var(--text3)] text-[11px]">閲覧のみ</span>}
                 </div>
               </>
             )
