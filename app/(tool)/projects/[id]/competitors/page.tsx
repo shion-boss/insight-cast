@@ -6,6 +6,7 @@ import { getCharacter } from '@/lib/characters'
 import { loadProjectCompetitorContext } from '@/lib/project-competitor-context'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { getMemberRole } from '@/lib/project-members'
 
 export const metadata: Metadata = {
   title: '競合サイトの設定',
@@ -20,13 +21,20 @@ export default async function CompetitorsPage({ params }: { params: Promise<{ id
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, name, hp_url')
+    .select('id, name, hp_url, user_id')
     .eq('id', id)
-    .eq('user_id', user.id)
     .is('deleted_at', null)
     .single()
 
-  if (!project) redirect('/projects')
+  if (!project) redirect('/dashboard')
+
+  // 権限チェック: 競合設定はオーナー専用。メンバーはプロジェクト詳細へ redirect
+  const isOwner = project.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, id, user.id)
+    if (!memberRole) redirect('/dashboard')
+    redirect(`/projects/${id}`)
+  }
 
   const rememberedContext = await loadProjectCompetitorContext({
     supabase,

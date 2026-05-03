@@ -18,6 +18,7 @@ import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { InterviewSubmitButton } from '@/components/interview-submit-button'
 import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
+import { getMemberRole } from '@/lib/project-members'
 
 function getSearchParamValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] ?? '' : value ?? ''
@@ -38,13 +39,20 @@ export default async function InterviewerPage({
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, name, hp_url')
+    .select('id, name, hp_url, user_id')
     .eq('id', id)
-    .eq('user_id', user.id)
     .is('deleted_at', null)
     .single()
 
   if (!project) redirect('/dashboard')
+
+  // 権限チェック: オーナーなら通過、メンバーなら editor のみ通過、viewer は redirect
+  const isOwner = project.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, id, user.id)
+    if (!memberRole) redirect('/dashboard')
+    if (memberRole !== 'editor') redirect(`/projects/${id}`)
+  }
 
   const selectedCharacterId = getSearchParamValue(query.cast)
   const error = getSearchParamValue(query.error)

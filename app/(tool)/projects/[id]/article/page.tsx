@@ -126,6 +126,43 @@ export default function ArticlePage() {
   const isBusyWithAnotherTab = isGenerating && !isCurrentTabGenerating
   const mint = getCharacter('mint')
 
+  // 権限チェック: viewer は閲覧のみ、editor/オーナーは通過
+  useEffect(() => {
+    const supabase = supabaseRef.current
+    void (async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.replace('/')
+        return
+      }
+      const { data: project } = await supabase
+        .from('projects')
+        .select('user_id')
+        .eq('id', projectId)
+        .is('deleted_at', null)
+        .single()
+      if (!project) {
+        router.replace('/dashboard')
+        return
+      }
+      if (project.user_id === user.id) return  // オーナーは通過
+      const { data: member } = await supabase
+        .from('project_members')
+        .select('role')
+        .eq('project_id', projectId)
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (!member) {
+        router.replace('/dashboard')
+        return
+      }
+      if (member.role !== 'editor') {
+        router.replace(`/projects/${projectId}`)
+      }
+    })()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId])
+
   const loadPageState = useCallback(async (showLoading = false, initTheme = false) => {
     if (!interviewId) {
       setAvailableThemes([])
