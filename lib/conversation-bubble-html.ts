@@ -226,3 +226,77 @@ ${introHtml}${bubblesHtml.join('\n')}
 <div style="height:1px;background:${blockSepColor};"></div>
 </div>`
 }
+
+/**
+ * admin の記事下書き本文（blog_posts.body.content）を生成する。
+ *
+ * 出力構造:
+ *   [会話前の Markdown]
+ *
+ *   <!-- EMBED_HTML_START -->
+ *   [全会話バブルを含む単一HTML（イントロカード・フッター付き）]
+ *   <!-- EMBED_HTML_END -->
+ *
+ *   [会話後の Markdown]
+ *
+ * admin/posts/[id]/edit のエディタはこのマーカーで本文を分割し、
+ * Markdown ブロック / 埋め込みHTMLブロックを構築する。
+ * 会話バブルを1つの embed ブロックにまとめることで、
+ * バブルごとに分断されないようにする。
+ */
+export function buildDraftBody(opts: {
+  content: string
+  interviewerName: string
+  interviewerDisplayName: string
+  interviewerLabel?: string | null
+  interviewerAvatarUrl?: string | null
+  clientName: string
+  clientDisplayName: string
+  themeColor?: string
+}): string {
+  const lines = opts.content.split('\n')
+
+  // 最初/最後の会話行を特定
+  let firstQaIdx = -1
+  let lastQaIdx = -1
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+    if (m && (m[1] === opts.interviewerName || m[1] === opts.clientName)) {
+      if (firstQaIdx === -1) firstQaIdx = i
+      lastQaIdx = i
+    }
+  }
+
+  // 会話行が無い場合は変換せずそのまま返す
+  if (firstQaIdx === -1) return opts.content
+
+  const beforeMd = lines.slice(0, firstQaIdx).join('\n').trim()
+  const afterMd = lines.slice(lastQaIdx + 1).join('\n').trim()
+
+  // 会話区間内の会話行のみ抽出（途中に挟まる非会話行は無視）
+  const conversationContent = lines
+    .slice(firstQaIdx, lastQaIdx + 1)
+    .filter((l) => {
+      const m = l.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
+      return !!m && (m[1] === opts.interviewerName || m[1] === opts.clientName)
+    })
+    .join('\n')
+
+  const convHtml = buildArticleHtml({
+    content: conversationContent,
+    interviewerName: opts.interviewerName,
+    interviewerDisplayName: opts.interviewerDisplayName,
+    interviewerLabel: opts.interviewerLabel ?? null,
+    interviewerAvatarUrl: opts.interviewerAvatarUrl ?? null,
+    clientName: opts.clientName,
+    clientDisplayName: opts.clientDisplayName,
+    themeColor: opts.themeColor,
+    showIntro: true,
+  })
+
+  const parts: string[] = []
+  if (beforeMd) parts.push(beforeMd)
+  parts.push(`<!-- EMBED_HTML_START -->\n${convHtml}\n<!-- EMBED_HTML_END -->`)
+  if (afterMd) parts.push(afterMd)
+  return parts.join('\n\n')
+}

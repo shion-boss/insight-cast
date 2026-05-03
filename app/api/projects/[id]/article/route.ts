@@ -13,7 +13,7 @@ import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
-import { buildArticleHtml } from '@/lib/conversation-bubble-html'
+import { buildDraftBody } from '@/lib/conversation-bubble-html'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -191,10 +191,8 @@ async function saveArticle(input: {
       ? `${appUrl}${interviewerChar.icon48.src}`
       : null
     const blogBody = isConversationType
-      ? buildArticleHtml({
+      ? buildDraftBody({
           content: blogBodyRaw,
-          title,
-          date: today,
           interviewerName: input.interviewerDisplayName ?? 'インタビュアー',
           interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
           interviewerLabel: interviewerChar?.label ?? null,
