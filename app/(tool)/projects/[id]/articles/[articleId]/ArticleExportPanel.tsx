@@ -360,7 +360,7 @@ export function ArticleExportPanel({
       showClientName,
       showIntro: false,
     }),
-    [themeColor, interviewerName, interviewerLabel, interviewerDisplayName, interviewerAvatarUrl, clientName, clientDisplayName, clientAvatarUrl, userAvatarUrl, showInterviewerIcon, showInterviewerName, showClientIcon, showClientName]
+    [themeColor, interviewerName, interviewerLabel, interviewerDisplayName, interviewerAvatarUrl, clientName, clientDisplayName, clientAvatarUrl, userAvatarUrl, showInterviewerIcon, showInterviewerName, showClientIcon, showClientName, effectiveClientName]
   )
 
   const makeIntroHtml = useCallback(() =>

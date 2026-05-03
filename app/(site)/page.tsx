@@ -39,7 +39,6 @@ import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 const freeCast = CHARACTERS.filter((char) => char.available)
-const addonCast = CHARACTERS.filter((char) => !char.available)
 
 const CAST_TALK_THEME: Record<string, { color: string; label: string }> = {
   mint:  { color: '#c2722a', label: 'Customer Perspective' },
@@ -58,15 +57,6 @@ const BLOG_CATEGORY_COLOR: Record<PostCategory, string> = {
   philosophy: '#065f46',
   news:       '#be185d',
 }
-
-const PAIN_ITEMS = [
-  { n: '01', title: '「何を書けばいいか分からない」', body: 'ブログを書こうと思うたびに、「今さら何を？」と手が止まる。ネタがないのではなく、ネタの見つけ方が分からないのです。' },
-  { n: '02', title: '「取材・撮影が大変で後回しになる」', body: '更新のたびに写真を撮って文章を考えて。それだけで半日かかる。本業が忙しいのに、続くわけがない。' },
-  { n: '03', title: '「自社の強みを言葉にできない」', body: '「特別なことなんて何もない」——そう感じていませんか。でも、それが一番伝わっていない価値かもしれません。' },
-] as const
-
-
-
 
 const FREE_TRIAL_FEATURES = ['取材回数：2回まで（単発）', 'フリーキャスト 3名', 'プロジェクト登録：1件', '取材メモ・記事を受け取れる'] as const
 

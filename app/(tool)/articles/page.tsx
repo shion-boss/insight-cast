@@ -60,8 +60,6 @@ export default async function ArticlesPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  const userId = user.id
-
   const start = (page - 1) * PAGE_SIZE
   const end = start + PAGE_SIZE - 1
 
