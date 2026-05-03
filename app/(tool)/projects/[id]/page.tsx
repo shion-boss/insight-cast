@@ -352,6 +352,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           heatmapData={heatmapData}
           continuityScore={continuityScore}
           nextProjectId={id}
+          canEdit={canEdit}
         />
       </div>
 

@@ -12,6 +12,7 @@ type Props = {
   heatmapData:       HeatmapEntry[]
   continuityScore:   number
   nextProjectId:     string | null
+  canEdit?:          boolean
 }
 
 /* ─── Bar chart ───────────────────────────────── */
@@ -196,7 +197,7 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 /* ─── Analytics section (exported) ───────────── */
-export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore, nextProjectId }: Props) {
+export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore, nextProjectId, canEdit = true }: Props) {
   const scoreDesc = continuityScore >= 80
     ? '月4本以上のペースで記事を積み上げられています。この調子で続けましょう。'
     : continuityScore >= 50
@@ -237,12 +238,14 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
             <div className="text-sm font-bold mb-1 text-[var(--text)]">記事づくり継続スコア：{continuityScore} / 100</div>
             <div className="text-[12px] leading-relaxed text-[var(--text2)]">{scoreDesc}</div>
           </div>
-          <Link
-            href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
-            className={getButtonClass('primary', 'flex-shrink-0 text-sm px-4 py-2')}
-          >
-            取材する <span aria-hidden="true">→</span>
-          </Link>
+          {canEdit && (
+            <Link
+              href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
+              className={getButtonClass('primary', 'flex-shrink-0 text-sm px-4 py-2')}
+            >
+              取材する <span aria-hidden="true">→</span>
+            </Link>
+          )}
         </div>
       </div>
     </div>

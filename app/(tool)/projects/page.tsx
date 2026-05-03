@@ -313,24 +313,26 @@ export default async function ProjectsPage() {
 
                 {/* Actions */}
                 <div className="flex gap-2 flex-wrap">
-                  {isLocked ? (
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text3)] cursor-not-allowed"
-                      title="プランの上限を超えているためこのプロジェクトでは取材できません"
-                    >
-                      <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="1" y="6" width="9" height="7" rx="2" fill="currentColor"/>
-                        <path d="M3 6V4a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
-                      </svg>
-                      取材不可
-                    </span>
-                  ) : (
-                  <Link
-                    href={`/projects/${project.id}/interviewer`}
-                    className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
-                  >
-                    取材する <span aria-hidden="true">→</span>
-                  </Link>
+                  {!isShared && (
+                    isLocked ? (
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text3)] cursor-not-allowed"
+                        title="プランの上限を超えているためこのプロジェクトでは取材できません"
+                      >
+                        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <rect x="1" y="6" width="9" height="7" rx="2" fill="currentColor"/>
+                          <path d="M3 6V4a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                        </svg>
+                        取材不可
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/projects/${project.id}/interviewer`}
+                        className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                      >
+                        取材する <span aria-hidden="true">→</span>
+                      </Link>
+                    )
                   )}
                   <Link
                     href={`/projects/${project.id}`}
@@ -357,14 +359,14 @@ export default async function ProjectsPage() {
                     >
                       レポート
                     </Link>
-                  ) : (
+                  ) : !isShared ? (
                     <StartAnalysisButton
                       projectId={project.id}
                       projectName={project.name || project.hp_url}
                       compact
                       className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
                     />
-                  )}
+                  ) : null}
                 </div>
               </div>
             )

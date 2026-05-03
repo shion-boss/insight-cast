@@ -22,6 +22,7 @@ export function AnalyticsSectionDynamic(props: {
   heatmapData: HeatmapEntry[]
   continuityScore: number
   nextProjectId: string | null
+  canEdit?: boolean
 }) {
   return <AnalyticsSectionInner {...props} />
 }

@@ -6,6 +6,7 @@ import { Breadcrumb } from '@/components/ui'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { buildBlogFreshnessMetrics, getStoredBlogMetrics, getStoredSiteBlogPosts } from '@/lib/site-blog-support'
+import { getMemberRole } from '@/lib/project-members'
 
 export const metadata: Metadata = {
   title: '調査レポート',
@@ -26,9 +27,8 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   ] = await Promise.all([
     supabase
       .from('projects')
-      .select('id, name, hp_url, status')
+      .select('id, name, hp_url, status, user_id')
       .eq('id', id)
-      .eq('user_id', user.id)
       .is('deleted_at', null)
       .single(),
     supabase
@@ -50,6 +50,12 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   if (!project) redirect('/dashboard')
 
+  const isOwner = project.user_id === user.id
+  if (!isOwner) {
+    const memberRole = await getMemberRole(supabase, id, user.id)
+    if (!memberRole) redirect('/dashboard')
+  }
+
   const readiness = isProjectAnalysisReady({
     project,
     competitors: competitors ?? [],
@@ -59,7 +65,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
 
   const resolvedStatus = resolveProjectAnalysisStatus(project.status, readiness.isReady)
 
-  if (project.status !== resolvedStatus) {
+  if (isOwner && project.status !== resolvedStatus) {
     await supabase
       .from('projects')
       .update({ status: resolvedStatus })
