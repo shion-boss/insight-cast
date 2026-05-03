@@ -133,7 +133,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         trustSignals={trustSignals}
         conversionObstacles={conversionObstacles}
         priorityActions={priorityActions}
-        canEdit={isOwner}
+        canEdit={canEdit}
         classificationSummary={classificationSummary}
       />
     </>
