@@ -9,7 +9,7 @@ import { createClient } from '@/lib/supabase/server'
 
 const PAGE_SIZE = 20
 
-type Project = { id: string; name: string | null; hp_url: string }
+type Project = { id: string; name: string | null; hp_url: string; user_id: string }
 type Interview = {
   id: string
   project_id: string
@@ -49,13 +49,29 @@ export default async function InterviewsPage({
   const end = start + PAGE_SIZE - 1
 
   const [{ data: projectRows }, plan] = await Promise.all([
-    supabase.from('projects').select('id, name, hp_url').is('deleted_at', null),
+    supabase.from('projects').select('id, name, hp_url, user_id').is('deleted_at', null),
     getUserPlan(supabase, userId),
   ])
 
   const projects = (projectRows ?? []) as Project[]
   const projectMap = new Map(projects.map((p) => [p.id, p]))
   const projectIds = projects.map((p) => p.id)
+
+  // viewer ロール判定: 自分が所有していない共有プロジェクトのロールを一括取得
+  const sharedProjectIds = projectIds.filter((id) => projectMap.get(id)?.user_id !== userId)
+  let viewerProjectIds = new Set<string>()
+  if (sharedProjectIds.length > 0) {
+    const { data: memberRows } = await supabase
+      .from('project_members')
+      .select('project_id, role')
+      .eq('user_id', userId)
+      .in('project_id', sharedProjectIds)
+    for (const row of memberRows ?? []) {
+      if (row.role === 'viewer') {
+        viewerProjectIds.add(row.project_id as string)
+      }
+    }
+  }
 
   if (projectIds.length === 0) {
     const mint = getCharacter('mint')
@@ -134,6 +150,7 @@ export default async function InterviewsPage({
       articleCount: articleCountByInterview.get(interview.id) ?? 0,
       createdAtLabel: formatDate(interview.created_at),
       href,
+      canContinue: !viewerProjectIds.has(interview.project_id),
     }
   })
 

@@ -21,6 +21,7 @@ type InterviewItem = {
   articleCount: number
   createdAtLabel: string
   href: string
+  canContinue?: boolean
 }
 
 type ProjectOption = { id: string; label: string }
@@ -173,63 +174,83 @@ function FilterContent({
         </section>
       ) : (
         <div className="space-y-3">
-          {items.map((item) => (
-            <Link
-              key={item.id}
-              href={item.href}
-              className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow"
-            >
-              <CharacterAvatar
-                src={item.icon48}
-                alt={`${item.interviewerName}のアイコン`}
-                emoji={item.interviewerEmoji}
-                size={48}
-                className="bg-[var(--accent-l)]"
-              />
+          {items.map((item) => {
+            const isViewerInProgress = !item.isDone && item.canContinue === false
+            const cardInner = (
+              <>
+                <CharacterAvatar
+                  src={item.icon48}
+                  alt={`${item.interviewerName}のアイコン`}
+                  emoji={item.interviewerEmoji}
+                  size={48}
+                  className="bg-[var(--accent-l)]"
+                />
 
-              <div className="min-w-0">
-                <div className="flex items-center gap-2.5 mb-1">
-                  <p className="truncate font-bold text-[var(--text)] text-base leading-[1.3]">{item.projectLabel}</p>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5 mb-1">
+                    <p className="truncate font-bold text-[var(--text)] text-base leading-[1.3]">{item.projectLabel}</p>
+                    {item.isDone ? (
+                      <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">完了</span>
+                    ) : (
+                      <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">途中</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[var(--text2)] mb-3">{item.interviewerName}<span aria-hidden="true"> · </span>{item.createdAtLabel}</p>
+                  <div className="flex flex-wrap gap-2">
+                    <InterviewStatusPills
+                      interviewId={item.id}
+                      hasSummary={item.hasSummary}
+                      hasArticle={item.hasArticle}
+                      hasUncreatedThemes={item.hasUncreatedThemes}
+                      articleStatus={item.articleStatus}
+                      summaryLabel="取材メモあり"
+                      articleLabel="記事あり"
+                      creatingLabel="作成中"
+                      uncreatedLabel="未作成テーマあり"
+                    />
+                  </div>
+                </div>
+
+                <div className="hidden sm:flex flex-col items-end gap-2">
+                  <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
                   {item.isDone ? (
-                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">完了</span>
-                  ) : (
-                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">途中</span>
-                  )}
+                    <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
+                  ) : !isViewerInProgress ? (
+                    <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
+                  ) : null}
                 </div>
-                <p className="text-xs text-[var(--text2)] mb-3">{item.interviewerName}<span aria-hidden="true"> · </span>{item.createdAtLabel}</p>
-                <div className="flex flex-wrap gap-2">
-                  <InterviewStatusPills
-                    interviewId={item.id}
-                    hasSummary={item.hasSummary}
-                    hasArticle={item.hasArticle}
-                    hasUncreatedThemes={item.hasUncreatedThemes}
-                    articleStatus={item.articleStatus}
-                    summaryLabel="取材メモあり"
-                    articleLabel="記事あり"
-                    creatingLabel="作成中"
-                    uncreatedLabel="未作成テーマあり"
-                  />
+                <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
+                  <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
+                  {item.isDone ? (
+                    <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
+                  ) : !isViewerInProgress ? (
+                    <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
+                  ) : null}
                 </div>
-              </div>
+              </>
+            )
 
-              <div className="hidden sm:flex flex-col items-end gap-2">
-                <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
-                {item.isDone ? (
-                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
-                ) : (
-                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                )}
-              </div>
-              <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
-                <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
-                {item.isDone ? (
-                  <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
-                ) : (
-                  <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                )}
-              </div>
-            </Link>
-          ))}
+            if (isViewerInProgress) {
+              return (
+                <div
+                  key={item.id}
+                  className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start opacity-60 cursor-default"
+                >
+                  {cardInner}
+                </div>
+              )
+            }
+
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-4 sm:p-6 grid grid-cols-[40px_1fr] sm:grid-cols-[48px_1fr_auto] gap-3 sm:gap-4 items-start hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-shadow"
+              >
+                {cardInner}
+              </Link>
+            )
+          })}
           <Pagination page={currentPage} totalPages={totalPages} onPageChange={changePage} />
         </div>
       )}
