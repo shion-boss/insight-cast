@@ -7,11 +7,11 @@ const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').r
 
 export const metadata: Metadata = {
   title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-  description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態で届くので、ホームページを会話で少しずつ育てられます。カード不要で無料体験できます。',
+  description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態で届くので、ホームページを会話で少しずつ育てられます。カード不要で無料体験できます。',
   alternates: { canonical: APP_URL },
   openGraph: {
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
+    description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     url: APP_URL,
     siteName: 'Insight Cast',
     locale: 'ja_JP',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
-    description: '動物モチーフのAIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
+    description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     images: ['/og-image.jpg'],
   },
 }
@@ -341,7 +341,7 @@ export default async function LandingPage() {
                   今日もAIキャストが、<br />あなたの話を聞きます。
                 </h2>
                 <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
-                  動物モチーフのインタビュアーたちが、毎回あなたの話を聞く準備を整えます。専門知識も、整った言葉も必要ありません。ふだん通りに話すだけで大丈夫です。
+                  インタビュアーたちが、毎回あなたの話を聞く準備を整えます。専門知識も、整った言葉も必要ありません。ふだん通りに話すだけで大丈夫です。
                 </p>
                 <ul className="mt-7 space-y-3.5">
                   {[
