@@ -51,9 +51,11 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   if (!project) redirect('/dashboard')
 
   const isOwner = project.user_id === user.id
+  let canEdit = isOwner
   if (!isOwner) {
     const memberRole = await getMemberRole(supabase, id, user.id)
     if (!memberRole) redirect('/dashboard')
+    canEdit = memberRole === 'editor'
   }
 
   const readiness = isProjectAnalysisReady({
