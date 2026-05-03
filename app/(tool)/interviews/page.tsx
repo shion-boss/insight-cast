@@ -59,7 +59,7 @@ export default async function InterviewsPage({
 
   // viewer ロール判定: 自分が所有していない共有プロジェクトのロールを一括取得
   const sharedProjectIds = projectIds.filter((id) => projectMap.get(id)?.user_id !== userId)
-  let viewerProjectIds = new Set<string>()
+  const viewerProjectIds = new Set<string>()
   if (sharedProjectIds.length > 0) {
     const { data: memberRows } = await supabase
       .from('project_members')
