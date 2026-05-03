@@ -13,7 +13,7 @@ import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
-import { embedConversationBubblesAsHtml } from '@/lib/conversation-bubble-html'
+import { buildArticleHtml } from '@/lib/conversation-bubble-html'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -185,12 +185,21 @@ async function saveArticle(input: {
 
     const blogBodyRaw = cleanContent.replace(/^#\s+[^\n]*\n?/, '').trimStart()
     const isConversationType = input.articleType === 'conversation'
+    const interviewerChar = input.interviewerType ? getCharacter(input.interviewerType) : null
+    const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
+    const interviewerAvatarUrl = interviewerChar?.icon48?.src && appUrl
+      ? `${appUrl}${interviewerChar.icon48.src}`
+      : null
     const blogBody = isConversationType
-      ? embedConversationBubblesAsHtml({
+      ? buildArticleHtml({
           content: blogBodyRaw,
+          title,
+          date: today,
           interviewerName: input.interviewerDisplayName ?? 'インタビュアー',
-          clientName: input.clientName ?? '事業者',
           interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
+          interviewerLabel: interviewerChar?.label ?? null,
+          interviewerAvatarUrl,
+          clientName: input.clientName ?? '事業者',
           clientDisplayName: input.clientName ?? '事業者',
         })
       : blogBodyRaw
