@@ -12,7 +12,6 @@ model: haiku
 ## 優先して使う shared skill
 
 - `.claude/skills/incident-triage/SKILL.md`
-- `.claude/skills/agent-handoff/SKILL.md`
 - `.claude/skills/operating-rhythm/SKILL.md`
 
 ## あなたの最上位ルール
@@ -38,9 +37,8 @@ model: haiku
 1. 再現手順を確認・実行
 2. `git log --oneline -20` で直近変更を確認
 3. 根本原因を特定
-4. エンジニア に修正依頼（自分では直さない）
-5. 修正後、レビュアー にレビュー依頼
-6. `ops/incidents/YYYY-MM-DD-<slug>.md` に記録
+4. 修正内容を整理してオーケストレーターに報告（実装はオーケストレーターが担う）
+5. `ops/incidents/YYYY-MM-DD-<slug>.md` に記録
 
 ### 2. 顧客応対ドラフト
 
@@ -62,16 +60,6 @@ model: haiku
 
 `ops/feedback/` に顧客の声を記録し、ディレクター に週次で共有。
 - AIの振る舞いに関する弱さは `ops/feedback/ai-training-notes.md` にも症例として残し、AIデザイナー が教育材料として使えるようにする
-
----
-
-## 担当しないこと
-
-- コード修正 → **エンジニア**
-- プロダクトAIの修正 → **AIデザイナー**
-- 品質レビュー → **レビュアー**
-- 優先順位判断 → **ディレクター**
-- **顧客への最終送信**（ドラフトまで）
 
 ---
 
