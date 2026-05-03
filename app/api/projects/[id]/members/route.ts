@@ -46,16 +46,16 @@ export async function GET(
   if (!project) return new Response('Not found', { status: 404 })
   if (project.user_id !== user.id) return new Response('Forbidden', { status: 403 })
 
-  // メンバー一覧取得（admin client でユーザーのメール・名前を補完）
+  // メンバー一覧取得（オーナー確認済みなので admin client で RLS を経由せず取得）
   const adminSupabase = createAdminClient()
 
   const [{ data: members }, { data: invitations }] = await Promise.all([
-    supabase
+    adminSupabase
       .from('project_members')
       .select('id, user_id, role, created_at, invited_by')
       .eq('project_id', projectId)
       .order('created_at', { ascending: true }),
-    supabase
+    adminSupabase
       .from('project_invitations')
       .select('id, email, role, expires_at, created_at')
       .eq('project_id', projectId)
@@ -67,29 +67,33 @@ export async function GET(
   const invitationRows = (invitations ?? []) as InvitationRow[]
 
   // メンバーのユーザー情報を admin client 経由で取得
+  // 注意: listUsers() はデフォルト perPage=50 で auth.users 全件のうち先頭しか返さない。
+  // メンバー数 > 50 でなくても、auth ユーザー全体が 50 件を超えていれば
+  // 招待されたメンバーが結果に含まれない可能性があるため getUserById で個別取得する。
   const userIds = memberRows.map((m) => m.user_id)
   const userInfoMap = new Map<string, { email: string | null; name: string | null }>()
 
   if (userIds.length > 0) {
-    const { data: authUsers } = await adminSupabase.auth.admin.listUsers()
-    for (const u of authUsers?.users ?? []) {
-      if (userIds.includes(u.id)) {
+    const userResults = await Promise.all(
+      userIds.map((uid) => adminSupabase.auth.admin.getUserById(uid)),
+    )
+    for (const result of userResults) {
+      const u = result.data?.user
+      if (u) {
         userInfoMap.set(u.id, {
           email: u.email ?? null,
           name: (u.user_metadata?.full_name as string | undefined) ?? null,
         })
       }
     }
-    // profiles テーブルからも名前を補完
+    // profiles テーブルからも名前を補完（auth で見つからなかったメンバーも含めて初期化）
     const { data: profiles } = await adminSupabase
       .from('profiles')
       .select('id, name')
       .in('id', userIds)
     for (const p of profiles ?? []) {
-      const existing = userInfoMap.get(p.id)
-      if (existing && p.name) {
-        userInfoMap.set(p.id, { ...existing, name: p.name })
-      }
+      const existing = userInfoMap.get(p.id) ?? { email: null, name: null }
+      userInfoMap.set(p.id, { ...existing, name: p.name ?? existing.name })
     }
   }
 

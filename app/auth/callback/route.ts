@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
               .maybeSingle()
 
             if (inv && inv.email === user.email) {
-              // メンバー追加（既に存在する場合は無視）
+              // メンバー追加（既に存在する場合は UNIQUE 違反として正常扱い）
               const { error: memberError } = await adminSupabase
                 .from('project_members')
                 .insert({
@@ -44,11 +44,15 @@ export async function GET(request: NextRequest) {
                   role: inv.role,
                   invited_by: inv.invited_by,
                 })
-              if (!memberError) {
+              // UNIQUE 違反 (23505) = 既にメンバー登録済みなので accepted を必ず true に更新する。
+              // それ以外のエラーが出ていない場合も accepted を true にする。
+              if (!memberError || memberError.code === '23505') {
                 await adminSupabase
                   .from('project_invitations')
                   .update({ accepted: true })
                   .eq('id', inv.id)
+              } else {
+                console.error('[callback] project_members insert error:', memberError.message)
               }
               return NextResponse.redirect(new URL(`/projects/${inv.project_id}`, baseOrigin))
             }
