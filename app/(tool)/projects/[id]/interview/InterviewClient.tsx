@@ -19,6 +19,7 @@ const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
+const SKIP_PHOTO_TOKEN = '__SKIP_PHOTO__'
 
 function getProgressLabel(turns: number) {
   if (turns < 3) return '話を聞かせてもらっています'
@@ -59,6 +60,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const [pendingAttachments, setPendingAttachments] = useState<AttachmentRef[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // ハル限定: 「写真なしで進める」を選んだら次回からスキップボタンを隠す
+  const [photoSkipped, setPhotoSkipped] = useState(false)
   const [supportPosts, setSupportPosts] = useState<{
     ownPosts: SupportPost[]
     competitorPosts: SupportPost[]
@@ -347,6 +350,22 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     } finally {
       setUploadingAttachment(false)
     }
+  }
+
+  /**
+   * ハル限定: 「写真なしで進める」を押したら、AI に記憶ベースの取材へ切り替えるよう指示。
+   * 一度押したらボタンを隠す（state で管理）。
+   */
+  async function handleSkipPhoto() {
+    if (loading || hasReachedTurnLimit) return
+    setPhotoSkipped(true)
+    const result = await sendMessageToAI(SKIP_PHOTO_TOKEN, { alreadyDisplayed: true })
+    if (!result.ok) {
+      // 失敗したら再表示できるよう state を戻す
+      setPhotoSkipped(false)
+      return
+    }
+    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function removePendingAttachment(index: number) {
@@ -680,6 +699,17 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   >
                     {uploadingAttachment ? 'アップ中...' : '📷 写真を添付'}
                   </button>
+                  {/* 「写真なしで進める」ボタン: 取材序盤かつ画像が一度も送られていない時だけ出す */}
+                  {!photoSkipped && userTurns < 2 && pendingAttachments.length === 0 && !messages.some((m) => m.attachments && m.attachments.length > 0) && (
+                    <button
+                      type="button"
+                      onClick={handleSkipPhoto}
+                      disabled={loading || initializing || hasReachedTurnLimit}
+                      className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+                    >
+                      写真なしで進める
+                    </button>
+                  )}
                 </>
               )}
               <button

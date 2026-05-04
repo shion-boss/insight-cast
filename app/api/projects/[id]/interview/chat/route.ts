@@ -17,6 +17,7 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
+const SKIP_PHOTO_TOKEN = '__SKIP_PHOTO__'
 
 export async function POST(
   req: NextRequest,
@@ -57,6 +58,7 @@ export async function POST(
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
   const isContinueInterview = userMessage === CONTINUE_INTERVIEW_TOKEN
   const isDeepDive = userMessage === DEEP_DIVE_TOKEN
+  const isSkipPhoto = userMessage === SKIP_PHOTO_TOKEN
 
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
@@ -99,7 +101,7 @@ export async function POST(
   }
 
   // ユーザーメッセージ保存
-  if (!isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive) {
+  if (!isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive && !isSkipPhoto) {
     const userMeta = acceptedAttachments.length > 0
       ? { attachments: acceptedAttachments.map((a) => ({ path: a.path, content_type: a.contentType })) }
       : null
@@ -233,6 +235,12 @@ export async function POST(
           ? [{
               role: 'user' as const,
               content: 'いまの話、もう少し聞かせてもらえますか。直前のやりとりの中で、まだ掘りきれていないと感じる1点を選んで、別の角度から自然に1つだけ問いを立ててください。具体的な場面・人・行動・反応のいずれかを引き出す方向で。',
+            }]
+          : []),
+        ...(isSkipPhoto
+          ? [{
+              role: 'user' as const,
+              content: '今日は写真なしで進めたいです。これ以上は写真を求めず、記憶の中の場面から取材を始めてください。「最近、仕事で印象に残っている場面を1つ思い浮かべてください」のように、頭の中で再現してもらう問いから入ってください。前置きを1文添えて、答えやすい入り口にしてください。',
             }]
           : []),
       ]
