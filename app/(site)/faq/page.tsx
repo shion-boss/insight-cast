@@ -186,7 +186,7 @@ export default function FaqPage() {
           description="サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。"
         />
 
-        <section className="px-6 py-[88px]">
+        <section className="px-6 py-12 sm:py-[88px]">
           <FaqContent groups={FAQ_GROUPS} />
         </section>
       </main>

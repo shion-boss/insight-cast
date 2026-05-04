@@ -170,15 +170,15 @@ export default async function LandingPage() {
                     キャストを見る
                   </Link>
                 </div>
-                <div className="mt-9 flex flex-wrap gap-6 border-t border-[var(--border)]/70 pt-8 sm:gap-9">
+                <div className="mt-9 grid grid-cols-3 gap-x-3 gap-y-4 border-t border-[var(--border)]/70 pt-8 sm:gap-x-9">
                   {[
                     { n: '3名', l: '無料キャスト' },
                     { n: '約20分', l: '平均取材時間' },
                     { n: '¥0', l: 'カード不要で始められる' },
                   ].map((item) => (
-                    <div key={item.l}>
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--accent)] leading-none">{item.n}</div>
-                      <div className="text-[11px] text-[var(--text2)] mt-1.5 font-medium">{item.l}</div>
+                    <div key={item.l} className="min-w-0">
+                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[24px] sm:text-[28px] font-bold text-[var(--accent)] leading-none">{item.n}</div>
+                      <div className="text-[11px] text-[var(--text2)] mt-1.5 font-medium leading-[1.4]">{item.l}</div>
                     </div>
                   ))}
                 </div>
@@ -478,13 +478,13 @@ export default async function LandingPage() {
                   </div>
                 </div>
                 {/* アクションボタン行 */}
-                <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-3">
+                <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-x-3 gap-y-2">
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">全文コピー</span>
                     <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">テキスト</span>
                     <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">Markdown</span>
                   </div>
-                  <span aria-hidden="true" className="h-4 w-px bg-[var(--border)]" />
+                  <span aria-hidden="true" className="hidden sm:inline-block h-4 w-px bg-[var(--border)]" />
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">書き出し</span>
                     <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.txt</span>

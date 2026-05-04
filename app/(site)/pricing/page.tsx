@@ -349,7 +349,7 @@ export default async function PricingPage({
               {PLANS.filter((plan) => plan.id !== 'free').map((plan) => (
                 <div
                   key={plan.id}
-                  className={`relative flex flex-col bg-[var(--surface)] rounded-[24px] p-9 ${
+                  className={`relative flex flex-col bg-[var(--surface)] rounded-[24px] p-6 sm:p-9 ${
                     plan.featured
                       ? 'border-[1.5px] border-[var(--accent)] shadow-[0_0_0_2px_var(--accent)]'
                       : 'border-[1.5px] border-[var(--border)]'
