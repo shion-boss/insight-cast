@@ -56,6 +56,32 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;')
 }
 
+// 会話バブル本文の `。！？` の直後に `<br>` を入れて文ごとに改行する。
+// ただし以下は改行しない:
+//  - 直後の文字が閉じ括弧（」』）)）の場合（例: `！」` `。)`）
+//  - その `。！？` が「」/『』/()/（）の内側にある場合（引用文・補足の中の文区切り）
+function insertSentenceBreaks(text: string): string {
+  const opens = ['「', '『', '（', '(']
+  const closes = ['」', '』', '）', ')']
+  let out = ''
+  let depth = 0
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i]
+    out += c
+    if (opens.includes(c)) {
+      depth++
+    } else if (closes.includes(c)) {
+      depth = Math.max(0, depth - 1)
+    } else if ((c === '。' || c === '！' || c === '？') && depth === 0) {
+      const next = text[i + 1]
+      if (!next || !closes.includes(next)) {
+        out += '<br>'
+      }
+    }
+  }
+  return out
+}
+
 function lighten(hex: string, amount: number): string {
   const r = parseInt(hex.slice(1, 3), 16)
   const g = parseInt(hex.slice(3, 5), 16)
@@ -178,7 +204,7 @@ export function buildArticleHtml(opts: {
     const match = line.match(/^\*\*(.+?)\*\*[:：]\s*(.+)$/)
     if (!match) continue
     if (match[1] !== interviewerName && match[1] !== clientName) continue
-    const rawText = escapeHtml(match[2]).replace(/([。！？])/g, '$1<br>')
+    const rawText = insertSentenceBreaks(escapeHtml(match[2]))
     if (match[1] === interviewerName) {
       bubblesHtml.push(`<div style="display:flex;align-items:flex-start;justify-content:flex-end;${iconGapInterviewer}margin-bottom:20px;">
   <div style="display:flex;flex-direction:column;align-items:flex-end;${iconMarginTopInterviewer}flex:1;min-width:0;">
