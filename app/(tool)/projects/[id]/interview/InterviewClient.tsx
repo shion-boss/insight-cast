@@ -204,15 +204,54 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           .order('created_at', { ascending: true })
 
         if (history && history.length > 0) {
-          // meta から yesno フラグを Message 型に展開（最新のインタビュアー発話だけが対象だが、全件持っておいて render 側で最新判定）
+          // meta から yesno フラグ + 添付パスを Message 型に展開
+          type MessageMeta = {
+            yesno?: { active?: boolean }
+            attachments?: Array<{ path?: string; content_type?: string }>
+          }
+          // 添付ありメッセージの path を収集
+          const allPaths: string[] = []
           const enriched: Message[] = history.map((m) => {
-            const meta = (m as { meta?: { yesno?: { active?: boolean } } | null }).meta ?? null
+            const meta = (m as { meta?: MessageMeta | null }).meta ?? null
+            const rawAttachments = Array.isArray(meta?.attachments) ? meta!.attachments : []
+            const attachments: AttachmentRef[] = rawAttachments
+              .filter((a): a is { path: string; content_type: string } =>
+                typeof a?.path === 'string' && typeof a?.content_type === 'string',
+              )
+              .map((a) => {
+                allPaths.push(a.path)
+                return { path: a.path, contentType: a.content_type, previewUrl: '' }
+              })
             return {
               role: m.role as 'user' | 'interviewer',
               content: m.content,
               yesno: meta?.yesno?.active === true,
+              attachments: attachments.length > 0 ? attachments : undefined,
             }
           })
+
+          // 添付があれば一括で署名URLを取得
+          if (allPaths.length > 0) {
+            try {
+              const params = new URLSearchParams({ paths: allPaths.join(',') })
+              const res = await fetch(
+                `/api/projects/${projectId}/interviews/${interviewId}/attach?${params.toString()}`,
+              )
+              if (res.ok) {
+                const { urls } = (await res.json()) as { urls: Record<string, string> }
+                for (const m of enriched) {
+                  if (m.attachments) {
+                    for (const a of m.attachments) {
+                      if (urls[a.path]) a.previewUrl = urls[a.path]
+                    }
+                  }
+                }
+              }
+            } catch (err) {
+              console.warn('[interview] failed to load signed urls', err)
+            }
+          }
+
           setMessages(enriched)
           setUserTurns(enriched.filter(m => m.role === 'user').length)
         } else {
@@ -229,7 +268,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       }
     }
     init()
-  }, [interviewId, sendMessageToAI])
+  }, [interviewId, projectId, sendMessageToAI])
 
   const latestInterviewerMessage = [...messages].reverse().find((message) => message.role === 'interviewer')?.content ?? ''
 
@@ -626,17 +665,27 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 }`}>
                   {msg.attachments && msg.attachments.length > 0 && (
                     <div className="mb-2 flex flex-wrap gap-1.5">
-                      {msg.attachments.map((att, j) => (
-                        <Image
-                          key={`${i}-${j}`}
-                          src={att.previewUrl}
-                          alt={`添付 ${j + 1}`}
-                          width={140}
-                          height={140}
-                          unoptimized
-                          className="max-h-36 max-w-[180px] rounded-lg object-cover"
-                        />
-                      ))}
+                      {msg.attachments.map((att, j) =>
+                        att.previewUrl ? (
+                          <Image
+                            key={`${i}-${j}`}
+                            src={att.previewUrl}
+                            alt={`添付 ${j + 1}`}
+                            width={140}
+                            height={140}
+                            unoptimized
+                            className="max-h-36 max-w-[180px] rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div
+                            key={`${i}-${j}`}
+                            className="h-20 w-20 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text3)]"
+                            aria-label="画像読み込み中"
+                          >
+                            画像
+                          </div>
+                        ),
+                      )}
                     </div>
                   )}
                   {msg.content || <span className="opacity-50">...</span>}

@@ -77,3 +77,75 @@ export async function POST(
 
   return NextResponse.json({ path, contentType: file.type })
 }
+
+const SIGN_EXPIRES_SEC = 60 * 60 // 1 時間
+
+/**
+ * 添付画像の署名付き URL を取得する API。
+ *
+ * バケットは private で RLS のクライアント側 SELECT が安定しないため、
+ * admin client が createSignedUrl で短期 URL を発行する。
+ *
+ * 認証 + キャラ判定 + path のスコープ（同じ project/interview）を確認する。
+ * クエリパラメータ `paths` で複数 path をカンマ区切りで指定できる。
+ */
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string; interviewId: string }> },
+) {
+  const { id: projectId, interviewId } = await params
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const { data: interview } = await supabase
+    .from('interviews')
+    .select('id, project_id, interviews_project:projects(user_id)')
+    .eq('id', interviewId)
+    .eq('project_id', projectId)
+    .is('deleted_at', null)
+    .single()
+  if (!interview) return NextResponse.json({ error: 'not_found' }, { status: 404 })
+
+  // オーナーまたはメンバー（viewer 含む）が閲覧可能
+  const joinedProject = interview.interviews_project as { user_id: string } | { user_id: string }[] | null
+  const projectInfo = Array.isArray(joinedProject) ? (joinedProject[0] ?? null) : joinedProject
+  const isOwner = projectInfo?.user_id === user.id
+  if (!isOwner) {
+    const role = await getMemberRole(supabase, projectId, user.id)
+    if (role !== 'editor' && role !== 'viewer') {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+    }
+  }
+
+  const url = new URL(req.url)
+  const pathsParam = url.searchParams.get('paths') ?? ''
+  const requestedPaths = pathsParam
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .slice(0, 20) // 1 リクエストあたり最大 20 件
+
+  const expectedPrefix = `${projectId}/${interviewId}/`
+  const validPaths = requestedPaths.filter((p) => p.startsWith(expectedPrefix))
+
+  if (validPaths.length === 0) {
+    return NextResponse.json({ urls: {} as Record<string, string> })
+  }
+
+  const adminClient = createAdminClient()
+  const { data, error } = await adminClient.storage
+    .from('interview-attachments')
+    .createSignedUrls(validPaths, SIGN_EXPIRES_SEC)
+
+  if (error) {
+    console.error('[interview attach] sign failed', { interviewId, error: error.message })
+    return NextResponse.json({ error: 'sign_failed' }, { status: 500 })
+  }
+
+  const urls: Record<string, string> = {}
+  for (const item of data ?? []) {
+    if (item.path && item.signedUrl) urls[item.path] = item.signedUrl
+  }
+  return NextResponse.json({ urls })
+}
