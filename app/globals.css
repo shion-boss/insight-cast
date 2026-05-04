@@ -101,6 +101,21 @@ button:disabled,
   }
 }
 
+/* 取材画面など、AppShell 内で viewport を占有したいフルスクリーン系ツールページ。
+   InterviewClient が mount 時に body にこのクラスを付与する。
+   - グローバルヘッダー（ロゴ + ハンバーガー）を非表示に
+   - <main> の padding / max-width を解除し、子コンポーネントが viewport ぴったりに
+     収まるようにする
+   PC サイドバー（lg:fixed）は残るので、コンテンツ側で lg:pl-[236px] を当てる。 */
+body.is-tool-fullscreen [data-app-header] {
+  display: none;
+}
+body.is-tool-fullscreen main#main-content {
+  padding: 0;
+  max-width: none;
+  margin: 0;
+}
+
 .text-balance {
   text-wrap: balance;
 }
