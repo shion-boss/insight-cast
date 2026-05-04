@@ -122,6 +122,31 @@ export function getCastName(id: string): string {
   return getCharacter(id)?.name ?? id
 }
 
+/**
+ * 埋め込みHTML（ブログ下書き等の永続記録）で使う、安定した公開アイコンURL。
+ *
+ * 注意: Next.js の StaticImageData (`char.icon48.src`) は
+ * `/_next/static/media/icon-48.<hash>.png` のフィンガープリント付きURLになる。
+ * これをDBに保存すると、リビルドでハッシュが変わった時に古いURLが 404 になる。
+ *
+ * このヘルパーは `/public/characters/<id>-48.png` という**ハッシュ無しの安定URL**を返す。
+ * 公開画像は `/public/characters/{mint,claus,rain,hal,mogro,cocco}-48.png` に置いてある。
+ *
+ * 用途:
+ * - admin ブログ下書きの埋め込みHTMLに含めるアイコンURL
+ * - 取材記事の export 時に使う avatar URL
+ *
+ * UI 上の表示（CharacterAvatar など）は、引き続き `char.icon48` の StaticImageData を使う
+ * （Next.js Image での最適化が効くため）。
+ */
+export function getPublicCastIconUrl(castId: string, baseUrl?: string): string | null {
+  const c = getCharacter(castId)
+  if (!c) return null
+  const path = `/characters/${castId}-48.png`
+  if (!baseUrl) return path
+  return `${baseUrl.replace(/\/$/, '')}${path}`
+}
+
 // =====================================================================
 // キャラ正典（CHARACTER_PERSONAS）
 // =====================================================================

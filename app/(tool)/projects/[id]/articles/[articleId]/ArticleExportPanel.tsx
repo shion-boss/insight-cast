@@ -3,7 +3,7 @@
 import { useState, useCallback, useTransition, useMemo, useEffect, useRef, Fragment } from 'react'
 import DOMPurify from 'dompurify'
 import Image from 'next/image'
-import { getCharacter } from '@/lib/characters'
+import { getCharacter, getPublicCastIconUrl } from '@/lib/characters'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { saveArticleContent } from './actions'
 import { buildArticleHtml, buildIntroHtml } from '@/lib/conversation-bubble-html'
@@ -140,7 +140,9 @@ export function ArticleExportPanel({
 
   const char = getCharacter(interviewerId ?? 'mint')
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
-  const defaultInterviewerAvatarUrl = char?.icon48?.src ? `${appUrl}${char.icon48.src}` : null
+  // 埋め込みHTML用のアイコンURLは安定した /public/characters/{id}-48.png を使う。
+  // Next.js StaticImageData (`char.icon48.src`) はビルドで変わる可能性があるため不可。
+  const defaultInterviewerAvatarUrl = char ? getPublicCastIconUrl(char.id, appUrl) : null
 
   // コンテンツ内の実際の respondent 名を検出。旧フォーマット（bizName）の記事にも対応。
   const detectedClientName = detectRespondentName(content, interviewerName)

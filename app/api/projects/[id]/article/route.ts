@@ -6,7 +6,7 @@ import { generateArticleSuggestions } from '@/lib/article-suggestions'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { getCharacter } from '@/lib/characters'
+import { getCharacter, getPublicCastIconUrl } from '@/lib/characters'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
@@ -190,8 +190,10 @@ async function saveArticle(input: {
     const isCastPerspective = isConversationType || isInterviewStyle
     const interviewerChar = input.interviewerType ? getCharacter(input.interviewerType) : null
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
-    const interviewerAvatarUrl = interviewerChar?.icon48?.src && appUrl
-      ? `${appUrl}${interviewerChar.icon48.src}`
+    // 永続記録（blog_posts の下書きHTML）に保存するURLは Next.js のフィンガープリント
+    // 付きURLを使わず、`/public/characters/<id>-48.png` の安定URLを使う。
+    const interviewerAvatarUrl = input.interviewerType && appUrl
+      ? getPublicCastIconUrl(input.interviewerType, appUrl)
       : null
     const introEmbed = isCastPerspective
       ? buildIntroEmbed({
