@@ -156,7 +156,8 @@ export async function POST(
     : [
         ...(history ?? []).map((m) => ({
           role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-          content: m.content,
+          // Anthropic は空文字 content を 400 で拒否するので placeholder を補完
+          content: m.content && m.content.length > 0 ? m.content : '（写真を共有しました）',
         })),
         ...(isPassQuestion
           ? [{

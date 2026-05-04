@@ -217,7 +217,9 @@ export async function POST(
     : [
         ...(history ?? []).map((m): AnthropicMessage => ({
           role: m.role === 'user' ? 'user' : 'assistant',
-          content: m.content,
+          // Anthropic は user/assistant の content が空文字だと 400 を返す。
+          // 写真だけのターン（空テキストで保存される）には placeholder を補完する。
+          content: m.content && m.content.length > 0 ? m.content : '（写真を共有しました）',
         })),
         ...(isPassQuestion
           ? [{
