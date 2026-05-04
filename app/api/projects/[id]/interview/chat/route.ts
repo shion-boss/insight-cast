@@ -41,7 +41,7 @@ export async function POST(
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url)')
+    .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url, industry_memo, location)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .is('deleted_at', null)
@@ -51,7 +51,13 @@ export async function POST(
 
   const projectData = !interview.interviews_project || Array.isArray(interview.interviews_project)
     ? null
-    : interview.interviews_project as { user_id: string; name: string | null; hp_url: string }
+    : interview.interviews_project as {
+        user_id: string
+        name: string | null
+        hp_url: string
+        industry_memo: string | null
+        location: string | null
+      }
 
   // role-based アクセスチェック: オーナーまたはeditorのみ
   const isOwner = projectData?.user_id === user.id
@@ -229,6 +235,17 @@ export async function POST(
     contextParts.push(
       `【このインタビューのスコープ】\n以下の情報はすべて今日の取材先「${projectData.name ?? '未設定'}」のものです。他社・他の取材先の情報は含まれていません。このセッションの外の情報には言及しないでください。`
     )
+
+    // 業界・地域情報（事前調査・事業者入力ベース）
+    const industryParts: string[] = []
+    if (projectData.industry_memo) industryParts.push(`業界メモ: ${projectData.industry_memo}`)
+    if (projectData.location) industryParts.push(`地域: ${projectData.location}`)
+    if (industryParts.length > 0) {
+      contextParts.push(
+        `【取材先の業界・地域】\n${industryParts.join('\n')}\n` +
+        `これは事業者または事前調査で把握した前提情報です。「業界では一般的に〜」と断言せず、業種・地域柄ありそうな話を引き出すヒントとして使ってください。事業者の語りと違う場合は語りを優先します。`
+      )
+    }
   }
   const focusThemeContext = buildInterviewFocusThemeContext(interview.focus_theme_mode, interview.focus_theme)
   if (focusThemeContext) {
@@ -260,14 +277,48 @@ export async function POST(
         `未取り上げのテーマを優先し、取り上げ済みのものは同じ切り口を繰り返さず別の角度から掘り下げる場合のみ選んでください。3回以上のテーマは他に選択肢がない場合を除き避けてください。`
       )
     }
+
+    // 全キャラ共通: 調査で見えている自社の輪郭
+    const profileParts: string[] = []
+    if (audit.strengths.length > 0) {
+      profileParts.push(`HPで見えている強み:\n${audit.strengths.map((s) => `・${s}`).join('\n')}`)
+    }
+    if (audit.priority_actions.length > 0) {
+      profileParts.push(`次の発信で優先したいこと:\n${audit.priority_actions.map((a) => `・${a}`).join('\n')}`)
+    }
+    if (audit.conversion_obstacles.length > 0) {
+      profileParts.push(`問い合わせを妨げていそうな要因:\n${audit.conversion_obstacles.map((o) => `・${o}`).join('\n')}`)
+    }
+    const effectCoverage = buildEffectCoverage(audit.blog_classification_summary)
+    const thinEffects = effectCoverage.filter((e) => e.count === 0)
+    if (thinEffects.length > 0) {
+      profileParts.push(
+        `ブログで不足している効果軸（0件）:\n${thinEffects.map((e) => `・${e.label}（${e.desc}）`).join('\n')}`
+      )
+    }
+    if (audit.blog_posts.length > 0) {
+      profileParts.push(
+        `既存ブログ記事タイトル（重複を避けるための参考）:\n${audit.blog_posts.slice(0, 15).map((t) => `・${t}`).join('\n')}`
+      )
+    }
+    if (profileParts.length > 0) {
+      contextParts.push(
+        `【調査で見えている自社の輪郭】\n${profileParts.join('\n\n')}\n\n` +
+        `インタビューでは、ここに挙がっている内容を「事業者本人の言葉」で具体化することと、ここに挙がっていない隠れた価値を引き出すことの両方を意識してください。これらは前提情報であり、断言の根拠にはしません。`
+      )
+    }
+
+    // 全キャラ共通: 競合 gaps（クラウス・レイン以外にも届く）
+    if (allCompetitorGaps.length > 0) {
+      contextParts.push(
+        `【競合が書いていて自社にないテーマ（競合調査結果）】\n${allCompetitorGaps.slice(0, 5).map((g) => `・${g}`).join('\n')}\n` +
+        `これらのテーマで自社独自の視点・経験を引き出せると、差別化の核になります。`
+      )
+    }
   }
 
-  // キャラ別コンテキスト注入
-  const characterContext = buildCharacterSpecificContext(
-    interview.interviewer_type,
-    audit,
-    allCompetitorGaps,
-  )
+  // キャラ別コンテキスト注入（観点の重み付けのみ。データは上で共通化済み）
+  const characterContext = buildCharacterSpecificContext(interview.interviewer_type, audit)
   if (characterContext) {
     contextParts.push(characterContext)
   }
@@ -378,68 +429,48 @@ type AuditContext = {
   } | null
 } | null
 
+/**
+ * キャラ別の取材重み付け指示。
+ * audit のデータ自体は呼び出し元（contextParts）で全キャラ共通として注入済み。
+ * ここでは「このキャラはどの観点を重視するか」だけを残す。
+ */
 function buildCharacterSpecificContext(
   characterId: string,
   audit: AuditContext,
-  competitorGaps: string[],
 ): string {
   if (!audit) return ''
 
-  const parts: string[] = []
-
-  // ブログの効果別カバレッジ（全キャラ共通の下地）
-  const effectCoverage = buildEffectCoverage(audit.blog_classification_summary)
-
-  if (characterId === 'mint') {
-    // ミント: お客様目線で伝わっていないことを掘る
-    // 信頼・共感系のブログが薄い場合に注目させる
-    const thinEffects = effectCoverage.filter((e) => e.key === 'trust' || e.key === 'empathy').filter((e) => e.count === 0)
-    if (thinEffects.length > 0) {
-      parts.push(`【お客様目線で不足しているコンテンツ（調査結果）】\n以下のタイプの記事がブログにほとんどありません。お客様から見て「信頼できそう」「この人に頼んでみたい」と思える話が届いていない可能性があります。\n${thinEffects.map((e) => `・${e.label}`).join('\n')}`)
-    }
-
-    if (audit.blog_posts.length > 0) {
-      parts.push(`【既存ブログ記事タイトル一覧（重複を避けるための参考）】\n${audit.blog_posts.slice(0, 15).map((t) => `・${t}`).join('\n')}`)
-    }
+  const FOCUS_BY_CHARACTER: Record<string, { focusAxes: string[]; emphasis: string }> = {
+    mint: {
+      focusAxes: ['trust', 'empathy'],
+      emphasis: '上記「自社の輪郭」のうち、信頼・実績や共感・人柄に関する箇所を中心に。お客様から見て「信頼できそう」「この人に頼んでみたい」と思える具体エピソードを引き出すことを優先する。',
+    },
+    claus: {
+      focusAxes: ['discovery', 'trust'],
+      emphasis: '上記「自社の輪郭」のうち、業種知識・判断基準・技術的な選択に関する箇所を中心に。HPで語られていない、業種ならではの工夫や選択の理由を引き出すことを優先する。',
+    },
+    rain: {
+      focusAxes: ['conversion'],
+      emphasis: '上記「自社の輪郭」のうち、問い合わせを妨げていそうな要因と次の発信の優先事項を中心に。なぜ選ばれるのか・他と何が違うのかを、お客様目線の言葉で引き出すことを優先する。',
+    },
+    hal: {
+      focusAxes: ['empathy'],
+      emphasis: '上記「自社の輪郭」のうち、人柄・関係性・場の空気が見える話を中心に。数字や実績ではなく、写真と感情・人との関係を起点にエピソードを引き出すことを優先する。',
+    },
+    mogro: {
+      focusAxes: ['trust', 'discovery'],
+      emphasis: '上記「自社の輪郭」を仮説の出発点として使い、はい/いいえで価値の有無・頻度・独自性を順番に確かめてください。1問ごとに「分かったこと」を短く言語化する。',
+    },
+    cocco: {
+      focusAxes: ['conversion', 'discovery'],
+      emphasis: '上記「自社の輪郭」のうち、次の発信で優先したいことと不足している効果軸を中心に。今・直近で告知したい変化や新しい話題を引き出し、すぐ使える1行に落とす。',
+    },
   }
 
-  if (characterId === 'claus') {
-    // クラウス: 競合との差分と、業界・発見系の不足を深掘り
-    if (competitorGaps.length > 0) {
-      parts.push(`【競合が書いていて自社にないテーマ（競合調査結果）】\n以下のテーマは競合のHPやブログにあって、自社では扱えていません。ここに業種の専門性を絡めた深掘りの余地があります。\n${competitorGaps.slice(0, 4).map((g) => `・${g}`).join('\n')}`)
-    }
+  const focus = FOCUS_BY_CHARACTER[characterId]
+  if (!focus) return ''
 
-    const thinEffects = effectCoverage.filter((e) => e.key === 'discovery' || e.key === 'trust').filter((e) => e.count === 0)
-    if (thinEffects.length > 0) {
-      parts.push(`【専門性で補強できるコンテンツの不足（調査結果）】\n${thinEffects.map((e) => `・${e.label}（${e.desc}）が0件`).join('\n')}\n業種ならではの知識や判断基準を語ることで補強できる余地です。`)
-    }
-
-    if (audit.strengths.length > 0) {
-      parts.push(`【HPで見えている強み（参照用）】\n${audit.strengths.map((s) => `・${s}`).join('\n')}\nインタビューでは、ここに挙がっていない・HPで語られていない強みを引き出してください。`)
-    }
-  }
-
-  if (characterId === 'rain') {
-    // レイン: 問い合わせ転換につながっていない理由と競合差分を訴求として引き出す
-    if (audit.conversion_obstacles.length > 0) {
-      parts.push(`【問い合わせを妨げていそうな要因（調査結果）】\n${audit.conversion_obstacles.map((o) => `・${o}`).join('\n')}\nこれらを解消するエピソードや言葉を引き出すことが、このインタビューの勝負所です。`)
-    }
-
-    const thinConversion = effectCoverage.filter((e) => e.key === 'conversion').filter((e) => e.count === 0)
-    if (thinConversion.length > 0) {
-      parts.push(`【問い合わせにつながるコンテンツが不足（調査結果）】\n「読んで行動したくなる」記事がブログにほとんどありません。なぜ選ばれるのか・他と何が違うのかを、お客様目線の言葉で引き出してください。`)
-    }
-
-    if (competitorGaps.length > 0) {
-      parts.push(`【競合が積極的に発信していて自社にないテーマ（競合調査結果）】\n${competitorGaps.slice(0, 3).map((g) => `・${g}`).join('\n')}\nこれらのテーマで自社独自の訴求を引き出せると、差別化の核になります。`)
-    }
-
-    if (audit.priority_actions.length > 0) {
-      parts.push(`【次の発信で優先したいこと（調査結果）】\n${audit.priority_actions.map((a) => `・${a}`).join('\n')}`)
-    }
-  }
-
-  return parts.join('\n\n')
+  return `【${characterId} としての取材の重み付け】\n${focus.emphasis}`
 }
 
 function buildEffectCoverage(
