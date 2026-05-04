@@ -271,21 +271,43 @@ ${introHtml}${bubblesHtml.join('\n')}
 }
 
 /**
- * admin の記事下書き本文（blog_posts.body.content）を生成する。
+ * インタビュアー紹介カードを admin エディタの「埋め込みHTMLブロック」として
+ * 1つ独立して扱えるよう、EMBED マーカーで囲んだ文字列を返す。
+ *
+ * 全記事タイプ（client / interviewer / conversation）共通で、
+ * 下書き本文の先頭に置かれることを想定している。
+ */
+export function buildIntroEmbed(opts: {
+  interviewerDisplayName: string
+  interviewerLabel?: string | null
+  interviewerAvatarUrl?: string | null
+  themeColor?: string
+}): string {
+  const introHtml = buildIntroHtml({
+    interviewerDisplayName: opts.interviewerDisplayName,
+    interviewerLabel: opts.interviewerLabel ?? null,
+    interviewerAvatarUrl: opts.interviewerAvatarUrl ?? null,
+    themeColor: opts.themeColor ?? DEFAULT_THEME_COLOR,
+  })
+  return `<!-- EMBED_HTML_START -->\n${introHtml}\n<!-- EMBED_HTML_END -->`
+}
+
+/**
+ * admin の会話形式記事用に、会話バブル部分のみを埋め込みHTMLブロックとして
+ * 包んだ下書き本文を生成する。
  *
  * 出力構造:
  *   [会話前の Markdown]
  *
  *   <!-- EMBED_HTML_START -->
- *   [全会話バブルを含む単一HTML（イントロカード・フッター付き）]
+ *   [会話バブルのみのHTML（イントロカードは含まない）]
  *   <!-- EMBED_HTML_END -->
  *
  *   [会話後の Markdown]
  *
+ * インタビュアー紹介は `buildIntroEmbed` で別ブロックとして先頭に追加する想定。
  * admin/posts/[id]/edit のエディタはこのマーカーで本文を分割し、
  * Markdown ブロック / 埋め込みHTMLブロックを構築する。
- * 会話バブルを1つの embed ブロックにまとめることで、
- * バブルごとに分断されないようにする。
  */
 export function buildDraftBody(opts: {
   content: string
@@ -336,7 +358,7 @@ export function buildDraftBody(opts: {
     clientDisplayName: opts.clientDisplayName,
     userAvatarUrl: opts.userAvatarUrl ?? null,
     themeColor: opts.themeColor,
-    showIntro: true,
+    showIntro: false,
   })
 
   const parts: string[] = []

@@ -13,7 +13,7 @@ import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
-import { buildDraftBody, ensureConversationClosingByInterviewer } from '@/lib/conversation-bubble-html'
+import { buildDraftBody, buildIntroEmbed, ensureConversationClosingByInterviewer } from '@/lib/conversation-bubble-html'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -191,7 +191,12 @@ async function saveArticle(input: {
     const interviewerAvatarUrl = interviewerChar?.icon48?.src && appUrl
       ? `${appUrl}${interviewerChar.icon48.src}`
       : null
-    const blogBody = isConversationType
+    const introEmbed = buildIntroEmbed({
+      interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
+      interviewerLabel: interviewerChar?.label ?? null,
+      interviewerAvatarUrl,
+    })
+    const mainBody = isConversationType
       ? buildDraftBody({
           content: blogBodyRaw,
           interviewerName: input.interviewerDisplayName ?? 'インタビュアー',
@@ -203,6 +208,7 @@ async function saveArticle(input: {
           userAvatarUrl: input.clientAvatarUrl ?? null,
         })
       : blogBodyRaw
+    const blogBody = `${introEmbed}\n\n${mainBody}`
     await input.supabase
       .from('blog_posts')
       .insert({
