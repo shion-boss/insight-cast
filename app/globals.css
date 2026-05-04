@@ -87,6 +87,20 @@ button:disabled,
   color: #1c1410;
 }
 
+/* iOS Safari の入力時オートズームを抑止する。
+   iOS は computed font-size < 16px の入力要素にフォーカスした時にビューポートを
+   自動でズームするため、モバイル幅では 16px に揃える。
+   ピンチズームは引き続き可能（user-scalable=no を使わない方針）。
+   `font-size: max(16px, ...)` で、Tailwind 側で text-base 以上を指定している場合は
+   そちらを優先する。 */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="color"]):not([type="range"]),
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+}
+
 .text-balance {
   text-wrap: balance;
 }
