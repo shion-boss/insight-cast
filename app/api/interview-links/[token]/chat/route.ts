@@ -1,7 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { buildInterviewQualityContext } from '@/lib/ai-quality'
+import { buildInterviewQualityContext, type PastInterviewMemo } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
+import { selectRelevantMemos } from '@/lib/interview-relationship'
 import { logApiUsage } from '@/lib/api-usage'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -77,7 +78,7 @@ export async function POST(
   // 既存インタビューの確認（同一リンクのもののみ許可）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, focus_theme, external_link_id')
+    .select('id, interviewer_type, project_id, focus_theme, external_link_id, external_respondent_name')
     .eq('id', resolvedInterviewId)
     .is('deleted_at', null)
     .single()
@@ -115,8 +116,41 @@ export async function POST(
 
   const userTurnCount = (history ?? []).filter(m => m.role === 'user').length
 
+  // 同じ外部リンク × 同じ回答者名で過去に完了した取材があれば「再会」として扱う。
+  // 名前なしのときは判定不能なので初対面扱い。
+  const respondentNameForLookup = respondentName ?? interview.external_respondent_name ?? null
+  let priorMeetingsCount = 0
+  let pastMemos: PastInterviewMemo[] = []
+  if (respondentNameForLookup) {
+    const { data: priorRows } = await supabase
+      .from('interviews')
+      .select('id, focus_theme, summary, themes, created_at')
+      .eq('external_link_id', link.id)
+      .eq('external_respondent_name', respondentNameForLookup)
+      .eq('status', 'completed')
+      .neq('id', resolvedInterviewId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(10)
+
+    pastMemos = (priorRows ?? []).map((row) => ({
+      focusTheme: row.focus_theme,
+      summary: row.summary,
+      themes: row.themes ?? [],
+      createdAt: row.created_at,
+    }))
+    priorMeetingsCount = pastMemos.length
+  }
+
+  const isReturning = priorMeetingsCount > 0
+  const relevantPastMemos = selectRelevantMemos(pastMemos, interview.focus_theme ?? link.theme, 2)
+
+  const greetingSeed = isReturning
+    ? '前回の続きから、今日のテーマで自然に始めてください。「はじめまして」とは言わないこと。'
+    : 'はじめまして。よろしくお願いします。'
+
   const messages = isGreeting
-    ? [{ role: 'user' as const, content: 'はじめまして。よろしくお願いします。' }]
+    ? [{ role: 'user' as const, content: greetingSeed }]
     : [
         ...(history ?? []).map((m) => ({
           role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
@@ -151,8 +185,11 @@ export async function POST(
   // 外部取材であることの注意
   contextParts.push(`【外部取材について】
 このインタビューは外部リンクを通じて行われています。
-相手はInsight Castに登録していない方で、初めてインタビューを受けてもらいます。
-最初に自己紹介をしてから、テーマに沿って話を聞いてください。
+${
+    isReturning
+      ? `この回答者の方とは、これまでに${priorMeetingsCount}回お話しています。「はじめまして」と言わず、前回までのやりとりの記憶から1つ自然に触れてからテーマに入ってください。`
+      : '相手はInsight Castに登録していない方で、初めてインタビューを受けてもらいます。最初に短い自己紹介をしてから、テーマに沿って話を聞いてください。'
+  }
 「プロジェクト名」「HP URL」などプロジェクト固有の情報は一切共有しないでください。`)
 
   // 品質コンテキスト
@@ -165,6 +202,9 @@ export async function POST(
     isGreeting,
     isPassQuestion,
     focusTheme: link.theme,
+    relationship: isReturning ? 'returning' : 'first',
+    priorMeetingsCount,
+    pastInterviewMemos: relevantPastMemos,
   })
   if (interviewQualityContext) {
     contextParts.push(interviewQualityContext)

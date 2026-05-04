@@ -1,9 +1,14 @@
 ---
 name: cast-talk-feedback-loop
-description: cast_talk_reviews に蓄積されたレビューを AIデザイナーが定期合成し、Cast Talk 生成プロンプトを改善するワークフロー。ai-education-loop スキルに準拠する。
+description: cast_talk_reviews に蓄積されたレビューを AIデザイナーが定期合成し、Cast Talk 生成プロンプトを改善するワークフロー。ai-education-loop スキルに準拠する。【2026-05-04 character-persona-feedback-loop に統合済み。新規合成は新スキルを使うこと】
 ---
 
-# Cast Talk フィードバック合成ループ
+# Cast Talk フィードバック合成ループ（旧スキル / 統合済み）
+
+> ⚠️ **2026-05-04 をもって `character-persona-feedback-loop` に統合された。**
+> Cast Talk と取材の双方向フィードバックを扱う汎用版がそちらにある。
+> 新規の合成作業は `character-persona-feedback-loop/SKILL.md` の手順に従うこと。
+> 本ファイルは過去の合成記録の参照用として残してある。
 
 ## 目的
 

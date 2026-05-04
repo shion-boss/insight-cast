@@ -4,7 +4,13 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { getCastName, buildCastTalkVoiceContext } from '@/lib/characters'
+import {
+  getCastName,
+  buildCastTalkVoiceContext,
+  buildCastTalkReactionsContext,
+  buildCastTalkFactIntegrityContext,
+  CAST_TALK_FACT_INTEGRITY_INSTRUCTION,
+} from '@/lib/characters'
 import { logApiUsage } from '@/lib/api-usage'
 
 export const maxDuration = 120
@@ -419,6 +425,11 @@ async function generateConversation(
     systemPrompt = DEFAULT_CONVERSATION_SYSTEM
   }
 
+  // キャラ正典（CHARACTER_PERSONAS）由来の本質ルールをシステムプロンプトに連結する。
+  // 取材側で導入された改善（反応の3段階・捏造禁止）を Cast Talk にも自動波及させるための仕組み。
+  // 詳細: .claude/skills/character-persona-feedback-loop/SKILL.md
+  systemPrompt += CAST_TALK_FACT_INTEGRITY_INSTRUCTION
+
   const interviewerName = getCastName(theme.interviewer)
   const guestName = getCastName(theme.guest)
 
@@ -427,9 +438,11 @@ async function generateConversation(
       ? `${interviewerName}が取材する形式（${interviewerName}→${guestName}）`
       : `${interviewerName}と${guestName}が対等に話し合う形式`
 
-  // 登場する2人分の口調定義を lib/characters.ts の CAST_TALK_VOICE から取得する。
+  // 登場する2人分の口調定義を lib/characters.ts の CAST_TALK_VOICE（CHARACTER_PERSONAS から派生）から取得する。
   // 全員分を渡さないのは、登場しないキャストの口調が混入するリスクを避けるため。
   const castVoiceContext = buildCastTalkVoiceContext([theme.interviewer, theme.guest])
+  const castReactionsContext = buildCastTalkReactionsContext([theme.interviewer, theme.guest])
+  const castFactIntegrityContext = buildCastTalkFactIntegrityContext([theme.interviewer, theme.guest])
 
   const recentEdits = await fetchRecentEdits(supabase)
   const editFewShot = buildEditFewShot(recentEdits)
@@ -446,6 +459,10 @@ async function generateConversation(
 
 【口調の定義（必ず守ること）】
 ${castVoiceContext}
+
+${castReactionsContext}
+
+${castFactIntegrityContext}
 
 出力形式（JSONのみ）:
 {

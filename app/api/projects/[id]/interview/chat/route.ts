@@ -3,6 +3,7 @@ import { buildInterviewQualityContext } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
+import { fetchPriorMeetings, selectRelevantMemos } from '@/lib/interview-relationship'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
@@ -97,21 +98,6 @@ export async function POST(
 
   const userTurnCount = (history ?? []).filter(m => m.role === 'user').length
 
-  const messages = isGreeting
-    ? [{ role: 'user' as const, content: 'はじめまして。よろしくお願いします。' }]
-    : [
-        ...(history ?? []).map((m) => ({
-          role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-          content: m.content,
-        })),
-        ...(isPassQuestion
-          ? [{
-              role: 'user' as const,
-              content: '今の質問はパスしたいです。無理に同じ問いを続けず、これまでの話を踏まえて別の切り口から短く1つだけ質問してください。',
-            }]
-          : []),
-      ]
-
   // 取材先情報と調査結果をコンテキストに注入（project 取得後に並列実行）
   const [
     { data: profile },
@@ -119,6 +105,7 @@ export async function POST(
     { data: pastInterviews },
     { data: pastArticles },
     { data: competitorThemeRows },
+    priorMeetings,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -150,7 +137,35 @@ export async function POST(
       .from('competitor_analyses')
       .select('raw_data, competitors(url)')
       .eq('project_id', projectId),
+    fetchPriorMeetings({
+      supabase,
+      projectId,
+      interviewerType: interview.interviewer_type,
+      currentInterviewId: interviewId,
+    }),
   ])
+
+  const isReturning = priorMeetings.relationship === 'returning'
+  const relevantPastMemos = selectRelevantMemos(priorMeetings.pastMemos, interview.focus_theme, 2)
+
+  const greetingSeed = isReturning
+    ? '前回の続きから、今日のテーマで自然に始めてください。「はじめまして」とは言わないこと。'
+    : 'はじめまして。よろしくお願いします。'
+
+  const messages = isGreeting
+    ? [{ role: 'user' as const, content: greetingSeed }]
+    : [
+        ...(history ?? []).map((m) => ({
+          role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+          content: m.content,
+        })),
+        ...(isPassQuestion
+          ? [{
+              role: 'user' as const,
+              content: '今の質問はパスしたいです。無理に同じ問いを続けず、これまでの話を踏まえて別の切り口から短く1つだけ質問してください。',
+            }]
+          : []),
+      ]
 
   const auditRawData = (auditRow?.raw_data ?? null) as Record<string, unknown> | null
 
@@ -258,6 +273,9 @@ export async function POST(
     isGreeting,
     isPassQuestion,
     focusTheme: interview.focus_theme,
+    relationship: priorMeetings.relationship,
+    priorMeetingsCount: priorMeetings.priorMeetingsCount,
+    pastInterviewMemos: relevantPastMemos,
   })
   if (interviewQualityContext) {
     contextParts.push(interviewQualityContext)

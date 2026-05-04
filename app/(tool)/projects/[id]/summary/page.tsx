@@ -9,6 +9,7 @@ import { hasPendingInterviewSummary, trackPendingInterviewSummary } from '@/comp
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { showToast } from '@/lib/client/toast'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { InterviewReviewForm } from '@/components/interview-review-form'
 
 type SummaryData = {
   values: string[]
@@ -533,6 +534,12 @@ export default function SummaryPage() {
           </aside>
         </div>
       </div>
+
+      {canEdit && interviewId && (
+        <div className="mt-12">
+          <InterviewReviewForm projectId={projectId} interviewId={interviewId} />
+        </div>
+      )}
 
       {canEdit && <div className="mt-16 flex justify-end border-t border-[var(--border)] pt-6">
         <button

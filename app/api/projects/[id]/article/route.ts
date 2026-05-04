@@ -13,7 +13,7 @@ import { waitUntil } from '@vercel/functions'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
-import { buildDraftBody } from '@/lib/conversation-bubble-html'
+import { buildDraftBody, ensureConversationClosingByInterviewer } from '@/lib/conversation-bubble-html'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -128,6 +128,7 @@ async function saveArticle(input: {
   userEmail?: string | null
   theme?: string | null
   clientName?: string | null
+  clientAvatarUrl?: string | null
   interviewerDisplayName?: string | null
 }) {
   const titleMatch = input.content.match(/^#\s+(.+)/m)
@@ -199,6 +200,7 @@ async function saveArticle(input: {
           interviewerAvatarUrl,
           clientName: input.clientName ?? '事業者',
           clientDisplayName: input.clientName ?? '事業者',
+          userAvatarUrl: input.clientAvatarUrl ?? null,
         })
       : blogBodyRaw
     await input.supabase
@@ -318,7 +320,7 @@ export async function POST(
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('name')
+    .select('name, avatar_url')
     .eq('id', user.id)
     .single()
 
@@ -461,6 +463,8 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 発言者名は必ず \`**${charName}**\` か \`**${clientName}**\` のみを使うこと。括弧・役職・説明を付け加えた変形は不可
 - 導入文・インタビュアー紹介・「この記事でわかること」などの導入部に **太字フィールド名**: 値 の形式（例: **取材先**: XXX、**インタビュアー**: YYY）を使わないこと
 - 会話バブルとして表示されるのは \`**${charName}**:\` か \`**${clientName}**:\` で始まる行のみ
+- **会話バブルの最後の行は必ず \`**${charName}**:\` で始めること**。\`**${clientName}**:\` で会話を終わらせない
+- 最後のインタビュアー発言は、直前の${clientName}さんの回答を受けた感謝・所感・締めくくりの1〜2文にする。新たな質問で終わらせないこと
 
 ## 【重要】会話の最初のインタビュアー発言について
 会話バブルとして表示されるとき、インタビュアーの1コメント目は読者にとって最初の接触になります。唐突に質問から入ると文脈がないため、**最初のインタビュアー発言だけ**以下の構造にしてください。
@@ -523,7 +527,14 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を仕上げきれませんでした。少し待ってから、もう一度お試しください。' })
       return
     }
-    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null, clientName, interviewerDisplayName: char?.name ?? 'インタビュアー' })
+    if (articleType === 'conversation') {
+      fullText = ensureConversationClosingByInterviewer({
+        content: fullText,
+        interviewerName: charName,
+        clientName,
+      })
+    }
+    const saved = await saveArticle({ supabase: adminSupabase, projectId, interviewId, articleType, interviewerType, content: fullText, userEmail: user?.email, theme: theme ?? null, clientName, clientAvatarUrl: profile?.avatar_url ?? null, interviewerDisplayName: char?.name ?? 'インタビュアー' })
     if (!saved) {
       await markArticleGenerationFailed({ supabase: adminSupabase, projectId, interviewId, message: '記事を保存できませんでした。少し待ってから、もう一度お試しください。' })
       return

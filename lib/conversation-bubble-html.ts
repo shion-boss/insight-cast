@@ -3,6 +3,49 @@
 import { marked } from 'marked'
 
 const DEFAULT_THEME_COLOR = '#c2722a'
+const SPEAKER_LINE_RE = /^\*\*(.+?)\*\*[:：]\s*(.+)$/
+const FALLBACK_CLOSING_TEXT = '貴重なお話、ありがとうございました。'
+
+/**
+ * 会話形式記事の本文を検査し、会話バブルが回答者で終わっている場合に
+ * AIキャストの定型お礼を末尾に追記して返す。
+ *
+ * - 会話行（`**name**:`）が無い、もしくは既にインタビュアーで終わっている場合は
+ *   引数の文字列をそのまま返す（破壊的変更なし）。
+ * - 「会話区間の最後」の判定は、最初の会話行〜最後の会話行までを区間として扱い、
+ *   その最後の会話行が `clientName` だった場合だけ補完する。
+ * - 補完文は最後の会話行の **直後** に挿入する（その後ろに「## まとめ」等の
+ *   非会話セクションが続く構成を壊さない）。
+ */
+export function ensureConversationClosingByInterviewer(opts: {
+  content: string
+  interviewerName: string
+  clientName: string
+}): string {
+  const { content, interviewerName, clientName } = opts
+  if (!content) return content
+
+  const lines = content.split('\n')
+  let lastSpeakerIdx = -1
+  let lastSpeaker: string | null = null
+
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(SPEAKER_LINE_RE)
+    if (m && (m[1] === interviewerName || m[1] === clientName)) {
+      lastSpeakerIdx = i
+      lastSpeaker = m[1]
+    }
+  }
+
+  if (lastSpeakerIdx === -1) return content
+  if (lastSpeaker === interviewerName) return content
+
+  const closingLine = `**${interviewerName}**: ${FALLBACK_CLOSING_TEXT}`
+  const next = lines.slice(0, lastSpeakerIdx + 1)
+    .concat(closingLine)
+    .concat(lines.slice(lastSpeakerIdx + 1))
+  return next.join('\n')
+}
 
 function escapeHtml(str: string): string {
   return str
@@ -252,6 +295,7 @@ export function buildDraftBody(opts: {
   interviewerAvatarUrl?: string | null
   clientName: string
   clientDisplayName: string
+  userAvatarUrl?: string | null
   themeColor?: string
 }): string {
   const lines = opts.content.split('\n')
@@ -290,6 +334,7 @@ export function buildDraftBody(opts: {
     interviewerAvatarUrl: opts.interviewerAvatarUrl ?? null,
     clientName: opts.clientName,
     clientDisplayName: opts.clientDisplayName,
+    userAvatarUrl: opts.userAvatarUrl ?? null,
     themeColor: opts.themeColor,
     showIntro: true,
   })

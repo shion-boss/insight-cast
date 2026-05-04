@@ -252,7 +252,7 @@ export function ArticleExportPanel({
   }
 
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
       {/* キャラ吹き出しヘッダー */}
       <div className="flex items-center gap-3 px-5 pt-5 pb-4">
         <div className="relative flex-shrink-0">
@@ -599,23 +599,60 @@ const BLOCK_LABEL: Record<ArticleBlockKind, string> = {
 
 function ClipboardIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <rect x="9" y="9" width="13" height="13" rx="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
   )
 }
 
-function ClipboardHint({ copied }: { copied: boolean }) {
+function CheckIcon() {
   return (
-    <span className="relative inline-flex items-center justify-center min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0">
-      <ClipboardIcon />
-      {copied && (
-        <span className="pointer-events-none absolute z-20 top-1/2 -translate-y-1/2 right-full mr-2 rounded-full bg-[#1c1410] px-3 py-[3px] text-[10px] font-semibold tracking-wide text-white whitespace-nowrap shadow-lg ring-1 ring-white/10">
-          ✓ コピーしました
-        </span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  )
+}
+
+function useCardCopy() {
+  const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const copy = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => setCopied(false), 1500)
+    } catch { /* ignore */ }
+  }, [])
+  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }, [])
+  return { copied, copy }
+}
+
+// 全カード共通のヘッダー sticky 位置（グローバルヘッダー min-h-[64px] の直下に貼り付く）
+const STICKY_TOP = 'top-[64px]'
+
+function HeaderCopyButton({ copied, onClick, ariaLabel = 'コピー' }: {
+  copied: boolean
+  onClick: (e: React.MouseEvent) => void
+  ariaLabel?: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'}`}
+    >
+      {copied ? (
+        <>
+          <CheckIcon />
+          <span className="whitespace-nowrap">コピーしました</span>
+        </>
+      ) : (
+        <ClipboardIcon />
       )}
-    </span>
+    </button>
   )
 }
 
@@ -963,8 +1000,8 @@ function InterviewerIntroPanelCard({
 }) {
   const [embedIntro, setEmbedIntro] = useState(false)
   const [embedConv, setEmbedConv] = useState(false)
-  const [introCopied, setIntroCopied] = useState(false)
-  const [convCopied, setConvCopied] = useState(false)
+  const intro = useCardCopy()
+  const conv = useCardCopy()
   const labelText = interviewerLabel ? `AIインタビュアー · ${interviewerLabel}` : 'AIインタビュアー'
   const introText = `${interviewerDisplayName} / ${labelText}`
   const introMarkdown = `**${interviewerDisplayName}** / ${labelText}\n\nこの記事は [Insight Cast](https://insight-cast.jp) のAIインタビュアーが取材・構成しました。`
@@ -985,104 +1022,100 @@ function InterviewerIntroPanelCard({
 
   async function doIntroCopy() {
     const content = embedIntro ? getIntroHtml() : mode === 'markdown' ? introMarkdown : introText
-    try { await navigator.clipboard.writeText(content); setIntroCopied(true); setTimeout(() => setIntroCopied(false), 1500) } catch { /* ignore */ }
+    await intro.copy(content)
   }
   async function doConvCopy() {
     const content = embedConv ? getConvHtml() : mode === 'markdown' ? convMarkdown : convPlainText
-    try { await navigator.clipboard.writeText(content); setConvCopied(true); setTimeout(() => setConvCopied(false), 1500) } catch { /* ignore */ }
+    await conv.copy(content)
   }
 
   return (
     <>
       {/* インタビュアー紹介 */}
-      {showIntro !== false && <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
-        <div
-          role={isEditing ? undefined : 'button'}
-          tabIndex={isEditing ? undefined : 0}
-          onClick={isEditing ? undefined : () => doIntroCopy()}
-          onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doIntroCopy()}
-          className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
-        >
-          <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">インタビュアー紹介</div>
-              {!isEditing && (
-                <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
-                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
-                  埋め込みHTML
-                </button>
-              )}
-            </div>
-            {embedIntro ? (
-              <div
-                className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getIntroHtml(), PURIFY_OPTS) }}
-              />
-            ) : mode === 'markdown' ? (
-              <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
-            ) : (
-              <p className="text-sm text-[var(--text2)]">{introText}</p>
+      {showIntro !== false && <div
+        role={isEditing ? undefined : 'button'}
+        tabIndex={isEditing ? undefined : 0}
+        onClick={isEditing ? undefined : doIntroCopy}
+        onKeyDown={isEditing ? undefined : e => { if (e.key === 'Enter') doIntroCopy() }}
+        className={`group relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      >
+        <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] whitespace-nowrap">インタビュアー紹介</div>
+            {!isEditing && (
+              <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                埋め込みHTML
+              </button>
             )}
           </div>
           {!isEditing && (
-            <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
-              <button type="button" onClick={e => { e.stopPropagation(); doIntroCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
-                <ClipboardHint copied={introCopied} />
-              </button>
-            </div>
+            <span onClick={e => e.stopPropagation()} className="shrink-0">
+              <HeaderCopyButton copied={intro.copied} onClick={(e) => { e.stopPropagation(); doIntroCopy() }} />
+            </span>
+          )}
+        </div>
+        <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+          {embedIntro ? (
+            <div
+              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getIntroHtml(), PURIFY_OPTS) }}
+            />
+          ) : mode === 'markdown' ? (
+            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
+          ) : (
+            <p className="text-sm text-[var(--text2)]">{introText}</p>
           )}
         </div>
       </div>}
       {/* 会話本文 */}
-      <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
-        <div
-          role={isEditing ? undefined : 'button'}
-          tabIndex={isEditing ? undefined : 0}
-          onClick={isEditing ? undefined : () => doConvCopy()}
-          onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && doConvCopy()}
-          className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
-        >
-          <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">会話本文</div>
-              {!isEditing && (
-                <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
-                  className={`text-[10px] px-2 py-1 rounded border transition-colors ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
-                  埋め込みHTML
-                </button>
-              )}
-            </div>
-            {isEditing ? (
-              <ConversationBubbleEditor
-                initialExchanges={exchanges}
-                interviewerName={interviewerName}
-                clientName={clientName}
-                onExchangesChange={newExchanges => onEditConv?.(newExchanges)}
-                themeColor={themeColor ?? DEFAULT_THEME_COLOR}
-              />
-            ) : embedConv ? (
-              <div
-                className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getConvHtml(), PURIFY_OPTS) }}
-              />
-            ) : mode === 'markdown' ? (
-              <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {exchanges.map((e, i) => (
-                  <p key={i} className="text-sm leading-relaxed">
-                    <span className="block font-semibold text-[var(--text)]">{e.speaker}:</span>
-                    <span className="block text-[var(--text2)]">{e.content}</span>
-                  </p>
-                ))}
-              </div>
+      <div
+        role={isEditing ? undefined : 'button'}
+        tabIndex={isEditing ? undefined : 0}
+        onClick={isEditing ? undefined : doConvCopy}
+        onKeyDown={isEditing ? undefined : e => { if (e.key === 'Enter') doConvCopy() }}
+        className={`group relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      >
+        <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] whitespace-nowrap">会話本文</div>
+            {!isEditing && (
+              <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                埋め込みHTML
+              </button>
             )}
           </div>
           {!isEditing && (
-            <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
-              <button type="button" onClick={e => { e.stopPropagation(); doConvCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
-                <ClipboardHint copied={convCopied} />
-              </button>
+            <span onClick={e => e.stopPropagation()} className="shrink-0">
+              <HeaderCopyButton copied={conv.copied} onClick={(e) => { e.stopPropagation(); doConvCopy() }} />
+            </span>
+          )}
+        </div>
+        <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+          {isEditing ? (
+            <ConversationBubbleEditor
+              initialExchanges={exchanges}
+              interviewerName={interviewerName}
+              clientName={clientName}
+              onExchangesChange={newExchanges => onEditConv?.(newExchanges)}
+              themeColor={themeColor ?? DEFAULT_THEME_COLOR}
+            />
+          ) : embedConv ? (
+            <div
+              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm"
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getConvHtml(), PURIFY_OPTS) }}
+            />
+          ) : mode === 'markdown' ? (
+            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {exchanges.map((e, i) => (
+                <p key={i} className="text-sm leading-relaxed">
+                  <span className="block font-semibold text-[var(--text)]">{e.speaker}:</span>
+                  <span className="block text-[var(--text2)]">{e.content}</span>
+                </p>
+              ))}
             </div>
           )}
         </div>
@@ -1108,19 +1141,19 @@ function SectionGroupCard({
   mode?: 'text' | 'markdown'
 }) {
   return (
-    <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
-      <BlockCopyCardInner kind="heading" text={heading.text} markdownCopyText={heading.rawText} isEditing={isEditing} onEditDone={onEditHeading} mode={mode} />
+    <div className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/20' : ''}`}>
+      <BlockCopyCardInner kind="heading" text={heading.text} markdownCopyText={heading.rawText} isEditing={isEditing} onEditDone={onEditHeading} mode={mode} position="top" />
       {body && (
         <>
           <div className="border-t border-[var(--border)]" />
-          <BlockCopyCardInner kind="body" text={body.text} markdownCopyText={body.rawText} isEditing={isEditing} onEditDone={onEditBody} mode={mode} />
+          <BlockCopyCardInner kind="body" text={body.text} markdownCopyText={body.rawText} isEditing={isEditing} onEditDone={onEditBody} mode={mode} position="bottom" />
         </>
       )}
     </div>
   )
 }
 
-function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, onEditDone, mode }: {
+function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, onEditDone, mode, position }: {
   kind: ArticleBlockKind
   text: string
   markdownCopyText?: string
@@ -1128,8 +1161,9 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
   isEditing?: boolean
   onEditDone?: (oldText: string, newText: string) => void
   mode?: 'text' | 'markdown'
+  position?: 'top' | 'bottom' | 'standalone'
 }) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCardCopy()
   const [localText, setLocalText] = useState(text)
   const origRef = useRef(text)
 
@@ -1141,23 +1175,30 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
   async function handleCopy() {
     if (isEditing) return
     const copyContent = mode === 'markdown' && markdownCopyText ? markdownCopyText : text
-    try { await navigator.clipboard.writeText(copyContent); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
+    await copy(copyContent)
   }
+
+  const headerRounded = position === 'bottom' ? '' : 'rounded-t-[14px]'
 
   return (
     <div
       role={isEditing ? undefined : 'button'}
       tabIndex={isEditing ? undefined : 0}
       onClick={isEditing ? undefined : handleCopy}
-      onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleCopy()}
-      className={`${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      onKeyDown={isEditing ? undefined : e => { if (e.key === 'Enter') handleCopy() }}
+      className={`group relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
-      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
-            {label ?? BLOCK_LABEL[kind]}
-          </div>
+      <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 ${headerRounded} bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+          {label ?? BLOCK_LABEL[kind]}
         </div>
+        {!isEditing && (
+          <span onClick={e => e.stopPropagation()} className="shrink-0">
+            <HeaderCopyButton copied={copied} onClick={(e) => { e.stopPropagation(); handleCopy() }} />
+          </span>
+        )}
+      </div>
+      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
         {isEditing ? (
           <textarea
             value={localText}
@@ -1175,13 +1216,6 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
           </p>
         )}
       </div>
-      {!isEditing && (
-        <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
-          <button type="button" onClick={e => { e.stopPropagation(); handleCopy() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
-            <ClipboardHint copied={copied} />
-          </button>
-        </div>
-      )}
     </div>
   )
 }
@@ -1211,7 +1245,7 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode }: {
   onEditDone?: (oldText: string, newText: string) => void
   mode?: 'text' | 'markdown'
 }) {
-  const [copied, setCopied] = useState(false)
+  const { copied, copy } = useCardCopy()
   const [localText, setLocalText] = useState(text)
   const origRef = useRef(text)
 
@@ -1223,7 +1257,7 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode }: {
   async function handleClick() {
     if (isEditing) return
     const copyContent = mode === 'markdown' && rawText ? rawText : text
-    try { await navigator.clipboard.writeText(copyContent); setCopied(true); setTimeout(() => setCopied(false), 1500) } catch { /* ignore */ }
+    await copy(copyContent)
   }
 
   return (
@@ -1231,15 +1265,20 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode }: {
       role={isEditing ? undefined : 'button'}
       tabIndex={isEditing ? undefined : 0}
       onClick={isEditing ? undefined : handleClick}
-      onKeyDown={isEditing ? undefined : e => e.key === 'Enter' && handleClick()}
-      className={`rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
+      onKeyDown={isEditing ? undefined : e => { if (e.key === 'Enter') handleClick() }}
+      className={`group relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
-      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
-            {BLOCK_LABEL[kind]}
-          </div>
+      <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+          {BLOCK_LABEL[kind]}
         </div>
+        {!isEditing && (
+          <span onClick={e => e.stopPropagation()} className="shrink-0">
+            <HeaderCopyButton copied={copied} onClick={(e) => { e.stopPropagation(); handleClick() }} />
+          </span>
+        )}
+      </div>
+      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
         {isEditing ? (
           <textarea
             value={localText}
@@ -1257,13 +1296,6 @@ function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode }: {
           </p>
         )}
       </div>
-      {!isEditing && (
-        <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1" onClick={e => e.stopPropagation()}>
-          <button type="button" onClick={e => { e.stopPropagation(); handleClick() }} className="text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none">
-            <ClipboardHint copied={copied} />
-          </button>
-        </div>
-      )}
     </div>
   )
 }
