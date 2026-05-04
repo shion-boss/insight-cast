@@ -9,6 +9,7 @@ import { z } from 'zod'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
+const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 
 const BodySchema = z.object({
   interviewId: z.string().uuid().optional(),
@@ -46,6 +47,7 @@ export async function POST(
   const { interviewId, userMessage, respondentName, respondentIndustry } = parsed.data
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
+  const isContinueInterview = userMessage === CONTINUE_INTERVIEW_TOKEN
 
   let resolvedInterviewId = interviewId
 
@@ -88,7 +90,7 @@ export async function POST(
   }
 
   // ユーザーメッセージ保存
-  if (!isGreeting && !isPassQuestion) {
+  if (!isGreeting && !isPassQuestion && !isContinueInterview) {
     const { error: msgInsertError } = await supabase.from('interview_messages').insert({
       interview_id: resolvedInterviewId,
       role: 'user',
@@ -160,6 +162,12 @@ export async function POST(
           ? [{
               role: 'user' as const,
               content: '今の質問はパスしたいです。無理に同じ問いを続けず、これまでの話を踏まえて別の切り口から短く1つだけ質問してください。',
+            }]
+          : []),
+        ...(isContinueInterview
+          ? [{
+              role: 'user' as const,
+              content: '取材を続けたいです。先ほどのまとめ提案は一度取り下げて、これまで出てきた話の中からまだ深掘りできそうな1点を選び、別の角度から自然に1つだけ質問してください。前置きを1文添えて、ユーザーが答えやすい問い方にしてください。今回の返答末尾に [INTERVIEW_COMPLETE] は付けないでください。',
             }]
           : []),
       ]

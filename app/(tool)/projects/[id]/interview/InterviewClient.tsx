@@ -15,6 +15,7 @@ type SupportPost = { url: string; title: string; summary: string }
 const MAX_TURNS = 15
 const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
+const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 
 function getProgressLabel(turns: number) {
   if (turns < 3) return '話を聞かせてもらっています'
@@ -295,10 +296,21 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     router.push(`/projects/${projectId}/summary?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`)
   }
 
-  function handleContinue() {
+  async function handleContinue() {
     if (hasReachedTurnLimit) return
     setContinueCount((c) => c + 1)
     setShowComplete(false)
+
+    // 直前のまとめ提案メッセージを履歴から取り消す（インタビュアーの返答末尾に[INTERVIEW_COMPLETE]が付いていた発話）
+    setMessages((prev) => {
+      const last = [...prev].reverse().findIndex((m) => m.role === 'interviewer')
+      if (last === -1) return prev
+      const idx = prev.length - 1 - last
+      return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
+    })
+
+    // AIキャストに「続行を選んだので別角度から1問」を送って、新しい質問を引き出す
+    await sendMessageToAI(CONTINUE_INTERVIEW_TOKEN, { alreadyDisplayed: true })
     setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
