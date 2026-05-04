@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getMemberRole } from '@/lib/project-members'
 import Anthropic from '@anthropic-ai/sdk'
 import { NextRequest, NextResponse } from 'next/server'
 import { isFreePlanLocked } from '@/lib/plans'
@@ -13,7 +15,7 @@ import { buildBlogFreshnessMetrics, discoverNewBlogPosts, discoverSiteBlogPosts,
 import { fetchMarkdown } from '@/lib/firecrawl'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { getValidGscToken, fetchGscSearchData, buildGscPromptSection } from '@/lib/gsc'
-import type { PostgrestError } from '@supabase/supabase-js'
+import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -296,13 +298,21 @@ export async function GET(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
+  // owner / member（editor + viewer）に開放。プロジェクト単位の status を全員に同じ値で見せる。
   const { data: project } = await supabase
     .from('projects')
-    .select('status, hp_url')
+    .select('status, hp_url, user_id')
     .eq('id', id)
-    .eq('user_id', user.id)
     .is('deleted_at', null)
-    .single()
+    .maybeSingle()
+
+  if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  const isOwner = project.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+  if (!isOwner && memberRole === null) {
+    return NextResponse.json({ error: 'not found' }, { status: 404 })
+  }
 
   const { data: audit } = await supabase
     .from('hp_audits')
@@ -322,24 +332,23 @@ export async function GET(
     .select('competitor_id, raw_data')
     .eq('project_id', id)
 
-  let resolvedStatus = project?.status ?? 'analysis_pending'
-  const readiness = project
-    ? isProjectAnalysisReady({
-      project,
-      competitors: competitors ?? [],
-      audit,
-      competitorAnalyses: competitorAnalyses ?? [],
-    })
-    : { isReady: false }
+  let resolvedStatus = project.status ?? 'analysis_pending'
+  const readiness = isProjectAnalysisReady({
+    project,
+    competitors: competitors ?? [],
+    audit,
+    competitorAnalyses: competitorAnalyses ?? [],
+  })
 
   resolvedStatus = resolveProjectAnalysisStatus(resolvedStatus, readiness.isReady)
 
-  if (project?.status !== resolvedStatus) {
-    const { error: statusSyncError } = await supabase
+  if (project.status !== resolvedStatus) {
+    // projects UPDATE は owner-only の RLS なので admin client で同期する
+    const adminSupabase = createAdminClient()
+    const { error: statusSyncError } = await adminSupabase
       .from('projects')
       .update({ status: resolvedStatus })
       .eq('id', id)
-      .eq('user_id', user.id)
     if (statusSyncError) {
       console.error('[analyze/GET] failed to sync status:', statusSyncError.message)
     }
@@ -356,21 +365,32 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  if (await isFreePlanLocked(supabase, user.id)) {
+
+  // owner / editor を許可（viewer は不可）
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, hp_url, status, user_id')
+    .eq('id', id)
+    .maybeSingle()
+
+  if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  const isOwner = project.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+  const canEdit = isOwner || memberRole === 'editor'
+  if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+
+  // 課金プラン制限はオーナー契約状況で判定
+  if (await isFreePlanLocked(supabase, project.user_id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
   if (!(await checkRateLimit(user.id, '/api/projects/[id]/analyze')).allowed) {
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('id, hp_url, status, user_id')
-    .eq('id', id)
-    .eq('user_id', user.id)
-    .single()
-
-  if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })
+  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので
+  // 以降の writes は admin client で実行する
+  const adminSupabase = createAdminClient()
 
   const { data: existingAudit } = await supabase
     .from('hp_audits')
@@ -404,7 +424,7 @@ export async function POST(
   })
 
   if (hasFreshAudit && hasFreshCompetitorAnalyses) {
-    const { error: projectUpdateError } = await supabase
+    const { error: projectUpdateError } = await adminSupabase
       .from('projects')
       .update({ status: 'report_ready' })
       .eq('id', id)
@@ -428,11 +448,11 @@ export async function POST(
     }
   }
 
-  const { error: statusAnalyzingError } = await supabase.from('projects').update({ status: 'analyzing' }).eq('id', id)
+  const { error: statusAnalyzingError } = await adminSupabase.from('projects').update({ status: 'analyzing' }).eq('id', id)
   if (statusAnalyzingError) console.error('[analyze] failed to set status analyzing:', statusAnalyzingError.message)
 
   const analysisArgs = {
-    supabase,
+    supabase: adminSupabase,
     projectId: id,
     userId: project.user_id as string,
     hpUrl: project.hp_url,
@@ -464,7 +484,7 @@ async function runAnalysis({
   competitors,
   inputSignature,
 }: {
-  supabase: Awaited<ReturnType<typeof createClient>>
+  supabase: SupabaseClient
   projectId: string
   userId: string
   hpUrl: string
@@ -617,7 +637,7 @@ async function runAnalysis({
 }
 
 async function sendAnalysisCompleteEmail(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient,
   projectId: string,
   hpUrl: string,
 ) {

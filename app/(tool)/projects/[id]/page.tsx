@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { getCharacter } from '@/lib/characters'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
@@ -89,7 +90,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const canEdit = isOwner || memberRole === 'editor'
 
-  // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得
+  // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得。
+  // 調査データ（auditRow / competitors / competitor_analyses）はプロジェクト単位の情報なので
+  // 取得元を admin client に統一し、オーナー / editor / viewer 全員が同じ値を見るようにする。
+  // これにより再調査クールダウンの判定もメンバー間で一致する。
+  const adminSupabase = createAdminClient()
   const [
     { data: interviewRows },
     { data: auditRow },
@@ -103,15 +108,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .eq('project_id', id)
       .is('deleted_at', null)
       .order('created_at', { ascending: false }),
-    supabase
+    adminSupabase
       .from('hp_audits')
       .select('id, raw_data')
       .eq('project_id', id)
       .order('created_at', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase.from('competitors').select('id, url').eq('project_id', id),
-    supabase.from('competitor_analyses').select('competitor_id, raw_data').eq('project_id', id),
+    adminSupabase.from('competitors').select('id, url').eq('project_id', id),
+    adminSupabase.from('competitor_analyses').select('competitor_id, raw_data').eq('project_id', id),
     supabase
       .from('articles')
       .select('id, interview_id, article_type, title, created_at')
@@ -454,6 +459,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         hasAudit={!!auditRow}
         reanalysisNextAvailableAt={reanalysisNextAvailableAt}
         canEdit={canEdit}
+        isOwner={isOwner}
       />
 
       {/* 未作成テーマ一覧 */}

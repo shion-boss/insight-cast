@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getMemberRole } from '@/lib/project-members'
 import { NextRequest, NextResponse } from 'next/server'
 import { isFreePlanLocked } from '@/lib/plans'
 import { checkRateLimit } from '@/lib/api-usage'
@@ -15,15 +17,20 @@ export async function POST(
   const body = await req.json().catch(() => null)
   const force = Boolean(body?.force)
 
+  // owner / editor を許可（viewer は不可）
   const { data: project } = await supabase
     .from('projects')
-    .select('id, status')
+    .select('id, status, user_id')
     .eq('id', id)
-    .eq('user_id', user.id)
     .is('deleted_at', null)
-    .single()
+    .maybeSingle()
 
   if (!project) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  const isOwner = project.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
+  const canEdit = isOwner || memberRole === 'editor'
+  if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
   if (project.status === 'report_ready' && !force) {
     return NextResponse.json({ status: 'report_ready' })
@@ -32,8 +39,8 @@ export async function POST(
   // fetch_failed は force なしで再試行可能にする（audit が存在しないため削除不要）
   const isFetchFailed = project.status === 'fetch_failed'
 
-  // force 再調査の月1回制限（analyzing に書く前に弾く）
-  if (await isFreePlanLocked(supabase, user.id)) {
+  // 課金プラン制限はオーナーの契約状況で判定する
+  if (await isFreePlanLocked(supabase, project.user_id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
@@ -41,8 +48,11 @@ export async function POST(
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
 
+  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので admin client で実行
+  const adminSupabase = createAdminClient()
+
   if (force && !isFetchFailed) {
-    const { data: auditRow } = await supabase
+    const { data: auditRow } = await adminSupabase
       .from('hp_audits')
       .select('raw_data')
       .eq('project_id', id)
@@ -64,7 +74,7 @@ export async function POST(
   }
 
   if (force && !isFetchFailed) {
-    const { error: deleteAuditError } = await supabase
+    const { error: deleteAuditError } = await adminSupabase
       .from('hp_audits')
       .delete()
       .eq('project_id', id)
@@ -73,7 +83,7 @@ export async function POST(
       return NextResponse.json({ error: 'failed to clear hp audit' }, { status: 500 })
     }
 
-    const { error: deleteCompetitorError } = await supabase
+    const { error: deleteCompetitorError } = await adminSupabase
       .from('competitor_analyses')
       .delete()
       .eq('project_id', id)
@@ -83,11 +93,10 @@ export async function POST(
     }
   }
 
-  const { error } = await supabase
+  const { error } = await adminSupabase
     .from('projects')
     .update({ status: 'analyzing' })
     .eq('id', id)
-    .eq('user_id', user.id)
 
   if (error) {
     return NextResponse.json({ error: 'failed to mark analyzing' }, { status: 500 })

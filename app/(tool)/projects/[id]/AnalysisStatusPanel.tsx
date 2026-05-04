@@ -18,6 +18,7 @@ type Props = {
   hasAudit: boolean
   reanalysisNextAvailableAt: string | null
   canEdit?: boolean
+  isOwner?: boolean
 }
 
 function GscDisconnectModal({
@@ -133,6 +134,7 @@ export default function AnalysisStatusPanel({
   hasAudit,
   reanalysisNextAvailableAt,
   canEdit = true,
+  isOwner = canEdit,
 }: Props) {
   const [optimisticAnalyzing, setOptimisticAnalyzing] = useState(false)
   const [autoStartFired, setAutoStartFired] = useState(false)
@@ -326,14 +328,19 @@ export default function AnalysisStatusPanel({
               <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} autoStart={autoStartFired} onStarted={() => setOptimisticAnalyzing(true)} />
             ) : null
           )}
-          {canEdit && (
+          {isOwner && (
             <Link href={`/projects/${projectId}/competitors`} className={getButtonClass('secondary')}>
               競合設定を見直す
             </Link>
           )}
-          {canEdit && nextAvailableLabel && status === 'report_ready' && (
+          {nextAvailableLabel && status === 'report_ready' && (
             <p className="text-xs text-[var(--text3)]">
               次回の再調査は {nextAvailableLabel} 以降に行えます。
+            </p>
+          )}
+          {!canEdit && (
+            <p className="text-xs text-[var(--text3)]">
+              再調査は編集者またはオーナーが操作できます。
             </p>
           )}
         </div>
@@ -400,14 +407,16 @@ export default function AnalysisStatusPanel({
                     連携すると、検索データをもとにより詳しい調査ができます。
                   </p>
                   <p className="text-xs text-[var(--text3)]">
-                    ホームページを登録している Google アカウントで連携してください。
+                    {isOwner
+                      ? 'ホームページを登録している Google アカウントで連携してください。'
+                      : 'プロジェクトのオーナーが連携できます。'}
                   </p>
                 </div>
               )}
             </div>
           </div>
 
-          {canEdit && (
+          {isOwner && (
             <div className="flex-shrink-0">
               {gscStatus === 'loading' && (
                 <button type="button" disabled className={getButtonClass('secondary', 'text-sm')}>

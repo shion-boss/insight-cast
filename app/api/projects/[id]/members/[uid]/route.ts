@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PatchSchema = z.object({
@@ -9,6 +10,9 @@ const PatchSchema = z.object({
 /**
  * PATCH /api/projects/[id]/members/[uid]
  * メンバーの role 変更（オーナーのみ）
+ *
+ * オーナー確認後は admin client で更新する。RLS の USING 条件で 0 行更新になり
+ * 「成功扱いだけど反映されない」サイレント失敗を避けるため。
  */
 export async function PATCH(
   req: NextRequest,
@@ -36,15 +40,22 @@ export async function PATCH(
   }
   const { role } = parsed.data
 
-  const { error } = await supabase
+  // admin client で実行（オーナー確認済みのため安全）
+  const adminSupabase = createAdminClient()
+  const { data: updated, error } = await adminSupabase
     .from('project_members')
     .update({ role })
     .eq('project_id', projectId)
     .eq('user_id', uid)
+    .select('id')
 
   if (error) {
     console.error('[members/PATCH] update error:', error.message)
     return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+  }
+
+  if (!updated || updated.length === 0) {
+    return NextResponse.json({ error: 'member_not_found' }, { status: 404 })
   }
 
   return NextResponse.json({ ok: true })
@@ -73,7 +84,9 @@ export async function DELETE(
   if (!project) return new Response('Not found', { status: 404 })
   if (project.user_id !== user.id) return new Response('Forbidden', { status: 403 })
 
-  const { error } = await supabase
+  // admin client で実行（オーナー確認済みのため安全）
+  const adminSupabase = createAdminClient()
+  const { error } = await adminSupabase
     .from('project_members')
     .delete()
     .eq('project_id', projectId)

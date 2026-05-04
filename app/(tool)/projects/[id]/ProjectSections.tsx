@@ -53,28 +53,21 @@ export function PaginatedUncreatedThemes({
   canEdit?: boolean
 }) {
   const [page, setPage] = useState(1)
-  const [bodyMinHeight, setBodyMinHeight] = useState(0)
-  const bodyRef = useRef<HTMLDivElement>(null)
 
   const totalPages = Math.ceil(items.length / PER_PAGE)
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const placeholderCount = PER_PAGE - visible.length
 
-  // ページ描画後に実際の高さを計測し、これまでの最大値を minHeight として保持する。
-  // テーマ文字が長くて行高が増えても、最初のページの高さに固定できる。
-  useLayoutEffect(() => {
-    if (!bodyRef.current) return
-    const h = bodyRef.current.offsetHeight
-    setBodyMinHeight((prev) => Math.max(prev, h))
-  }, [visible])
+  // 行高は固定（min-h-[72px]）。テーマは truncate で1行に揃え、ページ間で行高が変わらないようにする。
+  const ROW_CLASS = 'flex items-center gap-3 px-5 py-3.5 min-h-[72px]'
 
   return (
     <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
-      <div ref={bodyRef} style={{ minHeight: bodyMinHeight || undefined }}>
+      <div>
         {visible.map((item, i) => (
-          <div key={i} className="flex items-center gap-3 px-5 py-3.5">
+          <div key={i} className={ROW_CLASS}>
             <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-            <p className="flex-1 text-sm text-[var(--text)]">{item.theme}</p>
+            <p className="flex-1 truncate text-sm text-[var(--text)]" title={item.theme}>{item.theme}</p>
             {canEdit && (
               <Link
                 href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
@@ -86,10 +79,10 @@ export function PaginatedUncreatedThemes({
           </div>
         ))}
         {Array.from({ length: placeholderCount }).map((_, i) => (
-          <div key={`ph-${i}`} aria-hidden className="flex items-center gap-3 px-5 py-3.5 invisible">
+          <div key={`ph-${i}`} aria-hidden className={`${ROW_CLASS} invisible`}>
             <div className="h-7 w-7 rounded-full" />
             <div className="flex-1" />
-            <div className="h-8 w-16 rounded" />
+            <div className="h-11 w-16 rounded" />
           </div>
         ))}
       </div>
