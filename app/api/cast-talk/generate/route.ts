@@ -248,7 +248,9 @@ ${pastList}
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 400,
     temperature: 0.7,
-    system: systemPrompt,
+    system: [
+      { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+    ],
     messages: [{ role: 'user', content: userMessage }],
   })
 
@@ -482,7 +484,9 @@ ${castFactIntegrityContext}
     model: 'claude-sonnet-4-6',
     max_tokens: 3000,
     temperature: 0.85,
-    system: systemPrompt,
+    system: [
+      { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+    ],
     messages: [{ role: 'user', content: userMessage }],
   })
 

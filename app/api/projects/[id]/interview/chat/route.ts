@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { buildInterviewQualityContext } from '@/lib/ai-quality'
+import { buildInterviewQualityContext, detectQuestionRepetition } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
@@ -352,7 +352,12 @@ export async function POST(
     stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: 512,
-      system: systemPrompt,
+      // システムプロンプトをキャッシュ対象にする（5分の ephemeral）。
+      // 共通インストラクション + persona + 動的コンテキストを丸ごと1ブロックでキャッシュ。
+      // 同一取材内の連続ターンや、別取材でも同じ persona+project の組み合わせなら 90% コスト減 + レイテンシ減。
+      system: [
+        { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+      ],
       messages,
     })
   } catch (err) {
@@ -393,13 +398,40 @@ export async function POST(
         }).catch(() => {})
       }
 
-      // AIメッセージ保存（[INTERVIEW_COMPLETE]マーカーは除いて保存）
-      const cleanText = fullText.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
+      // [INTERVIEW_COMPLETE] と [DISCOVERY: ...] マーカーを抽出してから本文をクリーン化
+      const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
+      const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
+      const cleanText = fullText
+        .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
+        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+        .trim()
+
+      // 繰り返し検出（モニタリング用ログ。streamingを壊さないため再生成はせず、後の合成ループ材料にする）
       if (cleanText) {
+        const recentInterviewerHistory = (history ?? [])
+          .filter((m) => m.role !== 'user')
+          .map((m) => ({ role: 'interviewer' as const, content: m.content }))
+        const repetitionCheck = detectQuestionRepetition({
+          history: recentInterviewerHistory,
+          candidate: cleanText,
+        })
+        if (repetitionCheck.repeated) {
+          console.warn('[interview/chat] question repetition detected', {
+            interviewId,
+            similarity: repetitionCheck.similarity.toFixed(2),
+            matchedTextHead: repetitionCheck.matchedText?.slice(0, 80),
+            candidateHead: cleanText.slice(0, 80),
+          })
+        }
+      }
+
+      if (cleanText) {
+        const meta = discoveryReason ? { discovery: { reason: discoveryReason } } : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: interviewId,
           role: 'interviewer',
           content: cleanText,
+          ...(meta ? { meta } : {}),
         })
         if (error) console.error('[interview/chat] failed to save message:', error.message)
       }

@@ -102,6 +102,61 @@ function looksAbstractResponse(text: string) {
   return ABSTRACT_HINT_PATTERN.test(normalized)
 }
 
+/**
+ * 文字列の bigram 集合を返す（簡易類似度用）。
+ */
+function bigrams(text: string): Set<string> {
+  const normalized = normalizePromptText(text, 400)
+  const grams = new Set<string>()
+  for (let i = 0; i < normalized.length - 1; i++) {
+    grams.add(normalized.slice(i, i + 2))
+  }
+  return grams
+}
+
+/**
+ * 直近のインタビュアー発言と、新しい候補発言の類似度を計算（Jaccard / bigram）。
+ * 0.0 = 全く違う、1.0 = 完全一致。0.55 以上で「ほぼ同じ問い」と判定する想定。
+ */
+export function computeQuestionSimilarity(prevText: string, candidateText: string): number {
+  const a = bigrams(prevText)
+  const b = bigrams(candidateText)
+  if (a.size === 0 || b.size === 0) return 0
+  let intersect = 0
+  for (const g of a) if (b.has(g)) intersect++
+  const union = a.size + b.size - intersect
+  if (union === 0) return 0
+  return intersect / union
+}
+
+/**
+ * 直近 N ターンのインタビュアー発言の中に、候補発言と高類似度のものがあれば true。
+ * 「同じ質問の繰り返し」を機械的に検出するためのヘルパー。
+ */
+export function detectQuestionRepetition(input: {
+  history: PromptConversationMessage[]
+  candidate: string
+  windowTurns?: number
+  threshold?: number
+}): { repeated: boolean; similarity: number; matchedText?: string } {
+  const window = input.windowTurns ?? 3
+  const threshold = input.threshold ?? 0.55
+  const interviewerTurns = input.history.filter(
+    (m) => m.role === 'interviewer' || m.role === 'assistant',
+  )
+  const recent = interviewerTurns.slice(-window)
+  let max = 0
+  let matched: string | undefined
+  for (const m of recent) {
+    const sim = computeQuestionSimilarity(m.content, input.candidate)
+    if (sim > max) {
+      max = sim
+      matched = m.content
+    }
+  }
+  return { repeated: max >= threshold, similarity: max, matchedText: matched }
+}
+
 export type PastInterviewMemo = {
   focusTheme?: string | null
   summary?: string | null
@@ -124,6 +179,15 @@ export function buildInterviewQualityContext(input: {
   const recentUserFacts = userMessages
     .slice(-3)
     .map((message) => normalizePromptText(message.content, 120))
+    .filter(Boolean)
+
+  // 直近のインタビュアー発言（重複回避のための材料）
+  const interviewerTurns = input.messages.filter(
+    (message) => message.role === 'interviewer' || message.role === 'assistant',
+  )
+  const recentInterviewerQuestions = interviewerTurns
+    .slice(-3)
+    .map((message) => normalizePromptText(message.content, 200))
     .filter(Boolean)
 
   const relationship = input.relationship ?? 'first'
@@ -176,6 +240,12 @@ export function buildInterviewQualityContext(input: {
     parts.push(`【直近で聞けたこと】
 ${recentUserFacts.map((fact) => `・${fact}`).join('\n')}
 上の内容と重複しないよう、次は一段深い質問に進んでください。`)
+  }
+
+  if (recentInterviewerQuestions.length > 0) {
+    parts.push(`【直近で自分が投げた問い（重複回避）】
+${recentInterviewerQuestions.map((q) => `・${q}`).join('\n')}
+これらと同じ角度・同じ言い回しの問いは出さない。同じ単語の繰り返し、同じ語尾、同じ前置きも避ける。違う切り口（時間軸 / 人 / 場所 / 行動 / 感情）に変える。`)
   }
 
   if (input.focusTheme) {

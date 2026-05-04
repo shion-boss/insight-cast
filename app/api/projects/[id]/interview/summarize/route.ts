@@ -10,6 +10,7 @@ import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
+import { generateAiSelfReview } from '@/lib/ai-self-review'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -173,6 +174,53 @@ ${conversation}
   revalidatePath('/interviews')
   revalidatePath(`/projects/${projectId}`)
   revalidatePath(`/projects/${projectId}/summary`)
+
+  // AI 自己レビューを生成して interview_reviews に保存（失敗しても本処理は続行）
+  // character-persona-feedback-loop の症例ソースになる。
+  try {
+    const aiReview = await generateAiSelfReview({
+      client: anthropic,
+      castName: charName,
+      castSpecialty: char?.specialty ?? '',
+      focusTheme: interview.focus_theme ?? null,
+      messages: messages.map((m) => ({
+        role: m.role === 'user' ? 'user' : 'interviewer',
+        content: m.content,
+      })),
+    })
+    if (aiReview) {
+      logApiUsage({
+        userId: user.id,
+        projectId,
+        route: 'interview/summarize#ai-self-review',
+        model: 'claude-haiku-4-5-20251001',
+        inputTokens: aiReview.usage.inputTokens,
+        outputTokens: aiReview.usage.outputTokens,
+      }).catch(() => {})
+
+      const { error: reviewError } = await adminSupabase
+        .from('interview_reviews')
+        .upsert(
+          {
+            interview_id: interviewId,
+            overall_score: aiReview.review.overall_score,
+            character_score: aiReview.review.character_score,
+            question_quality_score: aiReview.review.question_quality_score,
+            enjoyment_score: aiReview.review.enjoyment_score,
+            good_points: aiReview.review.good_points || null,
+            improve_points: aiReview.review.improve_points || null,
+            reviewer_user_id: null,
+            reviewer_role: 'ai_self',
+          },
+          { onConflict: 'interview_id', ignoreDuplicates: true },
+        )
+      if (reviewError) {
+        console.warn('[summarize#ai-self-review] upsert failed:', reviewError.message)
+      }
+    }
+  } catch (err) {
+    console.warn('[summarize#ai-self-review] generation failed:', err)
+  }
 
   return NextResponse.json({ summary: values, themes: nextThemes })
 }

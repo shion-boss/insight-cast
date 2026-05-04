@@ -230,7 +230,10 @@ ${
     stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-6',
       max_tokens: 512,
-      system: systemPrompt,
+      // システムプロンプトをキャッシュ対象にする（5分の ephemeral）
+      system: [
+        { type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } },
+      ],
       messages,
     })
   } catch (err) {
@@ -275,13 +278,20 @@ ${
         }).catch(() => {})
       }
 
-      // AIメッセージ保存
-      const cleanText = fullText.replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '').trim()
+      // AIメッセージ保存（[INTERVIEW_COMPLETE] と [DISCOVERY: ...] マーカーを除いて保存）
+      const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
+      const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
+      const cleanText = fullText
+        .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
+        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+        .trim()
       if (cleanText) {
+        const meta = discoveryReason ? { discovery: { reason: discoveryReason } } : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: resolvedInterviewId,
           role: 'interviewer',
           content: cleanText,
+          ...(meta ? { meta } : {}),
         })
         if (error) console.error('[ext chat] failed to save message:', error.message)
       }
