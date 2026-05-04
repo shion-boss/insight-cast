@@ -285,17 +285,20 @@ ${
       const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
       const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
       const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
+      const yesnoActive = /\[YESNO_QUESTION\]/.test(fullText)
       const cleanText = fullText
         .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
         .replace(/\[DISCOVERY:[^\]]+\]/g, '')
         .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
         .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
+        .replace(/\[YESNO_QUESTION\]/g, '')
         .trim()
       if (cleanText) {
         const metaObj: Record<string, unknown> = {}
         if (discoveryReason) metaObj.discovery = { reason: discoveryReason }
         if (draftSnippet) metaObj.draft_proposal = { snippet: draftSnippet }
         if (headlineSource) metaObj.headline_candidates = { source: headlineSource }
+        if (yesnoActive) metaObj.yesno = { active: true }
         const meta = Object.keys(metaObj).length > 0 ? metaObj : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: resolvedInterviewId,

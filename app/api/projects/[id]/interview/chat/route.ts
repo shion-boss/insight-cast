@@ -525,18 +525,20 @@ export async function POST(
         }).catch(() => {})
       }
 
-      // マーカー抽出: [INTERVIEW_COMPLETE] / [DISCOVERY: ...] / [DRAFT_PROPOSAL: ...] / [HEADLINE_CANDIDATES: ...]
+      // マーカー抽出: [INTERVIEW_COMPLETE] / [DISCOVERY: ...] / [DRAFT_PROPOSAL: ...] / [HEADLINE_CANDIDATES: ...] / [YESNO_QUESTION]
       const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
       const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
       const draftMatch = fullText.match(/\[DRAFT_PROPOSAL:\s*([^\]]+)\]/)
       const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
       const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
       const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
+      const yesnoActive = /\[YESNO_QUESTION\]/.test(fullText)
       const cleanText = fullText
         .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
         .replace(/\[DISCOVERY:[^\]]+\]/g, '')
         .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
         .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
+        .replace(/\[YESNO_QUESTION\]/g, '')
         .trim()
 
       // 繰り返し検出（モニタリング用ログ。streamingを壊さないため再生成はせず、後の合成ループ材料にする）
@@ -563,6 +565,7 @@ export async function POST(
         if (discoveryReason) metaObj.discovery = { reason: discoveryReason }
         if (draftSnippet) metaObj.draft_proposal = { snippet: draftSnippet }
         if (headlineSource) metaObj.headline_candidates = { source: headlineSource }
+        if (yesnoActive) metaObj.yesno = { active: true }
         const meta = Object.keys(metaObj).length > 0 ? metaObj : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: interviewId,

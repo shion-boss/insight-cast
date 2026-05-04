@@ -11,7 +11,7 @@ import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
 
 type AttachmentRef = { path: string; contentType: string; previewUrl: string }
-type Message = { role: 'user' | 'interviewer'; content: string; attachments?: AttachmentRef[] }
+type Message = { role: 'user' | 'interviewer'; content: string; attachments?: AttachmentRef[]; yesno?: boolean }
 type SupportPost = { url: string; title: string; summary: string }
 
 const MAX_TURNS = 15
@@ -135,13 +135,29 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         const { done, value } = await reader.read()
         if (done) break
         text += decoder.decode(value)
-        setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim())
+        // ストリーミング表示時もマーカー類は隠す
+        setStreamingMessage(
+          text
+            .replace(/\[INTERVIEW_COMPLETE\]/g, '')
+            .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+            .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
+            .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
+            .replace(/\[YESNO_QUESTION\]/g, '')
+            .trim(),
+        )
       }
 
       const interviewComplete = /\[INTERVIEW_COMPLETE\]/g.test(text)
-      const finalText = text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim()
+      const yesnoActive = /\[YESNO_QUESTION\]/.test(text)
+      const finalText = text
+        .replace(/\[INTERVIEW_COMPLETE\]/g, '')
+        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
+        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
+        .replace(/\[YESNO_QUESTION\]/g, '')
+        .trim()
       if (finalText) {
-        setMessages((prev) => [...prev, { role: 'interviewer', content: finalText }])
+        setMessages((prev) => [...prev, { role: 'interviewer', content: finalText, yesno: yesnoActive }])
       }
       setStreamingMessage('')
       setTimeout(() => textareaRef.current?.focus(), 50)
@@ -183,13 +199,22 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
         const { data: history } = await supabase
           .from('interview_messages')
-          .select('role, content')
+          .select('role, content, meta')
           .eq('interview_id', interviewId)
           .order('created_at', { ascending: true })
 
         if (history && history.length > 0) {
-          setMessages(history as Message[])
-          setUserTurns(history.filter(m => m.role === 'user').length)
+          // meta から yesno フラグを Message 型に展開（最新のインタビュアー発話だけが対象だが、全件持っておいて render 側で最新判定）
+          const enriched: Message[] = history.map((m) => {
+            const meta = (m as { meta?: { yesno?: { active?: boolean } } | null }).meta ?? null
+            return {
+              role: m.role as 'user' | 'interviewer',
+              content: m.content,
+              yesno: meta?.yesno?.active === true,
+            }
+          })
+          setMessages(enriched)
+          setUserTurns(enriched.filter(m => m.role === 'user').length)
         } else {
           const result = await sendMessageToAI(null)
           if (!result.ok) {
@@ -565,41 +590,73 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       {/* 会話ログ */}
       {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
       <div role="log" aria-label="インタビューの会話" aria-live="polite" tabIndex={0} className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-        {messages.map((msg, i) => (
-          <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.role === 'interviewer' && (
-              <CharacterAvatar
-                src={char?.icon48}
-                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={char?.emoji}
-                size={32}
-                className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
-              />
-            )}
-            <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
-              msg.role === 'interviewer'
-                ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
-                : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
-            }`}>
-              {msg.attachments && msg.attachments.length > 0 && (
-                <div className="mb-2 flex flex-wrap gap-1.5">
-                  {msg.attachments.map((att, j) => (
-                    <Image
-                      key={`${i}-${j}`}
-                      src={att.previewUrl}
-                      alt={`添付 ${j + 1}`}
-                      width={140}
-                      height={140}
-                      unoptimized
-                      className="max-h-36 max-w-[180px] rounded-lg object-cover"
-                    />
-                  ))}
+        {messages.map((msg, i) => {
+          const isLatestInterviewer = msg.role === 'interviewer' && i === messages.length - 1
+          const showYesNoButtons =
+            isLatestInterviewer &&
+            msg.yesno === true &&
+            !loading &&
+            !streamingMessage &&
+            !hasReachedTurnLimit
+          return (
+            <React.Fragment key={`${msg.role}-${i}`}>
+              <div className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {msg.role === 'interviewer' && (
+                  <CharacterAvatar
+                    src={char?.icon48}
+                    alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                    emoji={char?.emoji}
+                    size={32}
+                    className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
+                  />
+                )}
+                <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
+                  msg.role === 'interviewer'
+                    ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
+                    : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
+                }`}>
+                  {msg.attachments && msg.attachments.length > 0 && (
+                    <div className="mb-2 flex flex-wrap gap-1.5">
+                      {msg.attachments.map((att, j) => (
+                        <Image
+                          key={`${i}-${j}`}
+                          src={att.previewUrl}
+                          alt={`添付 ${j + 1}`}
+                          width={140}
+                          height={140}
+                          unoptimized
+                          className="max-h-36 max-w-[180px] rounded-lg object-cover"
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {msg.content || <span className="opacity-50">...</span>}
+                </div>
+              </div>
+              {/* モグロ用 はい/いいえ ボタン（最新の interviewer 発話に [YESNO_QUESTION] が付いていた時だけ） */}
+              {showYesNoButtons && (
+                <div className="flex gap-2 pl-10">
+                  <button
+                    type="button"
+                    onClick={() => void sendMessageToAI('はい')}
+                    disabled={loading}
+                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  >
+                    はい
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void sendMessageToAI('いいえ')}
+                    disabled={loading}
+                    className="border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg2)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                  >
+                    いいえ
+                  </button>
                 </div>
               )}
-              {msg.content || <span className="opacity-50">...</span>}
-            </div>
-          </div>
-        ))}
+            </React.Fragment>
+          )
+        })}
         {(loading || streamingMessage) && (
           <div className="flex gap-1">
             <CharacterAvatar

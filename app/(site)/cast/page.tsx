@@ -145,17 +145,17 @@ export default async function CastPage() {
           aside={
             <div className="grid grid-cols-3 gap-3">
               {CHARACTERS.map((char) => (
-                <div key={char.id} className={`rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3 ${!char.available ? 'opacity-70' : ''}`}>
+                <div key={char.id} className="rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3">
                   <CharacterAvatar
                     src={char.icon96}
-                    alt={char.available ? `${char.name}のアイコン` : `${char.name}のアイコン（準備中）`}
+                    alt={`${char.name}のアイコン`}
                     emoji={char.emoji}
                     size={64}
                     className="mx-auto"
                   />
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
                   <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">
-                    {char.available ? char.label : '準備中'}
+                    {char.available ? char.label : `${char.label}・期間限定`}
                   </div>
                 </div>
               ))}
@@ -308,11 +308,14 @@ export default async function CastPage() {
         {/* Addon Casts */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              追加キャスト（近日公開）
+              専門キャスト（期間限定で全プラン込み）
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">今後、追加購入で選べるようになる予定のキャストです。</p>
+            <p className="text-base text-[var(--text2)] mt-3">
+              この3キャストは、期間限定で <strong className="text-[var(--text)]">無料プランを含むすべてのプランで利用可能</strong> です。
+              将来は買い切り商品として切り替える予定ですが、<strong className="text-[var(--text)]">期間中に登録したアカウントはその後も継続的にプラン内で利用できます</strong>。
+            </p>
 
             <div className="mt-10 space-y-4">
               {addonCasts.map((char) => {
@@ -321,7 +324,7 @@ export default async function CastPage() {
                 return (
                   <div
                     key={char.id}
-                    className="grid gap-8 rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 opacity-75 lg:grid-cols-[200px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:p-10"
+                    className="grid gap-8 rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 lg:grid-cols-[200px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:p-10"
                   >
                     <div>
                       <div className="rounded-[18px] overflow-hidden bg-[var(--bg2)] aspect-square flex items-center justify-center">
@@ -330,12 +333,12 @@ export default async function CastPage() {
                           alt={`${char.name}のポートレート`}
                           width={200}
                           height={200}
-                          className="h-full w-full object-contain grayscale-[15%]"
+                          className="h-full w-full object-contain"
                           sizes="(min-width: 1024px) 200px, 100vw"
                         />
                       </div>
-                      <div className="mt-3 flex gap-2">
-                        <span className="bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">準備中</span>
+                      <div className="mt-3 flex gap-2 flex-wrap">
+                        <span className="bg-[var(--accent-l)] text-[var(--accent)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
                         <span className="bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">入力: {detail.input}</span>
                       </div>
                     </div>

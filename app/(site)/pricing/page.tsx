@@ -441,11 +441,14 @@ export default async function PricingPage({
         {/* Add-on Cast (buyout) */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Add-on Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              専門キャスト（提供予定）
+              専門キャスト（期間限定で全プラン込み）
             </h2>
-            <p className="text-base text-[var(--text2)] mt-3">追加キャストは現在準備中です。以下は正式提供時の予定価格です。</p>
+            <p className="text-base text-[var(--text2)] mt-3">
+              下記の3キャストは、現在 <strong className="text-[var(--text)]">無料プランを含むすべてのプランで利用可能</strong> です。
+              将来的に買い切り商品（予定価格は各カードに表記）として切り替える予定ですが、<strong className="text-[var(--text)]">期間中に登録したアカウントはその後も継続的にプラン内で利用できます</strong>。
+            </p>
             <div className="mt-10 grid gap-5 sm:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)
@@ -462,8 +465,9 @@ export default async function PricingPage({
                     <div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)] mb-0.5">{addon?.name ?? char.name}</div>
                       <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mb-2">{addon?.specialty ?? char.specialty}</div>
-                      <div className="text-[15px] font-bold text-[var(--text)] mt-2">{addon?.price ?? '—'}（買い切り予定）</div>
-                      <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--text3)] border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 rounded-full">準備中</span>
+                      <div className="text-[15px] font-bold text-[var(--text)] mt-2">いまは全プラン込み</div>
+                      <div className="text-[12px] text-[var(--text3)] mt-1">後日 {addon?.price ?? '—'}（買い切り）に移行予定</div>
+                      <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--accent)] border border-[var(--accent)] bg-[var(--accent-l)] px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
                     </div>
                   </div>
                 )

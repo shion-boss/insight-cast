@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CHARACTERS } from '@/lib/characters'
+import { canUseCast, getAccessibleCharacters, getLockedCharacters } from '@/lib/cast-access'
 import { createInterview } from '@/lib/actions/interviews'
 import {
   INTERVIEW_FOCUS_THEME_MAX_LENGTH,
@@ -56,7 +57,11 @@ export default async function InterviewerPage({
 
   const selectedCharacterId = getSearchParamValue(query.cast)
   const error = getSearchParamValue(query.error)
-  const selectedCharacter = CHARACTERS.find((char) => char.id === selectedCharacterId && char.available) ?? null
+  const userCreatedAt = user.created_at
+  const selectedCharacter =
+    CHARACTERS.find((char) => char.id === selectedCharacterId && canUseCast(char.id, userCreatedAt)) ?? null
+  const accessibleCharacters = getAccessibleCharacters(userCreatedAt)
+  const lockedCharacters = getLockedCharacters(userCreatedAt)
 
   const userPlan = await getUserPlan(supabase, user.id)
   const planLimits = getPlanLimits(userPlan)
@@ -247,7 +252,7 @@ export default async function InterviewerPage({
 
         {!selectedCharacter ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-8">
-            {CHARACTERS.filter((char) => char.available).map((char) => (
+            {accessibleCharacters.map((char) => (
               <Link
                 key={char.id}
                 href={`/projects/${id}/interviewer?cast=${char.id}`}
@@ -455,7 +460,7 @@ export default async function InterviewerPage({
         <div>
           <p className="text-xs text-[var(--text3)] mb-3">これから選べるキャスト</p>
           <div className="grid grid-cols-3 gap-3">
-            {CHARACTERS.filter(c => !c.available).map((char) => (
+            {lockedCharacters.map((char) => (
               <div key={char.id} className="p-4 bg-[var(--surface)] rounded-2xl border border-[var(--border)] opacity-40">
                 <CharacterAvatar
                   src={char.icon48}

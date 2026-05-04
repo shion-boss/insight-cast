@@ -199,7 +199,7 @@ export default function AboutPage() {
             {CHARACTERS.map((char) => (
               <div
                 key={char.id}
-                className={`bg-[var(--bg)] rounded-[4px] flex flex-col gap-0${!char.available ? ' opacity-60' : ''}`}
+                className="bg-[var(--bg)] rounded-[4px] flex flex-col gap-0"
                 style={{ padding: '20px' }}
               >
                 <div className="flex items-center gap-4 mb-4">
@@ -220,13 +220,9 @@ export default function AboutPage() {
                     )}
                   </div>
                   <span
-                    className={`text-[10px] font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start ${
-                      char.available
-                        ? 'text-[var(--accent)] border-[rgba(194,114,42,0.3)] bg-[rgba(194,114,42,0.06)]'
-                        : 'text-[#b8a898] border-[var(--border)] bg-transparent'
-                    }`}
+                    className="text-[10px] font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start text-[var(--accent)] border-[rgba(194,114,42,0.3)] bg-[rgba(194,114,42,0.06)]"
                   >
-                    {char.available ? '取材中' : '準備中'}
+                    {char.available ? '取材中' : '期間限定で取材中'}
                   </span>
                 </div>
                 {CAST_BENEFITS[char.id] && (
