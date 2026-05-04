@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { generateAiSelfReview } from '@/lib/ai-self-review'
 import { estimateRespondentProfile, upsertRespondentProfile } from '@/lib/respondent-profile'
+import { extractIndustryTerms, upsertIndustryTerms } from '@/lib/industry-terms'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -175,6 +176,36 @@ ${conversation}
   revalidatePath('/interviews')
   revalidatePath(`/projects/${projectId}`)
   revalidatePath(`/projects/${projectId}/summary`)
+
+  // 業界用語を抽出して industry_terms に蓄積（失敗しても本処理は続行）
+  try {
+    const termsResult = await extractIndustryTerms({
+      client: anthropic,
+      castName: charName,
+      messages: messages.map((m) => ({
+        role: m.role === 'user' ? 'user' : 'interviewer',
+        content: m.content,
+      })),
+    })
+    if (termsResult && termsResult.terms.length > 0) {
+      logApiUsage({
+        userId: user.id,
+        projectId,
+        route: 'interview/summarize#industry-terms',
+        model: 'claude-haiku-4-5-20251001',
+        inputTokens: termsResult.usage.inputTokens,
+        outputTokens: termsResult.usage.outputTokens,
+      }).catch(() => {})
+      await upsertIndustryTerms({
+        supabase: adminSupabase,
+        projectId,
+        interviewId,
+        terms: termsResult.terms,
+      })
+    }
+  } catch (err) {
+    console.warn('[summarize#industry-terms] extraction failed:', err)
+  }
 
   // 回答者プロファイルを推定して respondent_profiles に upsert（失敗しても本処理は続行）
   try {

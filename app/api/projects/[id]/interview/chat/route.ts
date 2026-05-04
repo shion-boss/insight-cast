@@ -5,6 +5,8 @@ import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { fetchPriorMeetings, selectRelevantMemos } from '@/lib/interview-relationship'
 import { fetchRespondentProfile, formatProfileForPrompt } from '@/lib/respondent-profile'
+import { buildIndustryHintContext } from '@/lib/industry-hints'
+import { fetchTopIndustryTerms, formatIndustryTermsForPrompt } from '@/lib/industry-terms'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
@@ -116,6 +118,7 @@ export async function POST(
     { data: competitorThemeRows },
     priorMeetings,
     respondentProfile,
+    industryTerms,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -160,6 +163,11 @@ export async function POST(
           projectId,
         })
       : Promise.resolve(null),
+    fetchTopIndustryTerms({
+      supabase,
+      projectId,
+      limit: 5,
+    }),
   ])
 
   const isReturning = priorMeetings.relationship === 'returning'
@@ -254,6 +262,18 @@ export async function POST(
         `【取材先の業界・地域】\n${industryParts.join('\n')}\n` +
         `これは事業者または事前調査で把握した前提情報です。「業界では一般的に〜」と断言せず、業種・地域柄ありそうな話を引き出すヒントとして使ってください。事業者の語りと違う場合は語りを優先します。`
       )
+    }
+
+    // 業種別の深掘りヒント
+    const industryHint = buildIndustryHintContext(projectData.industry_memo)
+    if (industryHint) {
+      contextParts.push(industryHint)
+    }
+
+    // 過去取材で蓄積した業界用語辞書
+    const termsBlock = formatIndustryTermsForPrompt(industryTerms ?? [])
+    if (termsBlock) {
+      contextParts.push(termsBlock)
     }
   }
   const focusThemeContext = buildInterviewFocusThemeContext(interview.focus_theme_mode, interview.focus_theme)
