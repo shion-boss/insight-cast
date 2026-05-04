@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getMemberRole } from '@/lib/project-members'
 import { getStoredSiteBlogPosts, selectRelevantBlogPosts } from '@/lib/site-blog-support'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -37,9 +38,13 @@ export async function POST(
 
   const joinedProject = interview.interviews_project as { user_id: string } | { user_id: string }[] | null
   const projectOwner = Array.isArray(joinedProject) ? (joinedProject[0] ?? null) : joinedProject
-  if (projectOwner?.user_id !== user.id) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
-  }
+  if (!projectOwner) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  // owner OR editor を許可（読み取りのみで書き込みなし）
+  const isOwner = projectOwner.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, projectId, user.id)
+  const canEdit = isOwner || memberRole === 'editor'
+  if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
   const { data: auditRow } = await supabase
     .from('hp_audits')

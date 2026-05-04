@@ -3,6 +3,8 @@ import Anthropic from '@anthropic-ai/sdk'
 import { extractJsonBlock, formatConversationForPrompt, normalizeUniqueStringList } from '@/lib/ai-quality'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getMemberRole } from '@/lib/project-members'
 import { getCharacter } from '@/lib/characters'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
@@ -44,9 +46,13 @@ export async function POST(
 
   const joinedProject = interview.interviews_project as { user_id: string; name: string | null; hp_url: string | null } | { user_id: string; name: string | null; hp_url: string | null }[] | null
   const projectInfo = Array.isArray(joinedProject) ? (joinedProject[0] ?? null) : joinedProject
-  if (projectInfo?.user_id !== user.id) {
-    return NextResponse.json({ error: 'forbidden' }, { status: 403 })
-  }
+  if (!projectInfo) return NextResponse.json({ error: 'not found' }, { status: 404 })
+
+  // owner OR editor を許可
+  const isOwner = projectInfo.user_id === user.id
+  const memberRole = isOwner ? null : await getMemberRole(supabase, projectId, user.id)
+  const canEdit = isOwner || memberRole === 'editor'
+  if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
   if (interview.summary) {
     return NextResponse.json({ summary: interview.summary, themes: interview.themes })
@@ -145,7 +151,9 @@ ${conversation}
     ? themes
     : values.slice(0, 3)
 
-  const { error: updateError } = await supabase.from('interviews').update({
+  // interviews UPDATE は owner-only RLS なので admin client で書き込む
+  const adminSupabase = createAdminClient()
+  const { error: updateError } = await adminSupabase.from('interviews').update({
     status: 'completed',
     summary: values.map((value) => `・${value}`).join('\n'),
     themes: nextThemes,
@@ -159,7 +167,7 @@ ${conversation}
     return NextResponse.json({ error: 'db_error' }, { status: 500 })
   }
 
-  await syncProjectContentStatus(supabase, projectId)
+  await syncProjectContentStatus(adminSupabase, projectId)
   revalidatePath('/dashboard')
   revalidatePath('/projects')
   revalidatePath('/interviews')

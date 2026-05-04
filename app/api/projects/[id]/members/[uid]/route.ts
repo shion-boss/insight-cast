@@ -86,15 +86,20 @@ export async function DELETE(
 
   // admin client で実行（オーナー確認済みのため安全）
   const adminSupabase = createAdminClient()
-  const { error } = await adminSupabase
+  const { data: deleted, error } = await adminSupabase
     .from('project_members')
     .delete()
     .eq('project_id', projectId)
     .eq('user_id', uid)
+    .select('id')
 
   if (error) {
     console.error('[members/DELETE] delete error:', error.message)
     return NextResponse.json({ error: 'internal_error' }, { status: 500 })
+  }
+
+  if (!deleted || deleted.length === 0) {
+    return NextResponse.json({ error: 'member_not_found' }, { status: 404 })
   }
 
   return NextResponse.json({ ok: true })
