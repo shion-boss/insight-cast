@@ -340,7 +340,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
   /**
    * ハル限定: 画像をアップロードして添付候補に追加する。
-   * Supabase Storage の interview-attachments バケットに保存し、送信時にメッセージと一緒にAPIに送る。
+   * サーバー API（/api/projects/[id]/interviews/[interviewId]/attach）経由でアップロードする。
+   * これにより Storage RLS の罠を避け、サーバー側で admin client を使って確実に保存できる。
    */
   async function handleAttachmentUpload(file: File) {
     if (loading || uploadingAttachment) return
@@ -359,19 +360,27 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     setUploadingAttachment(true)
     setSubmitError(null)
     try {
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().slice(0, 5)
-      const uid = (typeof crypto !== 'undefined' && 'randomUUID' in crypto) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`
-      const path = `${projectId}/${interviewId}/${uid}.${ext}`
-      const { error } = await supabaseRef.current.storage
-        .from('interview-attachments')
-        .upload(path, file, { contentType: file.type, upsert: false })
-      if (error) {
-        setSubmitError('画像のアップロードに失敗しました。もう一度お試しください。')
-        console.error('[interview] upload failed', error)
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch(`/api/projects/${projectId}/interviews/${interviewId}/attach`, {
+        method: 'POST',
+        body: fd,
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        const msg = typeof body?.message === 'string'
+          ? body.message
+          : '画像のアップロードに失敗しました。もう一度お試しください。'
+        setSubmitError(msg)
+        console.error('[interview] upload failed', { status: res.status, body })
         return
       }
+      const data = await res.json() as { path: string; contentType: string }
       const previewUrl = URL.createObjectURL(file)
-      setPendingAttachments((prev) => [...prev, { path, contentType: file.type, previewUrl }])
+      setPendingAttachments((prev) => [...prev, { path: data.path, contentType: data.contentType, previewUrl }])
+    } catch (err) {
+      console.error('[interview] upload error', err)
+      setSubmitError('画像のアップロードに失敗しました。もう一度お試しください。')
     } finally {
       setUploadingAttachment(false)
     }
