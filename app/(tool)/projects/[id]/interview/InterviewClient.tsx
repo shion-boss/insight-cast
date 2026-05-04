@@ -42,7 +42,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const router = useRouter()
   const supabaseRef = useRef(createClient())
   const backHref = from === 'dashboard' ? '/dashboard' : `/projects/${projectId}`
-  const backLabel = from === 'dashboard' ? '← ダッシュボード' : '← プロジェクトの管理'
+  const backLabel = from === 'dashboard' ? 'ダッシュボード' : 'プロジェクトの管理'
 
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -547,9 +547,10 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   }, [])
 
   return (
-    <div className="bg-[var(--bg)] h-[100dvh] lg:pl-[236px] flex flex-col overflow-hidden">
+    <div className="bg-[var(--bg)] h-[100dvh] flex flex-col overflow-hidden">
       {/* ヘッダー */}
-      <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-3 sm:px-6 gap-2 sm:gap-4 flex-shrink-0">
+      <header className="bg-[var(--surface)] border-b border-[var(--border)] flex-shrink-0">
+        <div className="mx-auto h-16 flex items-center max-w-6xl px-4 sm:px-6 gap-2 sm:gap-4">
         <button
           type="button"
           onClick={() => router.push(backHref)}
@@ -629,11 +630,13 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         >
           インタビューを終わらせる
         </button>
+        </div>
       </header>
 
       {/* 進捗バー */}
-      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-3 sm:px-6 py-2 sm:py-3 flex-shrink-0">
-        <div className="max-w-2xl mx-auto">
+      <div className="bg-[var(--surface)] border-b border-[var(--border)] flex-shrink-0">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-2 sm:py-3">
+          <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
             <span className="text-xs text-[var(--text3)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
@@ -651,6 +654,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
             />
           </div>
+        </div>
         </div>
       </div>
 
