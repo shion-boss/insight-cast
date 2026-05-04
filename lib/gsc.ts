@@ -164,6 +164,306 @@ export async function fetchGscSearchData(
 }
 
 // ----------------------------------------------------------------
+// GSC 直近30日サマリー（admin ダッシュボード用）
+// ----------------------------------------------------------------
+
+export type GscMonthlySummary = {
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+}
+
+/**
+ * GSC の直近30日合計（クリック / 表示 / 平均CTR / 平均順位）を取得する。
+ * 失敗時は null を返す。
+ */
+export async function fetchGscMonthlySummary(
+  accessToken: string,
+  siteUrl: string,
+): Promise<GscMonthlySummary | null> {
+  const endDate = new Date()
+  const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
+  const fmt = (d: Date) => d.toISOString().slice(0, 10)
+
+  const res = await fetch(
+    `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        startDate: fmt(startDate),
+        endDate: fmt(endDate),
+        dimensions: [],
+      }),
+      signal: AbortSignal.timeout(10000),
+    },
+  )
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    console.error('[gsc] monthly summary error:', res.status, text)
+    return null
+  }
+
+  const data = (await res.json()) as {
+    rows?: Array<{ clicks: number; impressions: number; ctr: number; position: number }>
+  }
+  const row = data.rows?.[0]
+  if (!row) return { clicks: 0, impressions: 0, ctr: 0, position: 0 }
+
+  return {
+    clicks: row.clicks,
+    impressions: row.impressions,
+    ctr: row.ctr,
+    position: row.position,
+  }
+}
+
+// ----------------------------------------------------------------
+// admin ダッシュボード用: 期間別の詳細データ（TOP10 クエリ / ページ / 掲載クエリ数）
+// ----------------------------------------------------------------
+
+export type GscQueryRow = {
+  query: string
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+}
+
+export type GscPageRow = {
+  page: string
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+}
+
+export type GscDetail = {
+  summary: GscMonthlySummary
+  totalQueryCount: number
+  topQueries: GscQueryRow[]
+  topPages: GscPageRow[]
+  startDate: string
+  endDate: string
+}
+
+/**
+ * 期間内の GSC データをまとめて取得する。
+ * - 全体合計（summary）
+ * - 上位10クエリ
+ * - 上位10ページ
+ * - 期間内に少なくとも1表示があったクエリ総数
+ */
+export async function fetchGscDetail(
+  accessToken: string,
+  siteUrl: string,
+  options: { startDate: Date; endDate: Date },
+): Promise<GscDetail | null> {
+  const fmt = (d: Date) => d.toISOString().slice(0, 10)
+  const startDate = fmt(options.startDate)
+  const endDate = fmt(options.endDate)
+
+  const baseBody = { startDate, endDate }
+  const url = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  }
+
+  const [summaryRes, queryRes, pageRes, queryCountRes] = await Promise.all([
+    // 期間合計
+    fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...baseBody, dimensions: [] }),
+      signal: AbortSignal.timeout(15000),
+    }),
+    // TOP10 クエリ
+    fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...baseBody, dimensions: ['query'], rowLimit: 10 }),
+      signal: AbortSignal.timeout(15000),
+    }),
+    // TOP10 ページ
+    fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...baseBody, dimensions: ['page'], rowLimit: 10 }),
+      signal: AbortSignal.timeout(15000),
+    }),
+    // 掲載クエリ総数のために rowLimit を大きく取る（25000 が GSC 上限）
+    fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ ...baseBody, dimensions: ['query'], rowLimit: 25000 }),
+      signal: AbortSignal.timeout(15000),
+    }),
+  ])
+
+  if (!summaryRes.ok || !queryRes.ok || !pageRes.ok || !queryCountRes.ok) {
+    const errRes = !summaryRes.ok ? summaryRes : !queryRes.ok ? queryRes : !pageRes.ok ? pageRes : queryCountRes
+    const text = await errRes.text().catch(() => '')
+    console.error('[gsc] detail error:', errRes.status, text)
+    return null
+  }
+
+  type Row = { keys?: string[]; clicks: number; impressions: number; ctr: number; position: number }
+
+  const [summaryData, queryData, pageData, queryCountData] = await Promise.all([
+    summaryRes.json() as Promise<{ rows?: Row[] }>,
+    queryRes.json() as Promise<{ rows?: Row[] }>,
+    pageRes.json() as Promise<{ rows?: Row[] }>,
+    queryCountRes.json() as Promise<{ rows?: Row[] }>,
+  ])
+
+  const summaryRow = summaryData.rows?.[0]
+  const summary: GscMonthlySummary = summaryRow
+    ? {
+        clicks: summaryRow.clicks,
+        impressions: summaryRow.impressions,
+        ctr: summaryRow.ctr,
+        position: summaryRow.position,
+      }
+    : { clicks: 0, impressions: 0, ctr: 0, position: 0 }
+
+  const topQueries: GscQueryRow[] = (queryData.rows ?? []).map((r) => ({
+    query: r.keys?.[0] ?? '',
+    clicks: r.clicks,
+    impressions: r.impressions,
+    ctr: r.ctr,
+    position: r.position,
+  }))
+
+  const topPages: GscPageRow[] = (pageData.rows ?? []).map((r) => ({
+    page: r.keys?.[0] ?? '',
+    clicks: r.clicks,
+    impressions: r.impressions,
+    ctr: r.ctr,
+    position: r.position,
+  }))
+
+  return {
+    summary,
+    totalQueryCount: queryCountData.rows?.length ?? 0,
+    topQueries,
+    topPages,
+    startDate,
+    endDate,
+  }
+}
+
+// ----------------------------------------------------------------
+// admin ダッシュボード用: 記事 × クエリ（ブログ各記事の検索ヒットキーワード）
+// ----------------------------------------------------------------
+
+export type GscArticleEntry = {
+  page: string
+  totalClicks: number
+  totalImpressions: number
+  queries: GscQueryRow[]
+}
+
+/**
+ * 期間内の GSC データを page × query の2軸で取得し、
+ * pathPrefix にマッチするページごとに上位クエリをまとめて返す。
+ *
+ * 例: pathPrefix='/blog/' でブログ記事のみ抽出。
+ */
+export async function fetchGscArticleQueries(
+  accessToken: string,
+  siteUrl: string,
+  options: {
+    startDate: Date
+    endDate: Date
+    pathPrefix?: string
+    maxArticles?: number
+    queriesPerArticle?: number
+  },
+): Promise<GscArticleEntry[] | null> {
+  const fmt = (d: Date) => d.toISOString().slice(0, 10)
+  const startDate = fmt(options.startDate)
+  const endDate = fmt(options.endDate)
+  const pathPrefix = options.pathPrefix
+  const maxArticles = options.maxArticles ?? 10
+  const queriesPerArticle = options.queriesPerArticle ?? 5
+
+  const url = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      startDate,
+      endDate,
+      dimensions: ['page', 'query'],
+      rowLimit: 5000,
+    }),
+    signal: AbortSignal.timeout(20000),
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    console.error('[gsc] article queries error:', res.status, text)
+    return null
+  }
+
+  const data = (await res.json()) as {
+    rows?: Array<{ keys?: string[]; clicks: number; impressions: number; ctr: number; position: number }>
+  }
+
+  const rows = data.rows ?? []
+
+  // page ごとにグルーピング
+  const byPage = new Map<string, { totalClicks: number; totalImpressions: number; queries: GscQueryRow[] }>()
+  for (const row of rows) {
+    const page = row.keys?.[0] ?? ''
+    const query = row.keys?.[1] ?? ''
+    if (!page) continue
+
+    if (pathPrefix) {
+      let path = page
+      try { path = new URL(page).pathname } catch { /* ignore */ }
+      if (!path.startsWith(pathPrefix)) continue
+    }
+
+    const entry = byPage.get(page) ?? { totalClicks: 0, totalImpressions: 0, queries: [] }
+    entry.totalClicks += row.clicks
+    entry.totalImpressions += row.impressions
+    entry.queries.push({
+      query,
+      clicks: row.clicks,
+      impressions: row.impressions,
+      ctr: row.ctr,
+      position: row.position,
+    })
+    byPage.set(page, entry)
+  }
+
+  const articles: GscArticleEntry[] = Array.from(byPage.entries())
+    .map(([page, e]) => ({
+      page,
+      totalClicks: e.totalClicks,
+      totalImpressions: e.totalImpressions,
+      queries: [...e.queries]
+        .sort((a, b) => b.clicks - a.clicks || b.impressions - a.impressions)
+        .slice(0, queriesPerArticle),
+    }))
+    .sort((a, b) => b.totalClicks - a.totalClicks || b.totalImpressions - a.totalImpressions)
+    .slice(0, maxArticles)
+
+  return articles
+}
+
+// ----------------------------------------------------------------
 // Supabase から有効なトークンを取得
 // ----------------------------------------------------------------
 

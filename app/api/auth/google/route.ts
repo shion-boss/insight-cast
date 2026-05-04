@@ -48,7 +48,10 @@ export async function GET(req: NextRequest) {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: 'code',
-    scope: 'https://www.googleapis.com/auth/webmasters.readonly',
+    scope: [
+      'https://www.googleapis.com/auth/webmasters.readonly',
+      'https://www.googleapis.com/auth/analytics.readonly',
+    ].join(' '),
     access_type: 'offline',
     prompt: 'consent', // 必ず refresh_token を返させる
     login_hint: user.email ?? '', // ログイン中のアカウントを Google に伝えて誤選択を防ぐ
