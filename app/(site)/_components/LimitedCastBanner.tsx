@@ -15,10 +15,16 @@ export function LimitedCastBanner() {
   const mogro = getCharacter('mogro')
   const hal = getCharacter('hal')
 
+  // 画像サイズはキャラ間で統一する。元のデザイン (150/130/140) は意図的な
+  // 高さ違いだが、実キャラ画像（portrait-half.png）は各キャラで頭の大きさや
+  // ポーズが微妙に違うため、サイズを揃えた方が「会社が運営しているチーム」
+  // という世界観に合う。
+  const PC_SIZE = 144
+  const SP_SIZE = 100
   const characters = [
-    { id: 'cocco', name: cocco?.name ?? 'コッコ', portrait: cocco?.portrait, price: '¥9,800', pcSize: 150, spSize: 110 },
-    { id: 'mogro', name: mogro?.name ?? 'モグロ', portrait: mogro?.portrait, price: '¥9,800', pcSize: 130, spSize: 96 },
-    { id: 'hal', name: hal?.name ?? 'ハル', portrait: hal?.portrait, price: '¥14,800', pcSize: 140, spSize: 104 },
+    { id: 'cocco', name: cocco?.name ?? 'コッコ', portrait: cocco?.portrait, price: '¥9,800' },
+    { id: 'mogro', name: mogro?.name ?? 'モグロ', portrait: mogro?.portrait, price: '¥9,800' },
+    { id: 'hal', name: hal?.name ?? 'ハル', portrait: hal?.portrait, price: '¥14,800' },
   ] as const
 
   return (
@@ -64,9 +70,9 @@ export function LimitedCastBanner() {
             sizeClass="text-[12px]"
           />
         </div>
-        <div className="relative z-[1] flex flex-shrink-0 items-end self-end">
+        <div className="relative z-[1] flex flex-shrink-0 items-end self-end gap-3 pr-8 pb-2">
           {characters.map((c) => (
-            <CharSlot key={c.id} name={c.name} portrait={c.portrait} price={c.price} size={c.pcSize} />
+            <CharSlot key={c.id} name={c.name} portrait={c.portrait} price={c.price} size={PC_SIZE} />
           ))}
         </div>
       </div>
@@ -83,16 +89,9 @@ export function LimitedCastBanner() {
             background: 'radial-gradient(ellipse at 50% 25%, rgba(194,114,42,0.2) 0%, transparent 60%)',
           }}
         />
-        <div className="relative z-[1] flex justify-center items-end pt-7">
-          {characters.map((c, i) => (
-            <CharSlot
-              key={c.id}
-              name={c.name}
-              portrait={c.portrait}
-              price={c.price}
-              size={c.spSize}
-              extraStyle={i === 1 ? { marginBottom: '14px' } : i === 2 ? { marginBottom: '7px' } : undefined}
-            />
+        <div className="relative z-[1] flex justify-center items-end gap-2 pt-7 px-3">
+          {characters.map((c) => (
+            <CharSlot key={c.id} name={c.name} portrait={c.portrait} price={c.price} size={SP_SIZE} />
           ))}
         </div>
         <div className="relative z-[1] flex flex-col gap-3.5 px-6 pt-4 pb-7">
@@ -221,16 +220,14 @@ function CharSlot({
   portrait,
   price,
   size,
-  extraStyle,
 }: {
   name: string
   portrait: StaticImageData | undefined
   price: string
   size: number
-  extraStyle?: React.CSSProperties
 }) {
   return (
-    <div className="relative flex flex-col items-center" style={extraStyle}>
+    <div className="relative flex flex-col items-center" style={{ width: size }}>
       {portrait && (
         <Image
           src={portrait}
@@ -243,7 +240,7 @@ function CharSlot({
         />
       )}
       <span
-        className="absolute top-0 right-0 z-[3] rounded-[2px] px-[7px] py-[3px] text-[10px] font-bold text-white"
+        className="absolute top-1 right-1 z-[3] rounded-[2px] px-[7px] py-[3px] text-[10px] font-bold text-white"
         style={{ background: 'rgba(194,114,42,0.92)', letterSpacing: '0.03em' }}
       >
         {price}
@@ -251,7 +248,7 @@ function CharSlot({
       <span
         className="absolute left-1/2 z-[3] -translate-x-1/2 whitespace-nowrap rounded-[2px] px-2 py-[2px] text-[10px] font-bold"
         style={{
-          bottom: '4px',
+          bottom: '6px',
           background: 'rgba(28,20,16,0.72)',
           color: 'rgba(240,232,220,0.9)',
           letterSpacing: '0.08em',
