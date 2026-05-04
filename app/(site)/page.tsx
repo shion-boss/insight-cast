@@ -749,7 +749,7 @@ export default async function LandingPage() {
             </h2>
             <p className="text-base text-[var(--text2)] mt-3 max-w-[480px]">使いやすいかどうかは、使ってみないと分かりません。カード不要、メールアドレスだけで今すぐ始められます。</p>
             {/* お試し — プランではなく独立した体験導線 */}
-            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
+            <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-6 sm:p-8 lg:p-10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <div className="flex-1">
                   <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>

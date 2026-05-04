@@ -316,7 +316,7 @@ export default async function PricingPage({
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             {/* お試し — 独立したバナー */}
-            <div className="rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-8 sm:p-10">
+            <div className="rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-6 sm:p-8 lg:p-10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <div className="flex-1">
                   <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
