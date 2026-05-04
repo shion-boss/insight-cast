@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   },
 }
 import { CharacterAvatar } from '@/components/ui'
-import { CopyButton } from '@/components/CopyButton'
+import { HeaderCopyButton } from './_components/HeaderCopyButton'
 import { CheckoutButton } from '@/app/(site)/pricing/CheckoutButton'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import scenePlanning from '@/assets/scene/scene-story-planning.png'
@@ -35,6 +35,7 @@ import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
 import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
 import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 import { LpFaq } from './LpFaq'
+import { DraggableScrollRow } from './_components/DraggableScrollRow'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -359,23 +360,20 @@ export default async function LandingPage() {
             </div>
             <div className="mt-14 sm:mt-16">
               <p className="text-[13px] font-semibold text-[var(--text3)] mb-5 tracking-[.04em]">担当するキャストを選ぶ</p>
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-                <div className="flex gap-4 overflow-x-auto pt-2 pb-3 pr-24 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  {CHARACTERS.map((char) => (
-                    <Link key={char.id} href={`/cast#${char.id}`} className="flex-shrink-0 w-[220px] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-4 gap-3 transition-colors hover:border-[var(--accent)]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,.07)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                      <div className="relative w-full aspect-square rounded-[10px] overflow-hidden bg-[var(--bg2)]">
-                        <Image src={char.portrait} alt={char.name} fill sizes="188px" className="object-cover object-top" />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
-                        <span className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</span>
-                        <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <DraggableScrollRow className="flex gap-4 overflow-x-auto pt-2 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {CHARACTERS.map((char) => (
+                  <Link key={char.id} href={`/cast#${char.id}`} className="flex-shrink-0 w-[220px] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-4 gap-3 transition-colors hover:border-[var(--accent)]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,.07)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                    <div className="relative w-full aspect-square rounded-[10px] overflow-hidden bg-[var(--bg2)]">
+                      <Image src={char.portrait} alt={char.name} fill sizes="188px" className="object-cover object-top" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
+                      <span className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</span>
+                      <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
+                    </div>
+                  </Link>
+                ))}
+              </DraggableScrollRow>
               <div className="mt-5">
                 <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
                   キャストをすべて見る <span aria-hidden="true">→</span>
@@ -480,78 +478,60 @@ export default async function LandingPage() {
                   </div>
                 </div>
                 {/* アクションボタン行 */}
-                <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-1.5">
-                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">テキストでコピー</button>
-                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">MDでコピー</button>
-                  <span aria-hidden="true" className="hidden sm:block mx-0.5 h-4 w-px bg-[var(--border)]" />
-                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">.txt</button>
-                  <button type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">.md</button>
+                <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">全文コピー</span>
+                    <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">テキスト</span>
+                    <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">Markdown</span>
+                  </div>
+                  <span aria-hidden="true" className="h-4 w-px bg-[var(--border)]" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">書き出し</span>
+                    <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.txt</span>
+                    <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.md</span>
+                  </div>
                 </div>
                 {/* ブロック */}
                 <div className="flex flex-col gap-3 p-4 sm:p-5">
                   {/* タイトル */}
                   <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                    <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">タイトル</div>
-                        <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
-                          <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
-                          <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
-                        </div>
-                      </div>
-                      <p className="whitespace-pre-wrap leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
+                    <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
+                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">タイトル</div>
+                      <HeaderCopyButton text="創業者の父から受け継いだ思いやり。" />
                     </div>
-                    <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
-                      <CopyButton text="創業者の父から受け継いだ思いやり。" />
+                    <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                      <p className="whitespace-pre-wrap leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
                     </div>
                   </div>
                   {/* 概要 */}
                   <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                    <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">概要</div>
-                        <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
-                          <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
-                          <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
+                      <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">概要</div>
+                      <HeaderCopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" />
+                    </div>
+                    <div className="px-4 sm:px-5 pb-4 sm:pb-5">
                       <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
                     </div>
-                    <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
-                      <CopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" />
-                    </div>
                   </div>
-                  {/* セクション（小見出し＋本文） */}
+                  {/* セクション（小見出し＋本文）— 1カード内で divider 区切り */}
                   <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                     <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">小見出し</div>
-                          <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
-                            <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
-                            <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
-                          </div>
-                        </div>
-                        <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
+                      <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
+                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">小見出し</div>
+                        <HeaderCopyButton text="近所の方への気遣いも、仕事のうちだと思っています" />
                       </div>
-                      <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
-                        <CopyButton text="近所の方への気遣いも、仕事のうちだと思っています" />
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                        <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
                       </div>
                     </div>
                     <div className="border-t border-[var(--border)]" />
                     <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                      <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">本文</div>
-                          <div className="flex rounded border border-[var(--border)] overflow-hidden text-[11px] font-semibold">
-                            <span className="px-2.5 py-1 bg-[var(--accent)] text-white">テキスト</span>
-                            <span className="px-2.5 py-1 border-l border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]">MD</span>
-                          </div>
-                        </div>
-                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
+                      <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
+                        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">本文</div>
+                        <HeaderCopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} />
                       </div>
-                      <div className="flex justify-end px-4 sm:px-5 pb-3 pt-1">
-                        <CopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} />
+                      <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
                       </div>
                     </div>
                   </div>
