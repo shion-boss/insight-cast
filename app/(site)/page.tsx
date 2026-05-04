@@ -36,6 +36,7 @@ import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
 import { CATEGORY_LABELS, type PostCategory } from '@/lib/blog-posts'
 import { LpFaq } from './LpFaq'
 import { DraggableScrollRow } from './_components/DraggableScrollRow'
+import { LimitedCastBanner } from './_components/LimitedCastBanner'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -836,6 +837,11 @@ export default async function LandingPage() {
               <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
               をご覧ください。
             </p>
+
+            {/* 期間限定キャストの訴求バナー */}
+            <div className="mt-12 sm:mt-16">
+              <LimitedCastBanner />
+            </div>
           </div>
         </section>
 

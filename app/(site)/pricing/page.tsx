@@ -4,6 +4,7 @@ import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS, getCharacter } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { FreePlanBannerCTA, PlanCardCTA, PricingBottomCTA } from './PricingCTAs'
+import { LimitedCastBanner } from '@/app/(site)/_components/LimitedCastBanner'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -443,12 +444,20 @@ export default async function PricingPage({
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              専門キャスト（期間限定で全プラン込み）
+              専門キャスト3名が、いまだけ全プラン込み
             </h2>
             <p className="text-base text-[var(--text2)] mt-3">
-              下記の3キャストは、現在 <strong className="text-[var(--text)]">無料プランを含むすべてのプランで利用可能</strong> です。
-              将来的に買い切り商品（予定価格は各カードに表記）として切り替える予定ですが、<strong className="text-[var(--text)]">期間中に登録したアカウントはその後も継続的にプラン内で利用できます</strong>。
+              通常は <strong className="text-[var(--text)]">買い切り課金（合計 ¥34,400）</strong> でのみ利用できる専門キャスト3名を、
+              いまプランをご契約いただいたアカウントには <strong className="text-[var(--text)]">追加料金なし・アカウント削除まで</strong> で開放しています。
+              買い切り課金へ移行した後も、期間中に登録されたアカウントはそのまま継続利用できます。
             </p>
+
+            {/* 訴求バナー */}
+            <div className="mt-10">
+              <LimitedCastBanner />
+            </div>
+
+            {/* キャストごとの仕様カード */}
             <div className="mt-10 grid gap-5 sm:grid-cols-3">
               {paidCharacters.map((char) => {
                 const addon = ADDON_CASTS.find((a) => a.id === char.id)
@@ -466,7 +475,7 @@ export default async function PricingPage({
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)] mb-0.5">{addon?.name ?? char.name}</div>
                       <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mb-2">{addon?.specialty ?? char.specialty}</div>
                       <div className="text-[15px] font-bold text-[var(--text)] mt-2">いまは全プラン込み</div>
-                      <div className="text-[12px] text-[var(--text3)] mt-1">後日 {addon?.price ?? '—'}（買い切り）に移行予定</div>
+                      <div className="text-[12px] text-[var(--text3)] mt-1">通常 {addon?.price ?? '—'}（買い切り）</div>
                       <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--accent)] border border-[var(--accent)] bg-[var(--accent-l)] px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
                     </div>
                   </div>
