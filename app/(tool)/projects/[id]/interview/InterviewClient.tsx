@@ -96,10 +96,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     setLoading(true)
     setStreamingMessage('')
 
-    const shouldAppendUser = Boolean(userText && !opts?.alreadyDisplayed)
+    const hasAttachments = (opts?.attachments?.length ?? 0) > 0
+    const shouldAppendUser = !opts?.alreadyDisplayed && (Boolean(userText) || hasAttachments)
 
-    if (shouldAppendUser && userText) {
-      setMessages((prev) => [...prev, { role: 'user', content: userText, attachments: opts?.attachments }])
+    if (shouldAppendUser) {
+      setMessages((prev) => [...prev, { role: 'user', content: userText ?? '', attachments: opts?.attachments }])
       setUserTurns((t) => t + 1)
     }
 
@@ -331,7 +332,9 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       setShowComplete(true)
       return
     }
-    const text = input.trim() || '（写真を共有しました）'
+    // 写真だけのときはテキストを空文字で送る。サーバー側で AI への文脈用に補完される。
+    // ユーザーバブルでも text は空のまま表示し、画像だけが見える形にする。
+    const text = input.trim()
     setInput('')
 
     const newTurns = userTurns + 1
@@ -688,7 +691,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                       )}
                     </div>
                   )}
-                  {msg.content || <span className="opacity-50">...</span>}
+                  {msg.content
+                    ? msg.content
+                    : msg.attachments && msg.attachments.length > 0
+                      ? null
+                      : <span className="opacity-50">...</span>}
                 </div>
               </div>
               {/* モグロ用 はい/いいえ ボタン（最新の interviewer 発話に [YESNO_QUESTION] が付いていた時だけ） */}
@@ -858,7 +865,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   void submitMessage()
                 }
               }}
-              placeholder={hasReachedTurnLimit ? '取材はここまでです。ここまでの内容を記事にまとめられます。' : 'ここに話しかけてください'}
+              placeholder={hasReachedTurnLimit
+                ? '取材はここまでです。ここまでの内容を記事にまとめられます。'
+                : characterId === 'hal' && pendingAttachments.length > 0
+                  ? '一言添えても、写真だけで送ってもOK'
+                  : 'ここに話しかけてください'}
               disabled={loading || initializing || hasReachedTurnLimit}
               autoFocus
               className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
@@ -867,7 +878,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               <DevAiLabel>AI送信</DevAiLabel>
               <button
                 type="submit"
-                disabled={loading || initializing || !input.trim() || hasReachedTurnLimit}
+                disabled={loading || initializing || hasReachedTurnLimit || (!input.trim() && pendingAttachments.length === 0)}
                 className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
