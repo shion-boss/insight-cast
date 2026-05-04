@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -77,12 +77,25 @@ type Props = {
   initialTheme: string
   projectName: string
   from: string
+  interviewerType: string | null
 }
 
-export default function ArticleClient({ projectId, interviewId, initialTheme, projectName, from }: Props) {
+// モグロは Yes/No 取材のため、ユーザーの発話が「はい/いいえ」だけになる。
+// 会話記事として読み物に成立しないため、このリストのキャストは「会話記事」を選べない。
+const CONVERSATION_BLOCKED_CASTS = new Set<string>(['mogro'])
+
+export default function ArticleClient({ projectId, interviewId, initialTheme, projectName, from, interviewerType }: Props) {
   const router = useRouter()
   const supabaseRef = useRef(createClient())
 
+  const conversationBlocked = interviewerType !== null && CONVERSATION_BLOCKED_CASTS.has(interviewerType)
+  const visibleArticleGroups = useMemo(() => {
+    if (!conversationBlocked) return ARTICLE_GROUPS
+    return ARTICLE_GROUPS.map((g) => ({
+      ...g,
+      items: g.items.filter((item) => item.type !== 'conversation'),
+    })).filter((g) => g.items.length > 0)
+  }, [conversationBlocked])
   const [tab, setTab] = useState<ArticleType>('client')
   const [error, setError] = useState<string | null>(null)
   const [availableThemes, setAvailableThemes] = useState<string[]>([])
@@ -404,8 +417,11 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
           <aside className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 lg:sticky lg:top-20">
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">記事の種類</p>
+              {conversationBlocked && (
+                <p className="mb-2 text-[11px] text-[var(--text3)]">モグロの取材メモは「会話記事」での書き出しに対応していません。ブログ記事 / レポート記事をお選びください。</p>
+              )}
               <div className="space-y-3">
-                {ARTICLE_GROUPS.map((group) => (
+                {visibleArticleGroups.map((group) => (
                   <div key={group.label}>
                     <p className="mb-1.5 text-[11px] text-[var(--text3)]">◇ {group.label}</p>
                     <div className="flex flex-wrap gap-2">

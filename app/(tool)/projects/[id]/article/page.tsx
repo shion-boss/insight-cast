@@ -45,6 +45,16 @@ export default async function ArticlePage({
   const projectName = query.projectName ?? 'このプロジェクト'
   const from = query.from ?? ''
 
+  // 取材で使われたキャストを取得（モグロは「会話記事」を作れないため UI で隠す）
+  const { data: interview } = await supabase
+    .from('interviews')
+    .select('interviewer_type')
+    .eq('id', interviewId)
+    .eq('project_id', id)
+    .is('deleted_at', null)
+    .single()
+  const interviewerType = interview?.interviewer_type ?? null
+
   return (
     <ArticleClient
       projectId={id}
@@ -52,6 +62,7 @@ export default async function ArticlePage({
       initialTheme={initialTheme}
       projectName={projectName}
       from={from}
+      interviewerType={interviewerType}
     />
   )
 }

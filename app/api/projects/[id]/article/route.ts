@@ -287,6 +287,17 @@ export async function POST(
 
   const interviewerType = interview.interviewer_type
 
+  // モグロは Yes/No 取材のため「会話記事」を作れない（FACT_INTEGRITY と整合：Yes/No だけの発言を AI が肉付けしない）
+  if (articleType === 'conversation' && interviewerType === 'mogro') {
+    return NextResponse.json(
+      {
+        error: 'conversation_not_supported_for_cast',
+        message: 'モグロの取材メモは Yes/No が中心のため、会話記事への書き出しに対応していません。ブログ記事 / レポート記事をお選びください。',
+      },
+      { status: 400 },
+    )
+  }
+
   if (interview.article_status === 'generating') {
     return NextResponse.json({ ok: true, status: 'article_generating' }, { status: 202 })
   }
