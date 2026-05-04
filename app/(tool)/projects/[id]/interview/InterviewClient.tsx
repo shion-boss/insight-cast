@@ -16,11 +16,15 @@ const MAX_TURNS = 15
 const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
+const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
 
 function getProgressLabel(turns: number) {
   if (turns < 3) return '話を聞かせてもらっています'
   if (turns < 5) return 'いろいろと教えてもらっています'
-  if (turns < STANDARD_TURNS) return 'いい話が集まってきました'
+  if (turns < STANDARD_TURNS) {
+    const remaining = STANDARD_TURNS - turns
+    return `いい話が集まってきました（あと${remaining}問でひと区切り）`
+  }
   if (turns < MAX_TURNS) return 'もう少し掘り下げています'
   return 'まとめに入ります'
 }
@@ -291,6 +295,21 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     }
   }
 
+  /**
+   * 「もう少し聞かせてください」: ユーザー側から AI に深掘りを促す。
+   * 直前のインタビュアー発話には触らず、新しい問いを別角度で立て直してもらう。
+   */
+  async function handleDeepDive() {
+    if (loading) return
+    if (hasReachedTurnLimit) {
+      setShowComplete(true)
+      return
+    }
+    const result = await sendMessageToAI(DEEP_DIVE_TOKEN, { alreadyDisplayed: true })
+    if (!result.ok) return
+    setTimeout(() => textareaRef.current?.focus(), 50)
+  }
+
   function handleFinish() {
     flushSync(() => setFinishing(true))
     router.push(`/projects/${projectId}/summary?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`)
@@ -533,16 +552,26 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         )}
         <div className="max-w-2xl mx-auto">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="text-xs text-[var(--text3)] hidden sm:block">答えづらい質問は、無理せずパスして次へ進めます。</p>
-            <p className="text-xs text-[var(--text3)] sm:hidden">答えづらければパスできます。</p>
-            <button
-              type="button"
-              onClick={handlePassQuestion}
-              disabled={loading || initializing || hasReachedTurnLimit}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
-            >
-              この質問はパス
-            </button>
+            <p className="text-xs text-[var(--text3)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
+            <p className="text-xs text-[var(--text3)] sm:hidden">パス・もう少し聞くもできます。</p>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                type="button"
+                onClick={handleDeepDive}
+                disabled={loading || initializing || hasReachedTurnLimit || messages.length === 0}
+                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              >
+                もう少し聞いてもらう
+              </button>
+              <button
+                type="button"
+                onClick={handlePassQuestion}
+                disabled={loading || initializing || hasReachedTurnLimit}
+                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              >
+                この質問はパス
+              </button>
+            </div>
           </div>
           <form onSubmit={(e) => { e.preventDefault(); void submitMessage() }} className="flex gap-2 sm:gap-3 items-end">
             <textarea

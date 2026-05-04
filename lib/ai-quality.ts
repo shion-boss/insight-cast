@@ -164,6 +164,39 @@ export type PastInterviewMemo = {
   createdAt?: string | null
 }
 
+export type InterviewStructure = 'chronological' | 'topical' | 'contrast' | 'qa' | 'omakase'
+
+const STRUCTURE_HINTS: Record<InterviewStructure, string> = {
+  chronological:
+    '【取材構造: 時系列】\n' +
+    '取材は時系列で進める。「お仕事の1日を朝からざっと教えてください」のグランド・ツアーから入り、\n' +
+    '時間の流れに沿って深掘りする。途中の判断・選択・お客様との接点をその場で1つずつ拾う。\n' +
+    '時間が見えると行動・判断・場面が見えやすくなる。',
+  topical:
+    '【取材構造: トピック別】\n' +
+    '取材はトピックを順に切り替えて進める。focus_theme があればそれを最優先のトピックにし、\n' +
+    'ひとつのトピックで具体エピソードが1つ取れたら次のトピックに移る。長居しすぎない。\n' +
+    '複数の話題を浅すぎず深すぎず取れるのが利点。',
+  contrast:
+    '【取材構造: 対比】\n' +
+    '取材は対比軸を立てて進める。「過去と今」「他社と自社」「うまくいった例と困った例」のいずれかで、\n' +
+    '違いが見える話を引き出す。差を語ることで事業者の判断基準・価値観が浮かぶ。',
+  qa:
+    '【取材構造: Q&A】\n' +
+    '取材は読者からの想定質問に答える形で進める。「お客様がよく聞くこと」「初めて検討する人が不安なこと」\n' +
+    'を1つずつ拾い、それに答えてもらう。答えはそのまま FAQ 候補になる。',
+  omakase: '',
+}
+
+/**
+ * 取材構造のヒントをプロンプト注入用に整形する。omakase または不明なら空文字。
+ */
+export function buildInterviewStructureContext(structure: string | null | undefined): string {
+  if (!structure || structure === 'omakase') return ''
+  if (!(structure in STRUCTURE_HINTS)) return ''
+  return STRUCTURE_HINTS[structure as InterviewStructure]
+}
+
 export function buildInterviewQualityContext(input: {
   messages: PromptConversationMessage[]
   userTurnCount: number

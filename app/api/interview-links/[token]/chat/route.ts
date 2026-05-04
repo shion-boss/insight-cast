@@ -278,15 +278,25 @@ ${
         }).catch(() => {})
       }
 
-      // AIメッセージ保存（[INTERVIEW_COMPLETE] と [DISCOVERY: ...] マーカーを除いて保存）
+      // AIメッセージ保存（マーカーを除いて保存し、meta に集約）
       const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
       const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
+      const draftMatch = fullText.match(/\[DRAFT_PROPOSAL:\s*([^\]]+)\]/)
+      const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
+      const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
+      const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
       const cleanText = fullText
         .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
         .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
+        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
         .trim()
       if (cleanText) {
-        const meta = discoveryReason ? { discovery: { reason: discoveryReason } } : null
+        const metaObj: Record<string, unknown> = {}
+        if (discoveryReason) metaObj.discovery = { reason: discoveryReason }
+        if (draftSnippet) metaObj.draft_proposal = { snippet: draftSnippet }
+        if (headlineSource) metaObj.headline_candidates = { source: headlineSource }
+        const meta = Object.keys(metaObj).length > 0 ? metaObj : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: resolvedInterviewId,
           role: 'interviewer',

@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { buildInterviewQualityContext, detectQuestionRepetition } from '@/lib/ai-quality'
+import { buildInterviewQualityContext, buildInterviewStructureContext, detectQuestionRepetition } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from 'next/server'
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
+const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
 
 export async function POST(
   req: NextRequest,
@@ -40,11 +41,12 @@ export async function POST(
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
   const isContinueInterview = userMessage === CONTINUE_INTERVIEW_TOKEN
+  const isDeepDive = userMessage === DEEP_DIVE_TOKEN
 
   // インタビュー確認（project所有確認も兼ねる）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, interviews_project:projects(user_id, name, hp_url, industry_memo, location)')
+    .select('id, interviewer_type, project_id, focus_theme_mode, focus_theme, structure, interviews_project:projects(user_id, name, hp_url, industry_memo, location)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .is('deleted_at', null)
@@ -78,7 +80,7 @@ export async function POST(
   }
 
   // ユーザーメッセージ保存
-  if (!isGreeting && !isPassQuestion && !isContinueInterview) {
+  if (!isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive) {
     const { error: msgInsertError } = await supabase.from('interview_messages').insert({
       interview_id: interviewId,
       role: 'user',
@@ -196,6 +198,12 @@ export async function POST(
               content: '取材を続けたいです。先ほどのまとめ提案は一度取り下げて、これまで出てきた話の中からまだ深掘りできそうな1点を選び、別の角度から自然に1つだけ質問してください。前置きを1文添えて、ユーザーが答えやすい問い方にしてください。今回の返答末尾に [INTERVIEW_COMPLETE] は付けないでください。',
             }]
           : []),
+        ...(isDeepDive
+          ? [{
+              role: 'user' as const,
+              content: 'いまの話、もう少し聞かせてもらえますか。直前のやりとりの中で、まだ掘りきれていないと感じる1点を選んで、別の角度から自然に1つだけ問いを立ててください。具体的な場面・人・行動・反応のいずれかを引き出す方向で。',
+            }]
+          : []),
       ]
 
   const auditRawData = (auditRow?.raw_data ?? null) as Record<string, unknown> | null
@@ -279,6 +287,10 @@ export async function POST(
   const focusThemeContext = buildInterviewFocusThemeContext(interview.focus_theme_mode, interview.focus_theme)
   if (focusThemeContext) {
     contextParts.push(focusThemeContext)
+  }
+  const structureContext = buildInterviewStructureContext((interview as { structure?: string | null }).structure)
+  if (structureContext) {
+    contextParts.push(structureContext)
   }
   if (profile?.name) {
     contextParts.push(`【話し相手】\nお名前: ${profile.name}`)
@@ -431,12 +443,18 @@ export async function POST(
         }).catch(() => {})
       }
 
-      // [INTERVIEW_COMPLETE] と [DISCOVERY: ...] マーカーを抽出してから本文をクリーン化
+      // マーカー抽出: [INTERVIEW_COMPLETE] / [DISCOVERY: ...] / [DRAFT_PROPOSAL: ...] / [HEADLINE_CANDIDATES: ...]
       const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
       const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
+      const draftMatch = fullText.match(/\[DRAFT_PROPOSAL:\s*([^\]]+)\]/)
+      const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
+      const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
+      const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
       const cleanText = fullText
         .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
         .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
+        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
         .trim()
 
       // 繰り返し検出（モニタリング用ログ。streamingを壊さないため再生成はせず、後の合成ループ材料にする）
@@ -459,7 +477,11 @@ export async function POST(
       }
 
       if (cleanText) {
-        const meta = discoveryReason ? { discovery: { reason: discoveryReason } } : null
+        const metaObj: Record<string, unknown> = {}
+        if (discoveryReason) metaObj.discovery = { reason: discoveryReason }
+        if (draftSnippet) metaObj.draft_proposal = { snippet: draftSnippet }
+        if (headlineSource) metaObj.headline_candidates = { source: headlineSource }
+        const meta = Object.keys(metaObj).length > 0 ? metaObj : null
         const { error } = await supabase.from('interview_messages').insert({
           interview_id: interviewId,
           role: 'interviewer',
