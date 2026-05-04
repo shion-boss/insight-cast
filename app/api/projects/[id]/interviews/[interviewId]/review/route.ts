@@ -38,24 +38,28 @@ async function authorize(projectId: string, interviewId: string) {
 
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, project_id, projects!inner(user_id)')
+    .select('id, project_id, interviews_project:projects(user_id)')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .is('deleted_at', null)
     .single()
   if (!interview) return { ok: false as const, status: 404, message: '取材が見つかりません' }
 
-  const projectInfo = Array.isArray(interview.projects) ? interview.projects[0] : interview.projects
+  const joined = interview.interviews_project as { user_id: string } | { user_id: string }[] | null
+  const projectInfo = Array.isArray(joined) ? (joined[0] ?? null) : joined
   const isOwner = projectInfo?.user_id === user.id
+
   let reviewerRole: 'owner' | 'staff' | 'respondent' = 'owner'
+  let memberCanWrite = isOwner
   if (!isOwner) {
     const memberRole = await getMemberRole(supabase, projectId, user.id)
     if (memberRole !== 'editor' && memberRole !== 'viewer') {
       return { ok: false as const, status: 403, message: '権限がありません' }
     }
     reviewerRole = 'staff'
+    memberCanWrite = memberRole === 'editor'
   }
-  return { ok: true as const, supabase, userId: user.id, reviewerRole, isOwner, memberCanWrite: isOwner || (await getMemberRole(supabase, projectId, user.id)) === 'editor' }
+  return { ok: true as const, supabase, userId: user.id, reviewerRole, isOwner, memberCanWrite }
 }
 
 export async function GET(

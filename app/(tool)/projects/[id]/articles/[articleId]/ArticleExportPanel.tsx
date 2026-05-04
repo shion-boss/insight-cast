@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useCallback, useTransition, useMemo, useEffect, useRef, Fragment } from 'react'
-import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import Image from 'next/image'
 import { getCharacter } from '@/lib/characters'
