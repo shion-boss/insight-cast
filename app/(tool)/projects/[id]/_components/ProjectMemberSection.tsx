@@ -2,6 +2,101 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { showToast } from '@/lib/client/toast'
+
+type RoleKey = 'editor' | 'viewer'
+
+const ROLE_DEFS: Array<{ key: RoleKey; label: string; description: string }> = [
+  { key: 'editor', label: '編集者', description: '取材・記事生成・再調査ができます' },
+  { key: 'viewer', label: '閲覧者', description: '取材結果と記事を見るだけです' },
+]
+
+function RoleMenu({
+  currentRole,
+  memberName,
+  disabled,
+  onChange,
+}: {
+  currentRole: RoleKey
+  memberName: string
+  disabled: boolean
+  onChange: (next: RoleKey) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    function onPointerDown(e: PointerEvent) {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        buttonRef.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  const currentLabel = ROLE_DEFS.find((r) => r.key === currentRole)?.label ?? currentRole
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`${memberName}の権限を変更`}
+        className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+      >
+        <span>{currentLabel}</span>
+        <span aria-hidden="true" className="text-[var(--text3)]">▾</span>
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full mt-1 z-10 w-64 rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--surface)] py-1 shadow-lg"
+        >
+          {ROLE_DEFS.map((role) => {
+            const isCurrent = role.key === currentRole
+            return (
+              <button
+                key={role.key}
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false)
+                  if (!isCurrent) onChange(role.key)
+                }}
+                className={`w-full flex items-start gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:bg-[var(--bg2)] ${
+                  isCurrent ? 'cursor-default' : ''
+                }`}
+              >
+                <span aria-hidden="true" className={`flex-shrink-0 w-4 pt-0.5 text-center ${isCurrent ? 'text-[var(--accent)]' : 'text-transparent'}`}>
+                  ✓
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block font-semibold text-[var(--text)]">{role.label}</span>
+                  <span className="mt-0.5 block text-[11px] text-[var(--text3)]">{role.description}</span>
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
 
 type MemberInfo = {
   id: string
@@ -123,7 +218,17 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
     }
   }
 
-  const handleRoleChange = async (userId: string, role: 'editor' | 'viewer') => {
+  const [updatingRoleUserId, setUpdatingRoleUserId] = useState<string | null>(null)
+
+  const handleRoleChange = async (userId: string, role: RoleKey, memberName: string) => {
+    // 楽観的 UI: 即座に表示を更新してから API を叩く
+    const prevData = data
+    setData((current) => current ? {
+      ...current,
+      members: current.members.map((m) => m.userId === userId ? { ...m, role } : m),
+    } : current)
+    setUpdatingRoleUserId(userId)
+
     try {
       const res = await fetch(`/api/projects/${projectId}/members/${userId}`, {
         method: 'PATCH',
@@ -131,10 +236,25 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
         body: JSON.stringify({ role }),
       })
       if (!res.ok) throw new Error('failed')
+      const roleLabel = ROLE_DEFS.find((r) => r.key === role)?.label ?? role
+      showToast({
+        id: `role-change-${userId}`,
+        title: '権限を変更しました',
+        description: `${memberName} を${roleLabel}にしました。`,
+        tone: 'success',
+      })
       await fetchMembers()
     } catch {
-      setError('権限の変更に失敗しました。もう一度お試しください。')
-      await fetchMembers()
+      // ロールバック
+      setData(prevData)
+      showToast({
+        id: `role-change-error-${userId}`,
+        title: '権限を変更できませんでした',
+        description: 'しばらく待ってからもう一度お試しください。',
+        tone: 'warning',
+      })
+    } finally {
+      setUpdatingRoleUserId(null)
     }
   }
 
@@ -211,15 +331,12 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                       </p>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <select
-                        value={member.role}
-                        onChange={(e) => handleRoleChange(member.userId, e.target.value as 'editor' | 'viewer')}
-                        className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-xs text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 min-h-[36px]"
-                        aria-label={`${member.name ?? member.email ?? 'メンバー'}の権限`}
-                      >
-                        <option value="editor">編集者</option>
-                        <option value="viewer">閲覧者</option>
-                      </select>
+                      <RoleMenu
+                        currentRole={(member.role as RoleKey) ?? 'editor'}
+                        memberName={member.name ?? member.email ?? 'メンバー'}
+                        disabled={updatingRoleUserId === member.userId}
+                        onChange={(next) => handleRoleChange(member.userId, next, member.name ?? member.email ?? 'メンバー')}
+                      />
                       <button
                         type="button"
                         onClick={() => setConfirmDelete({ userId: member.userId, name: member.name ?? member.email ?? 'メンバー' })}
