@@ -307,6 +307,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     setShowComplete(true)
   }
 
+  function handleAbort() {
+    setShowComplete(false)
+    router.push(backHref)
+  }
+
   // モーダルフォーカストラップ
   useEffect(() => {
     if (!showComplete) return
@@ -635,15 +640,25 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">上限の{MAX_TURNS}回まで質問しました。</p>
                 <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめます。</p>
-                <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
-                <button
-                  type="button"
-                  onClick={handleFinish}
-                  disabled={finishing}
-                  className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {finishing ? 'まとめています...' : '記事にまとめる'}
-                </button>
+                <div className="space-y-2">
+                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
+                  <button
+                    type="button"
+                    onClick={handleFinish}
+                    disabled={finishing}
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {finishing ? 'まとめています...' : '記事にまとめる'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAbort}
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    まとめずに中断する
+                  </button>
+                </div>
               </>
             )}
             {completionType === 'standard_sufficient' && (
@@ -667,6 +682,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     もう少し話す
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAbort}
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    まとめずに中断する
                   </button>
                 </div>
               </>
@@ -692,6 +715,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   >
                     {finishing ? 'まとめています...' : 'ここまでの内容でまとめる'}
                   </button>
+                  <button
+                    type="button"
+                    onClick={handleAbort}
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    まとめずに中断する
+                  </button>
                 </div>
               </>
             )}
@@ -716,6 +747,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まだ話す
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAbort}
+                    disabled={finishing}
+                    className="w-full py-2 text-sm text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                  >
+                    まとめずに中断する
                   </button>
                 </div>
               </>

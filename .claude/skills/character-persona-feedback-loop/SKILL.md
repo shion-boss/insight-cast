@@ -27,7 +27,8 @@ Insight Cast の AIキャストは、ユーザーへの取材と Cast Talk（公
 | キャラ正典（人格・観点・口調・反応・初手・倫理） | `lib/characters.ts` の `CHARACTER_PERSONAS` | AIデザイナー |
 | 取材システムプロンプト（正典 + 取材ルール） | `lib/characters.ts` の `buildInterviewSystemPrompt(persona)` | AIデザイナー |
 | Cast Talk 生成プロンプト（正典 + 編集ルール） | `lib/characters.ts` の Cast Talk 用ビルダー + `.claude/skills/cast-talk/conversation-prompt.md` | AIデザイナー |
-| 共通インストラクション群 | `lib/characters.ts` の `IDENTITY` / `RELATIONSHIP` / `PSYCHOLOGY` / `CONVERSATION_QUALITY` / `FACT_INTEGRITY` / `PRIVACY_SCOPE` / `INTERVIEW_SCOPE` / `SUFFICIENCY` | AIデザイナー |
+| 共通インストラクション群 | `lib/characters.ts` の `IDENTITY` / `INSIGHT_CAST_KNOWLEDGE` / `RELATIONSHIP` / `PSYCHOLOGY` / `CONVERSATION_QUALITY` / `FACT_INTEGRITY` / `PRIVACY_SCOPE` / `INTERVIEW_SCOPE` / `SUFFICIENCY` | AIデザイナー |
+| Insight Cast 共有知識（自社認識） | `lib/characters.ts` の `INSIGHT_CAST_KNOWLEDGE_INSTRUCTION`。CLAUDE.md のサービス記述と手動同期 | AIデザイナー |
 | Cast Talk レビューの蓄積 | `cast_talk_reviews` テーブル | オペレーター（蓄積）、AIデザイナー（合成） |
 | 取材レビューの蓄積 | `interview_reviews` テーブル（Phase B 以降） | オペレーター（蓄積）、AIデザイナー（合成） |
 | 用途固有ルール（Cast Talk） | `.claude/skills/cast-talk/conversation-prompt.md` の `## 合成済み品質ルール` | AIデザイナー |

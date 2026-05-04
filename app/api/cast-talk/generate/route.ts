@@ -10,6 +10,7 @@ import {
   buildCastTalkReactionsContext,
   buildCastTalkFactIntegrityContext,
   CAST_TALK_FACT_INTEGRITY_INSTRUCTION,
+  CAST_TALK_INSIGHT_CAST_KNOWLEDGE_INSTRUCTION,
 } from '@/lib/characters'
 import { logApiUsage } from '@/lib/api-usage'
 
@@ -429,6 +430,7 @@ async function generateConversation(
   // 取材側で導入された改善（反応の3段階・捏造禁止）を Cast Talk にも自動波及させるための仕組み。
   // 詳細: .claude/skills/character-persona-feedback-loop/SKILL.md
   systemPrompt += CAST_TALK_FACT_INTEGRITY_INSTRUCTION
+  systemPrompt += CAST_TALK_INSIGHT_CAST_KNOWLEDGE_INSTRUCTION
 
   const interviewerName = getCastName(theme.interviewer)
   const guestName = getCastName(theme.guest)
