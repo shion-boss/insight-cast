@@ -63,7 +63,7 @@ export async function fetchPriorMeetings(params: {
 
 /**
  * 過去メモの中から、現在の focus_theme に関連しそうなものを最大 max 件返す。
- * キーワードが2文字以上マッチしたものを優先し、なければ最新を返す。
+ * キーワードが2文字以上マッチしたものを優先し、関連が遠いが面白いメモも1件混ぜる。
  * summary または themes のどちらかが空でないメモのみ対象にする。
  */
 export function selectRelevantMemos(
@@ -93,13 +93,23 @@ export function selectRelevantMemos(
     return { memo, score }
   })
 
+  // 関連度の高い順
   scored.sort((a, b) => b.score - a.score)
 
   const matched = scored.filter((s) => s.score > 0).map((s) => s.memo)
-  if (matched.length >= max) return matched.slice(0, max)
+  const unmatched = scored.filter((s) => s.score === 0).map((s) => s.memo)
 
-  const remaining = scored.filter((s) => s.score === 0).map((s) => s.memo)
-  return [...matched, ...remaining].slice(0, max)
+  // 関連が高いものを優先しつつ、関連が遠いが面白い（=最近の別テーマ）メモを1件混ぜる。
+  // これにより取材中に「前回の○○の話とつながりますね」のような横断的な接続が起こる余地ができる。
+  if (matched.length >= max) {
+    if (unmatched.length > 0 && max >= 2) {
+      // matched から (max-1) 件 + unmatched から 1 件
+      return [...matched.slice(0, max - 1), unmatched[0]]
+    }
+    return matched.slice(0, max)
+  }
+
+  return [...matched, ...unmatched].slice(0, max)
 }
 
 function extractKeywords(text: string): string[] {

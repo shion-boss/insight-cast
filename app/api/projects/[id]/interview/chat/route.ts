@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { fetchPriorMeetings, selectRelevantMemos } from '@/lib/interview-relationship'
+import { fetchRespondentProfile, formatProfileForPrompt } from '@/lib/respondent-profile'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
 import { isFreePlanLocked } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
@@ -114,6 +115,7 @@ export async function POST(
     { data: pastArticles },
     { data: competitorThemeRows },
     priorMeetings,
+    respondentProfile,
   ] = await Promise.all([
     supabase
       .from('profiles')
@@ -151,6 +153,13 @@ export async function POST(
       interviewerType: interview.interviewer_type,
       currentInterviewId: interviewId,
     }),
+    projectData
+      ? fetchRespondentProfile({
+          supabase,
+          userId: projectData.user_id,
+          projectId,
+        })
+      : Promise.resolve(null),
   ])
 
   const isReturning = priorMeetings.relationship === 'returning'
@@ -253,6 +262,10 @@ export async function POST(
   }
   if (profile?.name) {
     contextParts.push(`【話し相手】\nお名前: ${profile.name}`)
+  }
+  const profileBlock = formatProfileForPrompt(respondentProfile)
+  if (profileBlock) {
+    contextParts.push(profileBlock)
   }
   if (matchingCompetitorSources.length > 0) {
     contextParts.push(`【競合がこのテーマで伝えていること】\n${matchingCompetitorSources.map((source) => `・${source.url ?? '競合サイト'}: ${source.summary}`).join('\n')}`)

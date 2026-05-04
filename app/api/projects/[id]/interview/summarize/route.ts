@@ -11,6 +11,7 @@ import { isFreePlanLocked } from '@/lib/plans'
 import { NextRequest, NextResponse } from 'next/server'
 import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { generateAiSelfReview } from '@/lib/ai-self-review'
+import { estimateRespondentProfile, upsertRespondentProfile } from '@/lib/respondent-profile'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -174,6 +175,39 @@ ${conversation}
   revalidatePath('/interviews')
   revalidatePath(`/projects/${projectId}`)
   revalidatePath(`/projects/${projectId}/summary`)
+
+  // 回答者プロファイルを推定して respondent_profiles に upsert（失敗しても本処理は続行）
+  try {
+    const profileEst = await estimateRespondentProfile({
+      client: anthropic,
+      castName: charName,
+      messages: messages.map((m) => ({
+        role: m.role === 'user' ? 'user' : 'interviewer',
+        content: m.content,
+      })),
+    })
+    if (profileEst) {
+      logApiUsage({
+        userId: user.id,
+        projectId,
+        route: 'interview/summarize#respondent-profile',
+        model: 'claude-haiku-4-5-20251001',
+        inputTokens: profileEst.usage.inputTokens,
+        outputTokens: profileEst.usage.outputTokens,
+      }).catch(() => {})
+
+      // プロファイルは取材を受けた人（owner）の話し方を蓄積するもの
+      await upsertRespondentProfile({
+        supabase: adminSupabase,
+        userId: projectInfo.user_id,
+        projectId,
+        estimated: profileEst.profile,
+        lastInterviewId: interviewId,
+      })
+    }
+  } catch (err) {
+    console.warn('[summarize#respondent-profile] estimation failed:', err)
+  }
 
   // AI 自己レビューを生成して interview_reviews に保存（失敗しても本処理は続行）
   // character-persona-feedback-loop の症例ソースになる。
