@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useRouter } from 'next/navigation'
@@ -9,7 +10,8 @@ import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
 import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
 
-type Message = { role: 'user' | 'interviewer'; content: string }
+type AttachmentRef = { path: string; contentType: string; previewUrl: string }
+type Message = { role: 'user' | 'interviewer'; content: string; attachments?: AttachmentRef[] }
 type SupportPost = { url: string; title: string; summary: string }
 
 const MAX_TURNS = 15
@@ -53,6 +55,10 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [focusThemeLabel, setFocusThemeLabel] = useState<string | null>('テーマ: お任せ')
+  // ハル限定: アップロード予定の画像（送信前にプレビューで保持）
+  const [pendingAttachments, setPendingAttachments] = useState<AttachmentRef[]>([])
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [supportPosts, setSupportPosts] = useState<{
     ownPosts: SupportPost[]
     competitorPosts: SupportPost[]
@@ -82,7 +88,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     el.style.height = `${Math.min(el.scrollHeight, 200)}px`
   }, [input])
 
-  const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean }) => {
+  const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean; attachments?: AttachmentRef[] }) => {
     setSubmitError(null)
     setLoading(true)
     setStreamingMessage('')
@@ -90,7 +96,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     const shouldAppendUser = Boolean(userText && !opts?.alreadyDisplayed)
 
     if (shouldAppendUser && userText) {
-      setMessages((prev) => [...prev, { role: 'user', content: userText }])
+      setMessages((prev) => [...prev, { role: 'user', content: userText, attachments: opts?.attachments }])
       setUserTurns((t) => t + 1)
     }
 
@@ -98,7 +104,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       const res = await fetch(`/api/projects/${projectId}/interview/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ interviewId, userMessage: userText ?? '__GREETING__' }),
+        body: JSON.stringify({
+          interviewId,
+          userMessage: userText ?? '__GREETING__',
+          attachments: opts?.attachments?.map((a) => ({ path: a.path, contentType: a.contentType })) ?? [],
+        }),
       })
 
       if (res.status === 403) {
@@ -246,17 +256,22 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   }, [interviewId, latestInterviewerMessage, projectId])
 
   async function submitMessage() {
-    if (!input.trim() || loading) return
+    const hasContent = input.trim().length > 0
+    const hasAttachments = pendingAttachments.length > 0
+    if (!hasContent && !hasAttachments) return
+    if (loading) return
     if (hasReachedTurnLimit) {
       setShowComplete(true)
       return
     }
-    const text = input.trim()
+    const text = input.trim() || '（写真を共有しました）'
     setInput('')
 
     const newTurns = userTurns + 1
+    const attachmentsToSend = pendingAttachments
+    setPendingAttachments([])
 
-    const result = await sendMessageToAI(text)
+    const result = await sendMessageToAI(text, { attachments: attachmentsToSend })
     if (!result.ok) return
 
     if (newTurns >= MAX_TURNS) {
@@ -293,6 +308,54 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       setCompletionType('standard_sufficient')
       setShowComplete(true)
     }
+  }
+
+  /**
+   * ハル限定: 画像をアップロードして添付候補に追加する。
+   * Supabase Storage の interview-attachments バケットに保存し、送信時にメッセージと一緒にAPIに送る。
+   */
+  async function handleAttachmentUpload(file: File) {
+    if (loading || uploadingAttachment) return
+    if (pendingAttachments.length >= 4) {
+      setSubmitError('画像は1メッセージあたり4枚までです。')
+      return
+    }
+    if (!file.type.startsWith('image/')) {
+      setSubmitError('画像ファイルを選んでください。')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setSubmitError('画像は 5MB 以下にしてください。')
+      return
+    }
+    setUploadingAttachment(true)
+    setSubmitError(null)
+    try {
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().slice(0, 5)
+      const uid = (typeof crypto !== 'undefined' && 'randomUUID' in crypto) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      const path = `${projectId}/${interviewId}/${uid}.${ext}`
+      const { error } = await supabaseRef.current.storage
+        .from('interview-attachments')
+        .upload(path, file, { contentType: file.type, upsert: false })
+      if (error) {
+        setSubmitError('画像のアップロードに失敗しました。もう一度お試しください。')
+        console.error('[interview] upload failed', error)
+        return
+      }
+      const previewUrl = URL.createObjectURL(file)
+      setPendingAttachments((prev) => [...prev, { path, contentType: file.type, previewUrl }])
+    } finally {
+      setUploadingAttachment(false)
+    }
+  }
+
+  function removePendingAttachment(index: number) {
+    setPendingAttachments((prev) => {
+      const next = [...prev]
+      const removed = next.splice(index, 1)
+      removed.forEach((a) => URL.revokeObjectURL(a.previewUrl))
+      return next
+    })
   }
 
   /**
@@ -499,6 +562,21 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
                 : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
             }`}>
+              {msg.attachments && msg.attachments.length > 0 && (
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {msg.attachments.map((att, j) => (
+                    <Image
+                      key={`${i}-${j}`}
+                      src={att.previewUrl}
+                      alt={`添付 ${j + 1}`}
+                      width={140}
+                      height={140}
+                      unoptimized
+                      className="max-h-36 max-w-[180px] rounded-lg object-cover"
+                    />
+                  ))}
+                </div>
+              )}
               {msg.content || <span className="opacity-50">...</span>}
             </div>
           </div>
@@ -551,10 +629,59 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           </div>
         )}
         <div className="max-w-2xl mx-auto">
+          {/* ハル限定: 添付プレビュー */}
+          {characterId === 'hal' && pendingAttachments.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {pendingAttachments.map((att, idx) => (
+                <div key={att.path} className="relative">
+                  <Image
+                    src={att.previewUrl}
+                    alt={`添付 ${idx + 1}`}
+                    width={80}
+                    height={80}
+                    unoptimized
+                    className="h-20 w-20 rounded-md object-cover border border-[var(--border)]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removePendingAttachment(idx)}
+                    aria-label="この画像を削除"
+                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-[10px] flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="mb-2 flex items-center justify-between gap-2">
             <p className="text-xs text-[var(--text3)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
             <p className="text-xs text-[var(--text3)] sm:hidden">パス・もう少し聞くもできます。</p>
             <div className="flex items-center gap-2 flex-shrink-0">
+              {characterId === 'hal' && (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) void handleAttachmentUpload(file)
+                      if (fileInputRef.current) fileInputRef.current.value = ''
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={loading || initializing || hasReachedTurnLimit || uploadingAttachment || pendingAttachments.length >= 4}
+                    className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+                    aria-label="写真を添付"
+                  >
+                    {uploadingAttachment ? 'アップ中...' : '📷 写真を添付'}
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 onClick={handleDeepDive}

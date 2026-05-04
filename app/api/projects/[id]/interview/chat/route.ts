@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { buildInterviewQualityContext, buildInterviewStructureContext, detectQuestionRepetition } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { buildInterviewFocusThemeContext, getCompetitorThemeSourcesForTheme } from '@/lib/interview-focus-theme'
 import { fetchPriorMeetings, selectRelevantMemos } from '@/lib/interview-relationship'
@@ -31,13 +32,27 @@ export async function POST(
 
   const body = await req.json().catch(() => null)
   if (!body || typeof body !== 'object') return new Response('Bad Request', { status: 400 })
-  const { interviewId, userMessage } = body as Record<string, unknown>
+  const { interviewId, userMessage, attachments } = body as Record<string, unknown>
   if (typeof interviewId !== 'string' || typeof userMessage !== 'string') {
     return new Response('Bad Request', { status: 400 })
   }
   if (userMessage.length > 2000) {
     return new Response(JSON.stringify({ error: 'メッセージが長すぎます' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
   }
+
+  // 画像添付（ハル限定）。各要素は { path: string, contentType: string }。
+  // path は storage 内の interview-attachments バケットからのパス（例: '<project>/<interview>/<uuid>.jpg'）。
+  type AttachmentInput = { path: string; contentType: string }
+  const safeAttachments: AttachmentInput[] = Array.isArray(attachments)
+    ? attachments
+        .filter((a): a is AttachmentInput =>
+          a !== null &&
+          typeof a === 'object' &&
+          typeof (a as { path?: unknown }).path === 'string' &&
+          typeof (a as { contentType?: unknown }).contentType === 'string',
+        )
+        .slice(0, 4) // 1メッセージあたり最大4枚
+    : []
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
   const isContinueInterview = userMessage === CONTINUE_INTERVIEW_TOKEN
@@ -53,6 +68,10 @@ export async function POST(
     .single()
 
   if (!interview) return new Response('Not found', { status: 404 })
+
+  // ハル以外のキャストでは画像を受け付けない（差別化のため）
+  const allowAttachments = interview.interviewer_type === 'hal'
+  const acceptedAttachments = allowAttachments ? safeAttachments : []
 
   const projectData = !interview.interviews_project || Array.isArray(interview.interviews_project)
     ? null
@@ -81,10 +100,14 @@ export async function POST(
 
   // ユーザーメッセージ保存
   if (!isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive) {
+    const userMeta = acceptedAttachments.length > 0
+      ? { attachments: acceptedAttachments.map((a) => ({ path: a.path, content_type: a.contentType })) }
+      : null
     const { error: msgInsertError } = await supabase.from('interview_messages').insert({
       interview_id: interviewId,
       role: 'user',
       content: userMessage,
+      ...(userMeta ? { meta: userMeta } : {}),
     })
     if (msgInsertError) {
       console.error('[POST /api/projects/[id]/interview/chat] user message insert error', {
@@ -179,11 +202,19 @@ export async function POST(
     ? '前回の続きから、今日のテーマで自然に始めてください。「はじめまして」とは言わないこと。'
     : 'はじめまして。よろしくお願いします。'
 
-  const messages = isGreeting
-    ? [{ role: 'user' as const, content: greetingSeed }]
+  type SupportedImageMediaType = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'
+  type AnthropicContentBlock =
+    | { type: 'text'; text: string }
+    | { type: 'image'; source: { type: 'base64'; media_type: SupportedImageMediaType; data: string } }
+  type AnthropicMessage = { role: 'user' | 'assistant'; content: string | AnthropicContentBlock[] }
+  const isSupportedImageType = (v: string): v is SupportedImageMediaType =>
+    v === 'image/jpeg' || v === 'image/png' || v === 'image/gif' || v === 'image/webp'
+
+  const messages: AnthropicMessage[] = isGreeting
+    ? [{ role: 'user', content: greetingSeed }]
     : [
-        ...(history ?? []).map((m) => ({
-          role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        ...(history ?? []).map((m): AnthropicMessage => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
           content: m.content,
         })),
         ...(isPassQuestion
@@ -205,6 +236,49 @@ export async function POST(
             }]
           : []),
       ]
+
+  // 添付画像（ハル限定）を Anthropic vision に渡す。
+  // 直前のターンの画像のみ含める（過去ターンのは再送しないでコストとレイテンシを抑える）。
+  if (acceptedAttachments.length > 0 && !isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive) {
+    const adminClient = createAdminClient()
+    const imageBlocks: AnthropicContentBlock[] = []
+    for (const att of acceptedAttachments) {
+      try {
+        const { data: blob, error: dlErr } = await adminClient.storage
+          .from('interview-attachments')
+          .download(att.path)
+        if (dlErr || !blob) {
+          console.warn('[interview/chat] attachment download failed', { path: att.path, error: dlErr?.message })
+          continue
+        }
+        const buf = Buffer.from(await blob.arrayBuffer())
+        const mediaType: SupportedImageMediaType = isSupportedImageType(att.contentType) ? att.contentType : 'image/jpeg'
+        imageBlocks.push({
+          type: 'image',
+          source: { type: 'base64', media_type: mediaType, data: buf.toString('base64') },
+        })
+      } catch (err) {
+        console.warn('[interview/chat] attachment processing failed', err)
+      }
+    }
+    if (imageBlocks.length > 0) {
+      // 直近のユーザーメッセージを画像 + テキストの content 配列に書き換える
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].role === 'user') {
+          const original = messages[i].content
+          const originalText = typeof original === 'string' ? original : ''
+          messages[i] = {
+            role: 'user',
+            content: [
+              ...imageBlocks,
+              { type: 'text', text: originalText || '（写真を共有しました）' },
+            ],
+          }
+          break
+        }
+      }
+    }
+  }
 
   const auditRawData = (auditRow?.raw_data ?? null) as Record<string, unknown> | null
 
