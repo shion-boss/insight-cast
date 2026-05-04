@@ -91,6 +91,9 @@ export async function createInterview(projectId: string, formData: FormData) {
       interviewer_type: interviewerType,
       focus_theme_mode: focusThemeMode,
       focus_theme: focusThemeMode === 'omakase' ? null : focusTheme,
+      // 取材を受けるユーザー（チーム編集者が代行する場合は editor 自身）。
+      // 会話記事の「取材先」表示でこのユーザーの名前・アイコンをデフォルトにする。
+      interviewee_user_id: user.id,
     })
     .select('id')
     .single()

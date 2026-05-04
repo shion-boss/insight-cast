@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Breadcrumb, CharacterAvatar, StateCard, getButtonClass, getPanelClass } from '@/components/ui'
 import { ArticleExportPanel } from './ArticleExportPanel'
 import { DeleteArticleButton } from './DeleteArticleButton'
@@ -44,9 +45,8 @@ export default async function ArticleDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
-  // profile (avatar_url のみ) と article を並列取得
-  const [{ data: profile }, { data: article }] = await Promise.all([
-    supabase.from('profiles').select('avatar_url, name').eq('id', user.id).maybeSingle(),
+  // article と project を並列取得
+  const [{ data: article }, { data: project }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, content, article_type, created_at, project_id, interview_id, suggestions')
@@ -54,23 +54,33 @@ export default async function ArticleDetailPage({
       .eq('project_id', id)
       .is('deleted_at', null)
       .single(),
+    supabase.from('projects').select('id, user_id, name, hp_url').eq('id', id).is('deleted_at', null).single(),
   ])
 
   if (!article) redirect(`/projects/${id}`)
-
-  // article が取れてから project と interview を並列取得
-  const [{ data: project }, { data: interview }] = await Promise.all([
-    supabase.from('projects').select('id, user_id, name, hp_url').eq('id', id).is('deleted_at', null).single(),
-    article.interview_id
-      ? supabase.from('interviews').select('interviewer_type').eq('id', article.interview_id).single()
-      : Promise.resolve({ data: null }),
-  ])
-
   if (!project) redirect('/dashboard')
+
   const isOwner = project.user_id === user.id
   const memberRole = isOwner ? null : await getMemberRole(supabase, id, user.id)
   if (!isOwner && !memberRole) redirect('/dashboard')
   const canEdit = isOwner || memberRole === 'editor'
+
+  // 会話記事の「取材先」デフォルトは取材を受けたユーザーの名前・アイコンを使う。
+  // profiles RLS は own profile only なので、admin client で取得する。
+  // 1) 取材を受けたユーザー（interviewee_user_id）の profile を最優先
+  // 2) 既存の取材で interviewee_user_id が NULL の場合は project owner にフォールバック
+  // 3) 外部取材は external_respondent_name のみ（avatar なし）
+  const adminSupabase = createAdminClient()
+  const { data: interview } = article.interview_id
+    ? await supabase.from('interviews').select('interviewer_type, external_respondent_name, interviewee_user_id').eq('id', article.interview_id).single()
+    : { data: null as { interviewer_type: string | null; external_respondent_name: string | null; interviewee_user_id: string | null } | null }
+
+  const intervieweeUserId = interview?.interviewee_user_id ?? project.user_id
+  const { data: intervieweeProfile } = await adminSupabase
+    .from('profiles')
+    .select('avatar_url, name')
+    .eq('id', intervieweeUserId)
+    .maybeSingle()
 
   const interviewer = interview?.interviewer_type ? getCharacter(interview.interviewer_type) : null
   const fallbackChar = getCharacter('mint')
@@ -153,8 +163,8 @@ export default async function ArticleDetailPage({
               interviewerId={interview?.interviewer_type ?? null}
               interviewerName={interviewer?.name ?? null}
               interviewerLabel={interviewer?.label ?? null}
-              clientName={profile?.name ?? '事業者'}
-              userAvatarUrl={profile?.avatar_url ?? null}
+              clientName={interview?.external_respondent_name ?? intervieweeProfile?.name ?? '事業者'}
+              userAvatarUrl={intervieweeProfile?.avatar_url ?? null}
               articleId={article.id}
               projectId={id}
               suggestions={article.suggestions as ArticleSuggestions | null}
