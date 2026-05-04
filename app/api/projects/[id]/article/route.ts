@@ -466,7 +466,8 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - 見出し（##）を2〜3個つけて構造化する
 - タイトルを最初に書く（# タイトル）
 - 本文の最後に1行空けて「抜粋: 」で始まる150字以内の紹介文を書く（Markdown外のプレーンテキスト）
-- Markdown形式で出力${polishInstruction}`
+- Markdown形式で出力${polishInstruction}
+- **取材を受けた方（${clientName}）の名前を本文中で呼ぶときは、必ず「${clientName}さん」とさん付けにすること**。呼び捨て・役職のみの呼称は不可。法人名・屋号として登場する場合（例: 「${clientName}の店舗では」など事業体を指す文脈）はこの限りではない`
   } else {
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
 
@@ -485,6 +486,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 - Markdown形式で出力${polishInstruction}
 - **全文をですます体で統一すること**（会話バブル内のインタビュアー発言・散文すべて。インタビュー記録の話し言葉に引きずられないこと）
 - インタビュアー（${charName}）の発言は、インタビュー記録の口調に関わらず、**常に丁寧な敬語・ですます体を維持すること**。ため口・省略形・絵文字は使わない
+- **取材を受けた方（${clientName}）の名前を会話バブル内・導入文・まとめなどで呼ぶときは、必ず「${clientName}さん」とさん付けにすること**。呼び捨て・役職のみの呼称は不可。発言者ラベルとしての \`**${clientName}**:\` 表記はこの限りではない（フォーマット維持のためそのまま）。法人名・屋号として事業体を指す文脈もこの限りではない
 
 ## 【厳守】会話フォーマットについて
 - 発言者名は必ず \`**${charName}**\` か \`**${clientName}**\` のみを使うこと。括弧・役職・説明を付け加えた変形は不可
