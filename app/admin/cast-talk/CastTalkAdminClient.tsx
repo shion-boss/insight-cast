@@ -206,7 +206,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                   >
                     編集
                   </Link>
-                  {item.status === 'published' && (
+                  {item.status === 'published' ? (
                     <Link
                       href={`/cast-talk/${item.slug}`}
                       target="_blank"
@@ -215,6 +215,13 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     >
                       公開ページ ↗
                     </Link>
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="invisible min-h-[44px] rounded-[var(--r-sm)] border border-transparent px-4 py-2 text-xs font-medium inline-flex items-center whitespace-nowrap"
+                    >
+                      公開ページ ↗
+                    </span>
                   )}
                   <button
                     type="button"
@@ -296,7 +303,12 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                             公開ページ ↗
                           </Link>
                         ) : (
-                          <span className="inline-block px-3 py-1.5 text-xs" />
+                          <span
+                            aria-hidden="true"
+                            className="invisible inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium whitespace-nowrap"
+                          >
+                            公開ページ ↗
+                          </span>
                         )}
                         <button
                           type="button"
