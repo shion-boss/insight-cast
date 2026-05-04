@@ -218,12 +218,12 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-10">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">管理ダッシュボード</h1>
           <p className="mt-1 text-sm text-[var(--text2)]">ブログ記事の管理・公開を行います</p>
         </div>
-        <ButtonLink href="/admin/posts/new">新しい記事を書く</ButtonLink>
+        <ButtonLink href="/admin/posts/new" className="self-start">新しい記事を書く</ButtonLink>
       </div>
 
       {/* サービス統計 */}
@@ -299,28 +299,30 @@ export default async function AdminDashboardPage() {
                 {owner.gsc!.topQueries.length === 0 ? (
                   <div className="px-5 py-6 text-sm text-[var(--text3)]">直近30日のクエリデータなし</div>
                 ) : (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
-                        <th className="px-5 py-2 font-semibold">クエリ</th>
-                        <th className="px-2 py-2 text-right font-semibold">クリック</th>
-                        <th className="px-2 py-2 text-right font-semibold">表示</th>
-                        <th className="px-2 py-2 text-right font-semibold">CTR</th>
-                        <th className="px-5 py-2 text-right font-semibold">順位</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {owner.gsc!.topQueries.map((q, i) => (
-                        <tr key={`${q.query}-${i}`} className="border-t border-[var(--border)]">
-                          <td className="px-5 py-2 truncate max-w-[200px] text-[var(--text)]" title={q.query}>{q.query}</td>
-                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(q.clicks)}</td>
-                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(q.impressions)}</td>
-                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{(q.ctr * 100).toFixed(1)}%</td>
-                          <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{q.position.toFixed(1)}</td>
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[460px] text-sm">
+                      <thead>
+                        <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
+                          <th className="px-5 py-2 font-semibold">クエリ</th>
+                          <th className="px-2 py-2 text-right font-semibold">クリック</th>
+                          <th className="px-2 py-2 text-right font-semibold">表示</th>
+                          <th className="px-2 py-2 text-right font-semibold">CTR</th>
+                          <th className="px-5 py-2 text-right font-semibold">順位</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {owner.gsc!.topQueries.map((q, i) => (
+                          <tr key={`${q.query}-${i}`} className="border-t border-[var(--border)]">
+                            <td className="px-5 py-2 truncate max-w-[200px] text-[var(--text)]" title={q.query}>{q.query}</td>
+                            <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(q.clicks)}</td>
+                            <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(q.impressions)}</td>
+                            <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{(q.ctr * 100).toFixed(1)}%</td>
+                            <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{q.position.toFixed(1)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
 
@@ -333,30 +335,32 @@ export default async function AdminDashboardPage() {
                 {owner.gsc!.topPages.length === 0 ? (
                   <div className="px-5 py-6 text-sm text-[var(--text3)]">直近30日のページデータなし</div>
                 ) : (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
-                        <th className="px-5 py-2 font-semibold">ページ</th>
-                        <th className="px-2 py-2 text-right font-semibold">クリック</th>
-                        <th className="px-2 py-2 text-right font-semibold">表示</th>
-                        <th className="px-5 py-2 text-right font-semibold">順位</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {owner.gsc!.topPages.map((p, i) => (
-                        <tr key={`${p.page}-${i}`} className="border-t border-[var(--border)]">
-                          <td className="px-5 py-2 truncate max-w-[260px] text-[var(--text)]" title={p.page}>
-                            <a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                              {shortenPath(p.page)}
-                            </a>
-                          </td>
-                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(p.clicks)}</td>
-                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(p.impressions)}</td>
-                          <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{p.position.toFixed(1)}</td>
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[460px] text-sm">
+                      <thead>
+                        <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
+                          <th className="px-5 py-2 font-semibold">ページ</th>
+                          <th className="px-2 py-2 text-right font-semibold">クリック</th>
+                          <th className="px-2 py-2 text-right font-semibold">表示</th>
+                          <th className="px-5 py-2 text-right font-semibold">順位</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {owner.gsc!.topPages.map((p, i) => (
+                          <tr key={`${p.page}-${i}`} className="border-t border-[var(--border)]">
+                            <td className="px-5 py-2 truncate max-w-[260px] text-[var(--text)]" title={p.page}>
+                              <a href={p.page} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                                {shortenPath(p.page)}
+                              </a>
+                            </td>
+                            <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(p.clicks)}</td>
+                            <td className="px-2 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(p.impressions)}</td>
+                            <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{p.position.toFixed(1)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             </div>
@@ -375,7 +379,7 @@ export default async function AdminDashboardPage() {
                 <div className="divide-y divide-[var(--border)]">
                   {owner.blogArticleQueries.map((article, i) => (
                     <div key={`${article.page}-${i}`} className="px-5 py-4">
-                      <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                         <a
                           href={article.page}
                           target="_blank"
@@ -389,12 +393,17 @@ export default async function AdminDashboardPage() {
                           クリック {fmtNum(article.totalClicks)} / 表示 {fmtNum(article.totalImpressions)}
                         </div>
                       </div>
-                      <div className="mt-2 space-y-1">
+                      <div className="mt-2 space-y-2 sm:space-y-1">
                         {article.queries.map((q, qi) => (
-                          <div key={`${q.query}-${qi}`} className="flex items-center gap-3 text-xs">
-                            <span className="text-[var(--text3)] tabular-nums w-2">・</span>
-                            <span className="text-[var(--text2)] truncate flex-1 min-w-0" title={q.query}>{q.query}</span>
-                            <span className="text-[var(--text3)] tabular-nums whitespace-nowrap">
+                          <div
+                            key={`${q.query}-${qi}`}
+                            className="flex flex-col gap-0.5 text-xs sm:flex-row sm:items-center sm:gap-3"
+                          >
+                            <div className="flex min-w-0 items-start gap-2">
+                              <span className="text-[var(--text3)] tabular-nums shrink-0">・</span>
+                              <span className="text-[var(--text2)] flex-1 min-w-0 break-words sm:truncate" title={q.query}>{q.query}</span>
+                            </div>
+                            <span className="pl-4 text-[var(--text3)] tabular-nums sm:pl-0 sm:whitespace-nowrap">
                               {fmtNum(q.clicks)} click / 表示 {fmtNum(q.impressions)} / 順位 {q.position.toFixed(1)} / CTR {(q.ctr * 100).toFixed(1)}%
                             </span>
                           </div>
@@ -413,24 +422,26 @@ export default async function AdminDashboardPage() {
                   <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">よく読まれているページ TOP10（GA4 直近30日）</p>
                   <p className="mt-0.5 text-xs text-[var(--text3)]">検索以外も含む全流入ベース。SNSや直接流入も含む。</p>
                 </div>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
-                      <th className="px-5 py-2 font-semibold">ページ</th>
-                      <th className="px-2 py-2 text-right font-semibold">PV</th>
-                      <th className="px-5 py-2 text-right font-semibold">セッション</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {owner.ga4.topPages.map((p, i) => (
-                      <tr key={`${p.path}-${i}`} className="border-t border-[var(--border)]">
-                        <td className="px-5 py-2 truncate max-w-[400px] text-[var(--text)]" title={p.path}>{p.path}</td>
-                        <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(p.pageViews)}</td>
-                        <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(p.sessions)}</td>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-sm">
+                    <thead>
+                      <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text3)] uppercase">
+                        <th className="px-5 py-2 font-semibold">ページ</th>
+                        <th className="px-2 py-2 text-right font-semibold">PV</th>
+                        <th className="px-5 py-2 text-right font-semibold">セッション</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {owner.ga4.topPages.map((p, i) => (
+                        <tr key={`${p.path}-${i}`} className="border-t border-[var(--border)]">
+                          <td className="px-5 py-2 truncate max-w-[400px] text-[var(--text)]" title={p.path}>{p.path}</td>
+                          <td className="px-2 py-2 text-right tabular-nums text-[var(--text)]">{fmtNum(p.pageViews)}</td>
+                          <td className="px-5 py-2 text-right tabular-nums text-[var(--text2)]">{fmtNum(p.sessions)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </>

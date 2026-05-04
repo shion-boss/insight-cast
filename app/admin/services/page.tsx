@@ -144,9 +144,9 @@ export default function AdminServicesPage() {
             key={svc.name}
             className={`px-5 py-4 ${i < SERVICES.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
           >
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <p className="font-semibold text-[var(--text)]">{svc.name}</p>
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[svc.status].badge}`}>
                     {STATUS_STYLES[svc.status].label}
@@ -157,7 +157,7 @@ export default function AdminServicesPage() {
                 {svc.envKeys && svc.envKeys.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {svc.envKeys.map((key) => (
-                      <code key={key} className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[11px] text-[var(--text3)]">
+                      <code key={key} className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[11px] text-[var(--text3)] break-all">
                         {key}
                       </code>
                     ))}
@@ -168,7 +168,7 @@ export default function AdminServicesPage() {
                 href={svc.dashboardUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                className="inline-flex shrink-0 self-start items-center rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] whitespace-nowrap"
               >
                 ダッシュボード <span aria-hidden="true">→</span>
               </a>

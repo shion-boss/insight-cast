@@ -160,46 +160,97 @@ export default async function AdminUsagePage() {
         {thisMonthRows.length === 0 ? (
           <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
         ) : (
-          <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
-            {/* ヘッダー行 */}
-            <div className="grid grid-cols-6 gap-2 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-2.5">
-              {['プラン', 'ユーザー数', '平均APIコスト/人', '最大APIコスト/人', '月額単価', '粗利/人'].map((h) => (
-                <p key={h} className="text-xs font-bold text-[var(--text3)]">{h}</p>
-              ))}
+          <>
+            {/* モバイル: カード形式 */}
+            <div className="space-y-3 lg:hidden">
+              {thisMonthRows.map((row) => {
+                const grossUsd = calcGrossMarginUsd(row.plan, row.avg_cost_usd)
+                const isNegative = grossUsd !== null && grossUsd < 0
+                return (
+                  <div
+                    key={row.plan}
+                    className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4"
+                  >
+                    <div className="mb-3 flex items-baseline justify-between gap-3">
+                      <p className="text-sm font-semibold text-[var(--text)]">
+                        {PLAN_LABELS[row.plan] ?? row.plan}
+                      </p>
+                      <p className="shrink-0 text-xs text-[var(--text3)]">{row.user_count}人</p>
+                    </div>
+                    <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                      <dt className="text-[var(--text3)]">平均APIコスト/人</dt>
+                      <dd className="text-right">
+                        <CostValue usd={row.avg_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
+                      </dd>
+                      <dt className="text-[var(--text3)]">最大APIコスト/人</dt>
+                      <dd className="text-right">
+                        <CostValue usd={row.max_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
+                      </dd>
+                      <dt className="text-[var(--text3)]">月額単価</dt>
+                      <dd className="text-right text-sm font-semibold text-[var(--text)]">
+                        {PLAN_REVENUE_JPY[row.plan] !== undefined && PLAN_REVENUE_JPY[row.plan] > 0
+                          ? `¥${PLAN_REVENUE_JPY[row.plan].toLocaleString()}`
+                          : '¥0'}
+                      </dd>
+                      <dt className="text-[var(--text3)]">粗利/人</dt>
+                      <dd className="text-right">
+                        {grossUsd === null ? (
+                          <span className="text-sm text-[var(--text3)]">—</span>
+                        ) : (
+                          <CostValue
+                            usd={grossUsd}
+                            className={`text-sm font-semibold ${isNegative ? 'text-[var(--err)]' : 'text-[var(--ok)]'}`}
+                          />
+                        )}
+                      </dd>
+                    </dl>
+                  </div>
+                )
+              })}
             </div>
-            {thisMonthRows.map((row, i) => {
-              const grossUsd = calcGrossMarginUsd(row.plan, row.avg_cost_usd)
-              const isNegative = grossUsd !== null && grossUsd < 0
-              return (
-                <div
-                  key={row.plan}
-                  className={`group grid grid-cols-6 gap-2 items-center px-5 py-3.5 ${
-                    i < thisMonthRows.length - 1 ? 'border-b border-[var(--border)]' : ''
-                  }`}
-                >
-                  <p className="text-sm font-medium text-[var(--text)]">
-                    {PLAN_LABELS[row.plan] ?? row.plan}
-                  </p>
-                  <p className="text-sm text-[var(--text2)]">{row.user_count}人</p>
-                  <CostValue usd={row.avg_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
-                  <CostValue usd={row.max_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
-                  <p className="text-sm font-semibold text-[var(--text)]">
-                    {PLAN_REVENUE_JPY[row.plan] !== undefined && PLAN_REVENUE_JPY[row.plan] > 0
-                      ? `¥${PLAN_REVENUE_JPY[row.plan].toLocaleString()}`
-                      : '¥0'}
-                  </p>
-                  {grossUsd === null ? (
-                    <p className="text-sm text-[var(--text3)]">—</p>
-                  ) : (
-                    <CostValue
-                      usd={grossUsd}
-                      className={`text-sm font-semibold ${isNegative ? 'text-[var(--err)]' : 'text-[var(--ok)]'}`}
-                    />
-                  )}
-                </div>
-              )
-            })}
-          </div>
+
+            {/* PC: テーブル */}
+            <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] lg:block">
+              {/* ヘッダー行 */}
+              <div className="grid grid-cols-6 gap-2 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-2.5">
+                {['プラン', 'ユーザー数', '平均APIコスト/人', '最大APIコスト/人', '月額単価', '粗利/人'].map((h) => (
+                  <p key={h} className="text-xs font-bold text-[var(--text3)]">{h}</p>
+                ))}
+              </div>
+              {thisMonthRows.map((row, i) => {
+                const grossUsd = calcGrossMarginUsd(row.plan, row.avg_cost_usd)
+                const isNegative = grossUsd !== null && grossUsd < 0
+                return (
+                  <div
+                    key={row.plan}
+                    className={`group grid grid-cols-6 gap-2 items-center px-5 py-3.5 ${
+                      i < thisMonthRows.length - 1 ? 'border-b border-[var(--border)]' : ''
+                    }`}
+                  >
+                    <p className="text-sm font-medium text-[var(--text)]">
+                      {PLAN_LABELS[row.plan] ?? row.plan}
+                    </p>
+                    <p className="text-sm text-[var(--text2)]">{row.user_count}人</p>
+                    <CostValue usd={row.avg_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
+                    <CostValue usd={row.max_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
+                    <p className="text-sm font-semibold text-[var(--text)]">
+                      {PLAN_REVENUE_JPY[row.plan] !== undefined && PLAN_REVENUE_JPY[row.plan] > 0
+                        ? `¥${PLAN_REVENUE_JPY[row.plan].toLocaleString()}`
+                        : '¥0'}
+                    </p>
+                    {grossUsd === null ? (
+                      <p className="text-sm text-[var(--text3)]">—</p>
+                    ) : (
+                      <CostValue
+                        usd={grossUsd}
+                        className={`text-sm font-semibold ${isNegative ? 'text-[var(--err)]' : 'text-[var(--ok)]'}`}
+                      />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </>
         )}
         <p className="mt-2 text-xs text-[var(--text3)]">
           「粗利/人」= 月額単価 ÷ 150（円→USD換算）− 平均APIコスト。広告費の上限 = 粗利 × 回収期間（ヶ月）。
