@@ -1,6 +1,6 @@
 'use server'
 
-import { CHARACTERS } from '@/lib/characters'
+import { canUseCast } from '@/lib/cast-access'
 import {
   DEFAULT_INTERVIEW_FOCUS_THEME_MODE,
   isInterviewFocusThemeMode,
@@ -16,7 +16,8 @@ export async function createInterview(projectId: string, formData: FormData) {
   if (!user) redirect('/')
 
   const interviewerType = `${formData.get('interviewerType') ?? ''}`
-  const isAvailableInterviewer = CHARACTERS.some((char) => char.id === interviewerType && char.available)
+  // ユーザーごとにアクセス判定（grandfathered モデル）
+  const isAvailableInterviewer = canUseCast(interviewerType, user.created_at)
   if (!isAvailableInterviewer) redirect(`/projects/${projectId}/interviewer`)
 
   const focusThemeModeValue = `${formData.get('focusThemeMode') ?? DEFAULT_INTERVIEW_FOCUS_THEME_MODE}`
