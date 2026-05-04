@@ -339,7 +339,7 @@ export async function POST(
 
   const { data: messages } = await supabase
     .from('interview_messages')
-    .select('role, content')
+    .select('role, content, meta')
     .eq('interview_id', interviewId)
     .order('created_at', { ascending: true })
 
@@ -512,19 +512,75 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
   // ここに到達する前に isOwner または memberRole === 'editor' の検証が完了していることを保証する。
   const adminSupabase = createAdminClient()
 
+  // ハル取材かつ会話記事以外の場合のみ、添付画像を vision に渡して描写を引き出す。
+  // 画像本体は記事本文に埋め込まない（記事に画像URLが入らない＝コピペ運用が崩れない）。
+  type SupportedImageMediaType = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'
+  type ImageBlock = { type: 'image'; source: { type: 'base64'; media_type: SupportedImageMediaType; data: string } }
+  const isSupportedImageType = (v: string): v is SupportedImageMediaType =>
+    v === 'image/jpeg' || v === 'image/png' || v === 'image/gif' || v === 'image/webp'
+
+  type AttachmentMeta = { path?: string; content_type?: string }
+  const collectedAttachmentPaths: Array<{ path: string; contentType: string }> = []
+  if (interviewerType === 'hal' && articleType !== 'conversation') {
+    for (const m of messages ?? []) {
+      const meta = (m as { meta?: { attachments?: AttachmentMeta[] } | null }).meta ?? null
+      const list = Array.isArray(meta?.attachments) ? meta!.attachments : []
+      for (const a of list) {
+        if (typeof a?.path === 'string' && typeof a?.content_type === 'string') {
+          collectedAttachmentPaths.push({ path: a.path, contentType: a.content_type })
+        }
+      }
+    }
+  }
+
+  // 画像 path を base64 ImageBlock に変換（最大 6 枚に制限してコストとレイテンシを抑える）
+  async function loadImageBlocks(): Promise<ImageBlock[]> {
+    const blocks: ImageBlock[] = []
+    const limited = collectedAttachmentPaths.slice(0, 6)
+    if (limited.length === 0) return blocks
+    const adminClient = createAdminClient()
+    for (const att of limited) {
+      try {
+        const { data: blob, error: dlErr } = await adminClient.storage
+          .from('interview-attachments')
+          .download(att.path)
+        if (dlErr || !blob) continue
+        const buf = Buffer.from(await blob.arrayBuffer())
+        const mediaType: SupportedImageMediaType = isSupportedImageType(att.contentType) ? att.contentType : 'image/jpeg'
+        blocks.push({
+          type: 'image',
+          source: { type: 'base64', media_type: mediaType, data: buf.toString('base64') },
+        })
+      } catch (err) {
+        console.warn('[article] image load failed', { path: att.path, err })
+      }
+    }
+    return blocks
+  }
+
   async function generateAndSaveWithAdmin() {
     let fullText = ''
     try {
+      const imageBlocks = await loadImageBlocks()
+      const halImageInstruction = imageBlocks.length > 0
+        ? `\n\n## 写真の活用（ハル取材）\nこの取材ではユーザーが ${imageBlocks.length} 枚の写真を共有しています。写真の中の場面・人・空気を「事業者が見ていた景色」として、記事本文の中に1〜2段落の描写として自然に組み込んでください。\n\n重要:\n- 画像URLや画像タグは本文に出さない（記事はテキストのみ）\n- 写真にない人物・物・場所を増やさない\n- 写真の中の人物の固有名詞は、事業者が会話で言及した名前のみ使う\n- 推測で「○○年前から」「毎日」などの時間情報を加えない（会話に出てきた範囲で）`
+        : ''
+
+      // contextBlock + instructionBlock の order を保ちつつ、画像を文末の text の前に配置
+      type AnthropicTextBlock = { type: 'text'; text: string; cache_control?: { type: 'ephemeral' } }
+      const userContent: Array<AnthropicTextBlock | ImageBlock> = [
+        { type: 'text', text: contextBlock, cache_control: { type: 'ephemeral' } },
+        ...imageBlocks,
+        { type: 'text', text: instructionBlock + halImageInstruction },
+      ]
+
       const stream = await anthropic.messages.stream({
         model: 'claude-sonnet-4-6',
         max_tokens: 4096,
         system: editorialGuardrail,
         messages: [{
           role: 'user',
-          content: [
-            { type: 'text', text: contextBlock, cache_control: { type: 'ephemeral' } },
-            { type: 'text', text: instructionBlock },
-          ],
+          content: userContent,
         }],
       })
       for await (const chunk of stream) {

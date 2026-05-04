@@ -86,6 +86,37 @@ export default async function ArticleDetailPage({
   const fallbackChar = getCharacter('mint')
   const displayChar = interviewer ?? fallbackChar
 
+  // ハル取材の場合のみ、添付画像のサムネイル一覧を取得して記事下部に表示する。
+  // 画像本体は記事 HTML には埋め込まれず、ここで「使った写真」として参照できる。
+  type AttachmentMeta = { path?: string; content_type?: string }
+  type AttachmentRef = { path: string; signedUrl: string }
+  const attachmentRefs: AttachmentRef[] = []
+  if (interview?.interviewer_type === 'hal' && article.interview_id) {
+    const { data: msgs } = await adminSupabase
+      .from('interview_messages')
+      .select('meta')
+      .eq('interview_id', article.interview_id)
+      .order('created_at', { ascending: true })
+    const paths: string[] = []
+    for (const m of msgs ?? []) {
+      const meta = (m as { meta?: { attachments?: AttachmentMeta[] } | null }).meta ?? null
+      const list = Array.isArray(meta?.attachments) ? meta!.attachments : []
+      for (const a of list) {
+        if (typeof a?.path === 'string') paths.push(a.path)
+      }
+    }
+    if (paths.length > 0) {
+      const { data: signed } = await adminSupabase.storage
+        .from('interview-attachments')
+        .createSignedUrls(paths.slice(0, 12), 60 * 60)
+      for (const item of signed ?? []) {
+        if (item.path && item.signedUrl) {
+          attachmentRefs.push({ path: item.path, signedUrl: item.signedUrl })
+        }
+      }
+    }
+  }
+
   const backHref = from === 'articles'
     ? fromInterviewId ? `/articles?interviewId=${fromInterviewId}&projectId=${id}` : `/articles`
     : `/projects/${id}`
@@ -170,6 +201,37 @@ export default async function ArticleDetailPage({
               suggestions={article.suggestions as ArticleSuggestions | null}
               canEdit={canEdit}
             />
+            {attachmentRefs.length > 0 && (
+              <section className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+                <header className="mb-3">
+                  <h2 className="text-base font-semibold text-[var(--text)]">この取材で添付された写真</h2>
+                  <p className="mt-1 text-xs text-[var(--text3)]">
+                    記事本文には画像は含まれていません。HP に投稿する際、必要な写真をここから選んでお手元のブログ等に貼り付けてください。
+                  </p>
+                </header>
+                <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {attachmentRefs.map((ref) => (
+                    <li key={ref.path}>
+                      <a
+                        href={ref.signedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block aspect-square overflow-hidden rounded-md border border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        aria-label="添付画像を新しいタブで開く"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={ref.signedUrl}
+                          alt="取材で添付された写真"
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </>
         )}
       </div>
