@@ -547,7 +547,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   }, [])
 
   return (
-    <div className="bg-[var(--bg)] h-[100dvh] lg:pl-[236px] flex flex-col overflow-hidden">
+    <div className="bg-[var(--bg)] h-[100dvh] flex flex-col overflow-hidden">
       {/* ヘッダー */}
       <header className="bg-[var(--surface)] border-b border-[var(--border)] h-16 flex items-center px-3 sm:px-6 gap-2 sm:gap-4 flex-shrink-0">
         <button
