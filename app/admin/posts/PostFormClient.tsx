@@ -6,6 +6,7 @@ import { TextInput, PrimaryButton, SecondaryButton, FieldLabel } from '@/compone
 import { createPost, updatePost, deletePost, type PostFormData } from '@/lib/actions/admin-posts'
 import { CHARACTERS } from '@/lib/characters'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { MarkdownArticleBody } from '@/lib/blog-markdown'
 
 type PostFormProps = {
   mode: 'new' | 'edit'
@@ -219,6 +220,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [hasChanges, setHasChanges] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [previewMode, setPreviewMode] = useState(false)
   const handleSaveRef = useRef<(() => void) | null>(null)
 
   // JST での今日の日付（UTC のまま計算すると 0〜8 時台に前日になる）
@@ -265,7 +267,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           setErrorMsg(result.error)
           return
         }
-        router.push(`/admin/posts/${result.id}/edit`)
+        router.push('/admin/posts')
       } else {
         if (!id) return
         const result = await updatePost(id, form)
@@ -274,7 +276,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           return
         }
         setHasChanges(false)
-        setSuccessMsg('保存しました')
+        router.push('/admin/posts')
       }
     })
   }
@@ -340,6 +342,60 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         </div>
       )}
 
+      {/* 編集 / プレビュー 切替 */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="inline-flex rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] p-0.5">
+          <button
+            type="button"
+            onClick={() => setPreviewMode(false)}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-sm'}`}
+            aria-pressed={!previewMode}
+          >
+            編集
+          </button>
+          <button
+            type="button"
+            onClick={() => setPreviewMode(true)}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-sm' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+            aria-pressed={previewMode}
+          >
+            プレビュー
+          </button>
+        </div>
+        {previewMode && (
+          <PrimaryButton
+            onClick={handleSave}
+            disabled={isPending || (!hasChanges && mode === 'edit')}
+          >
+            {isPending
+              ? '保存中...'
+              : mode === 'new'
+                ? '記事を作成する'
+                : hasChanges
+                  ? '変更を保存する'
+                  : '保存済み'}
+          </PrimaryButton>
+        )}
+      </div>
+
+      {previewMode ? (
+        <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-10">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">プレビュー（公開ページの見た目に近い表示）</p>
+          <div className="mx-auto mt-6 max-w-2xl">
+            <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
+              {form.title || '（タイトル未設定）'}
+            </h1>
+            {form.excerpt && (
+              <p className="mt-3 text-sm leading-7 text-[var(--text3)]">{form.excerpt}</p>
+            )}
+            <div className="mt-8">
+              {form.body
+                ? <MarkdownArticleBody markdown={form.body} />
+                : <p className="text-sm text-[var(--text3)]">本文を準備中です。</p>}
+            </div>
+          </div>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         {/* メインカラム */}
         <div className="space-y-5">
@@ -523,6 +579,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
         </div>
       </div>
+      )}
     </div>
   )
 }

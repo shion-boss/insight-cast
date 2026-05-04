@@ -300,12 +300,17 @@ export function buildIntroEmbed(opts: {
  *   [会話前の Markdown]
  *
  *   <!-- EMBED_HTML_START -->
+ *   [インタビュアー紹介カード（introEmbed が渡された場合のみ）]
+ *   <!-- EMBED_HTML_END -->
+ *
+ *   <!-- EMBED_HTML_START -->
  *   [会話バブルのみのHTML（イントロカードは含まない）]
  *   <!-- EMBED_HTML_END -->
  *
  *   [会話後の Markdown]
  *
- * インタビュアー紹介は `buildIntroEmbed` で別ブロックとして先頭に追加する想定。
+ * インタビュアー紹介を会話本文の直前のブロックに置きたい場合は
+ * `buildIntroEmbed` の戻り値を `introEmbed` として渡す。
  * admin/posts/[id]/edit のエディタはこのマーカーで本文を分割し、
  * Markdown ブロック / 埋め込みHTMLブロックを構築する。
  */
@@ -319,6 +324,7 @@ export function buildDraftBody(opts: {
   clientDisplayName: string
   userAvatarUrl?: string | null
   themeColor?: string
+  introEmbed?: string
 }): string {
   const lines = opts.content.split('\n')
 
@@ -363,6 +369,7 @@ export function buildDraftBody(opts: {
 
   const parts: string[] = []
   if (beforeMd) parts.push(beforeMd)
+  if (opts.introEmbed) parts.push(opts.introEmbed)
   parts.push(`<!-- EMBED_HTML_START -->\n${convHtml}\n<!-- EMBED_HTML_END -->`)
   if (afterMd) parts.push(afterMd)
   return parts.join('\n\n')

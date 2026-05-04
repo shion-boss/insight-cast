@@ -186,17 +186,23 @@ async function saveArticle(input: {
 
     const blogBodyRaw = cleanContent.replace(/^#\s+[^\n]*\n?/, '').trimStart()
     const isConversationType = input.articleType === 'conversation'
+    // インタビュアー紹介は AIキャスト視点（conversation / interviewer）のみ。ユーザー視点（client）は不要。
+    const isCastPerspective = isConversationType || isInterviewStyle
     const interviewerChar = input.interviewerType ? getCharacter(input.interviewerType) : null
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')
     const interviewerAvatarUrl = interviewerChar?.icon48?.src && appUrl
       ? `${appUrl}${interviewerChar.icon48.src}`
       : null
-    const introEmbed = buildIntroEmbed({
-      interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
-      interviewerLabel: interviewerChar?.label ?? null,
-      interviewerAvatarUrl,
-    })
-    const mainBody = isConversationType
+    const introEmbed = isCastPerspective
+      ? buildIntroEmbed({
+          interviewerDisplayName: input.interviewerDisplayName ?? 'インタビュアー',
+          interviewerLabel: interviewerChar?.label ?? null,
+          interviewerAvatarUrl,
+        })
+      : ''
+    // 会話記事は紹介ブロックを会話本文の直前に差し込む。
+    // レポート記事（interviewer）は会話ブロックが存在しないため、本文の先頭に置く。
+    const blogBody = isConversationType
       ? buildDraftBody({
           content: blogBodyRaw,
           interviewerName: input.interviewerDisplayName ?? 'インタビュアー',
@@ -206,9 +212,11 @@ async function saveArticle(input: {
           clientName: input.clientName ?? '事業者',
           clientDisplayName: input.clientName ?? '事業者',
           userAvatarUrl: input.clientAvatarUrl ?? null,
+          introEmbed: introEmbed || undefined,
         })
-      : blogBodyRaw
-    const blogBody = `${introEmbed}\n\n${mainBody}`
+      : introEmbed
+        ? `${introEmbed}\n\n${blogBodyRaw}`
+        : blogBodyRaw
     await input.supabase
       .from('blog_posts')
       .insert({
