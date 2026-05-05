@@ -432,23 +432,23 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
 
 | Export | 現状の主な参照 | 更新後の参照 | 備考 |
 |---|---|---|---|
-| `getButtonClass` 共通基底 | `rounded-[var(--r-sm)]` `focus-visible:ring-[var(--accent)]/40` | `rounded-[var(--shape-sm)]` `focus-visible` のリングは撤去（globals 任せ） | active:scale / opacity は既存維持 |
-| `getButtonClass('primary')` | `border-[var(--accent)]` `bg-[var(--accent)]` `text-white` `hover:bg-[var(--accent-h)]` | `border-[var(--primary)]` `bg-[var(--primary)]` `text-[var(--on-primary)]` `hover:bg-[var(--primary-hover)]` | |
-| `getButtonClass('secondary')` | `border-[var(--border)]` `bg-white` `text-[var(--text)]` `hover:border-[var(--accent)]` `hover:text-[var(--accent)]` | `border-[var(--outline)]` `bg-[var(--surface-container-high)]` `text-[var(--on-surface)]` `hover:border-[var(--primary)]` `hover:text-[var(--primary)]` | bg を `white` から `--surface-container-high` に。暖色背景の中で白すぎる印象を緩和 |
-| `getButtonClass('ghost')` | `text-[var(--text2)]` `hover:bg-[var(--bg2)]` | `text-[var(--on-surface-variant)]` `hover:bg-[var(--surface-container-low)]` | |
+| `getButtonClass` 共通基底 | `rounded-[var(--r-sm)]` `focus-visible:ring-[var(--accent)]/40` | `rounded-[var(--shape-sm)]` `focus-visible:ring-[var(--primary)]/40` | active:scale / opacity は既存維持。focus ring 撤去は別タスク |
+| `getButtonClass('primary')` | `border-[var(--accent)]` `bg-[var(--accent)]` `text-white` `hover:bg-[var(--accent-h)]` | `border-[var(--primary)]` `bg-[var(--primary)]` `text-[var(--on-primary)]` `hover:bg-[var(--primary-hover)]` | `text-white` は `--on-primary` (#ffffff) と同値。リネームのみ |
+| `getButtonClass('secondary')` | `border-[var(--border)]` `bg-white` `text-[var(--text)]` `hover:border-[var(--accent)]` `hover:text-[var(--accent)]` | `border-[var(--outline)]` `bg-white` `text-[var(--on-surface)]` `hover:border-[var(--primary)]` `hover:text-[var(--primary)]` | `bg-white` 維持。視覚的微調整は別タスクで |
+| `getButtonClass('ghost')` | `text-[var(--text2)]` `hover:bg-[var(--bg2)]` | `text-[var(--on-surface-variant)]` `hover:bg-[var(--surface-container)]` | リネームのみ |
 | `PrimaryButton` / `SecondaryButton` / `ButtonLink` | 上記基底を使用 | 同上 | API 不変 |
-| `getPanelClass` | `rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)]` | `rounded-[var(--shape-xl)] border border-[var(--outline)] bg-[var(--surface-container-high)]` | 「浮いたパネル」の意味を明示 |
-| `EyebrowBadge` | `border-[var(--accent)]/20 bg-[var(--accent-l)] text-[var(--accent)] text-xs tracking-[0.2em] uppercase` | `border-[var(--primary)]/20 bg-[var(--primary-container)] text-[var(--on-primary-container)] text-[length:var(--type-label-size)] tracking-[var(--type-label-tracking)] uppercase` | label タイポを参照 |
-| `StatusPill` neutral | `bg-[var(--surface)] text-[var(--text2)] ring-[var(--border)]` | `bg-[var(--surface-container-high)] text-[var(--on-surface-variant)] ring-[var(--outline)]` | |
+| `getPanelClass` | `rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)]` | `rounded-[var(--shape-xl)] border border-[var(--outline)] bg-[var(--surface)]` | `--surface` は新旧同値（#fffdf9）。リネームのみ |
+| `EyebrowBadge` | `border-[var(--accent)]/20 bg-[var(--accent-l)] text-[var(--accent)] text-xs tracking-[0.2em] uppercase` | `border-[var(--primary)]/20 bg-[var(--primary-container)] text-[var(--primary)] text-xs tracking-[0.2em] uppercase` | リネームのみ。タイポ・配色の見直しは別タスク |
+| `StatusPill` neutral | `bg-[var(--surface)] text-[var(--text2)] ring-[var(--border)]` | `bg-[var(--surface)] text-[var(--on-surface-variant)] ring-[var(--outline)]` | |
 | `StatusPill` success | `bg-[var(--ok-l)] text-[var(--ok)] ring-[var(--ok)]/20` | `bg-[var(--success-container)] text-[var(--success)] ring-[var(--success)]/20` | |
 | `StatusPill` warning | `bg-[var(--warn-l)] text-[var(--warn)]` | `bg-[var(--warning-container)] text-[var(--warning)]` | |
 | `StatusPill` info | `bg-[var(--teal-l)] text-[var(--teal)]` | `bg-[var(--secondary-container)] text-[var(--secondary)]` | |
-| `StateCard` default | `border-[var(--border)] bg-[var(--surface)]` | `border-[var(--outline)] bg-[var(--surface-container-high)]` | |
-| `StateCard` soft | `border-[var(--border)] bg-[var(--bg2)]` | `border-[var(--outline)] bg-[var(--surface-container-low)]` | |
+| `StateCard` default | `border-[var(--border)] bg-[var(--surface)]` | `border-[var(--outline)] bg-[var(--surface)]` | |
+| `StateCard` soft | `border-[var(--border)] bg-[var(--bg2)]` | `border-[var(--outline)] bg-[var(--surface-container)]` | |
 | `StateCard` warning | `border-[var(--warn)]/30 bg-[var(--warn-l)]` | `border-[var(--warning)]/30 bg-[var(--warning-container)]` | |
-| `CharacterAvatar` | `border-[var(--border)] bg-[var(--surface)]` | `border-[var(--outline)] bg-[var(--surface-container-high)]` | |
-| `InterviewerSpeech` | 吹き出し背景 `var(--surface)` | 吹き出し背景 `var(--surface-container-high)`、矢印 `var(--outline-variant)` | キャラアイコン優先ルールは継続 |
-| `TextInput` | `bg-[var(--surface)] border-[var(--border)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)]` | `bg-[var(--surface-container-high)] border-[var(--outline)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)]` | focus 時の ring は撤去 |
+| `CharacterAvatar` | `border-[var(--border)] bg-[var(--surface)]` | `border-[var(--outline)] bg-[var(--surface)]` | |
+| `InterviewerSpeech` | 吹き出し背景 `var(--surface)` / `var(--accent-l)` | 吹き出し背景 `var(--surface)` / `var(--primary-container)`、罫線・矢印 `var(--outline)` | リネームのみ |
+| `TextInput` | `bg-[var(--surface)] border-[var(--border)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)] disabled:bg-[var(--bg2)]` | `bg-[var(--surface)] border-[var(--outline)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:bg-[var(--surface-container)]` | リネームのみ。focus ring 撤去は別タスク |
 | `Breadcrumb` | `text-[var(--text3)]` | `text-[var(--on-surface-muted)]` | |
 | `SiteBrand` / `HeaderSurface` / `PageHeader` / `FieldLabel` / `DevAiLabel` | 各種 `--text*` `--bg*` | `--on-surface*` `--surface*` 系 | リネーム追随のみ |
 
