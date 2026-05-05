@@ -201,7 +201,7 @@ export async function POST(
   const relevantPastMemos = selectRelevantMemos(priorMeetings.pastMemos, interview.focus_theme, 2)
 
   const greetingSeed = isReturning
-    ? '前回の続きから、今日のテーマで自然に始めてください。「はじめまして」とは言わないこと。'
+    ? '再会です。「はじめまして」とは言わないこと。再会の挨拶のあと、今日のテーマで自然に始めてください。'
     : 'はじめまして。よろしくお願いします。'
 
   type SupportedImageMediaType = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'

@@ -62,9 +62,10 @@ export async function fetchPriorMeetings(params: {
 }
 
 /**
- * 過去メモの中から、現在の focus_theme に関連しそうなものを最大 max 件返す。
- * キーワードが2文字以上マッチしたものを優先し、関連が遠いが面白いメモも1件混ぜる。
- * summary または themes のどちらかが空でないメモのみ対象にする。
+ * 過去メモの中から、現在の focus_theme に関連するものだけを最大 max 件返す。
+ * キーワードが2文字以上マッチしたメモのみ対象にし、関連が薄いメモは混ぜない。
+ * （無関係な過去テーマを冒頭で持ち出すと、今日の取材の焦点がぼやけるため。）
+ * focus_theme が未指定（omakase 等）の場合は、テーマ未確定なので最近のメモを max 件まで返す。
  */
 export function selectRelevantMemos(
   memos: PastInterviewMemo[],
@@ -93,23 +94,14 @@ export function selectRelevantMemos(
     return { memo, score }
   })
 
-  // 関連度の高い順
-  scored.sort((a, b) => b.score - a.score)
-
-  const matched = scored.filter((s) => s.score > 0).map((s) => s.memo)
-  const unmatched = scored.filter((s) => s.score === 0).map((s) => s.memo)
-
-  // 関連が高いものを優先しつつ、関連が遠いが面白い（=最近の別テーマ）メモを1件混ぜる。
-  // これにより取材中に「前回の○○の話とつながりますね」のような横断的な接続が起こる余地ができる。
-  if (matched.length >= max) {
-    if (unmatched.length > 0 && max >= 2) {
-      // matched から (max-1) 件 + unmatched から 1 件
-      return [...matched.slice(0, max - 1), unmatched[0]]
-    }
-    return matched.slice(0, max)
-  }
-
-  return [...matched, ...unmatched].slice(0, max)
+  // 関連が高いものだけを返す（マッチ 0 件なら何も返さない）。
+  // AI 側の指示でも「関連が薄い過去テーマには触れない」としているため、
+  // ここで関連が遠いメモを文脈に混ぜないようにすることでブレを抑える。
+  return scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, max)
+    .map((s) => s.memo)
 }
 
 function extractKeywords(text: string): string[] {
