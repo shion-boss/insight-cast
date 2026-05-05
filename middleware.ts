@@ -14,7 +14,81 @@ function timingSafeEqual(a: string, b: string): boolean {
   return result === 0
 }
 
+/* ─── IP-based rate limit ─────────────────────────────────────
+ * インスタンス内メモリの best-effort 実装。Vercel の各 lambda
+ * インスタンス内でのみ有効で、cold start でリセットされる。
+ * スケールアウト時には事実上のリミットがインスタンス数倍になる。
+ * 「明らかな乱用を弾く」ことを目的にし、厳密な制限は per-user の
+ * `lib/api-usage.ts` checkRateLimit (Supabase 永続) に任せる。
+ *
+ * 将来 Upstash Redis 等の外部ストアに置き換える前提。
+ * ─────────────────────────────────────────────────────────── */
+
+type IpBucket = { count: number; resetAt: number }
+const ipBuckets = new Map<string, IpBucket>()
+const IP_RATE_LIMITS: Array<{ pattern: RegExp; limit: number; windowMs: number; label: string }> = [
+  // 認証なしで叩ける mutation 系は厳しめ
+  { pattern: /^\/api\/contact(\/|$)/,                limit: 5,  windowMs: 60_000,  label: 'contact' },
+  { pattern: /^\/api\/stripe\/(checkout|portal)/,    limit: 10, windowMs: 60_000,  label: 'stripe' },
+  { pattern: /^\/api\/auth\//,                       limit: 30, windowMs: 60_000,  label: 'auth' },
+  { pattern: /^\/api\/interview-links\/[^/]+/,       limit: 60, windowMs: 60_000,  label: 'interview-links' },
+  // それ以外の API 全般のフォールバック
+  { pattern: /^\/api\//,                             limit: 120, windowMs: 60_000, label: 'api-default' },
+]
+
+function getIpKey(request: NextRequest): string {
+  const xff = request.headers.get('x-forwarded-for')
+  if (xff) return xff.split(',')[0]?.trim() ?? 'unknown'
+  return request.headers.get('x-real-ip') ?? 'unknown'
+}
+
+function checkIpRateLimit(request: NextRequest, pathname: string): { allowed: boolean; label?: string } {
+  const rule = IP_RATE_LIMITS.find((r) => r.pattern.test(pathname))
+  if (!rule) return { allowed: true }
+
+  const ip = getIpKey(request)
+  const key = `${rule.label}:${ip}`
+  const now = Date.now()
+  const bucket = ipBuckets.get(key)
+
+  if (!bucket || bucket.resetAt <= now) {
+    ipBuckets.set(key, { count: 1, resetAt: now + rule.windowMs })
+    // 簡易 GC: 100 エントリを超えたら期限切れを掃除
+    if (ipBuckets.size > 200) {
+      for (const [k, v] of ipBuckets) {
+        if (v.resetAt <= now) ipBuckets.delete(k)
+      }
+    }
+    return { allowed: true }
+  }
+
+  bucket.count += 1
+  if (bucket.count > rule.limit) {
+    return { allowed: false, label: rule.label }
+  }
+  return { allowed: true }
+}
+
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // IP-based rate limit（API ルートのみ。最初に判定して abuse を弾く）
+  if (pathname.startsWith('/api/')) {
+    const rl = checkIpRateLimit(request, pathname)
+    if (!rl.allowed) {
+      return new NextResponse(
+        JSON.stringify({ error: 'Too many requests. Please slow down.' }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': '60',
+          },
+        }
+      )
+    }
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -38,7 +112,6 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const pathname = request.nextUrl.pathname
   const isPublicPath =
     pathname === '/' ||
     pathname === '/about' ||
