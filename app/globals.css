@@ -43,6 +43,15 @@
   --outline: #e2d5c3;
   --outline-variant: #d0c0a8;
 
+  /* === Color: Dark Surface (admin / sidebar の暗い面で限定使用) ===
+   * dark theme 本体ではなく、light テーマ内に部分的に出てくる
+   * 暗いインジケータ（admin login 等）専用。 */
+  --surface-dark: #1c1410;
+  --surface-dark-hover: #2a1f18;
+  --on-surface-dark: #fafafa;
+  --on-surface-dark-variant: #d4d4d4;
+  --outline-dark: #57534e;
+
   /* === Color: Status === */
   --success: #16a34a;
   --on-success: #ffffff;
