@@ -33,7 +33,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
           キャストの対話
         </h2>
         <p className="text-base text-[var(--text2)] mt-3">キャスト同士の対話で、ホームページの育て方を学ぶ。</p>
-        <div className="mt-8 divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[#e2d5c3] bg-[#fffdf9]">
+        <div className="mt-8 divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[var(--outline)] bg-[var(--surface)]">
           {latestTalks.map((talk) => {
             const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
             const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
@@ -48,27 +48,27 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
                 className="group block px-5 py-5 transition-colors duration-200 hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
               >
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2 py-[4px]">
+                  <div className="flex items-center gap-1.5 rounded-[6px] border border-[var(--outline)] bg-white px-2 py-[4px]">
                     <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
-                    <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+                    <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--on-surface)]">{theme.label}</span>
                   </div>
                   {[interviewer, guest].map((c, i) =>
                     c ? (
-                      <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+                      <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[var(--outline)] flex-shrink-0">
                         <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" />
                       </div>
                     ) : null,
                   )}
-                  <span className="text-[11px] font-semibold text-[#7a6555]">
+                  <span className="text-[11px] font-semibold text-[var(--on-surface-variant)]">
                     {interviewer?.name ?? talk.interviewer_id} &amp; {guest?.name ?? talk.guest_id}
                   </span>
                 </div>
-                <h3 className="text-[15px] font-bold leading-[1.5] text-[#1c1410] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
+                <h3 className="text-[15px] font-bold leading-[1.5] text-[var(--on-surface)] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
                   {talk.title}
                 </h3>
-                <div className="h-px bg-[#e8ddd0] my-2.5" />
+                <div className="h-px bg-[var(--surface-container-high)] my-2.5" />
                 {talk.summary && (
-                  <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555]" style={{ borderColor: theme.color }}>
+                  <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)]" style={{ borderColor: theme.color }}>
                     「{talk.summary}」
                   </p>
                 )}

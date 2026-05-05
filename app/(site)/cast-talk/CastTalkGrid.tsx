@@ -63,7 +63,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
   return (
     <Link
       href={`/cast-talk/${talk.slug}`}
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] sm:flex-row"
+      className="group flex flex-col overflow-hidden rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] sm:flex-row"
     >
       {/* 左: 画像エリア */}
       <div className="relative aspect-video overflow-hidden sm:aspect-auto sm:w-2/5">
@@ -81,9 +81,9 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
           <div className="h-full bg-[var(--accent-l)]" />
         )}
         {/* LATEST バッジ */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-[#fffdf9] px-2.5 py-[5px]">
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-[6px] border border-[var(--outline)] bg-[var(--surface)] px-2.5 py-[5px]">
           <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
-          <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">LATEST</span>
+          <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--on-surface)]">LATEST</span>
         </div>
       </div>
 
@@ -91,9 +91,9 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
       <div className="flex flex-1 flex-col px-5 pb-[22px] pt-4 sm:py-6 sm:px-7">
         {/* テーマバッジ */}
         <div className="mb-3 flex items-center gap-1.5 flex-wrap">
-          <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2.5 py-[5px]">
+          <div className="flex items-center gap-1.5 rounded-[6px] border border-[var(--outline)] bg-white px-2.5 py-[5px]">
             <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
-            <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+            <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--on-surface)]">{theme.label}</span>
           </div>
         </div>
 
@@ -101,27 +101,27 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
         <div className="mb-3 flex items-center gap-1.5">
           {[interviewer, guest].map((c, i) =>
             c ? (
-              <div key={i} className="h-8 w-8 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3] flex-shrink-0">
+              <div key={i} className="h-8 w-8 overflow-hidden rounded-full border-[1.5px] border-[var(--outline)] flex-shrink-0">
                 <Image src={c.icon48} alt={c.name} width={32} height={32} className="h-full w-full object-cover" sizes="32px" />
               </div>
             ) : null,
           )}
-          <span className="text-[11px] font-semibold text-[#7a6555]">
+          <span className="text-[11px] font-semibold text-[var(--on-surface-variant)]">
             {getCastName(talk.interviewer_id ?? '')} &amp; {getCastName(talk.guest_id ?? '')}
           </span>
         </div>
 
         {/* タイトル */}
-        <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold leading-[1.5] text-[#1c1410] mb-2.5 sm:text-[20px] transition-colors duration-200 group-hover:text-[var(--accent)]">
+        <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-[18px] font-bold leading-[1.5] text-[var(--on-surface)] mb-2.5 sm:text-[20px] transition-colors duration-200 group-hover:text-[var(--accent)]">
           {talk.title}
         </h2>
 
         {/* 区切り線 */}
-        <div className="h-px bg-[#e8ddd0] my-2.5" />
+        <div className="h-px bg-[var(--surface-container-high)] my-2.5" />
 
         {/* summary */}
         {talk.summary && (
-          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555] line-clamp-3" style={{ borderColor: theme.color }}>
+          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
             「{talk.summary}」
           </p>
         )}
@@ -152,34 +152,34 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
       {/* 上段: テーマバッジ + キャラアイコン + 名前 */}
       <div className="mb-3 flex items-center gap-2 flex-wrap">
         {/* テーマバッジ */}
-        <div className="flex items-center gap-1.5 rounded-[6px] border border-[#e2d5c3] bg-white px-2 py-[4px]">
+        <div className="flex items-center gap-1.5 rounded-[6px] border border-[var(--outline)] bg-white px-2 py-[4px]">
           <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: theme.color }} />
-          <span className="text-[11px] font-bold tracking-[0.08em] text-[#1c1410]">{theme.label}</span>
+          <span className="text-[11px] font-bold tracking-[0.08em] text-[var(--on-surface)]">{theme.label}</span>
         </div>
         {/* キャラアイコン */}
         {[interviewer, guest].map((c, i) =>
           c ? (
-            <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[#e2d5c3]">
+            <div key={i} className="h-7 w-7 overflow-hidden rounded-full border-[1.5px] border-[var(--outline)]">
               <Image src={c.icon48} alt={c.name} width={28} height={28} className="h-full w-full object-cover" sizes="28px" />
             </div>
           ) : null,
         )}
-        <span className="text-[11px] font-semibold text-[#7a6555]">
+        <span className="text-[11px] font-semibold text-[var(--on-surface-variant)]">
           {getCastName(talk.interviewer_id ?? '')} &amp; {getCastName(talk.guest_id ?? '')}
         </span>
       </div>
 
       {/* タイトル */}
-      <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.5] text-[#1c1410] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
+      <h3 className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.5] text-[var(--on-surface)] mb-2 transition-colors duration-200 group-hover:text-[var(--accent)]">
         {talk.title}
       </h3>
 
       {/* 区切り線 */}
-      <div className="h-px bg-[#e8ddd0] my-2.5" />
+      <div className="h-px bg-[var(--surface-container-high)] my-2.5" />
 
       {/* summary */}
       {talk.summary && (
-        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[#7a6555] line-clamp-3" style={{ borderColor: theme.color }}>
+        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
           「{talk.summary}」
         </p>
       )}
@@ -246,7 +246,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
         <div>
           <div
             className={[
-              'divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[#e2d5c3] bg-[#fffdf9]',
+              'divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[var(--outline)] bg-[var(--surface)]',
               'transition-opacity duration-300',
               loading ? 'opacity-40' : 'opacity-100',
             ].join(' ')}
@@ -264,11 +264,11 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage - 1)}
                 disabled={listPage === 0 || loading}
                 aria-label="前のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span aria-hidden="true">←</span> 前へ
               </button>
-              <span className="min-w-[80px] text-center text-sm text-[#7a6555]" aria-live="polite">
+              <span className="min-w-[80px] text-center text-sm text-[var(--on-surface-variant)]" aria-live="polite">
                 {listPage + 1} / {listTotalPages}
               </span>
               <button
@@ -276,7 +276,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage + 1)}
                 disabled={listPage >= listTotalPages - 1 || loading}
                 aria-label="次のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 次へ <span aria-hidden="true">→</span>
               </button>

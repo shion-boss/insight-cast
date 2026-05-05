@@ -284,7 +284,7 @@ export default async function CastPage() {
             </div>
 
             {/* Cast Talk バナー */}
-            <div className="mt-16 rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="mt-16 rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
                 <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">Cast Talk</div>
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
