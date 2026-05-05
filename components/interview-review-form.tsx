@@ -141,7 +141,7 @@ export function InterviewReviewForm({
           {AXES.map((axis) => (
             <div key={axis.key} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
               <div className="sm:w-32">
-                <div className="text-sm font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-rose-500">*</span>}</div>
+                <div className="text-sm font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-[var(--error)]">*</span>}</div>
                 <div className="text-xs text-stone-500">{axis.help}</div>
               </div>
               <div className="flex gap-1.5">
@@ -155,8 +155,8 @@ export function InterviewReviewForm({
                       onClick={() => setScore(axis.key, score)}
                       className={`h-8 w-8 rounded-md border text-sm transition-colors ${
                         selected
-                          ? 'border-emerald-500 bg-emerald-500 text-white'
-                          : 'border-stone-300 bg-white text-stone-700 hover:border-emerald-300 hover:bg-emerald-50'
+                          ? 'border-[var(--success)] bg-[var(--success)] text-[var(--on-success)]'
+                          : 'border-stone-300 bg-white text-stone-700 hover:border-[var(--success)]/50 hover:bg-[var(--success-container)]'
                       }`}
                       aria-label={`${axis.label} スコア ${label}`}
                       aria-pressed={selected}
@@ -177,7 +177,7 @@ export function InterviewReviewForm({
             value={state.good_points}
             onChange={(e) => setState((s) => ({ ...s, good_points: e.target.value }))}
             rows={3}
-            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
+            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-[var(--success)] focus:outline-none"
             placeholder="例: 相槌のバリエーションが豊か、初手の質問が答えやすかった など"
           />
         </div>
@@ -189,12 +189,12 @@ export function InterviewReviewForm({
             value={state.improve_points}
             onChange={(e) => setState((s) => ({ ...s, improve_points: e.target.value }))}
             rows={3}
-            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none"
+            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-[var(--success)] focus:outline-none"
             placeholder="例: 後半で相槌が減った、専門知識の根拠提示が薄い、キャラの守備範囲外に踏み込んだ など"
           />
         </div>
 
-        {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+        {error ? <p className="text-sm text-[var(--error)]">{error}</p> : null}
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={saving} className={getButtonClass('primary')}>

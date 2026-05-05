@@ -33,7 +33,7 @@ export function LimitedCastBanner() {
       <div
         className="hidden md:grid relative overflow-hidden rounded-[6px] w-full"
         style={{
-          background: '#1c1410',
+          background: 'var(--surface-dark)',
           gridTemplateColumns: '1fr auto',
           alignItems: 'end',
         }}
@@ -80,7 +80,7 @@ export function LimitedCastBanner() {
       {/* ════ Mobile: md 未満 ════ */}
       <div
         className="md:hidden relative overflow-hidden rounded-[6px] w-full max-w-[390px] mx-auto"
-        style={{ background: '#1c1410' }}
+        style={{ background: 'var(--surface-dark)' }}
       >
         <div
           aria-hidden="true"

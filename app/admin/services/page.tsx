@@ -126,7 +126,7 @@ const SERVICES: Service[] = [
 const STATUS_STYLES: Record<ServiceStatus, { badge: string; label: string }> = {
   active: { badge: 'bg-[var(--ok-l)] text-[var(--ok)]', label: '稼働中' },
   free:   { badge: 'bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)]', label: '無料枠' },
-  inactive: { badge: 'bg-red-50 text-red-500', label: '未使用' },
+  inactive: { badge: 'bg-[var(--error-container)] text-[var(--error)]', label: '未使用' },
 }
 
 export default function AdminServicesPage() {

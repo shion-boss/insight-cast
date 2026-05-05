@@ -171,7 +171,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                   type="button"
                   onClick={() => handleDeleteRequest(post)}
                   disabled={deletingId === post.id}
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-red-200 px-4 py-2 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                 >
                   {deletingId === post.id ? '削除中...' : '削除'}
                 </button>
@@ -247,7 +247,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                         type="button"
                         onClick={() => handleDeleteRequest(post)}
                         disabled={deletingId === post.id}
-                        className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-2.5 py-1.5 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                       >
                         {deletingId === post.id ? '削除中...' : '削除'}
                       </button>
