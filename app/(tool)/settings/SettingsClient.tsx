@@ -93,6 +93,7 @@ function areNotificationPreferencesEqual(
 
 type Props = {
   initialName: string
+  initialFirstPerson: string
   email: string
   planKey: PlanKey
   avatarUrl: string | null
@@ -107,6 +108,7 @@ type Props = {
 
 export function SettingsClient({
   initialName,
+  initialFirstPerson,
   email,
   planKey,
   avatarUrl: initialAvatarUrl,
@@ -123,6 +125,8 @@ export function SettingsClient({
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [name, setName] = useState(initialName)
   const [savedName, setSavedName] = useState(initialName)
+  const [firstPerson, setFirstPerson] = useState(initialFirstPerson)
+  const [savedFirstPerson, setSavedFirstPerson] = useState(initialFirstPerson)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initialAvatarUrl)
   const [notifications, setNotifications] = useState<NotificationPreferences>(initialNotifications)
   const [savedNotifications, setSavedNotifications] = useState<NotificationPreferences>(initialNotifications)
@@ -165,9 +169,11 @@ export function SettingsClient({
       return
     }
 
+    const nextFirstPerson = firstPerson.trim().slice(0, 20)
+
     const { error } = await supabase
       .from('profiles')
-      .update({ name: nextName })
+      .update({ name: nextName, first_person: nextFirstPerson || null })
       .eq('id', userId)
 
     if (error) {
@@ -177,6 +183,7 @@ export function SettingsClient({
     }
 
     setSavedName(nextName)
+    setSavedFirstPerson(nextFirstPerson)
     setProfileSaving(false)
     setProfileSaved(true)
     window.setTimeout(() => setProfileSaved(false), 2000)
@@ -379,7 +386,8 @@ export function SettingsClient({
   }
 
   const mint = getCharacter('mint')
-  const hasUnsavedProfileChanges = name.trim() !== savedName.trim()
+  const hasUnsavedProfileChanges =
+    name.trim() !== savedName.trim() || firstPerson.trim() !== savedFirstPerson.trim()
   const hasUnsavedNotificationChanges = !areNotificationPreferencesEqual(
     notifications,
     savedNotifications,
@@ -480,6 +488,22 @@ export function SettingsClient({
                       aria-invalid={!!profileError || undefined}
                       aria-describedby={profileError ? 'settings-profile-error' : undefined}
                     />
+                  </div>
+                  <div>
+                    <label htmlFor="settings-first-person" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">記事の中での一人称</label>
+                    <TextInput
+                      id="settings-first-person"
+                      type="text"
+                      value={firstPerson}
+                      onChange={(event) => setFirstPerson(event.target.value)}
+                      placeholder="例: 私 / 僕 / うち / 弊社"
+                      maxLength={20}
+                      disabled={profileInputsDisabled}
+                      aria-describedby="settings-first-person-help"
+                    />
+                    <p id="settings-first-person-help" className="mt-1.5 text-xs text-[var(--text3)]">
+                      ブログ記事を作るときに、この一人称で書いてもらえます。空欄なら「私」になります。
+                    </p>
                   </div>
                 </div>
 

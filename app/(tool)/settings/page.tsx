@@ -28,7 +28,7 @@ export default async function SettingsPage() {
   ] = await Promise.all([
     supabase
       .from('profiles')
-      .select('name, avatar_url, notification_preferences')
+      .select('name, avatar_url, notification_preferences, first_person')
       .eq('id', user.id)
       .single(),
     supabase
@@ -71,6 +71,7 @@ export default async function SettingsPage() {
   return (
     <SettingsClient
       initialName={profile?.name ?? ''}
+      initialFirstPerson={profile?.first_person ?? ''}
       email={user.email ?? ''}
       planKey={planKey}
       avatarUrl={profile?.avatar_url ?? null}

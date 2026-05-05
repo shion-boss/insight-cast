@@ -351,6 +351,16 @@ export async function POST(
     .eq('id', user.id)
     .single()
 
+  // 一人称は「取材メモを作成したユーザー（= プロジェクトオーナー）」のものを使う。
+  // 共同編集者が記事生成した場合でも、語り手は事業者本人なので owner で揃える。
+  // RLS により他人の profile は読めないため、admin client で読む。
+  const { data: ownerProfile } = await adminForLimitCheck
+    .from('profiles')
+    .select('first_person')
+    .eq('id', ownerUserId)
+    .maybeSingle()
+  const ownerFirstPerson = (ownerProfile?.first_person ?? '').trim() || null
+
   const { data: auditRow } = await supabase
     .from('hp_audits')
     .select('raw_data')
@@ -436,6 +446,12 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
 
   let instructionBlock: string
 
+  // 事業者本人が語る記事（client）で使う一人称。
+  // ユーザーが設定画面で指定していればそれを使い、未設定なら従来どおり「私」または「弊社」。
+  const firstPersonRule = ownerFirstPerson
+    ? `一人称は「${ownerFirstPerson}」で統一する（事業者本人が日常的に使う一人称。インタビュー記録の口調に関わらず、記事内では必ずこの一人称で書く）`
+    : '一人称は「私」または「弊社」'
+
   if (articleType === 'client') {
     const styleLabel = STYLE_MAP[style as keyof typeof STYLE_MAP] ?? 'ですます体'
     const volumeLabel = VOLUME_MAP[volume as keyof typeof VOLUME_MAP] ?? '1200〜1500'
@@ -443,7 +459,7 @@ ${relevantOwnBlogPosts.map((post) => `- [${post.title}](${post.url}) : ${post.su
     instructionBlock = `上の事業者情報とインタビュー記録をもとに、事業者（${bizName}）の視点・言葉で語る読み物記事を書いてください。${themeInstruction}${internalLinkInstruction}
 
 ## 執筆ルール
-- 一人称は「私」または「弊社」
+- ${firstPersonRule}
 - 語尾スタイル: **${styleLabel}で全文を統一すること**（インタビュー記録の話し言葉に引きずられないこと）
 - 文字数: ${volumeLabel}文字程度
 - 見出し（##）を2〜3個つけて構造化する
