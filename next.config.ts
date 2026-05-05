@@ -110,8 +110,10 @@ export default withSentryConfig(nextConfig, {
   // 許可しているので直接送信できる。Sentry SDK 側で adBlockerDetected が
   // 出たら再検討する。
   // tunnelRoute: '/monitoring',
-  // SDK の console ログを抑制
-  disableLogger: true,
-  // Vercel Cron で Sentry に通知する
-  automaticVercelMonitors: true,
+  // disableLogger / automaticVercelMonitors は webpack namespace 配下に移動した（@sentry/nextjs ^10.51）。
+  // Turbopack では適用されないが、本番ビルド（next build）は webpack なので有効。
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+    automaticVercelMonitors: true,
+  },
 });
