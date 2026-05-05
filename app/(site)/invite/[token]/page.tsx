@@ -60,7 +60,7 @@ export default async function InvitePage({
 
   if (!invitation) {
     return (
-      <main className="mx-auto max-w-lg px-6 py-24 text-center">
+      <main id="main-content" className="mx-auto max-w-lg px-6 py-24 text-center">
         <div className="mb-6 flex justify-center">
           {claus?.icon96 ? (
             <Image src={claus.icon96} alt="クラウス" width={72} height={72} className="rounded-full" />
@@ -84,7 +84,7 @@ export default async function InvitePage({
   }
 
   return (
-    <main className="mx-auto max-w-lg px-6 py-24">
+    <main id="main-content" className="mx-auto max-w-lg px-6 py-24">
       <div className="mb-8 text-center">
         <div className="mb-4 flex justify-center">
           {claus?.icon96 ? (
