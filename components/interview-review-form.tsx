@@ -141,7 +141,7 @@ export function InterviewReviewForm({
           {AXES.map((axis) => (
             <div key={axis.key} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
               <div className="sm:w-32">
-                <div className="text-sm font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-rose-500">*</span>}</div>
+                <div className="text-sm font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-[var(--error)]">*</span>}</div>
                 <div className="text-xs text-stone-500">{axis.help}</div>
               </div>
               <div className="flex gap-1.5">

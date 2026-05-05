@@ -121,6 +121,18 @@
 | `--outline` | `#e2d5c3` | 通常の罫線・カードボーダー・フォームボーダー |
 | `--outline-variant` | `#d0c0a8` | 強調罫線・hover 時のボーダー |
 
+### Dark Surface（admin / sidebar の暗い面で限定使用）
+
+> **位置づけ**: dark theme 本体ではない。light テーマの中に部分的に出てくる **暗いインジケータ**（admin login ボタン、admin サイドバー、LP の限定キャストバナー等）専用。ダークモード対応は将来別途。
+
+| Role | Value | 用途 |
+|---|---|---|
+| `--surface-dark` | `#1c1410` | admin sidebar / 暗い帯の背景 |
+| `--surface-dark-hover` | `#2a1f18` | 上記の hover |
+| `--on-surface-dark` | `#fafafa` | ダーク面上の主要テキスト（白に近い） |
+| `--on-surface-dark-variant` | `#d4d4d4` | ダーク面上の補助テキスト（≒stone-300） |
+| `--outline-dark` | `#57534e` | ダーク面上の罫線（≒stone-700/40） |
+
 ### Status（成功・警告・エラー）
 
 | Role | Value | 用途 |
@@ -517,7 +529,8 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 情報密度を上げる側。ダッシュボード視認性が主役。
 
 - **Typography**：`--type-title` `--type-body` `--type-caption` 中心。`--type-headline` はページタイトルのみ。テーブル系は `--type-caption` 多めで密に。
-- **Surface**：tool と同骨格。さらに密に並べるため、カード間 gap は tool より狭めにする。
+- **Surface**：tool と同骨格。サイドバー・ヘッダーに `--surface-dark` 系を使ってよい（顧客向け側との区別）。さらに密に並べるため、カード間 gap は tool より狭めにする。
+- **Tailwind 標準カラーの許容**：`text-stone-*` `border-stone-*` 等の中立グレー系は、admin の **補助テキスト・罫線** で許容する。世界観表現は不要なため pragmatic に書いてよい。ただし **ステータス色（red / emerald / amber）は新トークン (`--error` `--success` `--warning`) を使う**。
 - **Elevation**：基本 0〜1。アクションパネルで 2。
 - **Motion**：`--duration-1` 〜 `--duration-2` のみ。装飾は不要。
 - **キャラクター**：内部用なので最低限。意思決定が必要な操作には添える。
@@ -628,10 +641,11 @@ CLAUDE.md の「UI ガードレール 14 項目」「世界観」「禁止事項
 2. **`components/ui.tsx` 内部書き換え** ✅ — 共有コンポーネントを新ロール参照に。API 不変、視覚不変。
 3. **新ヘルパー追加** ✅ — `getElevation` `getTypeClass` `getStateOpacity` を export。
 4. **focus ring の二重定義整理** ✅ — `focus-visible:outline-none focus-visible:ring-...` パターンを 66 ファイルで撤去。グローバル outline に統一。エラー色・暗背景・テーブル inset は例外で残す。
-5. **site 側のハードコード hex 除去** ✅ — 直接同値の対応がある hex（`#fffdf9` `#7a6555` `#e2d5c3` 等）を新トークンに置換。LP の暖色グラデやダーク系 UI は維持。
+5. **site 側のハードコード hex 除去** ✅ — 直接同値の対応がある hex（`#fffdf9` `#7a6555` `#e2d5c3` 等）を新トークンに置換。LP の暖色グラデやダーク系 UI は維持。磨き込みフェーズで `LimitedCastBanner` `SolutionBridge` の inline style もトークン化。
 6. **shadow 段階化** ✅ — ハードコード `box-shadow` と Tailwind 標準 `shadow-*` を `--elevation-1〜5` に置換。影色が暖色寄り `rgba(28,20,16,...)` に統一される。
 7. **typography 統一** 🟡 進行中 — `EyebrowBadge` を `getTypeClass('label')` ベースにリファクタ。**残る `text-[Npx]` 系（約 450 箇所）はサイズが多様で機械置換ではビジュアル差が出るため、ページタッチ時にケースバイケースで `getTypeClass()` 経由に書き換える方針**。新規実装は必ず `getTypeClass()` を使う。
 8. **旧 alias の削除** — Phase 3 以降。すべての参照が新名に切り替わったら、`globals.css` の alias 群を削除。
+9. **磨き込みフェーズ** ✅ — admin のステータス色（red-* / emerald-* / rose-*）を `--error` `--success` トークンに統一。ダーク系サーフェストークン (`--surface-dark` 系) を新規追加し、admin sidebar / 限定キャストバナーの暗い面に適用。残った例外（`bg-white` 46 箇所、content-map-panel の orange、暖色 hover bg）はドキュメントに方針として記載。
 
 各ステップは **既存挙動を壊さない**ことを最優先にする。視覚的なリファインメントは別タスクで切り分ける。
 
@@ -645,6 +659,20 @@ CLAUDE.md の「UI ガードレール 14 項目」「世界観」「禁止事項
 - **重要な page-level なリファインメント時**：その時点で当該ページのタイポを 6 段階スケールに揃える PR を立てる。
 
 `getTypeClass()` で表現できないが繰り返し使われるサイズ（例: 中間サイズの本文）が出てきたら、**スケールに新しい段階を追加** することを検討する（`--type-body-sm` 等）。トークンを増やすのは慎重に。
+
+---
+
+## 残った例外と扱い
+
+磨き込みフェーズ後、意味付けが文脈依存のため一括置換しなかった残存ハードコードと方針：
+
+- **`bg-white` 46 箇所**：accent 背景上の純白 CTA（公開ヘッダー・フッターの主 CTA、ヒーローのプライマリボタン）と、汎用カード地色用の用途が混在する。新規実装は **`--surface`（#fffdf9、ほぼ白）を使う** ルールにする。`bg-white`（純 #ffffff）は accent 背景の上に置く CTA のみ許容（コントラスト確保のため）。
+- **content-map-panel の "不足" インジケータ（`#fb923c` / `#fff7ed`）**：オレンジ-400 系のブライトな注意喚起色。`--warning` (#d97706 / amber-600) は色相が異なるため、視覚回帰なしの自動置換が難しい。**現状維持し、将来 dashboard リファインメント時に判断**。新規実装で類似の指標が必要になったら `--warning` 系を使う。
+- **暖色 hover bg（`#f7f1ea` / `#fdf6ee`）**：白 CTA や cast-talk カードの hover 用に手調整された値。`--surface-dim` や `--surface-container-low` への統合は色相のずれが生じるため、視覚確認が取れるまで **現状維持**。新規実装で hover の差替えが必要なら `--surface-container-low` を採用。
+- **stone-* / amber-* 系の Tailwind 標準カラー**：admin の補助テキスト・罫線、星評価のゴールド色（amber-400）は **意味あって維持**。Admin セクションの方針通り。
+- **`lib/conversation-bubble-html.ts` の hex**：HTML 出力（外部メールやブログ埋め込み用）のためトークン参照不可。**hex のまま維持**。
+
+これらは「壊れている」のではなく「意味が一意でない」ため自動置換から外している。新規実装は必ずトークン参照のルールを適用する。
 
 ---
 
