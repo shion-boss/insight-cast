@@ -542,6 +542,26 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 - 既存の呼び出し側コードは **無修正で動く**（旧トークン名は alias で残るため）
 - `getTypeClass` などの新ヘルパーは新規実装で使う。既存実装は段階的に書き換え
 
+### 宣言的ラッパー
+
+`getPanelClass()` / `getTypeClass()` を直接書くより、**新規実装は以下のラッパーコンポーネントを使う**。
+
+```tsx
+import { Card, Heading } from '@/components/ui'
+
+// Card: パネルの宣言的版。elevation / padding を props で
+<Card padding="lg" elevation={2}>
+  ...
+</Card>
+
+// Heading: HTML レベル(h1〜h6) と タイポトークン(display/headline/...) を分離
+<Heading level={1} type="display">会話から、記事へ。</Heading>
+<Heading level={2} type="headline">セクション見出し</Heading>
+<Heading level={3} type="title">カードタイトル</Heading>
+```
+
+`level` (HTML 見出しタグ) と `type` (タイポトークン) を分離した理由：SEO / a11y 上の階層は HTML タグで保ち、見た目だけスケールから選ぶ。例えば LP の Hero は `<h1>` でも `display` でなく `headline` のサイズに落とす場面がある。
+
 ---
 
 ## 3 サイドの使い分けガイド

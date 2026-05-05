@@ -22,28 +22,20 @@
 
 ## 🔴 HIGH — 早急に対応すべき
 
-### A-1. スキップナビゲーションリンクの追加
+### A-1. スキップナビゲーションリンクの追加 ✅ 完了 (2026-05-05)
 - **問題**: キーボードユーザーが毎ページのナビゲーションをスキップできない。WCAG 2.4.1 (A) 違反。
-- **対象**: `app/layout.tsx` または `components/app-shell.tsx`
-- **対応**: `<a href="#main-content" className="sr-only focus:not-sr-only ...">メインコンテンツへスキップ</a>` をページ先頭に追加。`<main id="main-content">` はすでに存在するので接続するだけ。
-- **工数**: 小（1-2h）
+- **対応**: `app/layout.tsx` にスキップリンクは既存。新トークンに揃え、`admin/layout.tsx` と `invite/[token]/page.tsx` の `<main>` に `id="main-content"` を補完。
 
-### A-2. 色コントラスト比の体系的確認
-- **問題**: CSS 変数経由の色は検証済みだが、inline style のハードコード色（例: `global-error.tsx:74` の `#c47b3a`、CastTalkGrid の `theme.color` など）の WCAG 4.5:1 達成が未確認。
-- **対象**: `app/global-error.tsx`, `app/(site)/cast-talk/CastTalkGrid.tsx`, `app/(site)/page.tsx` のインラインカラー
-- **対応**: axe DevTools または WebAIM Contrast Checker で全ページ手動確認 → 不足箇所を CSS 変数化
-- **工数**: 中（4-8h）
+### A-2. 色コントラスト比の体系的確認 ✅ 完了 (2026-05-05)
+- **問題**: トークンや inline style の色が WCAG AA 4.5:1 未達。`--warning` が AA fail、`--primary` が AA-LG 止まり。
+- **対応**: 24 ペアを計算し違反を特定 → status トークン（success/warning/error/secondary）を Tailwind 700-tier に統一して AA クリア。EyebrowBadge の text を `--on-primary-container` に。TextInput placeholder を `--on-surface-variant` に。`--primary` ブランドカラーの AA-LG ギャップは docs に運用方針として明記（text 用途は `--on-primary-container` を使う）。
 
-### S-1. API レート制限の網羅
-- **問題**: `/lib/api-usage.ts` でレート制限の仕組みはあるが、適用されていないエンドポイントが多数ある（`/api/stripe/checkout`、`/api/contact` 等）。OWASP API Security Top 10 の API4。
-- **対象**: `app/api/` 配下の全ルート
-- **対応**: middleware.ts でグローバルに IP ベースのレート制限を適用するか、未適用ルートに個別に `checkRateLimit()` を追加
-- **工数**: 中（4-6h）
+### S-1. API レート制限の網羅 ✅ 完了 (2026-05-05)
+- **問題**: `lib/api-usage.ts` の per-user rate limit は AI 系 7 ルートのみ。残り 40 ルートは未適用。OWASP API4 違反。
+- **対応**: `middleware.ts` に IP-based の best-effort レートリミットを追加。`/api/contact` (5/min), `/api/stripe/*` (10/min), `/api/auth/*` (30/min), `/api/interview-links/*` (60/min), `/api/*` default (120/min)。429 + Retry-After で返す。in-memory のため将来 Upstash Redis に置換する前提。
 
-### C-1. 本番エラーロギングの導入
-- **問題**: error.tsx / try-catch は揃っているが、本番エラーが誰にも通知されない。サイレント障害のリスク。
-- **対応**: Sentry（無料枠あり）または Vercel Log Drains を導入し、`500` 系エラーを Slack 通知
-- **工数**: 小-中（2-4h）
+### C-1. 本番エラーロギングの導入 ✅ 完了 (2026-05-05)
+- **対応**: Sentry Next.js SDK v10 を導入。本番のみ動作（DSN 未設定で no-op）。tunnelRoute=/monitoring で ad blocker 回避、source map upload 設定済み。Vercel に env vars (NEXT_PUBLIC_SENTRY_DSN / SENTRY_DSN / SENTRY_ORG / SENTRY_PROJECT / SENTRY_AUTH_TOKEN) 登録 → 再デプロイで有効化。詳細は `docs/runbook.md` の「Sentry エラーモニタリング」を参照。
 
 ---
 

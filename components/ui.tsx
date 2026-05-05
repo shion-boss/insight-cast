@@ -60,6 +60,58 @@ export function getPanelClass(className?: string) {
   return cx(panelBaseClass, className)
 }
 
+/* ─── Card ──────────────────────────────────────────────────
+ * `getPanelClass()` の宣言的ラッパー。新規実装で使う。
+ * elevation で影を、padding で内側余白を選べる。 */
+
+export type CardProps = {
+  children: ReactNode
+  className?: string
+  elevation?: ElevationLevel
+  padding?: 'none' | 'sm' | 'md' | 'lg'
+}
+
+const cardPaddingClass: Record<NonNullable<CardProps['padding']>, string> = {
+  none: '',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+}
+
+export function Card({ children, className, elevation = 0, padding = 'md' }: CardProps) {
+  return (
+    <div
+      className={cx(panelBaseClass, cardPaddingClass[padding], className)}
+      style={elevation > 0 ? getElevation(elevation) : undefined}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* ─── Heading ───────────────────────────────────────────────
+ * 6 段階のタイポスケールを宣言的に使える見出し。
+ * level は HTML タグ (h1〜h6) を、type はタイポトークンを指定。
+ * 同じ要素に異なる組み合わせを許す（h1 を `type='headline'` で出す等）。 */
+
+export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
+export type HeadingProps = {
+  level: HeadingLevel
+  type: TypeLevel
+  children: ReactNode
+  className?: string
+  id?: string
+}
+
+export function Heading({ level, type, children, className, id }: HeadingProps) {
+  const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+  return (
+    <Tag id={id} className={cx(getTypeClass(type), className)}>
+      {children}
+    </Tag>
+  )
+}
+
 export function Breadcrumb({ items }: {
   items: Array<{ label: string; href?: string }>
 }) {
