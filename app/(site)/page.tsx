@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
 import { createClient } from '@/lib/supabase/server'
@@ -41,30 +42,34 @@ export const metadata: Metadata = {
   },
 }
 
-// TODO(P-1): LP の Suspense / Streaming 最適化
-// latestPosts・latestTalks を別 async Server Component に切り出し Suspense でラップすることで
-// TTFB を改善できる。Phase 3 以降で対応を検討。
-export default async function LandingPage() {
+async function BlogPreviewSection() {
+  const all = await getBlogPostsFromDB().catch(() => [])
+  return <BlogPreview latestPosts={all.slice(0, 3)} />
+}
+
+async function CastTalkPreviewSection() {
   const supabaseAdmin = createAdminClient()
+  const { data } = await supabaseAdmin
+    .from('cast_talks')
+    .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(3)
+  return <CastTalkPreview latestTalks={data} />
+}
 
-  const [authResult, latestPostsAll, talksResult] = await Promise.allSettled([
-    (async () => {
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      return Boolean(user)
-    })(),
-    getBlogPostsFromDB(),
-    supabaseAdmin
-      .from('cast_talks')
-      .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .limit(3),
-  ])
+function BlogPreviewSkeleton() {
+  return <section aria-hidden="true" className="py-14 sm:py-[88px] bg-[var(--bg2)] min-h-[420px]" />
+}
 
-  const isLoggedIn = authResult.status === 'fulfilled' ? authResult.value : false
-  const latestPosts = (latestPostsAll.status === 'fulfilled' ? latestPostsAll.value : []).slice(0, 3)
-  const latestTalks = talksResult.status === 'fulfilled' ? talksResult.value.data : []
+function CastTalkPreviewSkeleton() {
+  return <section aria-hidden="true" className="py-14 sm:py-[88px] bg-[var(--bg)] min-h-[420px]" />
+}
+
+export default async function LandingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isLoggedIn = Boolean(user)
 
   const priceIds = {
     lightning: process.env.STRIPE_PRICE_ID_LIGHTNING ?? '',
@@ -84,8 +89,12 @@ export default async function LandingPage() {
       <EeatSection />
       <CompareCards />
       <PricingPreview isLoggedIn={isLoggedIn} priceIds={priceIds} />
-      <BlogPreview latestPosts={latestPosts} />
-      <CastTalkPreview latestTalks={latestTalks} />
+      <Suspense fallback={<BlogPreviewSkeleton />}>
+        <BlogPreviewSection />
+      </Suspense>
+      <Suspense fallback={<CastTalkPreviewSkeleton />}>
+        <CastTalkPreviewSection />
+      </Suspense>
       <LpFaqSection />
     </main>
   )
