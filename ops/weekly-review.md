@@ -155,6 +155,56 @@
   - Step2 キャストカードのグラデーションシャドウを削除し、PCマウスドラッグで横スクロールできるように `DraggableScrollRow` を導入
   - Output Example の記事ブロック例を実物の `ArticleExportPanel` のヘッダ右クリップボードアイコン型コピーボタンに揃えた
 
+#### 2026-05-06（パフォーマンス根本原因の解決 + 日次品質サイクル）
+
+**テーマ**: site (marketing) ページの dynamic 化を解消し、静的生成へ戻す根本原因対処
+
+**特定した根本原因（site側）**
+1. `PublicHeader` / `PublicFooter` が毎リクエスト `auth.getUser()` を呼び、site 全ページが SSG/ISR を放棄して dynamic 化していた
+2. LP `app/(site)/page.tsx` 自身も独立して `getUser()` を呼び、同一リクエスト内で 3〜4 回の Supabase Auth 往復が発生
+3. `middleware.ts` が完全 public path（`/`, `/blog`, `/faq` など）でも `getUser()` を呼んでいた
+4. `ProjectAnalysisNotifier` が root layout にあり、unauth ユーザーにも polling JS をバンドル送信
+
+**根本対処**
+- `lib/auth-state.ts`: client-side で `getSession()` を使う `useIsLoggedIn` hook を新設（cookie 読みのみ・network なし）
+- `components/public-server-components.tsx`: `PublicHeader`/`PublicFooter` を auth-agnostic 化
+- `components/public-footer-client.tsx`: フッターの auth 依存部分を client component に分離
+- `components/site-header-client.tsx` / `app/(site)/_components/lp/Hero.tsx` / `app/(site)/_components/lp/PricingPreview.tsx`: prop 経由の `isLoggedIn` を hook に置き換え
+- `app/(site)/page.tsx`: server-side `getUser()` を削除。CastTalk 取得は `unstable_cache` で包む
+- `app/layout.tsx`: `ProjectAnalysisNotifier` を root から削除
+- `app/(tool)/layout.tsx`: `ProjectAnalysisNotifier` をここに移動（authenticated 限定で配信）
+- `middleware.ts`: 完全 public path（`/`, `/about`, `/cast`, `/philosophy`, `/faq`, `/pricing`, `/service`, `/privacy`, `/terms`, `/tokushoho`, `/contact`, `/sitemap.xml`, `/robots.txt`, `/blog/*`, `/cast-talk/*`, `/invite/*`, `/interview/ext/*`, `/api/*`）で `getUser()` をスキップ
+
+**ビルド確認結果（`next build`）**
+- ○ Static (5m revalidate) 化したページ: `/`（LP）, `/about`, `/blog`, `/cast`, `/contact`, `/faq`, `/philosophy`, `/privacy`, `/terms`, `/tokushoho`, `/auth/login`, `/auth/signup`, `/auth/reset-password`, `/auth/update-password`
+- ● SSG 化（generateStaticParams）: `/blog/[slug]` (31記事を build 時に prerender)
+- ƒ Dynamic のまま: `/pricing`, `/cast-talk`, `/cast-talk/[slug]`（`searchParams` 利用のため適切な dynamic）
+- 効果: marketing pages の TTFB が CDN edge 配信に。Supabase Auth API 往復ゼロ。
+
+**チェック結果（軸別）**
+- 軸1 UI: 視覚要素は変更なし。Header/Footer の auth-aware ボタンは未ログイン側を楽観描画 → mount 後に切替（flash は <50ms）。logged-in marketing 訪問時のみ短時間 flicker するが、ターゲット（unauth 訪問者中心）には無影響
+- 軸2 UX: 認証 UI のみ。導線・パラメータ伝搬・状態表現に変更なし
+- 軸3 整合性: コピー・データ表示変更なし。問題なし
+- 軸4 AIキャスト: 範囲外
+- 軸5 AI社員: typecheck 通過、build 通過、lint warning のみ（既存）
+- 軸6 コピー: 変更なし
+- 軸7 セキュリティ: client hook は UI 表示用途のみ。サーバ側 `getUser()` チェック（middleware の `/admin`・`(tool)/layout.tsx`・各 API ルート）は維持。public path で middleware の token refresh は走らないが、tool ページ遷移時に再実行されるため通常 UX に影響なし
+- 軸8 実使用: ユーザー側で確認お願いしたい
+- 軸9 非同期処理: `ProjectAnalysisNotifier` の polling は (tool) でのみ。toast 通知はマウント時のlocalStorage 復元 + ポーリングで取りこぼしなし
+- 軸10 Sentry: Issue #3 (`TypeError: e[o] is not a function`) は webpack ランタイム + JSON.parse の minified トレースのみでアプリコードに辿れず、ブラウザ拡張ノイズと判断 → not_planned で close 済
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 共有レイアウトでの `getUser()` 呼び出しによる site 全ページの dynamic 化 | 1 | 初出 | ✅ daily-quality-cycle.md 軸1 既出（「静的コンテンツなのに `createClient()` + `getUser()` を呼んでいないか」） |
+| 認証専用 client コンポーネント（Notifier 等）の root layout マウント | 1 | 初出 | 🔲 要提案 |
+| middleware の Auth API 不要な path への過剰呼び出し | 1 | 初出 | 🔲 要提案 |
+
+**CLAUDE.md / エージェントmd 更新候補**
+- 「認証済みユーザー専用の client component（polling/notifier 等）は `(tool)/layout.tsx` にマウントし、root layout には置かない」をエンジニア向けガードレールに追加
+- 「middleware で `auth.getUser()` を呼ぶ path は redirect 判定が必要なものだけに限定する」を `daily-quality-cycle.md` 軸1のチェック項目に追加
+
 ---
 
 ## 週: 2026-04-22 〜（進行中・以下は日次ログ）

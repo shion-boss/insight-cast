@@ -69,6 +69,31 @@ function checkIpRateLimit(request: NextRequest, pathname: string): { allowed: bo
   return { allowed: true }
 }
 
+// Auth 状態を読まずにそのまま通せるパス。
+// `getUser()` は Supabase Auth API への往復が発生するため、redirect 判定が
+// 不要な完全 public path ではスキップして TTFB を削る。
+// 注意: ここに含めるパスでは middleware による cookie refresh も走らないが、
+// 認証が必要な画面（/dashboard 等）に遷移した時点で再 refresh されるので
+// 通常ユーザー体験への影響はない。
+function isFullyPublicSkippableAuth(pathname: string): boolean {
+  if (pathname === '/' || pathname === '/about' || pathname === '/cast' || pathname === '/philosophy'
+      || pathname === '/faq' || pathname === '/pricing' || pathname === '/service'
+      || pathname === '/privacy' || pathname === '/terms' || pathname === '/tokushoho'
+      || pathname === '/contact' || pathname === '/sitemap.xml' || pathname === '/robots.txt') {
+    return true
+  }
+  if (pathname.startsWith('/blog') || pathname.startsWith('/cast-talk')
+      || pathname.startsWith('/invite/') || pathname.startsWith('/interview/ext/')) {
+    return true
+  }
+  // /api/* は middleware で auth state を使わない（各ルートが内部で getUser する）。
+  // 認可は API ルート側で行うため、ここで Supabase Auth に往復する必要はない。
+  if (pathname.startsWith('/api/')) {
+    return true
+  }
+  return false
+}
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
@@ -87,6 +112,11 @@ export async function middleware(request: NextRequest) {
         }
       )
     }
+  }
+
+  // 完全 public path は auth 状態を読まずに通す（最大の TTFB 短縮）
+  if (isFullyPublicSkippableAuth(pathname)) {
+    return NextResponse.next({ request })
   }
 
   let supabaseResponse = NextResponse.next({ request })
@@ -112,26 +142,9 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const isPublicPath =
-    pathname === '/' ||
-    pathname === '/about' ||
-    pathname === '/cast' ||
-    pathname === '/philosophy' ||
-    pathname === '/faq' ||
-    pathname === '/pricing' ||
-    pathname === '/service' ||
-    pathname.startsWith('/blog') ||
-    pathname.startsWith('/cast-talk') ||
-    pathname.startsWith('/api/') ||
-    pathname === '/privacy' ||
-    pathname === '/terms' ||
-    pathname === '/tokushoho' ||
-    pathname === '/contact' ||
-    pathname.startsWith('/auth/') ||
-    pathname.startsWith('/invite/') ||
-    pathname === '/sitemap.xml' ||
-    pathname === '/robots.txt' ||
-    pathname.startsWith('/interview/ext/')
+  // /auth/* はログイン済み時に dashboard へリダイレクトする分岐があるため、
+  // auth state が必要。それ以外（/dashboard 等）は未ログイン時に /auth/login へ。
+  const isPublicPath = pathname.startsWith('/auth/')
 
   // /admin へのアクセス制御: ベーシック認証 + ADMIN_EMAILS チェック
   if (pathname.startsWith('/admin')) {

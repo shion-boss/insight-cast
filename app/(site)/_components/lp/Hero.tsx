@@ -1,9 +1,13 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
 import sceneCastTeam from '@/assets/scene/scene-cast-team.webp'
+import { useIsLoggedIn } from '@/lib/auth-state'
 
-export function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function Hero() {
+  const isLoggedIn = useIsLoggedIn() === true
   return (
     <section className="pt-[52px] pb-[56px] sm:pt-[68px] sm:pb-[72px] lg:pt-[88px] lg:pb-[88px]" style={{ background: 'linear-gradient(140deg,#fdf8f2 0%,#f6e9d8 55%,#ede0cc 100%)' }}>
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">

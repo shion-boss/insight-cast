@@ -1,0 +1,98 @@
+'use client'
+
+import Link from 'next/link'
+import { useIsLoggedIn } from '@/lib/auth-state'
+
+// PublicFooter はログイン状態で表示が分岐するため、auth は client 側で判定する。
+// これにより site レイアウト全体を dynamic 化せず、ページの静的生成を維持する。
+//
+// 初回レンダーは未ログイン側を楽観的に描画する。
+// ログイン済みユーザーへ遷移する際は client navigation (next/link) なので、
+// 一度状態が解決すれば再ロード以外で flash することはない。
+export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }) {
+  const loggedIn = useIsLoggedIn() === true
+
+  return (
+    <footer aria-label="サイトフッター" className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
+      {showPromo && (
+        <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
+          <div className="mx-auto max-w-3xl">
+            {loggedIn ? (
+              <>
+                <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">取材を続けましょう</h2>
+                <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+                  ダッシュボードから取材を始められます。
+                </p>
+                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                  >
+                    ダッシュボードへ <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">AIキャストの取材を受けてみませんか？</h2>
+                <p className="mt-5 text-sm leading-[2] text-white/85 sm:text-[15px]">
+                  答えるだけで、記事の素材が手元に届きます。<br />
+                  カードも、契約期間も、整った言葉も、いりません。
+                </p>
+                <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+                  <Link
+                    href="/auth/signup"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                  >
+                    無料で取材を始める <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+                <p className="mt-4 text-[12px] text-white/60">
+                  登録はメールアドレスだけ　・　2回まで無料　・　いつでも解約OK
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
+          <div>
+            <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
+            <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
+          </div>
+          <nav aria-label="フッターナビゲーション" className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+            {[
+              { heading: 'サービス', links: [{ href: '/cast', label: 'キャスト紹介' }, { href: '/faq', label: 'よくある質問' }] },
+              { heading: '情報', links: [{ href: '/blog', label: 'ブログ' }, { href: '/cast-talk', label: 'Cast Talk（対話録）' }, { href: '/about', label: 'Insight Castについて' }, { href: '/philosophy', label: 'AI時代の発信について' }] },
+              { heading: 'サポート', links: [{ href: '/contact', label: 'お問い合わせ' }, { href: '/privacy', label: 'プライバシーポリシー' }, { href: '/terms', label: '利用規約' }] },
+              {
+                heading: 'アカウント',
+                links: loggedIn
+                  ? [{ href: '/dashboard', label: 'ダッシュボード' }, { href: '/pricing', label: 'プランを変更する' }, { href: '/settings', label: '設定' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }]
+                  : [{ href: '/auth/signup', label: '無料で始める' }, { href: '/auth/login', label: 'ログイン' }, { href: '/pricing', label: '料金プラン' }, { href: '/tokushoho', label: '特定商取引法に基づく表記' }],
+              },
+            ].map((col) => (
+              <div key={col.heading}>
+                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mb-3">{col.heading}</p>
+                <ul className="space-y-2.5">
+                  {col.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+        <div className="mt-8 border-t border-[var(--border)] pt-6">
+          <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>
+        </div>
+      </div>
+    </footer>
+  )
+}

@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Geist_Mono, M_PLUS_1p } from "next/font/google";
 import Script from "next/script";
-import ProjectAnalysisNotifier from "@/components/project-analysis-notifier";
 import ToastViewport from "@/components/toast-viewport";
 import { PageTransitionOverlay } from "@/components/page-transition-overlay";
 import { NavigationOverlay } from "@/components/navigation-overlay";
@@ -153,7 +152,6 @@ export default function RootLayout({
         >
           メインコンテンツへスキップ
         </a>
-        <ProjectAnalysisNotifier />
         <ToastViewport />
         <PageTransitionOverlay />
         <Suspense><NavigationOverlay /></Suspense>

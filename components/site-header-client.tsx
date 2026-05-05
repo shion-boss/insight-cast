@@ -7,11 +7,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getButtonClass } from '@/components/ui'
 import { MobileNav } from '@/components/mobile-nav'
 import { signOut } from '@/lib/actions/auth'
+import { useIsLoggedIn } from '@/lib/auth-state'
 import { isSitePath } from '@/lib/nav-area'
 
 const MIN_MS = 400
 
-export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function SiteHeaderClient() {
+  // 未解決時は未ログイン側を楽観的に描画する。
+  // marketing pages の大半の訪問者は未ログインのため flash は最小限になる。
+  const isLoggedIn = useIsLoggedIn() === true
   const pathname = usePathname()
   const headerRef = useRef<HTMLElement>(null)
   const [navActive, setNavActive] = useState(false)

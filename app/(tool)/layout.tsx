@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { checkIsAdmin } from '@/lib/auth-utils.server'
 import { AppShell } from '@/components/app-shell'
+import ProjectAnalysisNotifier from '@/components/project-analysis-notifier'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,6 +39,7 @@ export default async function ToolLayout({ children }: { children: ReactNode }) 
       avatarUrl={profile?.avatar_url ?? null}
       isAdmin={isAdmin}
     >
+      <ProjectAnalysisNotifier />
       {children}
     </AppShell>
   )

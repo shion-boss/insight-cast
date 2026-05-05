@@ -1,6 +1,9 @@
+'use client'
+
 import Link from 'next/link'
 
 import { CheckoutButton } from '@/app/(site)/pricing/CheckoutButton'
+import { useIsLoggedIn } from '@/lib/auth-state'
 
 import { LimitedCastBanner } from '../LimitedCastBanner'
 
@@ -45,7 +48,8 @@ export type PricingPriceIds = {
   business: string
 }
 
-export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; priceIds: PricingPriceIds }) {
+export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
+  const isLoggedIn = useIsLoggedIn() === true
   return (
     <section className="py-14 sm:py-[88px]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">

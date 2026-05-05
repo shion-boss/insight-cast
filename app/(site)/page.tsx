@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
+import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 import { BlogPreview } from './_components/lp/BlogPreview'
@@ -47,14 +47,23 @@ async function BlogPreviewSection() {
   return <BlogPreview latestPosts={all.slice(0, 8)} />
 }
 
+const getLatestCastTalksForLP = unstable_cache(
+  async () => {
+    const supabaseAdmin = createAdminClient()
+    const { data } = await supabaseAdmin
+      .from('cast_talks')
+      .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false })
+      .limit(3)
+    return data ?? null
+  },
+  ['lp-latest-cast-talks'],
+  { revalidate: 300 },
+)
+
 async function CastTalkPreviewSection() {
-  const supabaseAdmin = createAdminClient()
-  const { data } = await supabaseAdmin
-    .from('cast_talks')
-    .select('id, title, summary, interviewer_id, guest_id, slug, published_at')
-    .eq('status', 'published')
-    .order('published_at', { ascending: false })
-    .limit(3)
+  const data = await getLatestCastTalksForLP().catch(() => null)
   return <CastTalkPreview latestTalks={data} />
 }
 
@@ -66,11 +75,7 @@ function CastTalkPreviewSkeleton() {
   return <section aria-hidden="true" className="py-14 sm:py-[88px] bg-[var(--bg)] min-h-[420px]" />
 }
 
-export default async function LandingPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const isLoggedIn = Boolean(user)
-
+export default function LandingPage() {
   const priceIds = {
     lightning: process.env.STRIPE_PRICE_ID_LIGHTNING ?? '',
     personal: process.env.STRIPE_PRICE_ID_PERSONAL ?? '',
@@ -79,7 +84,7 @@ export default async function LandingPage() {
 
   return (
     <main id="main-content" className="relative z-10">
-      <Hero isLoggedIn={isLoggedIn} />
+      <Hero />
       <PainSection />
       <SolutionBridge />
       <HpAnalysisStep />
@@ -88,7 +93,7 @@ export default async function LandingPage() {
       <OutputExample />
       <EeatSection />
       <CompareCards />
-      <PricingPreview isLoggedIn={isLoggedIn} priceIds={priceIds} />
+      <PricingPreview priceIds={priceIds} />
       <Suspense fallback={<BlogPreviewSkeleton />}>
         <BlogPreviewSection />
       </Suspense>
