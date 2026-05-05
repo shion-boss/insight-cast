@@ -135,9 +135,28 @@ export default async function ArticleDetailPage({
           <div>
             <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h2>
-            <p className="mt-2 text-sm text-[var(--text3)]">
-              {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <p className="text-sm text-[var(--text3)]">
+                {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
+              </p>
+              {(interview?.external_respondent_name || intervieweeProfile?.name) && (
+                <div className="flex items-center gap-1.5">
+                  {intervieweeProfile?.avatar_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={intervieweeProfile.avatar_url}
+                      alt={intervieweeProfile.name ?? ''}
+                      className="w-4 h-4 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : (
+                    <span className="w-4 h-4 rounded-full bg-[var(--border)] flex-shrink-0" />
+                  )}
+                  <span className="text-sm text-[var(--text3)]">
+                    回答者: {interview?.external_respondent_name ?? intervieweeProfile?.name}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
             {article.interview_id && (

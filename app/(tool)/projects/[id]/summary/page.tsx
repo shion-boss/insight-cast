@@ -65,6 +65,8 @@ export default function SummaryPage() {
   const [isCheckingNow, setIsCheckingNow] = useState(false)
   const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null)
   const pollCountRef = useRef(0)
+  const [respondentName, setRespondentName] = useState<string | null>(null)
+  const [respondentAvatarUrl, setRespondentAvatarUrl] = useState<string | null>(null)
 
   // 削除ダイアログ
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -169,7 +171,7 @@ export default function SummaryPage() {
       setLoadError(null)
       const { data: interview } = await supabase
         .from('interviews')
-        .select('interviewer_type, summary, themes')
+        .select('interviewer_type, summary, themes, interviewee_user_id, external_respondent_name')
         .eq('id', interviewId)
         .is('deleted_at', null)
         .single()
@@ -235,6 +237,20 @@ export default function SummaryPage() {
       })
       setArticles((articleRows ?? []) as ArticleRow[])
       setPendingSummary(false)
+
+      // 取材回答者プロフィールを取得（一度だけ）
+      if (respondentName === null) {
+        try {
+          const res = await fetch(`/api/interviews/${interviewId}/respondent`)
+          if (res.ok) {
+            const json = await res.json() as { name: string | null; avatarUrl: string | null }
+            setRespondentName(json.name ?? '')
+            setRespondentAvatarUrl(json.avatarUrl ?? null)
+          }
+        } catch {
+          // 回答者情報が取れなくても取材メモは表示する
+        }
+      }
     } catch {
       setLoadError('取材メモをまとめられませんでした。少し待ってから、もう一度開いてください。')
     } finally {
@@ -356,6 +372,21 @@ export default function SummaryPage() {
             <p className="text-xs text-[var(--text2)] mt-0.5">
               インタビューで引き出せた内容を、このまま記事づくりに使えます。
             </p>
+            {respondentName && (
+              <div className="flex items-center gap-1.5 mt-1.5">
+                {respondentAvatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={respondentAvatarUrl}
+                    alt={respondentName}
+                    className="w-4 h-4 rounded-full object-cover flex-shrink-0"
+                  />
+                ) : (
+                  <span className="w-4 h-4 rounded-full bg-[var(--border)] flex-shrink-0" />
+                )}
+                <span className="text-xs text-[var(--text3)]">回答者: {respondentName}</span>
+              </div>
+            )}
           </div>
           <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex-shrink-0">完了</span>
         </div>
