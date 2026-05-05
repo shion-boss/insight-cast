@@ -25,11 +25,18 @@ const nextConfig: NextConfig = {
     // marked と dompurify はクライアント側で使用されるため tree-shaking を最適化
     optimizePackageImports: ['marked', 'dompurify'],
   },
-  webpack: (config) => {
+  webpack: (config, { dev }) => {
     // Node.js 22/24 + webpack WASM hash bug workaround: use sha256 (no WASM dependency)
     config.output.hashFunction = "sha256";
     // Bust stale Vercel build cache that causes ERR_INVALID_ARG_TYPE on sha256.update(undefined)
     config.output.hashSalt = "v4";
+    // Vercel の build cache に壊れた webpack persistent cache が混ざると
+    // PackFileCacheStrategy の deserialize で undefined を sha256.update に渡して落ちる。
+    // hashSalt では filesystem cache が無効化できないため、Vercel 上の本番ビルドでは
+    // webpack persistent cache を完全に切る。
+    if (process.env.VERCEL && !dev) {
+      config.cache = false;
+    }
     return config;
   },
   async redirects() {

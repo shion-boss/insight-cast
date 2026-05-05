@@ -14,7 +14,10 @@ function isPostType(value: unknown): value is PostType {
 }
 
 function isInterviewerId(value: unknown): value is InterviewerId {
-  return value === 'mint' || value === 'claus' || value === 'rain'
+  return (
+    value === 'mint' || value === 'claus' || value === 'rain'
+    || value === 'hal' || value === 'mogro' || value === 'cocco'
+  )
 }
 
 function rowToPost(row: Record<string, unknown>): Post {

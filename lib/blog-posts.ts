@@ -1,6 +1,6 @@
 export type PostCategory = 'howto' | 'service' | 'interview' | 'case' | 'philosophy' | 'news'
 export type PostType = 'normal' | 'interview'
-export type InterviewerId = 'mint' | 'claus' | 'rain'
+export type InterviewerId = 'mint' | 'claus' | 'rain' | 'hal' | 'mogro' | 'cocco'
 
 export type Post = {
   slug: string
