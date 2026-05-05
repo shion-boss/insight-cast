@@ -448,6 +448,12 @@ Insight Cast を **作る・運営する** ためのAI。`.claude/agents/` に�
 
 ---
 
+## デザインの根幹
+
+サイト・ツール・admin の **デザインの根幹は `docs/design-system.md`**（Material Design 3 を骨格に採用）。新規実装は新トークン名（`--primary` `--surface` `--shape-sm` `--elevation-2` など）を使う。旧トークン（`--accent` `--bg` `--r-sm` 等）は互換 alias として当面残るが、移行後に削除予定。
+
+---
+
 ## 禁止事項
 
 - シークレットのコミット
