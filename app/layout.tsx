@@ -161,14 +161,23 @@ export default function RootLayout({
         <GoogleAnalytics />
         {process.env.NODE_ENV === 'production' && <SpeedInsights />}
         {process.env.NODE_ENV === 'production' && <Analytics />}
-        {/* Service Worker 登録（public site のみキャッシュ、認証済みアプリ側はキャッシュしない） */}
+        {/* Service Worker 登録（public site のみキャッシュ、認証済みアプリ側はキャッシュしない）。
+            requestIdleCallback で遅延し、初回描画後のメインスレッド空き時間で登録する。
+            これにより初回訪問の INP / TBT を悪化させない。 */}
         <Script
           id="sw-register"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js').catch(function() {});
+                var register = function () {
+                  navigator.serviceWorker.register('/sw.js').catch(function () {});
+                };
+                if ('requestIdleCallback' in window) {
+                  requestIdleCallback(register, { timeout: 4000 });
+                } else {
+                  setTimeout(register, 2000);
+                }
               }
             `,
           }}
