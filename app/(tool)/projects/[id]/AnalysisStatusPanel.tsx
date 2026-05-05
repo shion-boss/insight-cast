@@ -90,7 +90,7 @@ function GscDisconnectModal({
         aria-modal="true"
         aria-labelledby="gsc-disconnect-title"
         tabIndex={-1}
-        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl focus-visible:outline-none"
+        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-[var(--elevation-4)] focus-visible:outline-none"
       >
         <div className="flex items-start gap-3 mb-4">
           <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={40} className="flex-shrink-0 mt-0.5" />
@@ -108,7 +108,7 @@ function GscDisconnectModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             やめておく
           </button>

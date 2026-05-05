@@ -69,7 +69,7 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--r-sm)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-[var(--r-sm)] focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-[var(--elevation-3)]"
       >
         メインコンテンツへ
       </a>
@@ -78,7 +78,7 @@ export function SiteHeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
           <div className="flex h-[62px] items-center justify-between gap-4">
             <Link
               href="/"
-              className="transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="transition-opacity hover:opacity-80"
             >
               <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" priority />
             </Link>

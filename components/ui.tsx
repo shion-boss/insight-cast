@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Fragment } from 'react'
 import { CHARACTERS } from '@/lib/characters'
 
@@ -11,20 +11,50 @@ function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
 }
 
+/* ─── Design system helpers ──────────────────────────────────
+ * 詳細仕様は docs/design-system.md を参照。
+ * グローバルトークンはすべて app/globals.css の :root に定義。
+ * ───────────────────────────────────────────────────────── */
+
+export type ElevationLevel = 0 | 1 | 2 | 3 | 4 | 5
+export type TypeLevel = 'display' | 'headline' | 'title' | 'body' | 'label' | 'caption'
+export type StateName = 'hover' | 'focus' | 'pressed' | 'disabled'
+
+export function getElevation(level: ElevationLevel): CSSProperties {
+  return { boxShadow: `var(--elevation-${level})` }
+}
+
+const typeClassMap: Record<TypeLevel, string> = {
+  display:  'text-[length:var(--type-display-size)] leading-[var(--type-display-line)] font-[family-name:var(--font-noto-serif-jp)] font-bold',
+  headline: 'text-[length:var(--type-headline-size)] leading-[var(--type-headline-line)] font-[family-name:var(--font-noto-serif-jp)] font-bold',
+  title:    'text-[length:var(--type-title-size)] leading-[var(--type-title-line)] font-semibold',
+  body:     'text-[length:var(--type-body-size)] leading-[var(--type-body-line)]',
+  label:    'text-[length:var(--type-label-size)] tracking-[var(--type-label-tracking)] uppercase font-semibold',
+  caption:  'text-[length:var(--type-caption-size)] leading-[var(--type-caption-line)]',
+}
+
+export function getTypeClass(level: TypeLevel): string {
+  return typeClassMap[level]
+}
+
+export function getStateOpacity(state: StateName): string {
+  return `var(--state-${state})`
+}
+
 const buttonBaseClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--r-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--shape-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50'
 
 const buttonToneClass = {
-  primary: 'border-[var(--accent)] bg-[var(--accent)] text-white hover:border-[var(--accent-h)] hover:bg-[var(--accent-h)]',
-  secondary: 'border-[var(--border)] bg-white text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]',
-  ghost: 'border-transparent bg-transparent text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]',
+  primary: 'border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)] hover:border-[var(--primary-hover)] hover:bg-[var(--primary-hover)]',
+  secondary: 'border-[var(--outline)] bg-white text-[var(--on-surface)] hover:border-[var(--primary)] hover:text-[var(--primary)]',
+  ghost: 'border-transparent bg-transparent text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] hover:text-[var(--on-surface)]',
 } as const
 
 export function getButtonClass(tone: keyof typeof buttonToneClass = 'primary', className?: string) {
   return cx(buttonBaseClass, buttonToneClass[tone], className)
 }
 
-const panelBaseClass = 'rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)]'
+const panelBaseClass = 'rounded-[var(--shape-xl)] border border-[var(--outline)] bg-[var(--surface)]'
 
 export function getPanelClass(className?: string) {
   return cx(panelBaseClass, className)
@@ -34,7 +64,7 @@ export function Breadcrumb({ items }: {
   items: Array<{ label: string; href?: string }>
 }) {
   return (
-    <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-xs text-[var(--text3)]">
+    <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-xs text-[var(--on-surface-muted)]">
       {items.map((item, i) => {
         const isLast = i === items.length - 1
         return (
@@ -43,12 +73,12 @@ export function Breadcrumb({ items }: {
             {item.href ? (
               <Link
                 href={item.href}
-                className="rounded transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="rounded transition-colors hover:text-[var(--on-surface-variant)]"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-[var(--text2)]" aria-current={isLast ? 'page' : undefined}>{item.label}</span>
+              <span className="text-[var(--on-surface-variant)]" aria-current={isLast ? 'page' : undefined}>{item.label}</span>
             )}
           </Fragment>
         )
@@ -81,7 +111,7 @@ export function SiteBrand({
   subtitle?: ReactNode | false
 }) {
   return (
-    <Link href={href} className="rounded-[var(--r-sm)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+    <Link href={href} className="rounded-[var(--shape-sm)] transition-opacity hover:opacity-80">
       <div className="flex items-center gap-3">
         <div className="flex -space-x-2">
           {featuredCharacters.map((char) => (
@@ -96,11 +126,11 @@ export function SiteBrand({
           ))}
         </div>
         <div>
-          <p className="text-sm font-semibold tracking-[0.16em] text-[var(--text)] uppercase">
-            Insight <span className="text-[var(--accent)]">Cast</span>
+          <p className="text-sm font-semibold tracking-[0.16em] text-[var(--on-surface)] uppercase">
+            Insight <span className="text-[var(--primary)]">Cast</span>
           </p>
           {subtitle !== false && (
-            <p className="hidden text-xs text-[var(--text2)] sm:block">{subtitle}</p>
+            <p className="hidden text-xs text-[var(--on-surface-variant)] sm:block">{subtitle}</p>
           )}
         </div>
       </div>
@@ -116,7 +146,7 @@ export function HeaderSurface({
   bottom?: ReactNode
 }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
+    <header className="sticky top-0 z-30 border-b border-[var(--outline)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex h-[62px] items-center justify-between gap-4">
           {children}
@@ -149,8 +179,8 @@ export function PageHeader({
       bottom={(
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
           <div className="min-w-0">
-            <div className="font-semibold text-[var(--text)]">{title}</div>
-            {description && <p className="mt-1 text-sm text-[var(--text2)]">{description}</p>}
+            <div className="font-semibold text-[var(--on-surface)]">{title}</div>
+            {description && <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{description}</p>}
           </div>
           {backHref ? (
             <Link
@@ -181,11 +211,11 @@ export function FieldLabel({
   htmlFor?: string
 }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-[var(--text2)]">
+    <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-[var(--on-surface-variant)]">
       {children}
       {required && (
         <>
-          <span className="text-[var(--err)]" aria-hidden="true"> *</span>
+          <span className="text-[var(--error)]" aria-hidden="true"> *</span>
           <span className="sr-only">（必須）</span>
         </>
       )}
@@ -200,7 +230,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:bg-[var(--bg2)] disabled:text-[var(--text3)] disabled:hover:border-[var(--border)]',
+        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-muted)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
         className,
       )}
     />
@@ -261,7 +291,8 @@ export function EyebrowBadge({
 }) {
   return (
     <div className={cx(
-      'inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-4 py-2 text-xs font-semibold tracking-[0.2em] text-[var(--accent)] uppercase',
+      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-[var(--primary)]',
+      getTypeClass('label'),
       className,
     )}>
       {children}
@@ -279,10 +310,10 @@ export function StatusPill({
   className?: string
 }) {
   const toneClass = {
-    neutral: 'bg-[var(--surface)] text-[var(--text2)] ring-1 ring-[var(--border)]',
-    success: 'bg-[var(--ok-l)] text-[var(--ok)] ring-1 ring-[var(--ok)]/20',
-    warning: 'bg-[var(--warn-l)] text-[var(--warn)] ring-1 ring-[var(--warn)]/20',
-    info: 'bg-[var(--teal-l)] text-[var(--teal)] ring-1 ring-[var(--teal)]/20',
+    neutral: 'bg-[var(--surface)] text-[var(--on-surface-variant)] ring-1 ring-[var(--outline)]',
+    success: 'bg-[var(--success-container)] text-[var(--success)] ring-1 ring-[var(--success)]/20',
+    warning: 'bg-[var(--warning-container)] text-[var(--warning)] ring-1 ring-[var(--warning)]/20',
+    info: 'bg-[var(--secondary-container)] text-[var(--secondary)] ring-1 ring-[var(--secondary)]/20',
   }[tone]
 
   return (
@@ -308,21 +339,21 @@ export function StateCard({
   action?: ReactNode
 }) {
   const toneClass = {
-    default: 'border-[var(--border)] bg-[var(--surface)]',
-    soft: 'border-[var(--border)] bg-[var(--bg2)]',
-    warning: 'border-[var(--warn)]/30 bg-[var(--warn-l)]',
+    default: 'border-[var(--outline)] bg-[var(--surface)]',
+    soft: 'border-[var(--outline)] bg-[var(--surface-container)]',
+    warning: 'border-[var(--warning)]/30 bg-[var(--warning-container)]',
   }[tone]
 
   return (
     <div className={cx(
-      'rounded-[var(--r-xl)] border p-6',
+      'rounded-[var(--shape-xl)] border p-6',
       toneClass,
       align === 'center' ? 'text-center' : 'text-left',
     )}>
       <div className={cx('text-4xl mb-3', align === 'center' ? '' : 'w-fit')}>{icon}</div>
-      <p className="text-base font-semibold text-[var(--text)]">{title}</p>
+      <p className="text-base font-semibold text-[var(--on-surface)]">{title}</p>
       {description && (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{description}</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--on-surface-variant)]">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>
@@ -347,7 +378,7 @@ export function CharacterAvatar({
   return (
     <div
       className={cx(
-        'overflow-hidden rounded-full border border-[var(--border)] bg-[var(--surface)] flex items-center justify-center flex-shrink-0',
+        'overflow-hidden rounded-full border border-[var(--outline)] bg-[var(--surface)] flex items-center justify-center flex-shrink-0',
         className,
       )}
       style={{ width: size, height: size }}
@@ -375,11 +406,11 @@ export function InterviewerSpeech({
   tone?: 'default' | 'soft'
 }) {
   const bubbleClass = tone === 'soft'
-    ? 'border-[var(--accent-l)] bg-[var(--accent-l)]'
-    : 'border-[var(--border)] bg-[var(--surface)]'
+    ? 'border-[var(--primary-container)] bg-[var(--primary-container)]'
+    : 'border-[var(--outline)] bg-[var(--surface)]'
   const pointerClass = tone === 'soft'
-    ? 'border-l-[var(--accent-l)] border-b-[var(--accent-l)] bg-[var(--accent-l)]'
-    : 'border-l-[var(--border)] border-b-[var(--border)] bg-[var(--surface)]'
+    ? 'border-l-[var(--primary-container)] border-b-[var(--primary-container)] bg-[var(--primary-container)]'
+    : 'border-l-[var(--outline)] border-b-[var(--outline)] bg-[var(--surface)]'
 
   return (
     <div className="flex items-start gap-3">
@@ -392,11 +423,11 @@ export function InterviewerSpeech({
           )}
           aria-hidden="true"
         />
-        <div className={cx('rounded-[var(--r-lg)] border px-5 py-4', bubbleClass)}>
-          {name && <p className="text-xs font-medium text-[var(--text3)] mb-1">{name}</p>}
-          <p className="text-sm font-medium text-[var(--text)] leading-relaxed">{title}</p>
+        <div className={cx('rounded-[var(--shape-lg)] border px-5 py-4', bubbleClass)}>
+          {name && <p className="text-xs font-medium text-[var(--on-surface-muted)] mb-1">{name}</p>}
+          <p className="text-sm font-medium text-[var(--on-surface)] leading-relaxed">{title}</p>
           {description && (
-            <p className="text-sm text-[var(--text2)] mt-1.5 leading-relaxed">{description}</p>
+            <p className="text-sm text-[var(--on-surface-variant)] mt-1.5 leading-relaxed">{description}</p>
           )}
         </div>
       </div>

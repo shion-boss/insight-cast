@@ -68,7 +68,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
               key={group.id}
               href={`#${group.id}`}
               onClick={() => setActiveId(group.id)}
-              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors ${
                 activeId === group.id
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
                   : 'border-transparent text-[var(--text2)] hover:text-[var(--accent)]'

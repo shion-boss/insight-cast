@@ -109,7 +109,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
         ＋ ブロックを追加
       </button>
       {open && (
-        <div className="absolute top-7 z-20 flex gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] p-2 shadow-md">
+        <div className="absolute top-7 z-20 flex gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] p-2 shadow-[var(--elevation-2)]">
           <button
             type="button"
             onClick={() => { onAdd('markdown'); setOpen(false) }}
@@ -348,7 +348,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(false)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-sm'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
             aria-pressed={!previewMode}
           >
             編集
@@ -356,7 +356,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(true)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-sm' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
             aria-pressed={previewMode}
           >
             プレビュー
@@ -472,7 +472,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                   setHasChanges(true)
                   setSuccessMsg(null)
                 }}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${form.published ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors ${form.published ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
               >
                 <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.published ? 'translate-x-5' : 'translate-x-0.5'}`} />
               </button>

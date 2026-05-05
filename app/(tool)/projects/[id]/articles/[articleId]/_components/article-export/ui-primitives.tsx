@@ -44,7 +44,7 @@ export function HeaderCopyButton({ copied, onClick, ariaLabel = 'コピー' }: {
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'}`}
+      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'}`}
     >
       {copied ? (
         <>

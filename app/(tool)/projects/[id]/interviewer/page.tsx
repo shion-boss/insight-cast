@@ -147,13 +147,13 @@ export default async function InterviewerPage({
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/pricing?reason=project_over_limit"
-              className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
             >
               プランをアップグレードする <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/projects"
-              className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-sm font-semibold hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-sm font-semibold hover:bg-[var(--bg2)] transition-colors"
             >
               プロジェクト一覧へ
             </Link>
@@ -188,13 +188,13 @@ export default async function InterviewerPage({
             <div className="mt-4 flex gap-3">
               <Link
                 href="/pricing?reason=free_plan_locked"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href={`/projects/${id}`}
-                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
               >
                 プロジェクトに戻る
               </Link>
@@ -223,7 +223,7 @@ export default async function InterviewerPage({
             <div className="mt-4">
               <Link
                 href="/pricing?reason=interview_limit"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
@@ -256,7 +256,7 @@ export default async function InterviewerPage({
               <Link
                 key={char.id}
                 href={`/projects/${id}/interviewer?cast=${char.id}`}
-                className="flex flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:border-[var(--border2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="flex flex-col rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:border-[var(--border2)]"
               >
                 <CharacterAvatar
                   src={char.icon96}
@@ -299,7 +299,7 @@ export default async function InterviewerPage({
                 </div>
                 <Link
                   href={`/projects/${id}/interviewer`}
-                  className="rounded-lg border border-[var(--border)] px-3 py-2.5 min-h-[44px] text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="rounded-lg border border-[var(--border)] px-3 py-2.5 min-h-[44px] text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)]"
                 >
                   選び直す
                 </Link>
@@ -349,7 +349,7 @@ export default async function InterviewerPage({
                       <input type="hidden" name="focusThemeMode" value="suggested" />
                       <input type="hidden" name="focusTheme" value={theme} />
                       <InterviewSubmitButton
-                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--warn)]/40 hover:bg-[var(--warn-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--warn)]/40 hover:bg-[var(--warn-l)]"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--warn)]">Recommended</p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{theme}</p>
@@ -381,7 +381,7 @@ export default async function InterviewerPage({
                       <input type="hidden" name="focusThemeMode" value="suggested" />
                       <input type="hidden" name="focusTheme" value={suggestion.theme} />
                       <InterviewSubmitButton
-                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--ok)]/40 hover:bg-[var(--ok-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--ok)]/40 hover:bg-[var(--ok-l)]"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ok)]">Competitive Signal</p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{suggestion.theme}</p>
@@ -422,11 +422,11 @@ export default async function InterviewerPage({
                     required
                     maxLength={INTERVIEW_FOCUS_THEME_MAX_LENGTH}
                     placeholder="例: 初めて相談する人が安心できる理由"
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
                   />
                 </label>
                 <InterviewSubmitButton
-                  className="w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)]"
                   pendingLabel="取材を準備しています..."
                 >
                   このテーマでインタビューを始める
@@ -446,7 +446,7 @@ export default async function InterviewerPage({
                 <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                 <input type="hidden" name="focusThemeMode" value="omakase" />
                 <InterviewSubmitButton
-                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)]"
                   pendingLabel="取材を準備しています..."
                 >
                   お任せでインタビューを始める

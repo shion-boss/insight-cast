@@ -201,7 +201,7 @@ export default async function CastPage() {
                     className={`grid gap-8 pb-14 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-14 scroll-mt-24 ${index < freeCasts.length - 1 ? 'mb-14 border-b border-[var(--border)]' : ''}`}
                   >
                     <div>
-                      <div className="rounded-[24px] overflow-hidden shadow-[0_16px_48px_var(--shadow)] bg-[var(--bg2)] aspect-square flex items-center justify-center">
+                      <div className="rounded-[24px] overflow-hidden shadow-[var(--elevation-4)] bg-[var(--bg2)] aspect-square flex items-center justify-center">
                         <Image
                           src={char.portrait}
                           alt={`${char.name}のポートレート`}
@@ -258,7 +258,7 @@ export default async function CastPage() {
                       {talksByChar[char.id] && (
                         <Link
                           href={`/cast-talk/${talksByChar[char.id]!.slug}`}
-                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)]"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--accent)]">Cast Talk</div>
@@ -284,7 +284,7 @@ export default async function CastPage() {
             </div>
 
             {/* Cast Talk バナー */}
-            <div className="mt-16 rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="mt-16 rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
                 <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">Cast Talk</div>
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
@@ -297,7 +297,7 @@ export default async function CastPage() {
               </div>
               <Link
                 href="/cast-talk"
-                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
                 Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>

@@ -51,7 +51,7 @@ export function LpCopyableCard({
         }
       }}
       aria-label={copied ? `${label}をコピーしました` : `${label}をコピーする`}
-      className={`group cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:ring-inset ${wrapperClass}`}
+      className={`group cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none focus-visible:ring-inset ${wrapperClass}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
         <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">{label}</div>

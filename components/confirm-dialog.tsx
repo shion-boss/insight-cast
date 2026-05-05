@@ -99,7 +99,7 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={`${dialogId}-title`}
         aria-describedby={description ? `${dialogId}-desc` : undefined}
-        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl"
+        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-[var(--elevation-4)]"
       >
         <p id={`${dialogId}-title`} className="text-[15px] font-bold text-[var(--text)] mb-2">
           {title}
@@ -114,7 +114,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
           >
             {cancelLabel}
           </button>

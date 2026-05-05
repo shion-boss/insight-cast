@@ -328,7 +328,7 @@ export default async function BlogDetailPage({
                 <div className="mt-3 pl-[48px]">
                   <Link
                     href="/auth/signup"
-                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] hover:underline"
                   >
                     あなたも試してみる <span aria-hidden="true">→</span>
                   </Link>
@@ -346,7 +346,7 @@ export default async function BlogDetailPage({
               {prevPost ? (
                 <Link
                   href={`/blog/${prevPost.slug}`}
-                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
                 >
                   <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">← 新しい記事</span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{prevPost.title}</span>
@@ -355,7 +355,7 @@ export default async function BlogDetailPage({
               {nextPost ? (
                 <Link
                   href={`/blog/${nextPost.slug}`}
-                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
                 >
                   <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">過去の記事 <span aria-hidden="true">→</span></span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{nextPost.title}</span>

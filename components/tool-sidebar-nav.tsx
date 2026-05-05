@@ -57,7 +57,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 
 function navLinkClass(active: boolean) {
   return cx(
-    'flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40',
+    'flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors duration-150',
     active
       ? 'bg-[var(--accent-l)] text-[var(--accent)]'
       : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]',

@@ -74,14 +74,14 @@ export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; 
               {isLoggedIn ? (
                 <Link
                   href="/dashboard"
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   ダッシュボードへ
                 </Link>
               ) : (
                 <Link
                   href="/auth/signup"
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   無料で始める
                 </Link>
@@ -100,7 +100,7 @@ export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; 
           {PAID_PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
             >
               <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
               <div className="flex items-baseline gap-1 mb-1">
@@ -129,7 +129,7 @@ export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; 
               ) : (
                 <Link
                   href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-                  className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                  className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
                 >
                   {plan.cta}
                 </Link>
@@ -139,7 +139,7 @@ export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; 
         </div>
         <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
           料金の詳細は
-          <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">料金ページ</Link>
+          <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded">料金ページ</Link>
           をご覧ください。
         </p>
 

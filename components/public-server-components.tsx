@@ -83,7 +83,7 @@ export async function PublicFooter({ showPromo = true }: { showPromo?: boolean }
                 <ul className="space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.href}>
-                      <Link href={link.href} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm">
+                      <Link href={link.href} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
                         {link.label}
                       </Link>
                     </li>

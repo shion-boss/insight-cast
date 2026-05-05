@@ -123,9 +123,9 @@ export function LegalPageTemplate({
               <div className="sticky top-28 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Related</p>
                 <div className="mt-4 space-y-3 text-sm text-[var(--text2)]">
-                  <Link href="/privacy" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">プライバシーポリシー</Link>
-                  <Link href="/terms" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">利用規約</Link>
-                  <Link href="/tokushoho" className="block rounded transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">特定商取引法に基づく表記</Link>
+                  <Link href="/privacy" className="block rounded transition-colors hover:text-[var(--accent)]">プライバシーポリシー</Link>
+                  <Link href="/terms" className="block rounded transition-colors hover:text-[var(--accent)]">利用規約</Link>
+                  <Link href="/tokushoho" className="block rounded transition-colors hover:text-[var(--accent)]">特定商取引法に基づく表記</Link>
                 </div>
               </div>
             </aside>

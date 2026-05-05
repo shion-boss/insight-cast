@@ -431,7 +431,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                           type="button"
                           onClick={() => setTab(t.type)}
                           aria-pressed={tab === t.type}
-                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                             tab === t.type
                               ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                               : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -458,7 +458,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       type="button"
                       onClick={() => setTheme(item)}
                       aria-pressed={theme === item}
-                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-sm transition-all ${
                         theme === item
                           ? 'border border-[var(--accent)] bg-[var(--accent-l)] font-semibold text-[var(--accent)]'
                           : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -505,7 +505,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       type="button"
                       onClick={() => setStyle(opt.value)}
                       aria-pressed={style === opt.value}
-                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                         style === opt.value
                           ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                           : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -527,7 +527,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     type="button"
                     onClick={() => setVolume(opt.value)}
                     aria-pressed={volume === opt.value}
-                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                       volume === opt.value
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -544,14 +544,14 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 type="button"
                 onClick={() => setPolishAnswers((value) => !value)}
                 aria-pressed={polishAnswers}
-                className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)]"
               >
                 <div className="text-left">
                   <p className="text-sm font-semibold text-[var(--text)]">回答を整える</p>
                   <p className="mt-0.5 text-[11px] text-[var(--text3)]">誤字や話し言葉を自然に整えます</p>
                 </div>
                 <div className={`relative h-6 w-10 flex-shrink-0 overflow-hidden rounded-full transition-colors ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
+                  <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-[var(--elevation-1)] transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </button>
             </div>
@@ -583,7 +583,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
               type="button"
               onClick={() => void startBatchGeneration()}
               disabled={isGenerating || availableThemes.length === 0}
-              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCurrentTabGenerating ? (
                 <>この形式を作成中...</>
@@ -644,7 +644,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       <Link
                         key={a.id}
                         href={`/projects/${projectId}/articles/${a.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                       >
                         <span>{typeLabel}</span>
                         <span aria-hidden="true" className="text-[var(--text3)]">·</span>
@@ -764,7 +764,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     <Link
                       key={a.id}
                       href={`/projects/${projectId}/articles/${a.id}`}
-                      className="flex items-center justify-between gap-4 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg)] px-5 py-4 transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      className="flex items-center justify-between gap-4 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg)] px-5 py-4 transition-colors hover:border-[var(--accent)]"
                     >
                       <p className="truncate text-sm font-medium text-[var(--text)]">{a.title ?? '記事'}</p>
                       <div className="flex flex-shrink-0 items-center gap-3">
@@ -785,7 +785,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     type="button"
                     onClick={() => void startBatchGeneration()}
                     disabled={isGenerating}
-                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--text3)] transition-colors hover:text-[var(--text2)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     もう一度作成する
                   </button>
@@ -798,13 +798,13 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)]"
           >
             取材に戻って話を足す
           </Link>
           <Link
             href={`/projects/${projectId}`}
-            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="rounded text-sm text-[var(--text3)] transition-colors hover:text-[var(--text2)]"
           >
             プロジェクトの管理に戻る
           </Link>

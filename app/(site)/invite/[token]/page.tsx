@@ -75,7 +75,7 @@ export default async function InvitePage({
         </p>
         <Link
           href="/"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
         >
           トップページへ
         </Link>
@@ -124,13 +124,13 @@ export default async function InvitePage({
         <div className="flex flex-col gap-3">
           <Link
             href={`/auth/login?invite_token=${token}`}
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
             ログインして参加する
           </Link>
           <Link
             href={`/auth/signup?invite_token=${token}`}
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
           >
             新規登録して参加する
           </Link>

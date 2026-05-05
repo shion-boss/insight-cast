@@ -49,7 +49,7 @@ export default function InviteAcceptButton({ token }: { token: string }) {
         type="button"
         onClick={handleAccept}
         disabled={loading}
-        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? '参加しています...' : 'このまま参加する'}
       </button>
