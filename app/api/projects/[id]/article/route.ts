@@ -14,6 +14,7 @@ import { syncProjectContentStatus } from '@/lib/project-content-status'
 import { isFreePlanLocked, checkMonthlyArticleLimit } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
 import { buildDraftBody, buildIntroEmbed, ensureConversationClosingByInterviewer } from '@/lib/conversation-bubble-html'
+import { generateSlugFromTitle } from '@/lib/blog-slug'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 120_000 })
 
@@ -83,23 +84,7 @@ async function generateBlogSlug(
   title: string,
   today: string,
 ): Promise<string> {
-  let baseSlug = ''
-  try {
-    const msg = await anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 30,
-      messages: [{
-        role: 'user',
-        content: `次の記事タイトルを英語のケバブケーススラッグ（3〜5単語、小文字英数字とハイフンのみ）に変換してください。スラッグだけを返してください。\n\nタイトル: ${title}`,
-      }],
-    })
-    const raw = msg.content[0].type === 'text' ? msg.content[0].text.trim() : ''
-    baseSlug = raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)
-    logApiUsage({ route: 'article/slug', model: 'claude-haiku-4-5-20251001', inputTokens: msg.usage.input_tokens, outputTokens: msg.usage.output_tokens }).catch(() => {})
-  } catch {
-    // fallback to date-only slug on LLM error
-  }
-
+  const baseSlug = (await generateSlugFromTitle(title, 'article/slug')) ?? ''
   const candidate = baseSlug || `${today}-article`
   const { data: existing } = await supabase
     .from('blog_posts')

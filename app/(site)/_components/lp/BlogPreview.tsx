@@ -65,6 +65,25 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
             )
           })}
         </div>
+        <div className="mt-7 flex flex-wrap justify-center gap-2">
+          <span className="self-center text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mr-1">テーマで探す</span>
+          {([
+            { category: 'service' as const, label: 'サービス紹介', href: '/blog?category=service' },
+            { category: 'interview' as const, label: 'インタビュー', href: '/blog?category=interview' },
+            { category: 'case' as const, label: '事例', href: '/blog?category=case' },
+            { category: 'howto' as const, label: 'ノウハウ', href: '/blog?category=howto' },
+            { category: 'news' as const, label: 'お知らせ', href: '/blog?category=news' },
+          ]).map(({ category, label, href }) => (
+            <Link
+              key={category}
+              href={href}
+              className="rounded-full border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-[12px] font-semibold text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              style={{ color: BLOG_CATEGORY_COLOR[category] }}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
         <div className="text-center mt-8">
           <Link href="/blog" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             記事をもっと読む <span aria-hidden="true">→</span>

@@ -2,7 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { getCharacter } from '@/lib/characters'
 import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, type PostCategory, type Post } from '@/lib/blog-posts'
 
@@ -18,6 +19,12 @@ const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'news', label: 'お知らせ' },
 ]
 
+const VALID_TABS: ReadonlySet<string> = new Set(FILTER_TABS.map((t) => t.id))
+
+function parseFilter(value: string | null): FilterTab {
+  return value && VALID_TABS.has(value) ? (value as FilterTab) : 'all'
+}
+
 function formatDate(date: string): string {
   const [y, m, d] = date.split('-')
   return `${y}.${m}.${d}`
@@ -29,7 +36,26 @@ function resolveChar(post: Post) {
 }
 
 export function BlogClient({ posts }: { posts: Post[] }) {
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [activeFilter, setActiveFilter] = useState<FilterTab>(() => parseFilter(searchParams.get('category')))
+
+  // URL パラメータの変化（戻る/進む等）に追随する
+  useEffect(() => {
+    setActiveFilter(parseFilter(searchParams.get('category')))
+  }, [searchParams])
+
+  function changeFilter(next: FilterTab) {
+    setActiveFilter(next)
+    const params = new URLSearchParams(searchParams.toString())
+    if (next === 'all') {
+      params.delete('category')
+    } else {
+      params.set('category', next)
+    }
+    const qs = params.toString()
+    router.replace(qs ? `/blog?${qs}` : '/blog', { scroll: false })
+  }
 
   const featured = posts.find((p) => p.featured) ?? posts[0]
   const filtered = activeFilter === 'all' ? posts : posts.filter((p) => p.category === activeFilter)
@@ -45,7 +71,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
           <button
             key={tab.id}
             type="button"
-            onClick={() => setActiveFilter(tab.id)}
+            onClick={() => changeFilter(tab.id)}
             aria-pressed={activeFilter === tab.id}
             className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 ${
               activeFilter === tab.id
@@ -113,7 +139,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
           <p className="text-sm text-[var(--text3)]">このカテゴリの記事はまだありません</p>
           <button
             type="button"
-            onClick={() => setActiveFilter('all')}
+            onClick={() => changeFilter('all')}
             className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2 rounded"
           >
             すべての記事を見る

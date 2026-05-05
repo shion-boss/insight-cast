@@ -37,6 +37,7 @@ export async function generateMetadata({
       locale: 'ja_JP',
       type: 'article',
       publishedTime: post.date ? new Date(post.date).toISOString() : undefined,
+      modifiedTime: post.updatedAt ?? (post.date ? new Date(post.date).toISOString() : undefined),
       authors: ['Insight Cast'],
       images: [{ url: '/logo.jpg', width: 1116, height: 350, alt: 'Insight Cast' }],
     },
@@ -109,7 +110,7 @@ export default async function BlogDetailPage({
     headline: post.title,
     description: post.excerpt ?? undefined,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updatedAt ?? post.date,
     url: `${APP_URL}/blog/${slug}`,
     publisher: {
       '@type': 'Organization',

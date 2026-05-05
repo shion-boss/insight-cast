@@ -28,6 +28,7 @@ function rowToPost(row: Record<string, unknown>): Post {
     category: normalizePostCategory(row.category),
     type: isPostType(row.type) ? row.type : 'normal',
     date: String(row.date ?? ''),
+    updatedAt: typeof row.updated_at === 'string' ? row.updated_at : null,
     interviewer: isInterviewerId(row.interviewer) ? row.interviewer : undefined,
     coverColor: typeof row.cover_color === 'string' && row.cover_color.length > 0
       ? row.cover_color
@@ -43,7 +44,7 @@ export const getBlogPostsFromDB = unstable_cache(
       const supabase = createAdminClient()
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, interview_duration_min, interview_question_count')
+        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, updated_at, interview_duration_min, interview_question_count')
         .eq('published', true)
         .order('date', { ascending: false })
 
@@ -63,7 +64,7 @@ export const getBlogPostFromDB = unstable_cache(
       const supabase = createAdminClient()
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, body, interview_duration_min, interview_question_count')
+        .select('slug, title, excerpt, category, type, interviewer, cover_color, date, updated_at, body, interview_duration_min, interview_question_count')
         .eq('slug', slug)
         .eq('published', true)
         .maybeSingle()

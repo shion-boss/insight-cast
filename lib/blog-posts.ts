@@ -9,6 +9,7 @@ export type Post = {
   category: PostCategory
   type: PostType
   date: string
+  updatedAt: string | null
   interviewer?: InterviewerId
   coverColor: string
   icon?: string

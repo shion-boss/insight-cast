@@ -220,6 +220,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
   const [hasChanges, setHasChanges] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [previewMode, setPreviewMode] = useState(false)
+  const [isSuggestingSlug, setIsSuggestingSlug] = useState(false)
   const handleSaveRef = useRef<(() => void) | null>(null)
 
   // JST での今日の日付（UTC のまま計算すると 0〜8 時台に前日になる）
@@ -413,17 +414,41 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               <FieldLabel required htmlFor="post-slug">スラッグ（URL）</FieldLabel>
               <button
                 type="button"
-                onClick={() => {
-                  const next = slugify(form.title || '')
-                  if (next) {
-                    handleChange('slug', next)
-                  } else {
-                    setErrorMsg('タイトルから自動生成できませんでした。記事の内容に合った英語スラッグを手入力してください（例: dashboard-should-be-simple）')
+                disabled={isSuggestingSlug || !form.title.trim()}
+                onClick={async () => {
+                  setErrorMsg(null)
+                  // ASCII タイトルなら API を呼ばずにローカルで即変換
+                  const local = slugify(form.title || '')
+                  if (local) {
+                    handleChange('slug', local)
+                    return
+                  }
+                  setIsSuggestingSlug(true)
+                  try {
+                    const res = await fetch('/api/admin/blog-posts/suggest-slug', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ title: form.title }),
+                    })
+                    if (!res.ok) {
+                      setErrorMsg('スラッグを生成できませんでした。もう一度お試しいただくか、英語スラッグを手入力してください（例: dashboard-should-be-simple）')
+                      return
+                    }
+                    const data = (await res.json()) as { slug?: string }
+                    if (data.slug) {
+                      handleChange('slug', data.slug)
+                    } else {
+                      setErrorMsg('スラッグを生成できませんでした。英語スラッグを手入力してください')
+                    }
+                  } catch {
+                    setErrorMsg('スラッグの生成中にエラーが起きました。通信を確認してもう一度お試しください')
+                  } finally {
+                    setIsSuggestingSlug(false)
                   }
                 }}
-                className="text-xs text-[var(--accent)] hover:underline"
+                className="text-xs text-[var(--accent)] hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
               >
-                タイトルから生成
+                {isSuggestingSlug ? '生成中...' : 'タイトルから生成'}
               </button>
             </div>
             <TextInput

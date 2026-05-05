@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 
 async function BlogPreviewSection() {
   const all = await getBlogPostsFromDB().catch(() => [])
-  return <BlogPreview latestPosts={all.slice(0, 3)} />
+  return <BlogPreview latestPosts={all.slice(0, 8)} />
 }
 
 async function CastTalkPreviewSection() {
