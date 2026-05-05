@@ -79,14 +79,15 @@
 ### Secondary（ティール）
 
 副アクセント。ステータス表示・補助 CTA・フリーキャストや無料導線の示唆色などに使う。
+WCAG AA 適合のため 700 系の値を採用（teal-700 = `#0f766e`）。
 
 | Role | Value | 用途 |
 |---|---|---|
-| `--secondary` | `#0d9488` | 副 CTA、補助強調 |
+| `--secondary` | `#0f766e` | 副 CTA、補助強調（teal-700） |
 | `--on-secondary` | `#ffffff` | secondary 背景の上に乗る文字 |
-| `--secondary-container` | `#e0f5f3` | 副バッジ・タグ |
-| `--on-secondary-container` | `#0a7a70` | secondary-container 上の文字 |
-| `--secondary-hover` | `#0a7a70` | secondary のホバー色（既存 `--teal-h` の互換） |
+| `--secondary-container` | `#e0f5f3` | 副バッジ・タグ（teal-100） |
+| `--on-secondary-container` | `#115e59` | secondary-container 上の文字（teal-800） |
+| `--secondary-hover` | `#115e59` | secondary のホバー色 |
 
 ### Tertiary（将来用）
 
@@ -135,15 +136,16 @@
 
 ### Status（成功・警告・エラー）
 
+すべて Tailwind 700 系の値を採用。container 背景上で WCAG AA 4.5:1 をクリア。
+
 | Role | Value | 用途 |
 |---|---|---|
-| `--success` | `#16a34a` | 成功状態の文字・アイコン |
-| `--success-container` | `#dcfce7` | 成功状態の背景・通知 |
-| `--on-success-container` | `#16a34a` | success-container 背景上の文字（success と同値で運用） |
-| `--warning` | `#d97706` | 警告状態の文字 |
-| `--warning-container` | `#fef3c7` | 警告状態の背景 |
-| `--error` | `#dc2626` | エラー状態の文字 |
-| `--error-container` | `#fee2e2` | エラー状態の背景 |
+| `--success` | `#15803d` | 成功状態の文字・アイコン（green-700） |
+| `--success-container` | `#dcfce7` | 成功状態の背景・通知（green-100） |
+| `--warning` | `#b45309` | 警告状態の文字（amber-700） |
+| `--warning-container` | `#fef3c7` | 警告状態の背景（amber-100） |
+| `--error` | `#b91c1c` | エラー状態の文字（red-700） |
+| `--error-container` | `#fee2e2` | エラー状態の背景（red-100） |
 
 ### M3 とのズレ（明示）
 
@@ -266,6 +268,48 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
 
 ---
 
+## Contrast & Accessibility
+
+WCAG 2.1 AA を **デフォルト目標**として、トークン値とペア使用を選定している。
+
+### 検証済みのコントラスト比（小さいテキスト基準 4.5:1）
+
+| Foreground | Background | Ratio | 判定 |
+|---|---|---|---|
+| `--on-surface` | `--surface` | 17.87 | ✓ AAA |
+| `--on-surface-variant` | `--surface` | 5.41 | ✓ AA |
+| `--on-primary` (white) | `--secondary` | 4.55 | ✓ AA |
+| `--on-primary-container` | `--primary-container` | 6.10 | ✓ AA |
+| `--success` | `--success-container` | 4.57 | ✓ AA |
+| `--warning` | `--warning-container` | 4.51 | ✓ AA |
+| `--error` | `--error-container` | 5.30 | ✓ AA |
+| `--secondary` | `--secondary-container` | 4.83 | ✓ AA |
+
+### `--primary` ブランドカラーの AA ギャップ
+
+`--primary` (#c2722a) は ブランドコアカラーのため変えない。ただし結果として:
+
+- `--on-primary` (white) on `--primary`: **3.66:1**（AA: 14px regular で fail、large text 18.66px+ bold で pass）
+- `--primary` text on `--surface` (white card): **3.60:1**（同上）
+
+**運用方針**:
+- **テキストとして使う場合**は `--on-primary-container` (#8a4a18) を使う（surface 上で 6.73:1, AAA クリア）。EyebrowBadge / 強調文字の text 色はこちらを参照する。
+- **プライマリ塗りつぶしボタンの白文字**は AA-large only（3.66）。`text-sm font-semibold` (14px / 600) は厳密には小テキスト扱いになるため、新規実装で重要な操作ラベルには `text-base font-bold` (16px / 700) 以上を推奨。既存の `text-sm font-semibold` は当面維持するが、視覚診断で問題が出たら darken する余地を残す。
+- **装飾・アイコン・小バッジ**は `--primary` のままで OK（情報非依存）。
+
+### `--on-surface-muted` の制限用途
+
+`--on-surface-muted` (#8f7d6d) は `--surface` 上で 3.88:1（AA fail for small text）。これは **装飾・補助情報・無効状態** など「情報を伝える主要テキストではない」用途のみで使う。
+
+- 使ってよい：パンくず、補助メタ情報、無効化された input の文字
+- 使ってはいけない：プレースホルダ（`--on-surface-variant` を使う）、エラー説明文、フォームラベル
+
+### 検証スクリプト
+
+`/tmp/contrast-check.js` のロジックで全主要ペアを検証済み。新トークン追加・既存値変更時は同じ計算で AA を満たすか確認すること。
+
+---
+
 ## Focus Visibility
 
 `globals.css` のグローバル focus-visible 定義を **唯一の正** とする。
@@ -298,11 +342,11 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
   --primary-hover: #a85e20;
 
   /* === Color: Secondary (teal) === */
-  --secondary: #0d9488;
+  --secondary: #0f766e;
   --on-secondary: #ffffff;
   --secondary-container: #e0f5f3;
-  --on-secondary-container: #0a7a70;
-  --secondary-hover: #0a7a70;
+  --on-secondary-container: #115e59;
+  --secondary-hover: #115e59;
 
   /* === Color: Surface === */
   --surface: #fffdf9;
@@ -321,12 +365,12 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
   --outline-variant: #d0c0a8;
 
   /* === Color: Status === */
-  --success: #16a34a;
+  --success: #15803d;
   --on-success: #ffffff;
   --success-container: #dcfce7;
-  --warning: #d97706;
+  --warning: #b45309;
   --warning-container: #fef3c7;
-  --error: #dc2626;
+  --error: #b91c1c;
   --error-container: #fee2e2;
 
   /* === Shape === */
@@ -497,6 +541,26 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 ### 後方互換
 - 既存の呼び出し側コードは **無修正で動く**（旧トークン名は alias で残るため）
 - `getTypeClass` などの新ヘルパーは新規実装で使う。既存実装は段階的に書き換え
+
+### 宣言的ラッパー
+
+`getPanelClass()` / `getTypeClass()` を直接書くより、**新規実装は以下のラッパーコンポーネントを使う**。
+
+```tsx
+import { Card, Heading } from '@/components/ui'
+
+// Card: パネルの宣言的版。elevation / padding を props で
+<Card padding="lg" elevation={2}>
+  ...
+</Card>
+
+// Heading: HTML レベル(h1〜h6) と タイポトークン(display/headline/...) を分離
+<Heading level={1} type="display">会話から、記事へ。</Heading>
+<Heading level={2} type="headline">セクション見出し</Heading>
+<Heading level={3} type="title">カードタイトル</Heading>
+```
+
+`level` (HTML 見出しタグ) と `type` (タイポトークン) を分離した理由：SEO / a11y 上の階層は HTML タグで保ち、見た目だけスケールから選ぶ。例えば LP の Hero は `<h1>` でも `display` でなく `headline` のサイズに落とす場面がある。
 
 ---
 
