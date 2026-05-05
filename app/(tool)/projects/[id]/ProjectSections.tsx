@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState, useRef, useLayoutEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
@@ -126,17 +127,31 @@ export function PaginatedInterviewHistory({
 }: {
   items: InterviewHistoryItem[]
 }) {
+  const router = useRouter()
   const [page, setPage] = useState(1)
   const totalPages = Math.ceil(items.length / PER_PAGE)
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const placeholderCount = PER_PAGE - visible.length
 
   return (
-    <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
+    <div className="overflow-hidden bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
       {visible.map((item, i) => (
         <div
           key={item.id}
-          className={`flex flex-col sm:flex-row sm:items-center gap-3 py-4 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
+          role="link"
+          tabIndex={0}
+          aria-label={`${item.charName} の取材メモを見る`}
+          className={`flex flex-col sm:flex-row sm:items-center gap-3 py-4 cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
+          onClick={(e) => {
+            if ((e.target as Element).closest('a[href]')) return
+            router.push(item.managementHref)
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              router.push(item.managementHref)
+            }
+          }}
         >
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
@@ -220,6 +235,7 @@ const ARTICLE_TYPE_LABEL: Record<string, string> = {
 }
 
 export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
+  const router = useRouter()
   const [page, setPage] = useState(1)
   const totalPages = Math.ceil(items.length / PER_PAGE)
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
@@ -238,18 +254,19 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
       {/* モバイル: カードリスト */}
       <div className="space-y-3 sm:hidden">
         {visible.map((article) => (
-          <div key={article.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
+          <Link
+            key={article.id}
+            href={article.href}
+            className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          >
             <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
-            <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
                 {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
               </span>
               <span>{formatDateTime(article.createdAt)}</span>
             </div>
-            <Link href={article.href} className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-              詳細
-            </Link>
-          </div>
+          </Link>
         ))}
         {Array.from({ length: placeholderCount }).map((_, i) => (
           <div key={`ph-${i}`} aria-hidden className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 invisible">
@@ -286,7 +303,21 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
             </thead>
             <tbody className="bg-[var(--surface)]">
               {visible.map((article, i) => (
-                <tr key={article.id} className={i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}>
+                <tr
+                  key={article.id}
+                  tabIndex={0}
+                  className={`cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
+                  onClick={(e) => {
+                    if ((e.target as Element).closest('a[href]')) return
+                    router.push(article.href)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      router.push(article.href)
+                    }
+                  }}
+                >
                   <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate">
                     {article.title || '記事'}
                   </td>
