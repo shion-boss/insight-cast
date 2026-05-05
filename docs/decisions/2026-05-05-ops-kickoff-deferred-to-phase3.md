@@ -25,28 +25,31 @@ Sentry（本番エラーロギング、improvement-backlog C-1）を Phase 2 中
 | 項目 | Phase 2（現在） | Phase 3 開始時 |
 |---|---|---|
 | Sentry 受信 | ✓ 起動済み・維持 | ✓ |
-| Slack 通知 | 致命系のみ（500 / auth エラー / 取材完了失敗 等） | ✓ ルール拡張 |
+| 通知先 | **GitHub Issue 自動作成** のみ（`shion-boss/insight-cast` リポジトリに sentry[bot] が起票） | ✓ Slack を追加。リアルタイムアラート併用 |
+| アラートルール | `Issues → A new issue is created → Create GitHub issue` の 1 本のみ | ✓ ルール細分化（致命系・regression・volume 急増 等） |
 | docs/runbook.md | 骨格のみ（Sentry セットアップ手順は記載済み） | ✓ 実運用で肉付け |
 | アラート閾値 / SLO | 設定しない | ✓ 定義 |
-| 障害対応プロセス | アドホック | ✓ ops 役割で稼働 |
+| 障害対応プロセス | アドホック（GitHub Issue で気付いて対応） | ✓ ops 役割で稼働 |
 | 月次運用レビュー | 行わない | ✓ |
 | インシデント記録 (`ops/incidents/`) | 書きたい時だけ | ✓ ルール化 |
 
 ## 理由
 
-- ドッグフーディング期間でも「自分が踏むクラッシュを見逃す」のは本末転倒なので Sentry 受信と最小 Slack だけは Phase 2 で活かす
+- ドッグフーディング期間でも「自分が踏むクラッシュを見逃す」のは本末転倒なので、Sentry 受信 + GitHub Issue 自動起票という最小ループだけは Phase 2 で機能させる
+- **通知先を Slack ではなく GitHub Issue にした理由**：ソロ運用かつ既に GitHub を毎日触っているため、別チャネルを増やさずに済む。エラー → スタックトレース → ソース該当行 → 修正コミット → `Fixes #N` で close、までが GitHub 内で完結する。Slack のリアルタイム通知が必要になるのは複数顧客がついて分単位の応答が求められるフェーズで、それは Phase 3 の話
 - 一方、トラフィックが薄い段階で SLO や閾値を細かく決めても基準値が定まらないので無駄
 - Phase 3 開始時にまとめて運用設計を行う方が合理的（中間マイルストーン達成後の最初のスプリントで対応）
 - improvement-backlog の HIGH 4 項目（A-1/A-2/S-1/C-1）は Phase 2 中に潰し終えており、Phase 3 への引き継ぎ条件は満たしている
 
 ## やること（Phase 2 残期間）
 
-- Sentry の Slack 連携を 1 channel に追加し、`Issue is first seen` のみ通知（最小設定）
-- 致命系イベント（500、auth、Stripe webhook 失敗）が拾えていることを 1 度確認
+- Sentry の GitHub Integration を 1 ルールだけ設定する：`Issues → A new issue is created → Create GitHub issue (shion-boss/insight-cast)` ✓ 設定済み
+- 致命系エラー（500、auth、Stripe webhook 失敗 等）が GitHub に Issue として上がることを実利用の中で確認
 - `docs/runbook.md` の「Sentry エラーモニタリング」節は維持
 
 ## やらないこと（Phase 2 中）
 
+- Slack 連携の追加
 - アラートルールの細分化
 - SLO / SLA の数値定義
 - ランブックの章追加（実インシデント発生時のみ追記）
