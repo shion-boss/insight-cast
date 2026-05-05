@@ -6,37 +6,151 @@
 }
 
 :root {
-  /* Design tokens */
-  --bg: #faf6f0;
-  --bg2: #f0e9de;
-  --bg3: #e8ddd0;
+  /* ============================================================
+   * Design tokens — M3 (Material Design 3) を骨格に採用。
+   * 詳細仕様は docs/design-system.md を参照。
+   * ============================================================ */
+
+  /* === Color: Primary (暖色アクセント) === */
+  --primary: #c2722a;
+  --on-primary: #ffffff;
+  --primary-container: #fdf0e4;
+  --on-primary-container: #8a4a18;
+  --primary-hover: #a85e20;
+
+  /* === Color: Secondary (ティール) === */
+  --secondary: #0d9488;
+  --on-secondary: #ffffff;
+  --secondary-container: #e0f5f3;
+  --on-secondary-container: #0a7a70;
+  --secondary-hover: #0a7a70;
+
+  /* === Color: Surface ===
+   * Insight Cast は white-ish の面を base surface として扱う。
+   * 暖色文化のため、白いほど "紙が浮いている" 印象になる設計。 */
   --surface: #fffdf9;
-  --surface2: #f5ede0;
-  --border: #e2d5c3;
-  --border2: #d0c0a8;
-  --text: #1c1410;
-  --text2: #7a6555;
-  --text3: #8f7d6d;
-  --accent: #c2722a;
-  --accent-h: #a85e20;
-  --accent-l: #fdf0e4;
-  --accent-d: #8a4a18;
-  --teal: #0d9488;
-  --teal-h: #0a7a70;
-  --teal-l: #e0f5f3;
-  --ok: #16a34a;
-  --ok-l: #dcfce7;
-  --warn: #d97706;
-  --warn-l: #fef3c7;
-  --err: #dc2626;
-  --err-l: #fee2e2;
+  --surface-dim: #faf6f0;
+  --surface-container-low: #f5ede0;
+  --surface-container: #f0e9de;
+  --surface-container-high: #e8ddd0;
+
+  /* === Color: On-Surface (テキスト階層) === */
+  --on-surface: #1c1410;
+  --on-surface-variant: #7a6555;
+  --on-surface-muted: #8f7d6d;
+
+  /* === Color: Outline (罫線) === */
+  --outline: #e2d5c3;
+  --outline-variant: #d0c0a8;
+
+  /* === Color: Status === */
+  --success: #16a34a;
+  --on-success: #ffffff;
+  --success-container: #dcfce7;
+  --warning: #d97706;
+  --warning-container: #fef3c7;
+  --error: #dc2626;
+  --error-container: #fee2e2;
+
+  /* === Shape === */
+  --shape-xs: 4px;
+  --shape-sm: 8px;
+  --shape-md: 12px;
+  --shape-lg: 20px;
+  --shape-xl: 28px;
+  --shape-full: 9999px;
+
+  /* === Elevation (影のみ採用、surface tint は不採用) === */
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(28,20,16,0.04), 0 1px 3px rgba(28,20,16,0.06);
+  --elevation-2: 0 4px 8px rgba(28,20,16,0.06), 0 2px 4px rgba(28,20,16,0.04);
+  --elevation-3: 0 8px 16px rgba(28,20,16,0.08), 0 4px 8px rgba(28,20,16,0.06);
+  --elevation-4: 0 16px 32px rgba(28,20,16,0.10), 0 8px 16px rgba(28,20,16,0.08);
+  --elevation-5: 0 24px 48px rgba(28,20,16,0.12), 0 12px 24px rgba(28,20,16,0.10);
+
+  /* === Motion === */
+  --duration-1: 100ms;
+  --duration-2: 150ms;
+  --duration-3: 200ms;
+  --duration-4: 300ms;
+  --duration-5: 500ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* === State Layer (opacity tokens) === */
+  --state-hover: 0.08;
+  --state-focus: 0.12;
+  --state-pressed: 0.16;
+  --state-disabled: 0.38;
+
+  /* === Typography === */
+  --type-display-size: clamp(34px, 4vw, 54px);
+  --type-display-line: 1.14;
+  --type-headline-size: clamp(24px, 3vw, 40px);
+  --type-headline-line: 1.22;
+  --type-title-size: 1.125rem;
+  --type-title-line: 1.4;
+  --type-body-size: 1rem;
+  --type-body-line: 1.95;
+  --type-label-size: 0.75rem;
+  --type-label-tracking: 0.2em;
+  --type-caption-size: 0.8125rem;
+  --type-caption-line: 1.5;
+
+  /* Shippori Mincho 廃止: --font-noto-serif-jp を M PLUS 1p (Noto Sans JP) にリマップ */
+  --font-noto-serif-jp: var(--font-noto-sans-jp);
+
+  /* ============================================================
+   * Compatibility Aliases — リファクタ完了後に削除予定。
+   * 旧トークン名を使う既存コードを無修正で動作させるため残す。
+   * 移行時の対応表は docs/design-system.md を参照。
+   * ============================================================ */
+
+  /* old surface (`--surface` 自体は新旧で同値のため alias 不要) */
+  --bg: var(--surface-dim);
+  --bg2: var(--surface-container);
+  --bg3: var(--surface-container-high);
+  --surface2: var(--surface-container-low);
+
+  /* old text */
+  --text: var(--on-surface);
+  --text2: var(--on-surface-variant);
+  --text3: var(--on-surface-muted);
+
+  /* old outline */
+  --border: var(--outline);
+  --border2: var(--outline-variant);
+
+  /* old accent (primary) */
+  --accent: var(--primary);
+  --accent-h: var(--primary-hover);
+  --accent-l: var(--primary-container);
+  --accent-d: var(--on-primary-container);
+
+  /* old teal (secondary) */
+  --teal: var(--secondary);
+  --teal-h: var(--secondary-hover);
+  --teal-l: var(--secondary-container);
+
+  /* old status */
+  --ok: var(--success);
+  --ok-l: var(--success-container);
+  --warn: var(--warning);
+  --warn-l: var(--warning-container);
+  --err: var(--error);
+  --err-l: var(--error-container);
+
+  /* old shape (radius) */
+  --r: var(--shape-md);
+  --r-sm: var(--shape-sm);
+  --r-lg: var(--shape-lg);
+  --r-xl: var(--shape-xl);
+
+  /* old shadow (raw rgba 値、`shadow-[0_..._var(--shadow)]` 形式で参照される)
+   * 後方互換のため純黒のまま維持。暖色化は影段階化フェーズで実施予定。 */
   --shadow: rgba(0,0,0,0.07);
   --shadow-lg: rgba(0,0,0,0.13);
-  --r: 12px; --r-sm: 8px; --r-lg: 20px; --r-xl: 28px;
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  /* Shippori Mincho 廃止: --font-noto-serif-jp を M PLUS 1p にリマップ */
-  --font-noto-serif-jp: var(--font-noto-sans-jp);
 }
 
 @theme inline {

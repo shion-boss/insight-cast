@@ -94,15 +94,17 @@
 
 ### Surface（背景・カード階層）
 
-> **注意**: Insight Cast は M3 の「ティント増 = 浮いている」ルールを **反転** している。暖色文化のため、**白に近いほど浮いて見える**。M3 公式の surface-container 命名を踏襲しつつ、ティント方向は逆（高い段階ほど白寄り）とする。
+> **設計判断**: Insight Cast は **白に近い面を「base surface」、暖色のクリーム面を「surface-dim（浅く沈んだ面）」** として扱う。これは M3 公式の light テーマと同じ思想（`surface` が最も明るい・ニュートラルで、`surface-dim` がそれより暗いトーン）。Insight Cast では暖色文化のため、白いほど "紙が浮いている" 印象になる。
+>
+> この命名で、既存 `--surface`（旧コードで `#fffdf9` を指す 260+ 箇所）の **値が変わらない**。互換性を最大化する。
 
 | Role | Value | 用途 |
 |---|---|---|
-| `--surface` | `#faf6f0` | ページ最背面・body 背景 |
-| `--surface-container-low` | `#f0e9de` | 浅いセクション背景・サイドバー |
-| `--surface-container` | `#e8ddd0` | 通常カード・ヘッダー帯 |
-| `--surface-container-high` | `#fffdf9` | 浮いたカード（getPanelClass の主面）。ボタン白系の地、入力欄背景 |
-| `--surface-container-highest` | `#f5ede0` | 最前面の小要素背景（ホバー時の差替え、Pill 神経質な区別 等） |
+| `--surface` | `#fffdf9` | base surface。浮いたカード・パネル・入力欄背景・ボタン白系の地（旧 `--surface` を維持） |
+| `--surface-dim` | `#faf6f0` | dimmer surface。ページ最背面・body 背景（旧 `--bg`） |
+| `--surface-container-low` | `#f5ede0` | わずかにティントされた背景（旧 `--surface2`） |
+| `--surface-container` | `#f0e9de` | 浅いセクション背景・サイドバー（旧 `--bg2`） |
+| `--surface-container-high` | `#e8ddd0` | より強くティントされた背景・ヘッダー帯（旧 `--bg3`） |
 
 ### On-Surface（テキスト階層）
 
@@ -291,11 +293,11 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
   --secondary-hover: #0a7a70;
 
   /* === Color: Surface === */
-  --surface: #faf6f0;
-  --surface-container-low: #f0e9de;
-  --surface-container: #e8ddd0;
-  --surface-container-high: #fffdf9;
-  --surface-container-highest: #f5ede0;
+  --surface: #fffdf9;
+  --surface-dim: #faf6f0;
+  --surface-container-low: #f5ede0;
+  --surface-container: #f0e9de;
+  --surface-container-high: #e8ddd0;
 
   /* === Color: On-Surface === */
   --on-surface: #1c1410;
@@ -368,11 +370,11 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
   /* リファクタ完了後に削除予定。既存コード互換のために残す。 */
   /* ───────────────────────────────── */
 
-  /* old surface */
-  --bg: var(--surface);
-  --bg2: var(--surface-container-low);
-  --bg3: var(--surface-container);
-  --surface2: var(--surface-container-highest);
+  /* old surface — `--surface` 自体は新旧で同値（#fffdf9）なので alias 不要 */
+  --bg: var(--surface-dim);
+  --bg2: var(--surface-container);
+  --bg3: var(--surface-container-high);
+  --surface2: var(--surface-container-low);
 
   /* old text */
   --text: var(--on-surface);
@@ -415,8 +417,10 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
 ```
 
 ### 注意点
-- `--surface` の値が **変わる**（旧：`#fffdf9` → 新：`#faf6f0`）。互換 alias `--bg = var(--surface)` を経由するため、`--bg` を参照しているコードは色が変わらない。**新コードで `--surface` を直接使うときは、旧 `--surface`（白系）ではなく新定義（クリーム系）になることに注意**。混乱を避けるため、新コードで「白系のカード地色」が欲しいときは `--surface-container-high` を使う。
-- 上記のために、**既存 `--surface` 直接参照の箇所を後で grep して、意味が「白系カード地」だったら `--surface-container-high` に置換** する作業が移行タスクに必要。後述の対応表に記載する。
+- `--surface` は新旧で **値が同じ**（`#fffdf9`）。既存の 260+ 箇所の `var(--surface)` 参照は無修正で動く。
+- 旧 `--bg`（`#faf6f0` クリーム） → 新 `--surface-dim` にマッピング。alias `--bg = var(--surface-dim)` で既存コード互換。
+- 旧 `--bg2 / --bg3 / --surface2` も alias 経由で値が変わらない。
+- 新規実装では、ページ最背面は `--surface-dim`、浮いたカードは `--surface`、より沈んだ面は `--surface-container-low` 〜 `--surface-container-high` を使う。
 
 ---
 
@@ -493,7 +497,7 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 世界観で引き込む側。装飾と余白が主役。
 
 - **Typography**：`--type-display`（Hero）→ `--type-headline`（セクション）→ `--type-body`（本文）。`--type-label` を Eyebrow で。`--type-caption` は補助のみ。
-- **Surface**：`--surface` ベース。Hero は背景にグラデを敷くため `--surface` の上に直接背景指定するケースあり。ハードコード hex グラデは段階的に削減。
+- **Surface**：`--surface-dim` をページ背景にし、ヒーローセクションには `--surface-dim` の上にグラデを敷く。カード類は `--surface` を主面に。ハードコード hex グラデは段階的に削減。
 - **Elevation**：通常 0〜2。Hero 画像枠に 4。
 - **Motion**：`--duration-3` 〜 `--duration-5` を多用。`--ease-spring` で装飾的なポップ感を出してよい。
 - **キャラクター**：必ず登場させる。アイコン or イラスト。
@@ -503,7 +507,7 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 機能で勝負する側。情報階層と操作のしやすさが主役。
 
 - **Typography**：`--type-headline`（ページ最上部）→ `--type-title`（カード見出し）→ `--type-body`（本文）→ `--type-label / --type-caption`（補助）。`--type-display` は使わない。
-- **Surface**：`--surface-container` 系を多用。AppShell の背景は `--surface`、サイドバー `--surface-container-low`、本体カード `--surface-container-high`。
+- **Surface**：AppShell の背景は `--surface-dim`、サイドバーは `--surface-container`、本体カードは `--surface`。`--surface-container-low` をホバー差替えに使う。
 - **Elevation**：通常 0〜1。ホバー 2。モーダル 4。トースト 5。
 - **Motion**：`--duration-1` 〜 `--duration-3`。装飾的な `--ease-spring` は最小限。
 - **キャラクター**：通知・エラー・状態カードに必ず添える（CLAUDE.md 規約）。
@@ -528,11 +532,11 @@ export function getStateOpacity(state: 'hover' | 'focus' | 'pressed' | 'disabled
 
 | 旧 | 新 | 注意 |
 |---|---|---|
-| `--bg` | `--surface` | 旧 `--bg` の値（`#faf6f0`）と **新 `--surface` の値が同じ**。意味は変わらず |
-| `--bg2` | `--surface-container-low` | |
-| `--bg3` | `--surface-container` | |
-| `--surface` | **`--surface-container-high`** | **値が変わる**。旧 `--surface`（`#fffdf9`、白系）= 新 `--surface-container-high`。新 `--surface` は別物（クリーム系）なので、移行時に意味を取り違えないこと |
-| `--surface2` | `--surface-container-highest` | |
+| `--bg` | `--surface-dim` | 値同じ（`#faf6f0`）。ページ最背面の意味 |
+| `--bg2` | `--surface-container` | 値同じ（`#f0e9de`） |
+| `--bg3` | `--surface-container-high` | 値同じ（`#e8ddd0`） |
+| `--surface` | `--surface` | **新旧で同値**（`#fffdf9`、白系の浮いたカード）。M3 でも light テーマの "base surface" は最も明るい面なので、命名上の整合も取れる |
+| `--surface2` | `--surface-container-low` | 値同じ（`#f5ede0`） |
 | `--text` | `--on-surface` | |
 | `--text2` | `--on-surface-variant` | |
 | `--text3` | `--on-surface-muted` | |
