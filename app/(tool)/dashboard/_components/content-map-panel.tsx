@@ -70,15 +70,12 @@ export function ContentMapPanel({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border border-[var(--border)]">
-            <CharacterAvatar
-              src={clausIcon}
-              alt="クラウス"
-              emoji={clausEmoji ?? '🦉'}
-              size={40}
-              className="w-full h-full object-cover object-top"
-            />
-          </div>
+          <CharacterAvatar
+            src={clausIcon}
+            alt="クラウス"
+            emoji={clausEmoji ?? '🦉'}
+            size={40}
+          />
           <div>
             <h2 className="text-[18px] font-bold text-[var(--text)]">
               コンテンツマップ

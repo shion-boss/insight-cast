@@ -523,15 +523,12 @@ export default async function DashboardPage() {
                         href={interviewHref}
                         className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40`}
                       >
-                        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
-                          <CharacterAvatar
-                            src={char?.icon48}
-                            alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                            emoji={char?.emoji}
-                            size={32}
-                            className="w-full h-full object-cover object-top"
-                          />
-                        </div>
+                        <CharacterAvatar
+                          src={char?.icon48}
+                          alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+                          emoji={char?.emoji}
+                          size={32}
+                        />
                         <div className="flex-1 min-w-0">
                           <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                             {project.name || project.hp_url}
