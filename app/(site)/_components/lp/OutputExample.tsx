@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { CharacterAvatar } from '@/components/ui'
 import { CHARACTERS } from '@/lib/characters'
 
-import { HeaderCopyButton } from '../HeaderCopyButton'
+import { LpCopyableCard } from '../LpCopyableCard'
 
 const freeCast = CHARACTERS.filter((char) => char.available)
 
@@ -80,46 +80,22 @@ export function OutputExample() {
             {/* ブロック */}
             <div className="flex flex-col gap-3 p-4 sm:p-5">
               {/* タイトル */}
-              <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
-                  <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">タイトル</div>
-                  <HeaderCopyButton text="創業者の父から受け継いだ思いやり。" />
-                </div>
-                <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                  <p className="whitespace-pre-wrap leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
-                </div>
-              </div>
+              <LpCopyableCard label="タイトル" text="創業者の父から受け継いだ思いやり。">
+                <p className="whitespace-pre-wrap leading-relaxed text-[var(--text)] text-base font-bold">創業者の父から受け継いだ思いやり。</p>
+              </LpCopyableCard>
               {/* 概要 */}
-              <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
-                  <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">概要</div>
-                  <HeaderCopyButton text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。" />
-                </div>
-                <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
-                </div>
-              </div>
+              <LpCopyableCard label="概要" text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
+              </LpCopyableCard>
               {/* セクション（小見出し＋本文）— 1カード内で divider 区切り */}
               <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-                <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                  <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
-                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">小見出し</div>
-                    <HeaderCopyButton text="近所の方への気遣いも、仕事のうちだと思っています" />
-                  </div>
-                  <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                    <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
-                  </div>
-                </div>
+                <LpCopyableCard variant="segment" label="小見出し" text="近所の方への気遣いも、仕事のうちだと思っています">
+                  <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
+                </LpCopyableCard>
                 <div className="border-t border-[var(--border)]" />
-                <div className="cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none">
-                  <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
-                    <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">本文</div>
-                    <HeaderCopyButton text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'} />
-                  </div>
-                  <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
-                  </div>
-                </div>
+                <LpCopyableCard variant="segment" label="本文" text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}>
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
+                </LpCopyableCard>
               </div>
             </div>
           </div>
