@@ -164,7 +164,7 @@ function BlockEditor({
                   <button
                     type="button"
                     onClick={() => removeBlock(block.id)}
-                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)] hover:text-red-500 transition-colors"
+                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)] hover:text-[var(--error)] transition-colors"
                   >
                     削除
                   </button>
@@ -186,7 +186,7 @@ function BlockEditor({
                 <button
                   type="button"
                   onClick={() => removeBlock(block.id)}
-                  className="text-[11px] text-[var(--text3)] hover:text-red-500 transition-colors"
+                  className="text-[11px] text-[var(--text3)] hover:text-[var(--error)] transition-colors"
                 >
                   削除
                 </button>
@@ -571,7 +571,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               <SecondaryButton
                 onClick={handleDeleteRequest}
                 disabled={isDeleting}
-                className="w-full justify-center border-red-200 text-red-600 hover:border-red-400 hover:bg-red-50"
+                className="w-full justify-center border-[var(--error)]/30 text-[var(--error)] hover:border-[var(--error)]/50 hover:bg-[var(--error-container)]"
               >
                 {isDeleting ? '削除中...' : 'この記事を削除する'}
               </SecondaryButton>

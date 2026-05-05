@@ -227,7 +227,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     type="button"
                     onClick={() => handleDeleteRequest(item)}
                     disabled={deletingId === item.id}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-red-200 px-4 py-2 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                   >
                     {deletingId === item.id ? '削除中...' : '削除'}
                   </button>
@@ -314,7 +314,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                           type="button"
                           onClick={() => handleDeleteRequest(item)}
                           disabled={deletingId === item.id}
-                          className="rounded-[var(--r-sm)] border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 disabled:pointer-events-none disabled:opacity-50"
+                          className="rounded-[var(--r-sm)] border border-[var(--error)]/30 px-3 py-1.5 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                         >
                           {deletingId === item.id ? '削除中...' : '削除'}
                         </button>
