@@ -60,7 +60,7 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.vercel-insights.com https://*.ingest.sentry.io https://*.sentry.io`,
+      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://www.google.com https://stats.g.doubleclick.net https://*.vercel-insights.com https://*.ingest.sentry.io https://*.sentry.io`,
       "frame-src https://js.stripe.com https://hooks.stripe.com",
       "object-src 'none'",
       "base-uri 'self'",
@@ -92,8 +92,11 @@ export default withSentryConfig(nextConfig, {
   silent: !process.env.CI,
   // クライアントバンドルからの source map アップロードを広めに
   widenClientFileUpload: true,
-  // ad blocker を回避するため Sentry リクエストを /monitoring 経由に通す
-  tunnelRoute: '/monitoring',
+  // tunnelRoute は ad blocker 回避用だが、Vercel + auto-generated route の
+  // 検証で 400 が出るため一旦無効化。CSP の connect-src で *.sentry.io を
+  // 許可しているので直接送信できる。Sentry SDK 側で adBlockerDetected が
+  // 出たら再検討する。
+  // tunnelRoute: '/monitoring',
   // SDK の console ログを抑制
   disableLogger: true,
   // Vercel Cron で Sentry に通知する
