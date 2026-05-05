@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],
+    // 明示しないと Next.js は内部デフォルト（75）のみ許可。
+    // AVIF は 60 でも視覚的にほぼ劣化なく、デフォルト 75 だと帯域過剰。
+    // 60: AVIF 用、75: 互換用デフォルト、85: ロゴ等の鮮明さが必要な箇所用。
+    qualities: [60, 75, 85],
     remotePatterns: [
       { protocol: 'https', hostname: supabaseImageHost },
     ],
