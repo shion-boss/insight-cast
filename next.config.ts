@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // TODO(P-3): Bundle Analyzer の設定
 // @next/bundle-analyzer をインストール後、以下を有効化する:
@@ -59,7 +60,7 @@ const nextConfig: NextConfig = {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: blob: https:",
-      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.vercel-insights.com`,
+      `connect-src 'self' https://${supabaseHost} wss://${supabaseHost} https://api.stripe.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://www.google.com https://*.vercel-insights.com https://*.ingest.sentry.io https://*.sentry.io`,
       "frame-src https://js.stripe.com https://hooks.stripe.com",
       "object-src 'none'",
       "base-uri 'self'",
@@ -82,4 +83,19 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Sentry プロジェクトの組織・プロジェクト識別子。Vercel に SENTRY_ORG /
+  // SENTRY_PROJECT を設定して読み込む。SENTRY_AUTH_TOKEN は source map
+  // アップロード用（サーバ側でのみ使う）。
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  // クライアントバンドルからの source map アップロードを広めに
+  widenClientFileUpload: true,
+  // ad blocker を回避するため Sentry リクエストを /monitoring 経由に通す
+  tunnelRoute: '/monitoring',
+  // SDK の console ログを抑制
+  disableLogger: true,
+  // Vercel Cron で Sentry に通知する
+  automaticVercelMonitors: true,
+});
