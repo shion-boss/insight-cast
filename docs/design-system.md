@@ -454,7 +454,7 @@ M3 の state layer は「要素の上に半透明レイヤーを重ねる」考�
 
 ### 新規追加するヘルパー
 
-`components/ui.tsx`（または新ファイル `components/design-system.ts`）に、トークン参照をクラスに展開するヘルパーを追加する：
+`components/ui.tsx` の冒頭に追加済み（`ElevationLevel` `TypeLevel` `StateName` 型と合わせて export）。トークン参照をクラスや CSS プロパティに展開するヘルパー：
 
 ```ts
 // 影段階を style or className で適用するためのユーティリティ

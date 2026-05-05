@@ -1,6 +1,6 @@
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
-import type { ComponentPropsWithoutRef, ReactNode } from 'react'
+import type { CSSProperties, ComponentPropsWithoutRef, ReactNode } from 'react'
 import { Fragment } from 'react'
 import { CHARACTERS } from '@/lib/characters'
 
@@ -9,6 +9,36 @@ const featuredCharacters = CHARACTERS.slice(0, 3)
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
+}
+
+/* ─── Design system helpers ──────────────────────────────────
+ * 詳細仕様は docs/design-system.md を参照。
+ * グローバルトークンはすべて app/globals.css の :root に定義。
+ * ───────────────────────────────────────────────────────── */
+
+export type ElevationLevel = 0 | 1 | 2 | 3 | 4 | 5
+export type TypeLevel = 'display' | 'headline' | 'title' | 'body' | 'label' | 'caption'
+export type StateName = 'hover' | 'focus' | 'pressed' | 'disabled'
+
+export function getElevation(level: ElevationLevel): CSSProperties {
+  return { boxShadow: `var(--elevation-${level})` }
+}
+
+const typeClassMap: Record<TypeLevel, string> = {
+  display:  'text-[length:var(--type-display-size)] leading-[var(--type-display-line)] font-[family-name:var(--font-noto-serif-jp)] font-bold',
+  headline: 'text-[length:var(--type-headline-size)] leading-[var(--type-headline-line)] font-[family-name:var(--font-noto-serif-jp)] font-bold',
+  title:    'text-[length:var(--type-title-size)] leading-[var(--type-title-line)] font-semibold',
+  body:     'text-[length:var(--type-body-size)] leading-[var(--type-body-line)]',
+  label:    'text-[length:var(--type-label-size)] tracking-[var(--type-label-tracking)] uppercase font-semibold',
+  caption:  'text-[length:var(--type-caption-size)] leading-[var(--type-caption-line)]',
+}
+
+export function getTypeClass(level: TypeLevel): string {
+  return typeClassMap[level]
+}
+
+export function getStateOpacity(state: StateName): string {
+  return `var(--state-${state})`
 }
 
 const buttonBaseClass =
