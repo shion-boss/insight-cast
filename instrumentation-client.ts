@@ -1,5 +1,6 @@
 // Sentry initialization for the browser.
-// Loaded via Next.js convention; mirrors sentry.server.config.ts for SSR runs.
+// Next.js 15.3+ の規約に従い instrumentation-client.ts で命名。
+// 旧 sentry.client.config.ts は v15.3+ で auto-loaded されない。
 //
 // 環境変数 NEXT_PUBLIC_SENTRY_DSN が未設定の場合は Sentry を初期化しない
 // （ローカル開発・PR プレビュー等のノイズ送信を防ぐ）。
@@ -36,3 +37,6 @@ if (dsn) {
     enabled: process.env.NODE_ENV === 'production',
   })
 }
+
+// Next.js 15 App Router: ルート遷移を Sentry の Performance Monitoring に渡す
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart
