@@ -230,7 +230,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-muted)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
+        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-variant)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
         className,
       )}
     />
@@ -291,7 +291,7 @@ export function EyebrowBadge({
 }) {
   return (
     <div className={cx(
-      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-[var(--primary)]',
+      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-[var(--on-primary-container)]',
       getTypeClass('label'),
       className,
     )}>

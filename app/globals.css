@@ -18,12 +18,13 @@
   --on-primary-container: #8a4a18;
   --primary-hover: #a85e20;
 
-  /* === Color: Secondary (ティール) === */
-  --secondary: #0d9488;
+  /* === Color: Secondary (ティール) ===
+   * WCAG AA: secondary on secondary-container = 4.83:1 (4.5+ クリア) */
+  --secondary: #0f766e;
   --on-secondary: #ffffff;
   --secondary-container: #e0f5f3;
-  --on-secondary-container: #0a7a70;
-  --secondary-hover: #0a7a70;
+  --on-secondary-container: #115e59;
+  --secondary-hover: #115e59;
 
   /* === Color: Surface ===
    * Insight Cast は white-ish の面を base surface として扱う。
@@ -52,13 +53,14 @@
   --on-surface-dark-variant: #d4d4d4;
   --outline-dark: #57534e;
 
-  /* === Color: Status === */
-  --success: #16a34a;
+  /* === Color: Status ===
+   * 値は Tailwind 700 系（AA: container 上で 4.5:1+ クリア） */
+  --success: #15803d;
   --on-success: #ffffff;
   --success-container: #dcfce7;
-  --warning: #d97706;
+  --warning: #b45309;
   --warning-container: #fef3c7;
-  --error: #dc2626;
+  --error: #b91c1c;
   --error-container: #fee2e2;
 
   /* === Shape === */
