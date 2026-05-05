@@ -79,11 +79,20 @@ const SERVICES: Service[] = [
   {
     name: 'GitHub',
     description: 'コード管理',
-    role: 'ソースコードのバージョン管理・Issue・Pull Request管理',
+    role: 'ソースコードのバージョン管理・Issue・Pull Request管理（Sentry連携で本番エラーを sentry[bot] が自動起票）',
     status: 'free',
     plan: '無料',
     dashboardUrl: 'https://github.com',
-    envKeys: [],
+    envKeys: ['GITHUB_TOKEN'],
+  },
+  {
+    name: 'Sentry',
+    description: '本番エラーモニタリング',
+    role: '未捕捉エラーの検知 → GitHub Issue 自動起票（軸10）',
+    status: 'free',
+    plan: 'Free（5,000イベント/月）',
+    dashboardUrl: 'https://insight-cast.sentry.io/issues/',
+    envKeys: ['NEXT_PUBLIC_SENTRY_DSN', 'SENTRY_DSN', 'SENTRY_ORG', 'SENTRY_PROJECT', 'SENTRY_AUTH_TOKEN'],
   },
   {
     name: 'Google Analytics',
