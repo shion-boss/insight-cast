@@ -42,7 +42,7 @@ export function getStateOpacity(state: StateName): string {
 }
 
 const buttonBaseClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--shape-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40'
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--shape-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50'
 
 const buttonToneClass = {
   primary: 'border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)] hover:border-[var(--primary-hover)] hover:bg-[var(--primary-hover)]',
@@ -73,7 +73,7 @@ export function Breadcrumb({ items }: {
             {item.href ? (
               <Link
                 href={item.href}
-                className="rounded transition-colors hover:text-[var(--on-surface-variant)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40"
+                className="rounded transition-colors hover:text-[var(--on-surface-variant)]"
               >
                 {item.label}
               </Link>
@@ -111,7 +111,7 @@ export function SiteBrand({
   subtitle?: ReactNode | false
 }) {
   return (
-    <Link href={href} className="rounded-[var(--shape-sm)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40">
+    <Link href={href} className="rounded-[var(--shape-sm)] transition-opacity hover:opacity-80">
       <div className="flex items-center gap-3">
         <div className="flex -space-x-2">
           {featuredCharacters.map((char) => (
@@ -230,7 +230,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-muted)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/40 disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
+        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-muted)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
         className,
       )}
     />

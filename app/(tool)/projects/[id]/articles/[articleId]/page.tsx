@@ -235,7 +235,7 @@ export default async function ArticleDetailPage({
                         href={ref.signedUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block aspect-square overflow-hidden rounded-md border border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="block aspect-square overflow-hidden rounded-md border border-[var(--border)] bg-[var(--bg2)] hover:border-[var(--accent)]"
                         aria-label="添付画像を新しいタブで開く"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}

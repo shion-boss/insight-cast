@@ -68,7 +68,7 @@ function Toggle({
       aria-label={label}
       disabled={disabled}
       onClick={onToggle}
-      className="relative h-6 w-11 flex-shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:cursor-not-allowed disabled:opacity-60"
+      className="relative h-6 w-11 flex-shrink-0 rounded-full transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60"
       style={{ background: on ? 'var(--accent)' : 'var(--border)' }}
     >
       <span
@@ -412,7 +412,7 @@ export function SettingsClient({
               role="tab"
               aria-selected={activeSection === section}
               onClick={() => setActiveSection(section)}
-              className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-xs sm:text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+              className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-xs sm:text-sm font-medium transition-all ${
                 activeSection === section
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
                   : 'border-transparent text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'

@@ -208,7 +208,7 @@ export default function CompetitorSelectionFields({
           type="button"
           onClick={handleSuggestCompetitors}
           disabled={suggesting || !canSuggest}
-          className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer"
+          className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           {suggesting ? '候補を探しています...' : 'おすすめを見る'}
         </button>
@@ -290,7 +290,7 @@ export default function CompetitorSelectionFields({
                 onClick={() => toggleSelectedUrl(suggestion.url)}
                 disabled={disabled}
                 aria-pressed={selected}
-                className={`w-full rounded-xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                className={`w-full rounded-xl border p-4 text-left transition-colors ${
                   selected
                     ? 'border-[var(--text)] bg-[var(--text)] text-white'
                     : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] hover:border-[var(--border2)]'

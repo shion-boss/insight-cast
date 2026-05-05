@@ -63,7 +63,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
   return (
     <Link
       href={`/cast-talk/${talk.slug}`}
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 sm:flex-row"
+      className="group flex flex-col overflow-hidden rounded-[20px] border border-[#e2d5c3] bg-[#fffdf9] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] sm:flex-row"
     >
       {/* 左: 画像エリア */}
       <div className="relative aspect-video overflow-hidden sm:aspect-auto sm:w-2/5">
@@ -264,7 +264,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage - 1)}
                 disabled={listPage === 0 || loading}
                 aria-label="前のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span aria-hidden="true">←</span> 前へ
               </button>
@@ -276,7 +276,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage + 1)}
                 disabled={listPage >= listTotalPages - 1 || loading}
                 aria-label="次のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[#e2d5c3] bg-[#fffdf9] px-5 py-2 text-sm font-semibold text-[#7a6555] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 次へ <span aria-hidden="true">→</span>
               </button>

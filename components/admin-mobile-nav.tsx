@@ -64,7 +64,7 @@ export function AdminMobileNav({
         aria-label={open ? 'メニューを閉じる' : 'メニューを開く'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex flex-col items-center justify-center gap-[5px] rounded-[var(--r-sm)] w-11 h-11 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="flex flex-col items-center justify-center gap-[5px] rounded-[var(--r-sm)] w-11 h-11 transition-colors hover:bg-[var(--bg2)]"
       >
         <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-200 origin-center ${open ? 'translate-y-[7px] rotate-45' : ''}`} />
         <span className={`block h-[2px] w-4 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-200 ${open ? 'opacity-0 scale-x-0' : ''}`} />
@@ -98,7 +98,7 @@ export function AdminMobileNav({
                 type="button"
                 aria-label="メニューを閉じる"
                 onClick={() => setOpen(false)}
-                className="w-11 h-11 flex items-center justify-center rounded-[var(--r-sm)] text-white/50 transition-colors hover:bg-white/8 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="w-11 h-11 flex items-center justify-center rounded-[var(--r-sm)] text-white/50 transition-colors hover:bg-white/8 hover:text-white"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -115,7 +115,7 @@ export function AdminMobileNav({
                     href={link.href}
                     aria-current={active ? 'page' : undefined}
                     onClick={() => setOpen(false)}
-                    className={`flex rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+                    className={`flex rounded-[var(--r-sm)] px-3 py-2.5 text-sm font-medium transition-colors ${
                       active
                         ? 'bg-white/12 text-white'
                         : 'text-white/58 hover:bg-white/8 hover:text-white'

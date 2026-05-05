@@ -317,7 +317,7 @@ export default async function DashboardPage() {
             こんにちは、{profile?.name ?? 'ゲスト'}さん
           </div>
           {!profile?.name && (
-            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline rounded">
               名前を設定する <span aria-hidden="true">→</span>
             </Link>
           )}
@@ -397,7 +397,7 @@ export default async function DashboardPage() {
                 <Link
                   href={isProjectLimitReached ? '/pricing?reason=project_limit' : '/projects/new'}
                   aria-label={isProjectLimitReached ? 'プロジェクトを追加（プラン上限 — アップグレードする）' : undefined}
-                  className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="relative bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                 >
                   {isProjectLimitReached && (
                     <div className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full bg-[var(--text3)] text-white">
@@ -413,7 +413,7 @@ export default async function DashboardPage() {
                 {isInterviewLimitReached ? (
                   <Link
                     href="/pricing?reason=interview_limit"
-                    className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="relative bg-[var(--bg2)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 opacity-60 hover:opacity-80 transition-opacity"
                   >
                     <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
@@ -423,7 +423,7 @@ export default async function DashboardPage() {
                 ) : (
                   <Link
                     href={interviewerHref}
-                    className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                   >
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} />
                     <div className="text-sm font-semibold text-[var(--text2)]">{projectList.length > 1 ? 'プロジェクトを選ぶ' : '取材を始める'}</div>
@@ -431,7 +431,7 @@ export default async function DashboardPage() {
                 )}
                 <Link
                   href="/articles"
-                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="bg-[var(--surface)] border-[1.5px] border-dashed border-[var(--border)] rounded-[var(--r-lg)] p-5 flex flex-col items-center gap-2.5 transition-all hover:border-[var(--accent)] hover:bg-[var(--accent-l)]"
                 >
                   <CharacterAvatar src={rain?.icon48} alt={rain?.name ?? 'レイン'} emoji={rain?.emoji} size={40} />
                   <div className="text-sm font-semibold text-[var(--text2)]">記事を確認する</div>
@@ -445,7 +445,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">プロジェクト一覧</h2>
-                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -459,7 +459,7 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={getProjectContinueHref(project)}
-                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
                     >
                       {(() => {
                         const latestIv = latestInterviewMap.get(project.id)
@@ -499,7 +499,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">すべて見る <span aria-hidden="true">→</span></Link>
+                <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech
@@ -521,7 +521,7 @@ export default async function DashboardPage() {
                       <Link
                         key={interview.id}
                         href={interviewHref}
-                        className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40`}
+                        className={`flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} hover:bg-[var(--bg)] -mx-5 px-5 rounded transition-colors`}
                       >
                         <CharacterAvatar
                           src={char?.icon48}
@@ -555,7 +555,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">共有プロジェクト</h2>
-                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">
                   すべて見る <span aria-hidden="true">→</span>
                 </Link>
               </div>
@@ -564,7 +564,7 @@ export default async function DashboardPage() {
                   <Link
                     key={project.id}
                     href={`/projects/${project.id}`}
-                    className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
                   >
                     <div className="w-11 h-11 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
                       <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />

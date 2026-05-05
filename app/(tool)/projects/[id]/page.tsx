@@ -380,7 +380,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">HP診断サマリー</h2>
-            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded">
               詳細レポートを見る <span aria-hidden="true">→</span>
             </Link>
           </div>

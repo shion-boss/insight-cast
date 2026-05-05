@@ -38,7 +38,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-dvh bg-gradient-to-br from-[#fdf8f2] to-[#f0e5d0] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-[440px]">
         <div className="mb-8 flex justify-center">
-          <Link href="/" className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+          <Link href="/" className="rounded">
             <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" sizes="120px" priority />
           </Link>
         </div>
@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
               </p>
               <Link
                 href="/auth/login"
-                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
               >
                 ログイン画面に戻る
               </Link>
@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
                     autoComplete="email"
                     aria-invalid={!!error || undefined}
                     aria-describedby={error ? 'reset-error' : undefined}
-                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:border-[var(--accent)] transition-colors"
+                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
                   />
                 </div>
 
@@ -92,7 +92,7 @@ export default function ResetPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? '送信中...' : '再設定メールを送る'}
                 </button>
@@ -101,7 +101,7 @@ export default function ResetPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href="/auth/login"
-                  className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded"
                 >
                   ← ログインに戻る
                 </Link>

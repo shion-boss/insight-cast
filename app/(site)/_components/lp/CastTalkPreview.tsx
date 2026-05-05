@@ -81,7 +81,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
           })}
         </div>
         <div className="text-center mt-8">
-          <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
+          <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             Cast Talk をもっと読む <span aria-hidden="true">→</span>
           </Link>
         </div>

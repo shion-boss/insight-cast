@@ -453,7 +453,7 @@ export default function SummaryPage() {
                         {canEdit && (
                           <Link
                             href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors whitespace-nowrap"
+                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
                           >
                             この記事を作る <span aria-hidden="true">→</span>
                           </Link>
@@ -478,13 +478,13 @@ export default function SummaryPage() {
                   onClick={() => setShowMessages(!showMessages)}
                   aria-expanded={showMessages}
                   aria-controls="summary-interview-log"
-                  className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
                 >
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
               </div>
               {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
-              <div id="summary-interview-log" hidden={!showMessages} tabIndex={showMessages ? 0 : -1} className="mt-4 space-y-0 max-h-80 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-[var(--r-sm)]">
+              <div id="summary-interview-log" hidden={!showMessages} tabIndex={showMessages ? 0 : -1} className="mt-4 space-y-0 max-h-80 overflow-y-auto rounded-[var(--r-sm)]">
                   {data?.messages.map((m, i) => (
                     <div
                       key={i}
@@ -513,7 +513,7 @@ export default function SummaryPage() {
                 <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
                 <Link
                   href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
+                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors"
                 >
                   記事を受け取る <span aria-hidden="true">→</span>
                 </Link>
@@ -526,7 +526,7 @@ export default function SummaryPage() {
                 <p className="font-bold text-[var(--text)] text-sm">この取材の記事</p>
                 <Link
                   href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
-                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded"
                 >
                   この取材の一覧へ
                 </Link>
@@ -539,7 +539,7 @@ export default function SummaryPage() {
                     <Link
                       key={article.id}
                       href={`/projects/${projectId}/articles/${article.id}`}
-                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors rounded"
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
                       <span className="text-[var(--text3)] flex-shrink-0 text-[11px]">
@@ -556,7 +556,7 @@ export default function SummaryPage() {
               <div className="space-y-2">
                 <Link
                   href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors"
+                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
                 >
                   もう少し話す
                 </Link>

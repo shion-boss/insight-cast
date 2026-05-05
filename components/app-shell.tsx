@@ -64,7 +64,7 @@ export function AppShell({
         <div className="border-b border-[var(--border)] px-5 py-4">
           <Link
             href="/"
-            className="block transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="block transition-opacity hover:opacity-80"
           >
             <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" priority />
           </Link>
@@ -114,7 +114,7 @@ export function AppShell({
                 <Link
                   href="/settings"
                   aria-label="設定"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] overflow-hidden bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] overflow-hidden bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
                 >
                   {avatarUrl ? (
                     <Image src={avatarUrl} alt={accountLabel} width={40} height={40} className="h-full w-full object-cover" />

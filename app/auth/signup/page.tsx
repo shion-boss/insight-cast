@@ -129,7 +129,7 @@ function SignupForm() {
             </p>
             <Link
               href="/auth/login"
-              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
             >
               ログイン画面へ
             </Link>
@@ -153,7 +153,7 @@ function SignupForm() {
             すでにアカウントをお持ちの方は{' '}
             <Link
               href={`/auth/login${nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''}`}
-              className="whitespace-nowrap text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
+              className="whitespace-nowrap text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] rounded-sm"
             >
               ログイン
             </Link>
@@ -164,7 +164,7 @@ function SignupForm() {
               type="button"
               onClick={handleGoogleSignup}
               disabled={loading || googleLoading}
-              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleに移動中...' : effectivePlan ? 'Googleアカウントで申し込む' : 'Googleで新規登録'}
             </button>
@@ -226,7 +226,7 @@ function SignupForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? '登録中...' : effectivePlan ? 'アカウントを作成して申し込む' : '無料で始める'}
             </button>
@@ -234,9 +234,9 @@ function SignupForm() {
 
           <p className="mt-5 text-[12px] text-[var(--text3)] text-center leading-relaxed">
             登録すると{' '}
-            <Link href="/terms" className="text-[var(--accent)] underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">利用規約</Link>
+            <Link href="/terms" className="text-[var(--accent)] underline rounded">利用規約</Link>
             {' '}と{' '}
-            <Link href="/privacy" className="text-[var(--accent)] underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">プライバシーポリシー</Link>
+            <Link href="/privacy" className="text-[var(--accent)] underline rounded">プライバシーポリシー</Link>
             {' '}に同意したものとみなされます
           </p>
         </div>

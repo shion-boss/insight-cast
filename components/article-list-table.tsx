@@ -44,7 +44,7 @@ function getUniqueOptions(values: string[]) {
 function selectClassName() {
   return cx(
     'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150',
-    'hover:border-[var(--border2)] focus-visible:border-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40',
+    'hover:border-[var(--border2)] focus-visible:border-[var(--accent)]',
   )
 }
 
@@ -226,7 +226,7 @@ export function ArticleListTable({
               <Link
                 key={item.id}
                 href={item.detailHref}
-                className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
               >
                 <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
                 {item.excerpt && (

@@ -312,7 +312,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             <button
               type="button"
               onClick={handleStart}
-              className="w-full bg-[var(--accent)] text-white rounded-[var(--r-sm)] py-3 text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer min-h-[44px]"
+              className="w-full bg-[var(--accent)] text-white rounded-[var(--r-sm)] py-3 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               はじめる
             </button>
@@ -400,7 +400,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         aria-label="インタビューの会話"
         aria-live="polite"
         tabIndex={0}
-        className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto"
       >
         {messages.map((msg, i) => (
           <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -477,7 +477,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               type="button"
               onClick={handlePassQuestion}
               disabled={loading || hasReachedTurnLimit}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer flex-shrink-0"
+              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
             >
               この質問はパス
             </button>
@@ -504,7 +504,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               <button
                 type="submit"
                 disabled={loading || !input.trim() || hasReachedTurnLimit}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
               </button>
@@ -522,7 +522,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             <button
               type="button"
               onClick={() => handleFinish()}
-              className="bg-[var(--accent)] text-white rounded-[var(--r-sm)] px-6 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 transition-colors cursor-pointer min-h-[44px]"
+              className="bg-[var(--accent)] text-white rounded-[var(--r-sm)] px-6 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               完了する
             </button>

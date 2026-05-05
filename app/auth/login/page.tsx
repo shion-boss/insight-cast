@@ -129,7 +129,7 @@ function LoginForm() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading || googleLoading}
-              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleのページを開いています...' : 'Googleでログイン'}
             </button>
@@ -158,7 +158,7 @@ function LoginForm() {
                 <label htmlFor="login-password" className="text-sm font-medium text-[var(--text2)]">パスワード</label>
                 <Link
                   href="/auth/reset-password"
-                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors rounded"
                 >
                   パスワードを忘れた場合
                 </Link>
@@ -185,7 +185,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'ログインしています...' : 'ログインする'}
             </button>
@@ -202,7 +202,7 @@ function LoginForm() {
               const qs = params.toString()
               return `/auth/signup${qs ? `?${qs}` : ''}`
             })()}
-            className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
+            className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] rounded-sm"
           >
             新規登録
           </Link>
@@ -211,7 +211,7 @@ function LoginForm() {
         <p className="mt-3 text-center">
           <Link
             href="/"
-            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded-sm"
+            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded-sm"
           >
             ← トップへ
           </Link>

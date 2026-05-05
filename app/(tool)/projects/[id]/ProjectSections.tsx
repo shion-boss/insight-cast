@@ -257,7 +257,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
           <Link
             key={article.id}
             href={article.href}
-            className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
           >
             <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
             <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">

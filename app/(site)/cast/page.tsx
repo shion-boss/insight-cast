@@ -258,7 +258,7 @@ export default async function CastPage() {
                       {talksByChar[char.id] && (
                         <Link
                           href={`/cast-talk/${talksByChar[char.id]!.slug}`}
-                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)]"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--accent)]">Cast Talk</div>
@@ -297,7 +297,7 @@ export default async function CastPage() {
               </div>
               <Link
                 href="/cast-talk"
-                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
                 Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>

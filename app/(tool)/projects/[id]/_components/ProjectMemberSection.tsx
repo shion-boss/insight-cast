@@ -57,7 +57,7 @@ function RoleMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${memberName}の権限を変更`}
-        className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none"
       >
         <span>{currentLabel}</span>
         <span aria-hidden="true" className="text-[var(--text3)]">▾</span>
@@ -403,14 +403,14 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                     placeholder="メールアドレス"
                     required
                     disabled={inviting}
-                    className="flex-1 min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                    className="flex-1 min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
                     aria-label="招待するメールアドレス"
                   />
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as 'editor' | 'viewer')}
                     disabled={inviting}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] disabled:opacity-50"
                     aria-label="権限"
                   >
                     <option value="editor">編集者（取材・記事生成）</option>
@@ -419,7 +419,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                   <button
                     type="submit"
                     disabled={inviting || !inviteEmail.trim()}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none"
                   >
                     {inviting ? '送信中...' : '招待する'}
                   </button>

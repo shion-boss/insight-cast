@@ -39,7 +39,7 @@ function ToggleSwitch({ on, onToggle, disabled }: { on: boolean; onToggle: () =>
       aria-checked={on}
       onClick={onToggle}
       disabled={disabled}
-      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:pointer-events-none disabled:opacity-50 ${on ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
+      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${on ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
     >
       <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
     </button>
@@ -227,7 +227,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     <div className="inline-flex items-center justify-end gap-2">
                       <Link
                         href={`/admin/posts/${post.id}/edit`}
-                        className="inline-block w-24 text-center text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        className="inline-block w-24 text-center text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors"
                       >
                         編集
                       </Link>

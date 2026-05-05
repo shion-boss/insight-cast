@@ -67,7 +67,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
         aria-expanded={open}
         aria-controls="mobile-drawer"
         onClick={() => setOpen((v) => !v)}
-        className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-[var(--r-sm)] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+        className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-[var(--r-sm)] transition-colors hover:bg-[var(--bg2)]"
       >
         <span
           className={`block h-[2px] w-5 rounded-full bg-[var(--text)] transition-all duration-200 origin-center ${open ? 'translate-y-[7px] rotate-45' : ''}`}
@@ -108,7 +108,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
                 type="button"
                 aria-label="メニューを閉じる"
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -128,7 +128,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
                       href={link.href}
                       onClick={() => setOpen(false)}
                       aria-current={isActive ? 'page' : undefined}
-                      className={`flex items-center rounded-[var(--r-sm)] px-4 py-3 text-[15px] font-medium transition-colors hover:bg-[var(--bg2)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${isActive ? 'text-[var(--accent)] font-semibold' : 'text-[var(--text2)]'}`}
+                      className={`flex items-center rounded-[var(--r-sm)] px-4 py-3 text-[15px] font-medium transition-colors hover:bg-[var(--bg2)] hover:text-[var(--accent)] ${isActive ? 'text-[var(--accent)] font-semibold' : 'text-[var(--text2)]'}`}
                     >
                       {link.label}
                     </Link>

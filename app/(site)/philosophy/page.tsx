@@ -165,7 +165,7 @@ export default function PhilosophyPage() {
                 <a
                   key={a.id}
                   href={`#${a.id}`}
-                  className="flex items-center gap-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--text2)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="flex items-center gap-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--text2)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 >
                   <span className="rounded-full bg-[var(--bg2)] px-2 py-0.5 text-[11px] font-medium text-[var(--text2)]">{a.tag}</span>
                   {a.title}

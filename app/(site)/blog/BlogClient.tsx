@@ -47,7 +47,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
             type="button"
             onClick={() => setActiveFilter(tab.id)}
             aria-pressed={activeFilter === tab.id}
-            className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 ${
+            className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 ${
               activeFilter === tab.id
                 ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                 : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -114,7 +114,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
           <button
             type="button"
             onClick={() => setActiveFilter('all')}
-            className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 rounded"
+            className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2 rounded"
           >
             すべての記事を見る
           </button>

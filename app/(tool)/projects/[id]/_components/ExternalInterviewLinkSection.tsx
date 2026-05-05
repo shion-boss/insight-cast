@@ -170,7 +170,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 value={interviewerType}
                 onChange={(e) => setInterviewerType(e.target.value)}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] disabled:opacity-50"
               >
                 {INTERVIEWER_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -190,7 +190,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 required
                 maxLength={200}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
             </div>
           </div>
@@ -207,7 +207,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 placeholder="例: 山田"
                 maxLength={100}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
               <p className="mt-1.5 text-xs text-[var(--text3)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
             </div>
@@ -223,7 +223,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 placeholder="例: 飲食業"
                 maxLength={100}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
             </div>
           </div>
@@ -231,7 +231,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
             <button
               type="submit"
               disabled={issuing || !theme.trim()}
-              className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer"
+              className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
             >
               {issuing ? '発行中...' : 'リンクを発行する'}
             </button>
@@ -297,7 +297,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                       onClick={() => handleCopy(link.token)}
                       disabled={isExpired}
                       aria-label={`${link.theme}のリンクをコピー`}
-                      className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 cursor-pointer transition-colors"
+                      className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
                     >
                       {copiedToken === link.token ? 'コピー済み' : 'リンクをコピー'}
                     </button>
