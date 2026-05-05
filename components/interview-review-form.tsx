@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { showToast } from '@/lib/client/toast'
-import { getButtonClass } from '@/components/ui'
+import { getButtonClass, CharacterAvatar } from '@/components/ui'
+import { getCharacter } from '@/lib/characters'
 
 type ReviewState = {
   overall_score: number | null
@@ -34,15 +34,19 @@ const initial: ReviewState = {
 export function InterviewReviewForm({
   projectId,
   interviewId,
+  interviewerType,
 }: {
   projectId: string
   interviewId: string
+  interviewerType: string
 }) {
   const [state, setState] = useState<ReviewState>(initial)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [savedAt, setSavedAt] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const character = getCharacter(interviewerType)
 
   useEffect(() => {
     let cancelled = false
@@ -56,16 +60,10 @@ export function InterviewReviewForm({
           }
         } else {
           const json = await res.json()
+          // 既にユーザーレビューが保存済みなら、最初から感謝メッセージを表示する。
+          // フォームには値を流し込まない（再編集は許可しない仕様）。
           if (!cancelled && json.review) {
-            setState({
-              overall_score: json.review.overall_score ?? null,
-              character_score: json.review.character_score ?? null,
-              question_quality_score: json.review.question_quality_score ?? null,
-              enjoyment_score: json.review.enjoyment_score ?? null,
-              good_points: json.review.good_points ?? '',
-              improve_points: json.review.improve_points ?? '',
-            })
-            setSavedAt(json.review.updated_at ?? null)
+            setSubmitted(true)
           }
         }
       } catch (e) {
@@ -109,9 +107,7 @@ export function InterviewReviewForm({
         const json = await res.json().catch(() => ({}))
         throw new Error(json.error ?? '保存に失敗しました')
       }
-      const json = await res.json()
-      setSavedAt(json.review?.updated_at ?? new Date().toISOString())
-      showToast({ tone: 'success', title: '取材レビューを保存しました' })
+      setSubmitted(true)
     } catch (e) {
       setError(e instanceof Error ? e.message : '保存に失敗しました')
     } finally {
@@ -127,13 +123,44 @@ export function InterviewReviewForm({
     )
   }
 
+  if (submitted) {
+    return (
+      <section className="rounded-lg border border-stone-200 bg-white p-4 sm:p-6">
+        <div className="flex items-start gap-3">
+          <CharacterAvatar
+            src={character?.icon48}
+            alt={`${character?.name ?? 'インタビュアー'}のアイコン`}
+            emoji={character?.emoji}
+            size={48}
+          />
+          <div>
+            <p className="text-base font-semibold text-stone-900">
+              振り返りをありがとうございました
+            </p>
+            <p className="mt-1 text-sm text-stone-600 leading-relaxed">
+              いただいたレビューはAIキャスト内でも共有して、より良い取材ができるよう努めます。
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="rounded-lg border border-stone-200 bg-white p-4 sm:p-6">
-      <header className="mb-3">
-        <h2 className="text-base font-semibold text-stone-900">この取材の振り返り</h2>
-        <p className="mt-1 text-xs text-stone-500">
-          AIキャストの会話品質をフィードバックしてください。蓄積されたレビューはキャラ正典の改善に使われます。
-        </p>
+      <header className="mb-3 flex items-start gap-3">
+        <CharacterAvatar
+          src={character?.icon48}
+          alt={`${character?.name ?? 'インタビュアー'}のアイコン`}
+          emoji={character?.emoji}
+          size={40}
+        />
+        <div>
+          <h2 className="text-base font-semibold text-stone-900">この取材の振り返り</h2>
+          <p className="mt-1 text-xs text-stone-500">
+            {character?.name ?? 'AIキャスト'}との取材はどうでしたか？いただいた声は、これからのキャスト育成に使わせてください。
+          </p>
+        </div>
       </header>
 
       <form onSubmit={onSubmit} className="space-y-5">
@@ -198,11 +225,8 @@ export function InterviewReviewForm({
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={saving} className={getButtonClass('primary')}>
-            {saving ? '保存中...' : savedAt ? '更新する' : '登録する'}
+            {saving ? '送信中...' : '送信する'}
           </button>
-          {savedAt ? (
-            <span className="text-xs text-stone-500">最終更新: {new Date(savedAt).toLocaleString('ja-JP')}</span>
-          ) : null}
         </div>
       </form>
     </section>

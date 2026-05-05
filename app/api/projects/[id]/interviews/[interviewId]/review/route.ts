@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getMemberRole } from '@/lib/project-members'
 
 type ReviewBody = {
   overall_score: number
@@ -10,6 +9,10 @@ type ReviewBody = {
   good_points?: string | null
   improve_points?: string | null
 }
+
+// 振り返りはユーザー本人（interviewee_user_id）が書くものに限定する。
+// owner / editor / viewer は API 経由でも書き込めない（UI 上もフォームを出さない）。
+const HUMAN_ROLES = ['owner', 'staff', 'respondent'] as const
 
 function isScore(v: unknown): v is number {
   return typeof v === 'number' && Number.isInteger(v) && v >= 1 && v <= 5
@@ -38,28 +41,20 @@ async function authorize(projectId: string, interviewId: string) {
 
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, project_id, interviews_project:projects(user_id)')
+    .select('id, project_id, interviewee_user_id')
     .eq('id', interviewId)
     .eq('project_id', projectId)
     .is('deleted_at', null)
     .single()
   if (!interview) return { ok: false as const, status: 404, message: '取材が見つかりません' }
 
-  const joined = interview.interviews_project as { user_id: string } | { user_id: string }[] | null
-  const projectInfo = Array.isArray(joined) ? (joined[0] ?? null) : joined
-  const isOwner = projectInfo?.user_id === user.id
-
-  let reviewerRole: 'owner' | 'staff' | 'respondent' = 'owner'
-  let memberCanWrite = isOwner
-  if (!isOwner) {
-    const memberRole = await getMemberRole(supabase, projectId, user.id)
-    if (memberRole !== 'editor' && memberRole !== 'viewer') {
-      return { ok: false as const, status: 403, message: '権限がありません' }
-    }
-    reviewerRole = 'staff'
-    memberCanWrite = memberRole === 'editor'
+  const isInterviewee = !!interview.interviewee_user_id && interview.interviewee_user_id === user.id
+  return {
+    ok: true as const,
+    supabase,
+    userId: user.id,
+    isInterviewee,
   }
-  return { ok: true as const, supabase, userId: user.id, reviewerRole, isOwner, memberCanWrite }
 }
 
 export async function GET(
@@ -71,10 +66,12 @@ export async function GET(
   if (!auth.ok) {
     return NextResponse.json({ error: auth.message }, { status: auth.status })
   }
+  // ユーザーレビューのみ返す。AI 自己採点（reviewer_role='ai_self'）はこの API では返さない。
   const { data, error } = await auth.supabase
     .from('interview_reviews')
     .select('id, overall_score, character_score, question_quality_score, enjoyment_score, good_points, improve_points, reviewer_role, updated_at')
     .eq('interview_id', interviewId)
+    .in('reviewer_role', HUMAN_ROLES as unknown as string[])
     .maybeSingle()
   if (error) {
     console.error('[interview review] select error', { interviewId, error: error.message })
@@ -92,8 +89,8 @@ export async function PUT(
   if (!auth.ok) {
     return NextResponse.json({ error: auth.message }, { status: auth.status })
   }
-  if (!auth.memberCanWrite) {
-    return NextResponse.json({ error: '閲覧者は登録できません' }, { status: 403 })
+  if (!auth.isInterviewee) {
+    return NextResponse.json({ error: '振り返りを書けるのは取材の回答者本人のみです' }, { status: 403 })
   }
 
   let body: unknown
@@ -106,27 +103,33 @@ export async function PUT(
     return NextResponse.json({ error: '入力値が不正です' }, { status: 400 })
   }
 
+  // partial unique index (interview_id) WHERE reviewer_role IN ('owner','staff','respondent') に対する
+  // upsert は postgrest の onConflict から扱いづらいので、既存ユーザーレビューを delete → insert で置き換える。
+  // AI 自己採点（reviewer_role='ai_self'）は別レコードのため影響しない。
+  await auth.supabase
+    .from('interview_reviews')
+    .delete()
+    .eq('interview_id', interviewId)
+    .in('reviewer_role', HUMAN_ROLES as unknown as string[])
+
   const { data, error } = await auth.supabase
     .from('interview_reviews')
-    .upsert(
-      {
-        interview_id: interviewId,
-        overall_score: body.overall_score,
-        character_score: body.character_score ?? null,
-        question_quality_score: body.question_quality_score ?? null,
-        enjoyment_score: body.enjoyment_score ?? null,
-        good_points: body.good_points?.trim() || null,
-        improve_points: body.improve_points?.trim() || null,
-        reviewer_user_id: auth.userId,
-        reviewer_role: auth.reviewerRole,
-      },
-      { onConflict: 'interview_id' },
-    )
+    .insert({
+      interview_id: interviewId,
+      overall_score: body.overall_score,
+      character_score: body.character_score ?? null,
+      question_quality_score: body.question_quality_score ?? null,
+      enjoyment_score: body.enjoyment_score ?? null,
+      good_points: body.good_points?.trim() || null,
+      improve_points: body.improve_points?.trim() || null,
+      reviewer_user_id: auth.userId,
+      reviewer_role: 'respondent',
+    })
     .select('id, overall_score, character_score, question_quality_score, enjoyment_score, good_points, improve_points, reviewer_role, updated_at')
     .single()
 
   if (error) {
-    console.error('[interview review] upsert error', { interviewId, error: error.message })
+    console.error('[interview review] insert error', { interviewId, error: error.message })
     return NextResponse.json({ error: '保存に失敗しました' }, { status: 500 })
   }
 

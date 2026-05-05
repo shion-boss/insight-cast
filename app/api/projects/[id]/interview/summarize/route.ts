@@ -263,24 +263,30 @@ ${conversation}
         outputTokens: aiReview.usage.outputTokens,
       }).catch(() => {})
 
+      // partial unique index (interview_id) WHERE reviewer_role='ai_self' に対する upsert は
+      // postgrest の onConflict から扱いづらいため、delete → insert で置き換える。
+      // ユーザーレビュー（reviewer_role IN ('owner','staff','respondent')）は別レコードのため影響しない。
+      await adminSupabase
+        .from('interview_reviews')
+        .delete()
+        .eq('interview_id', interviewId)
+        .eq('reviewer_role', 'ai_self')
+
       const { error: reviewError } = await adminSupabase
         .from('interview_reviews')
-        .upsert(
-          {
-            interview_id: interviewId,
-            overall_score: aiReview.review.overall_score,
-            character_score: aiReview.review.character_score,
-            question_quality_score: aiReview.review.question_quality_score,
-            enjoyment_score: aiReview.review.enjoyment_score,
-            good_points: aiReview.review.good_points || null,
-            improve_points: aiReview.review.improve_points || null,
-            reviewer_user_id: null,
-            reviewer_role: 'ai_self',
-          },
-          { onConflict: 'interview_id', ignoreDuplicates: true },
-        )
+        .insert({
+          interview_id: interviewId,
+          overall_score: aiReview.review.overall_score,
+          character_score: aiReview.review.character_score,
+          question_quality_score: aiReview.review.question_quality_score,
+          enjoyment_score: aiReview.review.enjoyment_score,
+          good_points: aiReview.review.good_points || null,
+          improve_points: aiReview.review.improve_points || null,
+          reviewer_user_id: null,
+          reviewer_role: 'ai_self',
+        })
       if (reviewError) {
-        console.warn('[summarize#ai-self-review] upsert failed:', reviewError.message)
+        console.warn('[summarize#ai-self-review] insert failed:', reviewError.message)
       }
     }
   } catch (err) {

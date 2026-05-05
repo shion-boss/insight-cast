@@ -67,6 +67,8 @@ export default function SummaryPage() {
   const pollCountRef = useRef(0)
   const [respondentName, setRespondentName] = useState<string | null>(null)
   const [respondentAvatarUrl, setRespondentAvatarUrl] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [intervieweeUserId, setIntervieweeUserId] = useState<string | null>(null)
 
   // 削除ダイアログ
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -133,6 +135,8 @@ export default function SummaryPage() {
         return
       }
 
+      setCurrentUserId(user.id)
+
       const { data: project } = await supabase
         .from('projects')
         .select('name, hp_url, user_id')
@@ -181,6 +185,8 @@ export default function SummaryPage() {
       if (!interview) {
         throw new Error('interview not found')
       }
+
+      setIntervieweeUserId(interview.interviewee_user_id ?? null)
 
       if (!interview.summary) {
         const { data: project } = await supabase
@@ -566,9 +572,13 @@ export default function SummaryPage() {
         </div>
       </div>
 
-      {canEdit && interviewId && (
+      {interviewId && currentUserId && intervieweeUserId === currentUserId && (
         <div className="mt-12">
-          <InterviewReviewForm projectId={projectId} interviewId={interviewId} />
+          <InterviewReviewForm
+            projectId={projectId}
+            interviewId={interviewId}
+            interviewerType={data?.interviewerType ?? 'mint'}
+          />
         </div>
       )}
 
