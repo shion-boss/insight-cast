@@ -208,7 +208,7 @@ export default async function CastTalkDetailPage({
                       alt={char.name}
                       width={96}
                       height={96}
-                      className="h-10 w-10 shrink-0 rounded-full border-2 border-white object-cover shadow-sm sm:h-12 sm:w-12"
+                      className="h-10 w-10 shrink-0 rounded-full border-2 border-white object-cover shadow-[var(--elevation-1)] sm:h-12 sm:w-12"
                       sizes="48px"
                     />
                     <div className="min-w-0">

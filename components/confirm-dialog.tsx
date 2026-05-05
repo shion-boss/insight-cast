@@ -99,7 +99,7 @@ export function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={`${dialogId}-title`}
         aria-describedby={description ? `${dialogId}-desc` : undefined}
-        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl"
+        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-[var(--elevation-4)]"
       >
         <p id={`${dialogId}-title`} className="text-[15px] font-bold text-[var(--text)] mb-2">
           {title}

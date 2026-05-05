@@ -63,7 +63,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
   return (
     <Link
       href={`/cast-talk/${talk.slug}`}
-      className="group flex flex-col overflow-hidden rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] shadow-[0_8px_32px_rgba(0,0,0,0.10)] transition-colors duration-200 hover:bg-[#fdf6ee] sm:flex-row"
+      className="group flex flex-col overflow-hidden rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] shadow-[var(--elevation-3)] transition-colors duration-200 hover:bg-[#fdf6ee] sm:flex-row"
     >
       {/* 左: 画像エリア */}
       <div className="relative aspect-video overflow-hidden sm:aspect-auto sm:w-2/5">

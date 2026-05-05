@@ -459,7 +459,7 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={getProjectContinueHref(project)}
-                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
+                      className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[var(--elevation-2)]"
                     >
                       {(() => {
                         const latestIv = latestInterviewMap.get(project.id)
@@ -564,7 +564,7 @@ export default async function DashboardPage() {
                   <Link
                     key={project.id}
                     href={`/projects/${project.id}`}
-                    className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[0_4px_20px_var(--shadow,rgba(0,0,0,0.08))]"
+                    className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5 flex items-center gap-4 transition-[shadow,border-color] hover:border-[var(--accent)]/40 hover:shadow-[var(--elevation-2)]"
                   >
                     <div className="w-11 h-11 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
                       <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />

@@ -911,7 +911,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
       {/* 参考記事パネル — fixed */}
       {isSupportPanelOpen && !supportPosts.loading && (
-        <div id="support-posts-panel" className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-lg md:left-auto md:w-80">
+        <div id="support-posts-panel" className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--elevation-3)] md:left-auto md:w-80">
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-xs font-medium text-[var(--text2)]">この質問に近い記事</p>
@@ -969,7 +969,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             aria-modal="true"
             aria-label="取材まとめの確認"
             tabIndex={-1}
-            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[0_24px_64px_rgba(0,0,0,0.12)] focus-visible:outline-none"
+            className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-xl)] p-6 max-w-sm w-full shadow-[var(--elevation-5)] focus-visible:outline-none"
           >
             <div className="flex justify-center mb-4">
               <CharacterAvatar

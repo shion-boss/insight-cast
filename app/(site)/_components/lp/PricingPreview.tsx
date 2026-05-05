@@ -100,7 +100,7 @@ export function PricingPreview({ isLoggedIn, priceIds }: { isLoggedIn: boolean; 
           {PAID_PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[0_20px_56px_rgba(0,0,0,.13)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
             >
               <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
               <div className="flex items-baseline gap-1 mb-1">

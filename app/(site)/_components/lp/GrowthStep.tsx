@@ -30,10 +30,10 @@ export function GrowthStep() {
             </div>
           </div>
           <div className="relative">
-            <div className="rounded-[28px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,.13)]">
+            <div className="rounded-[28px] overflow-hidden shadow-[var(--elevation-5)]">
               <Image src={sceneGrowth} alt="キャストたちがホームページ成長戦略を立てている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" />
             </div>
-            <div className="absolute -bottom-4 -right-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[0_8px_24px_rgba(0,0,0,.10)]">
+            <div className="absolute -bottom-4 -right-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
               <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">HP Growth</div>
               <div className="text-[12px] font-bold text-[var(--text)]">競合との差、見えてきました</div>
             </div>

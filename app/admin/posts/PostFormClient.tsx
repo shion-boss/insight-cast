@@ -109,7 +109,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
         ＋ ブロックを追加
       </button>
       {open && (
-        <div className="absolute top-7 z-20 flex gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] p-2 shadow-md">
+        <div className="absolute top-7 z-20 flex gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] p-2 shadow-[var(--elevation-2)]">
           <button
             type="button"
             onClick={() => { onAdd('markdown'); setOpen(false) }}
@@ -348,7 +348,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(false)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-sm'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
             aria-pressed={!previewMode}
           >
             編集
@@ -356,7 +356,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(true)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-sm' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
             aria-pressed={previewMode}
           >
             プレビュー

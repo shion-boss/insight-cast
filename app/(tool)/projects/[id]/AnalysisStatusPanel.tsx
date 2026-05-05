@@ -90,7 +90,7 @@ function GscDisconnectModal({
         aria-modal="true"
         aria-labelledby="gsc-disconnect-title"
         tabIndex={-1}
-        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-xl focus-visible:outline-none"
+        className="w-full max-w-sm rounded-[var(--r-lg)] bg-[var(--surface)] border border-[var(--border)] p-6 shadow-[var(--elevation-4)] focus-visible:outline-none"
       >
         <div className="flex items-start gap-3 mb-4">
           <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={40} className="flex-shrink-0 mt-0.5" />

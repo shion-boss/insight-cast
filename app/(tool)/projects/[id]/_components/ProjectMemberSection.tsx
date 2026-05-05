@@ -65,7 +65,7 @@ function RoleMenu({
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-1 z-10 w-64 rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--surface)] py-1 shadow-lg"
+          className="absolute right-0 top-full mt-1 z-10 w-64 rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--surface)] py-1 shadow-[var(--elevation-3)]"
         >
           {ROLE_DEFS.map((role) => {
             const isCurrent = role.key === currentRole

@@ -176,7 +176,7 @@ export function PricingBottomCTA() {
         {isLoggedIn ? (
           <Link
             href="/dashboard"
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
           >
             ダッシュボードへ <span aria-hidden="true">→</span>
           </Link>
@@ -184,7 +184,7 @@ export function PricingBottomCTA() {
           <>
             <Link
               href="/contact"
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[0_4px_24px_rgba(0,0,0,.12)]"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
             >
               相談してみる <span aria-hidden="true">→</span>
             </Link>

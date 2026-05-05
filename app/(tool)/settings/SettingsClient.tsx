@@ -72,7 +72,7 @@ function Toggle({
       style={{ background: on ? 'var(--accent)' : 'var(--border)' }}
     >
       <span
-        className="absolute top-[3px] block h-[18px] w-[18px] rounded-full bg-white shadow-[0_1px_4px_rgba(0,0,0,0.2)] transition-[left] duration-200"
+        className="absolute top-[3px] block h-[18px] w-[18px] rounded-full bg-white shadow-[var(--elevation-1)] transition-[left] duration-200"
         style={{ left: on ? '23px' : '3px' }}
       />
     </button>

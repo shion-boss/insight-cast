@@ -551,7 +551,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                   <p className="mt-0.5 text-[11px] text-[var(--text3)]">誤字や話し言葉を自然に整えます</p>
                 </div>
                 <div className={`relative h-6 w-10 flex-shrink-0 overflow-hidden rounded-full transition-colors ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
+                  <span className={`absolute left-1 top-1 h-4 w-4 rounded-full bg-white shadow-[var(--elevation-1)] transition-transform ${polishAnswers ? 'translate-x-4' : 'translate-x-0'}`} />
                 </div>
               </button>
             </div>
