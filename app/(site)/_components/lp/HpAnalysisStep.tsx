@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.png'
+import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.webp'
 
 export function HpAnalysisStep() {
   return (

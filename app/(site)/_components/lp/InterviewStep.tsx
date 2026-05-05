@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import scenePlanning from '@/assets/scene/scene-story-planning.png'
+import scenePlanning from '@/assets/scene/scene-story-planning.webp'
 import { CHARACTERS } from '@/lib/characters'
 
 import { DraggableScrollRow } from '../DraggableScrollRow'

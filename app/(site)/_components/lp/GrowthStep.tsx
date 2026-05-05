@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.png'
+import sceneGrowth from '@/assets/scene/scene-growth-strategy-meeting.webp'
 
 export function GrowthStep() {
   return (

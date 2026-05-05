@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import sceneCastTeam from '@/assets/scene/scene-cast-team.png'
+import sceneCastTeam from '@/assets/scene/scene-cast-team.webp'
 
 export function Hero({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
