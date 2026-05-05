@@ -291,7 +291,8 @@ export function EyebrowBadge({
 }) {
   return (
     <div className={cx(
-      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-xs font-semibold tracking-[0.2em] text-[var(--primary)] uppercase',
+      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-[var(--primary)]',
+      getTypeClass('label'),
       className,
     )}>
       {children}

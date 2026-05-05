@@ -624,16 +624,27 @@ CLAUDE.md の「UI ガードレール 14 項目」「世界観」「禁止事項
 
 本ドキュメント完成後、以下の順で実装を進める想定。**1 タスク 1 PR** が原則。
 
-1. **globals.css 適用**：新ロール定義 + 互換 alias を `:root` に追加。**既存コードはこの段階で無修正のまま動作**することをローカルで確認。
-2. **`components/ui.tsx` 内部書き換え**：上記の対比表に従って共有コンポーネントを新ロール参照に。API 不変、ビジュアル不変であることを目視で確認。
-3. **新ヘルパー追加**：`getElevation` `getTypeClass` `getStateOpacity` を export。
-4. **focus ring の二重定義整理**：各コンポーネントの `focus-visible:ring-2 ring-[...]` を撤去（globals の outline を信頼）。視覚確認で見えにくい箇所だけ例外で残す。
-5. **site 側のハードコード色除去**：LP の `#xxx` グラデを `--surface-container-low` 〜 `--primary-container` の組み合わせに置換。10+ ファイルを 1 PR ずつ。
-6. **shadow 段階化**：`shadow-[0_..._rgba(...)]` を `shadow-[var(--elevation-N)]` へ置換。
-7. **typography 統一**：`text-[15px]` 系の直接指定を `getTypeClass(...)` に置換。site → tool → admin の順。
-8. **旧 alias の削除**：すべての参照が新名に切り替わったら、`globals.css` の alias 群を削除。
+1. **globals.css 適用** ✅ — 新ロール定義 + 互換 alias を `:root` に追加。既存コード無修正で動作。
+2. **`components/ui.tsx` 内部書き換え** ✅ — 共有コンポーネントを新ロール参照に。API 不変、視覚不変。
+3. **新ヘルパー追加** ✅ — `getElevation` `getTypeClass` `getStateOpacity` を export。
+4. **focus ring の二重定義整理** ✅ — `focus-visible:outline-none focus-visible:ring-...` パターンを 66 ファイルで撤去。グローバル outline に統一。エラー色・暗背景・テーブル inset は例外で残す。
+5. **site 側のハードコード hex 除去** ✅ — 直接同値の対応がある hex（`#fffdf9` `#7a6555` `#e2d5c3` 等）を新トークンに置換。LP の暖色グラデやダーク系 UI は維持。
+6. **shadow 段階化** ✅ — ハードコード `box-shadow` と Tailwind 標準 `shadow-*` を `--elevation-1〜5` に置換。影色が暖色寄り `rgba(28,20,16,...)` に統一される。
+7. **typography 統一** 🟡 進行中 — `EyebrowBadge` を `getTypeClass('label')` ベースにリファクタ。**残る `text-[Npx]` 系（約 450 箇所）はサイズが多様で機械置換ではビジュアル差が出るため、ページタッチ時にケースバイケースで `getTypeClass()` 経由に書き換える方針**。新規実装は必ず `getTypeClass()` を使う。
+8. **旧 alias の削除** — Phase 3 以降。すべての参照が新名に切り替わったら、`globals.css` の alias 群を削除。
 
 各ステップは **既存挙動を壊さない**ことを最優先にする。視覚的なリファインメントは別タスクで切り分ける。
+
+### typography 統一の進め方（Step 7 補足）
+
+既存の `text-[15px]`, `text-[18px]`, `text-[clamp(...)]` などの直書きサイズは、各ページのデザイン意図に合わせて手調整されている。これを 6 段階のスケールに **強制的に統合すると視覚回帰** が出るため、以下のルールで段階的に進める：
+
+- **新規実装**：必ず `getTypeClass('display' | 'headline' | 'title' | 'body' | 'label' | 'caption')` を使う。
+- **既存コードを編集する時**：そのファイル内のテキストサイズ指定を見直し、`getTypeClass()` で表現できるものは置換する。完全一致しないものは現状維持。
+- **新ページを追加する時**：本ドキュメントの 6 段階スケールから選ぶ。例外を作らない。
+- **重要な page-level なリファインメント時**：その時点で当該ページのタイポを 6 段階スケールに揃える PR を立てる。
+
+`getTypeClass()` で表現できないが繰り返し使われるサイズ（例: 中間サイズの本文）が出てきたら、**スケールに新しい段階を追加** することを検討する（`--type-body-sm` 等）。トークンを増やすのは慎重に。
 
 ---
 
