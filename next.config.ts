@@ -43,6 +43,15 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/casts', destination: '/cast', permanent: true },
+      // 旧ハッシュスラッグの記事を意味のあるURLにリネーム（2026-05-06）
+      { source: '/blog/2026-04-27-30337bfe', destination: '/blog/hidden-strengths-emerge-from-questions', permanent: true },
+      { source: '/blog/2026-04-26-ef260ef8', destination: '/blog/why-ai-articles-fail-in-search', permanent: true },
+      { source: '/blog/2026-04-25-23hlx', destination: '/blog/dashboard-should-be-simple', permanent: true },
+      { source: '/blog/2026-04-25-mvzc3', destination: '/blog/developer-experience-ai-interview', permanent: true },
+      { source: '/blog/2026-04-25-a93ju', destination: '/blog/interview-format-removes-writers-block', permanent: true },
+      { source: '/blog/2026-04-23-m0r3k', destination: '/blog/homepage-as-active-signboard', permanent: true },
+      { source: '/blog/2026-04-21-kvga0', destination: '/blog/origin-story-of-insight-cast', permanent: true },
+      { source: '/blog/2026-04-21-01xr3', destination: '/blog/why-blog-updates-stop', permanent: true },
     ]
   },
   async headers() {

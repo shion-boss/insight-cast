@@ -31,16 +31,15 @@ const INTERVIEWER_OPTIONS = [
   ...CHARACTERS.map((c) => ({ value: c.id, label: `${c.name}（${c.species}）` })),
 ]
 
+// タイトルが ASCII を含む場合は kebab-case スラッグを返す。
+// 日本語のみのタイトルは ASCII 化できないため空文字を返し、利用者に手入力を促す。
+// （ハッシュ付きフォールバックは SEO 上の URL 価値を消すため避ける）
 function slugify(text: string): string {
-  const ascii = text
+  return text
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/[\s_]+/g, '-')
     .replace(/^-+|-+$/g, '')
-  if (ascii) return ascii
-  const date = new Date().toLocaleDateString('sv', { timeZone: 'Asia/Tokyo' })
-  const suffix = crypto.randomUUID().slice(0, 8)
-  return `${date}-${suffix}`
 }
 
 const selectClass =
@@ -414,7 +413,14 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               <FieldLabel required htmlFor="post-slug">スラッグ（URL）</FieldLabel>
               <button
                 type="button"
-                onClick={() => handleChange('slug', slugify(form.title || ''))}
+                onClick={() => {
+                  const next = slugify(form.title || '')
+                  if (next) {
+                    handleChange('slug', next)
+                  } else {
+                    setErrorMsg('タイトルから自動生成できませんでした。記事の内容に合った英語スラッグを手入力してください（例: dashboard-should-be-simple）')
+                  }
+                }}
                 className="text-xs text-[var(--accent)] hover:underline"
               >
                 タイトルから生成
@@ -428,7 +434,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               pattern="[a-z0-9-]+"
             />
             <p className="mt-1 text-xs text-[var(--text3)]">
-              半角英数字とハイフンのみ。公開後は変更しないでください。
+              半角英数字とハイフンのみ。記事内容を表す英語にしてください（SEO に影響します）。公開後は変更しないでください。
             </p>
           </div>
 
