@@ -130,6 +130,10 @@ export default function RootLayout({
   return (
     <html lang="ja" data-scroll-behavior="smooth">
       <head>
+        {/* GTM/GA を lazyOnload で読み込むが、TLS ハンドシェイクを先行させる
+            ことで初回計測 ping のレイテンシを 100〜300ms 削れる。 */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}

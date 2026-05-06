@@ -5,6 +5,10 @@ import { createClient } from '@/lib/supabase/server'
 import { checkIsAdmin } from '@/lib/auth-utils.server'
 import { AppShell } from '@/components/app-shell'
 import ProjectAnalysisNotifier from '@/components/project-analysis-notifier'
+// tool 系専用の演出 CSS（ローディング・取材準備・進行表示）。
+// site (marketing) 配下では参照しないので、(tool)/layout.tsx でのみ import
+// することで marketing CSS bundle から外し、LP の初回ロードを軽くする。
+import '../tool.css'
 
 export const dynamic = 'force-dynamic'
 
