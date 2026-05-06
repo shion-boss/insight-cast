@@ -5,8 +5,13 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { checkIsAdmin } from '@/lib/auth-utils.server'
 import { AppShell } from '@/components/app-shell'
-import ProjectAnalysisNotifier from '@/components/project-analysis-notifier'
 import SentryLoader from '@/components/sentry-loader'
+// ProjectAnalysisNotifier は内部で @supabase/ssr を import するため、
+// 直接 import すると (tool)/layout chunk に Supabase JS が混入し
+// marketing pages の HTML にも script として参照される（Next.js の
+// chunk 取り込み挙動）。next/dynamic ssr:false の Client wrapper を介す
+// ことで Supabase JS は遅延 chunk に分離される。
+import ProjectAnalysisNotifierLoader from '@/components/project-analysis-notifier-loader'
 // tool 系専用の演出 CSS（ローディング・取材準備・進行表示）。
 // site (marketing) 配下では参照しないので、(tool)/layout.tsx でのみ import
 // することで marketing CSS bundle から外し、LP の初回ロードを軽くする。
@@ -56,7 +61,7 @@ export default async function ToolLayout({ children }: { children: ReactNode }) 
         avatarUrl={profile?.avatar_url ?? null}
         isAdmin={isAdmin}
       >
-        <ProjectAnalysisNotifier />
+        <ProjectAnalysisNotifierLoader />
         {children}
       </AppShell>
     </div>

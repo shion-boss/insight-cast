@@ -143,6 +143,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
               {isLoggedIn ? (
                 <Link
                   href="/dashboard"
+                  prefetch={false}
                   onClick={() => setOpen(false)}
                   className={getButtonClass('primary', 'w-full justify-center px-5 py-3 text-[15px]')}
                 >
@@ -152,6 +153,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
                 <>
                   <Link
                     href="/auth/signup"
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className={getButtonClass('primary', 'w-full justify-center px-5 py-3 text-[15px]')}
                   >
@@ -159,6 +161,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
                   </Link>
                   <Link
                     href="/auth/login"
+                    prefetch={false}
                     onClick={() => setOpen(false)}
                     className={getButtonClass('ghost', 'w-full justify-center px-5 py-3 text-[15px]')}
                   >

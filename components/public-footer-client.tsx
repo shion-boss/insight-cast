@@ -26,6 +26,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/dashboard"
+                    prefetch={false}
                     className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     ダッシュボードへ <span aria-hidden="true">→</span>
@@ -42,6 +43,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/auth/signup"
+                    prefetch={false}
                     className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     無料で取材を始める <span aria-hidden="true">→</span>
@@ -77,13 +79,22 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
               <div key={col.heading}>
                 <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mb-3">{col.heading}</p>
                 <ul className="space-y-2.5">
-                  {col.links.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {col.links.map((link) => {
+                    // tool / auth / pricing 系は別 chunk（Supabase 等）を引き連れ
+                    // てくるので、フッターからの prefetch を無効化して marketing
+                    // pages の初期 JS を軽く保つ。
+                    const skipPrefetch = link.href.startsWith('/dashboard')
+                      || link.href.startsWith('/settings')
+                      || link.href.startsWith('/auth/')
+                      || link.href === '/pricing'
+                    return (
+                      <li key={link.href}>
+                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
+                          {link.label}
+                        </Link>
+                      </li>
+                    )
+                  })}
                 </ul>
               </div>
             ))}

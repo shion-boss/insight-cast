@@ -78,6 +78,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
               {isLoggedIn ? (
                 <Link
                   href="/dashboard"
+                  prefetch={false}
                   className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   ダッシュボードへ
@@ -85,6 +86,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
               ) : (
                 <Link
                   href="/auth/signup"
+                  prefetch={false}
                   className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   無料で始める
@@ -133,6 +135,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
               ) : (
                 <Link
                   href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
+                  prefetch={false}
                   className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
                 >
                   {plan.cta}

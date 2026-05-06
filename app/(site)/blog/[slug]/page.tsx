@@ -329,6 +329,7 @@ export default async function BlogDetailPage({
                 <div className="mt-3 pl-[48px]">
                   <Link
                     href="/auth/signup"
+                    prefetch={false}
                     className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] hover:underline"
                   >
                     あなたも試してみる <span aria-hidden="true">→</span>

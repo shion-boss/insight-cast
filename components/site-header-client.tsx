@@ -90,7 +90,7 @@ export function SiteHeaderClient() {
             <div className="hidden md:flex items-center gap-2 sm:gap-3">
               {isLoggedIn ? (
                 <div className="flex items-center gap-2 sm:gap-3">
-                  <Link href="/dashboard" className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                  <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
                     ダッシュボード
                   </Link>
                   <form action={signOut}>
@@ -101,10 +101,10 @@ export function SiteHeaderClient() {
                 </div>
               ) : (
                 <>
-                  <Link href="/auth/login" className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                  <Link href="/auth/login" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
                     ログイン
                   </Link>
-                  <Link href="/auth/signup" className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
+                  <Link href="/auth/signup" prefetch={false} className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
                     無料で試す <span aria-hidden="true">→</span>
                   </Link>
                 </>
