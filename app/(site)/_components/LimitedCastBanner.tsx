@@ -123,7 +123,7 @@ function BannerTag() {
     <span
       className="inline-flex items-center gap-[7px] rounded-[2px] px-3 py-[5px] text-[11px] font-bold uppercase w-fit"
       style={{
-        background: 'var(--accent)',
+        background: 'var(--accent-h)',
         color: '#fff',
         letterSpacing: '0.14em',
       }}

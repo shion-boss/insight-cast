@@ -49,7 +49,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                     無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>
                 </div>
-                <p className="mt-4 text-[12px] text-white/85">
+                <p className="mt-4 text-[12px] text-white">
                   登録はメールアドレスだけ　・　2回まで無料　・　いつでも解約OK
                 </p>
               </>

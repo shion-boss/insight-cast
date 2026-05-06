@@ -108,7 +108,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
               key={plan.name}
               className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent-h)] bg-[var(--accent-h)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
             >
-              <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/90' : 'text-[var(--on-primary-container)]'}`}>{plan.name}</div>
+              <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white' : 'text-[var(--on-primary-container)]'}`}>{plan.name}</div>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
                 <span className={`text-sm ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.period}</span>
@@ -116,7 +116,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
               <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
               <ul className="space-y-2.5 flex-1 mb-8">
                 {plan.features.map((f) => (
-                  <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
+                  <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white' : 'text-[var(--text2)]'}`}>
                     <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
                     {f}
                   </li>
