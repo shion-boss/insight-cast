@@ -60,6 +60,7 @@ export default async function InterviewerPage({
   const userCreatedAt = user.created_at
   const selectedCharacter =
     CHARACTERS.find((char) => char.id === selectedCharacterId && canUseCast(char.id, userCreatedAt)) ?? null
+  const isHal = selectedCharacter?.id === 'hal'
   const accessibleCharacters = getAccessibleCharacters(userCreatedAt)
   const lockedCharacters = getLockedCharacters(userCreatedAt)
 
@@ -167,7 +168,7 @@ export default async function InterviewerPage({
       <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
           { label: project.name || project.hp_url, href: `/projects/${id}` },
-          { label: selectedCharacter ? 'テーマを決める' : 'キャストを選ぶ' },
+          { label: selectedCharacter ? (isHal ? '写真を準備する' : 'テーマを決める') : 'キャストを選ぶ' },
         ]} />
         {freeLocked && (
           <div className="mb-6">
@@ -242,9 +243,13 @@ export default async function InterviewerPage({
               />
             )}
             name={selectedCharacter?.name ?? 'Insight Cast'}
-            title={selectedCharacter ? '今回は、どんなテーマから話しましょうか？' : '今日は、どのキャストと話しましょうか？'}
+            title={selectedCharacter
+              ? (isHal ? 'まずは1枚、写真を見せてもらえますか？' : '今回は、どんなテーマから話しましょうか？')
+              : '今日は、どのキャストと話しましょうか？'}
             description={selectedCharacter
-              ? '自由に書いても、AIのおすすめから選んでも、まだ決めずに始めても大丈夫です。'
+              ? (isHal
+                ? 'ハルは写真を入口に話を広げる取材役です。お店・現場・人・道具など、なんでも大丈夫です。'
+                : '自由に書いても、AIのおすすめから選んでも、まだ決めずに始めても大丈夫です。')
               : '得意な引き出し方がそれぞれ違います。いま聞きたいテーマに近い相手を選べば大丈夫です。'}
             tone="soft"
           />
@@ -333,6 +338,28 @@ export default async function InterviewerPage({
               </div>
             )}
 
+            {isHal ? (
+              <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
+                <div className="mb-4">
+                  <p className="text-xs font-medium text-[var(--text2)]">写真から話を広げます</p>
+                  <p className="mt-1 text-sm text-[var(--text2)] leading-relaxed">
+                    ハルはテーマを先に決めません。最初に写真を1枚見せてもらい、そこから話を広げていきます。
+                  </p>
+                </div>
+
+                <form action={createInterview.bind(null, id)}>
+                  <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
+                  <input type="hidden" name="focusThemeMode" value="omakase" />
+                  <InterviewSubmitButton
+                    className="w-full cursor-pointer rounded-xl bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)]"
+                    pendingLabel="ハルを呼んでいます..."
+                  >
+                    ハルに来てもらう
+                  </InterviewSubmitButton>
+                </form>
+              </section>
+            ) : (
+            <>
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
                 <p className="text-xs font-medium text-[var(--text2)]">AIがおすすめするテーマ</p>
@@ -453,6 +480,8 @@ export default async function InterviewerPage({
                 </InterviewSubmitButton>
               </form>
             </section>
+            </>
+            )}
           </div>
         )}
 
