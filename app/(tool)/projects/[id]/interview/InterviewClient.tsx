@@ -694,15 +694,16 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                             key={`${i}-${j}`}
                             src={att.previewUrl}
                             alt={`添付 ${j + 1}`}
-                            width={140}
-                            height={140}
+                            width={480}
+                            height={480}
                             unoptimized
-                            className="max-h-36 max-w-[180px] rounded-lg object-cover"
+                            style={{ width: 'auto', height: 'auto' }}
+                            className="max-h-80 max-w-full rounded-lg sm:max-h-96"
                           />
                         ) : (
                           <div
                             key={`${i}-${j}`}
-                            className="h-20 w-20 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text2)]"
+                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text2)]"
                             aria-label="画像読み込み中"
                           >
                             画像
