@@ -15,19 +15,19 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
   return (
     <footer aria-label="サイトフッター" className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
       {showPromo && (
-        <div className="bg-[var(--accent)] px-6 py-[88px] text-center text-white">
+        <div className="bg-[var(--accent-h)] px-6 py-[88px] text-center text-white">
           <div className="mx-auto max-w-3xl">
             {loggedIn ? (
               <>
                 <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">取材を続けましょう</h2>
-                <p className="mt-4 text-sm leading-8 text-white/85 sm:text-[15px]">
+                <p className="mt-4 text-sm leading-8 text-white/95 sm:text-[15px]">
                   ダッシュボードから取材を始められます。
                 </p>
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/dashboard"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     ダッシュボードへ <span aria-hidden="true">→</span>
                   </Link>
@@ -36,7 +36,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
             ) : (
               <>
                 <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">AIキャストの取材を受けてみませんか？</h2>
-                <p className="mt-5 text-sm leading-[2] text-white/85 sm:text-[15px]">
+                <p className="mt-5 text-sm leading-[2] text-white/95 sm:text-[15px]">
                   答えるだけで、記事の素材が手元に届きます。<br />
                   カードも、契約期間も、整った言葉も、いりません。
                 </p>
@@ -44,12 +44,12 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                   <Link
                     href="/auth/signup"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>
                 </div>
-                <p className="mt-4 text-[12px] text-white/60">
+                <p className="mt-4 text-[12px] text-white/85">
                   登録はメールアドレスだけ　・　2回まで無料　・　いつでも解約OK
                 </p>
               </>

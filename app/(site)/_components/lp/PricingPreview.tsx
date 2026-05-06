@@ -53,7 +53,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Pricing</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           まず無料で体験してください。<br />2回まで、カード不要で使えます。
         </h2>
@@ -62,7 +62,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
         <div className="mt-11 rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-6 sm:p-8 lg:p-10">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="flex-1">
-              <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
+              <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">お試し — 無料・カード不要</div>
               <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
               <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
               <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
@@ -79,7 +79,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                 <Link
                   href="/dashboard"
                   prefetch={false}
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)] transition-colors"
                 >
                   ダッシュボードへ
                 </Link>
@@ -87,7 +87,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                 <Link
                   href="/auth/signup"
                   prefetch={false}
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)] transition-colors"
                 >
                   無料で始める
                 </Link>
@@ -106,14 +106,14 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
           {PAID_PLANS.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent)] bg-[var(--accent)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent-h)] bg-[var(--accent-h)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
             >
-              <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/70' : 'text-[var(--accent)]'}`}>{plan.name}</div>
+              <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white/90' : 'text-[var(--on-primary-container)]'}`}>{plan.name}</div>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
-                <span className={`text-sm ${plan.highlight ? 'text-white/70' : 'text-[var(--text2)]'}`}>{plan.period}</span>
+                <span className={`text-sm ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.period}</span>
               </div>
-              <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/80' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
+              <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
               <ul className="space-y-2.5 flex-1 mb-8">
                 {plan.features.map((f) => (
                   <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white/90' : 'text-[var(--text2)]'}`}>
@@ -136,7 +136,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                 <Link
                   href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
                   prefetch={false}
-                  className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--accent)] hover:bg-white/90' : 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'}`}
+                  className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--on-primary-container)] hover:bg-white/90' : 'bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)]'}`}
                 >
                   {plan.cta}
                 </Link>

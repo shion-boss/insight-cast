@@ -16,12 +16,12 @@ export function InterviewStep() {
               <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" quality={60} />
             </div>
             <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
-              <div className="text-[10px] font-semibold text-[var(--accent)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
+              <div className="text-[10px] font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
               <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 02 — Interview</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-4">Step 02 — Interview</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
               今日もAIキャストが、<br />あなたの話を聞きます。
             </h2>

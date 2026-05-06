@@ -3,8 +3,11 @@ import Link from 'next/link'
 
 import { CHARACTERS } from '@/lib/characters'
 
+// テーマカラー（11px の "続きを読む" や境界線の border-color に使用）。
+// AA を満たす濃さに揃えている: mint は --on-primary-container、他は元から
+// AA pass する濃色なのでそのまま。
 const CAST_TALK_THEME: Record<string, { color: string; label: string }> = {
-  mint:  { color: '#c2722a', label: 'Customer Perspective' },
+  mint:  { color: '#8a4a18', label: 'Customer Perspective' },
   claus: { color: '#0f766e', label: 'Industry Insight' },
   rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
   hal:   { color: '#1d4ed8', label: 'Story & People' },
@@ -28,7 +31,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
   return (
     <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Cast Talk</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           キャストの対話
         </h2>
@@ -37,7 +40,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
           {latestTalks.map((talk) => {
             const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
             const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-            const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+            const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
             const dateStr = talk.published_at
               ? (() => { const d = new Date(talk.published_at!); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}` })()
               : ''

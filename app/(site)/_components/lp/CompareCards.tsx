@@ -2,7 +2,7 @@ export function CompareCards() {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px] bg-[var(--bg2)]">
       <div className="mx-auto max-w-[1080px] px-6 sm:px-8 lg:px-12">
-        <p className="text-center text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-3">Comparison</p>
+        <p className="text-center text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--on-primary-container)] mb-3">Comparison</p>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-center mb-12" style={{ fontSize: 'clamp(20px,2.4vw,28px)', lineHeight: 1.65 }}>
           あなたの「悩み」に、どう応えるか。
         </h2>
@@ -22,7 +22,7 @@ export function CompareCards() {
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>20</span>
                   <span className="font-bold pb-1" style={{ fontSize: '22px', color: '#c2722a' }}>分</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>Insight Cast の 1記事あたりの時間</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>Insight Cast の 1記事あたりの時間</p>
               </div>
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
@@ -33,8 +33,8 @@ export function CompareCards() {
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
-                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
-                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? 'var(--on-primary-container)' : 'var(--on-surface-variant)', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? 'var(--on-primary-container)' : r.muted ? 'var(--on-surface-variant)' : 'var(--on-surface-variant)' }}>{r.value}</span>
                   </div>
                 ))}
               </div>
@@ -57,7 +57,7 @@ export function CompareCards() {
                   <span className="font-bold pb-1" style={{ fontSize: '18px', color: '#c2722a' }}>¥</span>
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>4,980</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>/ 月　Insight Cast 個人プラン（取材付き）</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>/ 月　Insight Cast 個人プラン（取材付き）</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
@@ -69,8 +69,8 @@ export function CompareCards() {
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
-                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
-                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? 'var(--on-primary-container)' : 'var(--on-surface-variant)', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? 'var(--on-primary-container)' : r.muted ? 'var(--on-surface-variant)' : 'var(--on-surface-variant)' }}>{r.value}</span>
                   </div>
                 ))}
               </div>
@@ -93,7 +93,7 @@ export function CompareCards() {
                   <span className="font-bold pb-1" style={{ fontSize: '18px', color: '#c2722a' }}>¥</span>
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: '#c2722a', lineHeight: 1 }}>83</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: '#b8a898' }}>Insight Cast の 1記事あたりのコスト</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>Insight Cast の 1記事あたりのコスト</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
@@ -105,8 +105,8 @@ export function CompareCards() {
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'rgba(194,114,42,0.2)' } : { borderColor: '#e2d5c3' }}>
-                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? '#c2722a' : '#7a6555', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
-                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? '#c2722a' : r.muted ? '#b8a898' : '#7a6555' }}>{r.value}</span>
+                    <span className="text-[12px] leading-[1.5]" style={{ color: r.highlight ? 'var(--on-primary-container)' : 'var(--on-surface-variant)', fontWeight: r.highlight ? 700 : 400 }}>{r.name}</span>
+                    <span className="text-[11px] font-medium whitespace-nowrap text-right" style={{ color: r.highlight ? 'var(--on-primary-container)' : r.muted ? 'var(--on-surface-variant)' : 'var(--on-surface-variant)' }}>{r.value}</span>
                   </div>
                 ))}
               </div>

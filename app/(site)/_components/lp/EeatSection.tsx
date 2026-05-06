@@ -2,13 +2,13 @@ export function EeatSection() {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px] bg-white">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">E-E-A-T</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">E-E-A-T</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)] leading-[1.4]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           AIが作った記事は評価されない？
         </h2>
         {/* E-E-A-T subheader */}
         <h3 className="mt-6 font-[family-name:var(--font-noto-serif-jp)] text-[20px] font-bold leading-[1.65] text-[var(--text)] sm:text-[26px]">
-          <span style={{ color: '#c2722a' }}>あなた自身の言葉と体験</span>が素材だから、<br />Googleが重視する4つの基準を<span style={{ color: '#c2722a' }}>自然にクリアできる。</span>
+          <span style={{ color: 'var(--on-primary-container)' }}>あなた自身の言葉と体験</span>が素材だから、<br />Googleが重視する4つの基準を<span style={{ color: 'var(--on-primary-container)' }}>自然にクリアできる。</span>
         </h3>
 
         {/* E-E-A-T table */}
@@ -17,7 +17,7 @@ export function EeatSection() {
           <thead className="max-sm:hidden">
             <tr>
               {(['基準', '定義', 'Insight Cast の記事'] as const).map((h, i) => (
-                <th key={i} className={`py-3 text-left text-[10px] font-bold tracking-[0.12em] uppercase${i === 2 ? ' pl-4' : ''}`} style={{ color: '#b8a898', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : 260 }}>{h}</th>
+                <th key={i} className={`py-3 text-left text-[10px] font-bold tracking-[0.12em] uppercase${i === 2 ? ' pl-4' : ''}`} style={{ color: 'var(--on-surface-variant)', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : 260 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -32,10 +32,10 @@ export function EeatSection() {
                 {/* Badge */}
                 <td className="w-[120px] py-7 align-top max-sm:w-auto max-sm:py-0">
                   <div className="flex items-center gap-3">
-                    <span className="w-9 flex-shrink-0 font-[family-name:var(--font-noto-serif-jp)] font-bold leading-none" style={{ fontSize: '32px', color: '#c2722a' }}>{row.letter}</span>
+                    <span className="w-9 flex-shrink-0 font-[family-name:var(--font-noto-serif-jp)] font-bold leading-none" style={{ fontSize: '32px', color: 'var(--on-primary-container)' }}>{row.letter}</span>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[13px] font-bold leading-none text-[var(--text)]">{row.ja}</span>
-                      <span className="text-[10px] tracking-[0.06em]" style={{ color: '#b8a898' }}>{row.en}</span>
+                      <span className="text-[10px] tracking-[0.06em]" style={{ color: 'var(--on-surface-variant)' }}>{row.en}</span>
                     </div>
                   </div>
                 </td>
