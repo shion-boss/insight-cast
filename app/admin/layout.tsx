@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { AdminMobileNav } from '@/components/admin-mobile-nav'
 import { AdminSidebarNav } from '@/components/admin-sidebar-nav'
+import SentryLoader from '@/components/sentry-loader'
 
 // Geist Mono は admin の <pre>/<textarea> でのみ使用。marketing pages から
 // 切り離すため root layout から外し、admin layout で個別に読み込む。
@@ -49,6 +50,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className={`${geistMono.variable} min-h-dvh bg-[var(--bg)]`}>
+      <SentryLoader />
       <aside className="hidden bg-[var(--surface-dark)] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[220px] lg:flex-col lg:border-r lg:border-r-white/8">
         <div className="border-b border-white/8 px-5 py-5">
           <Link href="/" className="font-serif text-[17px] font-bold text-white">
