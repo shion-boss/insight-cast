@@ -318,7 +318,7 @@ export const CHARACTER_PERSONAS: Record<string, CharacterPersona> = {
       interviewMission: '「写真を入り口にして」、事業者さんの人柄・スタッフとの関係・仕事場の空気・お客様への気持ちを引き出すこと。数字やデータではなく、感情・エピソード・人との関係を素材にすること',
     },
     perspective: {
-      label: 'Story & People',
+      label: 'Story & Picture',
       summary: '人柄・ストーリー・雰囲気',
       expertise: [
         '写真の中の場面・人・空気を起点に対話する',

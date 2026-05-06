@@ -10,7 +10,7 @@ const CAST_TALK_THEME: Record<string, { color: string; label: string }> = {
   mint:  { color: '#8a4a18', label: 'Customer Perspective' },
   claus: { color: '#0f766e', label: 'Industry Insight' },
   rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
-  hal:   { color: '#1d4ed8', label: 'Story & People' },
+  hal:   { color: '#1d4ed8', label: 'Story & Picture' },
   mogro: { color: '#065f46', label: 'Deep Dive' },
   cocco: { color: '#be185d', label: 'Promotion' },
 }

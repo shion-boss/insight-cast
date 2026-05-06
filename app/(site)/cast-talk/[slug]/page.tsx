@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
-import type { StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Breadcrumb, EyebrowBadge, getButtonClass } from '@/components/ui'
@@ -9,23 +8,7 @@ import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
 import { CastTalkContent } from './CastTalkContent'
 import { ShareButtons } from '@/app/(site)/blog/[slug]/ShareButtons'
-import mintXClaus from '@/assets/story/mint-x-claus.png'
-import mintXRain from '@/assets/story/mint-x-rain.jpg'
-import clausXRain from '@/assets/story/claus-x-rain.jpg'
-import halXCocco from '@/assets/story/hal-x-cocco.png'
-import halXMogro from '@/assets/story/hal-x-mogro.png'
-import mogroXRain from '@/assets/story/mogro-x-rain.png'
-import rainXCocco from '@/assets/story/rain-x-cocco.png'
-
-const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
-  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
-  'mint-rain': mintXRain,   'rain-mint': mintXRain,
-  'claus-rain': clausXRain, 'rain-claus': clausXRain,
-  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
-  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
-  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
-  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
-}
+import { getCastTalkStoryImage } from '@/lib/cast-talk-story-images'
 
 type Message = {
   castId: string
@@ -110,7 +93,7 @@ export default async function CastTalkDetailPage({
 
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-  const storyImage = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
+  const storyImage = getCastTalkStoryImage(talk.interviewer_id, talk.guest_id)
 
   const talkUrl = `${APP_URL}/cast-talk/${slug}`
 

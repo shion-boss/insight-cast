@@ -78,7 +78,7 @@ export const CHARACTERS: Character[] = [
     name: 'ハル',
     species: 'コーギー',
     emoji: '🐕',
-    label: 'Story & People',
+    label: 'Story & Picture',
     description: '人柄・雰囲気・魅力を引き出します',
     specialty: '人柄・ストーリー・雰囲気',
     available: false,

@@ -143,7 +143,7 @@ const ADDON_CASTS = [
   {
     id: 'hal',
     name: 'ハル（コーギー）',
-    specialty: 'Story & People — 人柄・ストーリー・写真起点',
+    specialty: 'Story & Picture — 人柄・ストーリー・写真起点',
     price: '¥14,800',
   },
   {

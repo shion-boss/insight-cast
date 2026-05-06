@@ -428,7 +428,7 @@ Insight Cast のインタビューで、毎回同じ方向の価値を引き出�
 | ミント（Customer Perspective） | Cognitive Interview | Critical Incident |
 | クラウス（Industry Insight） | STAR / BEI | Ethnographic（用語・グランドツアー） |
 | レイン（Marketing Strategy） | Laddering | STAR / BEI |
-| ハル（Story & People） | Cognitive Interview | Ethnographic |
+| ハル（Story & Picture） | Cognitive Interview | Ethnographic |
 | モグロ（Yes/No Deep Dive） | Solution-Focused（スケーリング・例外） | Critical Incident |
 | コッコ（Promotion & Campaign） | Solution-Focused（ミラクル） | Critical Incident |
 

@@ -1,33 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import Image, { type StaticImageData } from 'next/image'
+import Image from 'next/image'
 import Link from 'next/link'
 import { CHARACTERS, getCastName } from '@/lib/characters'
-
-import mintXClaus from '@/assets/story/mint-x-claus.png'
-import mintXRain from '@/assets/story/mint-x-rain.jpg'
-import clausXRain from '@/assets/story/claus-x-rain.jpg'
-import halXCocco from '@/assets/story/hal-x-cocco.png'
-import halXMogro from '@/assets/story/hal-x-mogro.png'
-import mogroXRain from '@/assets/story/mogro-x-rain.png'
-import rainXCocco from '@/assets/story/rain-x-cocco.png'
-
-const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
-  'mint-claus': mintXClaus, 'claus-mint': mintXClaus,
-  'mint-rain': mintXRain,   'rain-mint': mintXRain,
-  'claus-rain': clausXRain, 'rain-claus': clausXRain,
-  'hal-cocco': halXCocco,   'cocco-hal': halXCocco,
-  'hal-mogro': halXMogro,   'mogro-hal': halXMogro,
-  'mogro-rain': mogroXRain, 'rain-mogro': mogroXRain,
-  'rain-cocco': rainXCocco, 'cocco-rain': rainXCocco,
-}
+import { getCastTalkStoryImage } from '@/lib/cast-talk-story-images'
 
 const THEME_PALETTE: Record<string, { color: string; label: string }> = {
   mint:  { color: '#8a4a18', label: 'Customer Perspective' },
   claus: { color: '#0f766e', label: 'Industry Insight' },
   rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
-  hal:   { color: '#1d4ed8', label: 'Story & People' },
+  hal:   { color: '#1d4ed8', label: 'Story & Picture' },
   mogro: { color: '#065f46', label: 'Deep Dive' },
   cocco: { color: '#be185d', label: 'Promotion' },
 }
@@ -57,7 +40,7 @@ type Talk = {
 function FeaturedTalkCard({ talk }: { talk: Talk }) {
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-  const storyImg = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
+  const storyImg = getCastTalkStoryImage(talk.interviewer_id, talk.guest_id)
   const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
 
   return (
