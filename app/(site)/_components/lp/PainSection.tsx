@@ -1,6 +1,6 @@
 export function PainSection() {
   return (
-    <section className="py-16 sm:py-[100px] relative overflow-hidden" style={{ background: '#1e1610' }}>
+    <section className="cv-auto-section py-16 sm:py-[100px] relative overflow-hidden" style={{ background: '#1e1610' }}>
       {/* Subtle horizontal texture */}
       <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.012) 3px, rgba(255,255,255,0.012) 4px)' }} />
       {/* Warm orange vignette from bottom */}

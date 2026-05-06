@@ -9,7 +9,7 @@ const freeCast = CHARACTERS.filter((char) => char.available)
 
 export function OutputExample() {
   return (
-    <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
+    <section className="cv-auto-section py-14 sm:py-[88px] bg-[var(--bg2)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
         <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Output Example</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>

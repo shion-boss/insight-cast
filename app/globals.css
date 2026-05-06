@@ -317,6 +317,21 @@ body.is-tool-fullscreen main#main-content {
 }
 
 
+/* ─── Off-screen rendering optimization ──────────────────── */
+
+/* below-fold な LP セクションに当てる。viewport 外のセクションのスタイル
+ * 計算とレイアウトをブラウザに skip させ、初回 paint の Style/Layout コストを
+ * 削る。`contain-intrinsic-size` はレイアウト見積もり値で、スクロール位置の
+ * 跳ねを防ぐために concrete な高さを与える。LP の中段は 500〜700px 程度の
+ * セクションが連続するので 600px を採用。
+ *
+ * 対応ブラウザ: Chrome 85+ / Edge 85+ / Safari 18+ / Firefox は 2025 年内に
+ * 順次対応見込み。未対応ブラウザでは無視されるだけで描画自体は壊れない。 */
+.cv-auto-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
 /* ─── Interactive card lift ───────────────────────────────── */
 
 .card-interactive {

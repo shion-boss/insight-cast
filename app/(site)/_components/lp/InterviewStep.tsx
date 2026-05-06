@@ -8,7 +8,7 @@ import { DraggableScrollRow } from '../DraggableScrollRow'
 
 export function InterviewStep() {
   return (
-    <section className="py-14 sm:py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
+    <section className="cv-auto-section py-14 sm:py-[96px] overflow-hidden" style={{ background: 'linear-gradient(160deg,#fdf8f2 0%,#f0e5d0 100%)' }}>
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
         <div className="grid items-center gap-10 lg:grid-cols-[520px_minmax(0,1fr)] lg:gap-16">
           <div className="order-2 lg:order-1 relative">

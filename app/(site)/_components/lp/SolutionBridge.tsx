@@ -1,6 +1,6 @@
 export function SolutionBridge() {
   return (
-    <section className="py-16 sm:py-[100px] relative overflow-hidden" style={{ background: '#fdf7f0' }}>
+    <section className="cv-auto-section py-16 sm:py-[100px] relative overflow-hidden" style={{ background: '#fdf7f0' }}>
       {/* Watercolor wash top-right */}
       <div className="absolute pointer-events-none" style={{ top: '-80px', right: '-80px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, oklch(0.82 0.07 55 / 0.18), transparent 70%)' }} />
       <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">

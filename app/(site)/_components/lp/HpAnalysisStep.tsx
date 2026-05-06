@@ -4,7 +4,7 @@ import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.webp'
 
 export function HpAnalysisStep() {
   return (
-    <section className="py-14 sm:py-[96px] overflow-hidden bg-[var(--bg2)]">
+    <section className="cv-auto-section py-14 sm:py-[96px] overflow-hidden bg-[var(--bg2)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
           <div>

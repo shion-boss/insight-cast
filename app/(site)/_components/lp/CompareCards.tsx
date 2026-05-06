@@ -1,6 +1,6 @@
 export function CompareCards() {
   return (
-    <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
+    <section className="cv-auto-section py-14 sm:py-[88px] bg-[var(--bg2)]">
       <div className="mx-auto max-w-[1080px] px-6 sm:px-8 lg:px-12">
         <p className="text-center text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-3">Comparison</p>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-center mb-12" style={{ fontSize: 'clamp(20px,2.4vw,28px)', lineHeight: 1.65 }}>
