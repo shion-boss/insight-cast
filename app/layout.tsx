@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Geist_Mono, M_PLUS_1p } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import ToastViewport from "@/components/toast-viewport";
 import { PageTransitionOverlay } from "@/components/page-transition-overlay";
@@ -16,12 +16,12 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const mplus1p = M_PLUS_1p({
-  variable: "--font-noto-sans-jp",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
+// 日本語本文フォントは OS の高品質システムフォント（Hiragino Sans / Yu Gothic /
+// Noto Sans JP）にフォールバックする。M PLUS 1p を Google Fonts から読み込む
+// と、Latin subset 指定でも 379 個の @font-face 宣言と 25MB の woff2 が生成
+// され CSS bundle が 281KB 膨張するため。視覚差はほぼ無く、render-blocking
+// な CSS と font 読み込みを排除できる。font-family 指定側 (globals.css) で
+// 明示的に system stack を使う。
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
@@ -144,7 +144,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${mplus1p.variable} ${geistMono.variable} antialiased`}
+        className={`${geistMono.variable} antialiased`}
       >
         <a
           href="#main-content"

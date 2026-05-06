@@ -205,6 +205,38 @@
 - 「認証済みユーザー専用の client component（polling/notifier 等）は `(tool)/layout.tsx` にマウントし、root layout には置かない」をエンジニア向けガードレールに追加
 - 「middleware で `auth.getUser()` を呼ぶ path は redirect 判定が必要なものだけに限定する」を `daily-quality-cycle.md` 軸1のチェック項目に追加
 
+**追加対応（同日）: CSS render-blocking 2,850ms の根本原因対処**
+
+ユーザー報告（Lighthouse）: `insight-cast.jp` 配下の 3 CSS が render を 2,850ms ブロックしている。
+
+**初手の試行と却下**: `next.config.ts` に `experimental.optimizeCss: true` を追加して critters を入れたが、ビルド成果物の HTML を確認したところ critters が走っていなかった。Next.js 15 のソースを確認すると `optimizeCss` は `server/post-process.js` 経由で Pages Router からのみ呼ばれており、`server/app-render/` 配下からは参照ゼロ。**App Router では機能しない既知制約**（vercel/next.js#47755）。設定とパッケージはロールバック。
+
+**真の root cause**: 281KB CSS（`32dab84d3c10e2f7.css`）の中身を解析した結果、**379 個の `@font-face` 宣言が M PLUS 1p（Google Fonts 経由）由来**。`.next/static/media/` には 381 個 / 25MB の woff2 ファイル。`subsets: ["latin"]` は honored されていた（font-data.json で M PLUS 1p に "japanese" subset 自体存在しないことを確認）にも関わらず、Google Fonts のサブセット細分化により Latin だけで 379 個の chunk に分割されていた。
+
+**対処**: 案 A（システム日本語フォントへフォールバック）を採用。
+- `app/layout.tsx`: `M_PLUS_1p` の import / 設定 / variable 適用を削除
+- `app/globals.css`: `--font-noto-sans-jp` を `"Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", YuGothic, "Noto Sans JP", "Meiryo", sans-serif` に直結。既存の参照（`--font-noto-serif-jp` / `--font-sans` / `--font-serif` / body）は変数経由で自動的に system stack を引く
+
+**削減効果（実測）**
+| 指標 | Before | After | 差分 |
+|---|---|---|---|
+| CSS bundle 合計 | 389KB | 108KB | **-281KB (-72%)** |
+| 最大の CSS ファイル | 281KB | 107KB | -174KB |
+| woff2 ファイル数 | 381 | 3（Geist Mono Latin のみ） | **-378 (-99%)** |
+| `.next/static/media/` 合計 | 25MB | 21MB（残りは画像） | -4MB |
+| HTML 1ページ（`/`） | 344KB | 288KB | -56KB |
+| `@font-face` 宣言（M PLUS） | 379 | 0 | -379 |
+| font preload `<link>` | 多数 | 1 | -多数 |
+
+Static ルートの状態は維持（`/`, `/about`, `/blog`, `/cast`, `/contact`, `/faq`, `/philosophy`, `/privacy`, `/terms`, `/tokushoho`, `/auth/*`、`/blog/[slug]` は SSG）。typecheck・build 通過。
+
+**指摘パターン集計（追加）**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| `experimental.optimizeCss` を App Router で期待する誤解 | 1 | 初出 | 🔲 要提案 |
+| Google Fonts (CJK) の subsets 指定が CSS @font-face 数を実質減らさない | 1 | 初出 | 🔲 要提案（CJK フォントは self-host or system stack 推奨） |
+
 ---
 
 ## 週: 2026-04-22 〜（進行中・以下は日次ログ）
