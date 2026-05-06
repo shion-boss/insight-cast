@@ -239,6 +239,40 @@ export default async function PricingPage({
     })),
   }
 
+  // Service schema: 料金は AggregateOffer で範囲を示し、検索結果の Pricing
+  // Snippet（無料体験〜法人プランまで）に表示されやすくする。
+  const paidPlans = PLANS.filter((p) => p.price > 0)
+  const lowPrice = Math.min(...paidPlans.map((p) => p.price))
+  const highPrice = Math.max(...paidPlans.map((p) => p.price))
+
+  const serviceJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'Insight Cast — AIインタビュー型 HP 育成サービス',
+    description:
+      'AIキャストが取材し、ホームページにまだ書けていない事業の価値を引き出して記事化します。更新が止まったHPを一次情報で少しずつ強くする中小企業向けサブスクリプションです。',
+    serviceType: 'コンテンツ制作 / マーケティング支援',
+    provider: {
+      '@type': 'Organization',
+      name: 'Insight Cast',
+      url: APP_URL,
+    },
+    areaServed: { '@type': 'Country', name: 'JP' },
+    audience: {
+      '@type': 'BusinessAudience',
+      audienceType: '中小企業・小規模事業者',
+    },
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'JPY',
+      lowPrice: String(lowPrice),
+      highPrice: String(highPrice),
+      offerCount: paidPlans.length,
+      url: `${APP_URL}/pricing`,
+    },
+    inLanguage: 'ja',
+  }
+
   return (
     <>
       <script
@@ -252,6 +286,10 @@ export default async function PricingPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalogJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
 
       <main id="main-content" className="relative z-10">

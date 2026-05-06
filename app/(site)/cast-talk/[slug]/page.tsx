@@ -36,7 +36,7 @@ async function getCastTalk(slug: string) {
   const supabase = createAdminClient()
   const { data } = await supabase
     .from('cast_talks')
-    .select('id, title, theme, format, interviewer_id, guest_id, messages, summary, published_at')
+    .select('id, title, theme, format, interviewer_id, guest_id, messages, summary, published_at, updated_at')
     .eq('slug', slug)
     .eq('status', 'published')
     .single()
@@ -114,21 +114,37 @@ export default async function CastTalkDetailPage({
 
   const talkUrl = `${APP_URL}/cast-talk/${slug}`
 
+  // 会話メッセージの合計文字数を wordCount として渡す（記事ボリュームの信頼シグナル）
+  const conversationWordCount = (() => {
+    const messages = Array.isArray(talk.messages) ? talk.messages : []
+    return messages.reduce((acc: number, m: { text?: string }) => acc + (m?.text?.replace(/\s+/g, '').length ?? 0), 0)
+  })()
+
   const articleJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: talk.title,
     description: talk.summary ?? undefined,
     datePublished: talk.published_at ?? undefined,
+    dateModified: talk.updated_at ?? talk.published_at ?? undefined,
     url: talkUrl,
+    image: `${APP_URL}/cast-talk/${slug}/opengraph-image`,
     publisher: {
       '@type': 'Organization',
       name: 'Insight Cast',
       url: APP_URL,
     },
     ...(interviewer && {
-      author: { '@type': 'Person', name: interviewer.name },
+      author: {
+        '@type': 'Person',
+        name: `${interviewer.name}（Insight Cast AIキャスト）`,
+        knowsAbout: interviewer.specialty ? [interviewer.specialty] : undefined,
+      },
     }),
+    articleSection: 'Cast Talk',
+    keywords: ['Cast Talk', 'AIキャスト対話', 'Insight Cast', interviewer?.name, guest?.name].filter(Boolean).join(', '),
+    wordCount: conversationWordCount,
+    inLanguage: 'ja',
   }
 
   const breadcrumbJsonLd = {

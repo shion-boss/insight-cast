@@ -112,14 +112,22 @@ export default async function BlogDetailPage({
     datePublished: post.date,
     dateModified: post.updatedAt ?? post.date,
     url: `${APP_URL}/blog/${slug}`,
+    image: `${APP_URL}/blog/${slug}/opengraph-image`,
     publisher: {
       '@type': 'Organization',
       name: 'Insight Cast',
       url: APP_URL,
     },
     author: interviewer
-      ? { '@type': 'Person', name: `${interviewer.name}（Insight Cast AIキャスト）` }
+      ? {
+          '@type': 'Person',
+          name: `${interviewer.name}（Insight Cast AIキャスト）`,
+          knowsAbout: interviewer.specialty ? [interviewer.specialty] : undefined,
+        }
       : { '@type': 'Organization', name: 'Insight Cast' },
+    articleSection: CATEGORY_LABELS[post.category],
+    keywords: [CATEGORY_LABELS[post.category], 'Insight Cast', 'AIインタビュー', 'ホームページ更新'].join(', '),
+    wordCount: bodyTextLength,
     inLanguage: 'ja',
   }
 

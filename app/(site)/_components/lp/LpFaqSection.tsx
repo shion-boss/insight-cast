@@ -11,9 +11,25 @@ const FAQS = [
   { q: 'どんな業種でも使えますか？', a: 'はい。建設・飲食・医療・美容・士業など業種を問わず対応しています。取材内容はすべてあなた自身の言葉から引き出すため、業種特有の専門知識が不要です。' },
 ] as const
 
+// LP の FAQ section を Google / AI 検索に Q&A として理解させるための JSON-LD。
+// 同じ FAQS 配列から派生させているので、内容を変更すれば schema も自動追従する。
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: { '@type': 'Answer', text: faq.a },
+  })),
+}
+
 export function LpFaqSection() {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px] bg-[var(--bg)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
         <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">FAQ</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
