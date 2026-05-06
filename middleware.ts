@@ -91,6 +91,13 @@ function isFullyPublicSkippableAuth(pathname: string): boolean {
   if (pathname.startsWith('/api/')) {
     return true
   }
+  // public/ 配下の静的 JS / 設定ファイル。matcher で除外できない拡張子の
+  // ものを明示的に通す（`/sw.js` を redirect すると Service Worker 登録時
+  // に "script resource is behind a redirect" として Lighthouse から
+  // 警告が出る + SW が登録できない）。
+  if (pathname === '/sw.js' || pathname === '/manifest.webmanifest') {
+    return true
+  }
   return false
 }
 
