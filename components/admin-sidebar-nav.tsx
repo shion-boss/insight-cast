@@ -9,6 +9,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: '/admin', label: 'ダッシュボード' },
   { href: '/admin/posts', label: '記事管理' },
   { href: '/admin/cast-talk', label: 'Cast Talk' },
+  { href: '/admin/interview-reviews', label: '取材レビュー' },
   { href: '/admin/users', label: 'ユーザー管理' },
   { href: '/admin/usage', label: '利用状況' },
   { href: '/admin/costs', label: 'コスト管理' },
