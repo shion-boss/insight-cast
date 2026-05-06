@@ -751,7 +751,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               size={32}
               className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
             />
-            <div className="bg-[var(--surface)] border border-[var(--border)] px-3 py-1 rounded-2xl rounded-tl-sm">
+            <div className="max-w-[80%] sm:max-w-[60%] bg-[var(--surface)] border border-[var(--border)] px-3 py-1 rounded-2xl rounded-tl-sm break-words">
               {streamingMessage ? (
                 <span className="text-[var(--text2)] text-[15px] whitespace-pre-wrap leading-[1.85]">
                   {streamingMessage}
