@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-[440px]">
         <div className="mb-8 flex justify-center">
           <Link href="/" className="rounded">
-            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" sizes="120px" priority />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-9 w-auto" sizes="120px" />
           </Link>
         </div>
 

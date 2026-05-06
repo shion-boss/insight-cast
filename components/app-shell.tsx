@@ -66,7 +66,7 @@ export function AppShell({
             href="/"
             className="block transition-opacity hover:opacity-80"
           >
-            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" priority />
+            <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" />
           </Link>
         </div>
 
@@ -97,7 +97,7 @@ export function AppShell({
             {/* モバイル: ロゴ（左）+ ハンバーガー（右） */}
             <div className="flex w-full items-center justify-between lg:hidden">
               <Link href="/" className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40">
-                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" priority />
+                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-8 w-auto" sizes="120px" />
               </Link>
               <ToolMobileNav
                 accountLabel={accountLabel}

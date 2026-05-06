@@ -84,7 +84,7 @@ export function SiteHeaderClient() {
               href="/"
               className="transition-opacity hover:opacity-80"
             >
-              <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" priority />
+              <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" />
             </Link>
 
             <div className="hidden md:flex items-center gap-2 sm:gap-3">
