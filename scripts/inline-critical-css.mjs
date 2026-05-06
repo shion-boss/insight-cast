@@ -48,16 +48,24 @@ async function main() {
   // 除去し path と join する。
   // publicPath '/_next/' + path '.next/' で URL `/_next/static/css/abc.css`
   // → ファイル `.next/static/css/abc.css` に正しく解決される。
-  // critters は preload mode 'swap' だと `rel="stylesheet"` を維持したまま
-  // onload を追加するだけで実際の defer にならない（v0.0.23 で確認）。
-  // 既定モード（preload オプション省略）は「link を body に移動 + head に
-  // <link rel="preload" as="style"> を挿入」する正攻法で、確実に
-  // render-blocking を解消する。
+  //
+  // preload mode の選定:
+  // - 既定モード（省略）: link を body に移動 + head に rel="preload" 挿入。
+  //   ただし body 側は `rel="stylesheet"` のままなので spec 上 render-blocking
+  //   になり、Lighthouse でも引き続き警告される。NG。
+  // - 'swap': onload 追加するだけで rel が stylesheet のまま。実質 no-op。NG。
+  // - 'media': link 自体に `media="print" onload="this.media='all'"` を
+  //   付与し、screen には適用されない link として扱われるので render-blocking
+  //   から外れる。`<noscript>` フォールバック付き。これを採用。
   const critters = new Critters({
     path: NEXT_DIR,
     publicPath: '/_next/',
     // 本番ファイル名の hash 化に対応するため、CSS は filesystem から読みに行く
     pruneSource: true,
+    // 既存 <link> を `media="print" onload="this.media='all'"` に書き換え。
+    // CSS はバックグラウンドで取得され、ロード完了時に screen に適用される。
+    // critters が <noscript><link rel="stylesheet"></noscript> も追加する。
+    preload: 'media',
     // フォント関連 @font-face はインライン化しない（別途 preload で扱う）
     inlineFonts: false,
     fonts: false,
