@@ -44,9 +44,13 @@ export function getStateOpacity(state: StateName): string {
 const buttonBaseClass =
   'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--shape-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50'
 
+// primary ボタンの bg は --primary-hover を default に。
+// --primary (#c2722a) に white を載せると 4.0:1 で AA fail。
+// --primary-hover (#a85e20) なら 5:1 で AA pass。
+// hover はさらに濃い --on-primary-container (#8a4a18) で深まる。
 const buttonToneClass = {
-  primary: 'border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)] hover:border-[var(--primary-hover)] hover:bg-[var(--primary-hover)]',
-  secondary: 'border-[var(--outline)] bg-white text-[var(--on-surface)] hover:border-[var(--primary)] hover:text-[var(--primary)]',
+  primary: 'border-[var(--primary-hover)] bg-[var(--primary-hover)] text-[var(--on-primary)] hover:border-[var(--on-primary-container)] hover:bg-[var(--on-primary-container)]',
+  secondary: 'border-[var(--outline)] bg-white text-[var(--on-surface)] hover:border-[var(--primary)] hover:text-[var(--on-primary-container)]',
   ghost: 'border-transparent bg-transparent text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] hover:text-[var(--on-surface)]',
 } as const
 

@@ -62,7 +62,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
         <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
           <div>
             <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
-            <p className="mt-2 text-xs text-[var(--text3)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
+            <p className="mt-2 text-xs text-[var(--text2)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
           </div>
           <nav aria-label="フッターナビゲーション" className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {[
@@ -77,7 +77,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
               },
             ].map((col) => (
               <div key={col.heading}>
-                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mb-3">{col.heading}</p>
+                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text2)] mb-3">{col.heading}</p>
                 <ul className="space-y-2.5">
                   {col.links.map((link) => {
                     // tool / auth / pricing 系は別 chunk（Supabase 等）を引き連れ
@@ -101,7 +101,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
           </nav>
         </div>
         <div className="mt-8 border-t border-[var(--border)] pt-6">
-          <p className="text-xs text-[var(--text3)]">© 2026 Insight Cast</p>
+          <p className="text-xs text-[var(--text2)]">© 2026 Insight Cast</p>
         </div>
       </div>
     </footer>

@@ -154,7 +154,7 @@ export default async function CastPage() {
                     className="mx-auto"
                   />
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
-                  <div className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em] mt-0.5">
+                  <div className="text-[10px] text-[var(--on-primary-container)] font-semibold tracking-[.06em] mt-0.5">
                     {char.available ? char.label : `${char.label}・期間限定`}
                   </div>
                 </div>
@@ -176,7 +176,7 @@ export default async function CastPage() {
               ].map((item) => (
                 <div key={item.q} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5">
                   <div className="text-sm text-[var(--text2)] mb-2">{item.q}</div>
-                  <div className="text-sm font-bold text-[var(--accent)]"><span aria-hidden="true">→ </span>{item.a}</div>
+                  <div className="text-sm font-bold text-[var(--on-primary-container)]"><span aria-hidden="true">→ </span>{item.a}</div>
                 </div>
               ))}
             </div>
@@ -186,7 +186,7 @@ export default async function CastPage() {
         {/* Free Casts Detail */}
         <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Free Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Free Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               無料キャスト
             </h2>
@@ -214,15 +214,15 @@ export default async function CastPage() {
                       </div>
                       <div className="mt-4 flex gap-2 flex-wrap">
                         <span className="bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">無料</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[var(--accent-l)] text-[var(--accent)] rounded-full text-[12px] font-semibold px-3.5 py-1.5">
+                        <span className="inline-flex items-center gap-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-full text-[12px] font-semibold px-3.5 py-1.5">
                           入力: {detail.input}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <div className="text-[13px] text-[var(--text3)] mb-1.5">{char.species}</div>
+                      <div className="text-[13px] text-[var(--text2)] mb-1.5">{char.species}</div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold text-[var(--text)] mb-1.5">{char.name}</div>
-                      <div className="text-[13px] text-[var(--accent)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                      <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-semibold text-[var(--text)] leading-[1.45] mb-5 pl-4 border-l-[3px] border-[var(--accent)]">
                         {char.id === 'mint'
                           ? 'お客様目線で、やさしく引き出します'
@@ -261,17 +261,17 @@ export default async function CastPage() {
                           className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)]"
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--accent)]">Cast Talk</div>
+                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--on-primary-container)]">Cast Talk</div>
                             <div className="text-sm font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
                               {talksByChar[char.id]!.title}
                             </div>
                             {talksByChar[char.id]!.summary && (
-                              <div className="mt-1 text-[12px] leading-relaxed text-[var(--text3)] line-clamp-2">
+                              <div className="mt-1 text-[12px] leading-relaxed text-[var(--text2)] line-clamp-2">
                                 {talksByChar[char.id]!.summary}
                               </div>
                             )}
                           </div>
-                          <span className="shrink-0 text-[12px] font-bold text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1 inline-block mt-0.5">
+                          <span className="shrink-0 text-[12px] font-bold text-[var(--on-primary-container)] transition-transform duration-200 group-hover:translate-x-1 inline-block mt-0.5">
                             読む <span aria-hidden="true">→</span>
                           </span>
                         </Link>
@@ -286,7 +286,7 @@ export default async function CastPage() {
             {/* Cast Talk バナー */}
             <div className="mt-16 rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
-                <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">Cast Talk</div>
+                <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">Cast Talk</div>
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
                   キャストの実際の対話を読んでみる
                 </p>
@@ -297,7 +297,7 @@ export default async function CastPage() {
               </div>
               <Link
                 href="/cast-talk"
-                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
                 Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>
@@ -308,7 +308,7 @@ export default async function CastPage() {
         {/* Addon Casts */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               専門キャスト（期間限定で全プラン込み）
             </h2>
@@ -338,14 +338,14 @@ export default async function CastPage() {
                         />
                       </div>
                       <div className="mt-3 flex gap-2 flex-wrap">
-                        <span className="bg-[var(--accent-l)] text-[var(--accent)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
-                        <span className="bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">入力: {detail.input}</span>
+                        <span className="bg-[var(--accent-l)] text-[var(--on-primary-container)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
+                        <span className="bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">入力: {detail.input}</span>
                       </div>
                     </div>
                     <div>
-                      <div className="text-[13px] text-[var(--text3)] mb-1">{char.species}</div>
+                      <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] mb-1">{char.name}</div>
-                      <div className="text-[13px] text-[var(--accent)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                      <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-[17px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
                         {char.specialty}
                       </div>

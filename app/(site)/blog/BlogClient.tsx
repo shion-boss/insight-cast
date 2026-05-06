@@ -140,7 +140,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
           <button
             type="button"
             onClick={() => changeFilter('all')}
-            className="text-sm font-semibold text-[var(--accent)] underline underline-offset-2 rounded"
+            className="text-sm font-semibold text-[var(--on-primary-container)] underline underline-offset-2 rounded"
           >
             すべての記事を見る
           </button>

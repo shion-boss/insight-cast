@@ -99,7 +99,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
         {/* 月額プラン */}
         <div className="mt-10 flex items-center gap-4">
           <div className="flex-1 h-px bg-[var(--border)]" />
-          <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
+          <span className="text-[12px] font-semibold text-[var(--text2)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
           <div className="flex-1 h-px bg-[var(--border)]" />
         </div>
         <div className="mt-6 grid gap-6 sm:grid-cols-3">
@@ -144,9 +144,9 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
             </div>
           ))}
         </div>
-        <p className="text-center mt-6 text-[12px] text-[var(--text3)]">
+        <p className="text-center mt-6 text-[12px] text-[var(--text2)]">
           料金の詳細は
-          <Link href="/pricing" className="text-[var(--accent)] underline underline-offset-2 mx-1 rounded">料金ページ</Link>
+          <Link href="/pricing" className="text-[var(--on-primary-container)] underline underline-offset-2 mx-1 rounded">料金ページ</Link>
           をご覧ください。
         </p>
 

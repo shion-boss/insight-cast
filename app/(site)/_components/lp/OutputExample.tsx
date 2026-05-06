@@ -66,13 +66,13 @@ export function OutputExample() {
             {/* アクションボタン行 */}
             <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-x-3 gap-y-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">全文コピー</span>
+                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">テキスト</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">Markdown</span>
               </div>
               <span aria-hidden="true" className="hidden sm:inline-block h-4 w-px bg-[var(--border)]" />
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text3)] whitespace-nowrap">書き出し</span>
+                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.txt</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.md</span>
               </div>

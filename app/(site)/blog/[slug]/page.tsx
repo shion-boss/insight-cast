@@ -312,7 +312,7 @@ export default async function BlogDetailPage({
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-[var(--accent)] mb-1">Made with Insight Cast</p>
+                    <p className="text-[11px] font-bold tracking-[0.1em] uppercase text-[var(--on-primary-container)] mb-1">Made with Insight Cast</p>
                     <p className="text-sm leading-[1.7] text-[var(--text2)]">
                       この記事は、Insight Cast の AI取材を実際に使って作成しました。
                     </p>
@@ -371,7 +371,7 @@ export default async function BlogDetailPage({
         {/* 関連記事 */}
         {relatedPosts.length > 0 && (
           <div className="mx-auto mt-16 max-w-2xl">
-            <h2 className="mb-5 text-[11px] font-semibold tracking-[0.14em] text-[var(--accent)] uppercase">Related</h2>
+            <h2 className="mb-5 text-[11px] font-semibold tracking-[0.14em] text-[var(--on-primary-container)] uppercase">Related</h2>
             <div className="flex flex-col divide-y divide-[var(--border)] rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {relatedPosts.map((related) => {
                 const relatedInterviewer = related.interviewer

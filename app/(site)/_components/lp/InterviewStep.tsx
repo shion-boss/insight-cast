@@ -35,7 +35,7 @@ export function InterviewStep() {
                 '取材後、記事づくりに進める',
               ].map((text) => (
                 <li key={text} className="flex items-start gap-3 text-[14px] text-[var(--text2)] leading-[1.7]">
-                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--accent)] text-[10px] font-bold">✓</span>
+                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--on-primary-container)] text-[10px] font-bold">✓</span>
                   {text}
                 </li>
               ))}
@@ -43,7 +43,7 @@ export function InterviewStep() {
           </div>
         </div>
         <div className="mt-14 sm:mt-16">
-          <p className="text-[13px] font-semibold text-[var(--text3)] mb-5 tracking-[.04em]">担当するキャストを選ぶ</p>
+          <p className="text-[13px] font-semibold text-[var(--text2)] mb-5 tracking-[.04em]">担当するキャストを選ぶ</p>
           <DraggableScrollRow className="flex gap-4 overflow-x-auto pt-2 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {CHARACTERS.map((char) => (
               <Link key={char.id} href={`/cast#${char.id}`} className="flex-shrink-0 w-[220px] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-4 gap-3 transition-colors hover:border-[var(--accent)]/50 hover:shadow-[var(--elevation-3)]">
@@ -52,7 +52,7 @@ export function InterviewStep() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
-                  <span className="text-[10px] text-[var(--accent)] font-semibold tracking-[.06em]">{char.label}</span>
+                  <span className="text-[10px] text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
                   <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
                 </div>
               </Link>

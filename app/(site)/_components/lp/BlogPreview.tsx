@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
 import { getCharacter } from '@/lib/characters'
 
+// テーマカラー: 12px のカテゴリチップ + 11px の category badge に使用。
+// AA を満たす濃さに揃えている。howto は --on-primary-container を直値で指定。
 const BLOG_CATEGORY_COLOR: Record<PostCategory, string> = {
-  howto:      '#c2722a',
+  howto:      '#8a4a18',
   service:    '#0f766e',
   interview:  '#7c3aed',
   case:       '#1d4ed8',
@@ -49,24 +51,24 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
                     <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                       {CATEGORY_LABELS[post.category]}
                     </span>
-                    <span className="text-[11px] text-[var(--text3)]">{post.date}</span>
+                    <span className="text-[11px] text-[var(--text2)]">{post.date}</span>
                   </div>
                   <p className="text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">
                     {post.title}
                   </p>
                   {post.excerpt && (
-                    <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--text3)] line-clamp-2">
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--text2)] line-clamp-2">
                       {post.excerpt}
                     </p>
                   )}
                 </div>
-                <span aria-hidden="true" className="mt-0.5 flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
+                <span aria-hidden="true" className="mt-0.5 flex-shrink-0 text-[11px] font-bold text-[var(--text2)] group-hover:text-[var(--accent)] transition-colors">→</span>
               </Link>
             )
           })}
         </div>
         <div className="mt-7 flex flex-wrap justify-center gap-2">
-          <span className="self-center text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text3)] mr-1">テーマで探す</span>
+          <span className="self-center text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text2)] mr-1">テーマで探す</span>
           {([
             { category: 'service' as const, label: 'サービス紹介', href: '/blog?category=service' },
             { category: 'interview' as const, label: 'インタビュー', href: '/blog?category=interview' },

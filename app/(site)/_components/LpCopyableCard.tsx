@@ -54,11 +54,11 @@ export function LpCopyableCard({
       className={`group cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none focus-visible:ring-inset ${wrapperClass}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">{label}</div>
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">{label}</div>
         <span
           aria-hidden="true"
           className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${
-            copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] group-hover:text-[var(--text)]'
+            copied ? 'text-[var(--accent)]' : 'text-[var(--text2)] group-hover:text-[var(--text)]'
           }`}
         >
           {copied ? (
