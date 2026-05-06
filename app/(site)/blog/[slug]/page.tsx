@@ -161,8 +161,8 @@ export default async function BlogDetailPage({
                 <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                   {CATEGORY_LABELS[post.category]}
                 </span>
-                <span className="text-[11px] text-[var(--text3)]">約{readingTimeMin}分で読めます</span>
-                <span className="text-[11px] text-[var(--text3)]"><span aria-hidden="true">· </span>{post.date}</span>
+                <span className="text-[11px] text-[var(--text2)]">約{readingTimeMin}分で読めます</span>
+                <span className="text-[11px] text-[var(--text2)]"><span aria-hidden="true">· </span>{post.date}</span>
               </div>
 
               {headerChar && (
@@ -174,12 +174,12 @@ export default async function BlogDetailPage({
                     size={40}
                   />
                   <div>
-                    <p className="text-[11px] text-[var(--text3)]">取材担当</p>
+                    <p className="text-[11px] text-[var(--text2)]">取材担当</p>
                     <p className="text-sm font-semibold text-[var(--text)]">
                       {headerChar.name}
-                      <span className="ml-1.5 font-normal text-[var(--text3)]">（{headerChar.species}）</span>
+                      <span className="ml-1.5 font-normal text-[var(--text2)]">（{headerChar.species}）</span>
                     </p>
-                    <p className="text-[11px] leading-relaxed text-[var(--text3)]">{headerChar.specialty}</p>
+                    <p className="text-[11px] leading-relaxed text-[var(--text2)]">{headerChar.specialty}</p>
                   </div>
                 </div>
               )}
@@ -246,7 +246,7 @@ export default async function BlogDetailPage({
                       <p className="text-sm font-semibold text-[var(--text2)]">
                         担当: {interviewerChar.name}（{interviewerChar.species}）
                       </p>
-                      <p className="mt-1 text-sm text-[var(--text3)]">{body.interviewerIntro}</p>
+                      <p className="mt-1 text-sm text-[var(--text2)]">{body.interviewerIntro}</p>
                     </div>
                   </div>
                 )}
@@ -293,7 +293,7 @@ export default async function BlogDetailPage({
           })()}
 
           {!body && (
-            <p className="text-[var(--text3)]">本文を準備中です。</p>
+            <p className="text-[var(--text2)]">本文を準備中です。</p>
           )}
 
           {/* Made with Insight Cast バッジ */}
@@ -317,7 +317,7 @@ export default async function BlogDetailPage({
                       この記事は、Insight Cast の AI取材を実際に使って作成しました。
                     </p>
                     {(post.interviewDurationMin || post.interviewQuestionCount) && (
-                      <p className="mt-1 text-[12px] text-[var(--text3)]">
+                      <p className="mt-1 text-[12px] text-[var(--text2)]">
                         {post.interviewDurationMin && `取材時間：${post.interviewDurationMin}分`}
                         {post.interviewDurationMin && post.interviewQuestionCount && '　／　'}
                         {post.interviewQuestionCount && `質問数：${post.interviewQuestionCount}問`}
@@ -330,7 +330,7 @@ export default async function BlogDetailPage({
                   <Link
                     href="/auth/signup"
                     prefetch={false}
-                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] hover:underline"
+                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--on-primary-container)] hover:underline"
                   >
                     あなたも試してみる <span aria-hidden="true">→</span>
                   </Link>
@@ -350,7 +350,7 @@ export default async function BlogDetailPage({
                   href={`/blog/${prevPost.slug}`}
                   className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">← 新しい記事</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">← 新しい記事</span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{prevPost.title}</span>
                 </Link>
               ) : <div />}
@@ -359,7 +359,7 @@ export default async function BlogDetailPage({
                   href={`/blog/${nextPost.slug}`}
                   className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">過去の記事 <span aria-hidden="true">→</span></span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">過去の記事 <span aria-hidden="true">→</span></span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{nextPost.title}</span>
                 </Link>
               ) : <div />}
@@ -393,13 +393,13 @@ export default async function BlogDetailPage({
                         <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${relColor}1a`, color: relColor }}>
                           {CATEGORY_LABELS[related.category]}
                         </span>
-                        <span className="text-[11px] text-[var(--text3)]">{related.date}</span>
+                        <span className="text-[11px] text-[var(--text2)]">{related.date}</span>
                       </div>
                       <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-1 group-hover:text-[var(--accent)] transition-colors">
                         {related.title}
                       </p>
                     </div>
-                    <span aria-hidden="true" className="flex-shrink-0 text-[11px] font-bold text-[var(--text3)] group-hover:text-[var(--accent)] transition-colors">→</span>
+                    <span aria-hidden="true" className="flex-shrink-0 text-[11px] font-bold text-[var(--text2)] group-hover:text-[var(--accent)] transition-colors">→</span>
                   </Link>
                 )
               })}

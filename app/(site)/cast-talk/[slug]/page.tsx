@@ -180,7 +180,7 @@ export default async function CastTalkDetailPage({
             )}
 
             {talk.published_at && (
-              <p className="mt-3 text-sm text-[var(--text3)]">{formatDate(talk.published_at)}</p>
+              <p className="mt-3 text-sm text-[var(--text2)]">{formatDate(talk.published_at)}</p>
             )}
 
             {/* ストーリー画像 */}
@@ -214,7 +214,7 @@ export default async function CastTalkDetailPage({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span className="font-semibold text-[var(--text)]">{char.name}</span>
-                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--accent)]">
+                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--on-primary-container)]">
                           {char.label}
                         </span>
                       </div>
@@ -271,7 +271,7 @@ export default async function CastTalkDetailPage({
           <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
             <Link
               href={backHref}
-              className="group flex items-center gap-2 text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)] rounded"
+              className="group flex items-center gap-2 text-sm text-[var(--text2)] transition-colors hover:text-[var(--text)] rounded"
             >
               <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
               <span>Cast Talk の記事一覧へ</span>

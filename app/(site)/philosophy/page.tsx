@@ -188,7 +188,7 @@ export default function PhilosophyPage() {
                 {/* 左: ラベル・タイトル */}
                 <div className={articleIndex % 2 === 1 ? 'lg:order-2' : ''}>
                   <div className="sticky top-24">
-                    <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
+                    <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--on-primary-container)]">
                       {article.tag}
                     </span>
                     <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
@@ -197,7 +197,7 @@ export default function PhilosophyPage() {
                     <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{article.lead}</p>
 
                     <div className="mt-8 h-px bg-gradient-to-r from-[var(--border2)] to-transparent" />
-                    <p className="mt-6 text-xs text-[var(--text3)]">
+                    <p className="mt-6 text-xs text-[var(--text2)]">
                       {article.sections.length} つの観点で整理しています
                     </p>
                   </div>
@@ -237,7 +237,7 @@ export default function PhilosophyPage() {
         {/* まとめ */}
         <section className="px-6 py-14 sm:py-[88px]">
           <div className="mx-auto max-w-6xl">
-            <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--accent)]">
+            <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--on-primary-container)]">
               Summary
             </span>
             <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">

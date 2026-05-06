@@ -80,7 +80,7 @@ export default async function BlogPage() {
           aside={(
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">Library</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text2)]">Library</p>
                 <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
                   ノウハウ、事例、思想、サービスの考え方をテーマ別に読めます。
                 </p>
@@ -91,7 +91,7 @@ export default async function BlogPage() {
                   { label: '主なテーマ', value: '一次情報' },
                 ].map((item) => (
                   <div key={item.label} className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text3)]">{item.label}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text2)]">{item.label}</p>
                     <p className="mt-2 text-sm font-semibold text-[var(--text)]">{item.value}</p>
                   </div>
                 ))}

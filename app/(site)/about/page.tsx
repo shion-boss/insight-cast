@@ -104,7 +104,7 @@ export default function AboutPage() {
             style={{ paddingTop: 'calc(108px + clamp(24px,3vw,48px))', paddingBottom: 'clamp(48px,6vw,96px)' }}
           >
             <div className="md:w-[55%] md:pr-12">
-              <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">About</p>
+              <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--on-primary-container)] mb-4">About</p>
               <h1
                 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-7"
                 style={{ fontSize: 'clamp(24px,3vw,40px)' }}
@@ -137,7 +137,7 @@ export default function AboutPage() {
         {/* ② WHY */}
         <section className="bg-[var(--bg2)]" style={{ padding: 'clamp(64px,7vw,96px) clamp(32px,6vw,80px)' }}>
           <div className="max-w-[800px] mx-auto">
-            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">Why We Started</p>
+            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--on-primary-container)] mb-4">Why We Started</p>
             <h2
               className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.65] mb-10"
               style={{ fontSize: 'clamp(20px,2.2vw,28px)' }}
@@ -167,7 +167,7 @@ export default function AboutPage() {
             style={{ top: '-100px', right: '-100px', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(194,114,42,0.1) 0%, transparent 65%)' }}
           />
           <div className="relative z-10 max-w-[800px] mx-auto">
-            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] opacity-70 mb-4">Mission</p>
+            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--on-primary-container)] opacity-70 mb-4">Mission</p>
             <p
               className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.75] mb-10"
               style={{ color: '#f0e8dc', fontSize: 'clamp(18px,2.4vw,30px)' }}
@@ -190,7 +190,7 @@ export default function AboutPage() {
         {/* ④ Our Cast */}
         <section className="bg-[var(--bg)]" style={{ padding: 'clamp(64px,7vw,96px) clamp(32px,6vw,80px)' }}>
           <div className="text-center mb-14">
-            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">Our Cast</p>
+            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--on-primary-container)] mb-4">Our Cast</p>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(20px,2.2vw,28px)' }}>
               インタビューを担当するAIキャスト
             </h2>
@@ -220,7 +220,7 @@ export default function AboutPage() {
                     )}
                   </div>
                   <span
-                    className="text-[10px] font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start text-[var(--accent)] border-[rgba(194,114,42,0.3)] bg-[rgba(194,114,42,0.06)]"
+                    className="text-[10px] font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start text-[var(--on-primary-container)] border-[rgba(194,114,42,0.3)] bg-[rgba(194,114,42,0.06)]"
                   >
                     {char.available ? '取材中' : '期間限定で取材中'}
                   </span>
@@ -239,7 +239,7 @@ export default function AboutPage() {
         {/* ⑤ Team */}
         <section className="bg-[var(--bg2)]" style={{ padding: 'clamp(64px,7vw,96px) clamp(32px,6vw,80px)' }}>
           <div className="text-center mb-14">
-            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--accent)] mb-4">Our Team</p>
+            <p className="text-[10px] font-bold tracking-[0.22em] uppercase text-[var(--on-primary-container)] mb-4">Our Team</p>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)]" style={{ fontSize: 'clamp(20px,2.2vw,28px)' }}>
               Insight Cast を支えるメンバー
             </h2>

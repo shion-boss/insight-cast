@@ -257,25 +257,25 @@ export default async function PricingPage({
       <main id="main-content" className="relative z-10">
         {/* Limit banners */}
         {reason === 'project_limit' && (
-          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+          <div className="bg-[var(--accent-h)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
             <span>現在のプランではプロジェクトを追加できません。プランをアップグレードすると、複数のプロジェクトを管理できます。</span>
           </div>
         )}
         {reason === 'interview_limit' && (
-          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+          <div className="bg-[var(--accent-h)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
             <span>今月の取材回数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。</span>
           </div>
         )}
         {reason === 'free_plan_locked' && (
-          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+          <div className="bg-[var(--accent-h)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
             <span>無料体験が終了しました。これまでのデータはそのまま残っています。プランを選ぶと続けられます。</span>
           </div>
         )}
         {reason === 'monthly_article_limit' && (
-          <div className="bg-[var(--accent)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
+          <div className="bg-[var(--accent-h)] text-white px-4 py-3 text-[13px] font-semibold leading-relaxed flex items-center justify-center gap-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={28} className="flex-shrink-0" />
             <span>今月の記事作成数の上限に達しました。プランをアップグレードすると、来月を待たずに続けられます。</span>
           </div>
@@ -320,7 +320,7 @@ export default async function PricingPage({
             <div className="rounded-[22px] border border-[var(--border)] bg-[var(--accent-l)] p-6 sm:p-8 lg:p-10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                 <div className="flex-1">
-                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--accent)] mb-2">お試し — 無料・カード不要</div>
+                  <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">お試し — 無料・カード不要</div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
                   <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
                   <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
@@ -341,7 +341,7 @@ export default async function PricingPage({
             {/* 続けて使うなら、月額プランへ */}
             <div className="mt-10 flex items-center gap-4">
               <div className="flex-1 h-px bg-[var(--border)]" />
-              <span className="text-[12px] font-semibold text-[var(--text3)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
+              <span className="text-[12px] font-semibold text-[var(--text2)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
               <div className="flex-1 h-px bg-[var(--border)]" />
             </div>
 
@@ -357,20 +357,20 @@ export default async function PricingPage({
                   }`}
                 >
                   {plan.featured && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-white text-[11px] font-bold px-4 py-1 rounded-full tracking-[.06em] whitespace-nowrap">
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent-h)] text-white text-[11px] font-bold px-4 py-1 rounded-full tracking-[.06em] whitespace-nowrap">
                       <span aria-hidden="true">✦ </span>おすすめ
                     </div>
                   )}
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>
-                  <div className="text-[12px] text-[var(--text3)] mb-4 leading-[1.6]">{plan.catch}</div>
+                  <div className="text-[12px] text-[var(--text2)] mb-4 leading-[1.6]">{plan.catch}</div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[44px] font-bold text-[var(--text)] leading-none mb-1">
                     <><sup className="text-[22px] align-super font-sans">¥</sup>{plan.price.toLocaleString()}<sub className="text-base text-[var(--text2)] font-sans font-normal">/月</sub></>
                   </div>
-                  <div className="text-[13px] text-[var(--text3)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
+                  <div className="text-[13px] text-[var(--text2)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
                   <div className="flex flex-col flex-1 mb-7">
                     {plan.features.map((feat, i) => (
-                      <div key={i} className={`flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 ${!feat.ok ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>
-                        <span aria-hidden="true" className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text3)]'}`}>
+                      <div key={i} className={`flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 ${!feat.ok ? 'text-[var(--text2)]' : 'text-[var(--text2)]'}`}>
+                        <span aria-hidden="true" className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text2)]'}`}>
                           {feat.ok ? '✓' : '–'}
                         </span>
                         {feat.label}
@@ -387,7 +387,7 @@ export default async function PricingPage({
         {/* Compare Table */}
         <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Plan Comparison</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Plan Comparison</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
@@ -398,7 +398,7 @@ export default async function PricingPage({
                 const planLabel = plan === 'lightning' ? 'ライト' : plan === 'personal' ? '個人向け' : '法人向け'
                 return (
                   <div key={plan} className={`rounded-[16px] border p-5 ${isPersonal ? 'border-[var(--accent)] bg-[var(--accent-l)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}>
-                    <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--accent)]' : 'text-[var(--text2)]'}`}>{planLabel}</div>
+                    <div className={`mb-4 text-[13px] font-bold ${isPersonal ? 'text-[var(--on-primary-container)]' : 'text-[var(--text2)]'}`}>{planLabel}</div>
                     <div className="space-y-3">
                       {TABLE_ROWS.map((row) => (
                         <div key={row.label} className="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3 last:border-0 last:pb-0">
@@ -420,7 +420,7 @@ export default async function PricingPage({
                   <tr>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[25%]"><span className="sr-only">機能</span></th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">ライト</th>
-                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent)] text-white">個人向け</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent-h)] text-white">個人向け</th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">法人向け</th>
                   </tr>
                 </thead>
@@ -442,7 +442,7 @@ export default async function PricingPage({
         {/* Add-on Cast (buyout) */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               専門キャスト3名が、いまだけ全プラン込み
             </h2>
@@ -473,10 +473,10 @@ export default async function PricingPage({
                     </div>
                     <div>
                       <div className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)] mb-0.5">{addon?.name ?? char.name}</div>
-                      <div className="text-[11px] text-[var(--accent)] font-semibold tracking-[.08em] mb-2">{addon?.specialty ?? char.specialty}</div>
+                      <div className="text-[11px] text-[var(--on-primary-container)] font-semibold tracking-[.08em] mb-2">{addon?.specialty ?? char.specialty}</div>
                       <div className="text-[15px] font-bold text-[var(--text)] mt-2">いまは全プラン込み</div>
-                      <div className="text-[12px] text-[var(--text3)] mt-1">通常 {addon?.price ?? '—'}（買い切り）</div>
-                      <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--accent)] border border-[var(--accent)] bg-[var(--accent-l)] px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
+                      <div className="text-[12px] text-[var(--text2)] mt-1">通常 {addon?.price ?? '—'}（買い切り）</div>
+                      <span className="inline-block mt-2 text-[11px] font-semibold text-[var(--on-primary-container)] border border-[var(--accent)] bg-[var(--accent-l)] px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
                     </div>
                   </div>
                 )
@@ -488,7 +488,7 @@ export default async function PricingPage({
         {/* FAQ */}
         <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある質問</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">よくある質問</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               料金に関するよくある質問
             </h2>
@@ -497,7 +497,7 @@ export default async function PricingPage({
                 <details key={i} className="group">
                   <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
                     <span>{faq.q}</span>
-                    <span aria-hidden="true" className="text-[var(--text3)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
+                    <span aria-hidden="true" className="text-[var(--text2)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>
                   <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>

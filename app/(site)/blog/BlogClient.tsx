@@ -75,7 +75,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
             aria-pressed={activeFilter === tab.id}
             className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 ${
               activeFilter === tab.id
-                ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
+                ? 'border-[var(--accent-h)] bg-[var(--accent-h)] text-white'
                 : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
             }`}
           >
@@ -118,7 +118,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                         注目
                       </span>
                     )}
-                    <span className="text-[11px] text-[var(--text3)]">{formatDate(post.date)}</span>
+                    <span className="text-[11px] text-[var(--text2)]">{formatDate(post.date)}</span>
                   </div>
                   <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-snug text-[var(--text)] line-clamp-2 transition-colors group-hover:text-[var(--accent)]">
                     {post.title}
@@ -129,14 +129,14 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                     </p>
                   )}
                 </div>
-                <span aria-hidden="true" className="flex-shrink-0 text-[12px] font-bold text-[var(--text3)] transition-colors group-hover:text-[var(--accent)]">→</span>
+                <span aria-hidden="true" className="flex-shrink-0 text-[12px] font-bold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">→</span>
               </Link>
             )
           })}
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3 py-12 text-center">
-          <p className="text-sm text-[var(--text3)]">このカテゴリの記事はまだありません</p>
+          <p className="text-sm text-[var(--text2)]">このカテゴリの記事はまだありません</p>
           <button
             type="button"
             onClick={() => changeFilter('all')}

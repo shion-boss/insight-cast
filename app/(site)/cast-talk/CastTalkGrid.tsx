@@ -24,7 +24,7 @@ const STORY_IMAGE_MAP: Record<string, StaticImageData> = {
 }
 
 const THEME_PALETTE: Record<string, { color: string; label: string }> = {
-  mint:  { color: '#c2722a', label: 'Customer Perspective' },
+  mint:  { color: '#8a4a18', label: 'Customer Perspective' },
   claus: { color: '#0f766e', label: 'Industry Insight' },
   rain:  { color: '#7c3aed', label: 'Marketing Strategy' },
   hal:   { color: '#1d4ed8', label: 'Story & People' },
@@ -58,7 +58,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
   const storyImg = STORY_IMAGE_MAP[`${talk.interviewer_id}-${talk.guest_id}`] ?? null
-  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
 
   return (
     <Link
@@ -128,7 +128,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
 
         {/* 日付 + 続きを読む */}
         <div className="mt-3.5 flex items-center justify-between">
-          <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
+          <span className="text-[11px] text-[var(--text2)]">{formatDate(talk.published_at)}</span>
           <span className="inline-block text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1" style={{ color: theme.color }}>続きを読む <span aria-hidden="true">→</span></span>
         </div>
       </div>
@@ -141,7 +141,7 @@ const LIST_PAGE_SIZE = 10
 function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number }) {
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#c2722a', label: 'Cast Talk' }
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
   const href = fromPage > 0 ? `/cast-talk/${talk.slug}?from=${fromPage}` : `/cast-talk/${talk.slug}`
 
   return (
@@ -186,7 +186,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
 
       {/* 下段: 日付 + 続きを読む */}
       <div className="mt-3 flex items-center justify-between">
-        <span className="text-[11px] text-[var(--text3)]">{formatDate(talk.published_at)}</span>
+        <span className="text-[11px] text-[var(--text2)]">{formatDate(talk.published_at)}</span>
         <span className="text-[11px] font-bold transition-transform duration-200 group-hover:translate-x-1 inline-block" style={{ color: theme.color }}>続きを読む <span aria-hidden="true">→</span></span>
       </div>
     </Link>
@@ -229,7 +229,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
   if (!featuredTalk && listTotalCount === 0) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm text-[var(--text3)]">まだ公開中の記事がありません</p>
+        <p className="text-sm text-[var(--text2)]">まだ公開中の記事がありません</p>
       </div>
     )
   }

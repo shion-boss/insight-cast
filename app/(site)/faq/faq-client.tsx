@@ -39,7 +39,7 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
                 aria-controls={`${group.id}-answer-${index}`}
               >
                 <span className="text-[15px] font-semibold text-[var(--text)]">{item.q}</span>
-                <span className={`text-[var(--text3)] transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
+                <span className={`text-[var(--text2)] transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true">▾</span>
               </button>
               <div
                 id={`${group.id}-answer-${index}`}
@@ -70,7 +70,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
               onClick={() => setActiveId(group.id)}
               className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors ${
                 activeId === group.id
-                  ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
+                  ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                   : 'border-transparent text-[var(--text2)] hover:text-[var(--accent)]'
               }`}
             >
@@ -86,7 +86,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
         ))}
 
         <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-10 text-center">
-          <div aria-hidden="true" className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] text-2xl text-[var(--accent)]">
+          <div aria-hidden="true" className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent-l)] text-2xl text-[var(--on-primary-container)]">
             ?
           </div>
           <h2 className="mt-5 font-serif text-2xl font-bold text-[var(--text)]">解決しない質問がありますか？</h2>
