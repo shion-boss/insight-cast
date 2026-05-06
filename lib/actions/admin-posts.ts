@@ -133,6 +133,57 @@ export async function togglePublished(id: string, published: boolean): Promise<M
   return { ok: true }
 }
 
+type UploadImageResult = { url: string } | { error: string }
+
+const ALLOWED_IMAGE_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+])
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024 // 5MB
+
+export async function uploadBlogImage(formData: FormData): Promise<UploadImageResult> {
+  if (!(await getIsAdmin())) return { error: '権限がありません' }
+
+  const file = formData.get('file')
+  if (!(file instanceof File)) return { error: 'ファイルが選択されていません' }
+  if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+    return { error: 'PNG / JPEG / WebP / GIF の画像のみアップロードできます' }
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return { error: '画像は 5MB 以下にしてください' }
+  }
+
+  const ext = (() => {
+    const fromName = file.name.includes('.') ? file.name.split('.').pop()?.toLowerCase() : ''
+    if (fromName && /^[a-z0-9]{1,5}$/.test(fromName)) return fromName
+    if (file.type === 'image/png') return 'png'
+    if (file.type === 'image/jpeg') return 'jpg'
+    if (file.type === 'image/webp') return 'webp'
+    if (file.type === 'image/gif') return 'gif'
+    return 'bin'
+  })()
+
+  const path = `posts/${crypto.randomUUID()}.${ext}`
+  const supabase = createAdminClient()
+
+  const { error: uploadError } = await supabase.storage
+    .from('blog-images')
+    .upload(path, file, {
+      contentType: file.type,
+      cacheControl: '31536000, immutable',
+      upsert: false,
+    })
+
+  if (uploadError) {
+    return { error: '画像をアップロードできませんでした。もう一度お試しください' }
+  }
+
+  const { data } = supabase.storage.from('blog-images').getPublicUrl(path)
+  return { url: data.publicUrl }
+}
+
 export async function deletePost(id: string): Promise<MutateResult> {
   if (!(await getIsAdmin())) return { error: '権限がありません' }
   if (!id) return { error: 'IDが不正です' }

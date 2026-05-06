@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { TextInput, PrimaryButton, SecondaryButton, FieldLabel } from '@/components/ui'
-import { createPost, updatePost, deletePost, type PostFormData } from '@/lib/actions/admin-posts'
+import { createPost, updatePost, deletePost, uploadBlogImage, type PostFormData } from '@/lib/actions/admin-posts'
 import { CHARACTERS } from '@/lib/characters'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { MarkdownArticleBody } from '@/lib/blog-markdown'
@@ -129,6 +129,108 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
   )
 }
 
+function MarkdownBlockEditor({
+  block,
+  index,
+  total,
+  onUpdate,
+  onRemove,
+}: {
+  block: Block
+  index: number
+  total: number
+  onUpdate: (content: string) => void
+  onRemove: () => void
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  async function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setUploadError(null)
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const result = await uploadBlogImage(fd)
+      if ('error' in result) {
+        setUploadError(result.error)
+        return
+      }
+      const ta = textareaRef.current
+      const altText = file.name.replace(/\.[^.]+$/, '').slice(0, 60)
+      const insert = `\n\n![${altText}](${result.url})\n\n`
+      if (ta) {
+        const start = ta.selectionStart ?? block.content.length
+        const end = ta.selectionEnd ?? block.content.length
+        const next = block.content.slice(0, start) + insert + block.content.slice(end)
+        onUpdate(next)
+        const newPos = start + insert.length
+        requestAnimationFrame(() => {
+          if (textareaRef.current) {
+            textareaRef.current.focus()
+            textareaRef.current.setSelectionRange(newPos, newPos)
+          }
+        })
+      } else {
+        onUpdate(block.content + insert)
+      }
+    } catch {
+      setUploadError('画像のアップロード中にエラーが起きました。もう一度お試しください')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  return (
+    <div className="group relative">
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+        <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)]">Markdown</span>
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+          className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--on-primary-container)] hover:text-[var(--accent)] transition-colors disabled:opacity-60 disabled:cursor-wait"
+        >
+          {uploading ? 'アップロード中...' : '画像追加'}
+        </button>
+        {total > 1 && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--error)] transition-colors"
+          >
+            削除
+          </button>
+        )}
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        className="hidden"
+        onChange={handleImageSelect}
+      />
+      <textarea
+        ref={textareaRef}
+        aria-label={`本文ブロック ${index + 1}（Markdown）`}
+        value={block.content}
+        onChange={(e) => onUpdate(e.target.value)}
+        rows={10}
+        placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
+        className="min-h-40 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
+      />
+      {uploadError && (
+        <p role="alert" className="mt-1.5 text-xs text-[var(--err)]">{uploadError}</p>
+      )}
+    </div>
+  )
+}
+
 function BlockEditor({
   blocks,
   onChange,
@@ -156,28 +258,13 @@ function BlockEditor({
       {blocks.map((block, i) => (
         <div key={block.id}>
           {block.type === 'markdown' ? (
-            <div className="group relative">
-              <div className="absolute right-2 top-2 hidden items-center gap-1 group-hover:flex">
-                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)]">Markdown</span>
-                {blocks.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeBlock(block.id)}
-                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--error)] transition-colors"
-                  >
-                    削除
-                  </button>
-                )}
-              </div>
-              <textarea
-                aria-label={`本文ブロック ${i + 1}（Markdown）`}
-                value={block.content}
-                onChange={(e) => updateContent(block.id, e.target.value)}
-                rows={10}
-                placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
-                className="min-h-40 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
-              />
-            </div>
+            <MarkdownBlockEditor
+              block={block}
+              index={i}
+              total={blocks.length}
+              onUpdate={(content) => updateContent(block.id, content)}
+              onRemove={() => removeBlock(block.id)}
+            />
           ) : (
             <div className="group relative rounded-[var(--r-sm)] border-[1.5px] border-dashed border-[var(--accent)]/40 bg-[var(--accent)]/[0.03]">
               <div className="flex items-center justify-between border-b border-dashed border-[var(--accent)]/30 px-3 py-1.5">

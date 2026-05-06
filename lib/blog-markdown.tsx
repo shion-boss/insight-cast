@@ -10,9 +10,12 @@ type MarkdownBlock =
   | { type: 'ol'; items: string[] }
   | { type: 'blockquote'; lines: string[] }
   | { type: 'embed'; html: string }
+  | { type: 'image'; alt: string; url: string }
+
+const IMAGE_LINE_RE = /^!\[([^\]]*)\]\(([^)\s]+)\)$/
 
 function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
-  const pattern = /(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/
+  const pattern = /(!\[[^\]]*\]\([^)\s]+\)|\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*|`[^`]+`)/
   const match = text.match(pattern)
 
   if (!match || match.index === undefined) {
@@ -28,7 +31,22 @@ function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode[] {
     parts.push(...renderInlineMarkdown(before, `${keyPrefix}-before`))
   }
 
-  if (token.startsWith('[')) {
+  if (token.startsWith('![')) {
+    const imgMatch = token.match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/)
+    if (imgMatch) {
+      parts.push(
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={`${keyPrefix}-img-${match.index}`}
+          src={imgMatch[2]}
+          alt={imgMatch[1]}
+          loading="lazy"
+          decoding="async"
+          className="my-6 block h-auto max-w-full rounded-[var(--r-md)]"
+        />,
+      )
+    }
+  } else if (token.startsWith('[')) {
     const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
     if (linkMatch) {
       parts.push(
@@ -89,6 +107,13 @@ function parseMarkdown(markdown: string): MarkdownBlock[] {
     }
 
     if (!line) {
+      index += 1
+      continue
+    }
+
+    const imageMatch = line.match(IMAGE_LINE_RE)
+    if (imageMatch) {
+      blocks.push({ type: 'image', alt: imageMatch[1], url: imageMatch[2] })
       index += 1
       continue
     }
@@ -176,6 +201,26 @@ export function MarkdownArticleBody({ markdown }: { markdown: string }) {
               className="my-8"
               dangerouslySetInnerHTML={{ __html: block.html }}
             />
+          )
+        }
+
+        if (block.type === 'image') {
+          return (
+            <figure key={`image-${index}`} className="my-8">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={block.url}
+                alt={block.alt}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full rounded-[var(--r-md)]"
+              />
+              {block.alt && (
+                <figcaption className="mt-2 text-center text-xs text-[var(--text2)]">
+                  {block.alt}
+                </figcaption>
+              )}
+            </figure>
           )
         }
 
