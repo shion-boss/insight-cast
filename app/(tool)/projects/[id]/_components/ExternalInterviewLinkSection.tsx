@@ -143,14 +143,9 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
 
   return (
     <section aria-labelledby="external-links-section-title">
-      <div className="flex items-center justify-between mb-3">
-        <h2 id="external-links-section-title" className="text-[16px] font-bold text-[var(--text)]">
-          取材リンク
-        </h2>
-        <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text2)]">
-          法人プラン
-        </span>
-      </div>
+      <h2 id="external-links-section-title" className="text-[16px] font-bold text-[var(--text)] mb-3">
+        取材リンク
+      </h2>
 
       <p className="text-sm text-[var(--text2)] mb-4">
         リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。
