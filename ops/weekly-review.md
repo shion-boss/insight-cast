@@ -237,6 +237,45 @@ Static ルートの状態は維持（`/`, `/about`, `/blog`, `/cast`, `/contact`
 | `experimental.optimizeCss` を App Router で期待する誤解 | 1 | 初出 | 🔲 要提案 |
 | Google Fonts (CJK) の subsets 指定が CSS @font-face 数を実質減らさない | 1 | 初出 | 🔲 要提案（CJK フォントは self-host or system stack 推奨） |
 
+**追加対応（同日）: ネットワークペイロードの追加削減**
+
+ユーザー報告（Lighthouse「Avoid enormous network payloads」）: insight-cast.jp 配下 481.9 KiB + GTM 153.4 KiB ≒ 635 KiB。LP 配下に Sentry 125 KiB / Supabase 51 KiB / React 56 KiB / GTM 153 KiB。
+
+**bundle 内訳の特定**: `.next/app-build-manifest.json` で LP `/(site)/page` がロードする chunk を確認した結果、
+- chunk 7528 (408 KB raw / 125 KiB gzip): @sentry/nextjs
+- chunk 5281 (178 KB raw / 51 KiB gzip): @supabase/ssr （`useIsLoggedIn` が `createBrowserClient` を import していたため）
+- chunk 4bd1b696 (173 KB raw / 56 KiB gzip): React DOM
+- chunk 8538 (65 KB raw): LP コンポーネント + 一部インライン data URI
+が判明。LP のような marketing page で Supabase JS を読み込むのは過剰。
+
+**対処**
+- `lib/auth-state.ts`: `useIsLoggedIn` を `document.cookie` の `sb-...-auth-token` 存在判定に書き換え。Supabase JS の import を排除。UI 表示専用なので security 判定はサーバー側で従来どおり `getUser()` で行う
+- `app/components/google-analytics.tsx`: GTM の Script 戦略を `afterInteractive` → `lazyOnload` に変更。153 KiB を window.load 完了後に倒し、LCP との競合を排除
+- `next.config.ts`: `withSentryConfig` に `bundleSizeOptimizations.{excludeDebugStatements, excludeReplayShadowDom, excludeReplayIframe, excludeReplayWorker}` を設定。Replay は 0% 運用なので tree-shake 可能（実測では今回のビルドでは効果限定的、将来の SDK update で効く）
+
+**削減効果（First Load JS、`next build` 実測）**
+| Page | Before | After | 差分 |
+|---|---|---|---|
+| `/` (LP) | 283 kB | **221 kB** | **-62 kB (-22%)** |
+| `/blog` | 283 kB | 221 kB | -62 kB |
+| `/cast` | 282 kB | 219 kB | -63 kB |
+| `/faq` | 283 kB | 221 kB | -62 kB |
+| `/philosophy` | 282 kB | 219 kB | -63 kB |
+| `/privacy` `/terms` `/tokushoho` | 282 kB | 219 kB | -63 kB |
+
+LP の chunk 構成（`.next/app-build-manifest.json` 確認）:
+- 削除: chunk 5281 (Supabase 178 KB raw)
+- 維持: 7528 (Sentry), 4bd1b696 (React), 1356, 7862, 8538, page-...
+
+GTM は build size は変わらないが initial paint からブロック解除（運用効果のみ）。typecheck・build 通過、Static ルートの状態は全て維持。
+
+**指摘パターン（追加）**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 「auth state を UI 表示するため」だけに重い SDK 全体を marketing pages に持ち込む | 1 | 初出 | 🔲 要提案（cookie 存在判定で済む UI 用途は Supabase JS を import しない） |
+| GTM/GA を `afterInteractive` で initial paint と競合させる | 1 | 初出 | 🔲 要提案（marketing 用途は `lazyOnload` がデフォルト） |
+
 ---
 
 ## 週: 2026-04-22 〜（進行中・以下は日次ログ）

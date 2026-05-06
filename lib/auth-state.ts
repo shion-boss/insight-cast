@@ -1,40 +1,40 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
-// クライアント側で「ログイン済みかどうか」だけを判定する hook。
-// `getSession()` は cookie / localStorage の値を読むだけで Supabase Auth API
-// への往復が発生しないため、site (marketing) 系ページを静的生成のまま維持できる。
+// 「UI 表示用」のログイン状態判定 hook。
+// document.cookie に Supabase auth cookie（`...-auth-token`）が存在するかを
+// 単純チェックするだけで、Supabase JS の import は行わない。これにより
+// marketing pages のクライアント JS バンドルから @supabase/ssr 約 50KiB
+// (gzip) が外れる。
 //
 // 戻り値:
-//  - null   : 解決前（マウント直後の最初のレンダー）
-//  - true   : ログイン済み
-//  - false  : 未ログイン
+//  - null   : 解決前（最初のレンダー、サーバ側 / マウント前）
+//  - true   : auth cookie あり（ログイン済みの可能性が高い）
+//  - false  : auth cookie なし（未ログイン）
 //
-// UI 側は null の間、未ログイン側を楽観的に描画する or skeleton を出す。
-// セキュリティ判定にはこの値を使わず、必ずサーバ側 / API 側で `getUser()` を行うこと。
+// 注意:
+//  - これは UI 表示専用。security 判定には使わない。
+//  - cookie が偽造・有効期限切れでも true を返す可能性がある（middleware /
+//    server 側で実際の `getUser()` を必ず通すため UI 上の問題に留まる）
+//  - ログアウトを別タブで行った場合などの cookie 削除は反映されないが、
+//    next/link 遷移後にもう一度判定が走るため大きな実害はない
+//
+// 旧実装は `@supabase/ssr` の `createBrowserClient` を import して
+// `auth.getSession()` を呼んでいたが、bundle に Supabase JS 全体が
+// 取り込まれていたため軽量版に置き換えた。
+function readAuthCookie(): boolean {
+  if (typeof document === 'undefined') return false
+  // Supabase の auth cookie 名は `sb-<project-ref>-auth-token`。
+  // 末尾共通の `-auth-token=` でマッチする（プロジェクト ref が変わっても拾える）。
+  return /(?:^|;\s*)sb-[^=;]*-auth-token=/.test(document.cookie)
+}
+
 export function useIsLoggedIn(): boolean | null {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const supabase = createClient()
-    let cancelled = false
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (cancelled) return
-      setIsLoggedIn(Boolean(data.session))
-    })
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (cancelled) return
-      setIsLoggedIn(Boolean(session))
-    })
-
-    return () => {
-      cancelled = true
-      sub.subscription.unsubscribe()
-    }
+    setIsLoggedIn(readAuthCookie())
   }, [])
 
   return isLoggedIn

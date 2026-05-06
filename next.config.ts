@@ -116,4 +116,14 @@ export default withSentryConfig(nextConfig, {
     treeshake: { removeDebugLogging: true },
     automaticVercelMonitors: true,
   },
+  // 未使用機能を build 時に tree-shake して bundle を削る。
+  // - excludeDebugStatements: SDK 内のデバッグ文を除去（本番では不要）
+  // - excludeReplay*: Session Replay を完全 0% で運用しているため除去
+  // tracing は 10% で使うので excludeTracing は無効のまま。
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+    excludeReplayShadowDom: true,
+    excludeReplayIframe: true,
+    excludeReplayWorker: true,
+  },
 });
