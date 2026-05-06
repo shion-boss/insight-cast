@@ -278,7 +278,7 @@ export default function AnalysisStatusPanel({
       {/* HP調査・競合比較 セクション */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
-          <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-2">調査レポート</div>
+          <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-2">調査レポート</div>
           <h3 className="text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
           <p className="text-sm text-[var(--text2)] leading-relaxed">
             {competitorCount > 0
@@ -334,12 +334,12 @@ export default function AnalysisStatusPanel({
             </Link>
           )}
           {nextAvailableLabel && status === 'report_ready' && (
-            <p className="text-xs text-[var(--text3)]">
+            <p className="text-xs text-[var(--text2)]">
               次回の再調査は {nextAvailableLabel} 以降に行えます。
             </p>
           )}
           {!canEdit && (
-            <p className="text-xs text-[var(--text3)]">
+            <p className="text-xs text-[var(--text2)]">
               再調査は編集者またはオーナーが操作できます。
             </p>
           )}
@@ -378,11 +378,11 @@ export default function AnalysisStatusPanel({
               className="flex-shrink-0 mt-0.5"
             />
             <div className="min-w-0">
-              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-1">
+              <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-1">
                 Google Search Console
               </div>
               {gscStatus === 'loading' && (
-                <p className="text-sm text-[var(--text3)]">確認中...</p>
+                <p className="text-sm text-[var(--text2)]">確認中...</p>
               )}
               {gscStatus === 'connected' && (
                 <div>
@@ -391,7 +391,7 @@ export default function AnalysisStatusPanel({
                       連携済み
                     </span>
                     {gscSiteUrl && (
-                      <span className="text-xs text-[var(--text3)] truncate max-w-[200px]" title={gscSiteUrl}>
+                      <span className="text-xs text-[var(--text2)] truncate max-w-[200px]" title={gscSiteUrl}>
                         {gscSiteUrl}
                       </span>
                     )}
@@ -406,7 +406,7 @@ export default function AnalysisStatusPanel({
                   <p className="text-sm text-[var(--text2)]">
                     連携すると、検索データをもとにより詳しい調査ができます。
                   </p>
-                  <p className="text-xs text-[var(--text3)]">
+                  <p className="text-xs text-[var(--text2)]">
                     {isOwner
                       ? 'ホームページを登録している Google アカウントで連携してください。'
                       : 'プロジェクトのオーナーが連携できます。'}
@@ -428,7 +428,7 @@ export default function AnalysisStatusPanel({
                   type="button"
                   onClick={handleGscDisconnectRequest}
                   disabled={gscDeleting}
-                  className={getButtonClass('ghost', 'text-sm text-[var(--text3)] hover:text-[var(--err)]')}
+                  className={getButtonClass('ghost', 'text-sm text-[var(--text2)] hover:text-[var(--err)]')}
                 >
                   {gscDeleting ? '解除中...' : '連携を解除'}
                 </button>

@@ -71,7 +71,7 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
       className={`group relative ${isEditing ? '' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
       <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 ${headerRounded} bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">
           {label ?? BLOCK_LABEL[kind]}
         </div>
         {!isEditing && (
@@ -109,7 +109,7 @@ export function SuggestionCard({ item }: { item: ArticleSuggestion }) {
         {item.type === 'image' ? '📷' : '✏️'}
       </span>
       <div>
-        <p className="text-xs font-semibold text-[var(--accent)] mb-0.5">
+        <p className="text-xs font-semibold text-[var(--on-primary-container)] mb-0.5">
           {item.type === 'image' ? '写真・画像の提案' : '内容追加の提案'}
         </p>
         <p className="text-sm text-[var(--text2)] leading-relaxed">{item.text}</p>
@@ -150,7 +150,7 @@ export function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode
       className={`group relative rounded-[14px] border border-[var(--border)] bg-[var(--surface)] ${isEditing ? 'ring-1 ring-[var(--accent)]/30' : 'cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none'}`}
     >
       <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
-        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)]">
+        <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">
           {BLOCK_LABEL[kind]}
         </div>
         {!isEditing && (

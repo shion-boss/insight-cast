@@ -77,10 +77,10 @@ export function InterviewerIntroPanelCard({
       >
         <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
           <div className="flex items-center gap-2 min-w-0">
-            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] whitespace-nowrap">インタビュアー紹介</div>
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">インタビュアー紹介</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
-                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}
@@ -114,10 +114,10 @@ export function InterviewerIntroPanelCard({
       >
         <div className={`sticky ${STICKY_TOP} z-[20] flex items-center justify-between gap-3 rounded-t-[14px] bg-[var(--surface)] group-hover:bg-[var(--bg2)] px-4 sm:px-5 pt-4 sm:pt-5 pb-2 transition-colors`}>
           <div className="flex items-center gap-2 min-w-0">
-            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text3)] whitespace-nowrap">会話本文</div>
+            <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">会話本文</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
-                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text3)] hover:text-[var(--text2)]'}`}>
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}

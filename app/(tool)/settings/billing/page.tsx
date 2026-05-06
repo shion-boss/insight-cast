@@ -92,14 +92,14 @@ export default async function BillingPage({
           <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
             現在のプラン
           </h2>
-          <p className="mb-6 text-xs text-[var(--text3)]">契約中のプランと請求サイクルを確認できます</p>
+          <p className="mb-6 text-xs text-[var(--text2)]">契約中のプランと請求サイクルを確認できます</p>
 
           <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[rgba(194,114,42,0.25)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--on-primary-container)]">
                 Current Plan
               </p>
-              <p className="text-xl font-bold text-[var(--accent)]">
+              <p className="text-xl font-bold text-[var(--on-primary-container)]">
                 {planLabel}
               </p>
             </div>
@@ -158,7 +158,7 @@ export default async function BillingPage({
             <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
               支払い管理
             </h2>
-            <p className="mb-5 text-xs text-[var(--text3)]">
+            <p className="mb-5 text-xs text-[var(--text2)]">
               カード情報の変更・プランの変更・解約はこちらから行えます
             </p>
             <PortalButton />

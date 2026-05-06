@@ -54,7 +54,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
   return (
     <div className="max-w-2xl">
       <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">まとめて登録</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--on-primary-container)]">まとめて登録</p>
         <p className="mt-1 text-sm text-[var(--text2)]">この画面だけで、プロジェクトの基本情報と参考HPをまとめて登録できます。</p>
       </div>
 
@@ -120,7 +120,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
             {urlError ? (
               <p id="url-error" role="alert" className="mt-1 text-[12px] text-[var(--err)]">{urlError}</p>
             ) : (
-              <p id="url-hint" className="mt-1 text-[12px] text-[var(--text3)]">https:// がなくても大丈夫です</p>
+              <p id="url-hint" className="mt-1 text-[12px] text-[var(--text2)]">https:// がなくても大丈夫です</p>
             )}
           </div>
         </section>

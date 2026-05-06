@@ -210,7 +210,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
         <div className="flex items-start justify-between mb-4">
           <div>
             <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事づくりの進み具合</div>
-            <div className="text-[12px] text-[var(--text3)]">取材から作った記事の継続ペース</div>
+            <div className="text-[12px] text-[var(--text2)]">取材から作った記事の継続ペース</div>
           </div>
           <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去6ヶ月</span>
         </div>

@@ -414,7 +414,7 @@ export function SettingsClient({
               onClick={() => setActiveSection(section)}
               className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-xs sm:text-sm font-medium transition-all ${
                 activeSection === section
-                  ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--accent)]'
+                  ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                   : 'border-transparent text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'
               }`}
             >
@@ -430,12 +430,12 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウント情報
                 </h2>
-                <p className="mb-6 text-xs text-[var(--text3)]">表示名、メールアドレス、アイコンを管理します</p>
+                <p className="mb-6 text-xs text-[var(--text2)]">表示名、メールアドレス、アイコンを管理します</p>
 
                 <div className="mb-6 flex flex-col gap-5 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-4 min-w-0">
                     <div
-                      className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] text-2xl font-bold text-[var(--accent)]"
+                      className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[var(--border)] bg-[var(--accent-l)] text-2xl font-bold text-[var(--on-primary-container)]"
                       aria-label={avatarUrl ? '現在のアイコン画像' : '現在のアイコン'}
                       role="img"
                       style={avatarUrl ? {
@@ -449,7 +449,7 @@ export function SettingsClient({
                     </div>
                     <div className="min-w-0">
                       <p className="mb-1 truncate font-semibold text-[var(--text)]">{name.trim() || '名前未設定'}</p>
-                      <p className="truncate text-xs text-[var(--text3)]">{email || 'メールアドレス未設定'}</p>
+                      <p className="truncate text-xs text-[var(--text2)]">{email || 'メールアドレス未設定'}</p>
                     </div>
                   </div>
 
@@ -469,7 +469,7 @@ export function SettingsClient({
                     >
                       {avatarUploading ? 'アップロード中...' : 'アイコンを変更'}
                     </button>
-                    <p className="mt-2 text-xs text-[var(--text3)]">画像は 2MB 以下、正方形がおすすめです。</p>
+                    <p className="mt-2 text-xs text-[var(--text2)]">画像は 2MB 以下、正方形がおすすめです。</p>
                   </div>
                 </div>
 
@@ -501,7 +501,7 @@ export function SettingsClient({
                       disabled={profileInputsDisabled}
                       aria-describedby="settings-first-person-help"
                     />
-                    <p id="settings-first-person-help" className="mt-1.5 text-xs text-[var(--text3)]">
+                    <p id="settings-first-person-help" className="mt-1.5 text-xs text-[var(--text2)]">
                       ブログ記事を作るときに、この一人称で書いてもらえます。空欄なら「私」になります。
                     </p>
                   </div>
@@ -533,11 +533,11 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   メールアドレスの変更
                 </h2>
-                <p className="mb-5 break-all text-xs text-[var(--text3)]">現在: {email || '未設定'}</p>
+                <p className="mb-5 break-all text-xs text-[var(--text2)]">現在: {email || '未設定'}</p>
 
                 {emailSaved ? (
                   <div className="rounded-xl bg-[var(--accent-l)] border border-[rgba(194,114,42,0.25)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
-                    <p className="font-semibold text-[var(--accent)] mb-1">確認メールを送りました</p>
+                    <p className="font-semibold text-[var(--on-primary-container)] mb-1">確認メールを送りました</p>
                     <p>新しいメールアドレス宛に確認リンクを送りました。リンクをクリックすると変更が完了します。</p>
                   </div>
                 ) : (
@@ -582,10 +582,10 @@ export function SettingsClient({
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">プロジェクトの削除</h2>
-                <p className="mb-5 text-xs text-[var(--text3)]">削除すると取材メモ・記事も含めて論理削除されます</p>
+                <p className="mb-5 text-xs text-[var(--text2)]">削除すると取材メモ・記事も含めて論理削除されます</p>
 
                 {projectList.length === 0 ? (
-                  <p className="text-sm text-[var(--text3)]">登録済みのプロジェクトはありません。</p>
+                  <p className="text-sm text-[var(--text2)]">登録済みのプロジェクトはありません。</p>
                 ) : (
                   <ul className="space-y-3">
                     {projectList.map((project) => {
@@ -668,7 +668,7 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウントを削除
                 </h2>
-                <p className="mb-5 text-xs text-[var(--text3)]">この操作は取り消せません</p>
+                <p className="mb-5 text-xs text-[var(--text2)]">この操作は取り消せません</p>
 
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
@@ -720,14 +720,14 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 現在のプラン
               </h2>
-              <p className="mb-6 text-xs text-[var(--text3)]">現在の契約内容と利用上限を確認できます</p>
+              <p className="mb-6 text-xs text-[var(--text2)]">現在の契約内容と利用上限を確認できます</p>
 
               <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[rgba(194,114,42,0.25)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--on-primary-container)]">
                     Current Plan
                   </p>
-                  <p className="text-xl font-bold text-[var(--accent)]">
+                  <p className="text-xl font-bold text-[var(--on-primary-container)]">
                     {plan.label}
                   </p>
                 </div>
@@ -746,7 +746,7 @@ export function SettingsClient({
                   { label: '競合調査', value: `各プロジェクト ${plan.maxCompetitorsPerProject} 社` },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl bg-[var(--bg2)] px-4 py-4">
-                    <p className="text-xs text-[var(--text3)]">{item.label}</p>
+                    <p className="text-xs text-[var(--text2)]">{item.label}</p>
                     <p className="mt-2 text-xl font-bold text-[var(--text)]">
                       {item.value}
                     </p>
@@ -812,7 +812,7 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 通知設定
               </h2>
-              <p className="mb-5 text-xs text-[var(--text3)]">メール通知の受信設定を保存できます</p>
+              <p className="mb-5 text-xs text-[var(--text2)]">メール通知の受信設定を保存できます</p>
 
               <div className="space-y-0">
                 {NOTIFICATIONS.map((notification, index) => (
@@ -824,7 +824,7 @@ export function SettingsClient({
                   >
                     <div>
                       <p className="mb-0.5 text-sm font-semibold text-[var(--text)]">{notification.label}</p>
-                      <p className="text-xs text-[var(--text3)]">{notification.desc}</p>
+                      <p className="text-xs text-[var(--text2)]">{notification.desc}</p>
                     </div>
                     <Toggle
                       on={notifications[notification.key]}
@@ -869,10 +869,10 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 セキュリティ
               </h2>
-              <p className="mb-6 text-xs text-[var(--text3)]">ログイン中のアカウントのパスワードを更新できます</p>
+              <p className="mb-6 text-xs text-[var(--text2)]">ログイン中のアカウントのパスワードを更新できます</p>
 
               {!isEmailUser ? (
-                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5 text-sm text-[var(--text3)]">
+                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5 text-sm text-[var(--text2)]">
                   Googleアカウントでログイン中のため、パスワードの設定はありません。
                 </p>
               ) : (
@@ -908,7 +908,7 @@ export function SettingsClient({
                   </div>
                 </div>
 
-                <p className="mt-3 text-xs leading-6 text-[var(--text3)]">
+                <p className="mt-3 text-xs leading-6 text-[var(--text2)]">
                   現在ログイン中のため、確認メールなしで更新されます。共有端末では更新後にログアウトしてください。
                 </p>
 

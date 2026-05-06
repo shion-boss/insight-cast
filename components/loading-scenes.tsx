@@ -47,7 +47,7 @@ export function AnalysisLoadingScene({
         <AiBadge label="調査中" />
         <div className="min-w-0 flex-1">
           <p className="font-serif text-[15px] font-bold text-[var(--text)]">ホームページを分析しています</p>
-          <p className="mt-0.5 truncate text-xs text-[var(--text3)]">{projectName}</p>
+          <p className="mt-0.5 truncate text-xs text-[var(--text2)]">{projectName}</p>
         </div>
       </div>
       <div className="ic-loading-card-body">
@@ -182,9 +182,9 @@ export function InterviewLoadingScene({
       </div>
 
       <div className="mt-7">
-        <div className="mb-2 flex items-center justify-between text-[11px] text-[var(--text3)]">
+        <div className="mb-2 flex items-center justify-between text-[11px] text-[var(--text2)]">
           <span>取材準備</span>
-          <span className="font-semibold text-[var(--accent)]">{progress}%</span>
+          <span className="font-semibold text-[var(--on-primary-container)]">{progress}%</span>
         </div>
         <div className="h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
           <div
@@ -267,7 +267,7 @@ export function WritingLoadingScene({
         />
         <div className="min-w-0">
           <p className="font-serif text-[15px] font-bold text-[var(--text)]">{title}</p>
-          <p className="mt-0.5 text-xs text-[var(--text3)]">{description}</p>
+          <p className="mt-0.5 text-xs text-[var(--text2)]">{description}</p>
         </div>
         <div className="ml-auto">
           <AiBadge label="作成中" />
@@ -285,7 +285,7 @@ export function WritingLoadingScene({
 
         <div className="mb-5 text-center">
           <p className="text-sm font-semibold text-[var(--text)]">{phases[phaseIndex]}</p>
-          <p className="mt-1 text-xs text-[var(--text3)]">取材内容をもとに、読みやすい形へまとめています。</p>
+          <p className="mt-1 text-xs text-[var(--text2)]">取材内容をもとに、読みやすい形へまとめています。</p>
         </div>
 
         <div className="mb-5 h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">

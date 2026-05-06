@@ -122,14 +122,14 @@ export default function CompetitorsForm({
     <form onSubmit={handleSaveOnly} className="space-y-6">
       <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-3">
         <div>
-          <p className="text-xs text-[var(--text3)]">自社HP URL</p>
+          <p className="text-xs text-[var(--text2)]">自社HP URL</p>
           <p className="mt-1 break-all text-sm font-medium text-[var(--text2)]">{siteUrl}</p>
         </div>
-        <p className="text-xs leading-relaxed text-[var(--text3)]">
+        <p className="text-xs leading-relaxed text-[var(--text2)]">
           いま設定している参考HPは下の入力欄に入っています。空にして保存すると、比較なしで再調査します。
         </p>
         {initialCompetitorUrls.length === 0 && (
-          <p className="text-xs text-[var(--text3)]">
+          <p className="text-xs text-[var(--text2)]">
             まだ参考HPは登録されていません。おすすめから選ぶか、URLを入力して追加できます。
           </p>
         )}

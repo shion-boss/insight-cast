@@ -141,15 +141,15 @@ export default async function AdminCostsPage() {
 
       {/* 今月サマリー */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">今月のAI API費用</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">今月のAI API費用</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <CostCard label="今月累計" usd={currentCost} />
           <CostCard label="月末予測" usd={projectedCost} />
           <CostCard label="先月合計" usd={lastCost} />
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
-            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">今月トークン数</p>
+            <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">今月トークン数</p>
             <p className="mt-2 text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
-            <p className="mt-0.5 text-xs text-[var(--text3)]">tokens</p>
+            <p className="mt-0.5 text-xs text-[var(--text2)]">tokens</p>
           </div>
         </div>
       </section>
@@ -159,9 +159,9 @@ export default async function AdminCostsPage() {
 
       {/* ルート別 */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">機能別内訳（今月）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">機能別内訳（今月）</h2>
         {byRouteList.length === 0 ? (
-          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
+          <p className="text-sm text-[var(--text2)]">まだデータがありません</p>
         ) : (
           <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             {byRouteList.map((row, i) => (
@@ -171,7 +171,7 @@ export default async function AdminCostsPage() {
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[var(--text)]">{ROUTE_LABELS[row.route] ?? row.route}</p>
-                  <p className="text-xs text-[var(--text3)]">{row.calls}回</p>
+                  <p className="text-xs text-[var(--text2)]">{row.calls}回</p>
                 </div>
                 <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
               </div>
@@ -182,7 +182,7 @@ export default async function AdminCostsPage() {
 
       {/* 固定費 */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">固定費（月額）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">固定費（月額）</h2>
         <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           {FIXED_COSTS.map((row, i) => (
             <div
@@ -191,7 +191,7 @@ export default async function AdminCostsPage() {
             >
               <div className="flex-1">
                 <p className="text-sm font-medium text-[var(--text)]">{row.label}</p>
-                <p className="text-xs text-[var(--text3)]">{row.plan}</p>
+                <p className="text-xs text-[var(--text2)]">{row.plan}</p>
               </div>
               {row.usd === null
                 ? <p className="text-sm font-semibold text-[var(--text)]">要確認</p>
@@ -206,12 +206,12 @@ export default async function AdminCostsPage() {
             <CostValue usd={FIXED_COST_TOTAL} className="text-sm font-bold text-[var(--text)]" />
           </div>
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
+        <p className="mt-2 text-xs text-[var(--text2)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
       </section>
 
       {/* HP運用コスト（管理者） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">ホームページ運用費（今月・管理者操作 + 自動実行）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">ホームページ運用費（今月・管理者操作 + 自動実行）</h2>
         <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
             <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
@@ -221,21 +221,21 @@ export default async function AdminCostsPage() {
             <div key={route} className="flex items-center gap-4 border-b border-[var(--border)] px-5 py-3 last:border-0">
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
-                <p className="text-xs text-[var(--text3)]">{calls}回</p>
+                <p className="text-xs text-[var(--text2)]">{calls}回</p>
               </div>
               <CostValue usd={cost} className="text-sm font-semibold text-[var(--text)]" />
             </div>
           ))}
           {Object.keys(blogByRoute).length === 0 && (
-            <p className="px-5 py-4 text-sm text-[var(--text3)]">まだデータがありません</p>
+            <p className="px-5 py-4 text-sm text-[var(--text2)]">まだデータがありません</p>
           )}
         </div>
-        <p className="mt-2 text-xs text-[var(--text3)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
+        <p className="mt-2 text-xs text-[var(--text2)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
       </section>
 
       {/* 月別推移 */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">月別推移（過去12ヶ月）</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">月別推移（過去12ヶ月）</h2>
         <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
           <div className="space-y-1.5">
             {(() => {
@@ -246,7 +246,7 @@ export default async function AdminCostsPage() {
                 const label = `${y}/${mo}`
                 return (
                   <div key={m.month} className="group flex items-center gap-3 cursor-default">
-                    <span className="w-16 shrink-0 text-xs text-[var(--text3)]">{label}</span>
+                    <span className="w-16 shrink-0 text-xs text-[var(--text2)]">{label}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
@@ -262,7 +262,7 @@ export default async function AdminCostsPage() {
       {/* 日別推移 */}
       {dailyList.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">日別推移（今月）</h2>
+          <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">日別推移（今月）</h2>
           <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
             <div className="space-y-1.5">
               {dailyList.map((d) => {
@@ -270,7 +270,7 @@ export default async function AdminCostsPage() {
                 const pct = Math.round((d.cost / maxCost) * 100)
                 return (
                   <div key={d.day} className="group flex items-center gap-3 cursor-default">
-                    <span className="w-24 shrink-0 text-xs text-[var(--text3)]">{d.day}</span>
+                    <span className="w-24 shrink-0 text-xs text-[var(--text2)]">{d.day}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
@@ -283,7 +283,7 @@ export default async function AdminCostsPage() {
         </section>
       )}
 
-      <div className="text-xs text-[var(--text3)]">
+      <div className="text-xs text-[var(--text2)]">
         <p>* AI API費用は claude-sonnet-4-6 の公開レート（$3/M input, $15/M output）で計算しています。</p>
         <p>* 為替レートは概算 1 USD = {EXCHANGE_RATE} JPY です。</p>
         <p>* ログが取れるのはこの機能実装以降の利用分からです。</p>

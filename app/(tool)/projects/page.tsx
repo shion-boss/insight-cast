@@ -33,19 +33,19 @@ function AddProjectCard({ isLocked }: { isLocked: boolean }) {
       {isLocked ? (
         <>
           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--text3)]/20">
-            <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text3)]" aria-hidden="true">
+            <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text2)]" aria-hidden="true">
               <rect x="2" y="9" width="14" height="13" rx="3" fill="currentColor"/>
               <path d="M5 9V6.5a4 4 0 0 1 8 0V9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
             </svg>
           </div>
-          <div className="text-[14px] font-semibold text-[var(--text3)]">新しいプロジェクトを追加する</div>
-          <div className="text-[12px] text-[var(--accent)] font-semibold">プランをアップグレードする <span aria-hidden="true">→</span></div>
+          <div className="text-[14px] font-semibold text-[var(--text2)]">新しいプロジェクトを追加する</div>
+          <div className="text-[12px] text-[var(--on-primary-container)] font-semibold">プランをアップグレードする <span aria-hidden="true">→</span></div>
         </>
       ) : (
         <>
-          <div aria-hidden="true" className="text-[36px] text-[var(--text3)]">+</div>
+          <div aria-hidden="true" className="text-[36px] text-[var(--text2)]">+</div>
           <div className="text-[14px] font-semibold text-[var(--text2)]">新しいプロジェクトを追加する</div>
-          <div className="text-[12px] text-[var(--text3)]">名前とURLを登録して、調査の準備へ</div>
+          <div className="text-[12px] text-[var(--text2)]">名前とURLを登録して、調査の準備へ</div>
         </>
       )}
     </Link>
@@ -206,7 +206,7 @@ export default async function ProjectsPage() {
             </p>
             <Link
               href="/pricing?reason=project_over_limit"
-              className="mt-2 inline-block text-sm font-semibold text-[var(--accent)] hover:underline rounded"
+              className="mt-2 inline-block text-sm font-semibold text-[var(--on-primary-container)] hover:underline rounded"
             >
               プランを見る <span aria-hidden="true">→</span>
             </Link>
@@ -221,7 +221,7 @@ export default async function ProjectsPage() {
           { n: interviews.length, l: '総インタビュー' },
         ].map((s) => (
           <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
-            <span className="text-[28px] font-bold text-[var(--accent)]">{s.n}</span>
+            <span className="text-[28px] font-bold text-[var(--on-primary-container)]">{s.n}</span>
             <span className="text-sm text-[var(--text2)]">{s.l}</span>
           </div>
         ))}
@@ -256,7 +256,7 @@ export default async function ProjectsPage() {
                 <div className="flex items-start gap-4 mb-4">
                   <div className={`w-12 h-12 rounded-[var(--r)] flex items-center justify-center flex-shrink-0 ${isLocked ? 'bg-[var(--bg2)]' : 'bg-[var(--accent-l)]'}`}>
                     {isLocked ? (
-                      <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text3)]" aria-hidden="true">
+                      <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[var(--text2)]" aria-hidden="true">
                         <rect x="3" y="11" width="14" height="13" rx="3" fill="currentColor"/>
                         <path d="M6 11V7.5a4 4 0 0 1 8 0V11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
                       </svg>
@@ -267,7 +267,7 @@ export default async function ProjectsPage() {
                   <div className="flex-1 min-w-0">
                     <Link href={`/projects/${project.id}`} className="block rounded">
                       <div className="text-[18px] font-bold text-[var(--text)] mb-1">{project.name || project.hp_url}</div>
-                      <div className="text-[12px] text-[var(--text3)] overflow-hidden text-ellipsis whitespace-nowrap flex items-center gap-1">
+                      <div className="text-[12px] text-[var(--text2)] overflow-hidden text-ellipsis whitespace-nowrap flex items-center gap-1">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="flex-shrink-0"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap">{project.hp_url}</span>
                       </div>
@@ -308,7 +308,7 @@ export default async function ProjectsPage() {
                   ].map((s) => (
                     <div key={s.l} className="bg-[var(--bg2)] rounded-[var(--r-sm)] p-2.5 text-center">
                       <div className={`font-bold text-[var(--text)] ${String(s.n).length > 4 ? 'text-[14px]' : 'text-[20px]'}`}>{s.n}</div>
-                      <div className="text-[11px] text-[var(--text3)] mt-0.5">{s.l}</div>
+                      <div className="text-[11px] text-[var(--text2)] mt-0.5">{s.l}</div>
                     </div>
                   ))}
                 </div>
@@ -318,7 +318,7 @@ export default async function ProjectsPage() {
                   {!isShared && (
                     isLocked ? (
                       <span
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text3)] cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text2)] cursor-not-allowed"
                         title="プランの上限を超えているためこのプロジェクトでは取材できません"
                       >
                         <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

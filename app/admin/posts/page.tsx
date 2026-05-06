@@ -31,7 +31,7 @@ export default async function AdminPostsPage() {
 
       {posts.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text3)]">記事がありません</p>
+          <p className="text-sm text-[var(--text2)]">記事がありません</p>
           <ButtonLink href="/admin/posts/new" className="mt-4 inline-flex">
             最初の記事を書く
           </ButtonLink>

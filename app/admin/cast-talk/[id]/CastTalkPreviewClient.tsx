@@ -80,7 +80,7 @@ function StarRating({
             type="button"
             onClick={() => onChange(value)}
             aria-label="評価をリセット"
-            className="ml-1 self-center text-xs text-[var(--text3)] underline hover:text-[var(--text)]"
+            className="ml-1 self-center text-xs text-[var(--text2)] underline hover:text-[var(--text)]"
             onDoubleClick={() => {
               // no-op placeholder — reset via separate interaction
             }}
@@ -152,7 +152,7 @@ function CastTalkReviewForm({
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold text-[var(--text)]">品質評価</h2>
-          <p className="mt-0.5 text-xs text-[var(--text3)]">評価はAIキャストの次回生成に反映されます</p>
+          <p className="mt-0.5 text-xs text-[var(--text2)]">評価はAIキャストの次回生成に反映されます</p>
         </div>
         {saved && (
           <span role="status" className="shrink-0 rounded-full bg-[var(--ok-l)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ok)]">
@@ -188,7 +188,7 @@ function CastTalkReviewForm({
       </div>
 
       {overallScore !== null && (
-        <p className="text-xs text-[var(--text3)]">
+        <p className="text-xs text-[var(--text2)]">
           {overallScore <= 2 && '品質に問題あり — 改善してほしい点を書くと次の生成に反映されます'}
           {overallScore === 3 && 'まあまあ — 良い点・改善点を書いておくと精度が上がります'}
           {overallScore >= 4 && '良い出来 — 良かった点を書いておくと同じ方向性を維持できます'}
@@ -315,20 +315,20 @@ export function CastTalkPreviewClient({
       <div className="space-y-1">
         <Link
           href="/admin/cast-talk"
-          className="text-sm text-[var(--text3)] transition-colors hover:text-[var(--text)]"
+          className="text-sm text-[var(--text2)] transition-colors hover:text-[var(--text)]"
         >
           ← Cast Talk 一覧
         </Link>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <h1 className="font-serif text-2xl font-bold text-[var(--text)]">Cast Talk 編集</h1>
-            <p className="mt-0.5 text-xs text-[var(--text3)]">{talk.theme}</p>
+            <p className="mt-0.5 text-xs text-[var(--text2)]">{talk.theme}</p>
           </div>
           <span
             className={`mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
               status === 'published'
                 ? 'bg-[var(--ok-l)] text-[var(--ok)]'
-                : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text3)]'
+                : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]'
             }`}
           >
             {status === 'published' ? '公開中' : '下書き'}
@@ -343,7 +343,7 @@ export function CastTalkPreviewClient({
       )}
 
       <div>
-        <label htmlFor="cast-talk-title" className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
+        <label htmlFor="cast-talk-title" className="block text-xs font-semibold uppercase tracking-widest text-[var(--text2)] mb-1.5">
           タイトル
         </label>
         <input
@@ -356,7 +356,7 @@ export function CastTalkPreviewClient({
       </div>
 
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-3">会話</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text2)] mb-3">会話</p>
         <div className="space-y-4">
           {messages.map((msg, i) => {
             const char = characterMap[msg.castId]
@@ -371,12 +371,12 @@ export function CastTalkPreviewClient({
                     className="mt-1 shrink-0 rounded-full border border-[var(--border)]"
                   />
                 ) : (
-                  <div className="mt-1 h-9 w-9 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-xs text-[var(--text3)]">
+                  <div className="mt-1 h-9 w-9 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-xs text-[var(--text2)]">
                     {msg.castId.slice(0, 1).toUpperCase()}
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="mb-1 text-xs font-semibold text-[var(--text3)]">
+                  <p className="mb-1 text-xs font-semibold text-[var(--text2)]">
                     {char?.name ?? msg.castId}
                   </p>
                   <textarea
@@ -394,7 +394,7 @@ export function CastTalkPreviewClient({
       </div>
 
       <div>
-        <label htmlFor="cast-talk-summary" className="block text-xs font-semibold uppercase tracking-widest text-[var(--text3)] mb-1.5">
+        <label htmlFor="cast-talk-summary" className="block text-xs font-semibold uppercase tracking-widest text-[var(--text2)] mb-1.5">
           サマリー
         </label>
         <textarea

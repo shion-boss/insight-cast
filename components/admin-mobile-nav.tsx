@@ -91,7 +91,7 @@ export function AdminMobileNav({
                 onClick={() => setOpen(false)}
                 className="font-serif text-[17px] font-bold text-white"
               >
-                Insight <span className="text-[var(--accent)]">Cast</span>{' '}
+                Insight <span className="text-[#e8954a]">Cast</span>{' '}
                 <span className="text-[11px] text-white/50">Admin</span>
               </Link>
               <button

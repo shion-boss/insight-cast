@@ -134,7 +134,7 @@ const SERVICES: Service[] = [
 
 const STATUS_STYLES: Record<ServiceStatus, { badge: string; label: string }> = {
   active: { badge: 'bg-[var(--ok-l)] text-[var(--ok)]', label: '稼働中' },
-  free:   { badge: 'bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)]', label: '無料枠' },
+  free:   { badge: 'bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)]', label: '無料枠' },
   inactive: { badge: 'bg-[var(--error-container)] text-[var(--error)]', label: '未使用' },
 }
 
@@ -161,12 +161,12 @@ export default function AdminServicesPage() {
                     {STATUS_STYLES[svc.status].label}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-[var(--text3)]">{svc.description} — {svc.plan}</p>
+                <p className="mt-0.5 text-xs text-[var(--text2)]">{svc.description} — {svc.plan}</p>
                 <p className="mt-1.5 text-sm text-[var(--text2)]">{svc.role}</p>
                 {svc.envKeys && svc.envKeys.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {svc.envKeys.map((key) => (
-                      <code key={key} className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[11px] text-[var(--text3)] break-all">
+                      <code key={key} className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[11px] text-[var(--text2)] break-all">
                         {key}
                       </code>
                     ))}

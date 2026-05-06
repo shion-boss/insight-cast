@@ -122,7 +122,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
       )}
       {rows.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text3)]">記事がありません</p>
+          <p className="text-sm text-[var(--text2)]">記事がありません</p>
         </div>
       ) : (
       <>
@@ -133,13 +133,13 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
               <div className="mb-2 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="line-clamp-2 font-semibold text-[var(--text)]">{post.title}</p>
-                  <p className="text-[11px] text-[var(--text3)]">/{post.slug}</p>
+                  <p className="text-[11px] text-[var(--text2)]">/{post.slug}</p>
                 </div>
-                <span className={`shrink-0 text-xs font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                <span className={`shrink-0 text-xs font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                   {post.published ? '公開中' : '下書き'}
                 </span>
               </div>
-              <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+              <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text2)]">
                 <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                   {CATEGORY_LABELS[post.category] ?? post.category}
                 </span>
@@ -162,7 +162,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     href={`/blog/${post.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                    className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                   >
                     公開ページ ↗
                   </Link>
@@ -186,11 +186,11 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
             <caption className="sr-only">ブログ記事一覧</caption>
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase">タイトル</th>
-                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">カテゴリ</th>
-                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">公開日</th>
-                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">ステータス</th>
-                <th scope="col" className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.12em] text-[var(--text3)] uppercase whitespace-nowrap">操作</th>
+                <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text2)] uppercase">タイトル</th>
+                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text2)] uppercase whitespace-nowrap">カテゴリ</th>
+                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text2)] uppercase whitespace-nowrap">公開日</th>
+                <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.12em] text-[var(--text2)] uppercase whitespace-nowrap">ステータス</th>
+                <th scope="col" className="px-4 py-3 text-right text-[11px] font-semibold tracking-[0.12em] text-[var(--text2)] uppercase whitespace-nowrap">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -201,14 +201,14 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                 >
                   <td className="max-w-xs px-5 py-4">
                     <p className="font-semibold text-[var(--text)] overflow-hidden text-ellipsis whitespace-nowrap mb-0.5">{post.title}</p>
-                    <p className="text-[11px] text-[var(--text3)]">/{post.slug}</p>
+                    <p className="text-[11px] text-[var(--text2)]">/{post.slug}</p>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
-                    <span className="bg-[var(--bg2)] text-[var(--text3)] text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-[var(--border)]">
+                    <span className="bg-[var(--bg2)] text-[var(--text2)] text-[11px] font-medium px-2.5 py-0.5 rounded-full border border-[var(--border)]">
                       {CATEGORY_LABELS[post.category] ?? post.category}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-[var(--text3)] whitespace-nowrap text-xs">
+                  <td className="px-4 py-4 text-[var(--text2)] whitespace-nowrap text-xs">
                     {formatDate(post.date)}
                   </td>
                   <td className="px-4 py-4">
@@ -218,7 +218,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                         onToggle={() => handleToggle(post.id, post.published)}
                         disabled={isPending}
                       />
-                      <span className={`text-[11px] font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                      <span className={`text-[11px] font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                         {post.published ? '公開中' : '下書き'}
                       </span>
                     </div>
@@ -236,7 +236,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                           href={`/blog/${post.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block w-24 text-center text-xs font-medium text-[var(--accent)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
+                          className="inline-block w-24 text-center text-xs font-medium text-[var(--on-primary-container)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
                         >
                           公開ページ ↗
                         </Link>

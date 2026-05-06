@@ -306,7 +306,7 @@ export default function SummaryPage() {
             tone="soft"
           />
           {lastCheckedAt && (
-            <p className="mt-2 text-xs text-[var(--text3)]">最終確認: {lastCheckedAt}</p>
+            <p className="mt-2 text-xs text-[var(--text2)]">最終確認: {lastCheckedAt}</p>
           )}
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
             <button
@@ -390,7 +390,7 @@ export default function SummaryPage() {
                 ) : (
                   <span className="w-4 h-4 rounded-full bg-[var(--border)] flex-shrink-0" />
                 )}
-                <span className="text-xs text-[var(--text3)]">回答者: {respondentName}</span>
+                <span className="text-xs text-[var(--text2)]">回答者: {respondentName}</span>
               </div>
             )}
           </div>
@@ -404,20 +404,20 @@ export default function SummaryPage() {
 
             {/* 引き出せた価値 */}
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase mb-4">引き出せた価値</p>
+              <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase mb-4">引き出せた価値</p>
               {data?.values && data.values.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {data.values.map((v, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--accent)] rounded-[var(--r-sm)] text-sm font-semibold border border-[rgba(194,114,42,0.2)]"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-[var(--r-sm)] text-sm font-semibold border border-[rgba(194,114,42,0.2)]"
                     >
                       <span aria-hidden="true">✦</span> {v}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[var(--text3)]">この取材では価値の要点を引き出せませんでした。もう一度取材するか、取材ログを確認してみてください。</p>
+                <p className="text-sm text-[var(--text2)]">この取材では価値の要点を引き出せませんでした。もう一度取材するか、取材ログを確認してみてください。</p>
               )}
             </section>
 
@@ -459,7 +459,7 @@ export default function SummaryPage() {
                         {canEdit && (
                           <Link
                             href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
+                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent-h)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
                           >
                             この記事を作る <span aria-hidden="true">→</span>
                           </Link>
@@ -470,7 +470,7 @@ export default function SummaryPage() {
                 </div>
               ) : (
                 <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4">
-                  <p className="text-sm text-[var(--text3)]">取材メモの作成が完了すると、ここにテーマが並びます。</p>
+                  <p className="text-sm text-[var(--text2)]">取材メモの作成が完了すると、ここにテーマが並びます。</p>
                 </div>
               )}
             </div>
@@ -484,7 +484,7 @@ export default function SummaryPage() {
                   onClick={() => setShowMessages(!showMessages)}
                   aria-expanded={showMessages}
                   aria-controls="summary-interview-log"
-                  className="text-xs font-semibold text-[var(--text3)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
+                  className="text-xs font-semibold text-[var(--text2)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
                 >
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
@@ -498,7 +498,7 @@ export default function SummaryPage() {
                     >
                       <span
                         className={`text-[11px] font-semibold w-12 flex-shrink-0 pt-0.5 ${
-                          m.role !== 'user' ? 'text-[var(--accent)]' : 'text-[var(--teal)]'
+                          m.role !== 'user' ? 'text-[var(--on-primary-container)]' : 'text-[var(--teal)]'
                         }`}
                       >
                         {m.role !== 'user' ? (char?.name ?? 'キャスト') : 'あなた'}
@@ -519,7 +519,7 @@ export default function SummaryPage() {
                 <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
                 <Link
                   href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors"
+                  className="flex w-full items-center justify-center bg-[var(--accent-h)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors"
                 >
                   記事を受け取る <span aria-hidden="true">→</span>
                 </Link>
@@ -532,23 +532,23 @@ export default function SummaryPage() {
                 <p className="font-bold text-[var(--text)] text-sm">この取材の記事</p>
                 <Link
                   href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
-                  className="text-[11px] text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded"
+                  className="text-[11px] text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded"
                 >
                   この取材の一覧へ
                 </Link>
               </div>
               {articles.length === 0 ? (
-                <p className="text-sm text-[var(--text3)]">この取材から作成した記事はまだありません。</p>
+                <p className="text-sm text-[var(--text2)]">この取材から作成した記事はまだありません。</p>
               ) : (
                 <div className="space-y-0">
                   {articles.map((article) => (
                     <Link
                       key={article.id}
                       href={`/projects/${projectId}/articles/${article.id}`}
-                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors rounded"
+                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--on-primary-container)] hover:text-[var(--accent-h)] transition-colors rounded"
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
-                      <span className="text-[var(--text3)] flex-shrink-0 text-[11px]">
+                      <span className="text-[var(--text2)] flex-shrink-0 text-[11px]">
                         {new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'numeric', day: 'numeric' }).format(new Date(article.created_at))}
                       </span>
                     </Link>

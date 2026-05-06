@@ -133,10 +133,10 @@ export default async function ArticleDetailPage({
         ]} />
         <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
           <div>
-            <p className="text-xs text-[var(--text3)]">{project.name || project.hp_url}</p>
+            <p className="text-xs text-[var(--text2)]">{project.name || project.hp_url}</p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h2>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-              <p className="text-sm text-[var(--text3)]">
+              <p className="text-sm text-[var(--text2)]">
                 {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}
               </p>
               {(interview?.external_respondent_name || intervieweeProfile?.name) && (
@@ -151,7 +151,7 @@ export default async function ArticleDetailPage({
                   ) : (
                     <span className="w-4 h-4 rounded-full bg-[var(--border)] flex-shrink-0" />
                   )}
-                  <span className="text-sm text-[var(--text3)]">
+                  <span className="text-sm text-[var(--text2)]">
                     回答者: {interview?.external_respondent_name ?? intervieweeProfile?.name}
                   </span>
                 </div>
@@ -224,7 +224,7 @@ export default async function ArticleDetailPage({
               <section className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
                 <header className="mb-3">
                   <h2 className="text-base font-semibold text-[var(--text)]">この取材で添付された写真</h2>
-                  <p className="mt-1 text-xs text-[var(--text3)]">
+                  <p className="mt-1 text-xs text-[var(--text2)]">
                     記事本文には画像は含まれていません。HP に投稿する際、必要な写真をここから選んでお手元のブログ等に貼り付けてください。
                   </p>
                 </header>

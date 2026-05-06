@@ -147,7 +147,7 @@ export function ToolMobileNav({
                 type="button"
                 aria-label="メニューを閉じる"
                 onClick={() => setOpen(false)}
-                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-[var(--text3)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                className="w-8 h-8 flex items-center justify-center rounded-[var(--r-sm)] text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -166,7 +166,7 @@ export function ToolMobileNav({
                     onClick={() => setOpen(false)}
                     className={`flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-3 text-sm font-medium transition-colors ${
                       active
-                        ? 'bg-[var(--accent-l)] text-[var(--accent)]'
+                        ? 'bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                         : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'
                     }`}
                   >
@@ -178,7 +178,7 @@ export function ToolMobileNav({
             </nav>
 
             <div className="border-t border-[var(--border)] px-4 py-4 space-y-2">
-              <p className="truncate text-xs text-[var(--text3)] px-1">{accountLabel}</p>
+              <p className="truncate text-xs text-[var(--text2)] px-1">{accountLabel}</p>
               {isAdmin && (
                 <Link
                   href="/admin"

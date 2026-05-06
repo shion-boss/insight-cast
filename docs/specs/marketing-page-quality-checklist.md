@@ -142,7 +142,32 @@ rm app/(site)/<route>/page.tsx.bak
 
 ---
 
-## 6. 新ページ追加時の最短手順
+## 6. tool / admin 側への適用
+
+tool 側（認証済み）と admin 側でも、コントラスト系（観点 C）は marketing と同じパターンで適用できる。
+ただし以下は **適用しない**:
+
+- Static 化・content-visibility・critters・preconnect・prefetch=false（tool は dynamic 前提・内部ナビは prefetch あり推奨）
+- Sentry 除外（tool には必要）
+- LCP 画像 quality 60（機能 UI なので優先度低）
+
+### 暗背景上の brand text に注意（誤置換ポイント）
+
+`bg-[var(--surface-dark)]`（#1c1410）等の **暗背景上**で `text-[var(--accent)]` を使っているケースは、`--on-primary-container`（#8a4a18）に置換すると逆に読めなくなる。暗背景上では:
+- 完全白 (`text-white`) — 読みやすい・無難
+- 明るい brand orange `text-[#e8954a]` — ブランド色で映える（PainSection / CompareCards で既に採用、AA pass）
+
+判断: 一括 sed で置換した後、`grep -nE "(surface-dark|#1c1410|#1e1610).*on-primary-container"` 系で誤置換を検出して個別に戻す。
+
+### tool 側の実績
+
+2026-05-06 に `app/(tool)/` + `app/admin/` + 関連 components 計 104 ファイルを一括処理:
+- `text-[var(--accent)]` 51件 / `text-[var(--text3)]` 379件 / `bg-[var(--accent)] text-white` 23件 を解消
+- `app/admin/layout.tsx` と `components/admin-mobile-nav.tsx` の "Cast" ロゴ（暗背景）は `text-[#e8954a]` に修正
+
+---
+
+## 7. 新ページ追加時の最短手順
 
 1. `app/(site)/<route>/page.tsx` を作る
 2. server component なら `cookies()` / `getUser()` を呼ばない（dynamic 化を防ぐ）

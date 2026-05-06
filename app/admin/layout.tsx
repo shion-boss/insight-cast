@@ -54,7 +54,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <aside className="hidden bg-[var(--surface-dark)] lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-[220px] lg:flex-col lg:border-r lg:border-r-white/8">
         <div className="border-b border-white/8 px-5 py-5">
           <Link href="/" className="font-serif text-[17px] font-bold text-white">
-            Insight <span className="text-[var(--accent)]">Cast</span>{' '}
+            Insight <span className="text-[#e8954a]">Cast</span>{' '}
             <span className="text-[11px] text-white/50">Admin</span>
           </Link>
         </div>
@@ -80,7 +80,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             </div>
             {/* PC: メールアドレス（右寄せ） */}
             <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-end">
-              <span className="text-xs text-[var(--text3)]">{user.email}</span>
+              <span className="text-xs text-[var(--text2)]">{user.email}</span>
             </div>
           </div>
         </header>

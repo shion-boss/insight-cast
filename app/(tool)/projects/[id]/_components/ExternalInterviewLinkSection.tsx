@@ -152,7 +152,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
         </span>
       </div>
 
-      <p className="text-sm text-[var(--text3)] mb-4">
+      <p className="text-sm text-[var(--text2)] mb-4">
         リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。
       </p>
 
@@ -209,7 +209,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 disabled={issuing}
                 className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
-              <p className="mt-1.5 text-xs text-[var(--text3)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
+              <p className="mt-1.5 text-xs text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
             </div>
             <div>
               <label htmlFor="ext-target-industry" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
@@ -251,11 +251,11 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
       {/* 発行済みリンク一覧 */}
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
         {loadingList ? (
-          <div className="p-6 text-sm text-[var(--text3)] text-center">読み込み中...</div>
+          <div className="p-6 text-sm text-[var(--text2)] text-center">読み込み中...</div>
         ) : listError ? (
           <div className="p-6 text-sm text-[var(--err)]">{listError}</div>
         ) : links.length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-[var(--text3)]">
+          <div className="px-5 py-8 text-center text-sm text-[var(--text2)]">
             まだリンクがありません。上のフォームから発行できます。
           </div>
         ) : (
@@ -278,16 +278,16 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[var(--text)] truncate">{link.theme}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-[var(--text3)]">
+                      <span className="text-[11px] text-[var(--text2)]">
                         {link.use_count} / {link.max_use_count} 回使用
                       </span>
                       {isExpired && (
-                        <span className="text-[11px] text-[var(--text3)] bg-[var(--bg2)] border border-[var(--border)] rounded-full px-2 py-0.5">
+                        <span className="text-[11px] text-[var(--text2)] bg-[var(--bg2)] border border-[var(--border)] rounded-full px-2 py-0.5">
                           無効
                         </span>
                       )}
                       {link.target_name && (
-                        <span className="text-[11px] text-[var(--text3)] truncate">{link.target_name}</span>
+                        <span className="text-[11px] text-[var(--text2)] truncate">{link.target_name}</span>
                       )}
                     </div>
                   </div>
@@ -306,7 +306,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                         type="button"
                         onClick={() => setConfirmDeactivate({ token: link.token, theme: link.theme })}
                         aria-label={`${link.theme}のリンクを無効化`}
-                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text3)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
+                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
                       >
                         無効化
                       </button>

@@ -154,11 +154,11 @@ export default async function AdminUsagePage() {
 
       {/* Section 1: プラン別ユニットエコノミクス（今月） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">
           プラン別ユニットエコノミクス（今月）
         </h2>
         {thisMonthRows.length === 0 ? (
-          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
+          <p className="text-sm text-[var(--text2)]">まだデータがありません</p>
         ) : (
           <>
             {/* モバイル: カード形式 */}
@@ -175,27 +175,27 @@ export default async function AdminUsagePage() {
                       <p className="text-sm font-semibold text-[var(--text)]">
                         {PLAN_LABELS[row.plan] ?? row.plan}
                       </p>
-                      <p className="shrink-0 text-xs text-[var(--text3)]">{row.user_count}人</p>
+                      <p className="shrink-0 text-xs text-[var(--text2)]">{row.user_count}人</p>
                     </div>
                     <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                      <dt className="text-[var(--text3)]">平均APIコスト/人</dt>
+                      <dt className="text-[var(--text2)]">平均APIコスト/人</dt>
                       <dd className="text-right">
                         <CostValue usd={row.avg_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
                       </dd>
-                      <dt className="text-[var(--text3)]">最大APIコスト/人</dt>
+                      <dt className="text-[var(--text2)]">最大APIコスト/人</dt>
                       <dd className="text-right">
                         <CostValue usd={row.max_cost_usd} className="text-sm font-semibold text-[var(--text)]" />
                       </dd>
-                      <dt className="text-[var(--text3)]">月額単価</dt>
+                      <dt className="text-[var(--text2)]">月額単価</dt>
                       <dd className="text-right text-sm font-semibold text-[var(--text)]">
                         {PLAN_REVENUE_JPY[row.plan] !== undefined && PLAN_REVENUE_JPY[row.plan] > 0
                           ? `¥${PLAN_REVENUE_JPY[row.plan].toLocaleString()}`
                           : '¥0'}
                       </dd>
-                      <dt className="text-[var(--text3)]">粗利/人</dt>
+                      <dt className="text-[var(--text2)]">粗利/人</dt>
                       <dd className="text-right">
                         {grossUsd === null ? (
-                          <span className="text-sm text-[var(--text3)]">—</span>
+                          <span className="text-sm text-[var(--text2)]">—</span>
                         ) : (
                           <CostValue
                             usd={grossUsd}
@@ -214,7 +214,7 @@ export default async function AdminUsagePage() {
               {/* ヘッダー行 */}
               <div className="grid grid-cols-6 gap-2 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-2.5">
                 {['プラン', 'ユーザー数', '平均APIコスト/人', '最大APIコスト/人', '月額単価', '粗利/人'].map((h) => (
-                  <p key={h} className="text-xs font-bold text-[var(--text3)]">{h}</p>
+                  <p key={h} className="text-xs font-bold text-[var(--text2)]">{h}</p>
                 ))}
               </div>
               {thisMonthRows.map((row, i) => {
@@ -239,7 +239,7 @@ export default async function AdminUsagePage() {
                         : '¥0'}
                     </p>
                     {grossUsd === null ? (
-                      <p className="text-sm text-[var(--text3)]">—</p>
+                      <p className="text-sm text-[var(--text2)]">—</p>
                     ) : (
                       <CostValue
                         usd={grossUsd}
@@ -252,18 +252,18 @@ export default async function AdminUsagePage() {
             </div>
           </>
         )}
-        <p className="mt-2 text-xs text-[var(--text3)]">
+        <p className="mt-2 text-xs text-[var(--text2)]">
           「粗利/人」= 月額単価 ÷ 150（円→USD換算）− 平均APIコスト。広告費の上限 = 粗利 × 回収期間（ヶ月）。
         </p>
       </section>
 
       {/* Section 2: 月次コスト推移（プラン別・過去6ヶ月） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">
           月次コスト推移（プラン別・過去6ヶ月）
         </h2>
         {allAvgCosts.every((v) => v === 0) ? (
-          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
+          <p className="text-sm text-[var(--text2)]">まだデータがありません</p>
         ) : (
           <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4">
             <div className="space-y-3">
@@ -275,20 +275,20 @@ export default async function AdminUsagePage() {
                 if (plans.length === 0) {
                   return (
                     <div key={mKey} className="flex items-center gap-3">
-                      <span className="w-16 shrink-0 text-xs text-[var(--text3)]">{label}</span>
-                      <p className="text-xs text-[var(--text3)]">—</p>
+                      <span className="w-16 shrink-0 text-xs text-[var(--text2)]">{label}</span>
+                      <p className="text-xs text-[var(--text2)]">—</p>
                     </div>
                   )
                 }
                 return (
                   <div key={mKey} className="space-y-1">
-                    <span className="text-xs font-medium text-[var(--text3)]">{label}</span>
+                    <span className="text-xs font-medium text-[var(--text2)]">{label}</span>
                     {plans.map((plan) => {
                       const avgCost = planMap[plan]
                       const pct = Math.round((avgCost / maxAvgCost) * 100)
                       return (
                         <div key={plan} className="group flex items-center gap-3 cursor-default">
-                          <span className="w-28 shrink-0 text-xs text-[var(--text3)]">
+                          <span className="w-28 shrink-0 text-xs text-[var(--text2)]">
                             {PLAN_LABELS[plan] ?? plan}
                           </span>
                           <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
@@ -310,18 +310,18 @@ export default async function AdminUsagePage() {
             </div>
           </div>
         )}
-        <p className="mt-2 text-xs text-[var(--text3)]">
+        <p className="mt-2 text-xs text-[var(--text2)]">
           各バーは平均APIコスト/人を示します。ホバーで円換算。
         </p>
       </section>
 
       {/* Section 3: ルート別コスト内訳（今月・ユーザー分のみ） */}
       <section>
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text3)]">
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">
           ルート別コスト内訳（今月・ユーザー分のみ）
         </h2>
         {routeList.every((r) => r.cost === 0) ? (
-          <p className="text-sm text-[var(--text3)]">まだデータがありません</p>
+          <p className="text-sm text-[var(--text2)]">まだデータがありません</p>
         ) : (
           <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             {routeList.map((row, i) => (
@@ -335,19 +335,19 @@ export default async function AdminUsagePage() {
                   <p className="text-sm font-medium text-[var(--text)]">
                     {ROUTE_LABELS[row.route] ?? row.route}
                   </p>
-                  <p className="text-xs text-[var(--text3)]">{row.calls}回</p>
+                  <p className="text-xs text-[var(--text2)]">{row.calls}回</p>
                 </div>
                 <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
               </div>
             ))}
           </div>
         )}
-        <p className="mt-2 text-xs text-[var(--text3)]">
+        <p className="mt-2 text-xs text-[var(--text2)]">
           管理者・自動実行（user_id=null）を除いた純粋なユーザー利用分のみ集計しています。
         </p>
       </section>
 
-      <div className="text-xs text-[var(--text3)]">
+      <div className="text-xs text-[var(--text2)]">
         <p>* 平均APIコストは claude-sonnet-4-6 の公開レート（$3/M input, $15/M output）で計算しています。</p>
         <p>* 為替レートは概算 1 USD = {EXCHANGE_RATE} JPY です。</p>
         <p>* 粗利はAIコストのみの計算です。サポート・固定費等の間接費は含みません。</p>

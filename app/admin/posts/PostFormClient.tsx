@@ -103,7 +103,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative z-10 flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-0.5 text-xs text-[var(--text3)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+        className="relative z-10 flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-0.5 text-xs text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
       >
         ＋ ブロックを追加
       </button>
@@ -158,12 +158,12 @@ function BlockEditor({
           {block.type === 'markdown' ? (
             <div className="group relative">
               <div className="absolute right-2 top-2 hidden items-center gap-1 group-hover:flex">
-                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)]">Markdown</span>
+                <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)]">Markdown</span>
                 {blocks.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeBlock(block.id)}
-                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text3)] hover:text-[var(--error)] transition-colors"
+                    className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--error)] transition-colors"
                   >
                     削除
                   </button>
@@ -181,11 +181,11 @@ function BlockEditor({
           ) : (
             <div className="group relative rounded-[var(--r-sm)] border-[1.5px] border-dashed border-[var(--accent)]/40 bg-[var(--accent)]/[0.03]">
               <div className="flex items-center justify-between border-b border-dashed border-[var(--accent)]/30 px-3 py-1.5">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--accent)]/60">埋め込みHTML</span>
+                <span className="text-[11px] font-semibold uppercase tracking-widest text-[var(--on-primary-container)]/60">埋め込みHTML</span>
                 <button
                   type="button"
                   onClick={() => removeBlock(block.id)}
-                  className="text-[11px] text-[var(--text3)] hover:text-[var(--error)] transition-colors"
+                  className="text-[11px] text-[var(--text2)] hover:text-[var(--error)] transition-colors"
                 >
                   削除
                 </button>
@@ -348,7 +348,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(false)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text3)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text2)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
             aria-pressed={!previewMode}
           >
             編集
@@ -356,7 +356,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(true)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text3)] hover:text-[var(--text2)]'}`}
+            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text2)] hover:text-[var(--text2)]'}`}
             aria-pressed={previewMode}
           >
             プレビュー
@@ -380,18 +380,18 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
 
       {previewMode ? (
         <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-10">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text3)]">プレビュー（公開ページの見た目に近い表示）</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text2)]">プレビュー（公開ページの見た目に近い表示）</p>
           <div className="mx-auto mt-6 max-w-2xl">
             <h1 className="font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
               {form.title || '（タイトル未設定）'}
             </h1>
             {form.excerpt && (
-              <p className="mt-3 text-sm leading-7 text-[var(--text3)]">{form.excerpt}</p>
+              <p className="mt-3 text-sm leading-7 text-[var(--text2)]">{form.excerpt}</p>
             )}
             <div className="mt-8">
               {form.body
                 ? <MarkdownArticleBody markdown={form.body} />
-                : <p className="text-sm text-[var(--text3)]">本文を準備中です。</p>}
+                : <p className="text-sm text-[var(--text2)]">本文を準備中です。</p>}
             </div>
           </div>
         </div>
@@ -446,7 +446,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                     setIsSuggestingSlug(false)
                   }
                 }}
-                className="text-xs text-[var(--accent)] hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
+                className="text-xs text-[var(--on-primary-container)] hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
               >
                 {isSuggestingSlug ? '生成中...' : 'タイトルから生成'}
               </button>
@@ -458,7 +458,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               placeholder="url-slug-here"
               pattern="[a-z0-9-]+"
             />
-            <p className="mt-1 text-xs text-[var(--text3)]">
+            <p className="mt-1 text-xs text-[var(--text2)]">
               半角英数字とハイフンのみ。記事内容を表す英語にしてください（SEO に影響します）。公開後は変更しないでください。
             </p>
           </div>
@@ -466,7 +466,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <div>
             <div className="flex items-center justify-between mb-1">
               <FieldLabel htmlFor="post-excerpt">抜粋（一覧ページに表示されます）</FieldLabel>
-              <span className={`text-[11px] tabular-nums ${form.excerpt.length > 150 ? 'text-[var(--err)]' : 'text-[var(--text3)]'}`}>
+              <span className={`text-[11px] tabular-nums ${form.excerpt.length > 150 ? 'text-[var(--err)]' : 'text-[var(--text2)]'}`}>
                 {form.excerpt.length} / 150
               </span>
             </div>
@@ -507,7 +507,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               >
                 <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.published ? 'translate-x-5' : 'translate-x-0.5'}`} />
               </button>
-              <span className={`text-sm font-semibold ${form.published ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+              <span className={`text-sm font-semibold ${form.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                 {form.published ? '公開中' : '下書き'}
               </span>
             </div>
@@ -577,7 +577,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                 onChange={(e) => handleChange('cover_color', e.target.value)}
                 placeholder="bg-emerald-100"
               />
-              <p className="mt-1 text-[12px] text-[var(--text3)]">Tailwind CSSのクラス名を入力</p>
+              <p className="mt-1 text-[12px] text-[var(--text2)]">Tailwind CSSのクラス名を入力</p>
             </div>
             <div className={`h-12 rounded-xl ${form.cover_color}`} aria-hidden="true" />
           </div>
@@ -596,7 +596,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                     ? '変更を保存する'
                     : '保存済み'}
             </PrimaryButton>
-            <p className="text-center text-[11px] text-[var(--text3)]">Ctrl+S / ⌘S でも保存できます</p>
+            <p className="text-center text-[11px] text-[var(--text2)]">Ctrl+S / ⌘S でも保存できます</p>
 
             {mode === 'edit' && (
               <SecondaryButton

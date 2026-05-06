@@ -49,7 +49,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
       <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} aria-label="前のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         <span aria-hidden="true">←</span> 前へ
       </button>
-      <span className="text-sm text-[var(--text3)]" aria-live="polite">{page} / {totalPages} ページ</span>
+      <span className="text-sm text-[var(--text2)]" aria-live="polite">{page} / {totalPages} ページ</span>
       <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} aria-label="次のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         次へ <span aria-hidden="true">→</span>
       </button>
@@ -100,7 +100,7 @@ function FilterContent({
         <div className={`grid gap-3 grid-cols-1 sm:grid-cols-2 ${showProjectFilter ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
           {showProjectFilter && (
             <div>
-              <label htmlFor="filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+              <label htmlFor="filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
                 プロジェクト
               </label>
               <select
@@ -118,7 +118,7 @@ function FilterContent({
           )}
 
           <div>
-            <label htmlFor="filter-cast" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="filter-cast" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
               キャスト
             </label>
             <select
@@ -135,7 +135,7 @@ function FilterContent({
           </div>
 
           <div>
-            <label htmlFor="filter-status" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="filter-status" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
               ステータス
             </label>
             <select
@@ -151,7 +151,7 @@ function FilterContent({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {totalCount} 件
             {totalPages > 1 && <span className="ml-1.5">（{currentPage} / {totalPages} ページ）</span>}
@@ -171,7 +171,7 @@ function FilterContent({
       {items.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
           <p className="text-lg font-bold text-[var(--text)]">条件に合う取材メモが見つかりません。</p>
-          <p className="mt-2 text-sm text-[var(--text3)]">絞り込み条件を変えると、取材メモが表示されます。</p>
+          <p className="mt-2 text-sm text-[var(--text2)]">絞り込み条件を変えると、取材メモが表示されます。</p>
         </section>
       ) : (
         <div className="space-y-3">
@@ -214,20 +214,20 @@ function FilterContent({
                 </div>
 
                 <div className="hidden sm:flex flex-col items-end gap-2">
-                  <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
+                  <p className="text-xs text-[var(--text2)]">記事 {item.articleCount}本</p>
                   {item.isDone ? (
                     <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                   ) : !isViewerInProgress ? (
-                    <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                  ) : <span className="text-[var(--text3)] text-[11px]">閲覧のみ</span>}
+                    <span className="bg-[var(--accent-h)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
+                  ) : <span className="text-[var(--text2)] text-[11px]">閲覧のみ</span>}
                 </div>
                 <div className="col-span-2 flex items-center justify-between gap-2 pt-2 sm:hidden">
-                  <p className="text-xs text-[var(--text3)]">記事 {item.articleCount}本</p>
+                  <p className="text-xs text-[var(--text2)]">記事 {item.articleCount}本</p>
                   {item.isDone ? (
                     <span className="border border-[var(--border)] text-[var(--text2)] text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">メモを見る <span aria-hidden="true">→</span></span>
                   ) : !isViewerInProgress ? (
-                    <span className="bg-[var(--accent)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
-                  ) : <span className="text-[var(--text3)] text-[11px]">閲覧のみ</span>}
+                    <span className="bg-[var(--accent-h)] text-white text-[11px] font-semibold px-3 py-1 rounded-[var(--r-sm)]">続きを取材する <span aria-hidden="true">→</span></span>
+                  ) : <span className="text-[var(--text2)] text-[11px]">閲覧のみ</span>}
                 </div>
               </>
             )

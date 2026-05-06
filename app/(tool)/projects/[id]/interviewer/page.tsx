@@ -147,7 +147,7 @@ export default async function InterviewerPage({
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/pricing?reason=project_over_limit"
-              className="block w-full text-center rounded-xl bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+              className="block w-full text-center rounded-xl bg-[var(--accent-h)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
             >
               プランをアップグレードする <span aria-hidden="true">→</span>
             </Link>
@@ -188,7 +188,7 @@ export default async function InterviewerPage({
             <div className="mt-4 flex gap-3">
               <Link
                 href="/pricing?reason=free_plan_locked"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-xl bg-[var(--accent-h)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
@@ -223,7 +223,7 @@ export default async function InterviewerPage({
             <div className="mt-4">
               <Link
                 href="/pricing?reason=interview_limit"
-                className="inline-block rounded-xl bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-xl bg-[var(--accent-h)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
@@ -266,13 +266,13 @@ export default async function InterviewerPage({
                   className="mb-3 border-[var(--border)]"
                 />
                 <div className="font-medium text-[var(--text)] text-sm">{char.name}</div>
-                <div className="text-xs text-[var(--text3)] mt-0.5">{char.species}</div>
+                <div className="text-xs text-[var(--text2)] mt-0.5">{char.species}</div>
                 {char.label && (
-                  <div className="text-xs text-[var(--accent)] mt-1 font-medium">{char.label}</div>
+                  <div className="text-xs text-[var(--on-primary-container)] mt-1 font-medium">{char.label}</div>
                 )}
-                <div className="text-xs text-[var(--text3)] mt-2 leading-relaxed">{char.description}</div>
+                <div className="text-xs text-[var(--text2)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-xs text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
-                <div className="mt-auto text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-lg">
+                <div className="mt-auto text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent-h)] text-white rounded-lg">
                   このキャストと話す <span aria-hidden="true">→</span>
                 </div>
               </Link>
@@ -292,14 +292,14 @@ export default async function InterviewerPage({
                   />
                   <div>
                     <p className="text-sm font-medium text-[var(--text)]">{selectedCharacter.name}</p>
-                    <p className="mt-1 text-xs text-[var(--text3)]">{selectedCharacter.species}</p>
+                    <p className="mt-1 text-xs text-[var(--text2)]">{selectedCharacter.species}</p>
                     <p className="mt-3 text-sm text-[var(--text2)] leading-relaxed">{selectedCharacter.description}</p>
                     <p className="mt-2 text-xs font-medium text-[var(--text2)]">得意テーマ: {selectedCharacter.specialty}</p>
                   </div>
                 </div>
                 <Link
                   href={`/projects/${id}/interviewer`}
-                  className="rounded-lg border border-[var(--border)] px-3 py-2.5 min-h-[44px] text-xs text-[var(--text3)] transition-colors hover:bg-[var(--bg2)]"
+                  className="rounded-lg border border-[var(--border)] px-3 py-2.5 min-h-[44px] text-xs text-[var(--text2)] transition-colors hover:bg-[var(--bg2)]"
                 >
                   選び直す
                 </Link>
@@ -336,7 +336,7 @@ export default async function InterviewerPage({
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
                 <p className="text-xs font-medium text-[var(--text2)]">AIがおすすめするテーマ</p>
-                <p className="mt-1 text-sm text-[var(--text3)]">
+                <p className="mt-1 text-sm text-[var(--text2)]">
                   ホームページの内容から、先に深めるとよさそうなテーマを5つまで並べます。
                 </p>
               </div>
@@ -353,13 +353,13 @@ export default async function InterviewerPage({
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--warn)]">Recommended</p>
                         <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{theme}</p>
-                        <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
+                        <p className="mt-3 text-xs text-[var(--text2)]">このテーマでインタビューを始める</p>
                       </InterviewSubmitButton>
                     </form>
                   ))}
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-sm text-[var(--text3)]">
+                <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-sm text-[var(--text2)]">
                   まだおすすめテーマは準備できていません。いまは自由入力か、お任せで始められます。
                 </div>
               )}
@@ -369,7 +369,7 @@ export default async function InterviewerPage({
               <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
                 <div className="mb-4">
                   <p className="text-xs font-medium text-[var(--text2)]">競合から見えてくるテーマ</p>
-                  <p className="mt-1 text-sm text-[var(--text3)]">
+                  <p className="mt-1 text-sm text-[var(--text2)]">
                     競合が前面に出している切り口です。違う意見なら違いを話せますし、同じ方向なら自社で足りない発信テーマとして使えます。
                   </p>
                 </div>
@@ -389,13 +389,13 @@ export default async function InterviewerPage({
                           {suggestion.sources.map((source, index) => (
                             <div key={`${suggestion.theme}-${source.url ?? 'source'}-${index}`} className="rounded-lg border border-white/80 bg-white/70 px-3 py-2">
                               {source.url && (
-                                <p className="truncate text-[11px] text-[var(--text3)]">{source.url}</p>
+                                <p className="truncate text-[11px] text-[var(--text2)]">{source.url}</p>
                               )}
-                              <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">{source.summary}</p>
+                              <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{source.summary}</p>
                             </div>
                           ))}
                         </div>
-                        <p className="mt-3 text-xs text-[var(--text3)]">このテーマでインタビューを始める</p>
+                        <p className="mt-3 text-xs text-[var(--text2)]">このテーマでインタビューを始める</p>
                       </InterviewSubmitButton>
                     </form>
                   ))}
@@ -406,7 +406,7 @@ export default async function InterviewerPage({
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
                 <p className="text-xs font-medium text-[var(--text2)]">自由にテーマを書く</p>
-                <p className="mt-1 text-sm text-[var(--text3)]">
+                <p className="mt-1 text-sm text-[var(--text2)]">
                   すでに聞きたい切り口があるなら、そのまま短く入れてください。
                 </p>
               </div>
@@ -437,7 +437,7 @@ export default async function InterviewerPage({
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
                 <p className="text-xs font-medium text-[var(--text2)]">テーマはお任せ</p>
-                <p className="mt-1 text-sm text-[var(--text3)]">
+                <p className="mt-1 text-sm text-[var(--text2)]">
                   まだ切り口が決まっていなくても大丈夫です。これまで通り、会話しながら価値を一緒に見つけます。
                 </p>
               </div>
@@ -458,7 +458,7 @@ export default async function InterviewerPage({
 
         {/* coming soon */}
         <div>
-          <p className="text-xs text-[var(--text3)] mb-3">これから選べるキャスト</p>
+          <p className="text-xs text-[var(--text2)] mb-3">これから選べるキャスト</p>
           <div className="grid grid-cols-3 gap-3">
             {lockedCharacters.map((char) => (
               <div key={char.id} className="p-4 bg-[var(--surface)] rounded-2xl border border-[var(--border)] opacity-40">
@@ -470,8 +470,8 @@ export default async function InterviewerPage({
                   className="mb-2 grayscale"
                 />
                 <div className="text-xs font-medium text-[var(--text2)]">{char.name}</div>
-                {char.label && <div className="text-xs text-[var(--text3)] mt-0.5">{char.label}</div>}
-                <div className="text-xs text-[var(--text3)] mt-2">準備を進めています</div>
+                {char.label && <div className="text-xs text-[var(--text2)] mt-0.5">{char.label}</div>}
+                <div className="text-xs text-[var(--text2)] mt-2">準備を進めています</div>
               </div>
             ))}
           </div>

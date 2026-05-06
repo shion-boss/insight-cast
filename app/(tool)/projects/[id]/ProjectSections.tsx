@@ -12,7 +12,7 @@ const PER_PAGE = 5
 function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
   if (totalPages <= 1) return null
   return (
-    <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-xs text-[var(--text3)]">
+    <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-xs text-[var(--text2)]">
       <button
         type="button"
         onClick={() => onPageChange(page - 1)}
@@ -167,7 +167,7 @@ export function PaginatedInterviewHistory({
               <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
                 {item.charName}<span aria-hidden="true"> · </span>{formatDateTime(item.createdAt)}
               </div>
-              <div className="text-[12px] text-[var(--text3)] truncate">
+              <div className="text-[12px] text-[var(--text2)] truncate">
                 {item.themes && item.themes.length > 0
                   ? item.themes.join('、')
                   : 'テーマ未確定'}
@@ -176,7 +176,7 @@ export function PaginatedInterviewHistory({
           </div>
           <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
             {item.articleCount > 0 && (
-              <span className="text-[11px] text-[var(--text3)]">記事 {item.articleCount}本</span>
+              <span className="text-[11px] text-[var(--text2)]">記事 {item.articleCount}本</span>
             )}
             <InterviewStatusPills
               interviewId={item.id}
@@ -260,7 +260,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
             className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
           >
             <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
-            <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)]">
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
                 {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
               </span>
@@ -326,7 +326,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
                       {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-[12px] text-[var(--text3)]">{formatDateTime(article.createdAt)}</td>
+                  <td className="px-5 py-3 text-[12px] text-[var(--text2)]">{formatDateTime(article.createdAt)}</td>
                   <td className="px-5 py-3">
                     <Link href={article.href} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
                       詳細

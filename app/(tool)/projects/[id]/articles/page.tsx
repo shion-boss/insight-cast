@@ -116,11 +116,11 @@ export default async function ProjectArticlesPage({
       ]} />
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text3)] uppercase">Project Articles</p>
+          <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">Project Articles</p>
           <h2 className="mt-1 break-all text-2xl font-bold text-[var(--text)]">
             {project.name || project.hp_url}
           </h2>
-          <p className="mt-2 text-sm text-[var(--text3)]">
+          <p className="mt-2 text-sm text-[var(--text2)]">
             {interview
               ? <>{interviewer?.name ?? 'AIキャスト'}<span aria-hidden="true"> · </span>{formatDate(interview.created_at)} の取材から作成した記事</>
               : 'このプロジェクトから作成した記事をまとめて確認できます。'}

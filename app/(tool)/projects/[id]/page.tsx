@@ -307,7 +307,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               <div>
                 <div className="text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
                 <div className="text-sm text-[var(--text2)] flex items-center gap-1">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text3)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text2)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   {project.hp_url}
                 </div>
               </div>
@@ -343,7 +343,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 </div>
               ))}
             </div>
-            <div className="text-[11px] text-[var(--text3)]">
+            <div className="text-[11px] text-[var(--text2)]">
               最終更新: {formatDateTime(project.updated_at)}
             </div>
           </div>
@@ -380,14 +380,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">HP診断サマリー</h2>
-            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded">
+            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded">
               詳細レポートを見る <span aria-hidden="true">→</span>
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {hpPriorityActions.length > 0 && (
               <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 sm:col-span-3">
-                <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">優先アクション</p>
+                <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">優先アクション</p>
                 <ul className="space-y-2">
                   {hpPriorityActions.map((action, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
@@ -442,7 +442,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-[var(--text)]">{topic.theme}</p>
-                  <p className="mt-0.5 text-xs text-[var(--text3)] line-clamp-2">{topic.summary}</p>
+                  <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2">{topic.summary}</p>
                 </div>
               </div>
             ))}

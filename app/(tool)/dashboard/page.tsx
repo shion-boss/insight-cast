@@ -317,7 +317,7 @@ export default async function DashboardPage() {
             こんにちは、{profile?.name ?? 'ゲスト'}さん
           </div>
           {!profile?.name && (
-            <Link href="/settings" className="text-xs text-[var(--accent)] hover:underline rounded">
+            <Link href="/settings" className="text-xs text-[var(--on-primary-container)] hover:underline rounded">
               名前を設定する <span aria-hidden="true">→</span>
             </Link>
           )}
@@ -408,7 +408,7 @@ export default async function DashboardPage() {
                     </div>
                   )}
                   <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={40} className={isProjectLimitReached ? 'opacity-40' : undefined} />
-                  <div className={`text-sm font-semibold ${isProjectLimitReached ? 'text-[var(--text3)]' : 'text-[var(--text2)]'}`}>プロジェクトを追加する</div>
+                  <div className={`text-sm font-semibold ${isProjectLimitReached ? 'text-[var(--text2)]' : 'text-[var(--text2)]'}`}>プロジェクトを追加する</div>
                 </Link>
                 {isInterviewLimitReached ? (
                   <Link
@@ -417,8 +417,8 @@ export default async function DashboardPage() {
                   >
                     <div className="absolute top-2 right-2 text-xs font-bold bg-[var(--text3)] text-white rounded-full px-1.5 py-0.5 leading-none">上限</div>
                     <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={40} className="grayscale" />
-                    <div className="text-sm font-semibold text-[var(--text3)]">取材を始める</div>
-                    <div className="text-[11px] text-[var(--accent)] font-semibold">プランを見る <span aria-hidden="true">→</span></div>
+                    <div className="text-sm font-semibold text-[var(--text2)]">取材を始める</div>
+                    <div className="text-[11px] text-[var(--on-primary-container)] font-semibold">プランを見る <span aria-hidden="true">→</span></div>
                   </Link>
                 ) : (
                   <Link
@@ -445,7 +445,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">プロジェクト一覧</h2>
-                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--on-primary-container)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               <div className="flex flex-col gap-[10px]">
                 {projectList.slice(0, 4).map((project) => {
@@ -474,7 +474,7 @@ export default async function DashboardPage() {
                         <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                           {project.name || project.hp_url}
                         </div>
-                        <div className="text-[12px] text-[var(--text3)]">
+                        <div className="text-[12px] text-[var(--text2)]">
                           {latestInterviewMap.has(project.id)
                             ? `最終取材: ${formatShortDateTime(latestInterviewMap.get(project.id)!.created_at)}`
                             : `更新: ${formatDate(project.updated_at)}`}
@@ -499,7 +499,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
-                <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
+                <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-sm text-[var(--on-primary-container)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
               {interviews.length === 0 ? (
                 <InterviewerSpeech
@@ -533,7 +533,7 @@ export default async function DashboardPage() {
                           <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                             {project.name || project.hp_url}
                           </div>
-                          <div className="text-[12px] text-[var(--text3)]">
+                          <div className="text-[12px] text-[var(--text2)]">
                             {char?.name ?? 'インタビュアー'}<span aria-hidden="true"> · </span>{formatShortDateTime(interview.created_at)}
                           </div>
                         </div>
@@ -555,7 +555,7 @@ export default async function DashboardPage() {
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-[18px] font-bold text-[var(--text)]">共有プロジェクト</h2>
-                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--accent)] font-semibold hover:underline rounded">
+                <Link href="/projects" aria-label="プロジェクトをすべて見る" className="text-sm text-[var(--on-primary-container)] font-semibold hover:underline rounded">
                   すべて見る <span aria-hidden="true">→</span>
                 </Link>
               </div>
@@ -573,7 +573,7 @@ export default async function DashboardPage() {
                       <div className="text-[15px] font-bold text-[var(--text)] mb-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
                         {project.name || project.hp_url}
                       </div>
-                      <div className="text-[12px] text-[var(--text3)]">
+                      <div className="text-[12px] text-[var(--text2)]">
                         更新: {formatDate(project.updated_at)}
                       </div>
                     </div>

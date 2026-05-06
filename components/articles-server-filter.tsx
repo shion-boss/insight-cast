@@ -58,7 +58,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
       <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} aria-label="前のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         <span aria-hidden="true">←</span> 前へ
       </button>
-      <span className="text-sm text-[var(--text3)]" aria-live="polite">{page} / {totalPages} ページ</span>
+      <span className="text-sm text-[var(--text2)]" aria-live="polite">{page} / {totalPages} ページ</span>
       <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} aria-label="次のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
         次へ <span aria-hidden="true">→</span>
       </button>
@@ -148,7 +148,7 @@ function ArticlesFilterContent({
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className={gridClass}>
           <div className={gridCols >= 4 ? 'sm:col-span-2 lg:col-span-1' : ''}>
-            <label htmlFor="article-filter-query" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="article-filter-query" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
               キーワード
             </label>
             <TextInput
@@ -162,7 +162,7 @@ function ArticlesFilterContent({
 
           {showProjectColumn && projectOptions.length > 0 && (
             <div>
-              <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+              <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
                 プロジェクト
               </label>
               <select
@@ -180,7 +180,7 @@ function ArticlesFilterContent({
           )}
 
           <div>
-            <label htmlFor="article-filter-type" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+            <label htmlFor="article-filter-type" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
               種別
             </label>
             <select
@@ -198,7 +198,7 @@ function ArticlesFilterContent({
 
           {showInterviewerColumn && interviewerOptions.length > 0 && (
             <div>
-              <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">
+              <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
                 インタビュアー
               </label>
               <select
@@ -216,7 +216,7 @@ function ArticlesFilterContent({
           )}
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {totalCount} 件
             {totalPages > 1 && <span className="ml-1.5">（{currentPage} / {totalPages} ページ）</span>}
@@ -232,7 +232,7 @@ function ArticlesFilterContent({
       {items.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
           <p className="text-lg font-bold text-[var(--text)]">{noResultsTitle}</p>
-          <p className="mt-2 text-sm text-[var(--text3)]">{noResultsDescription}</p>
+          <p className="mt-2 text-sm text-[var(--text2)]">{noResultsDescription}</p>
         </section>
       ) : (
         <>
@@ -246,9 +246,9 @@ function ArticlesFilterContent({
               >
                 <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)]">{item.excerpt}</p>
                 )}
-                <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)]">
                   <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                     {item.articleTypeLabel}
                   </span>
@@ -272,15 +272,15 @@ function ArticlesFilterContent({
               <caption className="sr-only">記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                  <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase">タイトル</th>
+                  <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase">タイトル</th>
                   {showProjectColumn && (
-                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">プロジェクト</th>
+                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">プロジェクト</th>
                   )}
-                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">種別</th>
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">種別</th>
                   {showInterviewerColumn && (
-                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">インタビュアー</th>
+                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">インタビュアー</th>
                   )}
-                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text3)] uppercase whitespace-nowrap">作成日</th>
+                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">作成日</th>
                 </tr>
               </thead>
               <tbody>
@@ -309,11 +309,11 @@ function ArticlesFilterContent({
                     <td className="max-w-xs px-5 py-4">
                       <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">{item.title}</Link>
                       {item.excerpt && (
-                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text3)]">{item.excerpt}</p>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)]">{item.excerpt}</p>
                       )}
                     </td>
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap">
                         <span className="flex items-center gap-1.5">
                           {item.projectLabel ?? '—'}
                           {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
@@ -321,14 +321,14 @@ function ArticlesFilterContent({
                       </td>
                     )}
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text3)]">
+                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
                         {item.articleTypeLabel}
                       </span>
                     </td>
                     {showInterviewerColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">{item.interviewerLabel ?? '—'}</td>
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap">{item.interviewerLabel ?? '—'}</td>
                     )}
-                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text3)]">{item.createdAtLabel}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text2)]">{item.createdAtLabel}</td>
                   </tr>
                 ))}
               </tbody>

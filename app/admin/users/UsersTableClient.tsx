@@ -19,9 +19,9 @@ const PLAN_OPTIONS: { value: PlanKey; label: string }[] = [
 ]
 
 const PLAN_BADGE: Record<PlanKey, string> = {
-  free: 'bg-[var(--bg2)] text-[var(--text3)] border border-[var(--border)]',
-  lightning: 'bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] text-[var(--accent)]',
-  personal: 'bg-[var(--accent-l)] text-[var(--accent)]',
+  free: 'bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)]',
+  lightning: 'bg-[color-mix(in_srgb,var(--accent)_10%,transparent)] text-[var(--on-primary-container)]',
+  personal: 'bg-[var(--accent-l)] text-[var(--on-primary-container)]',
   business: 'bg-[var(--teal-l)] text-[var(--teal)]',
 }
 
@@ -85,7 +85,7 @@ function PlanSelect({
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
-      {saving && <p className="text-[10px] text-[var(--text3)]">更新中...</p>}
+      {saving && <p className="text-[10px] text-[var(--text2)]">更新中...</p>}
       {error && <p role="alert" className="text-[10px] text-[var(--err)]">{error}</p>}
     </div>
   )
@@ -146,7 +146,7 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
     <form onSubmit={handleSubmit} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-[var(--text)]">ユーザーを作成</p>
-        <button type="button" onClick={() => setOpen(false)} className="text-xs text-[var(--text3)] hover:text-[var(--text)]">キャンセル</button>
+        <button type="button" onClick={() => setOpen(false)} className="text-xs text-[var(--text2)] hover:text-[var(--text)]">キャンセル</button>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         <div>
@@ -213,7 +213,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
 
       {users.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
-          <p className="text-sm text-[var(--text3)]">登録ユーザーがいません</p>
+          <p className="text-sm text-[var(--text2)]">登録ユーザーがいません</p>
         </div>
       ) : (
         <>
@@ -222,7 +222,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
         {users.map((user) => (
           <div key={user.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
             <p className="mb-2 break-all font-medium text-[var(--text)]">{user.email ?? '—'}</p>
-            <div className="mb-3 space-y-1 text-xs text-[var(--text3)]">
+            <div className="mb-3 space-y-1 text-xs text-[var(--text2)]">
               <p>作成日: {formatDateTime(user.created_at)}</p>
               <p>最終ログイン: {formatDateTime(user.last_sign_in_at)}</p>
             </div>
@@ -241,10 +241,10 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
           <caption className="sr-only">ユーザー一覧</caption>
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--bg2)] text-left">
-              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">メールアドレス</th>
-              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">プラン</th>
-              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">作成日</th>
-              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text3)]">最終ログイン</th>
+              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">メールアドレス</th>
+              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">プラン</th>
+              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">作成日</th>
+              <th scope="col" className="px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">最終ログイン</th>
             </tr>
           </thead>
           <tbody>

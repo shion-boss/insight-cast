@@ -53,7 +53,7 @@ export default async function AdminPostEditPage({
           { label: '編集' },
         ]} />
         <h1 className="font-serif text-2xl font-bold text-[var(--text)]">記事を編集する</h1>
-        <p className="mt-1 text-sm text-[var(--text3)]">/{post.slug as string}</p>
+        <p className="mt-1 text-sm text-[var(--text2)]">/{post.slug as string}</p>
       </div>
 
       <PostFormClient mode="edit" id={id} defaultValues={defaultValues} />

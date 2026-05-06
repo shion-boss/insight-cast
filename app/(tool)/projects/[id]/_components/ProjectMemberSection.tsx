@@ -60,7 +60,7 @@ function RoleMenu({
         className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none"
       >
         <span>{currentLabel}</span>
-        <span aria-hidden="true" className="text-[var(--text3)]">▾</span>
+        <span aria-hidden="true" className="text-[var(--text2)]">▾</span>
       </button>
       {open && (
         <div
@@ -82,12 +82,12 @@ function RoleMenu({
                   isCurrent ? 'cursor-default' : ''
                 }`}
               >
-                <span aria-hidden="true" className={`flex-shrink-0 w-4 pt-0.5 text-center ${isCurrent ? 'text-[var(--accent)]' : 'text-transparent'}`}>
+                <span aria-hidden="true" className={`flex-shrink-0 w-4 pt-0.5 text-center ${isCurrent ? 'text-[var(--on-primary-container)]' : 'text-transparent'}`}>
                   ✓
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="block font-semibold text-[var(--text)]">{role.label}</span>
-                  <span className="mt-0.5 block text-[11px] text-[var(--text3)]">{role.description}</span>
+                  <span className="mt-0.5 block text-[11px] text-[var(--text2)]">{role.description}</span>
                 </span>
               </button>
             )
@@ -324,9 +324,9 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                         {member.name ?? member.email ?? member.userId}
                       </p>
                       {member.name && member.email && (
-                        <p className="text-xs text-[var(--text3)] truncate">{member.email}</p>
+                        <p className="text-xs text-[var(--text2)] truncate">{member.email}</p>
                       )}
-                      <p className="text-[11px] text-[var(--text3)] mt-0.5">
+                      <p className="text-[11px] text-[var(--text2)] mt-0.5">
                         追加日: {formatDate(member.createdAt)}
                       </p>
                     </div>
@@ -340,7 +340,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                       <button
                         type="button"
                         onClick={() => setConfirmDelete({ userId: member.userId, name: member.name ?? member.email ?? 'メンバー' })}
-                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text3)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                         aria-label={`${member.name ?? member.email ?? 'メンバー'}を削除`}
                       >
                         削除
@@ -355,21 +355,21 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
             {data && data.invitations.length > 0 && (
               <div className="border-t border-[var(--border)]">
                 <div className="px-5 py-3 bg-[var(--bg2)]">
-                  <p className="text-[11px] font-semibold tracking-[0.08em] text-[var(--text3)] uppercase">招待保留中</p>
+                  <p className="text-[11px] font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">招待保留中</p>
                 </div>
                 <div className="divide-y divide-[var(--border)]">
                   {data.invitations.map((inv) => (
                     <div key={inv.id} className="flex items-center gap-3 px-5 py-4">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-[var(--text2)] truncate">{inv.email}</p>
-                        <p className="text-[11px] text-[var(--text3)] mt-0.5">
+                        <p className="text-[11px] text-[var(--text2)] mt-0.5">
                           {ROLE_LABELS[inv.role] ?? inv.role} · 期限: {formatExpiry(inv.expires_at)}
                         </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => setConfirmCancelInvite({ id: inv.id, email: inv.email })}
-                        className="min-h-[36px] flex-shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text3)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                        className="min-h-[36px] flex-shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                         aria-label={`${inv.email}への招待をキャンセル`}
                       >
                         取消
@@ -381,7 +381,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
             )}
 
             {data && data.members.length === 0 && data.invitations.length === 0 && (
-              <div className="px-5 py-8 text-center text-sm text-[var(--text3)]">
+              <div className="px-5 py-8 text-center text-sm text-[var(--text2)]">
                 まだメンバーがいません。下のフォームから招待できます。
               </div>
             )}
@@ -390,7 +390,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
             <div className="border-t border-[var(--border)] px-5 py-5">
               <p className="text-sm font-semibold text-[var(--text)] mb-3">メンバーを招待する</p>
               {isAtLimit ? (
-                <p className="text-sm text-[var(--text3)]">
+                <p className="text-sm text-[var(--text2)]">
                   メンバー上限（{data?.max}名）に達しています。メンバーを削除してから招待してください。
                 </p>
               ) : (

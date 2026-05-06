@@ -166,8 +166,8 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
 
       {items.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
-          <p className="text-sm text-[var(--text3)]">まだcast-talkがありません</p>
-          <p className="mt-1 text-xs text-[var(--text3)]">「今すぐ生成」を押して最初の記事を作成してください</p>
+          <p className="text-sm text-[var(--text2)]">まだcast-talkがありません</p>
+          <p className="mt-1 text-xs text-[var(--text2)]">「今すぐ生成」を押して最初の記事を作成してください</p>
         </div>
       ) : (
         <>
@@ -177,11 +177,11 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
               <div key={item.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <p className="font-medium text-[var(--text)] leading-snug">{item.title}</p>
-                  <span className={`shrink-0 text-xs font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                  <span className={`shrink-0 text-xs font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                     {item.status === 'published' ? '公開中' : '下書き'}
                   </span>
                 </div>
-                <div className="mb-4 flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                <div className="mb-4 flex flex-wrap gap-2 text-xs text-[var(--text2)]">
                   <span className="rounded-full border border-[var(--border)] px-2 py-0.5">
                     {FORMAT_LABELS[item.format] ?? item.format}
                   </span>
@@ -211,7 +211,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       href={`/cast-talk/${item.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
+                      className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
                     >
                       公開ページ ↗
                     </Link>
@@ -242,12 +242,12 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
               <caption className="sr-only">Cast Talk 記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">タイトル</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">形式</th>
-                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] md:table-cell">キャスト</th>
-                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)] lg:table-cell">作成日</th>
-                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text3)]">ステータス</th>
-                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold uppercase text-[var(--text3)]">操作</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text2)]">タイトル</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text2)]">形式</th>
+                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text2)] md:table-cell">キャスト</th>
+                  <th scope="col" className="hidden px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text2)] lg:table-cell">作成日</th>
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-semibold uppercase text-[var(--text2)]">ステータス</th>
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-semibold uppercase text-[var(--text2)]">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
@@ -257,14 +257,14 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       <p className="line-clamp-1 font-medium text-[var(--text)]">{item.title}</p>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text3)]">
+                      <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[11px] text-[var(--text2)]">
                         {FORMAT_LABELS[item.format] ?? item.format}
                       </span>
                     </td>
                     <td className="hidden px-4 py-4 text-[var(--text2)] md:table-cell">
                       {getCastName(item.interviewer_id)} × {getCastName(item.guest_id)}
                     </td>
-                    <td className="hidden px-4 py-4 text-[var(--text3)] lg:table-cell">
+                    <td className="hidden px-4 py-4 text-[var(--text2)] lg:table-cell">
                       {formatDate(item.created_at)}
                     </td>
                     <td className="px-4 py-4">
@@ -280,7 +280,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                         >
                           <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
                         </button>
-                        <span className={`text-[11px] font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text3)]'}`}>
+                        <span className={`text-[11px] font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                           {item.status === 'published' ? '公開中' : '下書き'}
                         </span>
                       </div>
@@ -298,7 +298,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                             href={`/cast-talk/${item.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--accent)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                            className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                           >
                             公開ページ ↗
                           </Link>

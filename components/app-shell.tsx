@@ -114,7 +114,7 @@ export function AppShell({
                 <Link
                   href="/settings"
                   aria-label="設定"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] overflow-hidden bg-[var(--accent-l)] text-xs font-semibold text-[var(--accent)] transition-colors hover:border-[var(--accent)]"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] overflow-hidden bg-[var(--accent-l)] text-xs font-semibold text-[var(--on-primary-container)] transition-colors hover:border-[var(--accent)]"
                 >
                   {avatarUrl ? (
                     <Image src={avatarUrl} alt={accountLabel} width={40} height={40} className="h-full w-full object-cover" />

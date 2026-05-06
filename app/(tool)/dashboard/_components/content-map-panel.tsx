@@ -80,7 +80,7 @@ export function ContentMapPanel({
             <h2 className="text-[18px] font-bold text-[var(--text)]">
               コンテンツマップ
             </h2>
-            <p className="text-[12px] text-[var(--text3)] mt-0.5">
+            <p className="text-[12px] text-[var(--text2)] mt-0.5">
               {projectName}<span aria-hidden="true"> · </span>既存記事 {blogPostCount} 件
             </p>
           </div>
@@ -123,7 +123,7 @@ export function ContentMapPanel({
             HPから見つかった <span className="font-semibold text-[var(--text)]">{blogPostCount} 件</span> の記事を分析すると、<br />
             どのジャンル・効果が不足しているか可視化できます。
           </div>
-          <div className="text-[12px] text-[var(--text3)]">取材で補うべき空白が見えてきます</div>
+          <div className="text-[12px] text-[var(--text2)]">取材で補うべき空白が見えてきます</div>
         </div>
       )}
 
@@ -139,7 +139,7 @@ export function ContentMapPanel({
       {matrix && !loading && (
         <>
           {/* Legend */}
-          <div className="flex flex-wrap items-center gap-4 mb-5 text-[11px] text-[var(--text3)]">
+          <div className="flex flex-wrap items-center gap-4 mb-5 text-[11px] text-[var(--text2)]">
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded-sm bg-[var(--accent)]" />
               既存HP記事
@@ -165,7 +165,7 @@ export function ContentMapPanel({
                 {EFFECTS.map((e) => (
                   <div key={e.key} className="text-center px-0.5">
                     <div className="text-xs font-semibold text-[var(--text)] leading-tight">{e.label}</div>
-                    <div className="hidden sm:block text-xs text-[var(--text3)] leading-tight mt-0.5">{e.desc}</div>
+                    <div className="hidden sm:block text-xs text-[var(--text2)] leading-tight mt-0.5">{e.desc}</div>
                   </div>
                 ))}
               </div>
@@ -224,7 +224,7 @@ export function ContentMapPanel({
                               >
                                 {posts.length}
                               </div>
-                              <div className="text-[9px] mt-0.5 text-[var(--text3)]">記事</div>
+                              <div className="text-[9px] mt-0.5 text-[var(--text2)]">記事</div>
                             </>
                           )}
                         </div>
@@ -239,24 +239,24 @@ export function ContentMapPanel({
           {/* Summary */}
           <div className="mt-5 pt-5 border-t border-[var(--border)] grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-[22px] font-bold text-[var(--accent)]">
+              <div className="text-[22px] font-bold text-[var(--on-primary-container)]">
                 {existingCount}
               </div>
-              <div className="text-[11px] text-[var(--text3)] mt-0.5">既存HP記事</div>
+              <div className="text-[11px] text-[var(--text2)] mt-0.5">既存HP記事</div>
             </div>
             {insightCastCount > 0 && (
               <div className="text-center">
                 <div className="text-[22px] font-bold text-[var(--teal)]">
                   {insightCastCount}
                 </div>
-                <div className="text-[11px] text-[var(--text3)] mt-0.5">Insight Cast記事</div>
+                <div className="text-[11px] text-[var(--text2)] mt-0.5">Insight Cast記事</div>
               </div>
             )}
             <div className="text-center">
               <div className="text-[22px] font-bold text-[#fb923c]">
                 {gapCells.length}
               </div>
-              <div className="text-[11px] text-[var(--text3)] mt-0.5">不足ゾーン</div>
+              <div className="text-[11px] text-[var(--text2)] mt-0.5">不足ゾーン</div>
             </div>
           </div>
 
@@ -269,7 +269,7 @@ export function ContentMapPanel({
                   <li key={`${cell.genre}-${cell.effect}`} className="text-[12px] text-[var(--text2)] flex gap-2 items-center">
                     <span className="w-1 h-1 rounded-full flex-shrink-0 bg-[#fb923c]" />
                     <span className="font-medium">{cell.genre}</span>
-                    <span className="text-[var(--text3)]" aria-hidden="true">×</span>
+                    <span className="text-[var(--text2)]" aria-hidden="true">×</span>
                     <span>{cell.effect}</span>
                   </li>
                 ))}
