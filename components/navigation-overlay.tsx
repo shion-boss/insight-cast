@@ -66,7 +66,12 @@ export function NavigationOverlay() {
     if (fromArea !== toArea) return
     if (fromArea === 'site') return
 
-    const h = document.querySelector('[data-app-header]')?.getBoundingClientRect().bottom ?? 62
+    // is-tool-fullscreen（インタビュー画面など）ではヘッダーが display:none で
+    // getBoundingClientRect().bottom が 0 になり、バーが画面最上部に出てしまう。
+    // ヘッダーが視覚的に出ていないページではバーも出さない。
+    const headerEl = document.querySelector('[data-app-header]') as HTMLElement | null
+    if (!headerEl || headerEl.offsetParent === null) return
+    const h = headerEl.getBoundingClientRect().bottom
     setHeaderBottom(h)
     areaRef.current = fromArea
     prevPath.current = location.pathname + location.search
