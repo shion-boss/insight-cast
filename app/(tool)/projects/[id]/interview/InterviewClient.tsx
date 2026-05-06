@@ -819,7 +819,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           <div className="mb-2 flex flex-col gap-2">
             <p className="text-xs text-[var(--text2)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
             <p className="text-xs text-[var(--text2)] sm:hidden">パス・もう少し聞くもできます。</p>
-            <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex flex-wrap items-center justify-start gap-2">
               {characterId === 'hal' && (
                 <>
                   <input
