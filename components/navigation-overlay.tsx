@@ -31,7 +31,8 @@ export function NavigationOverlay() {
           document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
             el.removeAttribute('data-nav-pending')
           })
-          timerRef.current = setTimeout(() => setVisible(false), 300)
+          // ページ読み込み完了後、もう一周（アニメ 1s ＋ フェード余韻）回してから消す
+          timerRef.current = setTimeout(() => setVisible(false), 1000)
         }, 0)
       })
     }
