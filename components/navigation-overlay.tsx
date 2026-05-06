@@ -17,34 +17,45 @@ export function NavigationOverlay() {
   const prevPath = useRef(locationKey)
   const hideAt = useRef<number>(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  // ページ読み込み完了後にセット。次にバーが画面右端まで抜けたタイミング（=1サイクル境界）で hide する。
+  const finishingRef = useRef(false)
 
   // locationKey (pathname + search) が変わった = Next.js が新ページの React ツリーを更新完了
-  // rAF → setTimeout(0) でそのフレームのペイント完了を待ってからバーを消す
   useEffect(() => {
     if (!visible) return
     if (prevPath.current === locationKey) return
     prevPath.current = locationKey
 
-    const hide = () => {
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
-            el.removeAttribute('data-nav-pending')
-          })
-          // ページ読み込み完了後、もう一周（アニメ 1s ＋ フェード余韻）回してから消す
-          timerRef.current = setTimeout(() => setVisible(false), 1000)
-        }, 0)
-      })
+    const startFinish = () => {
+      finishingRef.current = true
+      // フェイルセーフ: animationiteration が来ない環境でも 1.2s 後には必ず消す
+      timerRef.current = setTimeout(() => {
+        finishingRef.current = false
+        document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
+          el.removeAttribute('data-nav-pending')
+        })
+        setVisible(false)
+      }, 1200)
     }
 
     const remaining = hideAt.current - Date.now()
     clearTimeout(timerRef.current)
     if (remaining > 0) {
-      timerRef.current = setTimeout(hide, remaining)
+      timerRef.current = setTimeout(startFinish, remaining)
     } else {
-      hide()
+      startFinish()
     }
   }, [locationKey, visible])
+
+  const handleAnimationIteration = useCallback(() => {
+    if (!finishingRef.current) return
+    finishingRef.current = false
+    clearTimeout(timerRef.current)
+    document.querySelectorAll('a[data-nav-pending]').forEach((el) => {
+      el.removeAttribute('data-nav-pending')
+    })
+    setVisible(false)
+  }, [])
 
   useEffect(() => {
     return () => { clearTimeout(timerRef.current) }
@@ -76,6 +87,7 @@ export function NavigationOverlay() {
     areaRef.current = fromArea
     prevPath.current = location.pathname + location.search
     hideAt.current = Date.now() + MIN_MS
+    finishingRef.current = false
     a.setAttribute('data-nav-pending', 'true')
     flushSync(() => setVisible(true))
   }, [])
@@ -96,7 +108,10 @@ export function NavigationOverlay() {
         className={`fixed left-0 right-0 z-[31] h-[2px] overflow-hidden ${sidebarClass}`}
         style={{ top: headerBottom }}
       >
-        <div className="absolute inset-0 animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
+        <div
+          className="absolute inset-0 animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]"
+          onAnimationIteration={handleAnimationIteration}
+        />
       </div>
     </div>
   )
