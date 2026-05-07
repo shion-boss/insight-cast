@@ -253,6 +253,37 @@
 
 総合評価: **A** 4週連続A〜B+の起点として記録。
 
+#### 2026-05-07 追補（日次品質サイクル / Sentry トリアージ + カテゴリ色 drift 修正）
+
+**テーマ**: 同日の Gate A 達成作業に対する独立 cycle。Sentry inbox 整理 + 軸3 整合性で発見した drift を当日修正。
+
+**軸10 Sentry トリアージ**
+- 5/6 中に open になった `sentry[bot]` 発の Issue #4・#5・#6・#7 を確認。すべて `TypeError: e[n] is not a function` で webpack ランタイム `r` 関数内が起点（webpack ハッシュは各デプロイで異なる）。
+- 5/6 に同パターンで close 済の #3 と症状一致 → ブラウザ拡張機能の干渉、または旧チャンクキャッシュ起因のノイズと判定。
+- 4件すべて `not_planned` でクローズし、Sentry 側の inboundFilters で `webpack-*.js` 由来の同一シグネチャを抑制する案をフォロー候補として記録。
+
+**軸3 整合性で発見した Should Fix（同日修正）**
+- 5系統カテゴリ再設計（commit `3d02a52`）で導入された `BlogPreview.tsx` のローカル `BLOG_CATEGORY_COLOR` が `lib/blog-posts.ts` の `CATEGORY_COLOR_MAP` と drift。具体的に `hp-update` の文字色が LP では `#8a4a18`（AA 対応で意図的に濃く）・blog 一覧では `#c2722a`（ブランドオレンジで 10px 小文字に対し AA 不足の可能性）。
+- 修正:
+  - `lib/blog-posts.ts`: `CATEGORY_COLOR_MAP['hp-update']` を `#8a4a18` に統一（コメントで AA 文字色用途と明記）。装飾用ブランドオレンジ `#c2722a` は他箇所で維持。
+  - `app/(site)/_components/lp/BlogPreview.tsx`: ローカル `BLOG_CATEGORY_COLOR` / `BLOG_PREVIEW_CHARACTER` / theme tag のラベル配列を全削除し、`CATEGORY_COLOR_MAP` / `CATEGORY_CHARACTER_MAP` / `CATEGORY_LABELS` を直接参照。
+  - `app/(site)/blog/BlogClient.tsx`: `FILTER_TABS` のラベルハードコードを削除し、`CATEGORY_LABELS` から動的生成。
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 同一カテゴリの色・ラベルが複数ファイルでローカル定義され drift | 1 | 初出 | 🔲 要提案（カテゴリ系定数は `lib/blog-posts.ts` を唯一の出典とする） |
+| sentry[bot] が webpack ランタイムノイズで毎日新規 issue を作る | 4 | 再発 | 🔲 Sentry 側の inboundFilters で抑制候補（5/6 に既知化済） |
+
+**チェック結果（軸別・追補分）**
+- 軸1 UI: 色の差は微細だが、`hp-update` カテゴリの blog 一覧チップが AA に近づいた
+- 軸3 整合性: ✅ カテゴリ色・ラベル・キャラ割当の出典を `lib/blog-posts.ts` に一本化
+- 軸5 AI社員: typecheck 通過。3ファイル編集後も型エラーなし
+- 軸10 Sentry: ✅ open issue ゼロに戻した
+
+総合評価: **A−** 同日中に Gate A 達成 + 余白で drift 修正 + Sentry inbox クリーン化。
+
 #### 2026-05-06（パフォーマンス根本原因の解決 + 日次品質サイクル）
 
 **テーマ**: site (marketing) ページの dynamic 化を解消し、静的生成へ戻す根本原因対処

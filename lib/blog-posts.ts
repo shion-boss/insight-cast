@@ -26,11 +26,13 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
   'meta':         '運営の舞台裏',
 }
 
+// 10px のカテゴリチップで AA を満たす濃さに揃えている。
+// ブランドオレンジ `#c2722a` は装飾用途で使い、文字色には濃いバリアント `#8a4a18` を使う。
 export const CATEGORY_COLOR_MAP: Record<PostCategory, string> = {
   'ai-search':    '#1d4ed8',
   'primary-info': '#065f46',
   'casts':        '#7c3aed',
-  'hp-update':    '#c2722a',
+  'hp-update':    '#8a4a18',
   'meta':         '#475569',
 }
 

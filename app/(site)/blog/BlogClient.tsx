@@ -9,13 +9,11 @@ import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, type PostC
 
 type FilterTab = 'all' | PostCategory
 
+const CATEGORY_ORDER: PostCategory[] = ['ai-search', 'primary-info', 'casts', 'hp-update', 'meta']
+
 const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'all', label: 'すべて' },
-  { id: 'ai-search', label: 'AI検索時代' },
-  { id: 'primary-info', label: '一次情報' },
-  { id: 'casts', label: 'AIキャスト' },
-  { id: 'hp-update', label: 'ホームページ更新' },
-  { id: 'meta', label: '運営の舞台裏' },
+  ...CATEGORY_ORDER.map((c) => ({ id: c, label: CATEGORY_LABELS[c] })),
 ]
 
 const VALID_TABS: ReadonlySet<string> = new Set(FILTER_TABS.map((t) => t.id))

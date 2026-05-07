@@ -1,26 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
+import { CATEGORY_LABELS, CATEGORY_COLOR_MAP, CATEGORY_CHARACTER_MAP, type Post } from '@/lib/blog-posts'
 import { getCharacter } from '@/lib/characters'
-
-// テーマカラー: 12px のカテゴリチップ + 11px の category badge に使用。
-// AA を満たす濃さに揃えている。
-const BLOG_CATEGORY_COLOR: Record<PostCategory, string> = {
-  'ai-search':    '#1d4ed8',
-  'primary-info': '#065f46',
-  'casts':        '#7c3aed',
-  'hp-update':    '#8a4a18',
-  'meta':         '#475569',
-}
-
-const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
-  'ai-search':    'claus',
-  'primary-info': 'rain',
-  'casts':        'mint',
-  'hp-update':    'mint',
-  'meta':         'claus',
-}
 
 export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
   return (
@@ -33,8 +15,8 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
         <p className="text-base text-[var(--text2)] mt-3">Insight Cast の考え方や、発信にまつわる話を長文の記事で読む。</p>
         <div className="mt-11 flex flex-col divide-y divide-[var(--border)] rounded-[20px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
           {latestPosts.map((post) => {
-            const char = getCharacter(post.interviewer ?? BLOG_PREVIEW_CHARACTER[post.category]) ?? getCharacter('mint')!
-            const themeColor = BLOG_CATEGORY_COLOR[post.category]
+            const char = getCharacter(post.interviewer ?? CATEGORY_CHARACTER_MAP[post.category]) ?? getCharacter('mint')!
+            const themeColor = CATEGORY_COLOR_MAP[post.category]
             return (
               <Link
                 key={post.slug}
@@ -67,20 +49,14 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
         </div>
         <div className="mt-7 flex flex-wrap justify-center gap-2">
           <span className="self-center text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text2)] mr-1">テーマで探す</span>
-          {([
-            { category: 'ai-search' as const, label: 'AI検索時代', href: '/blog?category=ai-search' },
-            { category: 'primary-info' as const, label: '一次情報', href: '/blog?category=primary-info' },
-            { category: 'casts' as const, label: 'AIキャスト', href: '/blog?category=casts' },
-            { category: 'hp-update' as const, label: 'ホームページ更新', href: '/blog?category=hp-update' },
-            { category: 'meta' as const, label: '運営の舞台裏', href: '/blog?category=meta' },
-          ]).map(({ category, label, href }) => (
+          {(['ai-search', 'primary-info', 'casts', 'hp-update', 'meta'] as const).map((category) => (
             <Link
               key={category}
-              href={href}
+              href={`/blog?category=${category}`}
               className="rounded-full border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-[12px] font-semibold text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              style={{ color: BLOG_CATEGORY_COLOR[category] }}
+              style={{ color: CATEGORY_COLOR_MAP[category] }}
             >
-              {label}
+              {CATEGORY_LABELS[category]}
             </Link>
           ))}
         </div>
