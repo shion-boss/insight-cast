@@ -8,6 +8,7 @@ type NavLink = { href: string; label: string }
 export const NAV_LINKS: NavLink[] = [
   { href: '/admin', label: 'ダッシュボード' },
   { href: '/admin/posts', label: '記事管理' },
+  { href: '/admin/article-quality', label: '記事品質ログ' },
   { href: '/admin/cast-talk', label: 'Cast Talk' },
   { href: '/admin/interview-reviews', label: '取材レビュー' },
   { href: '/admin/users', label: 'ユーザー管理' },

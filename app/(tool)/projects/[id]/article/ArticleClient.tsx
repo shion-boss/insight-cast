@@ -23,7 +23,8 @@ import { showToast } from '@/lib/client/toast'
 
 type ArticleType = 'client' | 'interviewer' | 'conversation'
 type ArticleStyle = 'desu' | 'de-aru' | 'da-na'
-type ArticleVolume = 'short' | 'medium' | 'long'
+type ArticleVolume = 'short' | 'medium' | 'long' | 'pillar'
+type ArticleAudience = 'new' | 'existing' | 'considering' | 'peer'
 type ArticleGenerationStatus = 'idle' | 'generating' | 'ready' | 'failed'
 type SavedArticle = {
   id: string
@@ -61,10 +62,18 @@ const STYLE_OPTIONS: { value: ArticleStyle; label: string }[] = [
   { value: 'da-na', label: 'だ・な体' },
 ]
 
-const VOLUME_OPTIONS: { value: ArticleVolume; label: string }[] = [
+const VOLUME_OPTIONS: { value: ArticleVolume; label: string; hint?: string }[] = [
   { value: 'short', label: 'コンパクト' },
   { value: 'medium', label: '標準' },
   { value: 'long', label: '詳細' },
+  { value: 'pillar', label: '保存版（ピラー）', hint: '5,000〜8,000字。要約と抽出テーマが揃った時のみ' },
+]
+
+const AUDIENCE_OPTIONS: { value: ArticleAudience; label: string; description: string }[] = [
+  { value: 'new', label: '新規の読者', description: '初めて知る人に向けて、信頼してもらえる入口を作る' },
+  { value: 'existing', label: '既存のお客様', description: '次回利用や紹介につながる温度で書く' },
+  { value: 'considering', label: '比較検討中', description: '判断材料を具体的に出して背中を押す' },
+  { value: 'peer', label: '同業・関係者', description: '業界の文脈を共有した読み物として書く' },
 ]
 
 function isFreshEnough(createdAt: string, requestedAt: string) {
@@ -78,13 +87,16 @@ type Props = {
   projectName: string
   from: string
   interviewerType: string | null
+  summaryCount: number
+  themesCount: number
+  pillarRequirements: { minSummaryItems: number; minThemes: number }
 }
 
 // モグロは Yes/No 取材のため、ユーザーの発話が「はい/いいえ」だけになる。
 // 会話記事として読み物に成立しないため、このリストのキャストは「会話記事」を選べない。
 const CONVERSATION_BLOCKED_CASTS = new Set<string>(['mogro'])
 
-export default function ArticleClient({ projectId, interviewId, initialTheme, projectName, from, interviewerType }: Props) {
+export default function ArticleClient({ projectId, interviewId, initialTheme, projectName, from, interviewerType, summaryCount, themesCount, pillarRequirements }: Props) {
   const router = useRouter()
   const supabaseRef = useRef(createClient())
 
@@ -107,7 +119,33 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
 
   const [style, setStyle] = useState<ArticleStyle>('desu')
   const [volume, setVolume] = useState<ArticleVolume>('medium')
+  const [audience, setAudience] = useState<ArticleAudience>('new')
   const [theme, setTheme] = useState(initialTheme)
+
+  // ピラー記事は要約・テーマが揃っていないと薄い記事になりやすいので、
+  // 押す前の段階でボタンを使えなくし、足りない条件をその場で見せる。
+  // サーバー側 (route.ts) と同じ閾値を使う必要がある（page.tsx で props に渡されてくる）。
+  const pillarReady = summaryCount >= pillarRequirements.minSummaryItems
+    && themesCount >= pillarRequirements.minThemes
+  const pillarShortfall = (() => {
+    if (pillarReady) return null
+    const lacks: string[] = []
+    if (summaryCount < pillarRequirements.minSummaryItems) {
+      lacks.push(`要約 ${summaryCount}/${pillarRequirements.minSummaryItems}`)
+    }
+    if (themesCount < pillarRequirements.minThemes) {
+      lacks.push(`テーマ ${themesCount}/${pillarRequirements.minThemes}`)
+    }
+    return lacks.join(' ・ ')
+  })()
+
+  // ピラーが選択されたまま条件が崩れる遷移は今は起きないが、tab 切替で会話記事になった時だけは
+  // ピラーが無効になるので medium に戻す。
+  useEffect(() => {
+    if (volume === 'pillar' && tab === 'conversation') {
+      setVolume('medium')
+    }
+  }, [tab, volume])
   const [polishAnswers, setPolishAnswers] = useState(true)
 
   const [allArticles, setAllArticles] = useState<SavedArticleRow[]>([])
@@ -284,6 +322,9 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
     const articleLabel = ARTICLE_ITEMS.find((item) => item.type === tab)?.label ?? '記事'
     const requestedAt = new Date().toISOString()
 
+    // 会話記事はピラー非対応のため、UI 側でも標準サイズに丸める。
+    const effectiveVolume: ArticleVolume = tab === 'conversation' && volume === 'pillar' ? 'medium' : volume
+
     trackPendingArticleGeneration({
       jobId,
       projectId,
@@ -292,7 +333,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
       articleType: tab,
       articleLabel,
       style: tab === 'client' ? style : undefined,
-      volume,
+      volume: effectiveVolume,
       theme: theme.trim() || undefined,
       polishAnswers,
       requestedAt,
@@ -307,7 +348,8 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
           interviewId,
           articleType: tab,
           style: tab === 'client' ? style : undefined,
-          volume,
+          volume: effectiveVolume,
+          audience,
           theme: theme.trim() || undefined,
           polishAnswers,
           background: true,
@@ -341,6 +383,32 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
           return
         }
         throw new Error('failed to start article generation')
+      }
+      if (response.status === 400) {
+        const body = await response.json().catch(() => ({} as Record<string, unknown>))
+        const errCode = typeof body.error === 'string' ? body.error : ''
+        const message = typeof body.message === 'string' ? body.message : ''
+        if (errCode === 'pillar_requirements_not_met' || errCode === 'pillar_not_supported_for_conversation') {
+          clearPendingArticleGeneration(jobId)
+          setPendingArticleJobIdByType((prev) => {
+            const next = { ...prev }
+            delete next[tab]
+            return next
+          })
+          setStartingArticleType(null)
+          setArticleStatus('failed')
+          const userMessage = message || '保存版（ピラー）の条件を満たしていません。'
+          setArticleErrorMessage(userMessage)
+          setFailedArticleMessages((prev) => ({ ...prev, [tab]: userMessage }))
+          showToast({
+            id: `article-error-${jobId}`,
+            title: '保存版を作成できません',
+            description: userMessage,
+            tone: 'warning',
+            characterId: 'mint',
+          })
+          return
+        }
       }
       if (!response.ok) {
         throw new Error('failed to start article generation')
@@ -519,16 +587,17 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
             )}
 
             <div className="mb-5">
-              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">文字量</p>
+              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">想定読者</p>
               <div className="flex flex-wrap gap-2">
-                {VOLUME_OPTIONS.map((opt) => (
+                {AUDIENCE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => setVolume(opt.value)}
-                    aria-pressed={volume === opt.value}
+                    onClick={() => setAudience(opt.value)}
+                    aria-pressed={audience === opt.value}
+                    title={opt.description}
                     className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
-                      volume === opt.value
+                      audience === opt.value
                         ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                     }`}
@@ -537,6 +606,52 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                   </button>
                 ))}
               </div>
+              <p className="mt-1.5 text-xs text-[var(--text2)]">{AUDIENCE_OPTIONS.find((o) => o.value === audience)?.description ?? ''}</p>
+            </div>
+
+            <div className="mb-5">
+              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">文字量</p>
+              <div className="flex flex-wrap gap-2">
+                {VOLUME_OPTIONS.filter((opt) => !(opt.value === 'pillar' && tab === 'conversation')).map((opt) => {
+                  const isPillar = opt.value === 'pillar'
+                  const disabled = isPillar && !pillarReady
+                  const titleText = disabled
+                    ? `保存版を作るには ${pillarShortfall} が必要です`
+                    : opt.hint
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        if (disabled) return
+                        setVolume(opt.value)
+                      }}
+                      aria-pressed={volume === opt.value}
+                      aria-disabled={disabled}
+                      disabled={disabled}
+                      title={titleText}
+                      className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                        disabled
+                          ? 'cursor-not-allowed border-[var(--border)] bg-transparent text-[var(--text2)]/50'
+                          : volume === opt.value
+                            ? 'cursor-pointer border-[var(--accent)] bg-[var(--accent-h)] text-white'
+                            : 'cursor-pointer border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+                      }`}
+                    >
+                      {opt.label}
+                      {isPillar && !pillarReady && (
+                        <span className="ml-1.5 text-[10px] font-medium opacity-70">条件未達</span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+              {volume === 'pillar' && pillarReady && (
+                <p className="mt-1.5 text-xs text-[var(--text2)]">5,000〜8,000字の保存版記事です。生成に時間がかかります（要約 {summaryCount}件・テーマ {themesCount}件 で生成可能）。</p>
+              )}
+              {!pillarReady && tab !== 'conversation' && (
+                <p className="mt-1.5 text-xs text-[var(--text2)]">保存版（ピラー）を作るには、インタビュー要約 {pillarRequirements.minSummaryItems}項目以上＋抽出テーマ {pillarRequirements.minThemes}項目以上が必要です（現在 {pillarShortfall}）。取材を進めると選べるようになります。</p>
+              )}
             </div>
 
             <div className="mb-5">

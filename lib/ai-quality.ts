@@ -17,9 +17,9 @@ type NormalizeListOptions = {
 const DEFAULT_LIST_MAX_ITEMS = 5
 const DEFAULT_LIST_MAX_LENGTH = 120
 
-const CONCRETE_SIGNAL_PATTERN = /(\d+|先月|先週|去年|今年|最近|お客様|現場|相談|見積|施工|来店|予約|問い合わせ|再依頼|写真|電話|メール|そのとき|この前|スタッフ|家族|具体)/u
+export const CONCRETE_SIGNAL_PATTERN = /(\d+|先月|先週|去年|今年|最近|お客様|現場|相談|見積|施工|来店|予約|問い合わせ|再依頼|写真|電話|メール|そのとき|この前|スタッフ|家族|具体)/u
 const CUSTOMER_REACTION_PATTERN = /(喜|安心|助か|選ば|頼|また|ありがとう|反応|驚|うれし|再依頼|問い合わせ)/u
-const ABSTRACT_HINT_PATTERN = /(丁寧|安心|信頼|品質|対応|こだわり|親切|誠実|まじめ|真面目|がんば|頑張|経験)/u
+export const ABSTRACT_HINT_PATTERN = /(丁寧|安心|信頼|品質|対応|こだわり|親切|誠実|まじめ|真面目|がんば|頑張|経験)/u
 
 export function normalizePromptText(value: unknown, maxLength = 160) {
   if (typeof value !== 'string') return ''
