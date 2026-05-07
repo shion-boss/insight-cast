@@ -44,7 +44,7 @@ export function InterviewStep() {
         </div>
         <div className="mt-14 sm:mt-16">
           <p className="text-[13px] font-semibold text-[var(--text2)] mb-5 tracking-[.04em]">担当するキャストを選ぶ</p>
-          <DraggableScrollRow className="flex gap-4 overflow-x-auto pt-2 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <DraggableScrollRow className="flex gap-4 overflow-x-auto pt-2 pb-1">
             {CHARACTERS.map((char) => (
               <Link key={char.id} href={`/cast#${char.id}`} className="flex-shrink-0 w-[220px] flex flex-col bg-[var(--surface)] border border-[var(--border)] rounded-[18px] p-4 gap-3 transition-colors hover:border-[var(--accent)]/50 hover:shadow-[var(--elevation-3)]">
                 <div className="relative w-full aspect-square rounded-[10px] overflow-hidden bg-[var(--bg2)]">

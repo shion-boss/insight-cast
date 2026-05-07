@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 /**
- * 横スクロール領域を、PCではマウスドラッグでもスクロールできるようにするラッパー。
- * モバイルは通常のタッチスクロールに任せる（pointer type で分岐）。
+ * 横スクロール領域の下に、カスタムのオレンジ色スクロールバーを表示するラッパー。
+ * つまみをドラッグして横スクロールできる（grab/grabbing カーソル付き）。
+ * モバイルは通常のタッチスクロールに任せる。
  */
 export function DraggableScrollRow({
   children,
@@ -13,60 +14,123 @@ export function DraggableScrollRow({
   children: ReactNode
   className?: string
 }) {
-  const ref = useRef<HTMLDivElement | null>(null)
-  const [dragging, setDragging] = useState(false)
-  const stateRef = useRef<{ startX: number; startScroll: number; movedPx: number } | null>(null)
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const trackRef = useRef<HTMLDivElement | null>(null)
+  const thumbStateRef = useRef<{ startX: number; startScroll: number } | null>(null)
+  const [thumbDragging, setThumbDragging] = useState(false)
+  const [thumb, setThumb] = useState({ width: 0, left: 0, visible: false })
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return
-      stateRef.current = { startX: e.clientX, startScroll: el.scrollLeft, movedPx: 0 }
-      setDragging(true)
-      el.setPointerCapture(e.pointerId)
+  const updateThumb = useCallback(() => {
+    const sc = scrollRef.current
+    const tr = trackRef.current
+    if (!sc || !tr) return
+    const scrollWidth = sc.scrollWidth
+    const clientWidth = sc.clientWidth
+    if (scrollWidth <= clientWidth + 1) {
+      setThumb({ width: 0, left: 0, visible: false })
+      return
     }
-    const onPointerMove = (e: PointerEvent) => {
-      const s = stateRef.current
-      if (!s) return
-      const dx = e.clientX - s.startX
-      s.movedPx = Math.max(s.movedPx, Math.abs(dx))
-      el.scrollLeft = s.startScroll - dx
-    }
-    const finish = (e: PointerEvent) => {
-      const s = stateRef.current
-      stateRef.current = null
-      setDragging(false)
-      if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId)
-      // 5px 以上動いていたら直後の click をキャンセル（カードリンクへの誤遷移を防ぐ）
-      if (s && s.movedPx > 5) {
-        const onClickCapture = (ev: MouseEvent) => {
-          ev.stopPropagation()
-          ev.preventDefault()
-          el.removeEventListener('click', onClickCapture, true)
-        }
-        el.addEventListener('click', onClickCapture, true)
-        setTimeout(() => el.removeEventListener('click', onClickCapture, true), 0)
-      }
-    }
-    el.addEventListener('pointerdown', onPointerDown)
-    el.addEventListener('pointermove', onPointerMove)
-    el.addEventListener('pointerup', finish)
-    el.addEventListener('pointercancel', finish)
-    return () => {
-      el.removeEventListener('pointerdown', onPointerDown)
-      el.removeEventListener('pointermove', onPointerMove)
-      el.removeEventListener('pointerup', finish)
-      el.removeEventListener('pointercancel', finish)
-    }
+    const trackWidth = tr.clientWidth
+    const ratio = clientWidth / scrollWidth
+    const thumbWidth = Math.min(trackWidth, Math.max(64, trackWidth * ratio))
+    const maxScroll = scrollWidth - clientWidth
+    const maxThumbLeft = Math.max(0, trackWidth - thumbWidth)
+    const thumbLeft = maxScroll > 0 ? (sc.scrollLeft / maxScroll) * maxThumbLeft : 0
+    setThumb({ width: thumbWidth, left: thumbLeft, visible: true })
   }, [])
 
+  useEffect(() => {
+    const sc = scrollRef.current
+    const tr = trackRef.current
+    if (!sc || !tr) return
+    updateThumb()
+    const onScroll = () => updateThumb()
+    sc.addEventListener('scroll', onScroll, { passive: true })
+    const ro = new ResizeObserver(updateThumb)
+    ro.observe(sc)
+    ro.observe(tr)
+    return () => {
+      sc.removeEventListener('scroll', onScroll)
+      ro.disconnect()
+    }
+  }, [updateThumb])
+
+  const onThumbPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return
+    e.preventDefault()
+    e.stopPropagation()
+    const sc = scrollRef.current
+    const tr = trackRef.current
+    if (!sc || !tr) return
+    thumbStateRef.current = { startX: e.clientX, startScroll: sc.scrollLeft }
+    setThumbDragging(true)
+    const target = e.currentTarget
+    target.setPointerCapture(e.pointerId)
+    const onMove = (ev: PointerEvent) => {
+      const s = thumbStateRef.current
+      if (!s || !sc || !tr) return
+      const trackWidth = tr.clientWidth
+      const ratio = sc.clientWidth / sc.scrollWidth
+      const thumbWidth = Math.min(trackWidth, Math.max(64, trackWidth * ratio))
+      const maxThumbLeft = Math.max(1, trackWidth - thumbWidth)
+      const maxScroll = sc.scrollWidth - sc.clientWidth
+      const dx = ev.clientX - s.startX
+      sc.scrollLeft = s.startScroll + (dx / maxThumbLeft) * maxScroll
+    }
+    const onUp = (ev: PointerEvent) => {
+      setThumbDragging(false)
+      thumbStateRef.current = null
+      if (target.hasPointerCapture(ev.pointerId)) target.releasePointerCapture(ev.pointerId)
+      target.removeEventListener('pointermove', onMove)
+      target.removeEventListener('pointerup', onUp)
+      target.removeEventListener('pointercancel', onUp)
+    }
+    target.addEventListener('pointermove', onMove)
+    target.addEventListener('pointerup', onUp)
+    target.addEventListener('pointercancel', onUp)
+  }
+
+  const onTrackPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return
+    if (e.target !== e.currentTarget) return
+    const sc = scrollRef.current
+    const tr = trackRef.current
+    if (!sc || !tr) return
+    const rect = tr.getBoundingClientRect()
+    const trackWidth = tr.clientWidth
+    const ratio = sc.clientWidth / sc.scrollWidth
+    const thumbWidth = Math.min(trackWidth, Math.max(64, trackWidth * ratio))
+    const maxThumbLeft = Math.max(1, trackWidth - thumbWidth)
+    const maxScroll = sc.scrollWidth - sc.clientWidth
+    const desiredLeft = e.clientX - rect.left - thumbWidth / 2
+    const clamped = Math.max(0, Math.min(maxThumbLeft, desiredLeft))
+    sc.scrollTo({ left: (clamped / maxThumbLeft) * maxScroll, behavior: 'smooth' })
+  }
+
   return (
-    <div
-      ref={ref}
-      className={`${className} ${dragging ? 'cursor-grabbing select-none' : 'md:cursor-grab'}`}
-    >
-      {children}
+    <div>
+      <div
+        ref={scrollRef}
+        className={`${className} [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`}
+      >
+        {children}
+      </div>
+      <div
+        ref={trackRef}
+        onPointerDown={onTrackPointerDown}
+        className={`relative mx-1 mt-3 h-3.5 rounded-[4px] bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] ${
+          thumb.visible ? '' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden="true"
+      >
+        <div
+          onPointerDown={onThumbPointerDown}
+          className={`absolute top-0 h-full rounded-[4px] bg-[var(--accent)] hover:bg-[var(--accent-h)] active:bg-[var(--accent-d)] transition-colors ${
+            thumbDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+          }`}
+          style={{ width: thumb.width, transform: `translateX(${thumb.left}px)`, touchAction: 'none' }}
+        />
+      </div>
     </div>
   )
 }
