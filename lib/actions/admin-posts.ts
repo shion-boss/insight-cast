@@ -8,7 +8,7 @@ export type PostFormData = {
   slug: string
   title: string
   excerpt: string
-  category: 'insight-cast' | 'interview' | 'case' | 'news'
+  category: 'ai-search' | 'primary-info' | 'casts' | 'hp-update' | 'meta'
   type: 'normal' | 'interview'
   interviewer?: string | null
   cover_color: string
@@ -20,7 +20,7 @@ export type PostFormData = {
 type CreateResult = { id: string } | { error: string }
 type MutateResult = { ok: true } | { error: string }
 
-const VALID_CATEGORIES = ['insight-cast', 'interview', 'case', 'news'] as const
+const VALID_CATEGORIES = ['ai-search', 'primary-info', 'casts', 'hp-update', 'meta'] as const
 const VALID_TYPES = ['normal', 'interview'] as const
 
 function validatePost(data: PostFormData): string | null {

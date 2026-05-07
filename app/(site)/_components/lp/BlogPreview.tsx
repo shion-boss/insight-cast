@@ -5,23 +5,21 @@ import { CATEGORY_LABELS, type PostCategory, type Post } from '@/lib/blog-posts'
 import { getCharacter } from '@/lib/characters'
 
 // テーマカラー: 12px のカテゴリチップ + 11px の category badge に使用。
-// AA を満たす濃さに揃えている。howto は --on-primary-container を直値で指定。
+// AA を満たす濃さに揃えている。
 const BLOG_CATEGORY_COLOR: Record<PostCategory, string> = {
-  howto:      '#8a4a18',
-  service:    '#0f766e',
-  interview:  '#7c3aed',
-  case:       '#1d4ed8',
-  philosophy: '#065f46',
-  news:       '#be185d',
+  'ai-search':    '#1d4ed8',
+  'primary-info': '#065f46',
+  'casts':        '#7c3aed',
+  'hp-update':    '#8a4a18',
+  'meta':         '#475569',
 }
 
 const BLOG_PREVIEW_CHARACTER: Record<PostCategory, string> = {
-  howto: 'mint',
-  service: 'claus',
-  interview: 'rain',
-  case: 'rain',
-  philosophy: 'claus',
-  news: 'mint',
+  'ai-search':    'claus',
+  'primary-info': 'rain',
+  'casts':        'mint',
+  'hp-update':    'mint',
+  'meta':         'claus',
 }
 
 export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
@@ -70,10 +68,11 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
         <div className="mt-7 flex flex-wrap justify-center gap-2">
           <span className="self-center text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text2)] mr-1">テーマで探す</span>
           {([
-            { category: 'service' as const, label: 'サービス紹介', href: '/blog?category=service' },
-            { category: 'interview' as const, label: 'インタビュー', href: '/blog?category=interview' },
-            { category: 'case' as const, label: '事例', href: '/blog?category=case' },
-            { category: 'howto' as const, label: 'ノウハウ', href: '/blog?category=howto' },
+            { category: 'ai-search' as const, label: 'AI検索時代', href: '/blog?category=ai-search' },
+            { category: 'primary-info' as const, label: '一次情報', href: '/blog?category=primary-info' },
+            { category: 'casts' as const, label: 'AIキャスト', href: '/blog?category=casts' },
+            { category: 'hp-update' as const, label: 'ホームページ更新', href: '/blog?category=hp-update' },
+            { category: 'meta' as const, label: '運営の舞台裏', href: '/blog?category=meta' },
           ]).map(({ category, label, href }) => (
             <Link
               key={category}

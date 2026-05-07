@@ -11,11 +11,11 @@ type FilterTab = 'all' | PostCategory
 
 const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'all', label: 'すべて' },
-  { id: 'howto', label: 'ノウハウ' },
-  { id: 'service', label: 'サービス' },
-  { id: 'interview', label: 'インタビュー' },
-  { id: 'case', label: '事例' },
-  { id: 'philosophy', label: '思想' },
+  { id: 'ai-search', label: 'AI検索時代' },
+  { id: 'primary-info', label: '一次情報' },
+  { id: 'casts', label: 'AIキャスト' },
+  { id: 'hp-update', label: 'ホームページ更新' },
+  { id: 'meta', label: '運営の舞台裏' },
 ]
 
 const VALID_TABS: ReadonlySet<string> = new Set(FILTER_TABS.map((t) => t.id))

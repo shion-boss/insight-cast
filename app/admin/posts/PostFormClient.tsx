@@ -15,10 +15,11 @@ type PostFormProps = {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'insight-cast', label: 'サービス紹介' },
-  { value: 'interview', label: 'インタビュー' },
-  { value: 'case', label: '事例' },
-  { value: 'news', label: 'お知らせ' },
+  { value: 'ai-search', label: 'AI検索時代' },
+  { value: 'primary-info', label: '一次情報' },
+  { value: 'casts', label: 'AIキャスト' },
+  { value: 'hp-update', label: 'ホームページ更新' },
+  { value: 'meta', label: '運営の舞台裏' },
 ]
 
 const TYPE_OPTIONS = [
@@ -318,7 +319,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
     slug: defaultSlug,
     title: defaultValues?.title ?? '',
     excerpt: defaultValues?.excerpt ?? '',
-    category: defaultValues?.category ?? 'insight-cast',
+    category: defaultValues?.category ?? 'meta',
     type: defaultValues?.type ?? 'normal',
     interviewer: defaultValues?.interviewer ?? null,
     cover_color: defaultValues?.cover_color ?? 'bg-gradient-to-br from-stone-200 to-stone-300',

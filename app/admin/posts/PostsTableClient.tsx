@@ -17,13 +17,19 @@ type PostRow = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  'insight-cast': 'サービス',
-  service: 'サービス',
-  interview: 'インタビュー',
-  case: '事例',
-  philosophy: '思想',
-  howto: 'ノウハウ',
-  news: 'お知らせ',
+  'ai-search':    'AI検索時代',
+  'primary-info': '一次情報',
+  'casts':        'AIキャスト',
+  'hp-update':    'ホームページ更新',
+  'meta':         '運営の舞台裏',
+  // 旧カテゴリのフォールバック表示
+  'insight-cast': 'AIキャスト',
+  'service':      'AIキャスト',
+  'interview':    '運営の舞台裏',
+  'case':         'ホームページ更新',
+  'philosophy':   '一次情報',
+  'howto':        'ホームページ更新',
+  'news':         '運営の舞台裏',
 }
 
 function formatDate(date: string): string {
