@@ -8,6 +8,8 @@ import { CHARACTERS } from '@/lib/characters'
 import { PublicHero } from '@/components/public-layout'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+import { CastFitFinder } from './_components/CastFitFinder'
+
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
@@ -92,6 +94,67 @@ const getLatestTalkByCharacter = unstable_cache(
   { revalidate: 300 },
 )
 
+type HeroLine = { role: 'cast' | 'user'; charId?: string; text: string }
+const heroDialog: HeroLine[] = [
+  { role: 'cast', charId: 'mint', text: 'こんにちは、ミントです。今日のお仕事のこと、聞かせてもらえますか？' },
+  { role: 'user', text: '特別なことはしてなくて…ふだん通りやっているだけです。' },
+  { role: 'cast', charId: 'mint', text: 'その「ふだん通り」の中に、まだ言葉になっていない魅力がありそうです。' },
+]
+
+function CastHeroDialog() {
+  const otherCasts = CHARACTERS.filter((c) => c.id !== 'mint')
+  return (
+    <div>
+      <div className="flex flex-col gap-5" aria-label="インタビューの会話例">
+        {heroDialog.map((m, i) => {
+          const cast = m.charId ? CHARACTERS.find((c) => c.id === m.charId) : null
+          return (
+            <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              {m.role === 'cast' && cast && (
+                <CharacterAvatar
+                  src={cast.icon48}
+                  alt={`${cast.name}のアイコン`}
+                  emoji={cast.emoji}
+                  size={36}
+                  className="-mt-1 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
+                />
+              )}
+              <div
+                className={`max-w-[68%] px-4 py-3 text-[14px] leading-[1.8] whitespace-pre-wrap break-words shadow-[var(--elevation-1)] ${
+                  m.role === 'cast'
+                    ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
+                    : 'bg-[var(--accent-h)] text-white rounded-2xl rounded-tr-sm'
+                }`}
+              >
+                {m.text}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 他のキャストの存在を視覚的に提示 */}
+      <div className="mt-6 pt-5 border-t border-[var(--border)]">
+        <div className="text-[10px] font-bold uppercase tracking-[.12em] text-[var(--text3)] mb-3">ほかのキャスト</div>
+        <div className="flex items-start gap-3 flex-wrap">
+          {otherCasts.map((char) => (
+            <div key={char.id} className="flex flex-col items-center gap-1.5 w-[52px]">
+              <CharacterAvatar
+                src={char.icon48}
+                alt={`${char.name}のアイコン`}
+                emoji={char.emoji}
+                size={40}
+                className="border-[var(--border)] bg-[var(--surface)]"
+              />
+              <span className="text-[10px] text-[var(--text2)] leading-tight text-center">{char.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const breadcrumbJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -140,46 +203,17 @@ export default async function CastPage() {
         <PublicHero
           compact
           eyebrow="Cast"
-          title={<>あなたの話を聞く<br />キャストたち</>}
-          description="6名のキャストが、それぞれ違う角度から話を聞きます。いま深めたいテーマに合わせて選べます。"
-          aside={
-            <div className="grid grid-cols-3 gap-3">
-              {CHARACTERS.map((char) => (
-                <div key={char.id} className="rounded-[16px] overflow-hidden border border-[var(--border)] text-center p-3">
-                  <CharacterAvatar
-                    src={char.icon96}
-                    alt={`${char.name}のアイコン`}
-                    emoji={char.emoji}
-                    size={64}
-                    className="mx-auto"
-                  />
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text)] mt-2">{char.name}</div>
-                  <div className="text-[10px] text-[var(--on-primary-container)] font-semibold tracking-[.06em] mt-0.5">
-                    {char.available ? char.label : `${char.label}・期間限定`}
-                  </div>
-                </div>
-              ))}
-            </div>
-          }
-          asideClassName="p-4"
+          title={<>あなたの話を聞く、<br />キャストたち。</>}
+          description="6名のAIキャストが、それぞれ違う角度から取材します。いまの悩みに合うキャストを選べば、ふだんの言葉が、ホームページに使える素材になります。"
+          aside={<CastHeroDialog />}
+          asideBare
+          asideClassName=""
         />
 
-        {/* How to choose */}
-        <section className="py-10 sm:py-14 bg-[var(--bg2)]">
+        {/* Cast Reading — 占い風キャスト診断（パネル自体に見出しを内包） */}
+        <section className="py-12 sm:py-16 bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold text-[var(--text)]">どのキャストを選べばいいですか？</h2>
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {[
-                { q: '自社の雰囲気や人柄を伝えたい', a: 'ミント' },
-                { q: '技術・専門性の違いを言語化したい', a: 'クラウス' },
-                { q: '選ばれる理由・差別化を整理したい', a: 'レイン' },
-              ].map((item) => (
-                <div key={item.q} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-5">
-                  <div className="text-sm text-[var(--text2)] mb-2">{item.q}</div>
-                  <div className="text-sm font-bold text-[var(--on-primary-container)]"><span aria-hidden="true">→ </span>{item.a}</div>
-                </div>
-              ))}
-            </div>
+            <CastFitFinder />
           </div>
         </section>
 
@@ -190,7 +224,7 @@ export default async function CastPage() {
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               無料キャスト
             </h2>
-            <div className="mt-12">
+            <div className="mt-10 space-y-6">
               {freeCasts.map((char, index) => {
                 const detail = castDetails[char.id]
                 if (!detail) return null
@@ -198,70 +232,74 @@ export default async function CastPage() {
                   <div
                     key={char.id}
                     id={char.id}
-                    className={`grid gap-8 pb-14 lg:grid-cols-[340px_minmax(0,1fr)] lg:items-start lg:gap-14 scroll-mt-24 ${index < freeCasts.length - 1 ? 'mb-14 border-b border-[var(--border)]' : ''}`}
+                    className="scroll-mt-24"
                   >
-                    <div>
-                      <div className="rounded-[24px] overflow-hidden shadow-[var(--elevation-4)] bg-[var(--bg2)] aspect-square flex items-center justify-center">
-                        <Image
-                          src={char.portrait}
-                          alt={`${char.name}のポートレート`}
-                          width={340}
-                          height={340}
-                          className="h-full w-full object-contain"
-                          priority={index === 0}
-                          sizes="(min-width: 1024px) 340px, 100vw"
-                        />
-                      </div>
-                      <div className="mt-4 flex gap-2 flex-wrap">
-                        <span className="bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">無料</span>
-                        <span className="inline-flex items-center gap-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-full text-[12px] font-semibold px-3.5 py-1.5">
-                          入力: {detail.input}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[13px] text-[var(--text2)] mb-1.5">{char.species}</div>
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold text-[var(--text)] mb-1.5">{char.name}</div>
-                      <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-xl font-semibold text-[var(--text)] leading-[1.45] mb-5 pl-4 border-l-[3px] border-[var(--accent)]">
-                        {char.id === 'mint'
-                          ? 'お客様目線で、やさしく引き出します'
-                          : char.id === 'claus'
-                          ? '専門知識をやさしい言葉に変えます'
-                          : char.id === 'rain'
-                          ? '選ばれる理由を一緒に見つけます'
-                          : char.specialty || detail.specialty}
-                      </div>
-                      <p className="text-[15px] text-[var(--text2)] leading-[1.9] mb-3">{detail.desc}</p>
-                      <div className="bg-[var(--bg2)] rounded-[14px] px-6 py-5 mt-5">
-                        <div className="flex items-start gap-3 py-2.5 border-b border-[var(--border)]">
-                          <span className="text-sm font-semibold text-[var(--text)] w-[100px] flex-shrink-0">専門分野</span>
-                          <span className="text-sm text-[var(--text2)]">{detail.specialty}</span>
+                    {/* メインカード: イントロ + 詳細ボックスを1つの塊に */}
+                    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 lg:p-10">
+                      {/* 上: 画像 + 名前情報 */}
+                      <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center lg:gap-12">
+                        <div>
+                          <div className="rounded-[18px] overflow-hidden bg-[var(--bg2)] aspect-square flex items-center justify-center">
+                            <Image
+                              src={char.portrait}
+                              alt={`${char.name}のポートレート`}
+                              width={240}
+                              height={240}
+                              className="h-full w-full object-contain"
+                              priority={index === 0}
+                              sizes="(min-width: 1024px) 240px, 100vw"
+                            />
+                          </div>
+                          <div className="mt-3 flex gap-2 flex-wrap">
+                            <span className="bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-1 rounded-full">無料</span>
+                          </div>
                         </div>
-                        <div className="flex items-start gap-3 py-2.5 border-b border-[var(--border)]">
-                          <span className="text-sm font-semibold text-[var(--text)] w-[100px] flex-shrink-0">得意なこと</span>
-                          <ul className="text-sm text-[var(--text2)] space-y-0.5">
+                        <div>
+                          <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
+                          <div className="font-[family-name:var(--font-noto-serif-jp)] text-[32px] font-bold text-[var(--text)] mb-1">{char.name}</div>
+                          <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                          <div className="font-[family-name:var(--font-noto-serif-jp)] text-[19px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
+                            {char.id === 'mint'
+                              ? 'お客様目線で、やさしく引き出します'
+                              : char.id === 'claus'
+                              ? '専門知識をやさしい言葉に変えます'
+                              : char.id === 'rain'
+                              ? '選ばれる理由を一緒に見つけます'
+                              : char.specialty || detail.specialty}
+                          </div>
+                          <p className="text-sm text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
+                        </div>
+                      </div>
+
+                      {/* 下: 詳細ボックス（背景色付き・両カラムの下） */}
+                      <div className="mt-8 rounded-[16px] bg-[var(--bg2)] p-6 lg:p-7">
+                        <div className="grid gap-x-10 gap-y-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
+                          <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">専門分野</div>
+                          <div className="text-sm text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
+
+                          <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)] sm:pt-1">得意なこと</div>
+                          <ul className="text-sm text-[var(--text)] space-y-1.5">
                             {detail.strengths.map((s) => (
-                              <li key={s} className="flex items-start gap-1.5">
-                                <span aria-hidden="true" className="flex-shrink-0">•</span>
-                                {s}
+                              <li key={s} className="flex items-start gap-2 leading-[1.7]">
+                                <span aria-hidden="true" className="mt-[9px] h-1 w-1 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                                <span>{s}</span>
                               </li>
                             ))}
                           </ul>
-                        </div>
-                        <div className="flex items-start gap-3 py-2.5">
-                          <span className="text-sm font-semibold text-[var(--text)] w-[100px] flex-shrink-0">入力形式</span>
-                          <span className="text-sm text-[var(--text2)]">{detail.input}</span>
+
+                          <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">入力形式</div>
+                          <div className="text-sm text-[var(--text)]">{detail.input}</div>
                         </div>
                       </div>
-                      {/* Cast Talk 対話記事プレビュー */}
+
+                      {/* Cast Talk 対話記事プレビュー（メインカード内） */}
                       {talksByChar[char.id] && (
                         <Link
                           href={`/cast-talk/${talksByChar[char.id]!.slug}`}
-                          className="group mt-5 flex items-start gap-4 rounded-[14px] border border-[var(--border)] bg-[var(--bg2)] p-4 transition-colors hover:border-[var(--accent)]/40 hover:bg-[var(--accent-l)]"
+                          className="group mt-4 flex items-start gap-4 rounded-[16px] bg-[var(--bg2)] p-5 transition-colors hover:bg-[var(--accent-l)]"
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] text-[var(--on-primary-container)]">Cast Talk</div>
+                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--on-primary-container)]">Cast Talk</div>
                             <div className="text-sm font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
                               {talksByChar[char.id]!.title}
                             </div>
@@ -276,15 +314,97 @@ export default async function CastPage() {
                           </span>
                         </Link>
                       )}
-
                     </div>
                   </div>
                 )
               })}
             </div>
 
-            {/* Cast Talk バナー */}
-            <div className="mt-16 rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          </div>
+        </section>
+
+        {/* Addon Casts */}
+        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Limited-time Cast</div>
+            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
+              専門キャスト（期間限定で全プラン込み）
+            </h2>
+            <p className="text-base text-[var(--text2)] mt-3">
+              この3キャストは、期間限定で <strong className="text-[var(--text)]">無料プランを含むすべてのプランで利用可能</strong> です。
+              将来は買い切り商品として切り替える予定ですが、<strong className="text-[var(--text)]">期間中に登録したアカウントはその後も継続的にプラン内で利用できます</strong>。
+            </p>
+
+            <div className="mt-10 space-y-6">
+              {addonCasts.map((char) => {
+                const detail = castDetails[char.id]
+                if (!detail) return null
+                return (
+                  <div
+                    key={char.id}
+                    id={char.id}
+                    className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 lg:p-10 scroll-mt-24"
+                  >
+                    {/* 上: 画像 + 名前情報 */}
+                    <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-center lg:gap-12">
+                      <div>
+                        <div className="rounded-[18px] overflow-hidden bg-[var(--bg2)] aspect-square flex items-center justify-center">
+                          <Image
+                            src={char.portrait}
+                            alt={`${char.name}のポートレート`}
+                            width={240}
+                            height={240}
+                            className="h-full w-full object-contain"
+                            sizes="(min-width: 1024px) 240px, 100vw"
+                          />
+                        </div>
+                        <div className="mt-3 flex gap-2 flex-wrap">
+                          <span className="bg-[var(--accent-l)] text-[var(--on-primary-container)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-1 rounded-full">期間限定で全プラン込み</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
+                        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[32px] font-bold text-[var(--text)] mb-1">{char.name}</div>
+                        <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                        <div className="font-[family-name:var(--font-noto-serif-jp)] text-[19px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
+                          {char.specialty || detail.specialty}
+                        </div>
+                        <p className="text-sm text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
+                      </div>
+                    </div>
+
+                    {/* 下: 詳細ボックス（背景色付き・両カラムの下） */}
+                    <div className="mt-8 rounded-[16px] bg-[var(--bg2)] p-6 lg:p-7">
+                      <div className="grid gap-x-10 gap-y-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
+                        <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">専門分野</div>
+                        <div className="text-sm text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
+
+                        <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)] sm:pt-1">得意なこと</div>
+                        <ul className="text-sm text-[var(--text)] space-y-1.5">
+                          {detail.strengths.map((s) => (
+                            <li key={s} className="flex items-start gap-2 leading-[1.7]">
+                              <span aria-hidden="true" className="mt-[9px] h-1 w-1 rounded-full bg-[var(--accent)] flex-shrink-0" />
+                              <span>{s}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">入力形式</div>
+                        <div className="text-sm text-[var(--text)]">{detail.input}</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+          </div>
+        </section>
+
+        {/* Cast Talk バナー（ページ末尾） */}
+        <section className="py-14 sm:py-[88px]">
+          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
+            <div className="rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
                 <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">Cast Talk</div>
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
@@ -302,60 +422,6 @@ export default async function CastPage() {
                 Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>
             </div>
-          </div>
-        </section>
-
-        {/* Addon Casts */}
-        <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
-          <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Limited-time Cast</div>
-            <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-              専門キャスト（期間限定で全プラン込み）
-            </h2>
-            <p className="text-base text-[var(--text2)] mt-3">
-              この3キャストは、期間限定で <strong className="text-[var(--text)]">無料プランを含むすべてのプランで利用可能</strong> です。
-              将来は買い切り商品として切り替える予定ですが、<strong className="text-[var(--text)]">期間中に登録したアカウントはその後も継続的にプラン内で利用できます</strong>。
-            </p>
-
-            <div className="mt-10 space-y-4">
-              {addonCasts.map((char) => {
-                const detail = castDetails[char.id]
-                if (!detail) return null
-                return (
-                  <div
-                    key={char.id}
-                    className="grid gap-8 rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-6 lg:grid-cols-[200px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:p-10"
-                  >
-                    <div>
-                      <div className="rounded-[18px] overflow-hidden bg-[var(--bg2)] aspect-square flex items-center justify-center">
-                        <Image
-                          src={char.portrait}
-                          alt={`${char.name}のポートレート`}
-                          width={200}
-                          height={200}
-                          className="h-full w-full object-contain"
-                          sizes="(min-width: 1024px) 200px, 100vw"
-                        />
-                      </div>
-                      <div className="mt-3 flex gap-2 flex-wrap">
-                        <span className="bg-[var(--accent-l)] text-[var(--on-primary-container)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">期間限定で全プラン込み</span>
-                        <span className="bg-[var(--bg2)] text-[var(--text2)] border border-[var(--border)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">入力: {detail.input}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] mb-1">{char.name}</div>
-                      <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
-                      <div className="font-[family-name:var(--font-noto-serif-jp)] text-[17px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
-                        {char.specialty}
-                      </div>
-                      <p className="text-sm text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
           </div>
         </section>
       </main>

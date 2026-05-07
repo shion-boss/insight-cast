@@ -421,3 +421,14 @@ a[data-nav-pending] {
   pointer-events: none;
   cursor: wait;
 }
+
+/* Cast Match（相性のよいキャストを案内するパネル）のアニメーション */
+@keyframes cast-match-card-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cast-match-card {
+    animation: none !important;
+  }
+}

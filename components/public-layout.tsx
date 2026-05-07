@@ -39,6 +39,7 @@ export function PublicHero({
   containerClassName,
   asideClassName,
   contentClassName,
+  asideBare = false,
 }: {
   eyebrow: ReactNode
   title: ReactNode
@@ -49,6 +50,7 @@ export function PublicHero({
   containerClassName?: string
   asideClassName?: string
   contentClassName?: string
+  asideBare?: boolean
 }) {
   return (
     <section className={cx(
@@ -58,7 +60,9 @@ export function PublicHero({
       <div
         className={cx(
           'mx-auto grid max-w-6xl gap-10',
-          !!aside && 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start',
+          !!aside && (asideBare
+            ? 'lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:items-center'
+            : 'lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start'),
           containerClassName,
         )}
       >
@@ -74,7 +78,12 @@ export function PublicHero({
         </div>
 
         {aside && (
-          <div className={cx(getPanelClass('rounded-[var(--r-xl)] p-5'), asideClassName)}>
+          <div
+            className={cx(
+              !asideBare && getPanelClass('rounded-[var(--r-xl)] p-5'),
+              asideClassName,
+            )}
+          >
             {aside}
           </div>
         )}
