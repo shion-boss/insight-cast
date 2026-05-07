@@ -65,7 +65,7 @@ export function PlanCardCTA({
     const isCurrentPlan = currentPlan === plan.id
     const isHigherPlan = (PLAN_RANK[currentPlan] ?? 0) > (PLAN_RANK[plan.id] ?? 0)
 
-    if (isCurrentPlan || isHigherPlan) {
+    if (isCurrentPlan) {
       return (
         <div className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold inline-flex items-center justify-center gap-2 border-[1.5px] border-[var(--ok)]/40 bg-[var(--ok-l)] text-[var(--ok)] cursor-default">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -73,6 +73,18 @@ export function PlanCardCTA({
             <path d="M4 7l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           現在ご契約中
+        </div>
+      )
+    }
+
+    if (isHigherPlan) {
+      return (
+        <div
+          className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold inline-flex items-center justify-center border-[1.5px] border-[var(--border)] bg-[var(--surface2)] text-[var(--text2)] cursor-not-allowed"
+          title="より上位のプランをご契約中のため、このプランは選択できません。プラン変更は設定からご相談ください。"
+          aria-disabled="true"
+        >
+          上位プランをご契約中
         </div>
       )
     }

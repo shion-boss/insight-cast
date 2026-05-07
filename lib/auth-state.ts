@@ -26,8 +26,9 @@ import { useEffect, useState } from 'react'
 function readAuthCookie(): boolean {
   if (typeof document === 'undefined') return false
   // Supabase の auth cookie 名は `sb-<project-ref>-auth-token`。
-  // 末尾共通の `-auth-token=` でマッチする（プロジェクト ref が変わっても拾える）。
-  return /(?:^|;\s*)sb-[^=;]*-auth-token=/.test(document.cookie)
+  // ただし @supabase/ssr は cookie が大きい場合 `sb-<ref>-auth-token.0`,
+  // `.1`, `.2` ... のように分割保存するため、`.\d+` 付きも許容する。
+  return /(?:^|;\s*)sb-[^=;]*-auth-token(?:\.\d+)?=/.test(document.cookie)
 }
 
 export function useIsLoggedIn(): boolean | null {
