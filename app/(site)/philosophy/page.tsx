@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { PublicHero } from '@/components/public-layout'
 
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
@@ -25,12 +26,25 @@ export const metadata: Metadata = {
   },
 }
 
-const articles = [
+type RelatedPost = { slug: string; title: string }
+
+const articles: Array<{
+  id: string
+  tag: string
+  title: string
+  lead: string
+  sections: { heading: string; body: string[] }[]
+  relatedPosts: RelatedPost[]
+}> = [
   {
     id: 'ai-search',
     tag: 'AI検索時代',
     title: 'AI検索時代に、一次情報だけが残る理由',
     lead: 'AIで検索するとき（ChatGPTやGoogleなど）、誰もが気づいていることがあります。まとめ記事が要約されて表示されるようになった、ということです。',
+    relatedPosts: [
+      { slug: 'why-ai-articles-fail-in-search', title: 'AIに記事を書かせても検索で埋もれる理由' },
+      { slug: 'seo-effective-blog-posts-primary-information', title: 'SEOに効くブログ記事とは何か' },
+    ],
     sections: [
       {
         heading: '「誰でも書けるコンテンツ」の価値が下がっている',
@@ -60,6 +74,10 @@ const articles = [
     tag: 'インタビューの効果',
     title: 'なぜインタビューで、価値が引き出せるのか',
     lead: '「自社の強みを教えてください」と聞かれると、人は身構えます。営業的な答えを返してしまいます。インタビューはそれを避けるための設計です。',
+    relatedPosts: [
+      { slug: 'why-ordinary-is-value', title: '一次情報こそが、小規模事業者の唯一の差別化である' },
+      { slug: 'hidden-strengths-emerge-from-questions', title: '事業者が気づいていない強みは、問いかけから生まれる' },
+    ],
     sections: [
       {
         heading: '「強みを教えてください」が機能しない理由',
@@ -89,6 +107,10 @@ const articles = [
     tag: 'ホームページ更新',
     title: 'なぜホームページの更新は止まるのか',
     lead: 'ホームページを持っている事業者さんの多くが、更新を止めています。制作会社が悪いわけでも、事業者さんが怠けているわけでもありません。',
+    relatedPosts: [
+      { slug: 'why-blog-updates-stop', title: 'ブログ更新が続かない本当の理由' },
+      { slug: 'why-interview-before-ai-writing', title: 'ホームページを更新し続けるために必要な「取材思考」とは' },
+    ],
     sections: [
       {
         heading: '「何を書けばいいか分からない」が正直なところ',
@@ -227,6 +249,27 @@ export default function PhilosophyPage() {
                       </div>
                     </article>
                   ))}
+
+                  {article.relatedPosts.length > 0 && (
+                    <div className="rounded-[var(--r-xl)] border border-[var(--accent)]/25 bg-[var(--accent-l)] p-6">
+                      <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">
+                        この考え方を深掘りした記事
+                      </p>
+                      <ul className="mt-3 space-y-2">
+                        {article.relatedPosts.map((post) => (
+                          <li key={post.slug}>
+                            <Link
+                              href={`/blog/${post.slug}`}
+                              className="group flex items-start gap-2 text-sm leading-7 text-[var(--text2)] hover:text-[var(--on-primary-container)]"
+                            >
+                              <span aria-hidden="true" className="mt-1 text-[var(--on-primary-container)]">→</span>
+                              <span className="underline-offset-2 group-hover:underline">{post.title}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -256,6 +299,23 @@ export default function PhilosophyPage() {
                   <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{item.text}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <span>ブログで実践と事例を読む</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span>Insight Cast について</span>
+                <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </section>

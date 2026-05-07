@@ -304,7 +304,7 @@ export default async function BlogDetailPage({
             <p className="text-[var(--text2)]">本文を準備中です。</p>
           )}
 
-          {/* Made with Insight Cast バッジ */}
+          {/* Made with Insight Cast バッジ（interviewer がいる記事のみ） */}
           {interviewer && (() => {
             const castChar = CHARACTERS.find((c) => c.id === post.interviewer)
             return (
@@ -334,18 +334,38 @@ export default async function BlogDetailPage({
                     )}
                   </div>
                 </div>
-                <div className="mt-3 pl-[48px]">
-                  <Link
-                    href="/auth/signup"
-                    prefetch={false}
-                    className="inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--on-primary-container)] hover:underline"
-                  >
-                    あなたも試してみる <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
               </div>
             )
           })()}
+
+          {/* 続きを読む導線（全記事共通・interviewer 有無を問わず常に表示） */}
+          <div className="mt-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
+            <p className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--text2)]">Read more</p>
+            <p className="mt-2 text-sm leading-[1.8] text-[var(--text2)]">
+              Insight Cast は、ホームページを一次情報で育てるための取材サービスです。
+            </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/philosophy"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg2)] px-4 py-2 text-[13px] font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span>考え方を読む</span><span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--bg2)] px-4 py-2 text-[13px] font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span>Insight Cast について</span><span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/auth/signup"
+                prefetch={false}
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--text)] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <span>無料で取材を試す</span><span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          </div>
 
           {/* SNS シェアボタン */}
           <ShareButtons title={post.title} url={`${APP_URL}/blog/${slug}`} />

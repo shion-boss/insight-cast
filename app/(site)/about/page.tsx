@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import { CHARACTERS } from '@/lib/characters'
 import aboutImage from '@/assets/about/about.png'
@@ -292,6 +293,37 @@ export default function AboutPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 続きを読む導線 */}
+        <section className="px-6 py-14 sm:py-[88px]">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Read more</p>
+            <h2 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug text-[var(--text)] sm:text-3xl">
+              続きはこちらから
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-[var(--text2)]">
+              なぜ一次情報なのか、なぜインタビューなのか、なぜホームページの更新は止まるのか——
+              <br className="hidden sm:block" />
+              考え方を整理したページと、毎日更新しているブログを用意しています。
+            </p>
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/philosophy"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <span>AI時代の発信について読む</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span>ブログを読む</span>
+                <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </section>

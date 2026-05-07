@@ -16,7 +16,6 @@ const FILTER_TABS: { id: FilterTab; label: string }[] = [
   { id: 'interview', label: 'インタビュー' },
   { id: 'case', label: '事例' },
   { id: 'philosophy', label: '思想' },
-  { id: 'news', label: 'お知らせ' },
 ]
 
 const VALID_TABS: ReadonlySet<string> = new Set(FILTER_TABS.map((t) => t.id))

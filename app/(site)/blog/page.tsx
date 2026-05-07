@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { PublicHero } from '@/components/public-layout'
 import { BlogClient } from './BlogClient'
 import { getBlogPostsFromDB } from '@/lib/blog-posts.server'
@@ -101,9 +102,38 @@ export default async function BlogPage() {
           asideClassName="self-stretch"
         />
 
-        <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12">
+        <section className="mx-auto max-w-[1160px] px-6 pb-12 sm:px-8 lg:px-12">
           <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: 'ブログ' }]} />
           <BlogClient posts={posts} />
+        </section>
+
+        {/* Philosophy / About 導線 */}
+        <section className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12">
+          <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7 sm:p-10">
+            <p className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Behind the blog</p>
+            <h2 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold leading-snug text-[var(--text)] sm:text-2xl">
+              なぜ Insight Cast は、こういう記事を書くのか
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-[var(--text2)]">
+              ブログの背景にある考え方と、運営しているチームのことをまとめています。
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/philosophy"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              >
+                <span>AI時代の発信について</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              >
+                <span>Insight Cast について</span>
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+          </div>
         </section>
 
       </main>
