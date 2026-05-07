@@ -233,7 +233,7 @@ function CastTalkReviewForm({
       <button
         type="submit"
         disabled={saving || saved || overallScore === null}
-        className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
       >
         {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '評価を保存'}
       </button>
@@ -411,7 +411,7 @@ export function CastTalkPreviewClient({
           type="button"
           onClick={handleSave}
           disabled={saving || saved}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
         >
           {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '保存する'}
         </button>
@@ -419,7 +419,7 @@ export function CastTalkPreviewClient({
           type="button"
           onClick={() => handleStatusChange(status === 'published' ? 'draft' : 'published')}
           disabled={statusChanging}
-          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
         >
           {statusChanging ? '更新中...' : status === 'published' ? '下書きに戻す' : '公開する'}
         </button>

@@ -9,36 +9,63 @@ import { LimitedCastBanner } from '../LimitedCastBanner'
 
 const FREE_TRIAL_FEATURES = ['取材回数：2回まで（単発）', 'フリーキャスト 3名', 'プロジェクト登録：1件', '取材メモ・記事を受け取れる'] as const
 
+// /pricing 側の PLANS と同じデータ形に揃える（price は数値、features は {ok, label}）
 const PAID_PLANS = [
   {
     id: 'lightning',
     name: 'ライト',
-    price: '¥1,980',
-    period: '/ 月',
-    desc: '月5回から、HPを育てはじめる',
-    features: ['取材 5回 / 月', '記事作成 月20回まで', 'プロジェクト 1件', '自社HP調査', '通常サポート'],
+    price: 1980,
+    note: 'クレジットカードで簡単お申し込み',
+    catch: 'まず月に数回、試しながら続けたい方へ',
+    featured: false,
+    features: [
+      { ok: true,  label: '取材回数：月5回まで' },
+      { ok: true,  label: '記事作成：月20回まで' },
+      { ok: true,  label: 'フリーキャスト 3名' },
+      { ok: true,  label: 'プロジェクト登録：1件' },
+      { ok: true,  label: '自社HP調査あり' },
+      { ok: false, label: '競合調査なし' },
+      { ok: true,  label: '取材メモを受け取れる' },
+    ],
     cta: 'ライトプランで始める',
-    highlight: false,
   },
   {
     id: 'personal',
     name: '個人向け',
-    price: '¥4,980',
-    period: '/ 月',
-    desc: '週1〜2本ペースでHPを育てたい方へ',
-    features: ['取材回数：月15回まで', '記事作成 月60回まで', 'フリーキャスト 3名', 'プロジェクト登録：1件', '競合調査：3社', '取材メモ・記事を受け取れる', '専門キャスト（期間限定で込み）'],
+    price: 4980,
+    note: 'クレジットカードで簡単お申し込み',
+    catch: '週1〜2本のペースで、ホームページをコツコツ育てたい方へ',
+    featured: true,
+    features: [
+      { ok: true,  label: '取材回数：月15回まで' },
+      { ok: true,  label: '記事作成：月60回まで' },
+      { ok: true,  label: 'フリーキャスト 3名' },
+      { ok: true,  label: 'プロジェクト登録：1件' },
+      { ok: true,  label: '自社HP調査あり' },
+      { ok: true,  label: '競合調査：3件' },
+      { ok: true,  label: '取材メモを受け取れる' },
+    ],
     cta: '月額プランを始める',
-    highlight: true,
   },
   {
     id: 'business',
     name: '法人向け',
-    price: '¥14,800',
-    period: '/ 月',
-    desc: '複数のプロジェクトや担当者でHPを強化したい方へ',
-    features: ['取材回数：月60回まで', '記事作成 月240回まで', 'フリーキャスト 3名', 'プロジェクト登録：最大3件', '競合調査：各プロジェクト3社', '取材メモ・記事を受け取れる', '専門キャスト（期間限定で込み）', '優先サポート'],
+    price: 14800,
+    note: 'クレジットカードで簡単お申し込み',
+    catch: '複数の事業・担当者でまとめて運用したい方へ',
+    featured: false,
+    features: [
+      { ok: true, label: '取材回数：月60回まで' },
+      { ok: true, label: '記事作成：月240回まで' },
+      { ok: true, label: 'フリーキャスト 3名' },
+      { ok: true, label: 'プロジェクト登録：最大3件' },
+      { ok: true, label: '自社HP調査あり' },
+      { ok: true, label: '競合調査：各プロジェクト3件' },
+      { ok: true, label: '取材メモを受け取れる' },
+      { ok: true, label: '取材依頼リンクあり' },
+      { ok: true, label: '優先サポート' },
+    ],
     cta: '月額プランを始める',
-    highlight: false,
   },
 ] as const
 
@@ -53,7 +80,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Pricing</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Pricing</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           まず無料で体験してください。<br />2回まで、カード不要で使えます。
         </h2>
@@ -79,7 +106,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                 <Link
                   href="/dashboard"
                   prefetch={false}
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)] transition-colors"
+                  className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   ダッシュボードへ
                 </Link>
@@ -87,7 +114,7 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                 <Link
                   href="/auth/signup"
                   prefetch={false}
-                  className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)] transition-colors"
+                  className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   無料で始める
                 </Link>
@@ -102,26 +129,37 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
           <span className="text-[12px] font-semibold text-[var(--text2)] tracking-[0.08em]">続けて使うなら、月額プランへ</span>
           <div className="flex-1 h-px bg-[var(--border)]" />
         </div>
-        <div className="mt-6 grid gap-6 sm:grid-cols-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {PAID_PLANS.map((plan) => (
             <div
-              key={plan.name}
-              className={`rounded-[22px] border p-8 flex flex-col ${plan.highlight ? 'border-[var(--accent-h)] bg-[var(--accent-h)] text-white shadow-[var(--elevation-4)]' : 'border-[var(--border)] bg-[var(--surface)]'}`}
+              key={plan.id}
+              className={`relative flex flex-col bg-[var(--surface)] rounded-[24px] p-6 sm:p-9 ${
+                plan.featured
+                  ? 'border-[1.5px] border-[var(--accent)] shadow-[0_0_0_2px_var(--accent)]'
+                  : 'border-[1.5px] border-[var(--border)]'
+              }`}
             >
-              <div className={`text-[11px] font-semibold tracking-[0.12em] uppercase mb-3 ${plan.highlight ? 'text-white' : 'text-[var(--on-primary-container)]'}`}>{plan.name}</div>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className={`font-[family-name:var(--font-noto-serif-jp)] text-[36px] font-bold leading-none ${plan.highlight ? 'text-white' : 'text-[var(--text)]'}`}>{plan.price}</span>
-                <span className={`text-sm ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.period}</span>
+              {plan.featured && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-white text-[11px] font-bold px-4 py-1 rounded-md tracking-[.06em] whitespace-nowrap">
+                  <span aria-hidden="true">✦ </span>おすすめ
+                </div>
+              )}
+              <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>
+              <div className="text-[12px] text-[var(--text2)] mb-4 leading-[1.6]">{plan.catch}</div>
+              <div className="font-[family-name:var(--font-noto-serif-jp)] text-[44px] font-bold text-[var(--text)] leading-none mb-1">
+                <sup className="text-[22px] align-super font-sans">¥</sup>{plan.price.toLocaleString()}<sub className="text-base text-[var(--text2)] font-sans font-normal">/月</sub>
               </div>
-              <div className={`text-[13px] mb-6 ${plan.highlight ? 'text-white/95' : 'text-[var(--text2)]'}`}>{plan.desc}</div>
-              <ul className="space-y-2.5 flex-1 mb-8">
-                {plan.features.map((f) => (
-                  <li key={f} className={`flex items-start gap-2.5 text-[13px] leading-[1.6] ${plan.highlight ? 'text-white' : 'text-[var(--text2)]'}`}>
-                    <span aria-hidden="true" className={`mt-[3px] flex-shrink-0 text-[11px] font-bold ${plan.highlight ? 'text-white' : 'text-[var(--teal)]'}`}>✓</span>
-                    {f}
-                  </li>
+              <div className="text-[13px] text-[var(--text2)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
+              <div className="flex flex-col flex-1 mb-7">
+                {plan.features.map((feat, i) => (
+                  <div key={i} className="flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 text-[var(--text2)]">
+                    <span aria-hidden="true" className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text2)]'}`}>
+                      {feat.ok ? '✓' : '–'}
+                    </span>
+                    {feat.label}
+                  </div>
                 ))}
-              </ul>
+              </div>
               {isLoggedIn ? (
                 <CheckoutButton
                   priceId={
@@ -130,13 +168,13 @@ export function PricingPreview({ priceIds }: { priceIds: PricingPriceIds }) {
                     : priceIds.business
                   }
                   label={plan.cta}
-                  featured={plan.highlight}
+                  featured={plan.featured}
                 />
               ) : (
                 <Link
                   href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
                   prefetch={false}
-                  className={`text-center rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors ${plan.highlight ? 'bg-white text-[var(--on-primary-container)] hover:bg-white/90' : 'bg-[var(--accent-h)] text-white hover:bg-[var(--on-primary-container)]'}`}
+                  className="text-center rounded-full px-6 py-3 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
                 >
                   {plan.cta}
                 </Link>

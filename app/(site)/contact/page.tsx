@@ -74,7 +74,7 @@ export default function ContactPage() {
 
           {/* 補足文 */}
           <p className="mt-5 text-center text-xs leading-6 text-[var(--text2)]">
-            通常2営業日以内にご返信します。強引な売り込みはしません。
+            通常2営業日以内にご返信します。
           </p>
         </div>
       </main>

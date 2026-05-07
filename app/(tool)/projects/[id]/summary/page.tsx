@@ -363,7 +363,7 @@ export default function SummaryPage() {
         )}
 
         {/* キャスト紹介パネル */}
-        <div className="flex items-center gap-4 bg-[var(--accent-l)] border border-[rgba(194,114,42,0.2)] rounded-[var(--r-lg)] px-6 py-5 mb-8">
+        <div className="flex items-center gap-4 bg-[var(--accent-l)] border border-[color-mix(in_srgb,var(--accent)_20%,transparent)] rounded-[var(--r-lg)] px-6 py-5 mb-8">
           <CharacterAvatar
             src={char?.icon48}
             alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
@@ -410,7 +410,7 @@ export default function SummaryPage() {
                   {data.values.map((v, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-[var(--r-sm)] text-sm font-semibold border border-[rgba(194,114,42,0.2)]"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-[var(--r-sm)] text-sm font-semibold border border-[color-mix(in_srgb,var(--accent)_20%,transparent)]"
                     >
                       <span aria-hidden="true">✦</span> {v}
                     </span>
@@ -459,7 +459,7 @@ export default function SummaryPage() {
                         {canEdit && (
                           <Link
                             href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent-h)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
+                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-full hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
                           >
                             この記事を作る <span aria-hidden="true">→</span>
                           </Link>
@@ -519,7 +519,7 @@ export default function SummaryPage() {
                 <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
                 <Link
                   href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center bg-[var(--accent-h)] text-white text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--accent-h)] transition-colors"
+                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-full hover:bg-[var(--accent-h)] transition-colors"
                 >
                   記事を受け取る <span aria-hidden="true">→</span>
                 </Link>

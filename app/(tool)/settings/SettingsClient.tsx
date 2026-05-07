@@ -536,7 +536,7 @@ export function SettingsClient({
                 <p className="mb-5 break-all text-xs text-[var(--text2)]">現在: {email || '未設定'}</p>
 
                 {emailSaved ? (
-                  <div className="rounded-xl bg-[var(--accent-l)] border border-[rgba(194,114,42,0.25)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
+                  <div className="rounded-xl bg-[var(--accent-l)] border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
                     <p className="font-semibold text-[var(--on-primary-container)] mb-1">確認メールを送りました</p>
                     <p>新しいメールアドレス宛に確認リンクを送りました。リンクをクリックすると変更が完了します。</p>
                   </div>
@@ -722,7 +722,7 @@ export function SettingsClient({
               </h2>
               <p className="mb-6 text-xs text-[var(--text2)]">現在の契約内容と利用上限を確認できます</p>
 
-              <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[rgba(194,114,42,0.25)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--on-primary-container)]">
                     Current Plan

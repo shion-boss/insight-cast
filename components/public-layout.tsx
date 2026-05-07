@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-import { EyebrowBadge, getPanelClass } from '@/components/ui'
+import { getPanelClass } from '@/components/ui'
 import { PublicHeader, PublicFooter } from '@/components/public-server-components'
 
 export { PublicHeader, PublicFooter }
@@ -67,8 +67,10 @@ export function PublicHero({
         )}
       >
         <div className={cx('max-w-3xl', contentClassName)}>
-          <EyebrowBadge>{eyebrow}</EyebrowBadge>
-          <h1 className="mt-6 text-pretty text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text)] sm:text-5xl lg:text-[4rem]">
+          <p className="text-[13px] font-semibold tracking-[0.18em] uppercase text-[var(--on-primary-container)]">
+            {eyebrow}
+          </p>
+          <h1 className="mt-4 text-pretty text-4xl font-semibold leading-[1.02] tracking-[-0.045em] text-[var(--text)] sm:text-5xl lg:text-[4rem]">
             {title}
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--text2)] sm:text-[1.05rem]">
@@ -128,7 +130,7 @@ export function LegalPageTemplate({
 
         <section className="relative z-10 px-6 pb-20">
           <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
-            <aside className="hidden lg:block">
+            <aside className="hidden lg:block mt-6">
               <div className="sticky top-28 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Related</p>
                 <div className="mt-4 space-y-3 text-sm text-[var(--text2)]">

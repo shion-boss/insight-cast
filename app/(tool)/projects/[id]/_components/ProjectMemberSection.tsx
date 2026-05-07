@@ -419,7 +419,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                   <button
                     type="submit"
                     disabled={inviting || !inviteEmail.trim()}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none"
+                    className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none"
                   >
                     {inviting ? '送信中...' : '招待する'}
                   </button>

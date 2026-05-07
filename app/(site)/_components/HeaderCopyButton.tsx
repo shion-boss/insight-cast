@@ -27,7 +27,7 @@ export function HeaderCopyButton({ text }: { text: string }) {
       onClick={handleClick}
       aria-label={copied ? 'コピーしました' : 'コピー'}
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${
-        copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'
+        copied ? 'text-[var(--accent)]' : 'text-[var(--text3)] hover:text-[var(--text)] hover:bg-[var(--accent-l)]'
       }`}
     >
       {copied ? (

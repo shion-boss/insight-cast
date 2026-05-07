@@ -151,7 +151,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
           >
             {generating ? '生成中...' : '今すぐ生成'}
           </button>
@@ -211,7 +211,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       href={`/cast-talk/${item.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
+                      className="min-h-[44px] rounded-full border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
                     >
                       公開ページ ↗
                     </Link>
@@ -298,7 +298,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                             href={`/cast-talk/${item.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                            className="inline-block rounded-full px-3 py-1.5 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                           >
                             公開ページ ↗
                           </Link>

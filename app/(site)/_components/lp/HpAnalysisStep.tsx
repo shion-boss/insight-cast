@@ -4,13 +4,13 @@ import sceneAnalysis from '@/assets/scene/scene-competitor-analysis.webp'
 
 export function HpAnalysisStep() {
   return (
-    <section className="cv-auto-section py-14 sm:py-[96px] overflow-hidden bg-[var(--bg2)]">
+    <section className="cv-auto-section py-14 sm:py-[96px] overflow-hidden bg-[var(--surface2)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
           <div>
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-4">Step 01 — HP Analysis</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 01 — Analysis</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
-              まず、あなたのHPと<br />競合を調べます。
+              あなたのホームページと<br />競合を調べます。
             </h2>
             <p className="text-[15px] text-[var(--text2)] leading-[1.95] mt-5 max-w-[400px]">
               プロジェクトを登録すると、今のホームページで何が足りないかを分析し、競合との違いを整理できます。「何が足りないか」「どこを強化すべきか」が、取材の前に見えやすくなります。

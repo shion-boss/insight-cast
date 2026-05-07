@@ -74,7 +74,7 @@ export default async function NewProjectPage({
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/pricing?reason=project_limit"
-              className="block w-full text-center rounded-xl bg-[var(--accent-h)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+              className="block w-full text-center rounded-full bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
             >
               プランを見る <span aria-hidden="true">→</span>
             </Link>

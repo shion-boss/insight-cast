@@ -94,7 +94,7 @@ export default async function BillingPage({
           </h2>
           <p className="mb-6 text-xs text-[var(--text2)]">契約中のプランと請求サイクルを確認できます</p>
 
-          <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[rgba(194,114,42,0.25)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--on-primary-container)]">
                 Current Plan

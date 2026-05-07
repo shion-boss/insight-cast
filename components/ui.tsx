@@ -42,14 +42,13 @@ export function getStateOpacity(state: StateName): string {
 }
 
 const buttonBaseClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--shape-sm)] border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50'
+  'inline-flex min-h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full border px-5 py-3 text-sm font-semibold leading-tight transition-[colors,transform,opacity] duration-150 active:scale-95 active:opacity-75 disabled:pointer-events-none disabled:opacity-50'
 
-// primary ボタンの bg は --primary-hover を default に。
-// --primary (#c2722a) に white を載せると 4.0:1 で AA fail。
-// --primary-hover (#a85e20) なら 5:1 で AA pass。
-// hover はさらに濃い --on-primary-container (#8a4a18) で深まる。
+// primary ボタンは --primary を default、hover で --primary-hover に深まる。
+// 注: white on --primary (#ff6900) は WCAG AA 2.89:1 で fail (large text でも fail)。
+// 視覚優先でブランドカラーを正面に出す方針。AA 厳守が必要な箇所は別 tone を検討する。
 const buttonToneClass = {
-  primary: 'border-[var(--primary-hover)] bg-[var(--primary-hover)] text-[var(--on-primary)] hover:border-[var(--on-primary-container)] hover:bg-[var(--on-primary-container)]',
+  primary: 'border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)] hover:border-[var(--primary-hover)] hover:bg-[var(--primary-hover)]',
   secondary: 'border-[var(--outline)] bg-white text-[var(--on-surface)] hover:border-[var(--primary)] hover:text-[var(--on-primary-container)]',
   ghost: 'border-transparent bg-transparent text-[var(--on-surface-variant)] hover:bg-[var(--surface-container)] hover:text-[var(--on-surface)]',
 } as const
@@ -347,8 +346,7 @@ export function EyebrowBadge({
 }) {
   return (
     <div className={cx(
-      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-4 py-2 text-[var(--on-primary-container)]',
-      getTypeClass('label'),
+      'inline-flex items-center gap-2 rounded-full border border-[var(--primary)]/20 bg-[var(--primary-container)] px-5 py-2 text-[13px] tracking-[var(--type-label-tracking)] uppercase font-semibold text-[var(--on-primary-container)]',
       className,
     )}>
       {children}
@@ -443,6 +441,79 @@ export function CharacterAvatar({
         <Image src={src} alt={alt} width={size} height={size} className="h-full w-full object-cover" priority={priority} />
       ) : (
         <span className="text-lg" aria-hidden="true">{emoji ?? '🙂'}</span>
+      )}
+    </div>
+  )
+}
+
+const PROJECT_AVATAR_PALETTE = [
+  '#feeae1', // accent-l
+  '#e9efe2', // teal-l
+  '#fbeed3', // warn-l
+  '#e5dfd1', // bg2 系
+  '#f3dcd0',
+  '#e4ded3',
+] as const
+
+function hashString(s: string): number {
+  let h = 0
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h) + s.charCodeAt(i)
+    h |= 0
+  }
+  return Math.abs(h)
+}
+
+function getProjectInitial(name: string): string {
+  const trimmed = name.trim()
+  if (!trimmed) return '?'
+  // 先頭文字（日本語1文字 or アルファベット1文字）
+  return Array.from(trimmed)[0] ?? '?'
+}
+
+/**
+ * プロジェクトを識別するためのアバター。
+ * imageUrl があれば画像を、なければ頭文字 + 色付き背景を表示する。
+ * 画像のロード失敗時 fallback はクライアント側 <ProjectAvatarImage> で対応。
+ */
+export function ProjectAvatar({
+  imageUrl,
+  name,
+  size = 40,
+  className,
+}: {
+  imageUrl?: string | null
+  name: string
+  size?: number
+  className?: string
+}) {
+  const initial = getProjectInitial(name)
+  const bgColor = PROJECT_AVATAR_PALETTE[hashString(name || 'project') % PROJECT_AVATAR_PALETTE.length]
+  const fontSize = Math.max(12, Math.round(size * 0.42))
+
+  return (
+    <div
+      className={cx(
+        'overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] flex items-center justify-center flex-shrink-0',
+        className,
+      )}
+      style={{ width: size, height: size, background: bgColor }}
+    >
+      {imageUrl ? (
+        // OGP/favicon は外部ホストのため next/image でなく <img>
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imageUrl}
+          alt=""
+          width={size}
+          height={size}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        <span aria-hidden="true" className="font-bold text-[var(--text)] select-none" style={{ fontSize }}>
+          {initial}
+        </span>
       )}
     </div>
   )

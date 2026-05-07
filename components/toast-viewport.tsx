@@ -84,9 +84,9 @@ export default function ToastViewport() {
                   <Link
                     href={toast.href}
                     prefetch={false}
-                    className="mt-3 inline-flex rounded-md text-sm text-[var(--text2)] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
+                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
-                    {toast.hrefLabel ?? '開く'}
+                    {toast.hrefLabel ?? '開く'} <span aria-hidden="true">→</span>
                   </Link>
                 )}
               </div>

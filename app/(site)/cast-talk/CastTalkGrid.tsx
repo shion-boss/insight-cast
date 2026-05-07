@@ -130,7 +130,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
   return (
     <Link
       href={href}
-      className="group block min-h-[44px] px-5 py-5 transition-colors duration-200 hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+      className="group block min-h-[44px] px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
     >
       {/* 上段: テーマバッジ + キャラアイコン + 名前 */}
       <div className="mb-3 flex items-center gap-2 flex-wrap">

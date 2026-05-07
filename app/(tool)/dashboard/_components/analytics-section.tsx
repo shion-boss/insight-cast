@@ -19,7 +19,14 @@ type Props = {
 function BarChart({ data }: { data: MonthlyPoint[] }) {
   const [hov, setHov] = useState<number | null>(null)
   const max = Math.max(...data.map((d) => d.n), 1)
-  const W = 340, H = 80, BAR = 28, GAP = 16, PAD = 20
+  const N = data.length
+  const PAD = 20
+  const H = 80
+  // バー幅とギャップを本数から自動計算（12 ヶ月 / 6 ヶ月どちらでも収まるように）
+  const W = 400
+  const inner = W - PAD * 2
+  const GAP = N >= 12 ? 8 : 16
+  const BAR = (inner - GAP * (N - 1)) / N
 
   const totalLabel = data.map((d) => `${d.m}:${d.n}本`).join(', ')
   return (
@@ -32,8 +39,7 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
         return (
           <g key={i} onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)} style={{ cursor: 'default' }}>
             <rect x={x} y={y} width={BAR} height={barH} rx={5}
-              fill={d.n === 0 ? 'var(--bg2)' : isHov ? 'var(--accent-h,#b05a20)' : 'var(--accent)'}
-              style={{ transition: 'fill .15s' }}
+              fill={d.n === 0 ? 'var(--bg2)' : 'var(--accent)'}
             />
             {isHov && d.n > 0 && (
               <text x={x + BAR / 2} y={y - 6} textAnchor="middle"
@@ -59,7 +65,7 @@ function BarChart({ data }: { data: MonthlyPoint[] }) {
 }
 
 /* ─── Heatmap ─────────────────────────────────── */
-const HM_COLORS = ['var(--bg2)', '#fde8c8', '#f5c07a', '#e0893a', '#c2722a']
+const HM_COLORS = ['var(--bg2)', '#fde8c8', '#f5c07a', '#e0893a', 'var(--accent)']
 
 function cellColor(count: number) {
   if (count === 0) return HM_COLORS[0]
@@ -212,7 +218,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
             <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事づくりの進み具合</div>
             <div className="text-[12px] text-[var(--text2)]">取材から作った記事の継続ペース</div>
           </div>
-          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去6ヶ月</span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去1年</span>
         </div>
 
         <div className="mb-5">

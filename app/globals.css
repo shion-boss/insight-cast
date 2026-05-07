@@ -11,12 +11,22 @@
    * 詳細仕様は docs/design-system.md を参照。
    * ============================================================ */
 
-  /* === Color: Primary (暖色アクセント) === */
-  --primary: #c2722a;
+  /* === Color: Primary (ブランド主張オレンジ) ===
+   * --primary はブランド主張のためのコアアクセント。
+   * CTA ボタン全般・リンク・focus ring・強調テキストに使う。
+   * 注: white on #ff6900 は WCAG AA で 2.89:1 (fail)。視覚優先でこの値を採用。
+   *      AA 厳守が必要な箇所は --primary-hover (#b81f00, 6.49:1) を使う。 */
+  --primary: #ff6900;
   --on-primary: #ffffff;
-  --primary-container: #fdf0e4;
-  --on-primary-container: #8a4a18;
-  --primary-hover: #a85e20;
+  --primary-container: #feeae1;
+  --on-primary-container: #655443;
+  --primary-hover: #b81f00;
+
+  /* === Color: Brand ground (フレーム・箱の色) ===
+   * 大きな枠・ヒーロー帯・フッター直前の重要パネル等の「茶色い土台」用ロール。
+   * クリーム container 上のテキスト色 (--on-primary-container) も同値で運用し、
+   * 「茶色いインク × クリーム紙」のレターヘッド的な統一感を作る。 */
+  --brand-ground: #655443;
 
   /* === Color: Secondary (ティール) ===
    * WCAG AA: secondary on secondary-container = 4.83:1 (4.5+ クリア) */
@@ -186,8 +196,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-noto-sans-jp);
+  font-weight: 500;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
 }
 
 h1 {
@@ -207,12 +217,12 @@ button:disabled,
 }
 
 :where(a, button, input, textarea, select, summary, [role="button"]):focus-visible {
-  outline: 3px solid rgba(194, 114, 42, 0.45);
+  outline: 3px solid rgba(255, 105, 0, 0.45);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: rgba(194, 114, 42, 0.22);
+  background: rgba(255, 105, 0, 0.22);
   color: #1c1410;
 }
 
@@ -257,6 +267,19 @@ body.is-tool-fullscreen main#main-content {
 
 /* ─── Animations ──────────────────────────────────────────── */
 
+/* Hero 下端のスクロール示唆。微かに上下する */
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(4px); opacity: 1; }
+}
+.hero-scroll-arrow {
+  animation: hero-scroll-bounce 2.4s ease-in-out infinite;
+  display: inline-block;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-arrow { animation: none; opacity: 0.85; }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -282,6 +305,16 @@ body.is-tool-fullscreen main#main-content {
     opacity: 1;
     scale: 1;
   }
+}
+
+/* インディターミネート横棒（フィルター変更時など、サーバ更新待ちを示す） */
+@keyframes progress-indeterminate {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+/* 1 回だけ実行する版。React 側で key を変えて再生し、終了は onAnimationEnd で検知する */
+.animate-progress-sweep {
+  animation: progress-indeterminate 1.1s ease-in-out 1;
 }
 
 /* Scroll-driven reveals — supported in Chrome 115+ / Firefox 114+ */

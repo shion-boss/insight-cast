@@ -64,7 +64,7 @@ const PLANS = [
     name: 'ライト',
     price: 1980,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '月5回から、HPを育てはじめる',
+    catch: 'まず月に数回、試しながら続けたい方へ',
     featured: false,
     features: [
       { ok: true, label: '取材回数：月5回まで' },
@@ -85,7 +85,7 @@ const PLANS = [
     name: '個人向け',
     price: 4980,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '週1〜2本ペースでHPを育てたい方へ',
+    catch: '週1〜2本のペースで、ホームページをコツコツ育てたい方へ',
     featured: true,
     features: [
       { ok: true, label: '取材回数：月15回まで' },
@@ -106,7 +106,7 @@ const PLANS = [
     name: '法人向け',
     price: 14800,
     note: 'クレジットカードで簡単お申し込み',
-    catch: '複数のプロジェクトや担当者でHPを強化したい方へ',
+    catch: '複数の事業・担当者でまとめて運用したい方へ',
     featured: false,
     features: [
       { ok: true, label: '取材回数：月60回まで' },
@@ -125,18 +125,25 @@ const PLANS = [
   },
 ] as const
 
+/** 比較表のセル値をマーク（✓ / −）の場合は色付きで描画する */
+function renderCellValue(value: string) {
+  if (value === '✓') return <span aria-label="あり" className="text-[var(--teal)] text-[16px] font-bold">✓</span>
+  if (value === '−') return <span aria-label="なし" className="text-[var(--text3)] text-[16px]">−</span>
+  return value
+}
+
 const TABLE_ROWS = [
   { label: '料金（月額）', lightning: '¥1,980', personal: '¥4,980', business: '¥14,800' },
   { label: '取材回数', lightning: '月5回', personal: '月15回', business: '月60回' },
   { label: '記事作成', lightning: '月20回', personal: '月60回', business: '月240回' },
   { label: 'フリーキャスト', lightning: '3名', personal: '3名', business: '3名' },
   { label: 'プロジェクト登録', lightning: '1件', personal: '1件', business: '最大3件' },
-  { label: '自社HP調査', lightning: 'あり', personal: 'あり', business: 'あり' },
-  { label: '競合調査', lightning: 'なし', personal: '3件', business: '各プロジェクト3件' },
-  { label: '取材メモを受け取れる', lightning: 'あり', personal: 'あり', business: 'あり' },
-  { label: '取材依頼リンク', lightning: 'なし', personal: 'なし', business: 'あり' },
-  { label: '複数アカウント管理', lightning: 'なし', personal: 'なし', business: 'あり' },
-  { label: '優先サポート', lightning: 'なし', personal: 'なし', business: 'あり' },
+  { label: '自社HP調査', lightning: '✓', personal: '✓', business: '✓' },
+  { label: '競合調査', lightning: '−', personal: '3件', business: '各プロジェクト3件' },
+  { label: '取材メモを受け取れる', lightning: '✓', personal: '✓', business: '✓' },
+  { label: '取材依頼リンク', lightning: '−', personal: '−', business: '✓' },
+  { label: '複数アカウント管理', lightning: '−', personal: '−', business: '✓' },
+  { label: '優先サポート', lightning: '−', personal: '−', business: '✓' },
 ] as const
 
 const ADDON_CASTS = [
@@ -330,24 +337,14 @@ export default async function PricingPage({
         <section className="py-10 sm:py-[56px] bg-[var(--bg)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="text-[13px] font-semibold text-[var(--text2)] mb-5">どれを選べばいいか迷ったら</div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="flex flex-col divide-y divide-[var(--border)] rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {guideChars.map((item) => (
-                <div key={item.plan} className="bg-[var(--surface)] border border-[var(--border)] rounded-[14px] px-5 py-4 flex gap-3 items-center">
-                  <div className="flex-shrink-0">
-                    <CharacterAvatar
-                      src={item.char?.icon48}
-                      alt={`${item.char?.name ?? item.plan}のアイコン`}
-                      emoji={item.char?.emoji}
-                      size={40}
-                    />
-                  </div>
-                  <div>
-                    <span className="font-bold text-sm text-[var(--text)]">{item.plan}</span>
-                    <span className="text-sm text-[var(--text2)] ml-2">{item.desc}</span>
-                  </div>
-                </div>
+                <li key={item.plan} className="flex flex-col gap-1 px-5 py-3.5 sm:flex-row sm:items-baseline sm:gap-4">
+                  <span className="font-bold text-sm text-[var(--text)] sm:min-w-[110px] sm:flex-shrink-0">{item.plan}</span>
+                  <span className="text-sm text-[var(--text2)] leading-[1.7]">{item.desc}</span>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
 
@@ -395,7 +392,7 @@ export default async function PricingPage({
                   }`}
                 >
                   {plan.featured && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent-h)] text-white text-[11px] font-bold px-4 py-1 rounded-full tracking-[.06em] whitespace-nowrap">
+                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-white text-[11px] font-bold px-4 py-1 rounded-md tracking-[.06em] whitespace-nowrap">
                       <span aria-hidden="true">✦ </span>おすすめ
                     </div>
                   )}
@@ -425,7 +422,7 @@ export default async function PricingPage({
         {/* Compare Table */}
         <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Plan Comparison</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Plan Comparison</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               プラン比較表
             </h2>
@@ -441,7 +438,7 @@ export default async function PricingPage({
                       {TABLE_ROWS.map((row) => (
                         <div key={row.label} className="flex items-center justify-between gap-3 border-b border-[var(--border)] pb-3 last:border-0 last:pb-0">
                           <span className="text-[12px] text-[var(--text2)]">{row.label}</span>
-                          <span className={`text-[12px] font-semibold ${isPersonal ? 'text-[var(--text)]' : 'text-[var(--text2)]'}`}>{row[plan]}</span>
+                          <span className={`text-[12px] font-semibold ${isPersonal ? 'text-[var(--text)]' : 'text-[var(--text2)]'}`}>{renderCellValue(row[plan])}</span>
                         </div>
                       ))}
                     </div>
@@ -458,7 +455,7 @@ export default async function PricingPage({
                   <tr>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-left border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] w-[25%]"><span className="sr-only">機能</span></th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">ライト</th>
-                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--accent-h)] text-white">個人向け</th>
+                    <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--brand-ground)] text-white">個人向け</th>
                     <th scope="col" className="px-4 py-3.5 text-[13px] font-bold text-center border-b border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)]">法人向け</th>
                   </tr>
                 </thead>
@@ -466,9 +463,9 @@ export default async function PricingPage({
                   {TABLE_ROWS.map((row) => (
                     <tr key={row.label}>
                       <td className="px-4 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.lightning}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{row.personal}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{row.business}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.lightning)}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{renderCellValue(row.personal)}</td>
+                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.business)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -480,7 +477,7 @@ export default async function PricingPage({
         {/* Add-on Cast (buyout) */}
         <section className="py-14 sm:py-[88px] bg-[var(--bg2)]">
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Limited-time Cast</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Limited-time Cast</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               専門キャスト3名が、いまだけ全プラン込み
             </h2>
@@ -526,14 +523,14 @@ export default async function PricingPage({
         {/* FAQ */}
         <section className="py-14 sm:py-[88px]">
           <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">よくある質問</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">よくある質問</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
               料金に関するよくある質問
             </h2>
             <div className="mt-10 divide-y divide-[var(--border)] rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {FAQS.map((faq, i) => (
                 <details key={i} className="group">
-                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors">
+                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)]">
                     <span>{faq.q}</span>
                     <span aria-hidden="true" className="text-[var(--text2)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>

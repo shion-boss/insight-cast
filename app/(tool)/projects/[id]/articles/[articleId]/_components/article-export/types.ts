@@ -1,4 +1,4 @@
-export const DEFAULT_THEME_COLOR = '#c2722a'
+export const DEFAULT_THEME_COLOR = '#ff6900'
 
 // 全カード共通のヘッダー sticky 位置（グローバルヘッダー min-h-[64px] の直下に貼り付く）
 export const STICKY_TOP = 'top-[64px]'

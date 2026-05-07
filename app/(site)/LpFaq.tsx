@@ -25,7 +25,7 @@ export function LpFaq({ faqs }: { faqs: readonly FaqItem[] }) {
             <button
               type="button"
               onClick={() => toggle(i)}
-              className="flex w-full items-center justify-between gap-4 px-6 py-5 cursor-pointer text-left text-sm font-semibold text-[var(--text)] hover:bg-[var(--bg2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+              className="flex w-full items-center justify-between gap-4 px-6 py-5 cursor-pointer text-left text-sm font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
               aria-expanded={open}
               aria-controls={answerId}
             >

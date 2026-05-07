@@ -681,10 +681,10 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
                   />
                 )}
-                <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
+                <div className={`max-w-[80%] sm:max-w-[60%] px-4 py-3 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] border border-[var(--border)] text-[var(--text)] rounded-[var(--r-lg)] shadow-[var(--elevation-1)] ${
                   msg.role === 'interviewer'
-                    ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
-                    : 'bg-[var(--accent-h)] text-white rounded-2xl rounded-tr-sm'
+                    ? 'bg-[var(--surface)] rounded-tl-none'
+                    : 'bg-[var(--accent-l)] rounded-tr-none'
                 }`}>
                   {msg.attachments && msg.attachments.length > 0 && (
                     <div className="mb-2 flex flex-wrap gap-1.5">
@@ -726,7 +726,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => void sendMessageToAI('はい')}
                     disabled={loading}
-                    className="bg-[var(--accent-h)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
+                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
                   >
                     はい
                   </button>
@@ -900,7 +900,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               <button
                 type="submit"
                 disabled={loading || initializing || hasReachedTurnLimit || (!input.trim() && pendingAttachments.length === 0)}
-                className="bg-[var(--accent-h)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
               </button>
@@ -991,7 +991,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent-h)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : '記事にまとめる'}
                   </button>
@@ -1016,7 +1016,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent-h)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>
@@ -1047,7 +1047,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   <button
                     type="button"
                     onClick={handleContinue}
-                    className="w-full py-3 bg-[var(--accent-h)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors"
                   >
                     もう少し話す
                   </button>
@@ -1081,7 +1081,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent-h)] text-white rounded-[var(--r-sm)] text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>

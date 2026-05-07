@@ -312,7 +312,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             <button
               type="button"
               onClick={handleStart}
-              className="w-full bg-[var(--accent)] text-white rounded-[var(--r-sm)] py-3 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
+              className="w-full bg-[var(--accent)] text-white rounded-full py-3 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               はじめる
             </button>
@@ -504,7 +504,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               <button
                 type="submit"
                 disabled={loading || !input.trim() || hasReachedTurnLimit}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
               </button>
@@ -522,7 +522,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             <button
               type="button"
               onClick={() => handleFinish()}
-              className="bg-[var(--accent)] text-white rounded-[var(--r-sm)] px-6 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
+              className="bg-[var(--accent)] text-white rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               完了する
             </button>

@@ -34,7 +34,7 @@ export default function OnboardingError({
           <button
             type="button"
             onClick={reset}
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold transition-colors"
+            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-6 py-3 text-sm font-semibold transition-colors"
           >
             もう一度試す
           </button>

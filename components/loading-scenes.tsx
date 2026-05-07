@@ -233,12 +233,15 @@ export function WritingLoadingScene({
   title,
   description,
   previewText,
+  characterId,
 }: {
   title: string
   description: string
   previewText?: string
+  /** 取材を担当した AIキャストの id。未指定 or 該当なしの場合は mint にフォールバック。 */
+  characterId?: string | null
 }) {
-  const mint = getCharacter('mint')
+  const cast = (characterId ? getCharacter(characterId) : null) ?? getCharacter('mint')
   const [progress, setProgress] = useState(8)
   const phases = ['取材メモを整理中', '構成を作成中', '文章を整えています']
 
@@ -259,9 +262,9 @@ export function WritingLoadingScene({
     <div role="status" aria-label={title} className="ic-loading-card w-full max-w-[560px]">
       <div className="ic-loading-card-header">
         <CharacterAvatar
-          src={mint?.icon48}
-          alt="ミントのアイコン"
-          emoji={mint?.emoji}
+          src={cast?.icon48}
+          alt={`${cast?.name ?? 'インタビュアー'}のアイコン`}
+          emoji={cast?.emoji}
           size={40}
           className="border-2 border-[var(--accent)]"
         />

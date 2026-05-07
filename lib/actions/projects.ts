@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { rememberProjectCompetitorContext } from '@/lib/project-competitor-context'
 import { getPlanLimits, getUserPlan } from '@/lib/plans'
+import { fetchProjectImageUrl } from '@/lib/project-image'
 import { redirect } from 'next/navigation'
 
 function normalizeUrl(raw: string): string {
@@ -76,6 +77,9 @@ export async function createProject(formData: FormData) {
     redirect('/projects/new?error=competitor_self')
   }
 
+  // HPから画像（OGP / favicon）を取得。失敗してもプロジェクト作成は続行。
+  const imageUrl = await fetchProjectImageUrl(hp_url).catch(() => null)
+
   const { data, error } = await supabase
     .from('projects')
     .insert({
@@ -83,6 +87,8 @@ export async function createProject(formData: FormData) {
       name,
       hp_url,
       status: 'analysis_pending',
+      image_url: imageUrl,
+      image_fetched_at: new Date().toISOString(),
     })
     .select('id')
     .single()
@@ -181,4 +187,41 @@ export async function saveCompetitors(
   })
 
   return {}
+}
+
+/**
+ * 既存プロジェクトの image_url をバックフィル（または再取得）。
+ * オーナーまたは編集メンバーのみ実行可能。
+ */
+export async function refreshProjectImage(projectId: string): Promise<{ imageUrl: string | null }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { imageUrl: null }
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, hp_url, user_id')
+    .eq('id', projectId)
+    .is('deleted_at', null)
+    .maybeSingle()
+
+  if (!project) return { imageUrl: null }
+
+  if (project.user_id !== user.id) {
+    const { data: member } = await supabase
+      .from('project_members')
+      .select('role')
+      .eq('project_id', projectId)
+      .eq('user_id', user.id)
+      .maybeSingle()
+    if (!member || member.role === 'viewer') return { imageUrl: null }
+  }
+
+  const imageUrl = await fetchProjectImageUrl(project.hp_url).catch(() => null)
+  await supabase
+    .from('projects')
+    .update({ image_url: imageUrl, image_fetched_at: new Date().toISOString() })
+    .eq('id', projectId)
+
+  return { imageUrl }
 }

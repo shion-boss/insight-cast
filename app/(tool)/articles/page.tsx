@@ -4,8 +4,7 @@ import { ArticlesServerFilter } from '@/components/articles-server-filter'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter, getCastName } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
-
-const PAGE_SIZE = 20
+import { ARTICLES_PAGE_SIZE } from './constants'
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'ブログ記事',
@@ -27,43 +26,44 @@ type ProjectRow = { id: string; name: string | null; hp_url: string; user_id: st
 type InterviewRow = { id: string; interviewer_type: string; created_at: string }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('ja-JP', {
+  const d = new Date(value)
+  const datePart = new Intl.DateTimeFormat('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date(value)).replace(/\//g, '.')
+  }).format(d).replace(/\//g, '.')
+  const timePart = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(d)
+  return `${datePart} ${timePart}`
 }
 
 export default async function ArticlesPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    page?: string
     projectId?: string
     articleType?: string
     interviewId?: string
-    q?: string
+    cast?: string
   }>
 }) {
   const {
-    page: pageStr,
     projectId: projectIdParam = 'all',
     articleType: articleTypeParam = 'all',
     interviewId: interviewIdParam = 'all',
-    q = '',
+    cast: castParam = 'all',
   } = await searchParams
-
-  const page = Math.max(1, Number(pageStr ?? '1'))
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
   const userId = user.id
-
-  const start = (page - 1) * PAGE_SIZE
-  const end = start + PAGE_SIZE - 1
 
   const [{ data: projectRows }] = await Promise.all([
     supabase.from('projects').select('id, name, hp_url, user_id').is('deleted_at', null),
@@ -105,10 +105,19 @@ export default async function ArticlesPage({
   if (projectIdParam !== 'all') articlesQuery = articlesQuery.eq('project_id', projectIdParam)
   if (articleTypeParam !== 'all') articlesQuery = articlesQuery.eq('article_type', articleTypeParam)
   if (interviewIdParam !== 'all') articlesQuery = articlesQuery.eq('interview_id', interviewIdParam)
-  if (q) {
-    // ilike のワイルドカード文字 (%, _) をエスケープして意図しないパターンマッチを防ぐ
-    const escapedQ = q.replace(/[%_\\]/g, (c) => `\\${c}`)
-    articlesQuery = articlesQuery.or(`title.ilike.%${escapedQ}%,content.ilike.%${escapedQ}%`)
+  if (castParam !== 'all') {
+    const { data: castInterviews } = await supabase
+      .from('interviews')
+      .select('id')
+      .in('project_id', projectIds)
+      .eq('interviewer_type', castParam)
+      .is('deleted_at', null)
+    const ids = (castInterviews ?? []).map((i) => i.id as string)
+    if (ids.length === 0) {
+      articlesQuery = articlesQuery.in('interview_id', ['__none__'])
+    } else {
+      articlesQuery = articlesQuery.in('interview_id', ids)
+    }
   }
 
   // フィルター済みページネーション記事 / インタビュアードロップダウン用全件 / 全記事件数 を並列取得
@@ -117,14 +126,14 @@ export default async function ArticlesPage({
     { data: allInterviewIdRows },
     { count: totalArticleCount },
   ] = await Promise.all([
-    articlesQuery.range(start, end),
+    articlesQuery.range(0, ARTICLES_PAGE_SIZE - 1),
     supabase.from('articles').select('interview_id').in('project_id', projectIds).not('interview_id', 'is', null).is('deleted_at', null),
     supabase.from('articles').select('id', { count: 'exact', head: true }).in('project_id', projectIds).is('deleted_at', null),
   ])
 
   const articles = (articleRows ?? []) as ArticleRow[]
   const totalCount = filteredCount ?? 0
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
+  const initialHasMore = totalCount > articles.length
 
   // 表示中の記事に紐づく project / interview を取得（表示用）
   const displayProjectIds = [...new Set(articles.map((a) => a.project_id))]
@@ -165,6 +174,7 @@ export default async function ArticlesPage({
       .trim()
       .slice(0, 80)
 
+    const interviewChar = interview ? getCharacter(interview.interviewer_type) : null
     return {
       id: article.id,
       title: article.title || '記事',
@@ -173,23 +183,31 @@ export default async function ArticlesPage({
       createdAtLabel: formatDate(article.created_at),
       detailHref: `/projects/${article.project_id}/articles/${article.id}`,
       projectLabel: project?.name || project?.hp_url || '—',
-      interviewerLabel: interview
-        ? `${formatDate(interview.created_at)} · ${getCastName(interview.interviewer_type)}`
-        : '—',
+      interviewerLabel: interview ? getCastName(interview.interviewer_type) : '—',
+      interviewerIcon48: interviewChar?.icon48,
+      interviewerEmoji: interviewChar?.emoji,
       isShared: project?.user_id !== userId,
     }
   })
 
   // ドロップダウン選択肢
   const projectOptions = projects.map((p) => ({ id: p.id, label: p.name || p.hp_url }))
-  const interviewerOptions = (dropdownInterviewRows ?? [])
+  // 取材メモ: 記事が紐づいている interview を、新しい順 + キャスト名つきで表示
+  const interviewOptions = (dropdownInterviewRows ?? [])
     .map((i) => ({
       id: i.id,
       label: `${formatDate(i.created_at)} · ${getCastName(i.interviewer_type)}`,
+      sortKey: i.created_at,
     }))
-    .sort((a, b) => b.label.localeCompare(a.label, 'ja'))
+    .sort((a, b) => b.sortKey.localeCompare(a.sortKey))
+    .map(({ id, label }) => ({ id, label }))
+  // インタビュアー: 記事が紐づいているキャスト種別の重複排除
+  const usedCastTypes = [...new Set((dropdownInterviewRows ?? []).map((i) => i.interviewer_type))]
+  const castOptions = usedCastTypes
+    .map((type) => ({ id: type, label: getCastName(type) }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'ja'))
 
-  if (totalCount === 0 && !q && projectIdParam === 'all' && articleTypeParam === 'all' && interviewIdParam === 'all') {
+  if (totalCount === 0 && projectIdParam === 'all' && articleTypeParam === 'all' && interviewIdParam === 'all' && castParam === 'all') {
     const rain = getCharacter('rain')
     return (
       <>
@@ -222,17 +240,18 @@ export default async function ArticlesPage({
       </div>
 
       <ArticlesServerFilter
-        items={articleItems}
+        key={`${projectIdParam}-${articleTypeParam}-${interviewIdParam}-${castParam}`}
+        initialItems={articleItems}
+        initialHasMore={initialHasMore}
         totalCount={totalCount}
-        currentPage={page}
-        totalPages={totalPages}
         projectOptions={projectOptions}
-        interviewerOptions={interviewerOptions}
+        interviewOptions={interviewOptions}
+        castOptions={castOptions}
         showProjectColumn={true}
-        showInterviewerColumn={true}
-        searchPlaceholder="タイトル・本文で検索"
+        showInterviewColumn={true}
+        showCastColumn={true}
         noResultsTitle="条件に合う記事が見つかりません。"
-        noResultsDescription="キーワードや絞り込み条件を変えると、記事が表示されます。"
+        noResultsDescription="絞り込み条件を変えると、記事が表示されます。"
       />
     </>
   )

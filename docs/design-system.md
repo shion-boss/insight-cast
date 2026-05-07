@@ -74,7 +74,7 @@
 | `--on-primary` | `#ffffff` | プライマリ背景の上に乗る文字・アイコン |
 | `--primary-container` | `#fdf0e4` | バッジ・タグ・薄い強調背景（Eyebrow 等） |
 | `--on-primary-container` | `#8a4a18` | primary-container 背景上の文字（より濃い暖色） |
-| `--primary-hover` | `#a85e20` | primary のホバー色（M3 標準では state layer で表現するが、既存コードとの互換のため明示変数を残す） |
+| `--primary-hover` | `#b85020` | primary のホバー色（M3 標準では state layer で表現するが、既存コードとの互換のため明示変数を残す） |
 
 ### Secondary（ティール）
 

@@ -24,17 +24,22 @@ type JsonLike = Record<string, unknown> | null | undefined
 
 type AuditLike = {
   raw_data?: JsonLike
+  /** 軽量化: raw_data 全体ではなく input_signature だけを jsonb path で抜いた値 */
+  input_signature?: string | null
 } | null | undefined
 
 type CompetitorAnalysisLike = {
   competitor_id: string
   raw_data?: JsonLike
+  /** 軽量化: raw_data 全体ではなく input_signature だけを jsonb path で抜いた値 */
+  input_signature?: string | null
 }
 
-function readInputSignature(rawData: JsonLike) {
-  return rawData && typeof rawData === 'object'
-    ? rawData.input_signature
-    : null
+function readSignature(row: { raw_data?: JsonLike; input_signature?: string | null } | null | undefined): unknown {
+  if (!row) return null
+  if (typeof row.input_signature === 'string') return row.input_signature
+  if (row.raw_data && typeof row.raw_data === 'object') return row.raw_data.input_signature
+  return null
 }
 
 export function isProjectAnalysisReady(input: {
@@ -48,12 +53,12 @@ export function isProjectAnalysisReady(input: {
     competitorUrls: input.competitors.map((competitor) => competitor.url),
   })
 
-  const hasFreshAudit = readInputSignature(input.audit?.raw_data) === inputSignature
+  const hasFreshAudit = readSignature(input.audit) === inputSignature
   const validCompetitorIds = new Set(input.competitors.map((competitor) => competitor.id))
   const matchedCompetitorIds = new Set(
     input.competitorAnalyses
       .filter((row) => validCompetitorIds.has(row.competitor_id))
-      .filter((row) => readInputSignature(row.raw_data) === inputSignature)
+      .filter((row) => readSignature(row) === inputSignature)
       .map((row) => row.competitor_id),
   )
 

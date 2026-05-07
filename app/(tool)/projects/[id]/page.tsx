@@ -6,7 +6,8 @@ import { getCharacter } from '@/lib/characters'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
-import { Breadcrumb, ButtonLink, CharacterAvatar, InterviewerSpeech, StatusPill } from '@/components/ui'
+import { Breadcrumb, ButtonLink, CharacterAvatar, InterviewerSpeech, ProjectAvatar, StatusPill } from '@/components/ui'
+import { ProjectImageRefreshButton } from '@/components/project-image-refresh-button'
 import { getStoredClassifications } from '@/lib/content-map'
 import { getStoredSiteBlogPosts } from '@/lib/site-blog-support'
 import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
@@ -68,7 +69,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const [{ data: project }] = await Promise.all([
     supabase
       .from('projects')
-      .select('id, name, hp_url, status, updated_at, user_id')
+      .select('id, name, hp_url, status, updated_at, user_id, image_url')
       .eq('id', id)
       .is('deleted_at', null)
       .single(),
@@ -181,8 +182,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     const now = new Date()
     const nowKey = jstMonthKey(now)
     const [nY, nM] = nowKey.split('-').map(Number)
-    return Array.from({ length: 6 }, (_, i) => {
-      const offset = 5 - i
+    return Array.from({ length: 12 }, (_, i) => {
+      const offset = 11 - i
       const m = nM - offset
       const y = nY + Math.floor((m - 1) / 12)
       const mo = ((m - 1 + 120) % 12) + 1
@@ -235,41 +236,44 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   // 取材メモアイテム
   const interviewHistoryItems: InterviewHistoryItem[] = interviews.map((interview) => {
     const interviewArticles = articlesByInterview.get(interview.id) ?? []
-    const latestInterviewArticle = interviewArticles[0] ?? null
     const char = getCharacter(interview.interviewer_type)
-    const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
     const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
-    const articleHref = interviewArticles.length > 1
-      ? `/articles?interviewId=${interview.id}&projectId=${id}`
-      : latestInterviewArticle
-        ? `/projects/${id}/articles/${latestInterviewArticle.id}`
-        : null
+    const themeCount = Array.isArray(interview.themes)
+      ? interview.themes.filter((t) => typeof t === 'string' && t.trim().length > 0).length
+      : 0
+    const articleCount = interviewArticles.length
+    const uncreatedThemeCount = Math.max(0, themeCount - articleCount)
+    const hasSummary = Boolean(interview.summary || interview.status === 'completed')
+    const isDone = interview.status === 'done' || hasSummary
     return {
       id: interview.id,
       charName: char?.name ?? 'インタビュアー',
       charEmoji: char?.emoji ?? '🎙️',
       charIcon48: char?.icon48,
-      themes: interview.themes,
-      hasSummary,
-      hasArticle,
-      hasUncreatedThemes,
-      articleStatus: interview.article_status,
       createdAt: interview.created_at,
-      articleCount: interviewArticles.length,
-      articleHref,
-      articleLabel: interviewArticles.length > 1 ? '記事一覧を見る' : '記事を見る',
+      isDone,
+      articleCount,
+      uncreatedThemeCount,
       managementHref,
     }
   })
 
   // 記事アイテム
-  const articleSectionItems: ArticleSectionItem[] = articles.map((article) => ({
-    id: article.id,
-    title: article.title,
-    articleType: article.article_type,
-    createdAt: article.created_at,
-    href: `/projects/${id}/articles/${article.id}`,
-  }))
+  const interviewById = new Map(interviews.map((iv) => [iv.id, iv]))
+  const articleSectionItems: ArticleSectionItem[] = articles.map((article) => {
+    const interview = article.interview_id ? interviewById.get(article.interview_id) : null
+    const interviewChar = interview ? getCharacter(interview.interviewer_type) : null
+    return {
+      id: article.id,
+      title: article.title,
+      articleType: article.article_type,
+      createdAt: article.created_at,
+      href: `/projects/${id}/articles/${article.id}`,
+      interviewerName: interviewChar?.name ?? null,
+      interviewerIcon48: interviewChar?.icon48,
+      interviewerEmoji: interviewChar?.emoji,
+    }
+  })
 
   const continuityScore = (() => {
     const now = new Date()
@@ -301,15 +305,22 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-[var(--r)] bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0">
-                <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={32} />
-              </div>
+              <ProjectAvatar
+                imageUrl={project.image_url}
+                name={project.name || project.hp_url}
+                size={64}
+              />
               <div>
                 <div className="text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
                 <div className="text-sm text-[var(--text2)] flex items-center gap-1">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text2)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   {project.hp_url}
                 </div>
+                {canEdit && (
+                  <div className="mt-1">
+                    <ProjectImageRefreshButton projectId={id} />
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -434,18 +445,38 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">競合が扱っている注目テーマ</h2>
           </div>
-          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
-            {influentialTopics.map((topic, i) => (
-              <div key={i} className="flex items-start gap-3 px-5 py-4">
-                <div className="mt-0.5 flex items-center gap-2">
-                  <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[var(--text)]">{topic.theme}</p>
-                  <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2">{topic.summary}</p>
-                </div>
-              </div>
-            ))}
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)] overflow-hidden">
+            {influentialTopics.map((topic, i) => {
+              if (!canEdit) {
+                return (
+                  <div key={i} className="flex items-start gap-3 px-5 py-4">
+                    <div className="mt-0.5 flex items-center gap-2">
+                      <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-[var(--text)]">{topic.theme}</p>
+                      <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2">{topic.summary}</p>
+                    </div>
+                  </div>
+                )
+              }
+              return (
+                <Link
+                  key={i}
+                  href={`/projects/${id}/interviewer`}
+                  className="group flex items-start gap-3 px-5 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+                >
+                  <div className="mt-0.5 flex items-center gap-2">
+                    <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{topic.theme}</p>
+                    <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2 transition-colors group-hover:text-[var(--accent)]">{topic.summary}</p>
+                  </div>
+                  <span aria-hidden="true" className="shrink-0 self-end text-[12px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">取材する →</span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       )}

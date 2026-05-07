@@ -135,7 +135,7 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
       >
         + ユーザーを作成
       </button>
@@ -192,7 +192,7 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
       <button
         type="submit"
         disabled={saving}
-        className="inline-flex min-h-10 items-center gap-2 rounded-[var(--r-sm)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:opacity-50"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:opacity-50"
       >
         {saving ? '作成中...' : 'メール確認なしで作成'}
       </button>

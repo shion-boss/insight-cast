@@ -179,7 +179,7 @@ export default async function BlogPage() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/philosophy"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-ground)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
                 <span>AI時代の発信について</span>
                 <span aria-hidden="true">→</span>

@@ -78,7 +78,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid rgba(194, 114, 42, 0.25);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   border-radius: 999px;
   background: var(--accent-l);
   padding: 5px 12px;
@@ -120,7 +120,7 @@
   left: 0;
   right: 0;
   height: 36px;
-  background: rgba(194, 114, 42, 0.08);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
   animation: ic-scan-highlight 2s ease-in-out infinite;
 }
 
@@ -203,7 +203,7 @@
 
 .ic-prep-ring {
   position: absolute;
-  border: 1.5px solid rgba(194, 114, 42, 0.18);
+  border: 1.5px solid color-mix(in srgb, var(--accent) 18%, transparent);
   border-radius: 999px;
   animation: ic-prep-ripple 2.4s ease-out infinite;
 }

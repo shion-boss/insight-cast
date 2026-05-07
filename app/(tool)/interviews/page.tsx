@@ -3,11 +3,10 @@ import { redirect } from 'next/navigation'
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { InterviewsFilterClient } from '@/components/interviews-filter-client'
 import { getCharacter, CHARACTERS } from '@/lib/characters'
-import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
+import { buildArticleCountByInterview, getInterviewManagementHref, getInterviewThemeCount, type InterviewArticleRef } from '@/lib/interview-state'
 import { getUserPlan } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
-
-const PAGE_SIZE = 20
+import { INTERVIEWS_PAGE_SIZE } from './constants'
 
 type Project = { id: string; name: string | null; hp_url: string; user_id: string }
 type Interview = {
@@ -22,31 +21,34 @@ type Interview = {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat('ja-JP', {
+  const d = new Date(value)
+  const datePart = new Intl.DateTimeFormat('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date(value)).replace(/\//g, '.')
+  }).format(d).replace(/\//g, '.')
+  const timePart = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(d)
+  return `${datePart} ${timePart}`
 }
 
 export default async function InterviewsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; projectId?: string; cast?: string; status?: string }>
+  searchParams: Promise<{ projectId?: string; cast?: string; status?: string }>
 }) {
-  const { page: pageStr, projectId: projectIdParam = 'all', cast: castParam = 'all', status: statusParam = 'all' } = await searchParams
-
-  const page = Math.max(1, Number(pageStr ?? '1'))
+  const { projectId: projectIdParam = 'all', cast: castParam = 'all', status: statusParam = 'all' } = await searchParams
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
   const userId = user.id
-
-  const start = (page - 1) * PAGE_SIZE
-  const end = start + PAGE_SIZE - 1
 
   const [{ data: projectRows }, plan] = await Promise.all([
     supabase.from('projects').select('id, name, hp_url, user_id').is('deleted_at', null),
@@ -105,9 +107,13 @@ export default async function InterviewsPage({
   if (projectIdParam !== 'all') interviewQuery = interviewQuery.eq('project_id', projectIdParam)
   if (castParam !== 'all') interviewQuery = interviewQuery.eq('interviewer_type', castParam)
   if (statusParam === 'done') {
-    interviewQuery = interviewQuery.or('status.eq.done,status.eq.completed,not.summary.is.null')
+    // 完了: status='done' または status='completed' または summary が入っている
+    interviewQuery = interviewQuery.or('status.eq.done,status.eq.completed,summary.not.is.null')
   } else if (statusParam === 'in_progress') {
-    interviewQuery = interviewQuery.or('status.is.null,not.status.in.(done,completed)').is('summary', null)
+    // 途中: summary なし かつ status が 'done'/'completed' でない（null は含む）
+    interviewQuery = interviewQuery
+      .is('summary', null)
+      .or('status.is.null,and(status.neq.done,status.neq.completed)')
   }
 
   const [
@@ -115,12 +121,12 @@ export default async function InterviewsPage({
     { data: interviewRows, count: filteredCount },
   ] = await Promise.all([
     supabase.from('interviews').select('interviewer_type').in('project_id', projectIds).is('deleted_at', null),
-    interviewQuery.range(start, end),
+    interviewQuery.range(0, INTERVIEWS_PAGE_SIZE - 1),
   ])
 
   const interviews = (interviewRows ?? []) as Interview[]
   const totalCount = filteredCount ?? 0
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
+  const initialHasMore = totalCount > interviews.length
 
   // 表示中の取材分だけ記事数を取得
   const displayedIds = interviews.map((i) => i.id)
@@ -133,7 +139,10 @@ export default async function InterviewsPage({
   const items = interviews.map((interview) => {
     const project = projectMap.get(interview.project_id)
     const char = getCharacter(interview.interviewer_type)
-    const { hasSummary, hasArticle, hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
+    const articleCount = articleCountByInterview.get(interview.id) ?? 0
+    const themeCount = getInterviewThemeCount(interview.themes)
+    const uncreatedThemeCount = Math.max(0, themeCount - articleCount)
+    const hasSummary = Boolean(interview.summary || interview.status === 'completed')
     const href = getInterviewManagementHref(interview, articleCountByInterview)
     return {
       id: interview.id,
@@ -143,11 +152,8 @@ export default async function InterviewsPage({
       interviewerEmoji: char?.emoji ?? '🎙️',
       icon48: char?.icon48,
       isDone: interview.status === 'done' || hasSummary,
-      hasSummary,
-      hasArticle,
-      hasUncreatedThemes,
-      articleStatus: interview.article_status,
-      articleCount: articleCountByInterview.get(interview.id) ?? 0,
+      articleCount,
+      uncreatedThemeCount,
       createdAtLabel: formatDate(interview.created_at),
       href,
       canContinue: !viewerProjectIds.has(interview.project_id),
@@ -199,10 +205,10 @@ export default async function InterviewsPage({
       </div>
 
       <InterviewsFilterClient
-        items={items}
+        key={`${projectIdParam}-${castParam}-${statusParam}`}
+        initialItems={items}
+        initialHasMore={initialHasMore}
         totalCount={totalCount}
-        currentPage={page}
-        totalPages={totalPages}
         projectOptions={projects.map((p) => ({ id: p.id, label: p.name || p.hp_url }))}
         castOptions={castOptions}
         alwaysShowProjectFilter={plan === 'business'}

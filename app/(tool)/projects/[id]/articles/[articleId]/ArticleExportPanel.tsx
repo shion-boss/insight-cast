@@ -242,7 +242,7 @@ export function ArticleExportPanel({
           {canEdit !== false && (isEditing ? (
             <div className="flex gap-2">
               <button type="button" onClick={handleSaveAndExit} disabled={saveState === 'saving'}
-                className="min-h-[44px] rounded-lg bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
+                className="min-h-[44px] rounded-full bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
                 {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存'}
               </button>
               <button type="button" onClick={handleCancel} disabled={saveState === 'saving'}
@@ -384,8 +384,8 @@ export function ArticleExportPanel({
         <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2">
           <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">コピー形式</span>
           <div className="flex overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] text-xs">
-            <button type="button" onClick={() => setGlobalMode('text')} className={`px-3 py-1.5 transition-colors ${globalMode === 'text' ? 'bg-[var(--accent-h)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>テキスト</button>
-            <button type="button" onClick={() => setGlobalMode('markdown')} className={`border-l border-[var(--border)] px-3 py-1.5 transition-colors ${globalMode === 'markdown' ? 'bg-[var(--accent-h)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>Markdown</button>
+            <button type="button" onClick={() => setGlobalMode('text')} className={`px-3 py-1.5 transition-colors ${globalMode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>テキスト</button>
+            <button type="button" onClick={() => setGlobalMode('markdown')} className={`border-l border-[var(--border)] px-3 py-1.5 transition-colors ${globalMode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>Markdown</button>
           </div>
         </div>
       )}

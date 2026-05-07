@@ -15,7 +15,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
   return (
     <footer aria-label="サイトフッター" className="relative border-t border-[var(--border)] bg-[var(--bg2)]">
       {showPromo && (
-        <div className="bg-[var(--accent-h)] px-6 py-[88px] text-center text-white">
+        <div className="bg-[var(--brand-ground)] px-6 py-[88px] text-center text-white">
           <div className="mx-auto max-w-3xl">
             {loggedIn ? (
               <>
@@ -27,7 +27,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                   <Link
                     href="/dashboard"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     ダッシュボードへ <span aria-hidden="true">→</span>
                   </Link>
@@ -44,7 +44,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                   <Link
                     href="/auth/signup"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-[var(--r-sm)] bg-white px-7 py-3.5 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[#f7f1ea] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>

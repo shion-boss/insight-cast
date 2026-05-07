@@ -120,10 +120,10 @@ function CastHeroDialog() {
                 />
               )}
               <div
-                className={`max-w-[68%] px-4 py-3 text-[14px] leading-[1.8] whitespace-pre-wrap break-words shadow-[var(--elevation-1)] ${
+                className={`max-w-[68%] px-4 py-3 text-[14px] leading-[1.8] whitespace-pre-wrap break-words border border-[var(--border)] text-[var(--text)] rounded-[var(--r-lg)] shadow-[var(--elevation-1)] ${
                   m.role === 'cast'
-                    ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
-                    : 'bg-[var(--accent-h)] text-white rounded-2xl rounded-tr-sm'
+                    ? 'bg-[var(--surface)] rounded-tl-none'
+                    : 'bg-[var(--accent-l)] rounded-tr-none'
                 }`}
               >
                 {m.text}
@@ -250,9 +250,6 @@ export default async function CastPage() {
                               sizes="(min-width: 1024px) 240px, 100vw"
                             />
                           </div>
-                          <div className="mt-3 flex gap-2 flex-wrap">
-                            <span className="bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-1 rounded-full">無料</span>
-                          </div>
                         </div>
                         <div>
                           <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
@@ -296,7 +293,7 @@ export default async function CastPage() {
                       {talksByChar[char.id] && (
                         <Link
                           href={`/cast-talk/${talksByChar[char.id]!.slug}`}
-                          className="group mt-4 flex items-start gap-4 rounded-[16px] bg-[var(--bg2)] p-5 transition-colors hover:bg-[var(--accent-l)]"
+                          className="group mt-4 flex items-start gap-4 rounded-[16px] bg-[var(--bg2)] p-5"
                         >
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--on-primary-container)]">Cast Talk</div>
@@ -358,9 +355,6 @@ export default async function CastPage() {
                             sizes="(min-width: 1024px) 240px, 100vw"
                           />
                         </div>
-                        <div className="mt-3 flex gap-2 flex-wrap">
-                          <span className="bg-[var(--accent-l)] text-[var(--on-primary-container)] border border-[var(--accent)] text-[11px] font-semibold px-2.5 py-1 rounded-full">期間限定で全プラン込み</span>
-                        </div>
                       </div>
                       <div>
                         <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
@@ -417,7 +411,7 @@ export default async function CastPage() {
               </div>
               <Link
                 href="/cast-talk"
-                className="shrink-0 inline-flex items-center rounded-[var(--r-sm)] border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+                className="shrink-0 inline-flex items-center rounded-full border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
                 Cast Talk を読む <span aria-hidden="true">→</span>
               </Link>

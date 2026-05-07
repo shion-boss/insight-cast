@@ -31,7 +31,7 @@ export function LpFaqSection() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div className="mx-auto max-w-[720px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">FAQ</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">FAQ</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           よくある質問
         </h2>
@@ -39,7 +39,7 @@ export function LpFaqSection() {
           <LpFaq faqs={FAQS} />
         </div>
         <div className="text-center mt-8">
-          <Link href="/faq" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+          <Link href="/faq" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             よくある質問をすべて見る <span aria-hidden="true">→</span>
           </Link>
         </div>

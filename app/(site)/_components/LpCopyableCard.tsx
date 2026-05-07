@@ -51,23 +51,21 @@ export function LpCopyableCard({
         }
       }}
       aria-label={copied ? `${label}をコピーしました` : `${label}をコピーする`}
-      className={`group cursor-pointer transition-colors hover:bg-[var(--bg2)] select-none focus-visible:ring-inset ${wrapperClass}`}
+      className={`group cursor-pointer transition-colors hover:bg-[var(--accent-l)] select-none focus-visible:ring-inset ${wrapperClass}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 sm:pt-5 pb-2">
         <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">{label}</div>
         <span
           aria-hidden="true"
-          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold leading-none min-h-[26px] transition-colors ${
             copied ? 'text-[var(--accent)]' : 'text-[var(--text2)] group-hover:text-[var(--text)]'
           }`}
         >
+          {copied && <span className="whitespace-nowrap">コピーしました</span>}
           {copied ? (
-            <>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              <span className="whitespace-nowrap">コピーしました</span>
-            </>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
           ) : (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" />

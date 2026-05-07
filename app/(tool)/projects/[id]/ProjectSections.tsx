@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useState, useRef, useLayoutEffect } from 'react'
 import type { StaticImageData } from 'next/image'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
-import InterviewStatusPills from '@/components/interview-status-pills'
 
 const PER_PAGE = 5
 
@@ -59,31 +58,37 @@ export function PaginatedUncreatedThemes({
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const placeholderCount = PER_PAGE - visible.length
 
-  // 行高は固定（min-h-[72px]）。テーマは truncate で1行に揃え、ページ間で行高が変わらないようにする。
   const ROW_CLASS = 'flex items-center gap-3 px-5 py-3.5 min-h-[72px]'
 
   return (
-    <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)]">
-      <div>
-        {visible.map((item, i) => (
-          <div key={i} className={ROW_CLASS}>
-            <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-            <p className="flex-1 truncate text-sm text-[var(--text)]" title={item.theme}>{item.theme}</p>
-            {canEdit && (
-              <Link
-                href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
-                className={getButtonClass('secondary', 'text-xs px-3 py-1.5 flex-shrink-0')}
-              >
-                記事を作る
-              </Link>
-            )}
-          </div>
-        ))}
+    <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)] overflow-hidden">
+      <div className="divide-y divide-[var(--border)]">
+        {visible.map((item, i) => {
+          if (!canEdit) {
+            return (
+              <div key={i} className={ROW_CLASS}>
+                <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
+                <p className="flex-1 truncate text-sm text-[var(--text)]" title={item.theme}>{item.theme}</p>
+              </div>
+            )
+          }
+          return (
+            <Link
+              key={i}
+              href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
+              className={`group ${ROW_CLASS} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40`}
+            >
+              <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
+              <p className="flex-1 truncate text-sm text-[var(--text)] transition-colors group-hover:text-[var(--accent)]" title={item.theme}>{item.theme}</p>
+              <span aria-hidden="true" className="text-[12px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)] flex-shrink-0">記事を作る →</span>
+            </Link>
+          )
+        })}
         {Array.from({ length: placeholderCount }).map((_, i) => (
           <div key={`ph-${i}`} aria-hidden className={`${ROW_CLASS} invisible`}>
             <div className="h-7 w-7 rounded-full" />
             <div className="flex-1" />
-            <div className="h-11 w-16 rounded" />
+            <div className="h-5 w-24 rounded" />
           </div>
         ))}
       </div>
@@ -99,27 +104,28 @@ export type InterviewHistoryItem = {
   charName: string
   charEmoji: string
   charIcon48: StaticImageData | undefined
-  themes: string[] | null
-  hasSummary: boolean
-  hasArticle: boolean
-  hasUncreatedThemes: boolean
-  articleStatus: string | null
   createdAt: string
+  isDone: boolean
   articleCount: number
-  articleHref: string | null
-  articleLabel: string
+  uncreatedThemeCount: number
   managementHref: string
 }
 
 function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat('ja-JP', {
+  const d = new Date(value)
+  const datePart = new Intl.DateTimeFormat('ja-JP', {
     timeZone: 'Asia/Tokyo',
     year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d).replace(/\//g, '.')
+  const timePart = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(value))
+    hour12: false,
+  }).format(d)
+  return `${datePart} ${timePart}`
 }
 
 export function PaginatedInterviewHistory({
@@ -133,88 +139,154 @@ export function PaginatedInterviewHistory({
   const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const placeholderCount = PER_PAGE - visible.length
 
+  // PC テーブルの最小高さを保持（最後のページで縮まないように）
+  const tableRef = useRef<HTMLDivElement | null>(null)
+  const [tableMinHeight, setTableMinHeight] = useState(0)
+  useLayoutEffect(() => {
+    if (!tableRef.current) return
+    const h = tableRef.current.offsetHeight
+    setTableMinHeight((prev) => Math.max(prev, h))
+  }, [visible])
+
   return (
-    <div className="overflow-hidden bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
-      {visible.map((item, i) => (
-        <div
-          key={item.id}
-          role="link"
-          tabIndex={0}
-          aria-label={`${item.charName} の取材メモを見る`}
-          className={`flex flex-col sm:flex-row sm:items-center gap-3 py-4 cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5`}
-          onClick={(e) => {
-            if ((e.target as Element).closest('a[href]')) return
-            router.push(item.managementHref)
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
+    <>
+      {/* モバイル: カードリスト */}
+      <div className="space-y-3 sm:hidden">
+        {visible.map((item) => (
+          <div
+            key={item.id}
+            role="link"
+            tabIndex={0}
+            aria-label={`${item.charName} の取材メモを見る`}
+            className="group cursor-pointer rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-shadow hover:shadow-[var(--elevation-2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+            onClick={(e) => {
+              if ((e.target as Element).closest('a[href]')) return
               router.push(item.managementHref)
-            }
-          }}
-        >
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-[38px] h-[38px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
-              <CharacterAvatar
-                src={item.charIcon48}
-                alt={`${item.charName}のアイコン`}
-                emoji={item.charEmoji}
-                size={38}
-                className="w-full h-full object-cover object-top"
-              />
-            </div>
-            <div className="min-w-0">
-              <div className="text-[14px] font-semibold text-[var(--text)] mb-0.5">
-                {item.charName}<span aria-hidden="true"> · </span>{formatDateTime(item.createdAt)}
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                router.push(item.managementHref)
+              }
+            }}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-[32px] h-[32px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                <CharacterAvatar
+                  src={item.charIcon48}
+                  alt={`${item.charName}のアイコン`}
+                  emoji={item.charEmoji}
+                  size={32}
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
-              <div className="text-[12px] text-[var(--text2)] truncate">
-                {item.themes && item.themes.length > 0
-                  ? item.themes.join('、')
-                  : 'テーマ未確定'}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <div className="text-[13px] font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)] truncate">
+                    {item.charName}
+                  </div>
+                  {item.isDone ? (
+                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">完了</span>
+                  ) : (
+                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">途中</span>
+                  )}
+                </div>
+                <div className="text-[11px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{formatDateTime(item.createdAt)}</div>
               </div>
             </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 flex-shrink-0">
-            {item.articleCount > 0 && (
-              <span className="text-[11px] text-[var(--text2)]">記事 {item.articleCount}本</span>
-            )}
-            <InterviewStatusPills
-              interviewId={item.id}
-              hasSummary={item.hasSummary}
-              hasArticle={item.hasArticle}
-              hasUncreatedThemes={item.hasUncreatedThemes}
-              articleStatus={item.articleStatus}
-            />
-            {item.articleHref && (
-              <Link href={item.articleHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
-                {item.articleLabel}
-              </Link>
-            )}
-            <Link href={item.managementHref} className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}>
-              メモを見る
-            </Link>
-          </div>
-        </div>
-      ))}
-      {Array.from({ length: placeholderCount }).map((_, i) => (
-        <div key={`ph-${i}`} aria-hidden className="flex flex-col sm:flex-row sm:items-center gap-3 py-4 border-b border-[var(--border)] -mx-5 px-5 invisible">
-          <div className="flex items-center gap-3 flex-1">
-            <div className="w-[38px] h-[38px] rounded-full" />
-            <div className="flex-1">
-              <div className="h-5 mb-0.5" />
-              <div className="h-4" />
+            <div className="flex items-center gap-4 text-[12px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+              <span>記事 <span className="font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.articleCount}</span></span>
+              <span>未作成テーマ <span className="font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.uncreatedThemeCount}</span></span>
             </div>
           </div>
-          <div className="flex gap-2">
-            <div className="h-[44px] w-16 rounded" />
-            <div className="h-[44px] w-20 rounded" />
+        ))}
+        {totalPages > 1 && (
+          <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
+            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
           </div>
+        )}
+      </div>
+
+      {/* PC: テーブル（/interviews と同じ構成。プロジェクト列だけ省略） */}
+      <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
+        <div ref={tableRef} style={{ minHeight: tableMinHeight || undefined }}>
+          <table className="w-full table-fixed">
+            <caption className="sr-only">取材メモ一覧</caption>
+            <colgroup>
+              <col className="w-[24%]" />
+              <col className="w-[26%]" />
+              <col className="w-[16%]" />
+              <col className="w-[17%]" />
+              <col className="w-[17%]" />
+            </colgroup>
+            <thead className="bg-[var(--bg2)]">
+              <tr>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">取材日時</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">キャスト</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">ステータス</th>
+                <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">記事</th>
+                <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">未作成テーマ</th>
+              </tr>
+            </thead>
+            <tbody className="bg-[var(--surface)]">
+              {visible.map((item, i) => (
+                <tr
+                  key={item.id}
+                  tabIndex={0}
+                  aria-label={`${item.charName} の取材メモを見る`}
+                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
+                  onClick={(e) => {
+                    if ((e.target as Element).closest('a[href]')) return
+                    router.push(item.managementHref)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      router.push(item.managementHref)
+                    }
+                  }}
+                >
+                  <td className="px-5 py-3 text-[12px] text-[var(--text2)] tabular-nums whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">{formatDateTime(item.createdAt)}</td>
+                  <td className="px-5 py-3 transition-colors group-hover:text-[var(--accent)]">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-[28px] h-[28px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                        <CharacterAvatar
+                          src={item.charIcon48}
+                          alt={`${item.charName}のアイコン`}
+                          emoji={item.charEmoji}
+                          size={28}
+                          className="w-full h-full object-cover object-top"
+                        />
+                      </div>
+                      <span className="truncate text-[13px] text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.charName}</span>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    {item.isDone ? (
+                      <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">完了</span>
+                    ) : (
+                      <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">途中</span>
+                    )}
+                  </td>
+                  <td className={`px-5 py-3 text-right text-[13px] tabular-nums transition-colors group-hover:text-[var(--accent)] ${item.articleCount > 0 ? 'font-semibold text-[var(--text)]' : 'text-[var(--text3)]'}`}>{item.articleCount}</td>
+                  <td className={`px-5 py-3 text-right text-[13px] tabular-nums transition-colors group-hover:text-[var(--accent)] ${item.uncreatedThemeCount > 0 ? 'font-semibold text-[var(--accent)]' : 'text-[var(--text3)]'}`}>{item.uncreatedThemeCount}</td>
+                </tr>
+              ))}
+              {Array.from({ length: placeholderCount }).map((_, i) => (
+                <tr key={`ph-${i}`} aria-hidden className="invisible">
+                  <td className="px-5 py-3"><div className="h-5" /></td>
+                  <td className="px-5 py-3"><div className="h-[28px]" /></td>
+                  <td className="px-5 py-3"><div className="h-5" /></td>
+                  <td className="px-5 py-3"><div className="h-5" /></td>
+                  <td className="px-5 py-3"><div className="h-5" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      ))}
-      <div className="-mx-5">
         <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
-    </div>
+    </>
   )
 }
 
@@ -226,6 +298,9 @@ export type ArticleSectionItem = {
   articleType: string | null
   createdAt: string
   href: string
+  interviewerName: string | null
+  interviewerIcon48: StaticImageData | undefined
+  interviewerEmoji: string | undefined
 }
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
@@ -257,14 +332,17 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
           <Link
             key={article.id}
             href={article.href}
-            className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
+            className="group block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-shadow hover:shadow-[var(--elevation-2)]"
           >
-            <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)]">{article.title || '記事'}</p>
-            <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)]">
-              <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
+            <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{article.title || '記事'}</p>
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+              <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                 {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
               </span>
-              <span>{formatDateTime(article.createdAt)}</span>
+              {article.interviewerName && (
+                <span className="transition-colors group-hover:text-[var(--accent)]">{article.interviewerName}</span>
+              )}
+              <span className="transition-colors group-hover:text-[var(--accent)]">{formatDateTime(article.createdAt)}</span>
             </div>
           </Link>
         ))}
@@ -282,23 +360,23 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
         )}
       </div>
 
-      {/* PC: テーブル */}
+      {/* PC: テーブル（/articles と同じ構成。プロジェクト列だけ省略） */}
       <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] sm:block">
         <div ref={tableRef} style={{ minHeight: tableMinHeight || undefined }}>
           <table className="w-full table-fixed">
             <caption className="sr-only">記事一覧</caption>
             <colgroup>
-              <col className="w-[50%]" />
-              <col className="w-[20%]" />
-              <col className="w-[20%]" />
-              <col className="w-[10%]" />
+              <col className="w-[48%]" />
+              <col className="w-[22%]" />
+              <col className="w-[15%]" />
+              <col className="w-[15%]" />
             </colgroup>
             <thead className="bg-[var(--bg2)]">
               <tr>
                 <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">タイトル</th>
-                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種類</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">インタビュアー</th>
+                <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">種別</th>
                 <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">作成日</th>
-                <th scope="col" className="px-5 py-3"><span className="sr-only">操作</span></th>
               </tr>
             </thead>
             <tbody className="bg-[var(--surface)]">
@@ -306,7 +384,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
                 <tr
                   key={article.id}
                   tabIndex={0}
-                  className={`cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
+                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
                   onClick={(e) => {
                     if ((e.target as Element).closest('a[href]')) return
                     router.push(article.href)
@@ -318,28 +396,41 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
                     }
                   }}
                 >
-                  <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate">
+                  <td className="px-5 py-3 text-[14px] font-semibold text-[var(--text)] truncate transition-colors group-hover:text-[var(--accent)]">
                     {article.title || '記事'}
                   </td>
+                  <td className="px-5 py-3 text-[12px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+                    {article.interviewerName ? (
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-[24px] h-[24px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                          <CharacterAvatar
+                            src={article.interviewerIcon48}
+                            alt={`${article.interviewerName}のアイコン`}
+                            emoji={article.interviewerEmoji}
+                            size={24}
+                            className="w-full h-full object-cover object-top"
+                          />
+                        </div>
+                        <span className="truncate transition-colors group-hover:text-[var(--accent)]">{article.interviewerName}</span>
+                      </div>
+                    ) : (
+                      <span>—</span>
+                    )}
+                  </td>
                   <td className="px-5 py-3">
-                    <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold">
+                    <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2.5 py-1 rounded-full font-semibold transition-colors group-hover:text-[var(--accent)]">
                       {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
                     </span>
                   </td>
-                  <td className="px-5 py-3 text-[12px] text-[var(--text2)]">{formatDateTime(article.createdAt)}</td>
-                  <td className="px-5 py-3">
-                    <Link href={article.href} className={getButtonClass('secondary', 'text-xs px-3 py-1.5')}>
-                      詳細
-                    </Link>
-                  </td>
+                  <td className="px-5 py-3 text-[12px] text-[var(--text2)] tabular-nums whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">{formatDateTime(article.createdAt)}</td>
                 </tr>
               ))}
               {Array.from({ length: placeholderCount }).map((_, i) => (
                 <tr key={`ph-${i}`} aria-hidden className="invisible">
                   <td className="px-5 py-3"><div className="h-5" /></td>
+                  <td className="px-5 py-3"><div className="h-[24px]" /></td>
                   <td className="px-5 py-3"><div className="h-5 w-16" /></td>
                   <td className="px-5 py-3"><div className="h-5 w-24" /></td>
-                  <td className="px-5 py-3"><div className="h-8 w-10" /></td>
                 </tr>
               ))}
             </tbody>

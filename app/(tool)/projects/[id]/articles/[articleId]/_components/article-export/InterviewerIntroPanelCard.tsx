@@ -80,7 +80,7 @@ export function InterviewerIntroPanelCard({
             <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">インタビュアー紹介</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
-                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}
@@ -117,7 +117,7 @@ export function InterviewerIntroPanelCard({
             <div className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">会話本文</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
-                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
+                className={`text-[10px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}

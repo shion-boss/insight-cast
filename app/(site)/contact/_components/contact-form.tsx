@@ -166,9 +166,9 @@ export function ContactForm() {
         )}
       </div>
 
-      {/* どこでお知りになりましたか */}
+      {/* どこでこのサービスを知りましたか */}
       <div>
-        <FieldLabel htmlFor="contact-referral">どこでお知りになりましたか？（任意）</FieldLabel>
+        <FieldLabel htmlFor="contact-referral">どこでこのサービスを知りましたか？（任意）</FieldLabel>
         <select
           id="contact-referral"
           value={referralSource}

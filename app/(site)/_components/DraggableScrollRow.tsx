@@ -125,7 +125,7 @@ export function DraggableScrollRow({
       >
         <div
           onPointerDown={onThumbPointerDown}
-          className={`absolute top-0 h-full rounded-[4px] bg-[var(--accent)] hover:bg-[var(--accent-h)] active:bg-[var(--accent-d)] transition-colors ${
+          className={`absolute top-0 h-full rounded-[4px] bg-[var(--accent)] hover:bg-[var(--accent-h)] active:bg-[var(--accent-h)] transition-colors ${
             thumbDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
           }`}
           style={{ width: thumb.width, transform: `translateX(${thumb.left}px)`, touchAction: 'none' }}

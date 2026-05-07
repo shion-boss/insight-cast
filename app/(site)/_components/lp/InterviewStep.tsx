@@ -21,7 +21,7 @@ export function InterviewStep() {
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-4">Step 02 — Interview</div>
+            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 02 — Interview</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
               今日もAIキャストが、<br />あなたの話を聞きます。
             </h2>
@@ -59,7 +59,7 @@ export function InterviewStep() {
             ))}
           </DraggableScrollRow>
           <div className="mt-5">
-            <Link href="/cast" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+            <Link href="/cast" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
               キャストをすべて見る <span aria-hidden="true">→</span>
             </Link>
           </div>

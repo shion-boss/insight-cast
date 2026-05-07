@@ -31,11 +31,13 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
   return (
     <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)]">Cast Talk</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
-          キャストの対話
+          キャストたちの、舞台裏話
         </h2>
-        <p className="text-base text-[var(--text2)] mt-3">キャスト同士の対話で、ホームページの育て方を学ぶ。</p>
+        <p className="text-base text-[var(--text2)] mt-3 leading-[1.85]">
+          取材の合間に、キャストたちが語り合ったこと。ホームページを育てることについての、本音の対話。
+        </p>
         <div className="mt-8 divide-y divide-[#e8ddd0] overflow-hidden rounded-[16px] border border-[var(--outline)] bg-[var(--surface)]">
           {latestTalks.map((talk) => {
             const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
@@ -48,7 +50,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
               <Link
                 key={talk.id}
                 href={`/cast-talk/${talk.slug}`}
-                className="group block px-5 py-5 transition-colors duration-200 hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+                className="group block px-5 py-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
               >
                 <div className="mb-3 flex flex-wrap items-center gap-2">
                   <div className="flex items-center gap-1.5 rounded-[6px] border border-[var(--outline)] bg-white px-2 py-[4px]">
@@ -83,8 +85,8 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
             )
           })}
         </div>
-        <div className="text-center mt-8">
-          <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+        <div className="mt-8">
+          <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             Cast Talk をもっと読む <span aria-hidden="true">→</span>
           </Link>
         </div>

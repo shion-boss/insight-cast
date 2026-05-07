@@ -27,7 +27,7 @@ export const CATEGORY_LABELS: Record<PostCategory, string> = {
 }
 
 // 10px のカテゴリチップで AA を満たす濃さに揃えている。
-// ブランドオレンジ `#c2722a` は装飾用途で使い、文字色には濃いバリアント `#8a4a18` を使う。
+// ブランドオレンジ `#ff6900` (= --primary) は装飾用途で使い、文字色には brand-ground `#655443` (= --on-primary-container) を使う。
 export const CATEGORY_COLOR_MAP: Record<PostCategory, string> = {
   'ai-search':    '#1d4ed8',
   'primary-info': '#065f46',

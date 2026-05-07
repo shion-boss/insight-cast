@@ -164,9 +164,9 @@ export default async function BlogDetailPage({
           const headerChar = interviewer
           return (
             <div className="mb-14">
-              {/* バッジ */}
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+              {/* カテゴリ + メタ情報 */}
+              <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <span className="text-[11px] font-semibold tracking-[0.14em] uppercase" style={{ color: themeColor }}>
                   {CATEGORY_LABELS[post.category]}
                 </span>
                 <span className="text-[11px] text-[var(--text2)]">約{readingTimeMin}分で読めます</span>
@@ -360,7 +360,7 @@ export default async function BlogDetailPage({
               <Link
                 href="/auth/signup"
                 prefetch={false}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--text)] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-ground)] px-4 py-2 text-[13px] font-semibold text-white transition-opacity hover:opacity-90"
               >
                 <span>無料で取材を試す</span><span aria-hidden="true">→</span>
               </Link>
@@ -376,7 +376,7 @@ export default async function BlogDetailPage({
               {prevPost ? (
                 <Link
                   href={`/blog/${prevPost.slug}`}
-                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)]"
                 >
                   <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">← 新しい記事</span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{prevPost.title}</span>
@@ -385,7 +385,7 @@ export default async function BlogDetailPage({
               {nextPost ? (
                 <Link
                   href={`/blog/${nextPost.slug}`}
-                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)] hover:bg-[var(--bg2)]"
+                  className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)]"
                 >
                   <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">過去の記事 <span aria-hidden="true">→</span></span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{nextPost.title}</span>
@@ -411,7 +411,7 @@ export default async function BlogDetailPage({
                   <Link
                     key={related.slug}
                     href={`/blog/${related.slug}`}
-                    className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+                    className="group flex items-center gap-4 px-5 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
                   >
                     <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${relColor}18` }}>
                       {relChar && <Image src={relChar.icon48} alt={relChar.name} fill sizes="40px" className="object-cover" />}

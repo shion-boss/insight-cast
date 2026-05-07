@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Breadcrumb, EyebrowBadge, getButtonClass } from '@/components/ui'
+import { Breadcrumb, getButtonClass } from '@/components/ui'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { CHARACTERS } from '@/lib/characters'
 import type { Character } from '@/lib/characters'
@@ -168,7 +168,7 @@ export default async function CastTalkDetailPage({
               { label: 'Cast Talk', href: '/cast-talk' },
               { label: talk.title },
             ]} />
-            <EyebrowBadge>Cast Talk</EyebrowBadge>
+            <p className="mt-2 text-[13px] font-semibold tracking-[0.18em] uppercase text-[var(--accent)]">Cast Talk</p>
 
             <h1 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.03em] text-[var(--text)] sm:text-3xl lg:text-4xl">
               {talk.title}

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useDeferredValue, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
 
 import { TextInput, getButtonClass } from '@/components/ui'
 
@@ -20,21 +20,6 @@ const PER_PAGE = 20
 
 function cx(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(' ')
-}
-
-function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
-  if (totalPages <= 1) return null
-  return (
-    <nav aria-label="ページネーション" className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
-      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} aria-label="前のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-        <span aria-hidden="true">←</span> 前へ
-      </button>
-      <span className="text-sm text-[var(--text3)]" aria-live="polite">{page} / {totalPages} ページ</span>
-      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} aria-label="次のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-        次へ <span aria-hidden="true">→</span>
-      </button>
-    </nav>
-  )
 }
 
 function getUniqueOptions(values: string[]) {
@@ -73,7 +58,7 @@ export function ArticleListTable({
   const [articleType, setArticleType] = useState('all')
   const [interviewerLabel, setInterviewerLabel] = useState(initialInterviewerLabel ?? 'all')
   const [projectLabel, setProjectLabel] = useState(initialProjectLabel ?? 'all')
-  const [page, setPage] = useState(1)
+  const [displayCount, setDisplayCount] = useState(PER_PAGE)
 
   const deferredQuery = useDeferredValue(query)
   const normalizedQuery = deferredQuery.trim().toLowerCase()
@@ -101,14 +86,31 @@ export function ArticleListTable({
 
   const hasActiveFilters = query.trim().length > 0 || articleType !== 'all' || interviewerLabel !== 'all' || projectLabel !== 'all'
 
-  const totalPages = Math.ceil(filteredItems.length / PER_PAGE)
-  const paginatedItems = filteredItems.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const placeholderCount = PER_PAGE - paginatedItems.length
+  const visibleItems = filteredItems.slice(0, displayCount)
+  const hasMore = filteredItems.length > displayCount
 
-  function changePage(p: number) {
-    setPage(p)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  // フィルタ変更時に表示件数をリセット
+  useEffect(() => {
+    setDisplayCount(PER_PAGE)
+  }, [normalizedQuery, articleType, interviewerLabel, projectLabel])
+
+  // 無限スクロール: 末尾の sentinel が viewport に入ったら次の chunk を読み込む
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    if (!hasMore) return
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setDisplayCount((prev) => prev + PER_PAGE)
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [hasMore])
 
   return (
     <>
@@ -122,7 +124,7 @@ export function ArticleListTable({
               id="article-filter-query"
               type="search"
               value={query}
-              onChange={(event) => { setQuery(event.target.value); setPage(1) }}
+              onChange={(event) => { setQuery(event.target.value); setDisplayCount(PER_PAGE) }}
               placeholder={searchPlaceholder}
             />
           </div>
@@ -135,7 +137,7 @@ export function ArticleListTable({
               <select
                 id="article-filter-project"
                 value={projectLabel}
-                onChange={(event) => { setProjectLabel(event.target.value); setPage(1) }}
+                onChange={(event) => { setProjectLabel(event.target.value); setDisplayCount(PER_PAGE) }}
                 className={selectClassName()}
               >
                 <option value="all">すべて</option>
@@ -153,7 +155,7 @@ export function ArticleListTable({
             <select
               id="article-filter-type"
               value={articleType}
-              onChange={(event) => { setArticleType(event.target.value); setPage(1) }}
+              onChange={(event) => { setArticleType(event.target.value); setDisplayCount(PER_PAGE) }}
               className={selectClassName()}
             >
               <option value="all">すべて</option>
@@ -173,7 +175,7 @@ export function ArticleListTable({
               <select
                 id="article-filter-interviewer"
                 value={interviewerLabel}
-                onChange={(event) => { setInterviewerLabel(event.target.value); setPage(1) }}
+                onChange={(event) => { setInterviewerLabel(event.target.value); setDisplayCount(PER_PAGE) }}
                 className={selectClassName()}
                 disabled={interviewerOptions.length === 0}
               >
@@ -191,7 +193,7 @@ export function ArticleListTable({
         <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {filteredItems.length} / {items.length} 件
-            {totalPages > 1 && <span className="ml-1.5">（{page} / {totalPages} ページ）</span>}
+            {hasMore && <span className="ml-1.5">（{visibleItems.length} 件表示中）</span>}
           </p>
           {hasActiveFilters && (
             <button
@@ -201,7 +203,7 @@ export function ArticleListTable({
                 setArticleType('all')
                 setInterviewerLabel('all')
                 setProjectLabel('all')
-                setPage(1)
+                setDisplayCount(PER_PAGE)
               }}
               className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
             >
@@ -222,13 +224,13 @@ export function ArticleListTable({
         <>
           {/* モバイル: カードリスト */}
           <div className="space-y-3 sm:hidden">
-            {paginatedItems.map((item) => (
+            {visibleItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.detailHref}
-                className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
+                className="group block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4"
               >
-                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
+                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</p>
                 {item.excerpt && (
                   <p className="mb-2 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
                 )}
@@ -246,7 +248,7 @@ export function ArticleListTable({
                 </div>
               </Link>
             ))}
-            <Pagination page={page} totalPages={totalPages} onPageChange={changePage} />
+            {hasMore && <div ref={sentinelRef} aria-hidden="true" className="h-4" />}
           </div>
 
           {/* PC: テーブル */}
@@ -271,14 +273,14 @@ export function ArticleListTable({
                 </tr>
               </thead>
               <tbody>
-                {paginatedItems.map((item, index) => (
+                {visibleItems.map((item, index) => (
                   <tr
                     key={item.id}
                     tabIndex={0}
                     aria-label={item.title}
                     className={cx(
-                      'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
-                      (index < paginatedItems.length - 1 || placeholderCount > 0) && 'border-b border-[var(--border)]',
+                      'group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
+                      index < visibleItems.length - 1 && 'border-b border-[var(--border)]',
                     )}
                     onClick={(e) => {
                       if ((e.target as Element).closest('a[href]')) return
@@ -294,7 +296,7 @@ export function ArticleListTable({
                     }}
                   >
                     <td className="max-w-xs px-5 py-4">
-                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">
                         {item.title}
                       </Link>
                       {item.excerpt && (
@@ -323,26 +325,9 @@ export function ArticleListTable({
                     </td>
                   </tr>
                 ))}
-                {Array.from({ length: placeholderCount }).map((_, i) => (
-                  <tr key={`ph-${i}`} aria-hidden className={cx(
-                    'invisible',
-                    i < placeholderCount - 1 && 'border-b border-[var(--border)]',
-                  )}>
-                    <td className="px-5 py-4">
-                      <div className="mb-1 h-5" />
-                      <div className="h-4" />
-                    </td>
-                    {showProjectColumn && <td className="px-4 py-4" />}
-                    <td className="px-4 py-4"><div className="h-5 w-16" /></td>
-                    {showInterviewerColumn && <td className="px-4 py-4" />}
-                    <td className="px-4 py-4" />
-                  </tr>
-                ))}
               </tbody>
             </table>
-            <div className="px-5 pb-4">
-              <Pagination page={page} totalPages={totalPages} onPageChange={changePage} />
-            </div>
+            {hasMore && <div ref={sentinelRef} aria-hidden="true" className="h-4" />}
           </div>
         </>
       )}

@@ -2,34 +2,26 @@
 
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useState, useEffect, useRef } from 'react'
-import { TextInput, StatusPill, getButtonClass } from '@/components/ui'
-
-type ArticleItem = {
-  id: string
-  title: string
-  excerpt?: string
-  articleTypeLabel: string
-  createdAtLabel: string
-  detailHref: string
-  projectLabel?: string
-  interviewerLabel?: string
-  isShared?: boolean
-}
+import { Suspense, useState, useEffect, useRef, useTransition } from 'react'
+import { CharacterAvatar, StatusPill, getButtonClass } from '@/components/ui'
+import { FilterProgressBar } from '@/components/filter-progress-bar'
+import { loadMoreArticles } from '@/app/(tool)/articles/actions'
+import type { ArticleItem } from '@/app/(tool)/articles/constants'
 
 type ProjectOption = { id: string; label: string }
-type InterviewerOption = { id: string; label: string }
+type InterviewOption = { id: string; label: string }
+type CastOption = { id: string; label: string }
 
 type Props = {
-  items: ArticleItem[]
+  initialItems: ArticleItem[]
+  initialHasMore: boolean
   totalCount: number
-  currentPage: number
-  totalPages: number
   projectOptions: ProjectOption[]
-  interviewerOptions: InterviewerOption[]
+  interviewOptions: InterviewOption[]
+  castOptions?: CastOption[]
   showProjectColumn?: boolean
-  showInterviewerColumn?: boolean
-  searchPlaceholder?: string
+  showInterviewColumn?: boolean
+  showCastColumn?: boolean
   noResultsTitle?: string
   noResultsDescription?: string
 }
@@ -51,60 +43,38 @@ function selectClassName() {
   )
 }
 
-function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
-  if (totalPages <= 1) return null
-  return (
-    <nav aria-label="ページネーション" className="flex items-center justify-between mt-4 pt-4 border-t border-[var(--border)]">
-      <button type="button" onClick={() => onPageChange(page - 1)} disabled={page <= 1} aria-label="前のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-        <span aria-hidden="true">←</span> 前へ
-      </button>
-      <span className="text-sm text-[var(--text2)]" aria-live="polite">{page} / {totalPages} ページ</span>
-      <button type="button" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages} aria-label="次のページへ" className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
-        次へ <span aria-hidden="true">→</span>
-      </button>
-    </nav>
-  )
-}
-
 function ArticlesFilterContent({
-  items,
+  initialItems,
+  initialHasMore,
   totalCount,
-  currentPage,
-  totalPages,
   projectOptions,
-  interviewerOptions,
+  interviewOptions,
+  castOptions = [],
   showProjectColumn = false,
-  showInterviewerColumn = false,
-  searchPlaceholder = 'タイトルで検索',
+  showInterviewColumn = false,
+  showCastColumn = false,
   noResultsTitle = '条件に合う記事がありません。',
   noResultsDescription = '絞り込み条件をゆるめると、記事が表示されます。',
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [isPending, startTransition] = useTransition()
 
-  const urlQ = searchParams.get('q') ?? ''
-  const projectId = searchParams.get('projectId') ?? 'all'
-  const articleType = searchParams.get('articleType') ?? 'all'
-  const interviewId = searchParams.get('interviewId') ?? 'all'
-
-  // キーワード入力: ローカル state で即座に UI 反映 → 400ms 後に URL へ反映
-  const [localQ, setLocalQ] = useState(urlQ)
-  const lastPushedQ = useRef(urlQ)
+  // select は URL 更新を待たずに即時反映するため local state を持つ。
+  // URL（戻る/進む等）の変化には useEffect で追従する。
+  const [projectId, setProjectId] = useState(searchParams.get('projectId') ?? 'all')
+  const [articleType, setArticleType] = useState(searchParams.get('articleType') ?? 'all')
+  const [interviewId, setInterviewId] = useState(searchParams.get('interviewId') ?? 'all')
+  const [cast, setCast] = useState(searchParams.get('cast') ?? 'all')
 
   useEffect(() => {
-    if (localQ === lastPushedQ.current) return
-    const timer = setTimeout(() => {
-      lastPushedQ.current = localQ
-      const params = new URLSearchParams(searchParams.toString())
-      if (localQ) params.set('q', localQ)
-      else params.delete('q')
-      params.delete('page')
-      router.push(`?${params.toString()}`)
-    }, 400)
-    return () => clearTimeout(timer)
-  }, [localQ, searchParams, router])
+    setProjectId(searchParams.get('projectId') ?? 'all')
+    setArticleType(searchParams.get('articleType') ?? 'all')
+    setInterviewId(searchParams.get('interviewId') ?? 'all')
+    setCast(searchParams.get('cast') ?? 'all')
+  }, [searchParams])
 
-  const hasFilter = urlQ !== '' || projectId !== 'all' || articleType !== 'all' || interviewId !== 'all'
+  const hasFilter = projectId !== 'all' || articleType !== 'all' || interviewId !== 'all' || cast !== 'all'
 
   function pushParams(updates: Record<string, string>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -113,53 +83,97 @@ function ArticlesFilterContent({
       if (value === 'all' || value === '') params.delete(key)
       else params.set(key, value)
     }
-    router.push(`?${params.toString()}`)
+    startTransition(() => {
+      router.push(`?${params.toString()}`)
+    })
   }
 
-  function changePage(page: number) {
-    const params = new URLSearchParams(searchParams.toString())
-    if (page <= 1) params.delete('page')
-    else params.set('page', String(page))
-    router.push(`?${params.toString()}`)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  function changeProject(v: string) {
+    setProjectId(v)
+    pushParams({ projectId: v })
   }
+  function changeArticleType(v: string) {
+    setArticleType(v)
+    pushParams({ articleType: v })
+  }
+  function changeInterview(v: string) {
+    setInterviewId(v)
+    pushParams({ interviewId: v })
+  }
+  function changeCast(v: string) {
+    setCast(v)
+    pushParams({ cast: v })
+  }
+
+  // 無限スクロール（true server-paginated）
+  const [items, setItems] = useState<ArticleItem[]>(initialItems)
+  const [hasMore, setHasMore] = useState(initialHasMore)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const visibleItems = items
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  // 最新値参照用（Observer callback の closure 問題を回避）
+  const stateRef = useRef({ items, hasMore, isLoading, projectId, articleType, interviewId, cast })
+  stateRef.current = { items, hasMore, isLoading, projectId, articleType, interviewId, cast }
+
+  useEffect(() => {
+    if (!hasMore) return
+    const sentinel = sentinelRef.current
+    if (!sentinel) return
+    const observer = new IntersectionObserver(
+      async (entries) => {
+        if (!entries[0]?.isIntersecting) return
+        const { items: cur, hasMore: curHasMore, isLoading: curLoading, projectId, articleType, interviewId, cast } = stateRef.current
+        if (curLoading || !curHasMore) return
+        setIsLoading(true)
+        try {
+          const { items: more, hasMore: nextHasMore } = await loadMoreArticles({
+            cursor: cur.length,
+            projectId,
+            articleType,
+            interviewId,
+            cast,
+          })
+          setItems((prev) => [...prev, ...more])
+          setHasMore(nextHasMore)
+        } finally {
+          setIsLoading(false)
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [hasMore])
 
   function resetFilters() {
-    lastPushedQ.current = ''
-    setLocalQ('')
-    router.push('?')
+    setProjectId('all')
+    setArticleType('all')
+    setInterviewId('all')
+    setCast('all')
+    startTransition(() => router.push('?'))
   }
 
-  const gridCols = [
-    true,                                                          // keyword: always
-    showProjectColumn && projectOptions.length > 0,               // project
-    true,                                                          // article type
-    showInterviewerColumn && interviewerOptions.length > 0,       // interviewer
+  const visibleSelectCount = [
+    showProjectColumn && projectOptions.length > 0,
+    true, // article type は常に表示
+    showCastColumn && castOptions.length > 0,
+    showInterviewColumn && interviewOptions.length > 0,
   ].filter(Boolean).length
 
-  const gridClass = gridCols >= 4
-    ? 'grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]'
-    : gridCols === 3
+  const gridClass = visibleSelectCount >= 4
+    ? 'grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+    : visibleSelectCount === 3
     ? 'grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-    : 'grid gap-3 grid-cols-1 sm:grid-cols-2'
+    : visibleSelectCount === 2
+    ? 'grid gap-3 grid-cols-1 sm:grid-cols-2'
+    : 'grid gap-3 grid-cols-1'
 
   return (
     <>
       <section className="mb-5 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
         <div className={gridClass}>
-          <div className={gridCols >= 4 ? 'sm:col-span-2 lg:col-span-1' : ''}>
-            <label htmlFor="article-filter-query" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
-              キーワード
-            </label>
-            <TextInput
-              id="article-filter-query"
-              type="search"
-              value={localQ}
-              onChange={(e) => setLocalQ(e.target.value)}
-              placeholder={searchPlaceholder}
-            />
-          </div>
-
           {showProjectColumn && projectOptions.length > 0 && (
             <div>
               <label htmlFor="article-filter-project" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
@@ -168,7 +182,7 @@ function ArticlesFilterContent({
               <select
                 id="article-filter-project"
                 value={projectId}
-                onChange={(e) => pushParams({ projectId: e.target.value })}
+                onChange={(e) => changeProject(e.target.value)}
                 className={selectClassName()}
               >
                 <option value="all">すべて</option>
@@ -186,7 +200,7 @@ function ArticlesFilterContent({
             <select
               id="article-filter-type"
               value={articleType}
-              onChange={(e) => pushParams({ articleType: e.target.value })}
+              onChange={(e) => changeArticleType(e.target.value)}
               className={selectClassName()}
             >
               <option value="all">すべて</option>
@@ -196,19 +210,38 @@ function ArticlesFilterContent({
             </select>
           </div>
 
-          {showInterviewerColumn && interviewerOptions.length > 0 && (
+          {showCastColumn && castOptions.length > 0 && (
             <div>
-              <label htmlFor="article-filter-interviewer" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
+              <label htmlFor="article-filter-cast" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
                 インタビュアー
               </label>
               <select
-                id="article-filter-interviewer"
-                value={interviewId}
-                onChange={(e) => pushParams({ interviewId: e.target.value })}
+                id="article-filter-cast"
+                value={cast}
+                onChange={(e) => changeCast(e.target.value)}
                 className={selectClassName()}
               >
                 <option value="all">すべて</option>
-                {interviewerOptions.map(({ id, label }) => (
+                {castOptions.map(({ id, label }) => (
+                  <option key={id} value={id}>{label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {showInterviewColumn && interviewOptions.length > 0 && (
+            <div>
+              <label htmlFor="article-filter-interview" className="mb-1.5 block text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">
+                取材メモ
+              </label>
+              <select
+                id="article-filter-interview"
+                value={interviewId}
+                onChange={(e) => changeInterview(e.target.value)}
+                className={selectClassName()}
+              >
+                <option value="all">すべて</option>
+                {interviewOptions.map(({ id, label }) => (
                   <option key={id} value={id}>{label}</option>
                 ))}
               </select>
@@ -219,7 +252,8 @@ function ArticlesFilterContent({
         <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {totalCount} 件
-            {totalPages > 1 && <span className="ml-1.5">（{currentPage} / {totalPages} ページ）</span>}
+            {hasMore && <span className="ml-1.5">（{visibleItems.length} 件表示中）</span>}
+            {isLoading && <span className="ml-1.5 text-[var(--text3)]">読み込み中...</span>}
           </p>
           {hasFilter && (
             <button type="button" onClick={resetFilters} className={getButtonClass('secondary', 'px-3 py-2 text-xs')}>
@@ -229,7 +263,9 @@ function ArticlesFilterContent({
         </div>
       </section>
 
-      {items.length === 0 ? (
+      <FilterProgressBar pending={isPending} />
+
+      {visibleItems.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
           <p className="text-lg font-bold text-[var(--text)]">{noResultsTitle}</p>
           <p className="mt-2 text-sm text-[var(--text2)]">{noResultsDescription}</p>
@@ -238,32 +274,32 @@ function ArticlesFilterContent({
         <>
           {/* モバイル: カードリスト */}
           <div className="space-y-3 sm:hidden">
-            {items.map((item) => (
+            {visibleItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.detailHref}
-                className="block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--bg2)]"
+                className="group block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4"
               >
-                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)]">{item.title}</p>
+                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                 )}
-                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)]">
-                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
+                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium transition-colors group-hover:text-[var(--accent)]">
                     {item.articleTypeLabel}
                   </span>
                   {showProjectColumn && item.projectLabel && (
                     <span className="flex items-center gap-1.5">
-                      {item.projectLabel}
+                      <span className="transition-colors group-hover:text-[var(--accent)]">{item.projectLabel}</span>
                       {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
                     </span>
                   )}
-                  {showInterviewerColumn && item.interviewerLabel && <span>{item.interviewerLabel}</span>}
-                  <span>{item.createdAtLabel}</span>
+                  {showInterviewColumn && item.interviewerLabel && <span className="transition-colors group-hover:text-[var(--accent)]">{item.interviewerLabel}</span>}
+                  <span className="transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</span>
                 </div>
               </Link>
             ))}
-            <Pagination page={currentPage} totalPages={totalPages} onPageChange={changePage} />
+            {hasMore && <div ref={sentinelRef} aria-hidden="true" className="h-4" />}
           </div>
 
           {/* PC: テーブル */}
@@ -273,23 +309,23 @@ function ArticlesFilterContent({
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
                   <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase">タイトル</th>
+                  {showInterviewColumn && (
+                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">インタビュアー</th>
+                  )}
                   {showProjectColumn && (
                     <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">プロジェクト</th>
                   )}
                   <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">種別</th>
-                  {showInterviewerColumn && (
-                    <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">インタビュアー</th>
-                  )}
-                  <th scope="col" className="px-4 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">作成日</th>
+                  <th scope="col" className="px-5 py-3 text-left text-[11px] font-semibold tracking-[0.10em] text-[var(--text2)] uppercase whitespace-nowrap">作成日</th>
                 </tr>
               </thead>
               <tbody>
-                {items.map((item, index) => (
+                {visibleItems.map((item, index) => (
                   <tr
                     key={item.id}
                     className={cx(
-                      'cursor-pointer transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
-                      index < items.length - 1 && 'border-b border-[var(--border)]',
+                      'group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40',
+                      index < visibleItems.length - 1 && 'border-b border-[var(--border)]',
                     )}
                     tabIndex={0}
                     aria-label={item.title}
@@ -306,36 +342,51 @@ function ArticlesFilterContent({
                       }
                     }}
                   >
-                    <td className="max-w-xs px-5 py-4">
-                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)]">{item.title}</Link>
+                    <td className="max-w-xs px-5 py-4 transition-colors group-hover:text-[var(--accent)]">
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</Link>
                       {item.excerpt && (
-                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)]">{item.excerpt}</p>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                       )}
                     </td>
+                    {showInterviewColumn && (
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
+                        {item.interviewerLabel && item.interviewerLabel !== '—' ? (
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div className="w-[24px] h-[24px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
+                              <CharacterAvatar
+                                src={item.interviewerIcon48}
+                                alt={`${item.interviewerLabel}のアイコン`}
+                                emoji={item.interviewerEmoji}
+                                size={24}
+                                className="w-full h-full object-cover object-top"
+                              />
+                            </div>
+                            <span className="truncate transition-colors group-hover:text-[var(--accent)]">{item.interviewerLabel}</span>
+                          </div>
+                        ) : (
+                          <span>—</span>
+                        )}
+                      </td>
+                    )}
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap">
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
                         <span className="flex items-center gap-1.5">
-                          {item.projectLabel ?? '—'}
+                          <span className="truncate transition-colors group-hover:text-[var(--accent)]">{item.projectLabel ?? '—'}</span>
                           {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
                         </span>
                       </td>
                     )}
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)]">
+                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                         {item.articleTypeLabel}
                       </span>
                     </td>
-                    {showInterviewerColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap">{item.interviewerLabel ?? '—'}</td>
-                    )}
-                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text2)]">{item.createdAtLabel}</td>
+                    <td className="px-5 py-4 whitespace-nowrap text-xs text-[var(--text2)] tabular-nums transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="px-5 pb-4">
-              <Pagination page={currentPage} totalPages={totalPages} onPageChange={changePage} />
-            </div>
+            {hasMore && <div ref={sentinelRef} aria-hidden="true" className="h-4" />}
           </div>
         </>
       )}

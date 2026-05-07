@@ -45,17 +45,17 @@ export default async function OgImage({
             display: 'flex',
             alignItems: 'center',
             marginBottom: '24px',
-            background: 'rgba(194, 114, 42, 0.12)',
+            background: 'rgba(255, 105, 0, 0.12)',
             borderRadius: '100px',
             padding: '6px 18px',
-            border: '1px solid rgba(194, 114, 42, 0.3)',
+            border: '1px solid rgba(255, 105, 0, 0.3)',
           }}
         >
           <span
             style={{
               fontSize: '14px',
               fontWeight: 700,
-              color: '#c2722a',
+              color: '#ff6900',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
             }}

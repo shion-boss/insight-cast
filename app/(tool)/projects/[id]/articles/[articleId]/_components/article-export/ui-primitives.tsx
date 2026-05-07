@@ -44,16 +44,10 @@ export function HeaderCopyButton({ copied, onClick, ariaLabel = 'コピー' }: {
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${copied ? 'text-[var(--on-primary-container)]' : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'}`}
+      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold leading-none min-h-[26px] transition-colors ${copied ? 'text-[var(--accent)]' : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--bg2)]'}`}
     >
-      {copied ? (
-        <>
-          <CheckIcon />
-          <span className="whitespace-nowrap">コピーしました</span>
-        </>
-      ) : (
-        <ClipboardIcon />
-      )}
+      {copied && <span className="whitespace-nowrap">コピーしました</span>}
+      {copied ? <CheckIcon /> : <ClipboardIcon />}
     </button>
   )
 }

@@ -501,7 +501,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                           aria-pressed={tab === t.type}
                           className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                             tab === t.type
-                              ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white'
+                              ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                               : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                           }`}
                         >
@@ -575,7 +575,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       aria-pressed={style === opt.value}
                       className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                         style === opt.value
-                          ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white'
+                          ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                           : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                       }`}
                     >
@@ -598,7 +598,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     title={opt.description}
                     className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
                       audience === opt.value
-                        ? 'border-[var(--accent)] bg-[var(--accent-h)] text-white'
+                        ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                     }`}
                   >
@@ -634,7 +634,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                         disabled
                           ? 'cursor-not-allowed border-[var(--border)] bg-transparent text-[var(--text2)]/50'
                           : volume === opt.value
-                            ? 'cursor-pointer border-[var(--accent)] bg-[var(--accent-h)] text-white'
+                            ? 'cursor-pointer border-[var(--accent)] bg-[var(--accent)] text-white'
                             : 'cursor-pointer border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                       }`}
                     >
@@ -698,7 +698,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
               type="button"
               onClick={() => void startBatchGeneration()}
               disabled={isGenerating || availableThemes.length === 0}
-              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-[var(--r-sm)] bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-full bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCurrentTabGenerating ? (
                 <>この形式を作成中...</>
@@ -832,6 +832,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 <WritingLoadingScene
                   title="記事を作成しています"
                   description="作成中です。そのまま待っても、別の画面に移っても大丈夫です。"
+                  characterId={interviewerType}
                 />
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
                   <Link href={`/projects/${projectId}`} className={getButtonClass('secondary')}>

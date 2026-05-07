@@ -44,7 +44,7 @@ export function LimitedCastBanner() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse at 18% 55%, rgba(194,114,42,0.18) 0%, transparent 52%), radial-gradient(ellipse at 82% 80%, rgba(194,114,42,0.07) 0%, transparent 48%)',
+              'radial-gradient(ellipse at 18% 55%, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 52%), radial-gradient(ellipse at 82% 80%, color-mix(in srgb, var(--accent) 7%, transparent) 0%, transparent 48%)',
           }}
         />
         <div className="relative z-[2] self-stretch flex flex-col justify-center gap-4 p-12">
@@ -86,7 +86,7 @@ export function LimitedCastBanner() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
           style={{
-            background: 'radial-gradient(ellipse at 50% 25%, rgba(194,114,42,0.2) 0%, transparent 60%)',
+            background: 'radial-gradient(ellipse at 50% 25%, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 60%)',
           }}
         />
         <div className="relative z-[1] flex justify-center items-end gap-2 pt-7 px-3">
@@ -123,7 +123,7 @@ function BannerTag() {
     <span
       className="inline-flex items-center gap-[7px] rounded-[2px] px-3 py-[5px] text-[11px] font-bold uppercase w-fit"
       style={{
-        background: 'var(--accent-h)',
+        background: 'var(--accent)',
         color: '#fff',
         letterSpacing: '0.14em',
       }}
@@ -205,8 +205,8 @@ function BannerFineList({ items, sizeClass }: { items: readonly string[]; sizeCl
           className={`flex items-center gap-[7px] leading-[1.5] ${sizeClass}`}
           style={{ color: 'rgba(240,232,220,0.52)' }}
         >
-          <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true" className="flex-shrink-0">
-            <path d="M1 4.5L4.5 8L11 1" stroke="#c2722a" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="12" height="10" viewBox="0 0 12 10" fill="none" aria-hidden="true" className="flex-shrink-0" style={{ color: 'var(--accent)' }}>
+            <path d="M1 4.5L4.5 8L11 1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           {text}
         </span>
@@ -234,25 +234,20 @@ function CharSlot({
           alt={name}
           width={size}
           height={size}
-          className="block"
+          className="block rounded-[8px]"
           style={{ objectFit: 'contain', objectPosition: 'bottom center', width: size, height: size }}
           sizes={`${size}px`}
         />
       )}
       <span
-        className="absolute top-1 right-1 z-[3] rounded-[2px] px-[7px] py-[3px] text-[10px] font-bold text-white"
-        style={{ background: 'rgba(194,114,42,0.92)', letterSpacing: '0.03em' }}
+        className="absolute top-1 right-1 z-[3] rounded-[6px] px-[7px] py-[3px] text-[10px] font-bold text-white"
+        style={{ background: 'color-mix(in srgb, var(--accent) 92%, transparent)', letterSpacing: '0.03em' }}
       >
         {price}
       </span>
       <span
-        className="absolute left-1/2 z-[3] -translate-x-1/2 whitespace-nowrap rounded-[2px] px-2 py-[2px] text-[10px] font-bold"
-        style={{
-          bottom: '6px',
-          background: 'rgba(28,20,16,0.72)',
-          color: 'rgba(240,232,220,0.9)',
-          letterSpacing: '0.08em',
-        }}
+        className="mt-1.5 text-[12px] font-medium leading-none"
+        style={{ color: '#f0e8dc', letterSpacing: '0.04em' }}
       >
         {name}
       </span>

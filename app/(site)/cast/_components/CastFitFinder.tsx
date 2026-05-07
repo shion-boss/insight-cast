@@ -159,7 +159,7 @@ export function CastFitFinder() {
                 style={{
                   width: 84,
                   height: 84,
-                  boxShadow: '0 0 0 3px var(--accent), 0 0 0 8px rgba(194,114,42,.12)',
+                  boxShadow: '0 0 0 3px var(--accent), 0 0 0 8px color-mix(in srgb, var(--accent) 12%, transparent)',
                 }}
               >
                 <CharacterAvatar

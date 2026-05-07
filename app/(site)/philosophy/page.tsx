@@ -181,20 +181,6 @@ export default function PhilosophyPage() {
               Insight Cast がインタビューを起点にする理由、ホームページを「育てる」という考え方の背景を、3つのテーマで整理しました。
             </>
           )}
-          actions={(
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {articles.map((a) => (
-                <a
-                  key={a.id}
-                  href={`#${a.id}`}
-                  className="flex items-center gap-3 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm text-[var(--text2)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                >
-                  <span className="rounded-full bg-[var(--bg2)] px-2 py-0.5 text-[11px] font-medium text-[var(--text2)]">{a.tag}</span>
-                  {a.title}
-                </a>
-              ))}
-            </div>
-          )}
           contentClassName="max-w-none"
         />
 
@@ -210,10 +196,10 @@ export default function PhilosophyPage() {
                 {/* 左: ラベル・タイトル */}
                 <div className={articleIndex % 2 === 1 ? 'lg:order-2' : ''}>
                   <div className="sticky top-24">
-                    <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--on-primary-container)]">
+                    <p className="text-[12px] font-semibold tracking-[0.16em] uppercase text-[var(--on-primary-container)]">
                       {article.tag}
-                    </span>
-                    <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
+                    </p>
+                    <h2 className="mt-3 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
                       {article.title}
                     </h2>
                     <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{article.lead}</p>
@@ -233,7 +219,7 @@ export default function PhilosophyPage() {
                       className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7"
                     >
                       <div className="flex items-start gap-4">
-                        <span aria-hidden="true" className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
+                        <span aria-hidden="true" className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--brand-ground)] text-xs font-semibold text-white">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <h3 className="pt-1 text-base font-semibold leading-snug text-[var(--text)] sm:text-lg">
@@ -280,10 +266,10 @@ export default function PhilosophyPage() {
         {/* まとめ */}
         <section className="px-6 py-14 sm:py-[88px]">
           <div className="mx-auto max-w-6xl">
-            <span className="inline-block rounded-full border border-[var(--accent)]/20 bg-[var(--accent-l)] px-3 py-1 text-xs font-medium text-[var(--on-primary-container)]">
+            <p className="text-[12px] font-semibold tracking-[0.16em] uppercase text-[var(--on-primary-container)]">
               Summary
-            </span>
-            <h2 className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
               「書く」より「聞く」が先。<br />一次情報が、ホームページを育てる。
             </h2>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -293,7 +279,7 @@ export default function PhilosophyPage() {
                 { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
               ].map((item) => (
                 <div key={item.num} className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                  <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--text)] text-xs font-semibold text-white">
+                  <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand-ground)] text-xs font-semibold text-white">
                     {item.num}
                   </span>
                   <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{item.text}</p>
@@ -304,7 +290,7 @@ export default function PhilosophyPage() {
             <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
               >
                 <span>ブログで実践と事例を読む</span>
                 <span aria-hidden="true">→</span>

@@ -72,9 +72,14 @@ export function BlogClient({ posts }: { posts: Post[] }) {
             aria-pressed={activeFilter === tab.id}
             className={`rounded-full border-[1.5px] px-4 py-[7px] text-[13px] font-semibold transition-all duration-200 ${
               activeFilter === tab.id
-                ? 'border-[var(--accent-h)] bg-[var(--accent-h)] text-white'
+                ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                 : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
             }`}
+            style={
+              activeFilter !== tab.id && tab.id !== 'all'
+                ? { color: CATEGORY_COLOR_MAP[tab.id as PostCategory] }
+                : undefined
+            }
           >
             {tab.label}
           </button>
@@ -92,7 +97,7 @@ export function BlogClient({ posts }: { posts: Post[] }) {
               <Link
                 key={post.slug}
                 href={`/blog/${post.slug}`}
-                className="group flex items-center gap-4 px-5 py-4 transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
+                className="group flex items-center gap-4 px-5 py-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40"
               >
                 <div
                   className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)] sm:h-10 sm:w-10"

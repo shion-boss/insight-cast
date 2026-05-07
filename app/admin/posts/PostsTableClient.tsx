@@ -168,7 +168,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     href={`/blog/${post.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                    className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                   >
                     公開ページ ↗
                   </Link>

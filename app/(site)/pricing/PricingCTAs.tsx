@@ -135,14 +135,14 @@ export function FreePlanBannerCTA() {
   return isLoggedIn ? (
     <Link
       href="/dashboard"
-      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+      className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
     >
       ダッシュボードへ
     </Link>
   ) : (
     <Link
       href="/auth/signup"
-      className="inline-block text-center rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+      className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
     >
       無料で始める
     </Link>
@@ -188,7 +188,7 @@ export function PricingBottomCTA() {
         {isLoggedIn ? (
           <Link
             href="/dashboard"
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
+            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
           >
             ダッシュボードへ <span aria-hidden="true">→</span>
           </Link>
@@ -196,13 +196,13 @@ export function PricingBottomCTA() {
           <>
             <Link
               href="/contact"
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-[var(--r-sm)] px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
             >
               相談してみる <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/auth/signup"
-              className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-full px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
             >
               無料で始める
             </Link>

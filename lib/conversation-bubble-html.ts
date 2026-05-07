@@ -2,7 +2,7 @@
 
 import { marked } from 'marked'
 
-const DEFAULT_THEME_COLOR = '#c2722a'
+const DEFAULT_THEME_COLOR = '#ff6900'
 const SPEAKER_LINE_RE = /^\*\*(.+?)\*\*[:：]\s*(.+)$/
 const FALLBACK_CLOSING_TEXT = '貴重なお話、ありがとうございました。'
 
@@ -253,7 +253,7 @@ export function buildArticleHtml(opts: {
     const styledSection = (md: string): string => {
       if (!md) return ''
       return String(marked.parse(md, { async: false }))
-        .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;margin:24px 0 12px;color:#1c1410;border-left:3px solid #c2722a;padding-left:12px;">')
+        .replace(/<h2>/g, '<h2 style="font-size:17px;font-weight:700;margin:24px 0 12px;color:#1c1410;border-left:3px solid #ff6900;padding-left:12px;">')
         .replace(/<h3>/g, '<h3 style="font-size:15px;font-weight:700;color:#1c1410;margin:18px 0 8px;">')
         .replace(/<p>/g, '<p style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 14px;">')
         .replace(/<ul>/g, '<ul style="font-size:15px;line-height:1.8;color:#3d2b1f;margin:0 0 14px;padding-left:20px;">')
@@ -272,7 +272,7 @@ export function buildArticleHtml(opts: {
     const convSeparator = `<div style="height:1px;background:${separatorColor};margin-bottom:28px;"></div>\n`
     return `<div style="box-sizing:border-box;max-width:800px;width:100%;margin:0 auto;font-family:system-ui,-apple-system,sans-serif;color:#1c1410;">
 <div style="padding:40px 32px 0;box-sizing:border-box;">
-  <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#c2722a;text-transform:uppercase;margin-bottom:14px;">取材インタビュー</div>
+  <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#ff6900;text-transform:uppercase;margin-bottom:14px;">取材インタビュー</div>
   <h1 style="font-size:24px;font-weight:700;color:#1c1410;line-height:1.4;margin:0 0 12px;">${escapeHtml(title)}</h1>
   <div style="font-size:12px;color:#8f7d6d;">${escapeHtml(date)}</div>
 </div>${beforeSection}
