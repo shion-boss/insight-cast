@@ -148,10 +148,97 @@ Gate A の質的水準点検。`content-authority` skill の4原則 + 3段階判
 | 5 | 結論先出しテンプレ化（P4） | AIデザイナー（記事生成プロンプト改訂） | 中 |
 | 6 | slug 命名規約の決定（P5）+ #5 のリネーム | マーケター | 小 |
 
-## Phase 3（残21本のレビュー）
+## Phase 3 レビュー結果（残21本・2026-05-07 同セッション継続実施）
 
-Phase 1+2 で見えたパターン（P1〜P5）を点検観点に固定し、残り21本を順次レビュー。
-1セッションあたり 4〜6本ペースで消化すれば、4〜6セッションで全32本のレビュー完了。
+| # | slug | カテゴリ | 一次情報 | 発信者 | 構造 | 独自観察 | 引用価値 |
+|---|---|---|---|---|---|---|---|
+| 12 | performance-50-to-90-improvement | meta | ✅ | ⚠ | ✅ | ✅ | **高** |
+| 13 | insight-cast-quality-improvement-journey | meta | ⚠ | ✅ | ✅ | ⚠ | **中** |
+| 14 | ai-user-memory-feature-engagement | casts | ✅ | ⚠ | ✅ | ✅ | **高** |
+| 15 | quality-improvement-progress-transparency-policy | meta | ✅ | ⚠ | ✅ | ✅ | **高** |
+| 16 | dogfooding-shapes-product-specs | meta | ✅ | ✅ | ✅ | ✅ | **高** |
+| 17 | ai-cast-improvement-natural-interviews | casts | ⚠ | ✅ | ✅ | ⚠ | **中** |
+| 18 | ai-quality-direction-over-rules | meta | ✅ | ✅ | ✅ | ✅ | **高** |
+| 19 | ai-teaching-listening-skills-development | casts | ✅ | ⚠ | ✅ | ✅ | **高** |
+| 20 | ceo-workflow-insight-cast-three-steps | hp-update | ⚠ | ⚠ | ✅ | ⚠ | **中** |
+| 21 | daily-updates-with-ai-casts | hp-update | ✅ | ⚠ | ⚠ | ⚠ | **中** |
+| 22 | dogfooding-6-interviews-discovery | meta | ✅ | ✅ | ✅ | ✅ | **高** |
+| 23 | dashboard-should-be-simple | meta | ❓ HTML依存 | ❓ | ❓ | ❓ | **評価不能** |
+| 24 | interview-format-removes-writers-block | hp-update | ✅ | ⚠ | ⚠ | ✅ | **中-高** |
+| 25 | developer-experience-ai-interview | meta | ✅ | ✅ | ✅ | ✅ | **高** |
+| 26 | homepage-as-active-signboard | hp-update | ❓ HTML依存 | ❓ | ⚠ | ❓ | **評価不能** |
+| 27 | origin-story-of-insight-cast | meta | ✅ | ✅ | ⚠ | ✅ | **高** |
+| 28 | why-interview-before-ai-writing | hp-update | ⚠ | ❌ | ✅ | ⚠ | **中** |
+| 29 | how-cast-works | casts | ⚠ | ❌ | ✅ | ⚠ | **低-中** |
+| 30 | case-painting-company | hp-update | ⚠ | ❌ | ✅ | ⚠ | **低-中** |
+| 31 | cast-guide | casts | ❌ | ❌ | ✅ | ⚠ | **低** |
+| 32 | report-guide | hp-update | ❌ | ❌ | ✅ | ⚠ | **低-中** |
+
+### 全32本 集計
+
+| 判定 | Phase 1+2 | Phase 3 | 合計 |
+|---|---|---|---|
+| **高** | 5 | 9 | **14本** (44%) |
+| **中-高** | 0 | 1 | 1本 |
+| **中** | 5 | 4 | 9本 |
+| **低-中** | 1 | 3 | 4本 |
+| **低** | 0 | 1 | 1本 |
+| **評価不能** | 0 | 2 | 2本 |
+
+引用価値「中-高」以上が **15/32 = 47%**。「低-中」以下は **5/32 = 16%**。
+
+### 高評価記事（追加分・Phase 3）
+
+- **#12 performance-50-to-90-improvement**: 「読みやすさとブランドカラーの好みが、完全には一致しない」「コントラスト調整だけは、まだ悩んでいる」など正直な揺らぎを開示
+- **#14 ai-user-memory-feature-engagement**: 「毎回初めましてと言われたら、答える気もなくなる」体験から仕様まで一直線
+- **#15 quality-improvement-progress-transparency-policy**: 「磨かれた言葉より、実態のある言葉を優先する」「進化している事実ごと見せる」フレーミング
+- **#16 dogfooding-shapes-product-specs**: ドッグフーディング論の具体例
+- **#18 ai-quality-direction-over-rules**: 取材中のリアルタイム発見「他にも何かありましたか？」を例示なしで聞かれて困る、を取材の中で発見
+- **#19 ai-teaching-listening-skills-development**: 暗黙知の言語化フレーミング
+- **#22 dogfooding-6-interviews-discovery**: 「語るべき話は、全部自分の中にあった」結論。具体的な質問と答えを引用
+- **#25 developer-experience-ai-interview**: 「2回目には受け身でも大丈夫」フレーミング
+- **#27 origin-story-of-insight-cast**: #5 と同じ父の話を別視点で展開
+
+### 要対応記事（追加発見）
+
+#### 🔴 #31 cast-guide（緊急修正必要）
+
+**問題**: 「現在、ミント・クラウス・レインの3名の無料キャスト」と書かれているが、**実際は6名（ハル・モグロ・コッコ含む）が利用可能**。CLAUDE.md とサービス実態と乖離。
+**対応**: 6名版に書き直すか、削除して新規記事に。マーケター主導で。
+
+#### 🔴 #29 how-cast-works（緊急修正必要）
+
+**問題**: タイトル「クラウスが専門業種の強みを引き出す仕組み」と限定的だが、本文は「ミント、クラウス、レインの3」全体の話。タイトルと本文の不一致 + 6名体制反映なし。
+**対応**: タイトルか本文どちらかを揃える。マーケター主導。
+
+#### 🟡 #30 case-painting-company
+
+**問題**: タイトル「工務店」だが本文は「塗装会社」。主語不在で、誰の話か（父の話か別ケースか）不明。
+**対応**: タイトル統一 + 主語明示（「私の父の塗装会社で…」など）
+
+#### 🟡 #32 report-guide / #28 why-interview-before-ai-writing
+
+**問題**: 主語不明・抽象的なハウツー。一次情報が欠落している。
+**対応**: シオンの実体験エピソードを冒頭に追加するか、ハウツー記事として割り切る。マーケター判断。
+
+#### ❓ #23 dashboard-should-be-simple / #26 homepage-as-active-signboard
+
+**問題**: 本文がほぼ空で HTML インタビュー埋込みに完全依存。AI検索のクローラは HTML 内のテキストも読むが、SEO/構造化データ的には本文の薄さが評価を下げる可能性。
+**対応**: HTML 内インタビューの要点を本文サイドにマークダウンで追記する（要約パラグラフ + 重要発言の引用ブロック）。
+
+### 共通弱点パターン（追加発見）
+
+**P6（NEW）**: 古いキャスト数記述（「3名」）が記事内に残存
+- 該当: #29 #31
+- 対処: grep で全32本を「3名」「3人」検索済 → 該当2本のみ。修正必要
+
+**P7（NEW）**: 本文が HTML インタビュー埋込みに完全依存
+- 該当: #13 #16 #17 #23 #26（5記事）
+- 対処: 各記事の要点を本文マークダウン側にも残す（AI検索引用 + SEO の両面で）。AIデザイナーへ「インタビュー記事生成プロンプトに『本文サマリー必須』を追加」依頼。
+
+**P8（NEW）**: タイトルと本文の不一致
+- 該当: #29（クラウス限定 vs 3名混在）、#30（工務店 vs 塗装会社）
+- 対処: 個別書き直し
 
 ---
 
