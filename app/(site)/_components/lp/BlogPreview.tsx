@@ -74,7 +74,6 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
             { category: 'interview' as const, label: 'インタビュー', href: '/blog?category=interview' },
             { category: 'case' as const, label: '事例', href: '/blog?category=case' },
             { category: 'howto' as const, label: 'ノウハウ', href: '/blog?category=howto' },
-            { category: 'news' as const, label: 'お知らせ', href: '/blog?category=news' },
           ]).map(({ category, label, href }) => (
             <Link
               key={category}
