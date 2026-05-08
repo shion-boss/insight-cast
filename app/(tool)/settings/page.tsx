@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getIsAdmin } from '@/lib/actions/auth'
 import { normalizeNotificationPreferences } from '@/lib/notification-preferences'
-import { type PlanKey } from '@/lib/plans'
+import { type PlanKey, getJstMonthKey } from '@/lib/plans'
 import { SettingsClient } from '@/app/(tool)/settings/SettingsClient'
 
 export default async function SettingsPage() {
@@ -55,18 +55,15 @@ export default async function SettingsPage() {
   const projectIds = userProjectList.map((p) => p.id)
   const projectCount = projectIds.length
 
-  let interviewCount = 0
-  if (projectIds.length > 0) {
-    const now = new Date()
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
-    const { count } = await supabase
-      .from('interviews')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', projectIds)
-      .is('deleted_at', null)
-      .gte('created_at', monthStart)
-    interviewCount = count ?? 0
-  }
+  // 「今月の取材回数」はカウンター値（削除済みも含む新規作成本数）から取得する。
+  // 削除で枠は回復しない方針のため、進捗表示も判定と同じ値に揃える。
+  const { data: monthlyUsage } = await supabase
+    .from('usage_counters')
+    .select('interviews_created')
+    .eq('user_id', user.id)
+    .eq('month_key', getJstMonthKey())
+    .maybeSingle()
+  const interviewCount = monthlyUsage?.interviews_created ?? 0
 
   return (
     <SettingsClient
