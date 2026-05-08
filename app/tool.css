@@ -318,6 +318,34 @@
   animation-delay: 0.36s;
 }
 
+/* 進捗バーが満たされた状態の演出: 白い光がキラキラ流れる */
+@keyframes ic-progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.ic-progress-bar-full {
+  position: relative;
+  overflow: hidden;
+}
+
+.ic-progress-bar-full::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 45%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.55) 55%,
+    transparent 100%
+  );
+  width: 50%;
+  animation: ic-progress-shine 2.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .ic-orbit {
   position: relative;
   width: 72px;
