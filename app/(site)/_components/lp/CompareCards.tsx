@@ -57,18 +57,18 @@ export function CompareCards() {
               {/* Hero number */}
               <div className="text-center mb-6">
                 <div className="flex items-end justify-center gap-1 leading-none">
-                  <span className="font-bold pb-1" style={{ fontSize: '18px', color: 'var(--accent)' }}>¥</span>
-                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>4,980</span>
+                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>3,000</span>
+                  <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>字+</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>/ 月　Insight Cast 個人プラン（取材付き）</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>会話から出てくる、原稿用紙7枚分の言葉</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
-                  { name: 'AIツール',          value: '自分の頭の中だけ',    muted: true,  highlight: false },
-                  { name: 'クラウドソーシング',  value: '業界外で深掘り限界',  muted: true,  highlight: false },
-                  { name: '取材付きライター',    value: 'できるが ¥30,000〜', muted: false, highlight: false },
-                  { name: 'Insight Cast',       value: '業種特化 月¥4,980〜', muted: false, highlight: true  },
+                  { name: 'AIツール',          value: '自分の頭の中だけ',           muted: true,  highlight: false },
+                  { name: 'クラウドソーシング',  value: '業界外で深掘り限界',         muted: true,  highlight: false },
+                  { name: '取材付きライター',    value: '業種が深掘りできるとは限らない', muted: false, highlight: false },
+                  { name: 'Insight Cast',       value: '業種ごとに深掘りして言葉化', muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
@@ -101,10 +101,10 @@ export function CompareCards() {
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
-                  { name: 'サイト放置',   value: '何も増えない',     muted: true,  highlight: false },
-                  { name: 'AIツール',     value: '月数本の薄い記事', muted: false, highlight: false },
-                  { name: 'ライター発注', value: '月1〜2本が限界',   muted: false, highlight: false },
-                  { name: 'Insight Cast', value: '月¥4,980で取材付き・使い放題', muted: false, highlight: true  },
+                  { name: 'サイト放置',         value: '何も増えない',         muted: true,  highlight: false },
+                  { name: 'AIツール',           value: '月数本の薄い記事',     muted: false, highlight: false },
+                  { name: '取材付きライター',    value: '1回¥30,000〜',         muted: false, highlight: false },
+                  { name: 'Insight Cast',      value: '月¥4,980 取材込み・使い放題', muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
