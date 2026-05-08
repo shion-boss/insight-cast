@@ -29,8 +29,8 @@ export function CompareCards() {
               </div>
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
-                  { name: 'AIに丸投げ',       value: '3分',      muted: true,  highlight: false },
-                  { name: 'AIツールで書く', value: '1〜2時間', muted: false, highlight: false },
+                  { name: 'AIに丸投げ',     value: '3分',      muted: true,  highlight: false },
+                  { name: '自分で書く',     value: '1〜2時間', muted: false, highlight: false },
                   { name: 'ライター外注',   value: '1〜2時間', muted: false, highlight: false },
                   { name: 'Insight Cast',   value: '約20分',   muted: false, highlight: true  },
                 ].map((r) => (
