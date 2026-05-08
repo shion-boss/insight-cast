@@ -9,7 +9,6 @@ type Interviewee = {
   industry: string | null
   role: string | null
   notes: string | null
-  linked_user_id: string | null
   created_at: string
   updated_at: string
   interview_count: number
@@ -285,9 +284,6 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
                     )}
                     {iv.industry && (
                       <span className="text-[11px] bg-[var(--bg2)] text-[var(--text2)] px-2 py-0.5 rounded-full">{iv.industry}</span>
-                    )}
-                    {iv.linked_user_id && (
-                      <span className="text-[11px] bg-[var(--accent-l)] text-[var(--on-primary-container)] px-2 py-0.5 rounded-full">メンバー</span>
                     )}
                   </div>
                   <div className="flex items-center gap-3 mt-1 text-[13px] text-[var(--text2)]">

@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import InviteAcceptButton from './_components/InviteAcceptButton'
 
 export const metadata: Metadata = {
-  title: '取材チームへの招待 | Insight Cast',
+  title: 'プロジェクトのメンバー招待 | Insight Cast',
 }
 
 type InvitationInfo = {
@@ -94,7 +94,7 @@ export default async function InvitePage({
           )}
         </div>
         <h1 className="text-xl font-bold text-[var(--text)] mb-2">
-          取材チームに招待されています
+          プロジェクトのメンバーに招待されています
         </h1>
         <p className="text-base text-[var(--text2)]">
           以下のプロジェクトへの参加招待が届いています。

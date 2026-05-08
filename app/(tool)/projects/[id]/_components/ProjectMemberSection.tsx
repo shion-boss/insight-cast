@@ -300,7 +300,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
     <section aria-labelledby="members-section-title">
       <div className="flex items-center justify-between mb-3">
         <h2 id="members-section-title" className="text-[16px] font-bold text-[var(--text)]">
-          取材チームのメンバー
+          プロジェクトのメンバー
         </h2>
         {data && (
           <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] font-medium text-[var(--text2)]">

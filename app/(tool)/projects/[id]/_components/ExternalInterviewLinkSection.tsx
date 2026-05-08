@@ -231,15 +231,11 @@ export function ExternalInterviewLinkSection({
               className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
             >
               <option value={UNSPECIFIED_INTERVIEWEE_VALUE}>取材先を指定しない（誰でも回答可）</option>
-              {interviewees.length > 0 && (
-                <optgroup label="登録済みの取材先">
-                  {interviewees.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.name}{i.industry ? `（${i.industry}）` : ''}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
+              {interviewees.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.name}{i.industry ? `（${i.industry}）` : ''}
+                </option>
+              ))}
             </select>
             <p className="mt-1.5 text-[13px] text-[var(--text2)]">
               登録済みの取材先を選ぶと、過去の取材を踏まえた続きの取材になります。新しい取材先は上の「取材先」セクションから追加できます。

@@ -259,9 +259,9 @@ export async function POST(
   await resend.emails.send({
     from: FROM_INFO,
     to: email,
-    subject: `【Insight Cast】${project.name ?? 'プロジェクト'}への取材チーム招待`,
+    subject: `【Insight Cast】${project.name ?? 'プロジェクト'}のメンバー招待`,
     html: [
-      `<p>${ownerName}さんから <strong>${project.name ?? 'プロジェクト'}</strong> の取材チームに招待されました。</p>`,
+      `<p>${ownerName}さんから <strong>${project.name ?? 'プロジェクト'}</strong> のメンバーに招待されました。</p>`,
       `<p>以下のリンクから参加できます（7日間有効）：</p>`,
       `<p><a href="${inviteUrl}">${inviteUrl}</a></p>`,
       `<p>このメールに心当たりがない場合は、無視してください。</p>`,
