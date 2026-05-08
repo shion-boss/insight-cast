@@ -18,7 +18,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { InterviewSubmitButton } from '@/components/interview-submit-button'
-import { getUserPlan, getPlanLimits, isFreePlanLocked, getJstMonthStartIso } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, isFreePlanLocked, getJstMonthKey } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
 import { getMemberRole } from '@/lib/project-members'
 
@@ -84,22 +84,25 @@ export default async function InterviewerPage({
   const activeProjectIds = new Set(ownerProjectIds.slice(0, planLimits.maxProjects))
   const isProjectOverLimit = !activeProjectIds.has(id)
 
+  // 取材回数 UI ガードはカウンター読み取り（interviews INSERT トリガで increment 済み）
   let isInterviewLimitReached = false
   if (planLimits.lifetimeInterviewLimit !== null) {
-    const { count: lifetimeCount } = await adminSupabase
-      .from('interviews')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', ownerProjectIds.length > 0 ? ownerProjectIds : ['__none__'])
-      .is('deleted_at', null)
-    isInterviewLimitReached = (lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit
+    const { data: lifetimeUsage } = await adminSupabase
+      .from('user_lifetime_usage')
+      .select('interviews_created')
+      .eq('user_id', ownerUserId)
+      .maybeSingle()
+    const lifetimeCount = lifetimeUsage?.interviews_created ?? 0
+    isInterviewLimitReached = lifetimeCount >= planLimits.lifetimeInterviewLimit
   } else {
-    const { count: thisMonthInterviewCount } = await adminSupabase
-      .from('interviews')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', ownerProjectIds.length > 0 ? ownerProjectIds : ['__none__'])
-      .is('deleted_at', null)
-      .gte('created_at', getJstMonthStartIso())
-    isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
+    const { data: monthlyUsage } = await adminSupabase
+      .from('usage_counters')
+      .select('interviews_created')
+      .eq('user_id', ownerUserId)
+      .eq('month_key', getJstMonthKey())
+      .maybeSingle()
+    const thisMonthInterviewCount = monthlyUsage?.interviews_created ?? 0
+    isInterviewLimitReached = thisMonthInterviewCount >= planLimits.monthlyInterviewLimit
   }
 
   const mint = getCharacter('mint')

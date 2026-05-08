@@ -6,7 +6,7 @@ import { getCharacter } from '@/lib/characters'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
-import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, getJstMonthKey } from '@/lib/plans'
 import type { Character } from '@/lib/characters'
 
 async function SharedProjectsZeroState({
@@ -279,11 +279,28 @@ export default async function DashboardPage() {
 
   const planLimits = getPlanLimits(userPlan)
   const isProjectLimitReached = projectList.length >= planLimits.maxProjects
-  const totalInterviewCount = interviews.length
   const isFreePlan = planLimits.lifetimeInterviewLimit !== null
+
+  // 制限進捗・到達判定はカウンター値（削除済みも含む「新規作成本数」）から取得する。
+  // 表示用の interviews / articles 配列（削除済み除外）とは意味が異なる。
+  const [{ data: monthlyUsage }, { data: lifetimeUsage }] = await Promise.all([
+    supabase
+      .from('usage_counters')
+      .select('articles_created, interviews_created')
+      .eq('user_id', userId)
+      .eq('month_key', getJstMonthKey())
+      .maybeSingle(),
+    supabase
+      .from('user_lifetime_usage')
+      .select('articles_created, interviews_created')
+      .eq('user_id', userId)
+      .maybeSingle(),
+  ])
+  const thisMonthInterviewUsage = monthlyUsage?.interviews_created ?? 0
+  const lifetimeInterviewUsage = lifetimeUsage?.interviews_created ?? 0
   const isInterviewLimitReached = isFreePlan
-    ? totalInterviewCount >= (planLimits.lifetimeInterviewLimit ?? Infinity)
-    : thisMonthInterviews >= planLimits.monthlyInterviewLimit
+    ? lifetimeInterviewUsage >= (planLimits.lifetimeInterviewLimit ?? Infinity)
+    : thisMonthInterviewUsage >= planLimits.monthlyInterviewLimit
 
   const deltaLabel = (n: number) =>
     n === 0 ? '先月と同じ' : n > 0 ? `先月比 +${n}` : `先月比 ${n}`
@@ -311,8 +328,8 @@ export default async function DashboardPage() {
           )}
           <div className="text-sm text-[var(--text2)]">
             {isFreePlan
-              ? <>生涯取材: <strong>{totalInterviewCount} / {planLimits.lifetimeInterviewLimit} 回</strong></>
-              : <>今月の取材: <strong>{thisMonthInterviews} / {planLimits.monthlyInterviewLimit} 回</strong></>
+              ? <>生涯取材: <strong>{lifetimeInterviewUsage} / {planLimits.lifetimeInterviewLimit} 回</strong></>
+              : <>今月の取材: <strong>{thisMonthInterviewUsage} / {planLimits.monthlyInterviewLimit} 回</strong></>
             }
             {totalArticles > 0 && <><span aria-hidden="true"> · </span>累計記事 <strong>{totalArticles} 件</strong></>}
           </div>
@@ -321,7 +338,7 @@ export default async function DashboardPage() {
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={isFreePlan ? (planLimits.lifetimeInterviewLimit ?? 1) : planLimits.monthlyInterviewLimit}
-              aria-valuenow={isFreePlan ? totalInterviewCount : thisMonthInterviews}
+              aria-valuenow={isFreePlan ? lifetimeInterviewUsage : thisMonthInterviewUsage}
               aria-label={isFreePlan ? '生涯取材回数' : '今月の取材回数'}
               className="mt-2 w-48 h-1.5 rounded-full bg-[rgba(0,0,0,0.08)] overflow-hidden"
             >
@@ -330,8 +347,8 @@ export default async function DashboardPage() {
                 className={`h-full rounded-full transition-all ${isInterviewLimitReached ? 'bg-[var(--err)]' : 'bg-[var(--accent)]'}`}
                 style={{
                   width: isFreePlan
-                    ? `${Math.min((totalInterviewCount / (planLimits.lifetimeInterviewLimit ?? 1)) * 100, 100)}%`
-                    : `${Math.min((thisMonthInterviews / planLimits.monthlyInterviewLimit) * 100, 100)}%`,
+                    ? `${Math.min((lifetimeInterviewUsage / (planLimits.lifetimeInterviewLimit ?? 1)) * 100, 100)}%`
+                    : `${Math.min((thisMonthInterviewUsage / planLimits.monthlyInterviewLimit) * 100, 100)}%`,
                 }}
               />
             </div>

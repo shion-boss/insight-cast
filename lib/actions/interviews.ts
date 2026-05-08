@@ -6,7 +6,7 @@ import {
   isInterviewFocusThemeMode,
   normalizeInterviewFocusTheme,
 } from '@/lib/interview-focus-theme'
-import { getUserPlan, getPlanLimits, getJstMonthStartIso } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, getJstMonthKey } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -60,26 +60,30 @@ export async function createInterview(projectId: string, formData: FormData) {
     redirect(`/projects/${projectId}/interviewer?error=project_over_limit`)
   }
 
+  // 取材回数の制限判定はカウンター読み取り（interviews INSERT トリガで increment 済み）
+  // 削除で枠は戻らないため、deleted_at 無関係。
   if (planLimits.lifetimeInterviewLimit !== null) {
     // 無料プラン: 生涯インタビュー回数チェック
-    const { count: lifetimeCount } = await supabase
-      .from('interviews')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-      .is('deleted_at', null)
-    if ((lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit) {
+    const { data: lifetimeUsage } = await supabase
+      .from('user_lifetime_usage')
+      .select('interviews_created')
+      .eq('user_id', ownerUserId)
+      .maybeSingle()
+    const lifetimeCount = lifetimeUsage?.interviews_created ?? 0
+    if (lifetimeCount >= planLimits.lifetimeInterviewLimit) {
       redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=lifetime_limit`)
     }
   } else {
-    // 有料プラン: 月間インタビュー回数チェック（JST 月初基準）
-    const monthStart = getJstMonthStartIso()
-    const { count: monthlyCount } = await supabase
-      .from('interviews')
-      .select('id', { count: 'exact', head: true })
-      .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-      .is('deleted_at', null)
-      .gte('created_at', monthStart)
-    if ((monthlyCount ?? 0) >= planLimits.monthlyInterviewLimit) {
+    // 有料プラン: 月間インタビュー回数チェック（JST 月キー基準）
+    const monthKey = getJstMonthKey()
+    const { data: monthlyUsage } = await supabase
+      .from('usage_counters')
+      .select('interviews_created')
+      .eq('user_id', ownerUserId)
+      .eq('month_key', monthKey)
+      .maybeSingle()
+    const monthlyCount = monthlyUsage?.interviews_created ?? 0
+    if (monthlyCount >= planLimits.monthlyInterviewLimit) {
       redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=monthly_limit`)
     }
   }

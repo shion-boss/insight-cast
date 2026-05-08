@@ -86,9 +86,22 @@ export function getJstMonthStartIso(now: Date = new Date()): string {
   return new Date(`${year}-${month}-01T00:00:00+09:00`).toISOString()
 }
 
+// 'YYYY-MM' 形式の JST 月キー。usage_counters.month_key と一致させる。
+export function getJstMonthKey(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+  }).formatToParts(now)
+  const year = parts.find((p) => p.type === 'year')?.value ?? '1970'
+  const month = parts.find((p) => p.type === 'month')?.value ?? '01'
+  return `${year}-${month}`
+}
+
 // 無料プランの生涯記事上限に達しているか確認する
 // true の場合、すべてのAI操作をロックする
-// soft-delete された projects / articles はカウント対象外。
+// user_lifetime_usage.articles_created（articles INSERT トリガで increment）から判定する。
+// 削除（soft-delete / hard-delete / プロジェクト削除）でカウンターは戻らない方針。
 // 別ユーザー（オーナー）の userId を渡してチェックする場合は admin client を渡すこと。
 export async function isFreePlanLocked(
   supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
@@ -98,22 +111,17 @@ export async function isFreePlanLocked(
   const limits = getPlanLimits(plan)
   if (limits.lifetimeArticleLimit === null) return false
 
-  const { data: userProjects } = await supabase
-    .from('projects')
-    .select('id')
+  const { data } = await supabase
+    .from('user_lifetime_usage')
+    .select('articles_created')
     .eq('user_id', userId)
-    .is('deleted_at', null)
-  const projectIds = (userProjects ?? []).map((p) => p.id as string)
-  const { count } = await supabase
-    .from('articles')
-    .select('id', { count: 'exact', head: true })
-    .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-    .is('deleted_at', null)
-  return (count ?? 0) >= limits.lifetimeArticleLimit
+    .maybeSingle()
+  return (data?.articles_created ?? 0) >= limits.lifetimeArticleLimit
 }
 
 // 有料プランの月次記事上限に達しているか確認する
-// soft-delete された projects / articles はカウント対象外。
+// usage_counters.articles_created（当月分、articles INSERT トリガで increment）から判定する。
+// 削除（soft-delete / hard-delete / プロジェクト削除）でカウンターは戻らない方針。
 // 別ユーザー（オーナー）の userId を渡してチェックする場合は admin client を渡すこと。
 export async function checkMonthlyArticleLimit(
   supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
@@ -123,25 +131,19 @@ export async function checkMonthlyArticleLimit(
   const limits = getPlanLimits(plan)
   if (limits.monthlyArticleLimit === null) return { allowed: true, limit: null, count: 0 }
 
-  const startOfMonthIso = getJstMonthStartIso()
-
-  const { data: userProjects } = await supabase
-    .from('projects')
-    .select('id')
+  const monthKey = getJstMonthKey()
+  const { data } = await supabase
+    .from('usage_counters')
+    .select('articles_created')
     .eq('user_id', userId)
-    .is('deleted_at', null)
-  const projectIds = (userProjects ?? []).map((p) => p.id as string)
-  const { count } = await supabase
-    .from('articles')
-    .select('id', { count: 'exact', head: true })
-    .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-    .is('deleted_at', null)
-    .gte('created_at', startOfMonthIso)
+    .eq('month_key', monthKey)
+    .maybeSingle()
+  const count = data?.articles_created ?? 0
 
   return {
-    allowed: (count ?? 0) < limits.monthlyArticleLimit,
+    allowed: count < limits.monthlyArticleLimit,
     limit: limits.monthlyArticleLimit,
-    count: count ?? 0,
+    count,
   }
 }
 
