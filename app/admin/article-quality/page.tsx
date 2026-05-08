@@ -118,9 +118,9 @@ export default async function AdminArticleQualityPage() {
 
       <header>
         <h1 className="text-xl font-bold text-[var(--text)]">記事品質ログ</h1>
-        <p className="mt-1 text-sm text-[var(--text2)]">
+        <p className="mt-1 text-base text-[var(--text2)]">
           直近80件の記事と、生成直後に走る決定的チェック・AI自己採点の結果。詳細ルーブリックは{' '}
-          <code className="rounded bg-[var(--surface-muted)] px-1.5 py-0.5 text-xs">docs/review-log/article-evaluation.md</code> 参照。
+          <code className="rounded bg-[var(--surface-muted)] px-1.5 py-0.5 text-[13px]">docs/review-log/article-evaluation.md</code> 参照。
         </p>
       </header>
 
@@ -140,7 +140,7 @@ export default async function AdminArticleQualityPage() {
       </section>
 
       <section className="overflow-x-auto rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--surface)]">
-        <table className="w-full min-w-[900px] text-sm">
+        <table className="w-full min-w-[900px] text-base">
           <thead className="border-b border-[var(--border)] bg-[var(--surface-muted)] text-xs uppercase tracking-[0.05em] text-[var(--text2)]">
             <tr>
               <th className="px-3 py-3 text-left">作成日</th>
@@ -173,16 +173,16 @@ export default async function AdminArticleQualityPage() {
                     {new Date(r.created_at).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
                   </td>
                   <td className="px-3 py-3 align-top">
-                    <p className="font-sans text-xs text-[var(--text2)]">{r.project?.name ?? '（プロジェクト不明）'}</p>
+                    <p className="font-sans text-[13px] text-[var(--text2)]">{r.project?.name ?? '（プロジェクト不明）'}</p>
                     {articleHref ? (
-                      <Link href={articleHref} className="font-sans text-sm font-medium text-[var(--accent)] hover:underline">
+                      <Link href={articleHref} className="font-sans text-base font-medium text-[var(--accent)] hover:underline">
                         {r.title ?? '（無題）'}
                       </Link>
                     ) : (
-                      <p className="font-sans text-sm font-medium text-[var(--text)]">{r.title ?? '（無題）'}</p>
+                      <p className="font-sans text-base font-medium text-[var(--text)]">{r.title ?? '（無題）'}</p>
                     )}
                     {r.source_theme && (
-                      <p className="mt-1 font-sans text-xs text-[var(--text2)]">テーマ: {r.source_theme}</p>
+                      <p className="mt-1 font-sans text-[13px] text-[var(--text2)]">テーマ: {r.source_theme}</p>
                     )}
                   </td>
                   <td className="px-3 py-3 align-top">{ARTICLE_TYPE_LABEL[r.article_type ?? ''] ?? r.article_type ?? '-'}</td>
@@ -191,13 +191,13 @@ export default async function AdminArticleQualityPage() {
                     {ai ? (
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className={`inline-block rounded px-1.5 py-0.5 text-xs font-bold ${rating.tone}`}>
+                          <span className={`inline-block rounded px-1.5 py-0.5 text-[13px] font-bold ${rating.tone}`}>
                             {rating.label}
                           </span>
                           <span>{ai.total} / {ai.total_max}</span>
                           <span className="text-[var(--text2)]">({formatPct(percent)})</span>
                         </div>
-                        <details className="text-xs">
+                        <details className="text-[13px]">
                           <summary className="cursor-pointer text-[var(--text2)] hover:text-[var(--accent)]">軸別</summary>
                           <ul className="mt-1 space-y-0.5">
                             {AXIS_ORDER.map((axis) => {

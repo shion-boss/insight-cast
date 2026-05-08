@@ -105,16 +105,16 @@ export function ConfirmDialog({
           {title}
         </p>
         {subject && (
-          <p className="text-sm text-[var(--text2)] mb-1 line-clamp-2">「{subject}」</p>
+          <p className="text-base text-[var(--text2)] mb-1 line-clamp-2">「{subject}」</p>
         )}
         {description && (
-          <p id={`${dialogId}-desc`} className="text-sm text-[var(--text3)] mb-5">{description}</p>
+          <p id={`${dialogId}-desc`} className="text-base text-[var(--text3)] mb-5">{description}</p>
         )}
         <div className="flex gap-3 justify-end">
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
           >
             {cancelLabel}
           </button>
@@ -122,7 +122,7 @@ export function ConfirmDialog({
             type="button"
             onClick={onConfirm}
             disabled={confirming}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
           >
             {confirming && confirmingLabel ? confirmingLabel : confirmLabel}
           </button>

@@ -146,7 +146,7 @@ function CastHeroDialog() {
                 size={40}
                 className="border-[var(--border)] bg-[var(--surface)]"
               />
-              <span className="text-xs text-[var(--text2)] leading-tight text-center">{char.name}</span>
+              <span className="text-[13px] text-[var(--text2)] leading-tight text-center">{char.name}</span>
             </div>
           ))}
         </div>
@@ -264,7 +264,7 @@ export default async function CastPage() {
                               ? '選ばれる理由を一緒に見つけます'
                               : char.specialty || detail.specialty}
                           </div>
-                          <p className="text-sm text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
+                          <p className="text-base text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
                         </div>
                       </div>
 
@@ -272,10 +272,10 @@ export default async function CastPage() {
                       <div className="mt-8 rounded-[16px] bg-[var(--bg2)] p-6 lg:p-7">
                         <div className="grid gap-x-10 gap-y-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
                           <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">専門分野</div>
-                          <div className="text-sm text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
+                          <div className="text-base text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
 
                           <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)] sm:pt-1">得意なこと</div>
-                          <ul className="text-sm text-[var(--text)] space-y-1.5">
+                          <ul className="text-base text-[var(--text)] space-y-1.5">
                             {detail.strengths.map((s) => (
                               <li key={s} className="flex items-start gap-2 leading-[1.7]">
                                 <span aria-hidden="true" className="mt-[9px] h-1 w-1 rounded-full bg-[var(--accent)] flex-shrink-0" />
@@ -285,7 +285,7 @@ export default async function CastPage() {
                           </ul>
 
                           <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">入力形式</div>
-                          <div className="text-sm text-[var(--text)]">{detail.input}</div>
+                          <div className="text-base text-[var(--text)]">{detail.input}</div>
                         </div>
                       </div>
 
@@ -297,7 +297,7 @@ export default async function CastPage() {
                         >
                           <div className="min-w-0 flex-1">
                             <div className="mb-1 text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--on-primary-container)]">キャスト対談</div>
-                            <div className="text-sm font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
+                            <div className="text-base font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
                               {talksByChar[char.id]!.title}
                             </div>
                             {talksByChar[char.id]!.summary && (
@@ -363,7 +363,7 @@ export default async function CastPage() {
                         <div className="font-[family-name:var(--font-noto-serif-jp)] text-[19px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
                           {char.specialty || detail.specialty}
                         </div>
-                        <p className="text-sm text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
+                        <p className="text-base text-[var(--text2)] leading-[1.9]">{detail.desc}</p>
                       </div>
                     </div>
 
@@ -371,10 +371,10 @@ export default async function CastPage() {
                     <div className="mt-8 rounded-[16px] bg-[var(--bg2)] p-6 lg:p-7">
                       <div className="grid gap-x-10 gap-y-5 sm:grid-cols-[160px_minmax(0,1fr)] sm:items-start">
                         <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">専門分野</div>
-                        <div className="text-sm text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
+                        <div className="text-base text-[var(--text)] leading-[1.7]">{detail.specialty}</div>
 
                         <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)] sm:pt-1">得意なこと</div>
-                        <ul className="text-sm text-[var(--text)] space-y-1.5">
+                        <ul className="text-base text-[var(--text)] space-y-1.5">
                           {detail.strengths.map((s) => (
                             <li key={s} className="flex items-start gap-2 leading-[1.7]">
                               <span aria-hidden="true" className="mt-[9px] h-1 w-1 rounded-full bg-[var(--accent)] flex-shrink-0" />
@@ -384,7 +384,7 @@ export default async function CastPage() {
                         </ul>
 
                         <div className="text-[11px] font-bold uppercase tracking-[.1em] text-[var(--text3)]">入力形式</div>
-                        <div className="text-sm text-[var(--text)]">{detail.input}</div>
+                        <div className="text-base text-[var(--text)]">{detail.input}</div>
                       </div>
                     </div>
                   </div>
@@ -404,14 +404,14 @@ export default async function CastPage() {
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
                   キャストの実際の対話を読んでみる
                 </p>
-                <p className="text-sm text-[var(--text2)] leading-relaxed">
+                <p className="text-base text-[var(--text2)] leading-relaxed">
                   ミント・クラウス・レインが実際にどんな質問をするのか。<br className="hidden sm:block" />
                   対話形式の記事で、取材スタイルを確認できます。
                 </p>
               </div>
               <Link
                 href="/cast-talk"
-                className="shrink-0 inline-flex items-center rounded-full border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
+                className="shrink-0 inline-flex items-center rounded-full border-[1.5px] border-[var(--accent)] px-6 py-3 text-base font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
                 キャスト対談を読む <span aria-hidden="true">→</span>
               </Link>

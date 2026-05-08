@@ -60,10 +60,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         </div>
         <AdminSidebarNav />
         <div className="border-t border-white/8 px-3 py-4">
-          <p className="truncate text-xs text-white/50">{user.email}</p>
+          <p className="truncate text-[13px] text-white/50">{user.email}</p>
           <Link
             href="/dashboard"
-            className="mt-3 inline-flex w-full items-center justify-center rounded-[var(--r-sm)] border border-white/10 px-4 py-2.5 text-sm font-medium text-white/72 transition-colors hover:bg-white/6 hover:text-white"
+            className="mt-3 inline-flex w-full items-center justify-center rounded-[var(--r-sm)] border border-white/10 px-4 py-2.5 text-base font-medium text-white/72 transition-colors hover:bg-white/6 hover:text-white"
           >
             ← 顧客画面へ
           </Link>
@@ -80,7 +80,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             </div>
             {/* PC: メールアドレス（右寄せ） */}
             <div className="hidden lg:flex lg:w-full lg:items-center lg:justify-end">
-              <span className="text-xs text-[var(--text2)]">{user.email}</span>
+              <span className="text-[13px] text-[var(--text2)]">{user.email}</span>
             </div>
           </div>
         </header>

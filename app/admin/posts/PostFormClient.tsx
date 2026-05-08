@@ -44,7 +44,7 @@ function slugify(text: string): string {
 }
 
 const selectClass =
-  'min-h-11 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
+  'min-h-11 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 
 // ── ブロック型 ───────────────────────────────────────────
 type Block =
@@ -104,7 +104,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="relative z-10 flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-0.5 text-xs text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+        className="relative z-10 flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-0.5 text-[13px] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
       >
         ＋ ブロックを追加
       </button>
@@ -113,14 +113,14 @@ function AddBlockMenu({ onAdd }: { onAdd: (type: Block['type']) => void }) {
           <button
             type="button"
             onClick={() => { onAdd('markdown'); setOpen(false) }}
-            className="rounded px-3 py-1.5 text-xs font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+            className="rounded px-3 py-1.5 text-[13px] font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
           >
             Markdown
           </button>
           <button
             type="button"
             onClick={() => { onAdd('embed'); setOpen(false) }}
-            className="rounded px-3 py-1.5 text-xs font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+            className="rounded px-3 py-1.5 text-[13px] font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
           >
             埋め込みHTML
           </button>
@@ -190,12 +190,12 @@ function MarkdownBlockEditor({
   return (
     <div className="group relative">
       <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-        <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)]">Markdown</span>
+        <span className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[13px] text-[var(--text2)]">Markdown</span>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--on-primary-container)] hover:text-[var(--accent)] transition-colors disabled:opacity-60 disabled:cursor-wait"
+          className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[13px] text-[var(--on-primary-container)] hover:text-[var(--accent)] transition-colors disabled:opacity-60 disabled:cursor-wait"
         >
           {uploading ? 'アップロード中...' : '画像追加'}
         </button>
@@ -203,7 +203,7 @@ function MarkdownBlockEditor({
           <button
             type="button"
             onClick={onRemove}
-            className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--error)] transition-colors"
+            className="rounded bg-[var(--bg2)] px-1.5 py-0.5 text-[13px] text-[var(--text2)] hover:text-[var(--error)] transition-colors"
           >
             削除
           </button>
@@ -223,10 +223,10 @@ function MarkdownBlockEditor({
         onChange={(e) => onUpdate(e.target.value)}
         rows={10}
         placeholder="## 見出し&#10;&#10;本文をMarkdown形式で入力してください..."
-        className="min-h-40 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
+        className="min-h-40 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 font-mono text-base text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
       />
       {uploadError && (
-        <p role="alert" className="mt-1.5 text-xs text-[var(--err)]">{uploadError}</p>
+        <p role="alert" className="mt-1.5 text-[13px] text-[var(--err)]">{uploadError}</p>
       )}
     </div>
   )
@@ -284,7 +284,7 @@ function BlockEditor({
                 onChange={(e) => updateContent(block.id, e.target.value)}
                 rows={8}
                 placeholder="<div>埋め込みHTMLをここに貼り付けてください</div>"
-                className="w-full bg-transparent px-4 py-3 font-mono text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:outline-none resize-y"
+                className="w-full bg-transparent px-4 py-3 font-mono text-base text-[var(--text)] placeholder:text-[var(--text3)] focus:outline-none resize-y"
               />
             </div>
           )}
@@ -416,16 +416,16 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         />
       )}
       {errorMsg && (
-        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-base text-[var(--err)]">
           <span className="mt-0.5 shrink-0">⚠</span>
           <div>
             <p>{errorMsg}</p>
-            <p className="mt-0.5 text-xs opacity-80">入力内容を確認してから、もう一度お試しください。</p>
+            <p className="mt-0.5 text-[13px] opacity-80">入力内容を確認してから、もう一度お試しください。</p>
           </div>
         </div>
       )}
       {successMsg && (
-        <div role="status" className="rounded-[var(--r-sm)] bg-[var(--ok-l)] px-4 py-3 text-sm text-[var(--ok)]">
+        <div role="status" className="rounded-[var(--r-sm)] bg-[var(--ok-l)] px-4 py-3 text-base text-[var(--ok)]">
           {successMsg}
         </div>
       )}
@@ -436,7 +436,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(false)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text2)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
+            className={`min-h-9 px-4 text-[13px] font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'text-[var(--text2)] hover:text-[var(--text2)]' : 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]'}`}
             aria-pressed={!previewMode}
           >
             編集
@@ -444,7 +444,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           <button
             type="button"
             onClick={() => setPreviewMode(true)}
-            className={`min-h-9 px-4 text-xs font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text2)] hover:text-[var(--text2)]'}`}
+            className={`min-h-9 px-4 text-[13px] font-semibold rounded-[var(--r-sm)] transition-colors cursor-pointer ${previewMode ? 'bg-[var(--surface)] text-[var(--text)] shadow-[var(--elevation-1)]' : 'text-[var(--text2)] hover:text-[var(--text2)]'}`}
             aria-pressed={previewMode}
           >
             プレビュー
@@ -474,12 +474,12 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               {form.title || '（タイトル未設定）'}
             </h1>
             {form.excerpt && (
-              <p className="mt-3 text-sm leading-7 text-[var(--text2)]">{form.excerpt}</p>
+              <p className="mt-3 text-base leading-7 text-[var(--text2)]">{form.excerpt}</p>
             )}
             <div className="mt-8">
               {form.body
                 ? <MarkdownArticleBody markdown={form.body} />
-                : <p className="text-sm text-[var(--text2)]">本文を準備中です。</p>}
+                : <p className="text-base text-[var(--text2)]">本文を準備中です。</p>}
             </div>
           </div>
         </div>
@@ -534,7 +534,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
                     setIsSuggestingSlug(false)
                   }
                 }}
-                className="text-xs text-[var(--on-primary-container)] hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
+                className="text-[13px] text-[var(--on-primary-container)] hover:underline disabled:opacity-50 disabled:cursor-not-allowed disabled:no-underline"
               >
                 {isSuggestingSlug ? '生成中...' : 'タイトルから生成'}
               </button>
@@ -546,7 +546,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               placeholder="url-slug-here"
               pattern="[a-z0-9-]+"
             />
-            <p className="mt-1 text-xs text-[var(--text2)]">
+            <p className="mt-1 text-[13px] text-[var(--text2)]">
               半角英数字とハイフンのみ。記事内容を表す英語にしてください（SEO に影響します）。公開後は変更しないでください。
             </p>
           </div>
@@ -564,7 +564,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               onChange={(e) => handleChange('excerpt', e.target.value)}
               rows={3}
               placeholder="記事の概要を150字程度で書いてください"
-              className="min-h-24 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
+              className="min-h-24 w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 resize-y"
             />
           </div>
 
@@ -577,7 +577,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
         {/* サイドカラム */}
         <div className="space-y-5">
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-[var(--text)]">公開設定</h3>
+            <h3 className="text-base font-semibold text-[var(--text)]">公開設定</h3>
 
             <div className="flex items-center gap-3">
               <button
@@ -595,7 +595,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
               >
                 <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${form.published ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
               </button>
-              <span className={`text-sm font-semibold ${form.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
+              <span className={`text-base font-semibold ${form.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                 {form.published ? '公開中' : '下書き'}
               </span>
             </div>
@@ -612,7 +612,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-[var(--text)]">分類</h3>
+            <h3 className="text-base font-semibold text-[var(--text)]">分類</h3>
 
             <div>
               <FieldLabel required htmlFor="post-category">カテゴリ</FieldLabel>
@@ -658,7 +658,7 @@ export function PostFormClient({ mode, id, defaultValues }: PostFormProps) {
           </div>
 
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-[var(--text)]">カバーカラー</h3>
+            <h3 className="text-base font-semibold text-[var(--text)]">カバーカラー</h3>
             <div>
               <TextInput
                 value={form.cover_color}

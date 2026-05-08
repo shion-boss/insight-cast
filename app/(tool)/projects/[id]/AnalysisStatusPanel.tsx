@@ -98,7 +98,7 @@ function GscDisconnectModal({
             <p id="gsc-disconnect-title" className="text-[15px] font-bold text-[var(--text)] mb-1">
               連携を解除しますか？
             </p>
-            <p className="text-sm text-[var(--text2)] leading-relaxed">
+            <p className="text-base text-[var(--text2)] leading-relaxed">
               Google Search Console の連携を解除します。解除後は検索データが調査に使われなくなります。
             </p>
           </div>
@@ -108,7 +108,7 @@ function GscDisconnectModal({
             type="button"
             onClick={onCancel}
             disabled={isDeleting}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-base font-semibold text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             やめておく
           </button>
@@ -116,7 +116,7 @@ function GscDisconnectModal({
             type="button"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+            className="inline-flex min-h-[44px] items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-base font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
           >
             {isDeleting ? '解除中...' : '解除する'}
           </button>
@@ -280,7 +280,7 @@ export default function AnalysisStatusPanel({
         <div className="min-w-0">
           <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--on-primary-container)] mb-2">調査レポート</div>
           <h3 className="text-[16px] font-bold text-[var(--text)] mb-2">HP調査・競合比較</h3>
-          <p className="text-sm text-[var(--text2)] leading-relaxed">
+          <p className="text-base text-[var(--text2)] leading-relaxed">
             {competitorCount > 0
               ? `${competitorCount}件の競合HPを設定中。`
               : 'まだ競合HPは設定していません。競合なしでも調査は始められます。'}
@@ -292,7 +292,7 @@ export default function AnalysisStatusPanel({
             <>
               <div role="status" className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
+                <p className="text-base text-[var(--warn)]">クラウスがホームページを調べています。数分後にもう一度確認してみてください。</p>
               </div>
               {canEdit && (
                 <button type="button" disabled className={getButtonClass('secondary')}>
@@ -304,7 +304,7 @@ export default function AnalysisStatusPanel({
             <>
               <div role="alert" className="flex items-start gap-3">
                 <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={32} />
-                <div className="px-1 text-sm text-[var(--err)]">ホームページを取得できませんでした。URLを確認してもう一度お試しください。</div>
+                <div className="px-1 text-base text-[var(--err)]">ホームページを取得できませんでした。URLを確認してもう一度お試しください。</div>
               </div>
               {canEdit && (
                 <StartAnalysisButton projectId={projectId} projectName={projectName} className={getButtonClass('secondary')} onStarted={() => setOptimisticAnalyzing(true)} />
@@ -334,12 +334,12 @@ export default function AnalysisStatusPanel({
             </Link>
           )}
           {nextAvailableLabel && status === 'report_ready' && (
-            <p className="text-xs text-[var(--text2)]">
+            <p className="text-[13px] text-[var(--text2)]">
               次回の再調査は {nextAvailableLabel} 以降に行えます。
             </p>
           )}
           {!canEdit && (
-            <p className="text-xs text-[var(--text2)]">
+            <p className="text-[13px] text-[var(--text2)]">
               再調査は編集者またはオーナーが操作できます。
             </p>
           )}
@@ -352,19 +352,19 @@ export default function AnalysisStatusPanel({
         {gscToast === 'connected' && (
           <div role="status" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--ok-l)] px-4 py-3 border border-[var(--ok)]/30">
             <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
-            <p className="text-sm text-[var(--ok)] font-medium">Google Search Console と連携しました。次回の調査から検索データが分析に使われます。</p>
+            <p className="text-base text-[var(--ok)] font-medium">Google Search Console と連携しました。次回の調査から検索データが分析に使われます。</p>
           </div>
         )}
         {gscToast === 'error' && (
           <div role="alert" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--err-l,#fff0f0)] px-4 py-3 border border-[var(--err)]/30">
             <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
-            <p className="text-sm text-[var(--err)]">連携に失敗しました。もう一度お試しください。</p>
+            <p className="text-base text-[var(--err)]">連携に失敗しました。もう一度お試しください。</p>
           </div>
         )}
         {gscToast === 'no_property' && (
           <div role="alert" className="mb-4 flex items-center gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3 border border-[var(--warn)]/30">
             <CharacterAvatar src={claus?.icon48} alt="クラウスのアイコン" emoji={claus?.emoji} size={28} className="flex-shrink-0" />
-            <p className="text-sm text-[var(--warn)]">Google Search Console にこのサイトのプロパティが見つかりませんでした。GSCにサイトを登録してからもう一度お試しください。</p>
+            <p className="text-base text-[var(--warn)]">Google Search Console にこのサイトのプロパティが見つかりませんでした。GSCにサイトを登録してからもう一度お試しください。</p>
           </div>
         )}
 
@@ -382,31 +382,31 @@ export default function AnalysisStatusPanel({
                 Google Search Console
               </div>
               {gscStatus === 'loading' && (
-                <p className="text-sm text-[var(--text2)]">確認中...</p>
+                <p className="text-base text-[var(--text2)]">確認中...</p>
               )}
               {gscStatus === 'connected' && (
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ok-l)] border border-[var(--ok)]/30 px-2.5 py-0.5 text-xs font-semibold text-[var(--ok)]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--ok-l)] border border-[var(--ok)]/30 px-2.5 py-0.5 text-[13px] font-semibold text-[var(--ok)]">
                       連携済み
                     </span>
                     {gscSiteUrl && (
-                      <span className="text-xs text-[var(--text2)] truncate max-w-[200px]" title={gscSiteUrl}>
+                      <span className="text-[13px] text-[var(--text2)] truncate max-w-[200px]" title={gscSiteUrl}>
                         {gscSiteUrl}
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-xs text-[var(--text2)]">
+                  <p className="mt-1 text-[13px] text-[var(--text2)]">
                     検索クエリ・流入ページのデータが調査分析に使われます。
                   </p>
                 </div>
               )}
               {gscStatus === 'disconnected' && (
                 <div className="space-y-1">
-                  <p className="text-sm text-[var(--text2)]">
+                  <p className="text-base text-[var(--text2)]">
                     連携すると、検索データをもとにより詳しい調査ができます。
                   </p>
-                  <p className="text-xs text-[var(--text2)]">
+                  <p className="text-[13px] text-[var(--text2)]">
                     {isOwner
                       ? 'ホームページを登録している Google アカウントで連携してください。'
                       : 'プロジェクトのオーナーが連携できます。'}
@@ -419,7 +419,7 @@ export default function AnalysisStatusPanel({
           {isOwner && (
             <div className="flex-shrink-0">
               {gscStatus === 'loading' && (
-                <button type="button" disabled className={getButtonClass('secondary', 'text-sm')}>
+                <button type="button" disabled className={getButtonClass('secondary', 'text-base')}>
                   読み込み中
                 </button>
               )}
@@ -428,7 +428,7 @@ export default function AnalysisStatusPanel({
                   type="button"
                   onClick={handleGscDisconnectRequest}
                   disabled={gscDeleting}
-                  className={getButtonClass('ghost', 'text-sm text-[var(--text2)] hover:text-[var(--err)]')}
+                  className={getButtonClass('ghost', 'text-base text-[var(--text2)] hover:text-[var(--err)]')}
                 >
                   {gscDeleting ? '解除中...' : '連携を解除'}
                 </button>
@@ -436,7 +436,7 @@ export default function AnalysisStatusPanel({
               {gscStatus === 'disconnected' && (
                 <a
                   href={`/api/auth/google?project_id=${projectId}`}
-                  className={getButtonClass('secondary', 'text-sm')}
+                  className={getButtonClass('secondary', 'text-base')}
                 >
                   Google Search Console を連携する
                 </a>

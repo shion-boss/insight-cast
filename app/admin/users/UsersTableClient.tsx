@@ -79,14 +79,14 @@ function PlanSelect({
         onChange={handleChange}
         disabled={saving}
         aria-label="プランを変更"
-        className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-xs text-[var(--text)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
+        className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2 py-1 text-[13px] text-[var(--text)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 disabled:opacity-50"
       >
         {PLAN_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
-      {saving && <p className="text-xs text-[var(--text2)]">更新中...</p>}
-      {error && <p role="alert" className="text-xs text-[var(--err)]">{error}</p>}
+      {saving && <p className="text-[13px] text-[var(--text2)]">更新中...</p>}
+      {error && <p role="alert" className="text-[13px] text-[var(--err)]">{error}</p>}
     </div>
   )
 }
@@ -135,7 +135,7 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
       >
         + ユーザーを作成
       </button>
@@ -145,12 +145,12 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
   return (
     <form onSubmit={handleSubmit} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-[var(--text)]">ユーザーを作成</p>
-        <button type="button" onClick={() => setOpen(false)} className="text-xs text-[var(--text2)] hover:text-[var(--text)]">キャンセル</button>
+        <p className="text-base font-semibold text-[var(--text)]">ユーザーを作成</p>
+        <button type="button" onClick={() => setOpen(false)} className="text-[13px] text-[var(--text2)] hover:text-[var(--text)]">キャンセル</button>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         <div>
-          <label htmlFor="create-email" className="block text-xs font-semibold text-[var(--text2)] mb-1">メールアドレス</label>
+          <label htmlFor="create-email" className="block text-[13px] font-semibold text-[var(--text2)] mb-1">メールアドレス</label>
           <input
             id="create-email"
             type="email"
@@ -159,11 +159,11 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
             required
             autoComplete="email"
             placeholder="user@example.com"
-            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           />
         </div>
         <div>
-          <label htmlFor="create-password" className="block text-xs font-semibold text-[var(--text2)] mb-1">パスワード（8文字以上）</label>
+          <label htmlFor="create-password" className="block text-[13px] font-semibold text-[var(--text2)] mb-1">パスワード（8文字以上）</label>
           <input
             id="create-password"
             type="password"
@@ -173,26 +173,26 @@ function CreateUserForm({ onCreated }: { onCreated: (user: UserRow) => void }) {
             minLength={8}
             autoComplete="new-password"
             placeholder="password123"
-            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           />
         </div>
         <div>
-          <label htmlFor="create-plan" className="block text-xs font-semibold text-[var(--text2)] mb-1">プラン</label>
+          <label htmlFor="create-plan" className="block text-[13px] font-semibold text-[var(--text2)] mb-1">プラン</label>
           <select
             id="create-plan"
             value={plan}
             onChange={(e) => setPlan(e.target.value as PlanKey)}
-            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           >
             {PLAN_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </div>
       </div>
-      {error && <p role="alert" className="text-xs text-[var(--err)]">{error}</p>}
+      {error && <p role="alert" className="text-[13px] text-[var(--err)]">{error}</p>}
       <button
         type="submit"
         disabled={saving}
-        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:opacity-50"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:opacity-50"
       >
         {saving ? '作成中...' : 'メール確認なしで作成'}
       </button>
@@ -213,7 +213,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
 
       {users.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
-          <p className="text-sm text-[var(--text2)]">登録ユーザーがいません</p>
+          <p className="text-base text-[var(--text2)]">登録ユーザーがいません</p>
         </div>
       ) : (
         <>
@@ -222,7 +222,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
         {users.map((user) => (
           <div key={user.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
             <p className="mb-2 break-all font-medium text-[var(--text)]">{user.email ?? '—'}</p>
-            <div className="mb-3 space-y-1 text-xs text-[var(--text2)]">
+            <div className="mb-3 space-y-1 text-[13px] text-[var(--text2)]">
               <p>作成日: {formatDateTime(user.created_at)}</p>
               <p>最終ログイン: {formatDateTime(user.last_sign_in_at)}</p>
             </div>
@@ -237,7 +237,7 @@ export function UsersTableClient({ initialUsers }: { initialUsers: UserRow[] }) 
 
       {/* PC: テーブル */}
       <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
-        <table className="w-full text-sm">
+        <table className="w-full text-base">
           <caption className="sr-only">ユーザー一覧</caption>
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--bg2)] text-left">

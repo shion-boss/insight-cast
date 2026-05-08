@@ -107,16 +107,16 @@ export function BlogClient({ posts }: { posts: Post[] }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex flex-wrap items-center gap-2">
-                    <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                    <span className="rounded-full px-2 py-0.5 text-[13px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                       {CATEGORY_LABELS[post.category]}
                     </span>
                     {post.type === 'interview' && (
-                      <span className="rounded-full bg-[var(--teal-l)] px-2 py-0.5 text-xs font-bold text-[var(--teal)]">
+                      <span className="rounded-full bg-[var(--teal-l)] px-2 py-0.5 text-[13px] font-bold text-[var(--teal)]">
                         インタビュー
                       </span>
                     )}
                     {isFeatured && (
-                      <span className="rounded-full bg-[var(--warn-l)] px-2 py-0.5 text-xs font-bold text-[var(--warn)]">
+                      <span className="rounded-full bg-[var(--warn-l)] px-2 py-0.5 text-[13px] font-bold text-[var(--warn)]">
                         注目
                       </span>
                     )}
@@ -138,11 +138,11 @@ export function BlogClient({ posts }: { posts: Post[] }) {
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3 py-12 text-center">
-          <p className="text-sm text-[var(--text2)]">このカテゴリの記事はまだありません</p>
+          <p className="text-base text-[var(--text2)]">このカテゴリの記事はまだありません</p>
           <button
             type="button"
             onClick={() => changeFilter('all')}
-            className="text-sm font-semibold text-[var(--on-primary-container)] underline underline-offset-2 rounded"
+            className="text-base font-semibold text-[var(--on-primary-container)] underline underline-offset-2 rounded"
           >
             すべての記事を見る
           </button>

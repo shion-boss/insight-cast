@@ -118,7 +118,7 @@ export function InterviewReviewForm({
   if (loading) {
     return (
       <section className="rounded-lg border border-stone-200 bg-white p-4 sm:p-6">
-        <p className="text-sm text-stone-500">読み込み中...</p>
+        <p className="text-base text-stone-500">読み込み中...</p>
       </section>
     )
   }
@@ -137,7 +137,7 @@ export function InterviewReviewForm({
             <p className="text-base font-semibold text-stone-900">
               振り返りをありがとうございました
             </p>
-            <p className="mt-1 text-sm text-stone-600 leading-relaxed">
+            <p className="mt-1 text-base text-stone-600 leading-relaxed">
               いただいたレビューはAIキャスト内でも共有して、より良い取材ができるよう努めます。
             </p>
           </div>
@@ -157,7 +157,7 @@ export function InterviewReviewForm({
         />
         <div>
           <h2 className="text-base font-semibold text-stone-900">この取材の振り返り</h2>
-          <p className="mt-1 text-xs text-stone-500">
+          <p className="mt-1 text-[13px] text-stone-500">
             {character?.name ?? 'AIキャスト'}との取材はどうでしたか？いただいた声は、これからのキャスト育成に使わせてください。
           </p>
         </div>
@@ -168,8 +168,8 @@ export function InterviewReviewForm({
           {AXES.map((axis) => (
             <div key={axis.key} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
               <div className="sm:w-32">
-                <div className="text-sm font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-[var(--error)]">*</span>}</div>
-                <div className="text-xs text-stone-500">{axis.help}</div>
+                <div className="text-base font-medium text-stone-800">{axis.label}{axis.key === 'overall_score' && <span className="ml-1 text-[var(--error)]">*</span>}</div>
+                <div className="text-[13px] text-stone-500">{axis.help}</div>
               </div>
               <div className="flex gap-1.5">
                 {SCORE_LABELS.map((label, idx) => {
@@ -180,7 +180,7 @@ export function InterviewReviewForm({
                       key={score}
                       type="button"
                       onClick={() => setScore(axis.key, score)}
-                      className={`h-8 w-8 rounded-md border text-sm transition-colors ${
+                      className={`h-8 w-8 rounded-md border text-base transition-colors ${
                         selected
                           ? 'border-[var(--success)] bg-[var(--success)] text-[var(--on-success)]'
                           : 'border-stone-300 bg-white text-stone-700 hover:border-[var(--success)]/50 hover:bg-[var(--success-container)]'
@@ -198,30 +198,30 @@ export function InterviewReviewForm({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-800" htmlFor="good_points">良かった点</label>
+          <label className="mb-1 block text-base font-medium text-stone-800" htmlFor="good_points">良かった点</label>
           <textarea
             id="good_points"
             value={state.good_points}
             onChange={(e) => setState((s) => ({ ...s, good_points: e.target.value }))}
             rows={3}
-            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-[var(--success)] focus:outline-none"
+            className="w-full rounded-md border border-stone-300 px-3 py-2 text-base focus:border-[var(--success)] focus:outline-none"
             placeholder="例: 相槌のバリエーションが豊か、初手の質問が答えやすかった など"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-stone-800" htmlFor="improve_points">改善してほしい点</label>
+          <label className="mb-1 block text-base font-medium text-stone-800" htmlFor="improve_points">改善してほしい点</label>
           <textarea
             id="improve_points"
             value={state.improve_points}
             onChange={(e) => setState((s) => ({ ...s, improve_points: e.target.value }))}
             rows={3}
-            className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm focus:border-[var(--success)] focus:outline-none"
+            className="w-full rounded-md border border-stone-300 px-3 py-2 text-base focus:border-[var(--success)] focus:outline-none"
             placeholder="例: 後半で相槌が減った、専門知識の根拠提示が薄い、キャラの守備範囲外に踏み込んだ など"
           />
         </div>
 
-        {error ? <p className="text-sm text-[var(--error)]">{error}</p> : null}
+        {error ? <p className="text-base text-[var(--error)]">{error}</p> : null}
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={saving} className={getButtonClass('primary')}>

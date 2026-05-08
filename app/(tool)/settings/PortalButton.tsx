@@ -39,7 +39,7 @@ export function PortalButton() {
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+      className={getButtonClass('secondary', 'px-4 py-2 text-base')}
     >
       {loading ? '開いています...' : '支払い管理を開く'}
     </button>

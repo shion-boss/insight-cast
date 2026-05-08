@@ -240,7 +240,7 @@ function CharSlot({
         />
       )}
       <span
-        className="absolute top-1 right-1 z-[3] rounded-[6px] px-[7px] py-[3px] text-xs font-bold text-white"
+        className="absolute top-1 right-1 z-[3] rounded-[6px] px-[7px] py-[3px] text-[13px] font-bold text-white"
         style={{ background: 'color-mix(in srgb, var(--accent) 92%, transparent)', letterSpacing: '0.03em' }}
       >
         {price}

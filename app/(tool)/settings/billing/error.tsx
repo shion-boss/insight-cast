@@ -34,13 +34,13 @@ export default function BillingError({
           <button
             type="button"
             onClick={reset}
-            className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('primary', 'px-6 py-3 text-base')}
           >
             もう一度試す
           </button>
           <Link
             href="/settings"
-            className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('secondary', 'px-6 py-3 text-base')}
           >
             設定へ戻る
           </Link>

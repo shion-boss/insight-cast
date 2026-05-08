@@ -112,7 +112,7 @@ function LoginForm() {
             {mint?.icon48 && (
               <Image src={mint.icon48} alt={mint.name} width={36} height={36} className="rounded-full flex-shrink-0 mt-0.5" sizes="36px" />
             )}
-            <p className="text-sm text-[var(--text2)] leading-[1.7]">
+            <p className="text-base text-[var(--text2)] leading-[1.7]">
               <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />
               ログイン後、そのままお支払い画面に進みます。<br />
               アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}${inviteToken ? `&invite_token=${encodeURIComponent(inviteToken)}` : ''}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>
@@ -129,14 +129,14 @@ function LoginForm() {
               type="button"
               onClick={handleGoogleLogin}
               disabled={loading || googleLoading}
-              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-base font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleのページを開いています...' : 'Googleでログイン'}
             </button>
 
             <div className="flex items-center gap-3">
               <hr className="flex-1 border-[var(--border)]" />
-              <span className="text-xs text-[var(--text3)]">または</span>
+              <span className="text-[13px] text-[var(--text3)]">または</span>
               <hr className="flex-1 border-[var(--border)]" />
             </div>
 
@@ -155,10 +155,10 @@ function LoginForm() {
             </div>
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="login-password" className="text-sm font-medium text-[var(--text2)]">パスワード</label>
+                <label htmlFor="login-password" className="text-base font-medium text-[var(--text2)]">パスワード</label>
                 <Link
                   href="/auth/reset-password"
-                  className="text-xs text-[var(--text3)] hover:text-[var(--accent)] transition-colors rounded"
+                  className="text-[13px] text-[var(--text3)] hover:text-[var(--accent)] transition-colors rounded"
                 >
                   パスワードを忘れた場合
                 </Link>
@@ -178,21 +178,21 @@ function LoginForm() {
             {(error || oauthError) && (
               <div id="login-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--err)]">{error ?? oauthError}</p>
+                <p className="text-base text-[var(--err)]">{error ?? oauthError}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'ログインしています...' : 'ログインする'}
             </button>
           </form>
         </div>
 
-        <p className="mt-5 text-center text-sm text-[var(--text3)]">
+        <p className="mt-5 text-center text-base text-[var(--text3)]">
           アカウントをお持ちでない方は{' '}
           <Link
             href={(() => {
@@ -211,7 +211,7 @@ function LoginForm() {
         <p className="mt-3 text-center">
           <Link
             href="/"
-            className="text-sm text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded-sm"
+            className="text-base text-[var(--text3)] hover:text-[var(--text2)] transition-colors rounded-sm"
           >
             ← トップへ
           </Link>

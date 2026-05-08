@@ -11,12 +11,12 @@ const PER_PAGE = 5
 function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
   if (totalPages <= 1) return null
   return (
-    <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-xs text-[var(--text2)]">
+    <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-[13px] text-[var(--text2)]">
       <button
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
+        className={getButtonClass('secondary', 'px-3 py-1.5 text-[13px]')}
       >
         <span aria-hidden="true">←</span> 前へ
       </button>
@@ -25,7 +25,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
         type="button"
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
+        className={getButtonClass('secondary', 'px-3 py-1.5 text-[13px]')}
       >
         次へ <span aria-hidden="true">→</span>
       </button>
@@ -68,7 +68,7 @@ export function PaginatedUncreatedThemes({
             return (
               <div key={i} className={ROW_CLASS}>
                 <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-                <p className="flex-1 truncate text-sm text-[var(--text)]" title={item.theme}>{item.theme}</p>
+                <p className="flex-1 truncate text-base text-[var(--text)]" title={item.theme}>{item.theme}</p>
               </div>
             )
           }
@@ -79,7 +79,7 @@ export function PaginatedUncreatedThemes({
               className={`group ${ROW_CLASS} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40`}
             >
               <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-              <p className="flex-1 truncate text-sm text-[var(--text)] transition-colors group-hover:text-[var(--accent)]" title={item.theme}>{item.theme}</p>
+              <p className="flex-1 truncate text-base text-[var(--text)] transition-colors group-hover:text-[var(--accent)]" title={item.theme}>{item.theme}</p>
               <span aria-hidden="true" className="text-[12px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)] flex-shrink-0">記事を作る →</span>
             </Link>
           )
@@ -186,9 +186,9 @@ export function PaginatedInterviewHistory({
                     {item.charName}
                   </div>
                   {item.isDone ? (
-                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">完了</span>
+                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[13px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">完了</span>
                   ) : (
-                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">途中</span>
+                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[13px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">途中</span>
                   )}
                 </div>
                 <div className="text-[11px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{formatDateTime(item.createdAt)}</div>
@@ -335,7 +335,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
             className="group block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4 transition-shadow hover:shadow-[var(--elevation-2)]"
           >
             <p className="mb-2 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{article.title || '記事'}</p>
-            <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+            <div className="flex flex-wrap gap-2 text-[13px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
               <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                 {ARTICLE_TYPE_LABEL[article.articleType ?? ''] ?? '記事'}
               </span>

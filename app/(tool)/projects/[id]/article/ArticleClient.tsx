@@ -469,7 +469,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
           <h1 className="font-semibold text-[var(--text)]">記事を作る</h1>
           <Link
             href={`/projects/${projectId}/summary?interviewId=${interviewId}${from ? `&from=${from}` : ''}`}
-            className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}
+            className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-base font-medium')}
           >
             ← 取材メモ
           </Link>
@@ -499,7 +499,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                           type="button"
                           onClick={() => setTab(t.type)}
                           aria-pressed={tab === t.type}
-                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                          className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-base font-semibold transition-all ${
                             tab === t.type
                               ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                               : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -517,7 +517,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
             <div className="mb-5">
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">テーマ</p>
               {loadingThemes ? (
-                <p className="text-sm text-[var(--text2)]">テーマを確認しています...</p>
+                <p className="text-base text-[var(--text2)]">テーマを確認しています...</p>
               ) : availableThemes.length > 0 ? (
                 <div className="space-y-2">
                   {availableThemes.map((item) => (
@@ -526,7 +526,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       type="button"
                       onClick={() => setTheme(item)}
                       aria-pressed={theme === item}
-                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-sm transition-all ${
+                      className={`w-full cursor-pointer rounded-[var(--r-sm)] px-3.5 py-2.5 text-left text-base transition-all ${
                         theme === item
                           ? 'border border-[var(--accent)] bg-[var(--accent-l)] font-semibold text-[var(--on-primary-container)]'
                           : 'border border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -541,19 +541,19 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 </div>
               ) : (
                 <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
-                  <p className="text-sm leading-[1.7] text-[var(--text2)]">
+                  <p className="text-base leading-[1.7] text-[var(--text2)]">
                     まだ選べるテーマがありません。先に取材メモを確認するか、取材に戻って話を足すと作りやすくなります。
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Link
                       href={`/projects/${projectId}/summary?interviewId=${interviewId}`}
-                      className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+                      className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
                     >
                       取材メモを開く
                     </Link>
                     <Link
                       href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-                      className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+                      className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
                     >
                       取材に戻る
                     </Link>
@@ -573,7 +573,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       type="button"
                       onClick={() => setStyle(opt.value)}
                       aria-pressed={style === opt.value}
-                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                      className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-base font-semibold transition-all ${
                         style === opt.value
                           ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                           : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -596,7 +596,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     onClick={() => setAudience(opt.value)}
                     aria-pressed={audience === opt.value}
                     title={opt.description}
-                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                    className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-base font-semibold transition-all ${
                       audience === opt.value
                         ? 'border-[var(--accent)] bg-[var(--accent)] text-white'
                         : 'border-[var(--border)] bg-transparent text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -606,7 +606,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-xs text-[var(--text2)]">{AUDIENCE_OPTIONS.find((o) => o.value === audience)?.description ?? ''}</p>
+              <p className="mt-1.5 text-[13px] text-[var(--text2)]">{AUDIENCE_OPTIONS.find((o) => o.value === audience)?.description ?? ''}</p>
             </div>
 
             <div className="mb-5">
@@ -630,7 +630,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       aria-disabled={disabled}
                       disabled={disabled}
                       title={titleText}
-                      className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-all ${
+                      className={`rounded-full border px-3.5 py-1.5 text-base font-semibold transition-all ${
                         disabled
                           ? 'cursor-not-allowed border-[var(--border)] bg-transparent text-[var(--text2)]/50'
                           : volume === opt.value
@@ -640,17 +640,17 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     >
                       {opt.label}
                       {isPillar && !pillarReady && (
-                        <span className="ml-1.5 text-xs font-medium opacity-70">条件未達</span>
+                        <span className="ml-1.5 text-[13px] font-medium opacity-70">条件未達</span>
                       )}
                     </button>
                   )
                 })}
               </div>
               {volume === 'pillar' && pillarReady && (
-                <p className="mt-1.5 text-xs text-[var(--text2)]">5,000〜8,000字の保存版記事です。生成に時間がかかります（要約 {summaryCount}件・テーマ {themesCount}件 で生成可能）。</p>
+                <p className="mt-1.5 text-[13px] text-[var(--text2)]">5,000〜8,000字の保存版記事です。生成に時間がかかります（要約 {summaryCount}件・テーマ {themesCount}件 で生成可能）。</p>
               )}
               {!pillarReady && tab !== 'conversation' && (
-                <p className="mt-1.5 text-xs text-[var(--text2)]">保存版（ピラー）を作るには、インタビュー要約 {pillarRequirements.minSummaryItems}項目以上＋抽出テーマ {pillarRequirements.minThemes}項目以上が必要です（現在 {pillarShortfall}）。取材を進めると選べるようになります。</p>
+                <p className="mt-1.5 text-[13px] text-[var(--text2)]">保存版（ピラー）を作るには、インタビュー要約 {pillarRequirements.minSummaryItems}項目以上＋抽出テーマ {pillarRequirements.minThemes}項目以上が必要です（現在 {pillarShortfall}）。取材を進めると選べるようになります。</p>
               )}
             </div>
 
@@ -662,7 +662,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 className="flex w-full cursor-pointer items-center justify-between rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3.5 py-2.5 transition-colors hover:border-[var(--accent)]"
               >
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-[var(--text)]">回答を整える</p>
+                  <p className="text-base font-semibold text-[var(--text)]">回答を整える</p>
                   <p className="mt-0.5 text-[11px] text-[var(--text2)]">誤字や話し言葉を自然に整えます</p>
                 </div>
                 <div className={`relative h-6 w-10 flex-shrink-0 overflow-hidden rounded-full transition-colors ${polishAnswers ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
@@ -693,12 +693,12 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
               <p className="mt-3 text-[12px] leading-[1.7] text-[var(--text2)]">{statusDescription}</p>
             </div>
 
-            <DevAiLabel className="justify-center mb-1 text-xs opacity-60">記事生成</DevAiLabel>
+            <DevAiLabel className="justify-center mb-1 text-[13px] opacity-60">記事生成</DevAiLabel>
             <button
               type="button"
               onClick={() => void startBatchGeneration()}
               disabled={isGenerating || availableThemes.length === 0}
-              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-full bg-[var(--accent)] py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-2 flex w-full cursor-pointer items-center justify-center rounded-full bg-[var(--accent)] py-2.5 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCurrentTabGenerating ? (
                 <>この形式を作成中...</>
@@ -721,10 +721,10 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
           <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--bg2)] px-6 py-4">
               <div className="flex items-center gap-2.5">
-                <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-xs font-semibold text-[var(--on-primary-container)]">
+                <span className="rounded-full bg-[var(--accent-l)] px-2.5 py-0.5 text-[13px] font-semibold text-[var(--on-primary-container)]">
                   {ARTICLE_ITEMS.find((item) => item.type === tab)?.label ?? tab}
                 </span>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                <span className={`rounded-full px-2.5 py-0.5 text-[13px] font-semibold ${
                   currentTabStatus === 'generating'
                     ? 'bg-[var(--warn-l)] text-[var(--warn)]'
                     : currentTabStatus === 'ready'
@@ -739,7 +739,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
               {latestComboArticle && !isCurrentTabGenerating && (
                 <Link
                   href={`/projects/${projectId}/articles/${latestComboArticle.id}`}
-                  className={getButtonClass('secondary', 'px-3 py-1.5 text-xs')}
+                  className={getButtonClass('secondary', 'px-3 py-1.5 text-[13px]')}
                 >
                   {tab === 'conversation' ? '記事を確認・書き出す' : '最新の記事を見る'}
                 </Link>
@@ -759,7 +759,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       <Link
                         key={a.id}
                         href={`/projects/${projectId}/articles/${a.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-[13px] text-[var(--text2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
                       >
                         <span>{typeLabel}</span>
                         <span aria-hidden="true" className="text-[var(--text2)]">·</span>
@@ -882,10 +882,10 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                       href={`/projects/${projectId}/articles/${a.id}`}
                       className="flex items-center justify-between gap-4 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg)] px-5 py-4 transition-colors hover:border-[var(--accent)]"
                     >
-                      <p className="truncate text-sm font-medium text-[var(--text)]">{a.title ?? '記事'}</p>
+                      <p className="truncate text-base font-medium text-[var(--text)]">{a.title ?? '記事'}</p>
                       <div className="flex flex-shrink-0 items-center gap-3">
-                        <span className="text-xs text-[var(--text2)]">{dateLabel}</span>
-                        <span className="text-xs font-medium text-[var(--on-primary-container)]">確認する <span aria-hidden="true">→</span></span>
+                        <span className="text-[13px] text-[var(--text2)]">{dateLabel}</span>
+                        <span className="text-[13px] font-medium text-[var(--on-primary-container)]">確認する <span aria-hidden="true">→</span></span>
                       </div>
                     </Link>
                   )
@@ -893,7 +893,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 <div className="flex flex-wrap justify-end gap-2 pt-2">
                   <Link
                     href={`/projects/${projectId}#articles`}
-                    className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+                    className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
                   >
                     プロジェクトの管理で確認する
                   </Link>
@@ -901,7 +901,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     type="button"
                     onClick={() => void startBatchGeneration()}
                     disabled={isGenerating}
-                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] transition-colors hover:text-[var(--text2)] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="cursor-pointer rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-2 text-[13px] text-[var(--text2)] transition-colors hover:text-[var(--text2)] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     もう一度作成する
                   </button>
@@ -914,13 +914,13 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
             href={`/projects/${projectId}/interview?interviewId=${interviewId}`}
-            className="rounded text-sm text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
+            className="rounded text-base text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
           >
             取材に戻って話を足す
           </Link>
           <Link
             href={`/projects/${projectId}`}
-            className="rounded text-sm text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
+            className="rounded text-base text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
           >
             プロジェクトの管理に戻る
           </Link>

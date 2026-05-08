@@ -119,7 +119,7 @@ export function Breadcrumb({ items }: {
   items: Array<{ label: string; href?: string }>
 }) {
   return (
-    <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-xs text-[var(--on-surface-muted)]">
+    <nav aria-label="パンくず" className="mb-5 flex items-center gap-1.5 text-[13px] text-[var(--on-surface-muted)]">
       {items.map((item, i) => {
         const isLast = i === items.length - 1
         return (
@@ -185,7 +185,7 @@ export function SiteBrand({
             Insight <span className="text-[var(--primary)]">Cast</span>
           </p>
           {subtitle !== false && (
-            <p className="hidden text-xs text-[var(--on-surface-variant)] sm:block">{subtitle}</p>
+            <p className="hidden text-[13px] text-[var(--on-surface-variant)] sm:block">{subtitle}</p>
           )}
         </div>
       </div>
@@ -235,7 +235,7 @@ export function PageHeader({
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
           <div className="min-w-0">
             <div className="font-semibold text-[var(--on-surface)]">{title}</div>
-            {description && <p className="mt-1 text-sm text-[var(--on-surface-variant)]">{description}</p>}
+            {description && <p className="mt-1 text-base text-[var(--on-surface-variant)]">{description}</p>}
           </div>
           {backHref ? (
             <Link
@@ -266,7 +266,7 @@ export function FieldLabel({
   htmlFor?: string
 }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1 block text-sm font-medium text-[var(--on-surface-variant)]">
+    <label htmlFor={htmlFor} className="mb-1 block text-base font-medium text-[var(--on-surface-variant)]">
       {children}
       {required && (
         <>
@@ -285,7 +285,7 @@ export function TextInput(props: ComponentPropsWithoutRef<'input'>) {
     <input
       {...rest}
       className={cx(
-        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-variant)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
+        'min-h-11 w-full rounded-[var(--shape-sm)] border border-[var(--outline)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--on-surface)] transition-colors duration-150 placeholder:text-[var(--on-surface-variant)] hover:border-[var(--outline-variant)] focus-visible:border-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--surface-container)] disabled:text-[var(--on-surface-muted)] disabled:hover:border-[var(--outline)]',
         className,
       )}
     />
@@ -407,7 +407,7 @@ export function StateCard({
       <div className={cx('text-4xl mb-3', align === 'center' ? '' : 'w-fit')}>{icon}</div>
       <p className="text-base font-semibold text-[var(--on-surface)]">{title}</p>
       {description && (
-        <p className="mt-2 text-sm leading-relaxed text-[var(--on-surface-variant)]">{description}</p>
+        <p className="mt-2 text-base leading-relaxed text-[var(--on-surface-variant)]">{description}</p>
       )}
       {action && <div className="mt-4">{action}</div>}
     </div>
@@ -551,10 +551,10 @@ export function InterviewerSpeech({
           aria-hidden="true"
         />
         <div className={cx('rounded-[var(--shape-lg)] border px-5 py-4', bubbleClass)}>
-          {name && <p className="text-xs font-medium text-[var(--on-surface-muted)] mb-1">{name}</p>}
-          <p className="text-sm font-medium text-[var(--on-surface)] leading-relaxed">{title}</p>
+          {name && <p className="text-[13px] font-medium text-[var(--on-surface-muted)] mb-1">{name}</p>}
+          <p className="text-base font-medium text-[var(--on-surface)] leading-relaxed">{title}</p>
           {description && (
-            <p className="text-sm text-[var(--on-surface-variant)] mt-1.5 leading-relaxed">{description}</p>
+            <p className="text-base text-[var(--on-surface-variant)] mt-1.5 leading-relaxed">{description}</p>
           )}
         </div>
       </div>

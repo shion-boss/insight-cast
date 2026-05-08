@@ -47,14 +47,14 @@ export function PlanCardCTA({
     return isLoggedIn ? (
       <Link
         href="/dashboard"
-        className="w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        className="w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-base font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
       >
         ダッシュボードへ
       </Link>
     ) : (
       <Link
         href="/auth/signup"
-        className="w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
+        className="w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-base font-semibold transition-colors inline-flex items-center justify-center border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
       >
         {plan.cta}
       </Link>
@@ -67,7 +67,7 @@ export function PlanCardCTA({
 
     if (isCurrentPlan) {
       return (
-        <div className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold inline-flex items-center justify-center gap-2 border-[1.5px] border-[var(--ok)]/40 bg-[var(--ok-l)] text-[var(--ok)] cursor-default">
+        <div className="w-full text-center py-3 rounded-[var(--r-sm)] text-base font-semibold inline-flex items-center justify-center gap-2 border-[1.5px] border-[var(--ok)]/40 bg-[var(--ok-l)] text-[var(--ok)] cursor-default">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <circle cx="7" cy="7" r="6.5" stroke="currentColor"/>
             <path d="M4 7l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -80,7 +80,7 @@ export function PlanCardCTA({
     if (isHigherPlan) {
       return (
         <div
-          className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold inline-flex items-center justify-center border-[1.5px] border-[var(--border)] bg-[var(--surface2)] text-[var(--text2)] cursor-not-allowed"
+          className="w-full text-center py-3 rounded-[var(--r-sm)] text-base font-semibold inline-flex items-center justify-center border-[1.5px] border-[var(--border)] bg-[var(--surface2)] text-[var(--text2)] cursor-not-allowed"
           title="より上位のプランをご契約中のため、このプランは選択できません。プラン変更は設定からご相談ください。"
           aria-disabled="true"
         >
@@ -106,7 +106,7 @@ export function PlanCardCTA({
   return (
     <Link
       href={`/auth/login?next=${encodeURIComponent(`/api/stripe/checkout-redirect?plan=${plan.id}`)}`}
-      className={`w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center ${
+      className={`w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-base font-semibold transition-colors inline-flex items-center justify-center ${
         plan.featured
           ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
           : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
@@ -135,14 +135,14 @@ export function FreePlanBannerCTA() {
   return isLoggedIn ? (
     <Link
       href="/dashboard"
-      className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+      className="inline-block text-center rounded-full px-8 py-3.5 text-base font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
     >
       ダッシュボードへ
     </Link>
   ) : (
     <Link
       href="/auth/signup"
-      className="inline-block text-center rounded-full px-8 py-3.5 text-sm font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
+      className="inline-block text-center rounded-full px-8 py-3.5 text-base font-semibold bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] transition-colors"
     >
       無料で始める
     </Link>
@@ -188,7 +188,7 @@ export function PricingBottomCTA() {
         {isLoggedIn ? (
           <Link
             href="/dashboard"
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
+            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-base font-semibold transition-colors shadow-[var(--elevation-3)]"
           >
             ダッシュボードへ <span aria-hidden="true">→</span>
           </Link>
@@ -196,13 +196,13 @@ export function PricingBottomCTA() {
           <>
             <Link
               href="/contact"
-              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-sm font-semibold transition-colors shadow-[var(--elevation-3)]"
+              className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-8 py-3.5 text-base font-semibold transition-colors shadow-[var(--elevation-3)]"
             >
               相談してみる <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/auth/signup"
-              className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-full px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+              className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-full px-6 py-3.5 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
             >
               無料で始める
             </Link>

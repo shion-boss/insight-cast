@@ -120,13 +120,13 @@ export default async function ProjectArticlesPage({
           <h2 className="mt-1 break-all text-2xl font-bold text-[var(--text)]">
             {project.name || project.hp_url}
           </h2>
-          <p className="mt-2 text-sm text-[var(--text2)]">
+          <p className="mt-2 text-base text-[var(--text2)]">
             {interview
               ? <>{interviewer?.name ?? 'AIキャスト'}<span aria-hidden="true"> · </span>{formatDate(interview.created_at)} の取材から作成した記事</>
               : 'このプロジェクトから作成した記事をまとめて確認できます。'}
           </p>
         </div>
-        <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
+        <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[13px] font-medium text-[var(--text2)]">
           {articles.length}件
         </span>
       </div>

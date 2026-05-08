@@ -23,10 +23,10 @@ export function Hero() {
               AI検索の時代でも、あなた自身の言葉だけは、真似できない。Insight Castが、その価値を引き出して記事にします。
             </p>
             <div className="flex gap-3 mt-8 flex-wrap">
-              <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} prefetch={false} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-7 py-3.5 text-sm font-semibold transition-colors inline-flex items-center shadow-[var(--elevation-3)]">
+              <Link href={isLoggedIn ? '/dashboard' : '/auth/signup'} prefetch={false} className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-7 py-3.5 text-base font-semibold transition-colors inline-flex items-center shadow-[var(--elevation-3)]">
                 {isLoggedIn ? <>ダッシュボードへ <span aria-hidden="true">→</span></> : <>カード不要・無料で体験する <span aria-hidden="true">→</span></>}
               </Link>
-              <Link href="/cast" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3.5 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+              <Link href="/cast" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3.5 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
                 キャストを見る
               </Link>
             </div>

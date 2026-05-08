@@ -133,7 +133,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
           <h1 className="text-2xl font-bold text-[var(--text)]">
             Cast Talk 管理
           </h1>
-          <p className="mt-1 text-sm text-[var(--text2)]">
+          <p className="mt-1 text-base text-[var(--text2)]">
             AIキャスト対話記事の一覧・公開管理
           </p>
         </div>
@@ -145,13 +145,13 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
             onChange={(e) => setThemeInput(e.target.value)}
             placeholder="テーマを指定（省略可）"
             disabled={generating}
-            className="min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] disabled:opacity-50 sm:w-64"
+            className="min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-base text-[var(--text)] placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] disabled:opacity-50 sm:w-64"
           />
           <button
             type="button"
             onClick={handleGenerate}
             disabled={generating}
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50 sm:w-auto"
           >
             {generating ? '生成中...' : '今すぐ生成'}
           </button>
@@ -159,15 +159,15 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
       </div>
 
       {error && (
-        <div role="alert" className="rounded-[var(--r-sm)] border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="rounded-[var(--r-sm)] border border-[var(--err-l)] bg-[var(--err-l)] px-4 py-3 text-base text-[var(--err)]">
           {error}
         </div>
       )}
 
       {items.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-10 text-center">
-          <p className="text-sm text-[var(--text2)]">まだcast-talkがありません</p>
-          <p className="mt-1 text-xs text-[var(--text2)]">「今すぐ生成」を押して最初の記事を作成してください</p>
+          <p className="text-base text-[var(--text2)]">まだcast-talkがありません</p>
+          <p className="mt-1 text-[13px] text-[var(--text2)]">「今すぐ生成」を押して最初の記事を作成してください</p>
         </div>
       ) : (
         <>
@@ -177,11 +177,11 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
               <div key={item.id} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <p className="font-medium text-[var(--text)] leading-snug">{item.title}</p>
-                  <span className={`shrink-0 text-xs font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
+                  <span className={`shrink-0 text-[13px] font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                     {item.status === 'published' ? '公開中' : '下書き'}
                   </span>
                 </div>
-                <div className="mb-4 flex flex-wrap gap-2 text-xs text-[var(--text2)]">
+                <div className="mb-4 flex flex-wrap gap-2 text-[13px] text-[var(--text2)]">
                   <span className="rounded-full border border-[var(--border)] px-2 py-0.5">
                     {FORMAT_LABELS[item.format] ?? item.format}
                   </span>
@@ -202,7 +202,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                   </button>
                   <Link
                     href={`/admin/cast-talk/${item.id}`}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] inline-flex items-center"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] inline-flex items-center"
                   >
                     編集
                   </Link>
@@ -211,14 +211,14 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       href={`/cast-talk/${item.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="min-h-[44px] rounded-full border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
+                      className="min-h-[44px] rounded-full border border-[var(--accent)] px-4 py-2 text-[13px] font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] inline-flex items-center whitespace-nowrap"
                     >
                       公開ページ ↗
                     </Link>
                   ) : (
                     <span
                       aria-hidden="true"
-                      className="invisible min-h-[44px] rounded-[var(--r-sm)] border border-transparent px-4 py-2 text-xs font-medium inline-flex items-center whitespace-nowrap"
+                      className="invisible min-h-[44px] rounded-[var(--r-sm)] border border-transparent px-4 py-2 text-[13px] font-medium inline-flex items-center whitespace-nowrap"
                     >
                       公開ページ ↗
                     </span>
@@ -227,7 +227,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     type="button"
                     onClick={() => handleDeleteRequest(item)}
                     disabled={deletingId === item.id}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-[13px] font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                   >
                     {deletingId === item.id ? '削除中...' : '削除'}
                   </button>
@@ -238,7 +238,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
 
           {/* PC: テーブル */}
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
-            <table className="w-full text-sm">
+            <table className="w-full text-base">
               <caption className="sr-only">Cast Talk 記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -289,7 +289,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                       <div className="inline-flex items-center gap-1.5">
                         <Link
                           href={`/admin/cast-talk/${item.id}`}
-                          className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                          className="inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                         >
                           編集
                         </Link>
@@ -298,14 +298,14 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                             href={`/cast-talk/${item.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block rounded-full px-3 py-1.5 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                            className="inline-block rounded-full px-3 py-1.5 text-[13px] font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                           >
                             公開ページ ↗
                           </Link>
                         ) : (
                           <span
                             aria-hidden="true"
-                            className="invisible inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium whitespace-nowrap"
+                            className="invisible inline-block rounded-[var(--r-sm)] px-3 py-1.5 text-[13px] font-medium whitespace-nowrap"
                           >
                             公開ページ ↗
                           </span>
@@ -314,7 +314,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                           type="button"
                           onClick={() => handleDeleteRequest(item)}
                           disabled={deletingId === item.id}
-                          className="rounded-[var(--r-sm)] border border-[var(--error)]/30 px-3 py-1.5 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
+                          className="rounded-[var(--r-sm)] border border-[var(--error)]/30 px-3 py-1.5 text-[13px] font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                         >
                           {deletingId === item.id ? '削除中...' : '削除'}
                         </button>

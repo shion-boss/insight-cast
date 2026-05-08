@@ -104,7 +104,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
 
         {/* summary */}
         {talk.summary && (
-          <p className="flex-1 border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
+          <p className="flex-1 border-l-2 pl-3 text-base italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
             「{talk.summary}」
           </p>
         )}
@@ -162,7 +162,7 @@ function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number })
 
       {/* summary */}
       {talk.summary && (
-        <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
+        <p className="border-l-2 pl-3 text-base italic leading-[1.75] text-[var(--on-surface-variant)] line-clamp-3" style={{ borderColor: theme.color }}>
           「{talk.summary}」
         </p>
       )}
@@ -212,7 +212,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
   if (!featuredTalk && listTotalCount === 0) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm text-[var(--text2)]">まだ公開中の記事がありません</p>
+        <p className="text-base text-[var(--text2)]">まだ公開中の記事がありません</p>
       </div>
     )
   }
@@ -247,11 +247,11 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage - 1)}
                 disabled={listPage === 0 || loading}
                 aria-label="前のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <span aria-hidden="true">←</span> 前へ
               </button>
-              <span className="min-w-[80px] text-center text-sm text-[var(--on-surface-variant)]" aria-live="polite">
+              <span className="min-w-[80px] text-center text-base text-[var(--on-surface-variant)]" aria-live="polite">
                 {listPage + 1} / {listTotalPages}
               </span>
               <button
@@ -259,7 +259,7 @@ export function CastTalkGrid({ featuredTalk, initialListTalks, initialListPage =
                 onClick={() => goToPage(listPage + 1)}
                 disabled={listPage >= listTotalPages - 1 || loading}
                 aria-label="次のページへ"
-                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                className="min-h-[44px] rounded-[var(--r-sm)] border-[1.5px] border-[var(--outline)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--on-surface-variant)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-40"
               >
                 次へ <span aria-hidden="true">→</span>
               </button>

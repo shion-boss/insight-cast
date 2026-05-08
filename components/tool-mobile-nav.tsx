@@ -164,7 +164,7 @@ export function ToolMobileNav({
                     href={item.href}
                     aria-current={active ? 'page' : undefined}
                     onClick={() => setOpen(false)}
-                    className={`flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-3 text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-2.5 rounded-[var(--r-sm)] px-3 py-3 text-base font-medium transition-colors ${
                       active
                         ? 'bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                         : 'text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'
@@ -178,12 +178,12 @@ export function ToolMobileNav({
             </nav>
 
             <div className="border-t border-[var(--border)] px-4 py-4 space-y-2">
-              <p className="truncate text-xs text-[var(--text2)] px-1">{accountLabel}</p>
+              <p className="truncate text-[13px] text-[var(--text2)] px-1">{accountLabel}</p>
               {isAdmin && (
                 <Link
                   href="/admin"
                   onClick={() => setOpen(false)}
-                  className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[var(--surface-dark)] px-3 py-2.5 text-xs font-semibold text-stone-300 transition-colors hover:bg-[var(--surface-dark-hover)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400/40"
+                  className="flex items-center justify-between rounded-[var(--r-sm)] border border-stone-700/40 bg-[var(--surface-dark)] px-3 py-2.5 text-[13px] font-semibold text-stone-300 transition-colors hover:bg-[var(--surface-dark-hover)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-400/40"
                 >
                   <span className="flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -198,7 +198,7 @@ export function ToolMobileNav({
               <form action={signOut} data-cross-area-nav>
                 <button
                   type="submit"
-                  className="w-full rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                  className="w-full rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2.5 text-base font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                 >
                   ログアウト
                 </button>

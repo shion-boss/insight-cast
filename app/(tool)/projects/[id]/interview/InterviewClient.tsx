@@ -555,7 +555,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           type="button"
           onClick={() => router.push(backHref)}
           aria-label={backLabel}
-          className="rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 text-sm text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
+          className="rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 text-base text-[var(--text2)] transition-colors hover:text-[var(--text2)]"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <line x1="19" y1="12" x2="5" y2="12" />
@@ -572,10 +572,10 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             className="border-2 border-[var(--accent)] flex-shrink-0"
           />
           <div className="min-w-0">
-            <p className="font-serif font-bold text-[var(--text)] text-sm truncate">{char?.name}</p>
-            <p className="text-xs text-[var(--teal)] hidden md:block">{char?.specialty}</p>
+            <p className="font-serif font-bold text-[var(--text)] text-base truncate">{char?.name}</p>
+            <p className="text-[13px] text-[var(--teal)] hidden md:block">{char?.specialty}</p>
             {focusThemeLabel && (
-              <p className="mt-0.5 text-xs text-[var(--text2)] hidden md:block">{focusThemeLabel}</p>
+              <p className="mt-0.5 text-[13px] text-[var(--text2)] hidden md:block">{focusThemeLabel}</p>
             )}
           </div>
         </div>
@@ -583,7 +583,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         {showSupportPanel && (
           <div className="flex items-center flex-shrink-0">
             {supportPosts.loading ? (
-              <span className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2 py-1 text-xs text-[var(--text2)]">
+              <span className="flex items-center gap-1.5 rounded-full border border-[var(--border)] px-2 py-1 text-[13px] text-[var(--text2)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
                 <span className="hidden sm:inline">確認中</span>
               </span>
@@ -593,7 +593,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 onClick={() => setIsSupportPanelOpen((prev) => !prev)}
                 aria-expanded={isSupportPanelOpen}
                 aria-controls="support-posts-panel"
-                className={`flex items-center gap-1.5 rounded-full border px-2 sm:px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                className={`flex items-center gap-1.5 rounded-full border px-2 sm:px-3 py-1 text-[13px] font-medium transition-colors cursor-pointer ${
                   isSupportPanelOpen
                     ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                     : 'border-[var(--border)] bg-[var(--bg2)] text-[var(--text2)] hover:bg-white'
@@ -602,7 +602,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 <span className="sm:hidden">記事</span>
                 <span className="hidden sm:inline">参考記事</span>
                 {supportPostCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] font-bold text-white">
                     {supportPostCount}
                   </span>
                 )}
@@ -626,7 +626,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         <button
           type="button"
           onClick={handleManualFinish}
-          className="hidden md:block bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-sm font-semibold transition-colors hover:opacity-90 cursor-pointer flex-shrink-0"
+          className="hidden md:block bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-base font-semibold transition-colors hover:opacity-90 cursor-pointer flex-shrink-0"
         >
           インタビューを終わらせる
         </button>
@@ -638,8 +638,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         <div className="mx-auto max-w-6xl px-4 sm:px-6 py-2 sm:py-3">
           <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-[var(--text2)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-xs text-[var(--text2)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
+            <span className="text-[13px] text-[var(--text2)]">{getProgressLabel(userTurns)}</span>
+            <span className="text-[13px] text-[var(--text2)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
           </div>
           <div
             role="progressbar"
@@ -681,7 +681,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
                   />
                 )}
-                <div className={`max-w-[80%] sm:max-w-[60%] px-4 py-3 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] border border-[var(--border)] text-[var(--text)] rounded-[var(--r-lg)] shadow-[var(--elevation-1)] ${
+                <div className={`max-w-[80%] sm:max-w-[60%] px-4 py-3 text-base sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] border border-[var(--border)] text-[var(--text)] rounded-[var(--r-lg)] shadow-[var(--elevation-1)] ${
                   msg.role === 'interviewer'
                     ? 'bg-[var(--surface)] rounded-tl-none'
                     : 'bg-[var(--accent-l)] rounded-tr-none'
@@ -703,7 +703,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                         ) : (
                           <div
                             key={`${i}-${j}`}
-                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-xs text-[var(--text2)]"
+                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[13px] text-[var(--text2)]"
                             aria-label="画像読み込み中"
                           >
                             画像
@@ -726,7 +726,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => void sendMessageToAI('はい')}
                     disabled={loading}
-                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
+                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-base font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
                   >
                     はい
                   </button>
@@ -734,7 +734,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => void sendMessageToAI('いいえ')}
                     disabled={loading}
-                    className="border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg2)] rounded-full px-5 py-2 text-sm font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
+                    className="border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg2)] rounded-full px-5 py-2 text-base font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
                   >
                     いいえ
                   </button>
@@ -808,7 +808,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => removePendingAttachment(idx)}
                     aria-label="この画像を削除"
-                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-xs flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-[13px] flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                   >
                     ×
                   </button>
@@ -817,8 +817,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             </div>
           )}
           <div className="mb-2 flex flex-col gap-2">
-            <p className="text-xs text-[var(--text2)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
-            <p className="text-xs text-[var(--text2)] sm:hidden">パス・もう少し聞くもできます。</p>
+            <p className="text-[13px] text-[var(--text2)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
+            <p className="text-[13px] text-[var(--text2)] sm:hidden">パス・もう少し聞くもできます。</p>
             <div className="flex flex-wrap items-center justify-start gap-2">
               {characterId === 'hal' && (
                 <>
@@ -837,7 +837,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={loading || initializing || hasReachedTurnLimit || uploadingAttachment || pendingAttachments.length >= 4}
-                    className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     aria-label="写真を添付"
                   >
                     {uploadingAttachment ? 'アップ中...' : '📷 写真を添付'}
@@ -848,7 +848,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                       type="button"
                       onClick={handleSkipPhoto}
                       disabled={loading || initializing || hasReachedTurnLimit}
-                      className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                      className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
                       写真なしで進める
                     </button>
@@ -859,7 +859,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 type="button"
                 onClick={handleDeepDive}
                 disabled={loading || initializing || hasReachedTurnLimit || messages.length === 0}
-                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 もう少し聞いてもらう
               </button>
@@ -867,7 +867,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 type="button"
                 onClick={handlePassQuestion}
                 disabled={loading || initializing || hasReachedTurnLimit}
-                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 この質問はパス
               </button>
@@ -893,18 +893,18 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   : 'ここに話しかけてください'}
               disabled={loading || initializing || hasReachedTurnLimit}
               autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-base resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
             />
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <DevAiLabel>AI送信</DevAiLabel>
               <button
                 type="submit"
                 disabled={loading || initializing || hasReachedTurnLimit || (!input.trim() && pendingAttachments.length === 0)}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
               </button>
-              <p className="text-xs text-[var(--text2)] hidden sm:block">Ctrl+Enter</p>
+              <p className="text-[13px] text-[var(--text2)] hidden sm:block">Ctrl+Enter</p>
             </div>
           </form>
         </div>
@@ -915,17 +915,17 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         <div id="support-posts-panel" className="fixed left-4 right-4 top-[68px] z-30 max-h-[60vh] overflow-y-auto rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--elevation-3)] md:left-auto md:w-80">
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-medium text-[var(--text2)]">この質問に近い記事</p>
+              <p className="text-[13px] font-medium text-[var(--text2)]">この質問に近い記事</p>
               <button
                 type="button"
                 onClick={() => setIsSupportPanelOpen(false)}
-                className="rounded-[var(--r-sm)] px-2 py-1 text-xs text-[var(--text2)] hover:text-[var(--text)] transition-colors cursor-pointer"
+                className="rounded-[var(--r-sm)] px-2 py-1 text-[13px] text-[var(--text2)] hover:text-[var(--text)] transition-colors cursor-pointer"
               >
                 閉じる
               </button>
             </div>
             {supportPosts.error && (
-              <p className="text-xs text-[var(--text2)]">{supportPosts.error}</p>
+              <p className="text-[13px] text-[var(--text2)]">{supportPosts.error}</p>
             )}
             {supportPosts.ownPosts.length > 0 && (
               <div className="mb-3">
@@ -934,8 +934,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   {supportPosts.ownPosts.map((post) => (
                     <a key={post.url} href={post.url} target="_blank" rel="noopener noreferrer"
                       className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--accent)]">
-                      <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
-                      <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="text-[13px] font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--text2)]">{post.summary}</p>
                       <p className="mt-1 truncate text-[11px] text-[var(--text2)]">{post.url}</p>
                     </a>
                   ))}
@@ -949,8 +949,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                   {supportPosts.competitorPosts.map((post) => (
                     <a key={post.url} href={post.url} target="_blank" rel="noopener noreferrer"
                       className="block rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2.5 transition-colors hover:border-[var(--teal)]">
-                      <p className="text-xs font-medium text-[var(--text)]">{post.title}</p>
-                      <p className="mt-0.5 text-xs leading-relaxed text-[var(--text2)]">{post.summary}</p>
+                      <p className="text-[13px] font-medium text-[var(--text)]">{post.title}</p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--text2)]">{post.summary}</p>
                       <p className="mt-1 truncate text-[11px] text-[var(--text2)]">{post.url}</p>
                     </a>
                   ))}
@@ -984,14 +984,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             {completionType === 'hard_limit' && (
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">上限の{MAX_TURNS}回まで質問しました。</p>
-                <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめます。</p>
+                <p className="text-base text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめます。</p>
                 <div className="space-y-2">
-                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
+                  <DevAiLabel className="justify-center mb-1 text-[13px] opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-base font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : '記事にまとめる'}
                   </button>
@@ -999,7 +999,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleAbort}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まとめずに中断する
                   </button>
@@ -1009,14 +1009,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             {completionType === 'standard_sufficient' && (
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">いいお話がたくさん聞けました。</p>
-                <p className="text-sm text-[var(--text2)] text-center mb-6">十分な内容が集まりました。このまままとめてもいいですか？</p>
+                <p className="text-base text-[var(--text2)] text-center mb-6">十分な内容が集まりました。このまままとめてもいいですか？</p>
                 <div className="space-y-2">
-                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
+                  <DevAiLabel className="justify-center mb-1 text-[13px] opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-base font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>
@@ -1024,7 +1024,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleContinue}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     もう少し話す
                   </button>
@@ -1032,7 +1032,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleAbort}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まとめずに中断する
                   </button>
@@ -1042,21 +1042,21 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             {completionType === 'standard_need_more' && (
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">もう少し話を聞かせてもらえますか？</p>
-                <p className="text-sm text-[var(--text2)] text-center mb-6">もう少し掘り下げると、さらに深い内容が引き出せるかもしれません。</p>
+                <p className="text-base text-[var(--text2)] text-center mb-6">もう少し掘り下げると、さらに深い内容が引き出せるかもしれません。</p>
                 <div className="space-y-2">
                   <button
                     type="button"
                     onClick={handleContinue}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-base font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors"
                   >
                     もう少し話す
                   </button>
-                  <DevAiLabel className="justify-center mt-1 text-xs opacity-60">まとめ生成</DevAiLabel>
+                  <DevAiLabel className="justify-center mt-1 text-[13px] opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     {finishing ? 'まとめています...' : 'ここまでの内容でまとめる'}
                   </button>
@@ -1064,7 +1064,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleAbort}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まとめずに中断する
                   </button>
@@ -1074,14 +1074,14 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             {completionType === 'manual' && (
               <>
                 <p className="text-[var(--text)] font-semibold text-center mb-2">取材をまとめますか？</p>
-                <p className="text-sm text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめることができます。</p>
+                <p className="text-base text-[var(--text2)] text-center mb-6">ここまでの内容を記事の素材にまとめることができます。</p>
                 <div className="space-y-2">
-                  <DevAiLabel className="justify-center mb-1 text-xs opacity-60">まとめ生成</DevAiLabel>
+                  <DevAiLabel className="justify-center mb-1 text-[13px] opacity-60">まとめ生成</DevAiLabel>
                   <button
                     type="button"
                     onClick={handleFinish}
                     disabled={finishing}
-                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-sm font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-[var(--accent)] text-white rounded-full text-base font-semibold hover:bg-[var(--accent-h)] cursor-pointer transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     {finishing ? 'まとめています...' : 'はい、まとめてください'}
                   </button>
@@ -1089,7 +1089,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleContinue}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まだ話す
                   </button>
@@ -1097,7 +1097,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={handleAbort}
                     disabled={finishing}
-                    className="w-full py-2 text-sm text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
+                    className="w-full py-2 text-base text-[var(--text2)] hover:text-[var(--text2)] rounded-[var(--r-sm)] cursor-pointer transition-colors disabled:opacity-50"
                   >
                     まとめずに中断する
                   </button>

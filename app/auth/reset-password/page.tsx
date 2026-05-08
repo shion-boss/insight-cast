@@ -50,12 +50,12 @@ export default function ResetPasswordPage() {
                 <span aria-hidden="true" className="text-2xl">📬</span>
               </div>
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] mb-3">メールを送りました</h1>
-              <p className="text-sm text-[var(--text2)] leading-[1.8] mb-6">
+              <p className="text-base text-[var(--text2)] leading-[1.8] mb-6">
                 <strong className="text-[var(--text)]">{email}</strong> にパスワード再設定のリンクを送りました。メールボックスをご確認ください。
               </p>
               <Link
                 href="/auth/login"
-                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
+                className="text-base text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
               >
                 ログイン画面に戻る
               </Link>
@@ -63,12 +63,12 @@ export default function ResetPasswordPage() {
           ) : (
             <>
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] text-center mb-2">パスワードを忘れた場合</h1>
-              <p className="text-sm text-[var(--text2)] text-center mb-8 leading-[1.7]">
+              <p className="text-base text-[var(--text2)] text-center mb-8 leading-[1.7]">
                 登録済みのメールアドレスを入力してください。パスワード再設定のリンクをお送りします。
               </p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="reset-email" className="block text-xs font-semibold text-[var(--text2)] mb-1.5">メールアドレス</label>
+                  <label htmlFor="reset-email" className="block text-[13px] font-semibold text-[var(--text2)] mb-1.5">メールアドレス</label>
                   <input
                     id="reset-email"
                     type="email"
@@ -78,21 +78,21 @@ export default function ResetPasswordPage() {
                     autoComplete="email"
                     aria-invalid={!!error || undefined}
                     aria-describedby={error ? 'reset-error' : undefined}
-                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
+                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-base text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
                   />
                 </div>
 
                 {error && (
                   <div id="reset-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-[var(--err)]">{error}</p>
+                    <p className="text-base text-[var(--err)]">{error}</p>
                   </div>
                 )}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? '送信中...' : '再設定メールを送る'}
                 </button>
@@ -101,7 +101,7 @@ export default function ResetPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href="/auth/login"
-                  className="text-sm text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded"
+                  className="text-base text-[var(--text3)] hover:text-[var(--text)] transition-colors rounded"
                 >
                   ← ログインに戻る
                 </Link>

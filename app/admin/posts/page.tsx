@@ -24,14 +24,14 @@ export default async function AdminPostsPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-serif text-2xl font-bold text-[var(--text)]">記事管理</h1>
-          <p className="mt-1 text-sm text-[var(--text2)]">全 {posts.length} 件</p>
+          <p className="mt-1 text-base text-[var(--text2)]">全 {posts.length} 件</p>
         </div>
         <ButtonLink href="/admin/posts/new" className="self-start">新しい記事を作成</ButtonLink>
       </div>
 
       {posts.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text2)]">記事がありません</p>
+          <p className="text-base text-[var(--text2)]">記事がありません</p>
           <ButtonLink href="/admin/posts/new" className="mt-4 inline-flex">
             最初の記事を書く
           </ButtonLink>

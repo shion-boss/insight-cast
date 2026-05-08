@@ -20,14 +20,14 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
             {loggedIn ? (
               <>
                 <h2 className="font-serif text-[clamp(24px,3vw,38px)] font-bold">取材を続けましょう</h2>
-                <p className="mt-4 text-sm leading-8 text-white/95 sm:text-[15px]">
+                <p className="mt-4 text-base leading-8 text-white/95 sm:text-[15px]">
                   ダッシュボードから取材を始められます。
                 </p>
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <Link
                     href="/dashboard"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     ダッシュボードへ <span aria-hidden="true">→</span>
                   </Link>
@@ -36,7 +36,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
             ) : (
               <>
                 <h2 className="font-serif text-[clamp(22px,2.8vw,36px)] font-bold leading-[1.5]">AIキャストの取材を受けてみませんか？</h2>
-                <p className="mt-5 text-sm leading-[2] text-white/95 sm:text-[15px]">
+                <p className="mt-5 text-base leading-[2] text-white/95 sm:text-[15px]">
                   答えるだけで、記事の素材が手元に届きます。<br />
                   カードも、契約期間も、整った言葉も、いりません。
                 </p>
@@ -44,7 +44,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                   <Link
                     href="/auth/signup"
                     prefetch={false}
-                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                    className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                   >
                     無料で取材を始める <span aria-hidden="true">→</span>
                   </Link>
@@ -62,7 +62,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
         <div className="grid gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
           <div>
             <p className="font-serif text-base font-bold text-[var(--text2)]">Insight Cast</p>
-            <p className="mt-2 text-xs text-[var(--text2)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
+            <p className="mt-2 text-[13px] text-[var(--text2)] max-w-[200px] leading-relaxed">会話から、記事へ。<br />あなたの当たり前を言葉に。</p>
           </div>
           <nav aria-label="フッターナビゲーション" className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {[
@@ -89,7 +89,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                       || link.href === '/pricing'
                     return (
                       <li key={link.href}>
-                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
+                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-[13px] text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
                           {link.label}
                         </Link>
                       </li>
@@ -101,7 +101,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
           </nav>
         </div>
         <div className="mt-8 border-t border-[var(--border)] pt-6">
-          <p className="text-xs text-[var(--text2)]">© 2026 Insight Cast</p>
+          <p className="text-[13px] text-[var(--text2)]">© 2026 Insight Cast</p>
         </div>
       </div>
     </footer>

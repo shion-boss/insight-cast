@@ -34,13 +34,13 @@ export default function SiteError({
           <button
             type="button"
             onClick={reset}
-            className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('primary', 'px-6 py-3 text-base')}
           >
             もう一度試す
           </button>
           <Link
             href="/"
-            className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('secondary', 'px-6 py-3 text-base')}
           >
             トップへ戻る
           </Link>

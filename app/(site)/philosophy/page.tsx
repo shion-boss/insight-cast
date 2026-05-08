@@ -202,10 +202,10 @@ export default function PhilosophyPage() {
                     <h2 className="mt-3 text-2xl font-semibold leading-snug tracking-tight text-[var(--text)] sm:text-3xl">
                       {article.title}
                     </h2>
-                    <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{article.lead}</p>
+                    <p className="mt-4 text-base leading-7 text-[var(--text2)]">{article.lead}</p>
 
                     <div className="mt-8 h-px bg-gradient-to-r from-[var(--border2)] to-transparent" />
-                    <p className="mt-6 text-xs text-[var(--text2)]">
+                    <p className="mt-6 text-[13px] text-[var(--text2)]">
                       {article.sections.length} つの観点で整理しています
                     </p>
                   </div>
@@ -219,7 +219,7 @@ export default function PhilosophyPage() {
                       className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7"
                     >
                       <div className="flex items-start gap-4">
-                        <span aria-hidden="true" className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--brand-ground)] text-xs font-semibold text-white">
+                        <span aria-hidden="true" className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[var(--brand-ground)] text-[13px] font-semibold text-white">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <h3 className="pt-1 text-base font-semibold leading-snug text-[var(--text)] sm:text-lg">
@@ -228,7 +228,7 @@ export default function PhilosophyPage() {
                       </div>
                       <div className="mt-5 space-y-4 pl-12">
                         {section.body.map((para, j) => (
-                          <p key={j} className="text-sm leading-8 text-[var(--text2)]">
+                          <p key={j} className="text-base leading-8 text-[var(--text2)]">
                             {para}
                           </p>
                         ))}
@@ -246,7 +246,7 @@ export default function PhilosophyPage() {
                           <li key={post.slug}>
                             <Link
                               href={`/blog/${post.slug}`}
-                              className="group flex items-start gap-2 text-sm leading-7 text-[var(--text2)] hover:text-[var(--on-primary-container)]"
+                              className="group flex items-start gap-2 text-base leading-7 text-[var(--text2)] hover:text-[var(--on-primary-container)]"
                             >
                               <span aria-hidden="true" className="mt-1 text-[var(--on-primary-container)]">→</span>
                               <span className="underline-offset-2 group-hover:underline">{post.title}</span>
@@ -279,10 +279,10 @@ export default function PhilosophyPage() {
                 { num: '03', text: '更新が止まる理由は「ネタ不足」ではなく「素材の気づかれなさ」' },
               ].map((item) => (
                 <div key={item.num} className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7">
-                  <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand-ground)] text-xs font-semibold text-white">
+                  <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--brand-ground)] text-[13px] font-semibold text-white">
                     {item.num}
                   </span>
-                  <p className="mt-4 text-sm leading-7 text-[var(--text2)]">{item.text}</p>
+                  <p className="mt-4 text-base leading-7 text-[var(--text2)]">{item.text}</p>
                 </div>
               ))}
             </div>
@@ -290,14 +290,14 @@ export default function PhilosophyPage() {
             <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
               >
                 <span>ブログで実践と事例を読む</span>
                 <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-base font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <span>Insight Cast について</span>
                 <span aria-hidden="true">→</span>

@@ -41,7 +41,7 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="mb-1.5 flex items-center gap-2">
-                    <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                    <span className="rounded-full px-2 py-0.5 text-[13px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                       {CATEGORY_LABELS[post.category]}
                     </span>
                     <span className="text-[11px] text-[var(--text2)]">{post.date}</span>
@@ -61,7 +61,7 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
           })}
         </div>
         <div className="mt-8">
-          <Link href="/blog" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+          <Link href="/blog" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             記事をもっと読む <span aria-hidden="true">→</span>
           </Link>
         </div>

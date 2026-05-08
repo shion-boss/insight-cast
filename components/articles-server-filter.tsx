@@ -38,7 +38,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 
 function selectClassName() {
   return cx(
-    'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150',
+    'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150',
     'hover:border-[var(--border2)] focus-visible:border-[var(--accent)]',
   )
 }
@@ -249,14 +249,14 @@ function ArticlesFilterContent({
           )}
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 text-base text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {totalCount} 件
             {hasMore && <span className="ml-1.5">（{visibleItems.length} 件表示中）</span>}
             {isLoading && <span className="ml-1.5 text-[var(--text3)]">読み込み中...</span>}
           </p>
           {hasFilter && (
-            <button type="button" onClick={resetFilters} className={getButtonClass('secondary', 'px-3 py-2 text-xs')}>
+            <button type="button" onClick={resetFilters} className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}>
               絞り込みを解除
             </button>
           )}
@@ -268,7 +268,7 @@ function ArticlesFilterContent({
       {visibleItems.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
           <p className="text-lg font-bold text-[var(--text)]">{noResultsTitle}</p>
-          <p className="mt-2 text-sm text-[var(--text2)]">{noResultsDescription}</p>
+          <p className="mt-2 text-base text-[var(--text2)]">{noResultsDescription}</p>
         </section>
       ) : (
         <>
@@ -282,9 +282,9 @@ function ArticlesFilterContent({
               >
                 <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-[13px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                 )}
-                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+                <div className="flex flex-wrap gap-2 text-[13px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                   <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium transition-colors group-hover:text-[var(--accent)]">
                     {item.articleTypeLabel}
                   </span>
@@ -304,7 +304,7 @@ function ArticlesFilterContent({
 
           {/* PC: テーブル */}
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
-            <table className="w-full text-sm">
+            <table className="w-full text-base">
               <caption className="sr-only">記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -345,11 +345,11 @@ function ArticlesFilterContent({
                     <td className="max-w-xs px-5 py-4 transition-colors group-hover:text-[var(--accent)]">
                       <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</Link>
                       {item.excerpt && (
-                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                       )}
                     </td>
                     {showInterviewColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
+                      <td className="px-4 py-4 text-[13px] text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
                         {item.interviewerLabel && item.interviewerLabel !== '—' ? (
                           <div className="flex items-center gap-2 min-w-0">
                             <div className="w-[24px] h-[24px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
@@ -369,7 +369,7 @@ function ArticlesFilterContent({
                       </td>
                     )}
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
+                      <td className="px-4 py-4 text-[13px] text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
                         <span className="flex items-center gap-1.5">
                           <span className="truncate transition-colors group-hover:text-[var(--accent)]">{item.projectLabel ?? '—'}</span>
                           {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
@@ -381,7 +381,7 @@ function ArticlesFilterContent({
                         {item.articleTypeLabel}
                       </span>
                     </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-xs text-[var(--text2)] tabular-nums transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</td>
+                    <td className="px-5 py-4 whitespace-nowrap text-[13px] text-[var(--text2)] tabular-nums transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</td>
                   </tr>
                 ))}
               </tbody>

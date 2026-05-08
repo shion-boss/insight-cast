@@ -116,13 +116,13 @@ export function LegalPageTemplate({
             <div className="space-y-4">
               <div>
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Document</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+                <p className="mt-2 text-base leading-6 text-[var(--text2)]">
                   サービス利用前に確認しやすいよう、要点を読みやすい形で整理しています。
                 </p>
               </div>
               <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
                 <p className="text-xs font-semibold tracking-[0.16em] text-[var(--text3)] uppercase">Last Updated</p>
-                <p className="mt-2 text-sm font-semibold text-[var(--text)]">{updatedAt}</p>
+                <p className="mt-2 text-base font-semibold text-[var(--text)]">{updatedAt}</p>
               </div>
             </div>
           }
@@ -133,7 +133,7 @@ export function LegalPageTemplate({
             <aside className="hidden lg:block mt-6">
               <div className="sticky top-28 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
                 <p className="text-xs font-semibold tracking-[0.18em] text-[var(--text3)] uppercase">Related</p>
-                <div className="mt-4 space-y-3 text-sm text-[var(--text2)]">
+                <div className="mt-4 space-y-3 text-base text-[var(--text2)]">
                   <Link href="/privacy" className="block rounded transition-colors hover:text-[var(--accent)]">プライバシーポリシー</Link>
                   <Link href="/terms" className="block rounded transition-colors hover:text-[var(--accent)]">利用規約</Link>
                   <Link href="/tokushoho" className="block rounded transition-colors hover:text-[var(--accent)]">特定商取引法に基づく表記</Link>

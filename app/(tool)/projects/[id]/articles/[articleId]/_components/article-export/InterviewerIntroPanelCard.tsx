@@ -80,7 +80,7 @@ export function InterviewerIntroPanelCard({
             <div className="text-xs font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">インタビュアー紹介</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedIntro(v => !v) }}
-                className={`text-xs px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
+                className={`text-[13px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedIntro ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}
@@ -94,13 +94,13 @@ export function InterviewerIntroPanelCard({
         <div className="px-4 sm:px-5 pb-4 sm:pb-5">
           {embedIntro ? (
             <div
-              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm max-h-48"
+              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-base max-h-48"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getIntroHtml(), PURIFY_OPTS) }}
             />
           ) : mode === 'markdown' ? (
-            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
+            <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[var(--text2)]">{introMarkdown}</pre>
           ) : (
-            <p className="text-sm text-[var(--text2)]">{introText}</p>
+            <p className="text-base text-[var(--text2)]">{introText}</p>
           )}
         </div>
       </div>}
@@ -117,7 +117,7 @@ export function InterviewerIntroPanelCard({
             <div className="text-xs font-bold tracking-[0.1em] uppercase text-[var(--text2)] whitespace-nowrap">会話本文</div>
             {!isEditing && (
               <button type="button" onClick={e => { e.stopPropagation(); setEmbedConv(v => !v) }}
-                className={`text-xs px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
+                className={`text-[13px] px-2 py-1 rounded border transition-colors whitespace-nowrap ${embedConv ? 'border-[var(--accent)] bg-[var(--accent)] text-white' : 'border-[var(--border)] text-[var(--text2)] hover:text-[var(--text2)]'}`}>
                 埋め込みHTML
               </button>
             )}
@@ -139,15 +139,15 @@ export function InterviewerIntroPanelCard({
             />
           ) : embedConv ? (
             <div
-              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-sm"
+              className="overflow-auto rounded border border-[var(--border)] bg-white px-3 py-2 text-base"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(getConvHtml(), PURIFY_OPTS) }}
             />
           ) : mode === 'markdown' ? (
-            <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
+            <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[var(--text2)]">{convMarkdown}</pre>
           ) : (
             <div className="flex flex-col gap-4">
               {exchanges.map((e, i) => (
-                <p key={i} className="text-sm leading-relaxed">
+                <p key={i} className="text-base leading-relaxed">
                   <span className="block font-semibold text-[var(--text)]">{e.speaker}:</span>
                   <span className="block text-[var(--text2)]">{e.content}</span>
                 </p>

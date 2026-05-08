@@ -199,7 +199,7 @@ export default async function InterviewsPage({
         <h1 className="font-serif text-xl font-bold text-[var(--text)]">取材メモ一覧</h1>
       </div>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)]">
+        <span className="rounded-full bg-[var(--surface)] border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text2)]">
           全 {totalInterviewCount} 件
         </span>
       </div>

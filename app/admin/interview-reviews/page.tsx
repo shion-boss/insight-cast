@@ -138,7 +138,7 @@ export default async function AdminInterviewReviewsPage() {
       <Breadcrumb items={[{ label: 'Admin', href: '/admin' }, { label: '取材レビュー' }]} />
 
       <h1 className="mb-1 text-2xl font-bold text-[var(--text)]">取材レビュー</h1>
-      <p className="mb-6 text-sm text-[var(--text2)]">
+      <p className="mb-6 text-base text-[var(--text2)]">
         AI 自己採点と回答者・オーナー・社内レビューを直近 200 件まで一覧します。改善ループの入口として使ってください。
       </p>
 
@@ -155,9 +155,9 @@ export default async function AdminInterviewReviewsPage() {
 
       {/* 種別ごとの件数 */}
       <section aria-labelledby="role-title" className="mb-8 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
-        <h2 id="role-title" className="mb-4 text-sm font-semibold text-[var(--text)]">レビュー種別ごとの件数</h2>
+        <h2 id="role-title" className="mb-4 text-base font-semibold text-[var(--text)]">レビュー種別ごとの件数</h2>
         {Object.keys(summary.byRole).length === 0 ? (
-          <p className="text-sm text-[var(--text2)]">まだレビューがありません。</p>
+          <p className="text-base text-[var(--text2)]">まだレビューがありません。</p>
         ) : (
           <ul className="space-y-2">
             {(['ai_self', 'respondent', 'owner', 'staff'] as const).map((role) => {
@@ -165,14 +165,14 @@ export default async function AdminInterviewReviewsPage() {
               const ratio = count / maxRoleCount
               return (
                 <li key={role} className="flex items-center gap-3">
-                  <span className="w-32 shrink-0 text-xs text-[var(--text2)]">{ROLE_LABELS[role]}</span>
+                  <span className="w-32 shrink-0 text-[13px] text-[var(--text2)]">{ROLE_LABELS[role]}</span>
                   <div className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--bg2)]">
                     <div
                       className="h-full bg-[var(--accent)] transition-[width] duration-300"
                       style={{ width: `${Math.max(ratio * 100, count > 0 ? 4 : 0)}%` }}
                     />
                   </div>
-                  <span className="w-10 shrink-0 text-right text-xs tabular-nums text-[var(--text)]">{count}</span>
+                  <span className="w-10 shrink-0 text-right text-[13px] tabular-nums text-[var(--text)]">{count}</span>
                 </li>
               )
             })}

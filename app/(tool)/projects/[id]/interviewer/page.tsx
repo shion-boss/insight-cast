@@ -154,13 +154,13 @@ export default async function InterviewerPage({
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/pricing?reason=project_over_limit"
-              className="block w-full text-center rounded-full bg-[var(--accent)] text-white px-6 py-3.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+              className="block w-full text-center rounded-full bg-[var(--accent)] text-white px-6 py-3.5 text-base font-semibold hover:bg-[var(--accent-h)] transition-colors"
             >
               プランをアップグレードする <span aria-hidden="true">→</span>
             </Link>
             <Link
               href="/projects"
-              className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-sm font-semibold hover:bg-[var(--bg2)] transition-colors"
+              className="block w-full text-center rounded-xl border border-[var(--border)] text-[var(--text2)] px-6 py-3.5 text-base font-semibold hover:bg-[var(--bg2)] transition-colors"
             >
               プロジェクト一覧へ
             </Link>
@@ -195,13 +195,13 @@ export default async function InterviewerPage({
             <div className="mt-4 flex gap-3">
               <Link
                 href="/pricing?reason=free_plan_locked"
-                className="inline-block rounded-full bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-full bg-[var(--accent)] text-white px-5 py-2.5 text-base font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href={`/projects/${id}`}
-                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
+                className="inline-block rounded-xl border border-[var(--border)] px-5 py-2.5 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] transition-colors"
               >
                 プロジェクトに戻る
               </Link>
@@ -230,7 +230,7 @@ export default async function InterviewerPage({
             <div className="mt-4">
               <Link
                 href="/pricing?reason=interview_limit"
-                className="inline-block rounded-full bg-[var(--accent)] text-white px-5 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors"
+                className="inline-block rounded-full bg-[var(--accent)] text-white px-5 py-2.5 text-base font-semibold hover:bg-[var(--accent-h)] transition-colors"
               >
                 プランを見る <span aria-hidden="true">→</span>
               </Link>
@@ -276,14 +276,14 @@ export default async function InterviewerPage({
                   size={64}
                   className="mb-3 border-[var(--border)]"
                 />
-                <div className="font-medium text-[var(--text)] text-sm">{char.name}</div>
-                <div className="text-xs text-[var(--text2)] mt-0.5">{char.species}</div>
+                <div className="font-medium text-[var(--text)] text-base">{char.name}</div>
+                <div className="text-[13px] text-[var(--text2)] mt-0.5">{char.species}</div>
                 {char.label && (
-                  <div className="text-xs text-[var(--on-primary-container)] mt-1 font-medium">{char.label}</div>
+                  <div className="text-[13px] text-[var(--on-primary-container)] mt-1 font-medium">{char.label}</div>
                 )}
-                <div className="text-xs text-[var(--text2)] mt-2 leading-relaxed">{char.description}</div>
-                <div className="text-xs text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
-                <div className="mt-auto text-xs text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-full">
+                <div className="text-[13px] text-[var(--text2)] mt-2 leading-relaxed">{char.description}</div>
+                <div className="text-[13px] text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
+                <div className="mt-auto text-[13px] text-center py-3 min-h-[44px] flex items-center justify-center bg-[var(--accent)] text-white rounded-full">
                   このキャストと話す <span aria-hidden="true">→</span>
                 </div>
               </Link>
@@ -302,15 +302,15 @@ export default async function InterviewerPage({
                     className="border-[var(--border)]"
                   />
                   <div>
-                    <p className="text-sm font-medium text-[var(--text)]">{selectedCharacter.name}</p>
-                    <p className="mt-1 text-xs text-[var(--text2)]">{selectedCharacter.species}</p>
-                    <p className="mt-3 text-sm text-[var(--text2)] leading-relaxed">{selectedCharacter.description}</p>
-                    <p className="mt-2 text-xs font-medium text-[var(--text2)]">得意テーマ: {selectedCharacter.specialty}</p>
+                    <p className="text-base font-medium text-[var(--text)]">{selectedCharacter.name}</p>
+                    <p className="mt-1 text-[13px] text-[var(--text2)]">{selectedCharacter.species}</p>
+                    <p className="mt-3 text-base text-[var(--text2)] leading-relaxed">{selectedCharacter.description}</p>
+                    <p className="mt-2 text-[13px] font-medium text-[var(--text2)]">得意テーマ: {selectedCharacter.specialty}</p>
                   </div>
                 </div>
                 <Link
                   href={`/projects/${id}/interviewer`}
-                  className="inline-flex items-center justify-center whitespace-nowrap flex-shrink-0 rounded-full border border-[var(--border)] px-4 py-2 min-h-[44px] text-xs text-[var(--text2)] transition-colors hover:bg-[var(--bg2)]"
+                  className="inline-flex items-center justify-center whitespace-nowrap flex-shrink-0 rounded-full border border-[var(--border)] px-4 py-2 min-h-[44px] text-[13px] text-[var(--text2)] transition-colors hover:bg-[var(--bg2)]"
                 >
                   選び直す
                 </Link>
@@ -320,7 +320,7 @@ export default async function InterviewerPage({
             {error === 'project_over_limit' && (
               <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--err)]">
+                <p className="text-base text-[var(--err)]">
                   このプロジェクトはプランの上限を超えているため、取材を開始できません。他のプロジェクトを削除するか、プランをアップグレードしてください。
                 </p>
               </div>
@@ -329,7 +329,7 @@ export default async function InterviewerPage({
             {(error === 'monthly_limit' || error === 'lifetime_limit') && (
               <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--err)]">
+                <p className="text-base text-[var(--err)]">
                   {error === 'lifetime_limit'
                     ? '無料体験の取材回数を使い切りました。プランへのアップグレードが必要です。'
                     : '今月の取材回数の上限に達しました。プランをアップグレードするか、来月またお試しください。'}
@@ -340,15 +340,15 @@ export default async function InterviewerPage({
             {error === 'theme-required' && (
               <div role="alert" className="flex items-start gap-3 rounded-xl bg-[var(--warn-l)] px-4 py-3">
                 <CharacterAvatar src={selectedCharacter.icon48} alt={`${selectedCharacter.name}のアイコン`} emoji={selectedCharacter.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--warn)]">テーマを自由入力する場合は内容を入れてください。決まっていなければ「テーマはお任せ」でも始められます。</p>
+                <p className="text-base text-[var(--warn)]">テーマを自由入力する場合は内容を入れてください。決まっていなければ「テーマはお任せ」でも始められます。</p>
               </div>
             )}
 
             {isHal ? (
               <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
                 <div className="mb-4">
-                  <p className="text-xs font-medium text-[var(--text2)]">写真から話を広げます</p>
-                  <p className="mt-1 text-sm text-[var(--text2)] leading-relaxed">
+                  <p className="text-[13px] font-medium text-[var(--text2)]">写真から話を広げます</p>
+                  <p className="mt-1 text-base text-[var(--text2)] leading-relaxed">
                     ハルはテーマを先に決めません。最初に写真を1枚見せてもらい、そこから話を広げていきます。
                   </p>
                 </div>
@@ -357,7 +357,7 @@ export default async function InterviewerPage({
                   <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                   <input type="hidden" name="focusThemeMode" value="omakase" />
                   <InterviewSubmitButton
-                    className="w-full cursor-pointer rounded-full bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)]"
+                    className="w-full cursor-pointer rounded-full bg-[var(--accent)] px-4 py-3 text-base text-white transition-colors hover:bg-[var(--accent-h)]"
                     pendingLabel="ハルを呼んでいます..."
                   >
                     ハルに来てもらう
@@ -368,8 +368,8 @@ export default async function InterviewerPage({
             <>
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-[var(--text2)]">AIがおすすめするテーマ</p>
-                <p className="mt-1 text-sm text-[var(--text2)]">
+                <p className="text-[13px] font-medium text-[var(--text2)]">AIがおすすめするテーマ</p>
+                <p className="mt-1 text-base text-[var(--text2)]">
                   ホームページの内容から、先に深めるとよさそうなテーマを5つまで並べます。
                 </p>
               </div>
@@ -385,14 +385,14 @@ export default async function InterviewerPage({
                         className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--warn)]/40 hover:bg-[var(--warn-l)]"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--warn)]">Recommended</p>
-                        <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{theme}</p>
-                        <p className="mt-3 text-xs text-[var(--text2)]">このテーマでインタビューを始める</p>
+                        <p className="mt-2 text-base leading-relaxed text-[var(--text2)]">{theme}</p>
+                        <p className="mt-3 text-[13px] text-[var(--text2)]">このテーマでインタビューを始める</p>
                       </InterviewSubmitButton>
                     </form>
                   ))}
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-sm text-[var(--text2)]">
+                <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-base text-[var(--text2)]">
                   まだおすすめテーマは準備できていません。いまは自由入力か、お任せで始められます。
                 </div>
               )}
@@ -401,8 +401,8 @@ export default async function InterviewerPage({
             {competitorThemeSuggestions.length > 0 && (
               <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
                 <div className="mb-4">
-                  <p className="text-xs font-medium text-[var(--text2)]">競合から見えてくるテーマ</p>
-                  <p className="mt-1 text-sm text-[var(--text2)]">
+                  <p className="text-[13px] font-medium text-[var(--text2)]">競合から見えてくるテーマ</p>
+                  <p className="mt-1 text-base text-[var(--text2)]">
                     競合が前面に出している切り口です。違う意見なら違いを話せますし、同じ方向なら自社で足りない発信テーマとして使えます。
                   </p>
                 </div>
@@ -417,18 +417,18 @@ export default async function InterviewerPage({
                         className="w-full cursor-pointer rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-4 text-left transition-colors hover:border-[var(--ok)]/40 hover:bg-[var(--ok-l)]"
                       >
                         <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--ok)]">Competitive Signal</p>
-                        <p className="mt-2 text-sm leading-relaxed text-[var(--text2)]">{suggestion.theme}</p>
+                        <p className="mt-2 text-base leading-relaxed text-[var(--text2)]">{suggestion.theme}</p>
                         <div className="mt-3 space-y-2">
                           {suggestion.sources.map((source, index) => (
                             <div key={`${suggestion.theme}-${source.url ?? 'source'}-${index}`} className="rounded-lg border border-white/80 bg-white/70 px-3 py-2">
                               {source.url && (
                                 <p className="truncate text-[11px] text-[var(--text2)]">{source.url}</p>
                               )}
-                              <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{source.summary}</p>
+                              <p className="mt-1 text-[13px] leading-relaxed text-[var(--text2)]">{source.summary}</p>
                             </div>
                           ))}
                         </div>
-                        <p className="mt-3 text-xs text-[var(--text2)]">このテーマでインタビューを始める</p>
+                        <p className="mt-3 text-[13px] text-[var(--text2)]">このテーマでインタビューを始める</p>
                       </InterviewSubmitButton>
                     </form>
                   ))}
@@ -438,8 +438,8 @@ export default async function InterviewerPage({
 
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-[var(--text2)]">自由にテーマを書く</p>
-                <p className="mt-1 text-sm text-[var(--text2)]">
+                <p className="text-[13px] font-medium text-[var(--text2)]">自由にテーマを書く</p>
+                <p className="mt-1 text-base text-[var(--text2)]">
                   すでに聞きたい切り口があるなら、そのまま短く入れてください。
                 </p>
               </div>
@@ -455,11 +455,11 @@ export default async function InterviewerPage({
                     required
                     maxLength={INTERVIEW_FOCUS_THEME_MAX_LENGTH}
                     placeholder="例: 初めて相談する人が安心できる理由"
-                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
+                    className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-base text-[var(--text2)] transition-colors placeholder:text-[var(--text3)] focus-visible:border-[var(--accent)] focus-visible:bg-[var(--surface)]"
                   />
                 </label>
                 <InterviewSubmitButton
-                  className="w-full cursor-pointer rounded-full bg-[var(--accent)] px-4 py-3 text-sm text-white transition-colors hover:bg-[var(--accent-h)]"
+                  className="w-full cursor-pointer rounded-full bg-[var(--accent)] px-4 py-3 text-base text-white transition-colors hover:bg-[var(--accent-h)]"
                   pendingLabel="取材を準備しています..."
                 >
                   このテーマでインタビューを始める
@@ -469,8 +469,8 @@ export default async function InterviewerPage({
 
             <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]/90 p-5">
               <div className="mb-4">
-                <p className="text-xs font-medium text-[var(--text2)]">テーマはお任せ</p>
-                <p className="mt-1 text-sm text-[var(--text2)]">
+                <p className="text-[13px] font-medium text-[var(--text2)]">テーマはお任せ</p>
+                <p className="mt-1 text-base text-[var(--text2)]">
                   まだ切り口が決まっていなくても大丈夫です。これまで通り、会話しながら価値を一緒に見つけます。
                 </p>
               </div>
@@ -479,7 +479,7 @@ export default async function InterviewerPage({
                 <input type="hidden" name="interviewerType" value={selectedCharacter.id} />
                 <input type="hidden" name="focusThemeMode" value="omakase" />
                 <InterviewSubmitButton
-                  className="w-full cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-sm text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)]"
+                  className="w-full cursor-pointer rounded-full border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 text-base text-[var(--text2)] transition-colors hover:border-[var(--border2)] hover:bg-[var(--surface)]"
                   pendingLabel="取材を準備しています..."
                 >
                   お任せでインタビューを始める
@@ -503,9 +503,9 @@ export default async function InterviewerPage({
                   size={44}
                   className="mb-2 grayscale"
                 />
-                <div className="text-xs font-medium text-[var(--text2)]">{char.name}</div>
-                {char.label && <div className="text-xs text-[var(--text2)] mt-0.5">{char.label}</div>}
-                <div className="text-xs text-[var(--text2)] mt-2">準備を進めています</div>
+                <div className="text-[13px] font-medium text-[var(--text2)]">{char.name}</div>
+                {char.label && <div className="text-[13px] text-[var(--text2)] mt-0.5">{char.label}</div>}
+                <div className="text-[13px] text-[var(--text2)] mt-2">準備を進めています</div>
               </div>
             ))}
           </div>

@@ -28,7 +28,7 @@ function getUniqueOptions(values: string[]) {
 
 function selectClassName() {
   return cx(
-    'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150',
+    'min-h-11 w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150',
     'hover:border-[var(--border2)] focus-visible:border-[var(--accent)]',
   )
 }
@@ -190,7 +190,7 @@ export function ArticleListTable({
           )}
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 text-base text-[var(--text3)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {filteredItems.length} / {items.length} 件
             {hasMore && <span className="ml-1.5">（{visibleItems.length} 件表示中）</span>}
@@ -205,7 +205,7 @@ export function ArticleListTable({
                 setProjectLabel('all')
                 setDisplayCount(PER_PAGE)
               }}
-              className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+              className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
             >
               絞り込みを解除
             </button>
@@ -218,7 +218,7 @@ export function ArticleListTable({
           <p className="text-lg font-bold text-[var(--text)]">
             {noResultsTitle}
           </p>
-          <p className="mt-2 text-sm text-[var(--text3)]">{noResultsDescription}</p>
+          <p className="mt-2 text-base text-[var(--text3)]">{noResultsDescription}</p>
         </section>
       ) : (
         <>
@@ -232,9 +232,9 @@ export function ArticleListTable({
               >
                 <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text3)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-[13px] text-[var(--text3)]">{item.excerpt}</p>
                 )}
-                <div className="flex flex-wrap gap-2 text-xs text-[var(--text3)]">
+                <div className="flex flex-wrap gap-2 text-[13px] text-[var(--text3)]">
                   <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                     {item.articleTypeLabel}
                   </span>
@@ -253,7 +253,7 @@ export function ArticleListTable({
 
           {/* PC: テーブル */}
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
-            <table className="w-full text-sm">
+            <table className="w-full text-base">
               <caption className="sr-only">記事一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -300,13 +300,13 @@ export function ArticleListTable({
                         {item.title}
                       </Link>
                       {item.excerpt && (
-                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text3)]">
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-[13px] text-[var(--text3)]">
                           {item.excerpt}
                         </p>
                       )}
                     </td>
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">
+                      <td className="px-4 py-4 text-[13px] text-[var(--text3)] whitespace-nowrap">
                         {item.projectLabel ?? '—'}
                       </td>
                     )}
@@ -316,11 +316,11 @@ export function ArticleListTable({
                       </span>
                     </td>
                     {showInterviewerColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text3)] whitespace-nowrap">
+                      <td className="px-4 py-4 text-[13px] text-[var(--text3)] whitespace-nowrap">
                         {item.interviewerLabel ?? '—'}
                       </td>
                     )}
-                    <td className="px-4 py-4 whitespace-nowrap text-xs text-[var(--text3)]">
+                    <td className="px-4 py-4 whitespace-nowrap text-[13px] text-[var(--text3)]">
                       {item.createdAtLabel}
                     </td>
                   </tr>

@@ -147,7 +147,7 @@ export default async function CastTalkPage({
                   )
                 })}
               </div>
-              <p className="text-sm leading-7 text-[var(--text2)]">
+              <p className="text-base leading-7 text-[var(--text2)]">
                 AIキャストたちが日々の取材や気づきを語り合います。
               </p>
             </div>

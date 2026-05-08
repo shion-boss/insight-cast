@@ -48,7 +48,7 @@ function StarRating({
 }) {
   return (
     <div>
-      <p id={`${id}-label`} className="mb-1.5 text-xs font-semibold text-[var(--text2)]">
+      <p id={`${id}-label`} className="mb-1.5 text-[13px] font-semibold text-[var(--text2)]">
         {label}{required && <span className="ml-0.5 text-[var(--err)]">*</span>}
       </p>
       <div role="radiogroup" aria-labelledby={`${id}-label`} className="flex gap-1">
@@ -80,7 +80,7 @@ function StarRating({
             type="button"
             onClick={() => onChange(value)}
             aria-label="評価をリセット"
-            className="ml-1 self-center text-xs text-[var(--text2)] underline hover:text-[var(--text)]"
+            className="ml-1 self-center text-[13px] text-[var(--text2)] underline hover:text-[var(--text)]"
             onDoubleClick={() => {
               // no-op placeholder — reset via separate interaction
             }}
@@ -151,8 +151,8 @@ function CastTalkReviewForm({
     <form onSubmit={handleSubmit} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 space-y-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-sm font-semibold text-[var(--text)]">品質評価</h2>
-          <p className="mt-0.5 text-xs text-[var(--text2)]">評価はAIキャストの次回生成に反映されます</p>
+          <h2 className="text-base font-semibold text-[var(--text)]">品質評価</h2>
+          <p className="mt-0.5 text-[13px] text-[var(--text2)]">評価はAIキャストの次回生成に反映されます</p>
         </div>
         {saved && (
           <span role="status" className="shrink-0 rounded-full bg-[var(--ok-l)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--ok)]">
@@ -162,7 +162,7 @@ function CastTalkReviewForm({
       </div>
 
       {error && (
-        <p role="alert" className="text-xs text-[var(--err)]">{error}</p>
+        <p role="alert" className="text-[13px] text-[var(--err)]">{error}</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -188,7 +188,7 @@ function CastTalkReviewForm({
       </div>
 
       {overallScore !== null && (
-        <p className="text-xs text-[var(--text2)]">
+        <p className="text-[13px] text-[var(--text2)]">
           {overallScore <= 2 && '品質に問題あり — 改善してほしい点を書くと次の生成に反映されます'}
           {overallScore === 3 && 'まあまあ — 良い点・改善点を書いておくと精度が上がります'}
           {overallScore >= 4 && '良い出来 — 良かった点を書いておくと同じ方向性を維持できます'}
@@ -199,7 +199,7 @@ function CastTalkReviewForm({
         <div>
           <label
             htmlFor={`review-good-${castTalkId}`}
-            className="block text-xs font-semibold text-[var(--text2)] mb-1.5"
+            className="block text-[13px] font-semibold text-[var(--text2)] mb-1.5"
           >
             良かった点
           </label>
@@ -209,13 +209,13 @@ function CastTalkReviewForm({
             onChange={(e) => { setGoodPoints(e.target.value); markDirty() }}
             rows={2}
             placeholder="テンポが良かった、具体例が分かりやすかった など"
-            className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--text3)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           />
         </div>
         <div>
           <label
             htmlFor={`review-improve-${castTalkId}`}
-            className="block text-xs font-semibold text-[var(--text2)] mb-1.5"
+            className="block text-[13px] font-semibold text-[var(--text2)] mb-1.5"
           >
             改善してほしい点
           </label>
@@ -225,7 +225,7 @@ function CastTalkReviewForm({
             onChange={(e) => { setImprovePoints(e.target.value); markDirty() }}
             rows={2}
             placeholder="会話が長すぎた、キャラの口調が似ていた など"
-            className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm text-[var(--text)] placeholder:text-[var(--text3)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+            className="w-full resize-y rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text)] placeholder:text-[var(--text3)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
           />
         </div>
       </div>
@@ -233,7 +233,7 @@ function CastTalkReviewForm({
       <button
         type="submit"
         disabled={saving || saved || overallScore === null}
-        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
       >
         {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '評価を保存'}
       </button>
@@ -315,14 +315,14 @@ export function CastTalkPreviewClient({
       <div className="space-y-1">
         <Link
           href="/admin/cast-talk"
-          className="text-sm text-[var(--text2)] transition-colors hover:text-[var(--text)]"
+          className="text-base text-[var(--text2)] transition-colors hover:text-[var(--text)]"
         >
           ← Cast Talk 一覧
         </Link>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <h1 className="font-serif text-2xl font-bold text-[var(--text)]">Cast Talk 編集</h1>
-            <p className="mt-0.5 text-xs text-[var(--text2)]">{talk.theme}</p>
+            <p className="mt-0.5 text-[13px] text-[var(--text2)]">{talk.theme}</p>
           </div>
           <span
             className={`mt-1 shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
@@ -337,7 +337,7 @@ export function CastTalkPreviewClient({
       </div>
 
       {error && (
-        <div role="alert" className="rounded-[var(--r-sm)] border border-[var(--error)]/30 bg-[var(--error-container)] px-4 py-3 text-sm text-[var(--error)]">
+        <div role="alert" className="rounded-[var(--r-sm)] border border-[var(--error)]/30 bg-[var(--error-container)] px-4 py-3 text-base text-[var(--error)]">
           {error}
         </div>
       )}
@@ -351,7 +351,7 @@ export function CastTalkPreviewClient({
           type="text"
           value={title}
           onChange={(e) => { setTitle(e.target.value); setSaved(false) }}
-          className="w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          className="w-full rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-base text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         />
       </div>
 
@@ -371,12 +371,12 @@ export function CastTalkPreviewClient({
                     className="mt-1 shrink-0 rounded-full border border-[var(--border)]"
                   />
                 ) : (
-                  <div className="mt-1 h-9 w-9 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-xs text-[var(--text2)]">
+                  <div className="mt-1 h-9 w-9 shrink-0 rounded-full border border-[var(--border)] bg-[var(--bg2)] flex items-center justify-center text-[13px] text-[var(--text2)]">
                     {msg.castId.slice(0, 1).toUpperCase()}
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="mb-1 text-xs font-semibold text-[var(--text2)]">
+                  <p className="mb-1 text-[13px] font-semibold text-[var(--text2)]">
                     {char?.name ?? msg.castId}
                   </p>
                   <textarea
@@ -384,7 +384,7 @@ export function CastTalkPreviewClient({
                     value={msg.text}
                     onChange={(e) => updateMessage(i, e.target.value)}
                     rows={3}
-                    className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-relaxed text-[var(--text)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base leading-relaxed text-[var(--text)] transition-colors hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   />
                 </div>
               </div>
@@ -402,7 +402,7 @@ export function CastTalkPreviewClient({
           value={summary}
           onChange={(e) => { setSummary(e.target.value); setSaved(false) }}
           rows={3}
-          className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm leading-relaxed text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+          className="w-full resize-y rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-base leading-relaxed text-[var(--text)] transition-colors placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus:border-[var(--accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
         />
       </div>
 
@@ -411,7 +411,7 @@ export function CastTalkPreviewClient({
           type="button"
           onClick={handleSave}
           disabled={saving || saved}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-3 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)] disabled:pointer-events-none disabled:opacity-50"
         >
           {saving ? '保存中...' : saved ? <>保存済み <span aria-hidden="true">✓</span></> : '保存する'}
         </button>
@@ -419,7 +419,7 @@ export function CastTalkPreviewClient({
           type="button"
           onClick={() => handleStatusChange(status === 'published' ? 'draft' : 'published')}
           disabled={statusChanging}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-3 text-base font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:pointer-events-none disabled:opacity-50"
         >
           {statusChanging ? '更新中...' : status === 'published' ? '下書きに戻す' : '公開する'}
         </button>

@@ -402,7 +402,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <ul className="space-y-2">
                   {hpPriorityActions.map((action, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-base text-[var(--text)]">
-                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">{i + 1}</span>
+                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] font-bold text-white">{i + 1}</span>
                       {action}
                     </li>
                   ))}
@@ -498,7 +498,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="mt-8">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事にしていないテーマ</h2>
-            <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text2)]">
+            <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] font-medium text-[var(--text2)]">
               {uncreatedThemeItems.length}件
             </span>
           </div>

@@ -198,7 +198,7 @@ export function ArticleExportPanel({
             </div>
           )}
         </div>
-        <div className="relative rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-sm text-[var(--text2)]">
+        <div className="relative rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-base text-[var(--text2)]">
           記事をまとめました。好きな形式でお使いください。
         </div>
       </div>
@@ -212,12 +212,12 @@ export function ArticleExportPanel({
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
               <button type="button" onClick={handleCopyText}
-                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
+                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 <span className={copiedText ? 'opacity-0' : ''}>テキスト</span>
                 <span className={`absolute inset-0 flex items-center justify-center ${copiedText ? '' : 'opacity-0'}`}>✓ コピー</span>
               </button>
               <button type="button" onClick={handleCopyMd}
-                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
+                className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 <span className={copiedMd ? 'opacity-0' : ''}>Markdown</span>
                 <span className={`absolute inset-0 flex items-center justify-center ${copiedMd ? '' : 'opacity-0'}`}>✓ コピー</span>
               </button>
@@ -226,11 +226,11 @@ export function ArticleExportPanel({
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
               <button type="button" onClick={() => handleDownload('text')}
-                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
+                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 .txt
               </button>
               <button type="button" onClick={() => handleDownload('markdown')}
-                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
+                className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 .md
               </button>
             </div>
@@ -242,17 +242,17 @@ export function ArticleExportPanel({
           {canEdit !== false && (isEditing ? (
             <div className="flex gap-2">
               <button type="button" onClick={handleSaveAndExit} disabled={saveState === 'saving'}
-                className="min-h-[44px] rounded-full bg-[var(--accent)] px-4 py-2 text-xs font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
+                className="min-h-[44px] rounded-full bg-[var(--accent)] px-4 py-2 text-[13px] font-semibold text-white transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
                 {saveState === 'saving' ? '保存中...' : saveState === 'saved' ? <><span aria-hidden="true">✓ </span>保存済み</> : saveState === 'error' ? '保存できませんでした' : '保存'}
               </button>
               <button type="button" onClick={handleCancel} disabled={saveState === 'saving'}
-                className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40">
+                className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40">
                 キャンセル
               </button>
             </div>
           ) : (
             <button type="button" onClick={handleStartEdit}
-              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
+              className="min-h-[44px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13px] font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
               編集する
             </button>
           ))}
@@ -263,16 +263,16 @@ export function ArticleExportPanel({
               <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
                 <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
               </div>
-              <span className="text-xs text-[var(--text2)] whitespace-nowrap">クオリティアップ提案</span>
+              <span className="text-[13px] text-[var(--text2)] whitespace-nowrap">クオリティアップ提案</span>
             </button>
           )}
           {articleType === 'conversation' && (
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-xs text-[var(--text2)] hidden sm:inline">テーマカラー</span>
+              <span className="text-[13px] text-[var(--text2)] hidden sm:inline">テーマカラー</span>
               <input type="color" aria-label="テーマカラーを選択" value={themeColor} onChange={(e) => setThemeColor(e.target.value)}
                 className="h-8 w-8 sm:h-7 sm:w-7 cursor-pointer rounded border border-[var(--border)] bg-transparent p-0.5" />
               <button type="button" onClick={() => setThemeColor(DEFAULT_THEME_COLOR)}
-                className="min-h-[44px] px-2 text-xs text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded sm:min-h-0 sm:px-0">
+                className="min-h-[44px] px-2 text-[13px] text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded sm:min-h-0 sm:px-0">
                 リセット
               </button>
             </div>
@@ -283,7 +283,7 @@ export function ArticleExportPanel({
 
       {/* 設定パネル（会話形式のみ） */}
       {articleType === 'conversation' && (
-        <div className="border-b border-[var(--border)] divide-y divide-[var(--border)] text-xs">
+        <div className="border-b border-[var(--border)] divide-y divide-[var(--border)] text-[13px]">
           {/* インタビュアー */}
           <div className="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-0 px-5 py-3">
             <span className="sm:w-28 shrink-0 text-[var(--text2)] sm:pt-1">インタビュアー</span>
@@ -383,7 +383,7 @@ export function ArticleExportPanel({
       {!isEditing && (
         <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2">
           <span className="text-xs font-bold tracking-[0.1em] uppercase text-[var(--text2)]">コピー形式</span>
-          <div className="flex overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] text-xs">
+          <div className="flex overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] text-[13px]">
             <button type="button" onClick={() => setGlobalMode('text')} className={`px-3 py-1.5 transition-colors ${globalMode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>テキスト</button>
             <button type="button" onClick={() => setGlobalMode('markdown')} className={`border-l border-[var(--border)] px-3 py-1.5 transition-colors ${globalMode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>Markdown</button>
           </div>
@@ -507,7 +507,7 @@ export function ArticleExportPanel({
         }
       </div>
       {copyError && (
-        <p role="alert" className="px-5 pb-3 text-xs text-[var(--err)]">コピーできませんでした。手動でお試しください。</p>
+        <p role="alert" className="px-5 pb-3 text-[13px] text-[var(--err)]">コピーできませんでした。手動でお試しください。</p>
       )}
     </section>
   )

@@ -37,7 +37,7 @@ export default async function AdminUsersPage() {
       <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: 'ユーザー管理' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">ユーザー管理</h1>
-        <p className="mt-1 text-sm text-[var(--text2)]">登録ユーザー {users.length} 件</p>
+        <p className="mt-1 text-base text-[var(--text2)]">登録ユーザー {users.length} 件</p>
       </div>
       <UsersTableClient initialUsers={users} />
     </div>

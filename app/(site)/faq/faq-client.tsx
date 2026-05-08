@@ -44,7 +44,7 @@ function FaqGroupSection({ group }: { group: FaqGroup }) {
               <div
                 id={`${group.id}-answer-${index}`}
                 hidden={!open}
-                className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-sm leading-8 text-[var(--text2)]"
+                className="bg-[var(--bg2)] px-6 pb-6 pt-4 text-base leading-8 text-[var(--text2)]"
               >
                 {item.a}
               </div>
@@ -68,7 +68,7 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
               key={group.id}
               href={`#${group.id}`}
               onClick={() => setActiveId(group.id)}
-              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-sm font-medium transition-colors ${
+              className={`block rounded-[var(--r-sm)] border-l-2 px-3 py-2 text-base font-medium transition-colors ${
                 activeId === group.id
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                   : 'border-transparent text-[var(--text2)] hover:text-[var(--accent)]'
@@ -90,12 +90,12 @@ export function FaqContent({ groups }: { groups: readonly FaqGroup[] }) {
             ?
           </div>
           <h2 className="mt-5 font-serif text-2xl font-bold text-[var(--text)]">解決しない質問がありますか？</h2>
-          <p className="mt-3 text-sm leading-7 text-[var(--text2)]">
+          <p className="mt-3 text-base leading-7 text-[var(--text2)]">
             お問い合わせフォームからお気軽にご連絡ください。
           </p>
           <Link
             href="/contact"
-            className={getButtonClass('primary', 'mt-6 px-6 py-3 text-sm')}
+            className={getButtonClass('primary', 'mt-6 px-6 py-3 text-base')}
           >
             お問い合わせ <span aria-hidden="true">→</span>
           </Link>

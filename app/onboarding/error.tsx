@@ -34,13 +34,13 @@ export default function OnboardingError({
           <button
             type="button"
             onClick={reset}
-            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-6 py-3 text-sm font-semibold transition-colors"
+            className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-6 py-3 text-base font-semibold transition-colors"
           >
             もう一度試す
           </button>
           <Link
             href="/"
-            className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
+            className="border-[1.5px] border-[var(--border)] text-[var(--text)] rounded-[var(--r-sm)] px-6 py-3 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
           >
             トップへ戻る
           </Link>

@@ -243,7 +243,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   if (validating || !token) {
     return (
       <div className="bg-[var(--bg)] h-dvh flex items-center justify-center">
-        <p className="text-[var(--text3)] text-sm">確認しています...</p>
+        <p className="text-[var(--text3)] text-base">確認しています...</p>
       </div>
     )
   }
@@ -261,7 +261,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         </div>
         <div className="text-center">
           <p className="text-[var(--text)] font-semibold text-lg mb-2">このリンクは無効または期限切れです。</p>
-          <p className="text-[var(--text3)] text-sm">リンクを送ってくれた方にご確認ください。</p>
+          <p className="text-[var(--text3)] text-base">リンクを送ってくれた方にご確認ください。</p>
         </div>
       </div>
     )
@@ -294,25 +294,25 @@ export default function ExternalInterviewPage({ params }: PageProps) {
 
             {/* 自己紹介 */}
             <p className="text-[var(--text)] font-semibold text-base mb-1">{char?.name ?? 'インタビュアー'}</p>
-            <p className="text-[var(--text2)] text-sm mb-5">
+            <p className="text-[var(--text2)] text-base mb-5">
               {getCharacterIntro(linkInfo.interviewerType ?? 'mint')}
             </p>
 
             {/* テーマ */}
             <div className="rounded-[var(--r-lg)] bg-[var(--accent-l)] border border-[var(--accent)]/20 px-4 py-3 mb-5">
-              <p className="text-xs text-[var(--accent)] font-semibold mb-1">今日のテーマ</p>
-              <p className="text-sm text-[var(--text)] font-medium">{linkInfo.theme}についてお話を聞かせてください</p>
+              <p className="text-[13px] text-[var(--accent)] font-semibold mb-1">今日のテーマ</p>
+              <p className="text-base text-[var(--text)] font-medium">{linkInfo.theme}についてお話を聞かせてください</p>
             </div>
 
             {/* 使い方 */}
-            <p className="text-xs text-[var(--text3)] mb-6">
+            <p className="text-[13px] text-[var(--text3)] mb-6">
               メッセージを送るだけでOKです。全部で10往返程度です。
             </p>
 
             <button
               type="button"
               onClick={handleStart}
-              className="w-full bg-[var(--accent)] text-white rounded-full py-3 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
+              className="w-full bg-[var(--accent)] text-white rounded-full py-3 text-base font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               はじめる
             </button>
@@ -339,11 +339,11 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               />
             </div>
             <p className="text-[var(--text)] font-semibold text-base mb-2">ありがとうございました！</p>
-            <p className="text-[var(--text2)] text-sm mb-6">
+            <p className="text-[var(--text2)] text-base mb-6">
               {nameDisplay}貴重なお話をありがとうございました。お話は記事の素材としてまとめられます。
             </p>
             <div className="rounded-[var(--r-lg)] bg-[var(--bg2)] border border-[var(--border)] px-4 py-4">
-              <p className="text-xs text-[var(--text3)]">
+              <p className="text-[13px] text-[var(--text3)]">
                 このインタビューは <span className="font-semibold text-[var(--text2)]">Insight Cast</span> を使って行われました。
               </p>
             </div>
@@ -366,17 +366,17 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             size={36}
             className="border border-[var(--accent)] flex-shrink-0"
           />
-          <span className="font-serif font-bold text-[var(--text)] text-sm">{char?.name}</span>
+          <span className="font-serif font-bold text-[var(--text)] text-base">{char?.name}</span>
         </div>
-        <span className="text-xs text-[var(--text3)] font-medium">Insight Cast</span>
+        <span className="text-[13px] text-[var(--text3)] font-medium">Insight Cast</span>
       </header>
 
       {/* 進捗バー */}
       <div className="bg-[var(--surface)] border-b border-[var(--border)] px-3 sm:px-6 py-2 flex-shrink-0">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-xs text-[var(--text3)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
+            <span className="text-[13px] text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
+            <span className="text-[13px] text-[var(--text3)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
           </div>
           <div
             role="progressbar"
@@ -413,7 +413,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
                 className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
               />
             )}
-            <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-sm sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
+            <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-base sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
               msg.role === 'interviewer'
                 ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
                 : 'bg-[var(--accent)] text-white rounded-2xl rounded-tr-sm'
@@ -471,13 +471,13 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         )}
         <div className="max-w-2xl mx-auto">
           <div className="mb-2 flex items-center justify-between gap-2">
-            <p className="text-xs text-[var(--text3)] hidden sm:block">答えづらい質問は、無理せずパスして次へ進めます。</p>
-            <p className="text-xs text-[var(--text3)] sm:hidden">答えづらければパスできます。</p>
+            <p className="text-[13px] text-[var(--text3)] hidden sm:block">答えづらい質問は、無理せずパスして次へ進めます。</p>
+            <p className="text-[13px] text-[var(--text3)] sm:hidden">答えづらければパスできます。</p>
             <button
               type="button"
               onClick={handlePassQuestion}
               disabled={loading || hasReachedTurnLimit}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-xs min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
+              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
             >
               この質問はパス
             </button>
@@ -498,17 +498,17 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               placeholder={hasReachedTurnLimit ? 'インタビューはここまでです。ありがとうございました。' : 'ここに話しかけてください'}
               disabled={loading || hasReachedTurnLimit}
               autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-sm resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
+              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-base resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
             />
             <div className="flex flex-col items-end gap-1 flex-shrink-0">
               <button
                 type="submit"
                 disabled={loading || !input.trim() || hasReachedTurnLimit}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
               >
                 {loading ? '送信中...' : '送信'}
               </button>
-              <p className="text-xs text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
+              <p className="text-[13px] text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
             </div>
           </form>
         </div>
@@ -518,11 +518,11 @@ export default function ExternalInterviewPage({ params }: PageProps) {
       {hasReachedTurnLimit && !completeCalled && (
         <div className="bg-[var(--surface)] border-t border-[var(--border)] px-4 py-4 flex-shrink-0">
           <div className="max-w-2xl mx-auto text-center">
-            <p className="text-sm text-[var(--text2)] mb-3">上限まで話を聞かせていただきました。</p>
+            <p className="text-base text-[var(--text2)] mb-3">上限まで話を聞かせていただきました。</p>
             <button
               type="button"
               onClick={() => handleFinish()}
-              className="bg-[var(--accent)] text-white rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
+              className="bg-[var(--accent)] text-white rounded-full px-6 py-2.5 text-base font-semibold hover:bg-[var(--accent-h)] transition-colors cursor-pointer min-h-[44px]"
             >
               完了する
             </button>

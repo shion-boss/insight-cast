@@ -42,14 +42,14 @@ export default function InviteAcceptButton({ token }: { token: string }) {
           {mint?.icon48 && (
             <Image src={mint.icon48} alt={mint.name} width={32} height={32} className="rounded-full flex-shrink-0 mt-0.5" sizes="32px" />
           )}
-          <p className="text-sm text-[var(--err)]">{error}</p>
+          <p className="text-base text-[var(--err)]">{error}</p>
         </div>
       )}
       <button
         type="button"
         onClick={handleAccept}
         disabled={loading}
-        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? '参加しています...' : 'このまま参加する'}
       </button>

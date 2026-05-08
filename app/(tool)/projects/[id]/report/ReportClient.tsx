@@ -190,7 +190,7 @@ export default function ReportClient({
         ) : (
           <div className="space-y-4">
             <AnalysisLoadingScene projectName="ホームページと競合を調査中" />
-            <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-sm text-[var(--text2)]')}>
+            <div className={getPanelClass('space-y-3 rounded-xl p-4 text-left text-base text-[var(--text2)]')}>
               <InterviewerSpeech
                 icon={<CharacterAvatar src={getCharacter('claus')?.icon48} alt="クラウスのアイコン" emoji={getCharacter('claus')?.emoji} size={48} />}
                 name="クラウス"
@@ -255,11 +255,11 @@ export default function ReportClient({
         <section aria-labelledby="section-site-eval" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 id="section-site-eval" className="text-sm font-medium text-[var(--text2)]">HPの評価サマリー</h2>
-              <p className="mt-1 text-xs text-[var(--text2)]">深掘り分析と、ホームページ上の更新傾向をまとめて確認できます。</p>
+              <h2 id="section-site-eval" className="text-base font-medium text-[var(--text2)]">HPの評価サマリー</h2>
+              <p className="mt-1 text-[13px] text-[var(--text2)]">深掘り分析と、ホームページ上の更新傾向をまとめて確認できます。</p>
             </div>
             {freshnessBadge && (
-              <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${freshnessBadge.className}`}>
+              <span className={`rounded-full border px-3 py-1 text-[13px] font-semibold ${freshnessBadge.className}`}>
                 {freshnessBadge.label}
               </span>
             )}
@@ -270,12 +270,12 @@ export default function ReportClient({
               {siteEvaluation.map((entry) => (
                 <div key={entry.key} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-sm font-medium text-[var(--text2)]">{entry.label}</p>
-                    <p className="text-lg font-semibold text-[var(--on-primary-container)]">{entry.score}<span className="text-xs text-[var(--text2)]">/10</span></p>
+                    <p className="text-base font-medium text-[var(--text2)]">{entry.label}</p>
+                    <p className="text-lg font-semibold text-[var(--on-primary-container)]">{entry.score}<span className="text-[13px] text-[var(--text2)]">/10</span></p>
                   </div>
-                  <p className="mt-2 text-xs leading-relaxed text-[var(--text2)]">{entry.summary}</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-[var(--text2)]">{entry.summary}</p>
                   {entry.improvement_hint && (
-                    <p className="mt-2 text-xs leading-relaxed text-[var(--on-primary-container)] border-t border-[var(--border)] pt-2">→ {entry.improvement_hint}</p>
+                    <p className="mt-2 text-[13px] leading-relaxed text-[var(--on-primary-container)] border-t border-[var(--border)] pt-2">→ {entry.improvement_hint}</p>
                   )}
                 </div>
               ))}
@@ -291,7 +291,7 @@ export default function ReportClient({
                 { label: '最終更新', value: blogMetrics.daysSinceLatestPost !== null ? `${blogMetrics.daysSinceLatestPost}日前` : '不明' },
               ].map((item) => (
                 <div key={item.label} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3">
-                  <p className="text-xs text-[var(--text2)]">{item.label}</p>
+                  <p className="text-[13px] text-[var(--text2)]">{item.label}</p>
                   <p className="mt-1 text-base font-semibold text-[var(--text)]">{item.value}</p>
                 </div>
               ))}
@@ -307,8 +307,8 @@ export default function ReportClient({
         return (
           <section aria-labelledby="section-post-freq" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
             <div>
-              <h2 id="section-post-freq" className="text-sm font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
-              <p className="text-xs text-[var(--text2)] mt-1">URLやタイトルから推定できた投稿日を月別に集計しています。</p>
+              <h2 id="section-post-freq" className="text-base font-medium text-[var(--text2)]">投稿の記録（日付が確認できた記事）</h2>
+              <p className="text-[13px] text-[var(--text2)] mt-1">URLやタイトルから推定できた投稿日を月別に集計しています。</p>
             </div>
             <div className={scrollable ? 'overflow-x-auto' : ''}>
               <div
@@ -327,7 +327,7 @@ export default function ReportClient({
                       className="flex flex-col items-center justify-end flex-1 min-w-0 h-full gap-1"
                     >
                       {count > 0 && (
-                        <span className="text-xs leading-none text-[var(--text2)]">{count}</span>
+                        <span className="text-[13px] leading-none text-[var(--text2)]">{count}</span>
                       )}
                       <div
                         className="w-full rounded-t-sm bg-[var(--accent)]"
@@ -351,16 +351,16 @@ export default function ReportClient({
 
       {(effectSummary.length > 0 || trustSignals.length > 0 || conversionObstacles.length > 0 || priorityActions.length > 0) && (
         <section aria-labelledby="section-improvement" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-          <h2 id="section-improvement" className="text-sm font-medium text-[var(--text2)]">改善とコンテンツの観点</h2>
+          <h2 id="section-improvement" className="text-base font-medium text-[var(--text2)]">改善とコンテンツの観点</h2>
 
           {effectSummary.length > 0 && (
             <div>
-              <p className="mb-2 text-xs text-[var(--text2)]">既存ブログが担っている効果</p>
+              <p className="mb-2 text-[13px] text-[var(--text2)]">既存ブログが担っている効果</p>
               <div className="flex flex-wrap gap-2">
                 {effectSummary.map((entry) => (
                   <span
                     key={entry.label}
-                    className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-3 py-1 text-xs font-medium text-[var(--text2)]"
+                    className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-3 py-1 text-[13px] font-medium text-[var(--text2)]"
                   >
                     {entry.label} {entry.count}件
                   </span>
@@ -371,10 +371,10 @@ export default function ReportClient({
 
           {trustSignals.length > 0 && (
             <div>
-              <p className="text-xs text-[var(--text2)] mb-2">信頼材料として使えている要素</p>
+              <p className="text-[13px] text-[var(--text2)] mb-2">信頼材料として使えている要素</p>
               <ul className="space-y-1">
                 {trustSignals.map((item, i) => (
-                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                  <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                     <span className="text-[var(--ok)] flex-shrink-0">●</span>{item}
                   </li>
                 ))}
@@ -384,10 +384,10 @@ export default function ReportClient({
 
           {conversionObstacles.length > 0 && (
             <div>
-              <p className="text-xs text-[var(--text2)] mb-2">問い合わせの邪魔になりそうなこと</p>
+              <p className="text-[13px] text-[var(--text2)] mb-2">問い合わせの邪魔になりそうなこと</p>
               <ul className="space-y-1">
                 {conversionObstacles.map((item, i) => (
-                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                  <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                     <span className="text-[var(--warn)] flex-shrink-0">▲</span>{item}
                   </li>
                 ))}
@@ -397,10 +397,10 @@ export default function ReportClient({
 
           {priorityActions.length > 0 && (
             <div>
-              <p className="text-xs text-[var(--text2)] mb-2">次に手を入れるとよさそうなこと</p>
+              <p className="text-[13px] text-[var(--text2)] mb-2">次に手を入れるとよさそうなこと</p>
               <ul className="space-y-1">
                 {priorityActions.map((item, i) => (
-                  <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                  <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                     <span className="text-[var(--on-primary-container)] flex-shrink-0">{i + 1}.</span>{item}
                   </li>
                 ))}
@@ -412,14 +412,14 @@ export default function ReportClient({
 
       {/* 自社HP現状 */}
       <section aria-labelledby="section-hp-current" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-        <h2 id="section-hp-current" className="text-sm font-medium text-[var(--text2)]">いまのホームページで伝えていること</h2>
+        <h2 id="section-hp-current" className="text-base font-medium text-[var(--text2)]">いまのホームページで伝えていること</h2>
 
         {audit.current_content && audit.current_content.length > 0 && (
           <div>
-            <p className="text-xs text-[var(--text2)] mb-2">現在伝えていること</p>
+            <p className="text-[13px] text-[var(--text2)] mb-2">現在伝えていること</p>
             <ul className="space-y-1">
               {audit.current_content.map((item, i) => (
-                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                   <span className="text-[var(--text2)] flex-shrink-0">・</span>{item}
                 </li>
               ))}
@@ -429,10 +429,10 @@ export default function ReportClient({
 
         {audit.strengths && audit.strengths.length > 0 && (
           <div>
-            <p className="text-xs text-[var(--text2)] mb-2">強みとして伝えていること</p>
+            <p className="text-[13px] text-[var(--text2)] mb-2">強みとして伝えていること</p>
             <ul className="space-y-1">
               {audit.strengths.map((item, i) => (
-                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                   <span aria-hidden="true" className="text-[var(--ok)] flex-shrink-0">✓</span>{item}
                 </li>
               ))}
@@ -442,10 +442,10 @@ export default function ReportClient({
 
         {audit.gaps && audit.gaps.length > 0 && (
           <div>
-            <p className="text-xs text-[var(--text2)] mb-2">伝えきれていないこと</p>
+            <p className="text-[13px] text-[var(--text2)] mb-2">伝えきれていないこと</p>
             <ul className="space-y-1">
               {audit.gaps.map((item, i) => (
-                <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+                <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                   <span className="text-[var(--warn)] flex-shrink-0">△</span>{item}
                 </li>
               ))}
@@ -457,23 +457,23 @@ export default function ReportClient({
       {/* 競合比較 */}
       {competitorAnalyses.length > 0 && (
         <section aria-labelledby="section-competitors" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-4">
-          <h2 id="section-competitors" className="text-sm font-medium text-[var(--text2)]">競合と比べてみると</h2>
+          <h2 id="section-competitors" className="text-base font-medium text-[var(--text2)]">競合と比べてみると</h2>
           {competitorAnalyses.map((ca, i) => {
             const hasData = (ca.gaps?.length ?? 0) > 0 || (ca.advantages?.length ?? 0) > 0 || ca.influentialTopics.length > 0
             return (
             <div key={i} className="space-y-3">
               {ca.competitors?.url && (
-                <p className="text-xs text-[var(--text2)] truncate">{ca.competitors.url}</p>
+                <p className="text-[13px] text-[var(--text2)] truncate">{ca.competitors.url}</p>
               )}
               {!hasData && (
-                <p className="text-sm text-[var(--text2)]">このサイトのコンテンツを取得できませんでした。</p>
+                <p className="text-base text-[var(--text2)]">このサイトのコンテンツを取得できませんでした。</p>
               )}
               {ca.gaps && ca.gaps.length > 0 && (
                 <div>
-                  <p className="text-xs text-[var(--text2)] mb-1">競合が伝えていてあなたのHPにないこと</p>
+                  <p className="text-[13px] text-[var(--text2)] mb-1">競合が伝えていてあなたのHPにないこと</p>
                   <ul className="space-y-1">
                     {ca.gaps.map((item, j) => (
-                      <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
+                      <li key={j} className="text-base text-[var(--text2)] flex gap-2">
                         <span className="text-[var(--err)] flex-shrink-0">▲</span>{item}
                       </li>
                     ))}
@@ -482,10 +482,10 @@ export default function ReportClient({
               )}
               {ca.advantages && ca.advantages.length > 0 && (
                 <div>
-                  <p className="text-xs text-[var(--text2)] mb-1">あなたのHPが競合より詳しいこと</p>
+                  <p className="text-[13px] text-[var(--text2)] mb-1">あなたのHPが競合より詳しいこと</p>
                   <ul className="space-y-1">
                     {ca.advantages.map((item, j) => (
-                      <li key={j} className="text-sm text-[var(--text2)] flex gap-2">
+                      <li key={j} className="text-base text-[var(--text2)] flex gap-2">
                         <span className="text-[var(--ok)] flex-shrink-0">◎</span>{item}
                       </li>
                     ))}
@@ -494,12 +494,12 @@ export default function ReportClient({
               )}
               {ca.influentialTopics.length > 0 && (
                 <div>
-                  <p className="text-xs text-[var(--text2)] mb-1">競合が前面に出しているテーマ</p>
+                  <p className="text-[13px] text-[var(--text2)] mb-1">競合が前面に出しているテーマ</p>
                   <ul className="space-y-2">
                     {ca.influentialTopics.map((topic, j) => (
                       <li key={`${topic.theme}-${j}`} className="rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2">
-                        <p className="text-sm text-[var(--text2)]">{topic.theme}</p>
-                        <p className="mt-1 text-xs leading-relaxed text-[var(--text2)]">{topic.summary}</p>
+                        <p className="text-base text-[var(--text2)]">{topic.theme}</p>
+                        <p className="mt-1 text-[13px] leading-relaxed text-[var(--text2)]">{topic.summary}</p>
                       </li>
                     ))}
                   </ul>
@@ -513,10 +513,10 @@ export default function ReportClient({
       {/* インタビューテーマ */}
       {audit.suggested_themes && audit.suggested_themes.length > 0 && (
         <section aria-labelledby="section-themes" className="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-5 space-y-3">
-          <h2 id="section-themes" className="text-sm font-medium text-[var(--text2)]">インタビューで深めたいテーマ</h2>
+          <h2 id="section-themes" className="text-base font-medium text-[var(--text2)]">インタビューで深めたいテーマ</h2>
           <ul className="space-y-2">
             {audit.suggested_themes.map((theme, i) => (
-              <li key={i} className="text-sm text-[var(--text2)] flex gap-2">
+              <li key={i} className="text-base text-[var(--text2)] flex gap-2">
                 <span aria-hidden="true" className="text-[var(--text2)] flex-shrink-0">💬</span>{theme}
               </li>
             ))}

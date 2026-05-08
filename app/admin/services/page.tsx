@@ -144,7 +144,7 @@ export default function AdminServicesPage() {
       <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: '関連サービス' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">関連サービス</h1>
-        <p className="mt-1 text-sm text-[var(--text2)]">Insight Cast が利用する外部サービスの一覧</p>
+        <p className="mt-1 text-base text-[var(--text2)]">Insight Cast が利用する外部サービスの一覧</p>
       </div>
 
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
@@ -161,8 +161,8 @@ export default function AdminServicesPage() {
                     {STATUS_STYLES[svc.status].label}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-[var(--text2)]">{svc.description} — {svc.plan}</p>
-                <p className="mt-1.5 text-sm text-[var(--text2)]">{svc.role}</p>
+                <p className="mt-0.5 text-[13px] text-[var(--text2)]">{svc.description} — {svc.plan}</p>
+                <p className="mt-1.5 text-base text-[var(--text2)]">{svc.role}</p>
                 {svc.envKeys && svc.envKeys.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {svc.envKeys.map((key) => (
@@ -177,7 +177,7 @@ export default function AdminServicesPage() {
                 href={svc.dashboardUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex shrink-0 self-start items-center rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] whitespace-nowrap"
+                className="inline-flex shrink-0 self-start items-center rounded-[var(--r-sm)] border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)] whitespace-nowrap"
               >
                 ダッシュボード <span aria-hidden="true">→</span>
               </a>

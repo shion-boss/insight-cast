@@ -57,7 +57,7 @@ function RoleMenu({
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${memberName}の権限を変更`}
-        className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none"
+        className="min-h-[36px] inline-flex items-center gap-1.5 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text)] hover:bg-[var(--bg2)] disabled:opacity-50 disabled:pointer-events-none"
       >
         <span>{currentLabel}</span>
         <span aria-hidden="true" className="text-[var(--text2)]">▾</span>
@@ -78,7 +78,7 @@ function RoleMenu({
                   setOpen(false)
                   if (!isCurrent) onChange(role.key)
                 }}
-                className={`w-full flex items-start gap-2 px-3 py-2 text-left text-xs transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:bg-[var(--bg2)] ${
+                className={`w-full flex items-start gap-2 px-3 py-2 text-left text-[13px] transition-colors hover:bg-[var(--bg2)] focus-visible:outline-none focus-visible:bg-[var(--bg2)] ${
                   isCurrent ? 'cursor-default' : ''
                 }`}
               >
@@ -303,7 +303,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
           取材チームのメンバー
         </h2>
         {data && (
-          <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--text2)]">
+          <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] font-medium text-[var(--text2)]">
             {data.total} / {data.max} 名
           </span>
         )}
@@ -311,7 +311,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
 
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
         {loading ? null : error ? (
-          <div className="p-6 text-sm text-[var(--err)]">{error}</div>
+          <div className="p-6 text-base text-[var(--err)]">{error}</div>
         ) : (
           <>
             {/* メンバー一覧 */}
@@ -320,11 +320,11 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                 {data.members.map((member) => (
                   <div key={member.id} className="flex items-center gap-3 px-5 py-4">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[var(--text)] truncate">
+                      <p className="text-base font-semibold text-[var(--text)] truncate">
                         {member.name ?? member.email ?? member.userId}
                       </p>
                       {member.name && member.email && (
-                        <p className="text-xs text-[var(--text2)] truncate">{member.email}</p>
+                        <p className="text-[13px] text-[var(--text2)] truncate">{member.email}</p>
                       )}
                       <p className="text-[11px] text-[var(--text2)] mt-0.5">
                         追加日: {formatDate(member.createdAt)}
@@ -340,7 +340,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                       <button
                         type="button"
                         onClick={() => setConfirmDelete({ userId: member.userId, name: member.name ?? member.email ?? 'メンバー' })}
-                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                         aria-label={`${member.name ?? member.email ?? 'メンバー'}を削除`}
                       >
                         削除
@@ -361,7 +361,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                   {data.invitations.map((inv) => (
                     <div key={inv.id} className="flex items-center gap-3 px-5 py-4">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-[var(--text2)] truncate">{inv.email}</p>
+                        <p className="text-base font-semibold text-[var(--text2)] truncate">{inv.email}</p>
                         <p className="text-[11px] text-[var(--text2)] mt-0.5">
                           {ROLE_LABELS[inv.role] ?? inv.role} · 期限: {formatExpiry(inv.expires_at)}
                         </p>
@@ -369,7 +369,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                       <button
                         type="button"
                         onClick={() => setConfirmCancelInvite({ id: inv.id, email: inv.email })}
-                        className="min-h-[36px] flex-shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                        className="min-h-[36px] flex-shrink-0 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                         aria-label={`${inv.email}への招待をキャンセル`}
                       >
                         取消
@@ -381,16 +381,16 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
             )}
 
             {data && data.members.length === 0 && data.invitations.length === 0 && (
-              <div className="px-5 py-8 text-center text-sm text-[var(--text2)]">
+              <div className="px-5 py-8 text-center text-base text-[var(--text2)]">
                 まだメンバーがいません。下のフォームから招待できます。
               </div>
             )}
 
             {/* 招待フォーム */}
             <div className="border-t border-[var(--border)] px-5 py-5">
-              <p className="text-sm font-semibold text-[var(--text)] mb-3">メンバーを招待する</p>
+              <p className="text-base font-semibold text-[var(--text)] mb-3">メンバーを招待する</p>
               {isAtLimit ? (
-                <p className="text-sm text-[var(--text2)]">
+                <p className="text-base text-[var(--text2)]">
                   メンバー上限（{data?.max}名）に達しています。メンバーを削除してから招待してください。
                 </p>
               ) : (
@@ -403,14 +403,14 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                     placeholder="メールアドレス"
                     required
                     disabled={inviting}
-                    className="flex-1 min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                    className="flex-1 min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
                     aria-label="招待するメールアドレス"
                   />
                   <select
                     value={inviteRole}
                     onChange={(e) => setInviteRole(e.target.value as 'editor' | 'viewer')}
                     disabled={inviting}
-                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] disabled:opacity-50"
+                    className="min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
                     aria-label="権限"
                   >
                     <option value="editor">編集者（取材・記事生成）</option>
@@ -419,7 +419,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                   <button
                     type="submit"
                     disabled={inviting || !inviteEmail.trim()}
-                    className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none"
+                    className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none"
                   >
                     {inviting ? '送信中...' : '招待する'}
                   </button>
@@ -427,7 +427,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
               )}
               {inviteMessage && (
                 <p
-                  className={`mt-2 text-sm ${inviteMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
+                  className={`mt-2 text-base ${inviteMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
                   role="status"
                   aria-live="polite"
                 >

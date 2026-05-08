@@ -241,13 +241,13 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[var(--border)]">
           <ScoreRing score={continuityScore} />
           <div className="flex-1">
-            <div className="text-sm font-bold mb-1 text-[var(--text)]">記事づくり継続スコア：{continuityScore} / 100</div>
+            <div className="text-base font-bold mb-1 text-[var(--text)]">記事づくり継続スコア：{continuityScore} / 100</div>
             <div className="text-[12px] leading-relaxed text-[var(--text2)]">{scoreDesc}</div>
           </div>
           {canEdit && (
             <Link
               href={nextProjectId ? `/projects/${nextProjectId}/interviewer` : '/projects/new'}
-              className={getButtonClass('primary', 'flex-shrink-0 text-sm px-4 py-2')}
+              className={getButtonClass('primary', 'flex-shrink-0 text-base px-4 py-2')}
             >
               取材する <span aria-hidden="true">→</span>
             </Link>

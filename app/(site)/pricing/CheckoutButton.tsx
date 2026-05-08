@@ -47,7 +47,7 @@ export function CheckoutButton({
 
   if (!priceId) {
     return (
-      <div className="w-full text-center py-3 rounded-[var(--r-sm)] text-sm font-semibold inline-flex items-center justify-center opacity-50 cursor-not-allowed border-[1.5px] border-[var(--border)] text-[var(--text)]">
+      <div className="w-full text-center py-3 rounded-[var(--r-sm)] text-base font-semibold inline-flex items-center justify-center opacity-50 cursor-not-allowed border-[1.5px] border-[var(--border)] text-[var(--text)]">
         準備中
       </div>
     )
@@ -58,7 +58,7 @@ export function CheckoutButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className={`w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-sm font-semibold transition-colors inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
+      className={`w-full text-center min-h-[44px] py-3 rounded-[var(--r-sm)] text-base font-semibold transition-colors inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed ${
         featured
           ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-h)]'
           : 'border-[1.5px] border-[var(--border)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)]'

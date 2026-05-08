@@ -47,7 +47,7 @@ export function AnalysisLoadingScene({
         <AiBadge label="調査中" />
         <div className="min-w-0 flex-1">
           <p className="font-serif text-[15px] font-bold text-[var(--text)]">ホームページを分析しています</p>
-          <p className="mt-0.5 truncate text-xs text-[var(--text2)]">{projectName}</p>
+          <p className="mt-0.5 truncate text-[13px] text-[var(--text2)]">{projectName}</p>
         </div>
       </div>
       <div className="ic-loading-card-body">
@@ -80,7 +80,7 @@ export function AnalysisLoadingScene({
                       : index + 1}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">{step.label}</p>
+                  <p className="text-base font-semibold">{step.label}</p>
                   {state === 'active' && <p className="mt-0.5 text-[11px] opacity-80">{step.subLabel}</p>}
                 </div>
               </div>
@@ -177,8 +177,8 @@ export function InterviewLoadingScene({
       </div>
 
       <div className="mt-7">
-        <p className="text-center text-sm font-semibold text-[var(--text)]">{title}</p>
-        <p className="mt-1 text-center text-xs text-[var(--text2)]">{subtitle}</p>
+        <p className="text-center text-base font-semibold text-[var(--text)]">{title}</p>
+        <p className="mt-1 text-center text-[13px] text-[var(--text2)]">{subtitle}</p>
       </div>
 
       <div className="mt-7">
@@ -222,7 +222,7 @@ export function InterviewLoadingScene({
             className="border-2 border-[var(--accent)]"
           />
           <p className="mt-3 font-serif text-lg font-bold text-[var(--text)]">取材を開始しています…</p>
-          <p className="mt-2 text-sm text-[var(--text2)]">最初の話しかけを整えています。</p>
+          <p className="mt-2 text-base text-[var(--text2)]">最初の話しかけを整えています。</p>
         </div>
       )}
     </div>
@@ -270,7 +270,7 @@ export function WritingLoadingScene({
         />
         <div className="min-w-0">
           <p className="font-serif text-[15px] font-bold text-[var(--text)]">{title}</p>
-          <p className="mt-0.5 text-xs text-[var(--text2)]">{description}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--text2)]">{description}</p>
         </div>
         <div className="ml-auto">
           <AiBadge label="作成中" />
@@ -287,8 +287,8 @@ export function WritingLoadingScene({
         </div>
 
         <div className="mb-5 text-center">
-          <p className="text-sm font-semibold text-[var(--text)]">{phases[phaseIndex]}</p>
-          <p className="mt-1 text-xs text-[var(--text2)]">取材内容をもとに、読みやすい形へまとめています。</p>
+          <p className="text-base font-semibold text-[var(--text)]">{phases[phaseIndex]}</p>
+          <p className="mt-1 text-[13px] text-[var(--text2)]">取材内容をもとに、読みやすい形へまとめています。</p>
         </div>
 
         <div className="mb-5 h-[5px] overflow-hidden rounded-full bg-[var(--bg2)]">
@@ -307,7 +307,7 @@ export function WritingLoadingScene({
         </div>
 
         {previewText && (
-          <pre className="mt-4 max-h-[32vh] overflow-y-auto whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--text2)]">
+          <pre className="mt-4 max-h-[32vh] overflow-y-auto whitespace-pre-wrap font-sans text-base leading-relaxed text-[var(--text2)]">
             {previewText}
           </pre>
         )}

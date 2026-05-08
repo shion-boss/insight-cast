@@ -80,7 +80,7 @@ export function SiteHeaderClient() {
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-[var(--elevation-3)]"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-base focus:font-semibold focus:text-white focus:shadow-[var(--elevation-3)]"
       >
         メインコンテンツへ
       </a>
@@ -102,7 +102,7 @@ export function SiteHeaderClient() {
                       key={link.href}
                       href={link.href}
                       aria-current={isActive ? 'page' : undefined}
-                      className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                      className={`rounded-full px-3 py-2 text-base font-medium transition-colors ${
                         isActive
                           ? 'text-[var(--text)] bg-[var(--bg2)]'
                           : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--bg2)]/60'
@@ -119,21 +119,21 @@ export function SiteHeaderClient() {
               <div className="hidden lg:flex items-center gap-2 sm:gap-3">
                 {isLoggedIn ? (
                   <>
-                    <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                    <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-base font-medium')}>
                       ダッシュボード
                     </Link>
                     <form action={signOut}>
-                      <button type="submit" className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                      <button type="submit" className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-base font-medium')}>
                         ログアウト
                       </button>
                     </form>
                   </>
                 ) : (
                   <>
-                    <Link href="/auth/login" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                    <Link href="/auth/login" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-base font-medium')}>
                       ログイン
                     </Link>
-                    <Link href="/auth/signup" prefetch={false} className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
+                    <Link href="/auth/signup" prefetch={false} className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-base')}>
                       無料で試す <span aria-hidden="true">→</span>
                     </Link>
                   </>

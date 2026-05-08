@@ -412,7 +412,7 @@ export function SettingsClient({
               role="tab"
               aria-selected={activeSection === section}
               onClick={() => setActiveSection(section)}
-              className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-xs sm:text-sm font-medium transition-all ${
+              className={`whitespace-nowrap rounded-[var(--r-sm)] border-b-2 lg:border-b-0 lg:border-l-2 px-2.5 py-2 sm:px-3 sm:py-2.5 text-left text-[13px] sm:text-base font-medium transition-all ${
                 activeSection === section
                   ? 'border-[var(--accent)] bg-[var(--accent-l)] text-[var(--on-primary-container)]'
                   : 'border-transparent text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--text)]'
@@ -430,7 +430,7 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウント情報
                 </h2>
-                <p className="mb-6 text-xs text-[var(--text2)]">表示名、メールアドレス、アイコンを管理します</p>
+                <p className="mb-6 text-[13px] text-[var(--text2)]">表示名、メールアドレス、アイコンを管理します</p>
 
                 <div className="mb-6 flex flex-col gap-5 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center">
                   <div className="flex items-center gap-4 min-w-0">
@@ -449,7 +449,7 @@ export function SettingsClient({
                     </div>
                     <div className="min-w-0">
                       <p className="mb-1 truncate font-semibold text-[var(--text)]">{name.trim() || '名前未設定'}</p>
-                      <p className="truncate text-xs text-[var(--text2)]">{email || 'メールアドレス未設定'}</p>
+                      <p className="truncate text-[13px] text-[var(--text2)]">{email || 'メールアドレス未設定'}</p>
                     </div>
                   </div>
 
@@ -465,17 +465,17 @@ export function SettingsClient({
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={avatarUploading}
-                      className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+                      className={getButtonClass('secondary', 'px-4 py-2 text-base')}
                     >
                       {avatarUploading ? 'アップロード中...' : 'アイコンを変更'}
                     </button>
-                    <p className="mt-2 text-xs text-[var(--text2)]">画像は 2MB 以下、正方形がおすすめです。</p>
+                    <p className="mt-2 text-[13px] text-[var(--text2)]">画像は 2MB 以下、正方形がおすすめです。</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="settings-name" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">表示名</label>
+                    <label htmlFor="settings-name" className="mb-1.5 block text-base font-semibold text-[var(--text)]">表示名</label>
                     <TextInput
                       id="settings-name"
                       type="text"
@@ -490,7 +490,7 @@ export function SettingsClient({
                     />
                   </div>
                   <div>
-                    <label htmlFor="settings-first-person" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">記事の中での一人称</label>
+                    <label htmlFor="settings-first-person" className="mb-1.5 block text-base font-semibold text-[var(--text)]">記事の中での一人称</label>
                     <TextInput
                       id="settings-first-person"
                       type="text"
@@ -501,7 +501,7 @@ export function SettingsClient({
                       disabled={profileInputsDisabled}
                       aria-describedby="settings-first-person-help"
                     />
-                    <p id="settings-first-person-help" className="mt-1.5 text-xs text-[var(--text2)]">
+                    <p id="settings-first-person-help" className="mt-1.5 text-[13px] text-[var(--text2)]">
                       ブログ記事を作るときに、この一人称で書いてもらえます。空欄なら「私」になります。
                     </p>
                   </div>
@@ -510,7 +510,7 @@ export function SettingsClient({
                 {(profileError || avatarError) && (
                   <div id="settings-profile-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-[var(--err)]">{avatarError ?? profileError}</p>
+                    <p className="text-base text-[var(--err)]">{avatarError ?? profileError}</p>
                   </div>
                 )}
 
@@ -519,12 +519,12 @@ export function SettingsClient({
                     type="button"
                     onClick={handleProfileSave}
                     disabled={profileSaving || !hasUnsavedProfileChanges}
-                    className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                    className={getButtonClass('primary', 'px-4 py-2 text-base')}
                   >
                     {profileSaving ? '保存中...' : '変更を保存する'}
                   </button>
                   {profileSaved && (
-                    <span role="status" className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
+                    <span role="status" className="text-base font-semibold text-[var(--teal)]">保存しました</span>
                   )}
                 </div>
               </section>
@@ -533,10 +533,10 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   メールアドレスの変更
                 </h2>
-                <p className="mb-5 break-all text-xs text-[var(--text2)]">現在: {email || '未設定'}</p>
+                <p className="mb-5 break-all text-[13px] text-[var(--text2)]">現在: {email || '未設定'}</p>
 
                 {emailSaved ? (
-                  <div className="rounded-xl bg-[var(--accent-l)] border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] px-5 py-4 text-sm leading-relaxed text-[var(--text2)]">
+                  <div className="rounded-xl bg-[var(--accent-l)] border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] px-5 py-4 text-base leading-relaxed text-[var(--text2)]">
                     <p className="font-semibold text-[var(--on-primary-container)] mb-1">確認メールを送りました</p>
                     <p>新しいメールアドレス宛に確認リンクを送りました。リンクをクリックすると変更が完了します。</p>
                   </div>
@@ -544,7 +544,7 @@ export function SettingsClient({
                   <>
                     <div className="space-y-3">
                       <div>
-                        <label htmlFor="settings-new-email" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいメールアドレス</label>
+                        <label htmlFor="settings-new-email" className="mb-1.5 block text-base font-semibold text-[var(--text)]">新しいメールアドレス</label>
                         <TextInput
                           id="settings-new-email"
                           type="email"
@@ -562,7 +562,7 @@ export function SettingsClient({
                     {emailError && (
                       <div id="settings-email-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                         <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-[var(--err)]">{emailError}</p>
+                        <p className="text-base text-[var(--err)]">{emailError}</p>
                       </div>
                     )}
 
@@ -571,7 +571,7 @@ export function SettingsClient({
                         type="button"
                         onClick={handleEmailSave}
                         disabled={emailSaving || !newEmail.trim()}
-                        className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                        className={getButtonClass('primary', 'px-4 py-2 text-base')}
                       >
                         {emailSaving ? '送信中...' : '確認メールを送る'}
                       </button>
@@ -582,10 +582,10 @@ export function SettingsClient({
 
               <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-7">
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">プロジェクトの削除</h2>
-                <p className="mb-5 text-xs text-[var(--text2)]">削除すると取材メモ・記事も含めて論理削除されます</p>
+                <p className="mb-5 text-[13px] text-[var(--text2)]">削除すると取材メモ・記事も含めて論理削除されます</p>
 
                 {projectList.length === 0 ? (
-                  <p className="text-sm text-[var(--text2)]">登録済みのプロジェクトはありません。</p>
+                  <p className="text-base text-[var(--text2)]">登録済みのプロジェクトはありません。</p>
                 ) : (
                   <ul className="space-y-3">
                     {projectList.map((project) => {
@@ -594,7 +594,7 @@ export function SettingsClient({
                       return (
                         <li key={project.id} className="rounded-[var(--r)] border border-[var(--border)] p-4">
                           <div className="flex items-center justify-between gap-4">
-                            <span className="truncate text-sm font-medium text-[var(--text)]">{displayName}</span>
+                            <span className="truncate text-base font-medium text-[var(--text)]">{displayName}</span>
                             {!isConfirming && (
                               <button
                                 type="button"
@@ -618,7 +618,7 @@ export function SettingsClient({
 
                           {isConfirming && (
                             <div className="mt-4 space-y-3 border-t border-[var(--border)] pt-4">
-                              <p className="text-sm text-[var(--text2)]">
+                              <p className="text-base text-[var(--text2)]">
                                 確認のため、プロジェクト名 <span className="font-semibold text-[var(--text)]">「{displayName}」</span> を入力してください。
                               </p>
                               <label htmlFor={`delete-project-${project.id}`} className="sr-only">プロジェクト名を入力</label>
@@ -634,7 +634,7 @@ export function SettingsClient({
                               {projectDeleteError && (
                                 <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                                   <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                                  <p className="text-sm text-[var(--err)]">{projectDeleteError}</p>
+                                  <p className="text-base text-[var(--err)]">{projectDeleteError}</p>
                                 </div>
                               )}
                               <div className="flex flex-wrap gap-3">
@@ -642,7 +642,7 @@ export function SettingsClient({
                                   type="button"
                                   onClick={() => void handleProjectDelete(project.id, displayName)}
                                   disabled={projectDeleting || projectDeleteInput.trim() !== displayName}
-                                  className="inline-flex min-h-10 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                                  className="inline-flex min-h-10 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-base font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                                 >
                                   {projectDeleting ? '削除中...' : '削除を確定する'}
                                 </button>
@@ -650,7 +650,7 @@ export function SettingsClient({
                                   type="button"
                                   onClick={() => { setDeletingProjectId(null); setProjectDeleteInput(''); setProjectDeleteError(null) }}
                                   disabled={projectDeleting}
-                                  className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+                                  className={getButtonClass('secondary', 'px-4 py-2 text-base')}
                                 >
                                   キャンセル
                                 </button>
@@ -668,17 +668,17 @@ export function SettingsClient({
                 <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                   アカウントを削除
                 </h2>
-                <p className="mb-5 text-xs text-[var(--text2)]">この操作は取り消せません</p>
+                <p className="mb-5 text-[13px] text-[var(--text2)]">この操作は取り消せません</p>
 
                 <div className="rounded-xl border border-[var(--err-l)] p-5">
                   <h3 className="mb-1.5 font-semibold text-[var(--err)]">アカウントを完全に削除する</h3>
-                  <ul className="mb-4 space-y-1 text-sm leading-[1.75] text-[var(--text2)] list-disc list-inside">
+                  <ul className="mb-4 space-y-1 text-base leading-[1.75] text-[var(--text2)] list-disc list-inside">
                     <li>プロジェクト・取材メモ・記事・プロフィール情報を含むアカウント全体が完全に削除されます</li>
                     <li>有料プランご利用中の場合、サブスクリプションは即時解約されます</li>
                     <li>残りの契約期間分の返金はありません</li>
                     <li>この操作は取り消せません</li>
                   </ul>
-                  <p className="mb-4 text-sm text-[var(--text2)]">確認のため、登録メールアドレス（{email}）を入力してください。</p>
+                  <p className="mb-4 text-base text-[var(--text2)]">確認のため、登録メールアドレス（{email}）を入力してください。</p>
 
                   <label htmlFor="settings-delete-confirm" className="sr-only">メールアドレスを入力して確認</label>
                   <TextInput
@@ -696,7 +696,7 @@ export function SettingsClient({
                   {deleteError && (
                     <div id="settings-delete-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                       <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-[var(--err)]">{deleteError}</p>
+                      <p className="text-base text-[var(--err)]">{deleteError}</p>
                     </div>
                   )}
 
@@ -705,7 +705,7 @@ export function SettingsClient({
                       type="button"
                       onClick={handleDeleteAccount}
                       disabled={deletePending}
-                      className="inline-flex min-h-11 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-sm font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                      className="inline-flex min-h-11 items-center justify-center rounded-[var(--r-sm)] border border-[var(--err)] bg-[var(--err)] px-4 py-2 text-base font-semibold text-white transition-colors hover:opacity-90 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                     >
                       {deletePending ? '削除中...' : 'アカウントを削除する'}
                     </button>
@@ -720,7 +720,7 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 現在のプラン
               </h2>
-              <p className="mb-6 text-xs text-[var(--text2)]">現在の契約内容と利用上限を確認できます</p>
+              <p className="mb-6 text-[13px] text-[var(--text2)]">現在の契約内容と利用上限を確認できます</p>
 
               <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -731,7 +731,7 @@ export function SettingsClient({
                     {plan.label}
                   </p>
                 </div>
-                <Link href="/settings/billing" className={getButtonClass('primary', 'px-4 py-2 text-sm')}>
+                <Link href="/settings/billing" className={getButtonClass('primary', 'px-4 py-2 text-base')}>
                   お支払い・解約の管理
                 </Link>
               </div>
@@ -746,7 +746,7 @@ export function SettingsClient({
                   { label: '競合調査', value: `各プロジェクト ${plan.maxCompetitorsPerProject} 社` },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl bg-[var(--bg2)] px-4 py-4">
-                    <p className="text-xs text-[var(--text2)]">{item.label}</p>
+                    <p className="text-[13px] text-[var(--text2)]">{item.label}</p>
                     <p className="mt-2 text-xl font-bold text-[var(--text)]">
                       {item.value}
                     </p>
@@ -755,8 +755,8 @@ export function SettingsClient({
               </div>
 
               <div className="mt-5 rounded-xl bg-[var(--bg2)] p-4">
-                <p className="mb-3 text-sm font-semibold text-[var(--text)]">現在の利用状況</p>
-                <div className="space-y-2 text-sm text-[var(--text2)]">
+                <p className="mb-3 text-base font-semibold text-[var(--text)]">現在の利用状況</p>
+                <div className="space-y-2 text-base text-[var(--text2)]">
                   <div className="flex items-center justify-between gap-4">
                     <span>登録済みのプロジェクト</span>
                     <span className="font-semibold text-[var(--text)]">
@@ -771,7 +771,7 @@ export function SettingsClient({
               </div>
 
               <div className="mt-5 rounded-xl border border-[var(--border)] p-5">
-                <p className="mb-3 text-sm font-semibold text-[var(--text)]">
+                <p className="mb-3 text-base font-semibold text-[var(--text)]">
                   {nextPlan ? `${nextPlan.label}にすると` : '現在ご利用中のプランです'}
                 </p>
                 {nextPlan ? (
@@ -783,7 +783,7 @@ export function SettingsClient({
                         nextPlan.maxCompetitorsPerProject !== plan.maxCompetitorsPerProject && `競合調査を各プロジェクト ${nextPlan.maxCompetitorsPerProject} 社まで`,
                         nextPlan.supportLabel !== plan.supportLabel && `${nextPlan.supportLabel}が利用可能`,
                       ].filter(Boolean).map((feature) => (
-                        <div key={String(feature)} className="flex items-center gap-2 text-sm text-[var(--text2)]">
+                        <div key={String(feature)} className="flex items-center gap-2 text-base text-[var(--text2)]">
                           <span aria-hidden="true" className="font-bold text-[var(--teal)]">✓</span>
                           {feature}
                         </div>
@@ -792,14 +792,14 @@ export function SettingsClient({
                     <div className="mt-4 flex flex-wrap items-center gap-3">
                       <Link
                         href={`/api/stripe/checkout-redirect?plan=${nextPlan.key}`}
-                        className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                        className={getButtonClass('primary', 'px-4 py-2 text-base')}
                       >
                         {nextPlan.label}にアップグレード <span aria-hidden="true">→</span>
                       </Link>
                     </div>
                   </>
                 ) : (
-                  <p className="text-sm leading-[1.75] text-[var(--text2)]">
+                  <p className="text-base leading-[1.75] text-[var(--text2)]">
                     法人向けプランをご利用中です。最新の料金や内容は料金ページで確認できます。
                   </p>
                 )}
@@ -812,7 +812,7 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 通知設定
               </h2>
-              <p className="mb-5 text-xs text-[var(--text2)]">メール通知の受信設定を保存できます</p>
+              <p className="mb-5 text-[13px] text-[var(--text2)]">メール通知の受信設定を保存できます</p>
 
               <div className="space-y-0">
                 {NOTIFICATIONS.map((notification, index) => (
@@ -823,8 +823,8 @@ export function SettingsClient({
                     }`}
                   >
                     <div>
-                      <p className="mb-0.5 text-sm font-semibold text-[var(--text)]">{notification.label}</p>
-                      <p className="text-xs text-[var(--text2)]">{notification.desc}</p>
+                      <p className="mb-0.5 text-base font-semibold text-[var(--text)]">{notification.label}</p>
+                      <p className="text-[13px] text-[var(--text2)]">{notification.desc}</p>
                     </div>
                     <Toggle
                       on={notifications[notification.key]}
@@ -844,7 +844,7 @@ export function SettingsClient({
               {notificationError && (
                 <div role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                   <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-[var(--err)]">{notificationError}</p>
+                  <p className="text-base text-[var(--err)]">{notificationError}</p>
                 </div>
               )}
 
@@ -853,12 +853,12 @@ export function SettingsClient({
                   type="button"
                   onClick={handleNotificationSave}
                   disabled={notificationSaving || !hasUnsavedNotificationChanges}
-                  className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                  className={getButtonClass('primary', 'px-4 py-2 text-base')}
                 >
                   {notificationSaving ? '保存中...' : '通知設定を保存する'}
                 </button>
                 {notificationSaved && (
-                  <span role="status" className="text-sm font-semibold text-[var(--teal)]">保存しました</span>
+                  <span role="status" className="text-base font-semibold text-[var(--teal)]">保存しました</span>
                 )}
               </div>
             </section>
@@ -869,17 +869,17 @@ export function SettingsClient({
               <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
                 セキュリティ
               </h2>
-              <p className="mb-6 text-xs text-[var(--text2)]">ログイン中のアカウントのパスワードを更新できます</p>
+              <p className="mb-6 text-[13px] text-[var(--text2)]">ログイン中のアカウントのパスワードを更新できます</p>
 
               {!isEmailUser ? (
-                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5 text-sm text-[var(--text2)]">
+                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5 text-base text-[var(--text2)]">
                   Googleアカウントでログイン中のため、パスワードの設定はありません。
                 </p>
               ) : (
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5">
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="settings-password" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">新しいパスワード</label>
+                    <label htmlFor="settings-password" className="mb-1.5 block text-base font-semibold text-[var(--text)]">新しいパスワード</label>
                     <TextInput
                       id="settings-password"
                       type="password"
@@ -893,7 +893,7 @@ export function SettingsClient({
                     />
                   </div>
                   <div>
-                    <label htmlFor="settings-password-confirm" className="mb-1.5 block text-sm font-semibold text-[var(--text)]">確認用パスワード</label>
+                    <label htmlFor="settings-password-confirm" className="mb-1.5 block text-base font-semibold text-[var(--text)]">確認用パスワード</label>
                     <TextInput
                       id="settings-password-confirm"
                       type="password"
@@ -908,14 +908,14 @@ export function SettingsClient({
                   </div>
                 </div>
 
-                <p className="mt-3 text-xs leading-6 text-[var(--text2)]">
+                <p className="mt-3 text-[13px] leading-6 text-[var(--text2)]">
                   現在ログイン中のため、確認メールなしで更新されます。共有端末では更新後にログアウトしてください。
                 </p>
 
                 {passwordError && (
                   <div id="settings-password-error" role="alert" className="mt-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'ミント'}のアイコン`} emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-[var(--err)]">{passwordError}</p>
+                    <p className="text-base text-[var(--err)]">{passwordError}</p>
                   </div>
                 )}
 
@@ -924,12 +924,12 @@ export function SettingsClient({
                     type="button"
                     onClick={handlePasswordSave}
                     disabled={passwordSaving || !password || !passwordConfirm}
-                    className={getButtonClass('primary', 'px-4 py-2 text-sm')}
+                    className={getButtonClass('primary', 'px-4 py-2 text-base')}
                   >
                     {passwordSaving ? '更新中...' : 'パスワードを変更する'}
                   </button>
                   {passwordSaved && (
-                    <span role="status" className="text-sm font-semibold text-[var(--teal)]">パスワードを更新しました</span>
+                    <span role="status" className="text-base font-semibold text-[var(--teal)]">パスワードを更新しました</span>
                   )}
                 </div>
               </div>

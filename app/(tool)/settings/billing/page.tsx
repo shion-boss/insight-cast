@@ -92,7 +92,7 @@ export default async function BillingPage({
           <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
             現在のプラン
           </h2>
-          <p className="mb-6 text-xs text-[var(--text2)]">契約中のプランと請求サイクルを確認できます</p>
+          <p className="mb-6 text-[13px] text-[var(--text2)]">契約中のプランと請求サイクルを確認できます</p>
 
           <div className="mb-5 flex flex-col gap-4 rounded-xl border border-[color-mix(in_srgb,var(--accent)_25%,transparent)] bg-[var(--accent-l)] p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -104,7 +104,7 @@ export default async function BillingPage({
               </p>
             </div>
             <span
-              className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+              className={`inline-flex items-center rounded-full px-3 py-1 text-[13px] font-semibold ${
                 sub?.status === 'active' || sub?.status === 'trialing'
                   ? 'bg-[color-mix(in_srgb,var(--teal)_15%,transparent)] text-[var(--teal)]'
                   : 'bg-[var(--err-l)] text-[var(--err)]'
@@ -114,7 +114,7 @@ export default async function BillingPage({
             </span>
           </div>
 
-          <div className="space-y-3 text-sm">
+          <div className="space-y-3 text-base">
             {periodEnd && (
               <div className="flex items-center justify-between gap-4 rounded-xl bg-[var(--bg2)] px-4 py-3">
                 <span className="text-[var(--text2)]">
@@ -125,12 +125,12 @@ export default async function BillingPage({
             )}
             {!isPaid && (
               <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[var(--text2)]">
-                <p className="text-sm leading-[1.75]">
+                <p className="text-base leading-[1.75]">
                   個人向け・法人向けプランにすると、取材回数が増え、より多くのプロジェクトを管理できます。
                 </p>
                 <Link
                   href="/pricing"
-                  className={getButtonClass('primary', 'mt-3 px-4 py-2 text-sm')}
+                  className={getButtonClass('primary', 'mt-3 px-4 py-2 text-base')}
                 >
                   料金プランを見る
                 </Link>
@@ -138,12 +138,12 @@ export default async function BillingPage({
             )}
             {isLightning && (
               <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[var(--text2)]">
-                <p className="text-sm leading-[1.75]">
+                <p className="text-base leading-[1.75]">
                   個人向けプランにアップグレードすると、月15回の取材と競合調査（3社）が使えます。
                 </p>
                 <Link
                   href="/api/stripe/checkout-redirect?plan=personal"
-                  className={getButtonClass('primary', 'mt-3 px-4 py-2 text-sm')}
+                  className={getButtonClass('primary', 'mt-3 px-4 py-2 text-base')}
                 >
                   アップグレードを確認する
                 </Link>
@@ -158,7 +158,7 @@ export default async function BillingPage({
             <h2 className="mb-1 text-lg font-bold text-[var(--text)]">
               支払い管理
             </h2>
-            <p className="mb-5 text-xs text-[var(--text2)]">
+            <p className="mb-5 text-[13px] text-[var(--text2)]">
               カード情報の変更・プランの変更・解約はこちらから行えます
             </p>
             <PortalButton />

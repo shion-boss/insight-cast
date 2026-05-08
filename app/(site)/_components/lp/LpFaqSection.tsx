@@ -39,7 +39,7 @@ export function LpFaqSection() {
           <LpFaq faqs={FAQS} />
         </div>
         <div className="text-center mt-8">
-          <Link href="/faq" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+          <Link href="/faq" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
             よくある質問をすべて見る <span aria-hidden="true">→</span>
           </Link>
         </div>

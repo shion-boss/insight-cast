@@ -54,14 +54,14 @@ export default function UpdatePasswordPage() {
                 <span className="text-2xl" aria-hidden="true">✓</span>
               </div>
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] mb-3">パスワードを更新しました</h1>
-              <p className="text-sm text-[var(--text2)]">ダッシュボードに移動します...</p>
+              <p className="text-base text-[var(--text2)]">ダッシュボードに移動します...</p>
             </div>
           ) : (
             <>
               <h1 className="font-serif text-[20px] font-bold text-[var(--text)] text-center mb-8">新しいパスワードを設定</h1>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="update-password" className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（8文字以上）</label>
+                  <label htmlFor="update-password" className="block text-[13px] font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（8文字以上）</label>
                   <input
                     id="update-password"
                     type="password"
@@ -72,11 +72,11 @@ export default function UpdatePasswordPage() {
                     autoComplete="new-password"
                     aria-invalid={!!error || undefined}
                     aria-describedby={error ? 'update-error' : undefined}
-                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
+                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-base text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
                   />
                 </div>
                 <div>
-                  <label htmlFor="update-password-confirm" className="block text-xs font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（確認）</label>
+                  <label htmlFor="update-password-confirm" className="block text-[13px] font-semibold text-[var(--text2)] mb-1.5">新しいパスワード（確認）</label>
                   <input
                     id="update-password-confirm"
                     type="password"
@@ -86,21 +86,21 @@ export default function UpdatePasswordPage() {
                     autoComplete="new-password"
                     aria-invalid={!!error || undefined}
                     aria-describedby={error ? 'update-error' : undefined}
-                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-sm text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
+                    className="w-full border border-[var(--border)] rounded-[var(--r-sm)] px-3.5 py-2.5 text-base text-[var(--text)] bg-[var(--surface)] focus-visible:border-[var(--accent)] transition-colors"
                   />
                 </div>
 
                 {error && (
                   <div id="update-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                     <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-[var(--err)]">{error}</p>
+                    <p className="text-base text-[var(--err)]">{error}</p>
                   </div>
                 )}
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? '更新中...' : 'パスワードを更新する'}
                 </button>

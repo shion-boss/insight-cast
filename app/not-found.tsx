@@ -35,13 +35,13 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/dashboard"
-            className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('primary', 'px-6 py-3 text-base')}
           >
             ダッシュボードに戻る
           </Link>
           <Link
             href="/"
-            className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('secondary', 'px-6 py-3 text-base')}
           >
             トップページへ
           </Link>

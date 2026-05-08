@@ -86,14 +86,14 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
             value={localText}
             onChange={e => setLocalText(e.target.value)}
             onBlur={() => onEditDone?.(origRef.current, localText)}
-            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}
+            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}
             style={{ fieldSizing: 'content' } as React.CSSProperties}
             rows={2}
           />
         ) : mode === 'markdown' && markdownCopyText ? (
-          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{markdownCopyText}</pre>
+          <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[var(--text2)]">{markdownCopyText}</pre>
         ) : (
-          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}>
             {text}
           </p>
         )}
@@ -109,10 +109,10 @@ export function SuggestionCard({ item }: { item: ArticleSuggestion }) {
         {item.type === 'image' ? '📷' : '✏️'}
       </span>
       <div>
-        <p className="text-xs font-semibold text-[var(--on-primary-container)] mb-0.5">
+        <p className="text-[13px] font-semibold text-[var(--on-primary-container)] mb-0.5">
           {item.type === 'image' ? '写真・画像の提案' : '内容追加の提案'}
         </p>
-        <p className="text-sm text-[var(--text2)] leading-relaxed">{item.text}</p>
+        <p className="text-base text-[var(--text2)] leading-relaxed">{item.text}</p>
       </div>
     </div>
   )
@@ -165,14 +165,14 @@ export function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode
             value={localText}
             onChange={e => setLocalText(e.target.value)}
             onBlur={() => onEditDone?.(origRef.current, localText)}
-            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}
+            className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}
             style={{ fieldSizing: 'content' } as React.CSSProperties}
             rows={2}
           />
         ) : mode === 'markdown' && rawText ? (
-          <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-[var(--text2)]">{rawText}</pre>
+          <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-[var(--text2)]">{rawText}</pre>
         ) : (
-          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-sm font-semibold' : 'text-sm'}`}>
+          <p className={`whitespace-pre-wrap leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}>
             {text}
           </p>
         )}

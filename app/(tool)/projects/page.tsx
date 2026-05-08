@@ -85,7 +85,7 @@ export default async function ProjectsPage() {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-20">
         <CharacterAvatar src={mint?.icon48} alt={mint?.name ?? 'ミント'} emoji={mint?.emoji} size={48} />
-        <p className="text-sm text-[var(--text2)]">
+        <p className="text-base text-[var(--text2)]">
           プロジェクトの読み込みに失敗しました。ページを再読み込みしてください。
         </p>
       </div>
@@ -184,15 +184,15 @@ export default async function ProjectsPage() {
             <path d="M10 2a8 8 0 1 0 0 16A8 8 0 0 0 10 2zm0 4v5m0 2v.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
           </svg>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-[var(--text)]">
+            <p className="text-base font-semibold text-[var(--text)]">
               プランの上限を超えたプロジェクトがあります
             </p>
-            <p className="mt-1 text-sm text-[var(--text2)]">
+            <p className="mt-1 text-base text-[var(--text2)]">
               現在のプランではプロジェクトを{planLimits.maxProjects}件まで管理できます。ロック中のプロジェクトを削除するか、プランをアップグレードしてください。
             </p>
             <Link
               href="/pricing?reason=project_over_limit"
-              className="mt-2 inline-block text-sm font-semibold text-[var(--on-primary-container)] hover:underline rounded"
+              className="mt-2 inline-block text-base font-semibold text-[var(--on-primary-container)] hover:underline rounded"
             >
               プランを見る <span aria-hidden="true">→</span>
             </Link>
@@ -208,7 +208,7 @@ export default async function ProjectsPage() {
         ].map((s) => (
           <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
             <span className="text-[28px] font-bold text-[var(--on-primary-container)]">{s.n}</span>
-            <span className="text-sm text-[var(--text2)]">{s.l}</span>
+            <span className="text-base text-[var(--text2)]">{s.l}</span>
           </div>
         ))}
       </div>
@@ -308,7 +308,7 @@ export default async function ProjectsPage() {
                   {!isShared && (
                     isLocked ? (
                       <span
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-xs text-[var(--text2)] cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 min-h-[44px] text-[13px] text-[var(--text2)] cursor-not-allowed"
                         title="プランの上限を超えているためこのプロジェクトでは取材できません"
                       >
                         <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -320,7 +320,7 @@ export default async function ProjectsPage() {
                     ) : (
                       <Link
                         href={`/projects/${project.id}/interviewer`}
-                        className={getButtonClass('primary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                        className={getButtonClass('primary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                       >
                         取材する <span aria-hidden="true">→</span>
                       </Link>
@@ -328,26 +328,26 @@ export default async function ProjectsPage() {
                   )}
                   <Link
                     href={`/projects/${project.id}`}
-                    className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                    className={getButtonClass('secondary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                   >
                     管理
                   </Link>
                   {articleCount > 0 && (
                     <Link
                       href={`/articles?projectId=${project.id}`}
-                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                      className={getButtonClass('secondary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                     >
                       記事を見る
                     </Link>
                   )}
                   {project.status === 'analyzing' ? (
-                    <span className="inline-flex items-center rounded-lg border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 min-h-[44px] text-xs text-[var(--warn)]">
+                    <span className="inline-flex items-center rounded-lg border border-[var(--warn)]/30 bg-[var(--warn-l)] px-3 min-h-[44px] text-[13px] text-[var(--warn)]">
                       調査中
                     </span>
                   ) : analysisReadyProjectIds.has(project.id) ? (
                     <Link
                       href={`/projects/${project.id}/report`}
-                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                      className={getButtonClass('secondary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                     >
                       レポート
                     </Link>
@@ -356,7 +356,7 @@ export default async function ProjectsPage() {
                       projectId={project.id}
                       projectName={project.name || project.hp_url}
                       compact
-                      className={getButtonClass('secondary', 'text-xs px-3 min-h-[44px] flex items-center')}
+                      className={getButtonClass('secondary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                     />
                   ) : null}
                 </div>

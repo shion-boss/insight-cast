@@ -62,7 +62,7 @@ function ScoreCell({ value }: { value: number | null }) {
 }
 
 const selectClass =
-  'min-h-10 rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
+  'min-h-10 rounded-[var(--r-sm)] border-[1.5px] border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[13px] text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40'
 
 export function InterviewReviewsClient({
   rows,
@@ -96,8 +96,8 @@ export function InterviewReviewsClient({
   return (
     <section aria-labelledby="reviews-list-title">
       <div className="mb-3 flex items-center justify-between">
-        <h2 id="reviews-list-title" className="text-sm font-semibold text-[var(--text)]">レビュー一覧</h2>
-        <span className="text-xs text-[var(--text2)]">{filtered.length} / {rows.length} 件</span>
+        <h2 id="reviews-list-title" className="text-base font-semibold text-[var(--text)]">レビュー一覧</h2>
+        <span className="text-[13px] text-[var(--text2)]">{filtered.length} / {rows.length} 件</span>
       </div>
 
       {/* フィルタ */}
@@ -125,7 +125,7 @@ export function InterviewReviewsClient({
 
       {filtered.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text2)]">
+          <p className="text-base text-[var(--text2)]">
             {rows.length === 0 ? 'まだレビューがありません。' : '条件に合うレビューがありません。'}
           </p>
         </div>
@@ -140,7 +140,7 @@ export function InterviewReviewsClient({
 
           {/* PC: テーブル */}
           <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] lg:block">
-            <table className="w-full text-sm">
+            <table className="w-full text-base">
               <caption className="sr-only">取材レビュー一覧</caption>
               <thead>
                 <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -160,9 +160,9 @@ export function InterviewReviewsClient({
                   const last = i === filtered.length - 1
                   return (
                     <tr key={r.id} className={`align-top transition-colors hover:bg-[var(--bg2)] ${last ? '' : 'border-b border-[var(--border)]'}`}>
-                      <Td className="whitespace-nowrap text-xs text-[var(--text2)]">{formatDate(r.created_at)}</Td>
-                      <Td className="whitespace-nowrap text-xs text-[var(--text)]">{characterNameMap[r.interviewer_type] ?? r.interviewer_type}</Td>
-                      <Td className="max-w-[160px] truncate text-xs text-[var(--text2)]">{r.project_name ?? '—'}</Td>
+                      <Td className="whitespace-nowrap text-[13px] text-[var(--text2)]">{formatDate(r.created_at)}</Td>
+                      <Td className="whitespace-nowrap text-[13px] text-[var(--text)]">{characterNameMap[r.interviewer_type] ?? r.interviewer_type}</Td>
+                      <Td className="max-w-[160px] truncate text-[13px] text-[var(--text2)]">{r.project_name ?? '—'}</Td>
                       <Td>
                         <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${ROLE_COLORS[r.reviewer_role] ?? 'bg-[var(--bg2)] text-[var(--text2)]'}`}>
                           {ROLE_LABELS[r.reviewer_role] ?? r.reviewer_role}
@@ -202,9 +202,9 @@ function Td({ children, className = '', align = 'left' }: { children: React.Reac
 }
 
 function CommentCell({ good, improve }: { good: string | null; improve: string | null }) {
-  if (!good && !improve) return <span className="text-xs text-[var(--text3)]">—</span>
+  if (!good && !improve) return <span className="text-[13px] text-[var(--text3)]">—</span>
   return (
-    <div className="max-w-[420px] space-y-1.5 text-xs">
+    <div className="max-w-[420px] space-y-1.5 text-[13px]">
       {improve && (
         <div>
           <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>
@@ -230,9 +230,9 @@ function ReviewCard({ row, characterName }: { row: ReviewRow; characterName: str
         </span>
         <span className="text-[11px] text-[var(--text2)]">{formatDate(row.created_at)}</span>
       </div>
-      <p className="mb-2 text-sm font-semibold text-[var(--text)]">
+      <p className="mb-2 text-base font-semibold text-[var(--text)]">
         {characterName}
-        {row.project_name && <span className="ml-2 text-xs font-normal text-[var(--text2)]">/ {row.project_name}</span>}
+        {row.project_name && <span className="ml-2 text-[13px] font-normal text-[var(--text2)]">/ {row.project_name}</span>}
       </p>
       <div className="mb-3 grid grid-cols-4 gap-2 text-center">
         <ScoreBlock label="overall" value={row.overall_score} />
@@ -241,7 +241,7 @@ function ReviewCard({ row, characterName }: { row: ReviewRow; characterName: str
         <ScoreBlock label="楽しさ" value={row.enjoyment_score} />
       </div>
       {(row.improve_points || row.good_points) && (
-        <div className="space-y-1.5 border-t border-[var(--border)] pt-3 text-xs">
+        <div className="space-y-1.5 border-t border-[var(--border)] pt-3 text-[13px]">
           {row.improve_points && (
             <div>
               <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>

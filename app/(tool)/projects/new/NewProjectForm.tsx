@@ -23,7 +23,7 @@ function SubmitProjectButton({
     <PrimaryButton
       type="submit"
       disabled={pending || disabled}
-      className="w-full py-3 text-sm"
+      className="w-full py-3 text-base"
     >
       {pending ? 'プロジェクトを登録しています...' : 'プロジェクトを登録する'}
     </PrimaryButton>
@@ -55,7 +55,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
     <div className="max-w-2xl">
       <div className="mb-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--on-primary-container)]">まとめて登録</p>
-        <p className="mt-1 text-sm text-[var(--text2)]">この画面だけで、プロジェクトの基本情報と参考HPをまとめて登録できます。</p>
+        <p className="mt-1 text-base text-[var(--text2)]">この画面だけで、プロジェクトの基本情報と参考HPをまとめて登録できます。</p>
       </div>
 
       <div className="mb-7">
@@ -78,7 +78,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
       {errorMessage && (
         <div role="alert" className="mb-6 flex items-start gap-3 rounded-[var(--r-lg)] bg-[var(--warn-l)] px-4 py-3">
           <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-          <p className="text-sm leading-relaxed text-[var(--warn)]">{errorMessage}</p>
+          <p className="text-base leading-relaxed text-[var(--warn)]">{errorMessage}</p>
         </div>
       )}
 
@@ -137,7 +137,7 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
         {competitorIssue && (
           <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
             <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-[var(--err)]">{competitorIssue}</p>
+            <p className="text-base text-[var(--err)]">{competitorIssue}</p>
           </div>
         )}
 

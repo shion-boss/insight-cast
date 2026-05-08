@@ -332,8 +332,8 @@ export default async function PricingPage({
             <ul className="flex flex-col divide-y divide-[var(--border)] rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {guideChars.map((item) => (
                 <li key={item.plan} className="flex flex-col gap-1 px-5 py-3.5 sm:flex-row sm:items-baseline sm:gap-4">
-                  <span className="font-bold text-sm text-[var(--text)] sm:min-w-[110px] sm:flex-shrink-0">{item.plan}</span>
-                  <span className="text-sm text-[var(--text2)] leading-[1.7]">{item.desc}</span>
+                  <span className="font-bold text-base text-[var(--text)] sm:min-w-[110px] sm:flex-shrink-0">{item.plan}</span>
+                  <span className="text-base text-[var(--text2)] leading-[1.7]">{item.desc}</span>
                 </li>
               ))}
             </ul>
@@ -349,7 +349,7 @@ export default async function PricingPage({
                 <div className="flex-1">
                   <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">お試し — 無料・カード不要</div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[28px] font-bold text-[var(--text)] leading-none mb-1">¥0</div>
-                  <div className="text-sm text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
+                  <div className="text-base text-[var(--text2)] mb-5">まず体験してから、続けるか決めてください。</div>
                   <ul className="flex flex-wrap gap-x-6 gap-y-1.5">
                     {FREE_TRIAL_FEATURES.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-[13px] text-[var(--text2)]">
@@ -388,7 +388,7 @@ export default async function PricingPage({
                       <span aria-hidden="true">✦ </span>おすすめ
                     </div>
                   )}
-                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-sm font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>
+                  <div className="font-[family-name:var(--font-noto-serif-jp)] text-base font-bold text-[var(--text2)] tracking-[.1em] mb-1">{plan.name}</div>
                   <div className="text-[12px] text-[var(--text2)] mb-4 leading-[1.6]">{plan.catch}</div>
                   <div className="font-[family-name:var(--font-noto-serif-jp)] text-[44px] font-bold text-[var(--text)] leading-none mb-1">
                     <><sup className="text-[22px] align-super font-sans">¥</sup>{plan.price.toLocaleString()}<sub className="text-base text-[var(--text2)] font-sans font-normal">/月</sub></>
@@ -396,7 +396,7 @@ export default async function PricingPage({
                   <div className="text-[13px] text-[var(--text2)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
                   <div className="flex flex-col flex-1 mb-7">
                     {plan.features.map((feat, i) => (
-                      <div key={i} className="flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 text-[var(--text2)]">
+                      <div key={i} className="flex items-baseline gap-2.5 text-base py-2.5 border-b border-[var(--border)] last:border-b-0 text-[var(--text2)]">
                         <span aria-hidden="true" className="flex-shrink-0 font-bold text-[var(--teal)]">✓</span>
                         {feat}
                       </div>
@@ -452,10 +452,10 @@ export default async function PricingPage({
                 <tbody>
                   {TABLE_ROWS.map((row) => (
                     <tr key={row.label}>
-                      <td className="px-4 py-[13px] text-sm text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.lightning)}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{renderCellValue(row.personal)}</td>
-                      <td className="px-4 py-[13px] text-sm text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.business)}</td>
+                      <td className="px-4 py-[13px] text-base text-left font-medium text-[var(--text)] border-b border-[var(--border)]">{row.label}</td>
+                      <td className="px-4 py-[13px] text-base text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.lightning)}</td>
+                      <td className="px-4 py-[13px] text-base text-center border-b border-[var(--border)] bg-[var(--accent-l)] font-semibold text-[var(--text)]">{renderCellValue(row.personal)}</td>
+                      <td className="px-4 py-[13px] text-base text-center border-b border-[var(--border)] text-[var(--text2)]">{renderCellValue(row.business)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -520,11 +520,11 @@ export default async function PricingPage({
             <div className="mt-10 divide-y divide-[var(--border)] rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               {FAQS.map((faq, i) => (
                 <details key={i} className="group">
-                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)]">
+                  <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-base font-semibold text-[var(--text)] transition-colors hover:text-[var(--accent)]">
                     <span>{faq.q}</span>
                     <span aria-hidden="true" className="text-[var(--text2)] transition-transform group-open:rotate-180 flex-shrink-0">▾</span>
                   </summary>
-                  <div className="px-6 pb-5 text-sm text-[var(--text2)] leading-[1.85]">{faq.a}</div>
+                  <div className="px-6 pb-5 text-base text-[var(--text2)] leading-[1.85]">{faq.a}</div>
                 </details>
               ))}
             </div>

@@ -122,14 +122,14 @@ export default function CompetitorsForm({
     <form onSubmit={handleSaveOnly} className="space-y-6">
       <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6 space-y-3">
         <div>
-          <p className="text-xs text-[var(--text2)]">自社HP URL</p>
-          <p className="mt-1 break-all text-sm font-medium text-[var(--text2)]">{siteUrl}</p>
+          <p className="text-[13px] text-[var(--text2)]">自社HP URL</p>
+          <p className="mt-1 break-all text-base font-medium text-[var(--text2)]">{siteUrl}</p>
         </div>
-        <p className="text-xs leading-relaxed text-[var(--text2)]">
+        <p className="text-[13px] leading-relaxed text-[var(--text2)]">
           いま設定している参考HPは下の入力欄に入っています。空にして保存すると、比較なしで再調査します。
         </p>
         {initialCompetitorUrls.length === 0 && (
-          <p className="text-xs text-[var(--text2)]">
+          <p className="text-[13px] text-[var(--text2)]">
             まだ参考HPは登録されていません。おすすめから選ぶか、URLを入力して追加できます。
           </p>
         )}
@@ -152,7 +152,7 @@ export default function CompetitorsForm({
       {(competitorIssue || error) && (
         <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
           <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-[var(--err)]">{error ?? competitorIssue}</p>
+          <p className="text-base text-[var(--err)]">{error ?? competitorIssue}</p>
         </div>
       )}
 
@@ -160,16 +160,16 @@ export default function CompetitorsForm({
         <PrimaryButton
           type="submit"
           disabled={isBusy || !canSubmit}
-          className="w-full py-3 text-sm"
+          className="w-full py-3 text-base"
         >
           {submitState === 'saving' ? '保存しています...' : '保存する'}
         </PrimaryButton>
-        <DevAiLabel className="justify-center mb-1 text-xs opacity-60">HP調査</DevAiLabel>
+        <DevAiLabel className="justify-center mb-1 text-[13px] opacity-60">HP調査</DevAiLabel>
         <button
           type="button"
           disabled={isBusy || !canSubmit}
           onClick={handleSaveAndAnalyze}
-          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-sm font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-base font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {submitState === 'requesting' ? '再調査を依頼しています...' : '保存して再調査する'}
         </button>

@@ -95,7 +95,7 @@ export default async function BlogPage() {
             <div className="space-y-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text2)]">Categories</p>
-                <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+                <p className="mt-2 text-base leading-7 text-[var(--text2)]">
                   AI検索時代 / 一次情報 / AIキャスト / ホームページ更新 / 運営の舞台裏 の5つのテーマで読めます。
                 </p>
               </div>
@@ -106,7 +106,7 @@ export default async function BlogPage() {
                 ].map((item) => (
                   <div key={item.label} className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text2)]">{item.label}</p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text)]">{item.value}</p>
+                    <p className="mt-2 text-base font-semibold text-[var(--text)]">{item.value}</p>
                   </div>
                 ))}
               </div>
@@ -129,7 +129,7 @@ export default async function BlogPage() {
               <h2 className="mt-2 font-[family-name:var(--font-noto-serif-jp)] text-lg font-bold leading-snug text-[var(--text)] sm:text-xl">
                 初めて読む方へ
               </h2>
-              <p className="mt-2 text-sm leading-7 text-[var(--text2)]">
+              <p className="mt-2 text-base leading-7 text-[var(--text2)]">
                 Insight Cast がなぜ生まれて、どう作られていて、自社で何を試しているか——3本でつかめます。
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -146,7 +146,7 @@ export default async function BlogPage() {
                         <div className="relative h-7 w-7 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
                           <Image src={char.icon48} alt={char.name} fill sizes="28px" className="object-cover" />
                         </div>
-                        <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                        <span className="rounded-full px-2 py-0.5 text-[13px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                           {CATEGORY_LABELS[post.category]}
                         </span>
                       </div>
@@ -173,20 +173,20 @@ export default async function BlogPage() {
             <h2 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-xl font-bold leading-snug text-[var(--text)] sm:text-2xl">
               なぜ Insight Cast は、こういう記事を書くのか
             </h2>
-            <p className="mt-3 text-sm leading-7 text-[var(--text2)]">
+            <p className="mt-3 text-base leading-7 text-[var(--text2)]">
               ブログの背景にある考え方と、運営しているチームのことをまとめています。
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/philosophy"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-ground)] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-ground)] px-5 py-2.5 text-base font-semibold text-white transition-opacity hover:opacity-90"
               >
                 <span>AI時代の発信について</span>
                 <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2.5 text-base font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <span>Insight Cast について</span>
                 <span aria-hidden="true">→</span>

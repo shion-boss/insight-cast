@@ -81,18 +81,18 @@ export function ConversationBubbleEditor({
             >
               {/* 並べ替えコントロール */}
               <div className="flex flex-col items-center shrink-0 pt-1.5 gap-0">
-                <button type="button" onClick={() => { if (i === 0) return; const n = [...exchanges]; [n[i-1], n[i]] = [n[i], n[i-1]]; handleChange(n) }} disabled={i === 0} aria-label="上に移動" className="px-1 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▲</button>
+                <button type="button" onClick={() => { if (i === 0) return; const n = [...exchanges]; [n[i-1], n[i]] = [n[i], n[i-1]]; handleChange(n) }} disabled={i === 0} aria-label="上に移動" className="px-1 py-0.5 text-[13px] text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▲</button>
                 <span aria-label="ドラッグして並べ替え" className="cursor-grab active:cursor-grabbing px-1 py-1 text-[var(--text2)] hover:text-[var(--text2)] select-none" onMouseDown={() => { dragFromHandle.current = true }} onMouseUp={() => { dragFromHandle.current = false }}>
                   <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor"><circle cx="2" cy="2" r="1.3"/><circle cx="6" cy="2" r="1.3"/><circle cx="2" cy="6" r="1.3"/><circle cx="6" cy="6" r="1.3"/><circle cx="2" cy="10" r="1.3"/><circle cx="6" cy="10" r="1.3"/></svg>
                 </span>
-                <button type="button" onClick={() => { if (i === exchanges.length - 1) return; const n = [...exchanges]; [n[i], n[i+1]] = [n[i+1], n[i]]; handleChange(n) }} disabled={i === exchanges.length - 1} aria-label="下に移動" className="px-1 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▼</button>
+                <button type="button" onClick={() => { if (i === exchanges.length - 1) return; const n = [...exchanges]; [n[i], n[i+1]] = [n[i+1], n[i]]; handleChange(n) }} disabled={i === exchanges.length - 1} aria-label="下に移動" className="px-1 py-0.5 text-[13px] text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▼</button>
               </div>
               {/* バブル */}
               <div className={`flex flex-col flex-1 min-w-0 ${isInterviewer ? 'items-end' : 'items-start'}`}>
                 <textarea
                   value={e.content}
                   onChange={ev => handleChange(exchanges.map((ex, j) => j === i ? { ...ex, content: ev.target.value } : ex))}
-                  className="w-full max-w-[80%] resize-none px-3.5 py-2.5 text-sm leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                  className="w-full max-w-[80%] resize-none px-3.5 py-2.5 text-base leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   style={{
                     background: isInterviewer ? questionBg : answerBg,
                     borderRadius: isInterviewer ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
@@ -103,7 +103,7 @@ export function ConversationBubbleEditor({
                 />
               </div>
               {/* 削除 */}
-              <button type="button" onClick={() => setPendingDeleteIdx(i)} aria-label="この発言を削除" className={`mt-2 shrink-0 px-1 text-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded ${pendingDeleteIdx === i ? 'text-[var(--err)]' : 'text-[var(--text2)] hover:text-[var(--err)]'}`}>×</button>
+              <button type="button" onClick={() => setPendingDeleteIdx(i)} aria-label="この発言を削除" className={`mt-2 shrink-0 px-1 text-base transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded ${pendingDeleteIdx === i ? 'text-[var(--err)]' : 'text-[var(--text2)] hover:text-[var(--err)]'}`}>×</button>
             </div>
           </div>
         )

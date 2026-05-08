@@ -221,7 +221,7 @@ export default function AboutPage() {
                     )}
                   </div>
                   <span
-                    className="text-xs font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start text-[var(--on-primary-container)] border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]"
+                    className="text-[13px] font-bold tracking-[0.08em] rounded-[20px] px-2.5 py-0.5 border flex-shrink-0 self-start text-[var(--on-primary-container)] border-[color-mix(in_srgb,var(--accent)_30%,transparent)] bg-[color-mix(in_srgb,var(--accent)_6%,transparent)]"
                   >
                     {char.available ? '取材中' : '期間限定で取材中'}
                   </span>
@@ -304,7 +304,7 @@ export default function AboutPage() {
             <h2 className="mt-3 font-[family-name:var(--font-noto-serif-jp)] text-2xl font-bold leading-snug text-[var(--text)] sm:text-3xl">
               続きはこちらから
             </h2>
-            <p className="mt-4 text-sm leading-7 text-[var(--text2)]">
+            <p className="mt-4 text-base leading-7 text-[var(--text2)]">
               なぜ一次情報なのか、なぜインタビューなのか、なぜホームページの更新は止まるのか——
               <br className="hidden sm:block" />
               考え方を整理したページと、毎日更新しているブログを用意しています。
@@ -312,14 +312,14 @@ export default function AboutPage() {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/philosophy"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-ground)] px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-ground)] px-6 py-3 text-base font-semibold text-white transition-opacity hover:opacity-90"
               >
                 <span>AI時代の発信について読む</span>
                 <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href="/blog"
-                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-base font-semibold text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 <span>ブログを読む</span>
                 <span aria-hidden="true">→</span>

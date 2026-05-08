@@ -181,7 +181,7 @@ export default function CompetitorSelectionFields({
             placeholder="例: 地域密着の工務店、住宅リフォーム"
             maxLength={500}
           />
-          <p className="mt-1 text-xs text-[var(--text3)]">競合候補を探すときの手がかりに使います。</p>
+          <p className="mt-1 text-[13px] text-[var(--text3)]">競合候補を探すときの手がかりに使います。</p>
         </div>
         <div>
           <FieldLabel htmlFor="competitor-location">地域・商圏（任意）</FieldLabel>
@@ -199,8 +199,8 @@ export default function CompetitorSelectionFields({
 
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-sm font-medium text-[var(--text2)]">参考にするHPのおすすめ</h2>
-          <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">
+          <h2 className="text-base font-medium text-[var(--text2)]">参考にするHPのおすすめ</h2>
+          <p className="mt-1 text-[13px] leading-relaxed text-[var(--text3)]">
             自社HPと業界情報をもとに、似た相手のHPを5件ほど探します。比較することで、テーマの提案に役立てます。
           </p>
         </div>
@@ -208,13 +208,13 @@ export default function CompetitorSelectionFields({
           type="button"
           onClick={handleSuggestCompetitors}
           disabled={suggesting || !canSuggest}
-          className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-[13px] text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           {suggesting ? '候補を探しています...' : 'おすすめを見る'}
         </button>
       </div>
 
-      <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-xs text-[var(--text3)]">
+      <div className="rounded-xl bg-[var(--bg2)] px-4 py-3 text-[13px] text-[var(--text3)]">
         <div className="flex items-center justify-between gap-3">
           <span>{resolvedHelperText}</span>
           <span className="whitespace-nowrap font-medium text-[var(--text2)]">{chosenUrls.length}/{MAX_COMPETITORS}件</span>
@@ -222,7 +222,7 @@ export default function CompetitorSelectionFields({
       </div>
 
       {reachedMax && !overLimit && (
-        <p className="text-xs text-[var(--warn)]">
+        <p className="text-[13px] text-[var(--warn)]">
           競合は3件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
         </p>
       )}
@@ -230,12 +230,12 @@ export default function CompetitorSelectionFields({
       {validationIssue && (
         <div role="alert" className="flex items-start gap-3 rounded-lg bg-[var(--err-l)] px-3 py-2">
           <CharacterAvatar src={claus?.icon48} alt={`${claus?.name ?? 'クラウス'}のアイコン`} emoji={claus?.emoji} size={28} className="flex-shrink-0 mt-0.5" />
-          <p className="text-xs leading-relaxed text-[var(--err)]">{validationIssue}</p>
+          <p className="text-[13px] leading-relaxed text-[var(--err)]">{validationIssue}</p>
         </div>
       )}
 
       {!canSuggest && (
-        <p className="text-xs text-[var(--text3)]">
+        <p className="text-[13px] text-[var(--text3)]">
           おすすめを見るには、自社HP URL と業界情報の両方を入力してください。
         </p>
       )}
@@ -298,17 +298,17 @@ export default function CompetitorSelectionFields({
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className={`text-sm font-medium ${selected ? 'text-white' : 'text-[var(--text)]'}`}>
+                    <p className={`text-base font-medium ${selected ? 'text-white' : 'text-[var(--text)]'}`}>
                       {suggestion.name}
                     </p>
-                    <p className={`mt-1 truncate text-xs ${selected ? 'text-[rgba(255,255,255,0.7)]' : 'text-[var(--text3)]'}`}>
+                    <p className={`mt-1 truncate text-[13px] ${selected ? 'text-[rgba(255,255,255,0.7)]' : 'text-[var(--text3)]'}`}>
                       {normalizedUrl}
                     </p>
-                    <p className={`mt-3 text-sm leading-relaxed ${selected ? 'text-[rgba(255,255,255,0.55)]' : 'text-[var(--text3)]'}`}>
+                    <p className={`mt-3 text-base leading-relaxed ${selected ? 'text-[rgba(255,255,255,0.55)]' : 'text-[var(--text3)]'}`}>
                       {suggestion.summary}
                     </p>
                   </div>
-                  <span className={`rounded-full px-2 py-1 text-xs ${selected ? 'bg-white text-[var(--text)]' : 'bg-[var(--bg2)] text-[var(--text3)]'}`}>
+                  <span className={`rounded-full px-2 py-1 text-[13px] ${selected ? 'bg-white text-[var(--text)]' : 'bg-[var(--bg2)] text-[var(--text3)]'}`}>
                     {selected ? '選択中' : '選ぶ'}
                   </span>
                 </div>
@@ -320,8 +320,8 @@ export default function CompetitorSelectionFields({
 
       <div className="space-y-3 pt-2">
         <div>
-          <h3 className="text-xs font-medium text-[var(--text3)]">URLを直接入力する</h3>
-          <p className="mt-1 text-xs text-[var(--text3)]">参考にしたいHPのURLを知っていれば、そのまま入力できます。{MAX_COMPETITORS}件まで登録できます。</p>
+          <h3 className="text-[13px] font-medium text-[var(--text3)]">URLを直接入力する</h3>
+          <p className="mt-1 text-[13px] text-[var(--text3)]">参考にしたいHPのURLを知っていれば、そのまま入力できます。{MAX_COMPETITORS}件まで登録できます。</p>
         </div>
         {Array.from({ length: MANUAL_INPUT_COUNT }).map((_, index) => (
           <TextInput
@@ -339,7 +339,7 @@ export default function CompetitorSelectionFields({
 
       {chosenUrls.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-[var(--text3)]">いま登録されるHP</p>
+          <p className="text-[13px] font-medium text-[var(--text3)]">いま登録されるHP</p>
           <div className="flex flex-wrap gap-2">
             {chosenUrls.map((urlValue) => (
               <button
@@ -347,7 +347,7 @@ export default function CompetitorSelectionFields({
                 key={urlValue}
                 onClick={() => removeChosenUrl(urlValue)}
                 aria-label={`${urlValue} を外す`}
-                className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs ${
+                className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-[13px] ${
                   normalizeComparableUrl(urlValue) === normalizedSiteUrl
                     ? 'border-[var(--err)]/30 bg-[var(--err-l)] text-[var(--err)]'
                     : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text2)]'
@@ -358,7 +358,7 @@ export default function CompetitorSelectionFields({
               </button>
             ))}
           </div>
-          <p className="text-xs text-[var(--text3)]">チップを押すと、そのURLを外せます。</p>
+          <p className="text-[13px] text-[var(--text3)]">チップを押すと、そのURLを外せます。</p>
         </div>
       )}
 

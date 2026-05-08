@@ -116,20 +116,20 @@ function SignupForm() {
                 <span className="text-3xl flex-shrink-0" aria-hidden="true">{mint?.emoji ?? '📬'}</span>
               )}
               <div>
-                <p className="text-sm font-semibold text-[var(--text)] mb-1">メールを送りました</p>
-                <p className="text-sm text-[var(--text2)] leading-[1.75]">
+                <p className="text-base font-semibold text-[var(--text)] mb-1">メールを送りました</p>
+                <p className="text-base text-[var(--text2)] leading-[1.75]">
                   <strong className="font-semibold text-[var(--text)]">{email}</strong> 宛てに確認メールを送りました。
                   メールを開いてリンクをクリックしてください。
                   {plan ? ' リンクを開くと、そのままお申し込み画面に進めます。' : ''}
                 </p>
               </div>
             </div>
-            <p className="text-xs text-[var(--text3)] leading-relaxed mb-6">
+            <p className="text-[13px] text-[var(--text3)] leading-relaxed mb-6">
               メールが届かない場合は、迷惑メールフォルダをご確認ください。
             </p>
             <Link
               href="/auth/login"
-              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
+              className="text-base text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
             >
               ログイン画面へ
             </Link>
@@ -164,14 +164,14 @@ function SignupForm() {
               type="button"
               onClick={handleGoogleSignup}
               disabled={loading || googleLoading}
-              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-sm font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-base font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleに移動中...' : effectivePlan ? 'Googleアカウントで申し込む' : 'Googleで新規登録'}
             </button>
 
             <div className="flex items-center gap-3">
               <hr className="flex-1 border-[var(--border)]" />
-              <span className="text-xs text-[var(--text3)]">または</span>
+              <span className="text-[13px] text-[var(--text3)]">または</span>
               <hr className="flex-1 border-[var(--border)]" />
             </div>
 
@@ -219,14 +219,14 @@ function SignupForm() {
             {error && (
               <div id="signup-error" role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">
                 <CharacterAvatar src={mint?.icon48} alt="ミントのアイコン" emoji={mint?.emoji} size={32} className="flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--err)]">{error}</p>
+                <p className="text-base text-[var(--err)]">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-[13px] font-semibold text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? '登録中...' : effectivePlan ? 'アカウントを作成して申し込む' : '無料で始める'}
             </button>
@@ -288,7 +288,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
         <ul className="space-y-3 mb-auto">
           {perks.map((perk) => (
             <li key={perk} className="flex items-center gap-3">
-              <span aria-hidden="true" className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-white text-xs font-bold">
+              <span aria-hidden="true" className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-white text-[13px] font-bold">
                 ✓
               </span>
               <span className="text-[14px] text-white/90">{perk}</span>
@@ -323,7 +323,7 @@ function LeftPanel({ mint, claus, rain }: LeftPanelProps) {
               )
             ))}
           </div>
-          <span className="text-sm text-white/80">3名のキャストが待っています</span>
+          <span className="text-base text-white/80">3名のキャストが待っています</span>
         </div>
       </div>
     </div>

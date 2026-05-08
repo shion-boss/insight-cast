@@ -221,14 +221,14 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text)]">管理ダッシュボード</h1>
-          <p className="mt-1 text-sm text-[var(--text2)]">ブログ記事の管理・公開を行います</p>
+          <p className="mt-1 text-base text-[var(--text2)]">ブログ記事の管理・公開を行います</p>
         </div>
         <ButtonLink href="/admin/posts/new" className="self-start">新しい記事を書く</ButtonLink>
       </div>
 
       {/* サービス統計 */}
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--text2)]">サービス統計</h2>
+        <h2 className="mb-3 text-base font-bold uppercase tracking-[0.12em] text-[var(--text2)]">サービス統計</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {serviceCards.map((s) => (
             <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
@@ -244,7 +244,7 @@ export default async function AdminDashboardPage() {
           <div className="grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-4">
             {analysisStatuses.map((s) => (
               <div key={s.key} className="flex items-center justify-between gap-2">
-                <span className="text-xs text-[var(--text2)]">{s.label}</span>
+                <span className="text-[13px] text-[var(--text2)]">{s.label}</span>
                 <span className="font-semibold text-[var(--text)]">{s.n}</span>
               </div>
             ))}
@@ -254,14 +254,14 @@ export default async function AdminDashboardPage() {
 
       {/* ブログ統計 */}
       <section>
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--text2)]">ブログ記事</h2>
+        <h2 className="mb-3 text-base font-bold uppercase tracking-[0.12em] text-[var(--text2)]">ブログ記事</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {blogCards.map((s) => (
             <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">{s.l}</p>
               <p className="mt-2 text-3xl font-bold text-[var(--text)]">{s.n}</p>
               {s.sub && (
-                <p className={`mt-2 text-xs ${deltaToneClass(s.subTone ?? 'none')}`}>{s.sub}</p>
+                <p className={`mt-2 text-[13px] ${deltaToneClass(s.subTone ?? 'none')}`}>{s.sub}</p>
               )}
             </div>
           ))}
@@ -271,8 +271,8 @@ export default async function AdminDashboardPage() {
       {/* 自社サイト 検索流入（GSC 直近30日） */}
       <section>
         <div className="mb-3">
-          <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--text2)]">検索流入（直近30日）</h2>
-          <p className="mt-1 text-xs text-[var(--text2)]">
+          <h2 className="text-base font-bold uppercase tracking-[0.12em] text-[var(--text2)]">検索流入（直近30日）</h2>
+          <p className="mt-1 text-[13px] text-[var(--text2)]">
             Google 検索からの自社サイトへの流入。クエリ別の数字は次の取材テーマやタイトル改善のヒントに使えます。
           </p>
         </div>
@@ -284,7 +284,7 @@ export default async function AdminDashboardPage() {
                 <div key={s.l} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
                   <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">{s.l}</p>
                   <p className="mt-2 text-3xl font-bold text-[var(--text)]">{s.n}</p>
-                  {s.sub && <p className="mt-2 text-xs text-[var(--text2)]">{s.sub}</p>}
+                  {s.sub && <p className="mt-2 text-[13px] text-[var(--text2)]">{s.sub}</p>}
                 </div>
               ))}
             </div>
@@ -294,13 +294,13 @@ export default async function AdminDashboardPage() {
               <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                 <div className="px-5 py-3 border-b border-[var(--border)]">
                   <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">上位検索クエリ TOP10</p>
-                  <p className="mt-0.5 text-xs text-[var(--text2)]">クリック数の多い順。CTR が低いクエリはタイトル改善の候補。</p>
+                  <p className="mt-0.5 text-[13px] text-[var(--text2)]">クリック数の多い順。CTR が低いクエリはタイトル改善の候補。</p>
                 </div>
                 {owner.gsc!.topQueries.length === 0 ? (
-                  <div className="px-5 py-6 text-sm text-[var(--text2)]">直近30日のクエリデータなし</div>
+                  <div className="px-5 py-6 text-base text-[var(--text2)]">直近30日のクエリデータなし</div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full min-w-[460px] text-sm">
+                    <table className="w-full min-w-[460px] text-base">
                       <thead>
                         <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text2)] uppercase">
                           <th className="px-5 py-2 font-semibold">クエリ</th>
@@ -330,13 +330,13 @@ export default async function AdminDashboardPage() {
               <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                 <div className="px-5 py-3 border-b border-[var(--border)]">
                   <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">上位流入ページ TOP10</p>
-                  <p className="mt-0.5 text-xs text-[var(--text2)]">検索流入を多く受けているページ。読まれているテーマが見える。</p>
+                  <p className="mt-0.5 text-[13px] text-[var(--text2)]">検索流入を多く受けているページ。読まれているテーマが見える。</p>
                 </div>
                 {owner.gsc!.topPages.length === 0 ? (
-                  <div className="px-5 py-6 text-sm text-[var(--text2)]">直近30日のページデータなし</div>
+                  <div className="px-5 py-6 text-base text-[var(--text2)]">直近30日のページデータなし</div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full min-w-[460px] text-sm">
+                    <table className="w-full min-w-[460px] text-base">
                       <thead>
                         <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text2)] uppercase">
                           <th className="px-5 py-2 font-semibold">ページ</th>
@@ -369,12 +369,12 @@ export default async function AdminDashboardPage() {
             <div className="mt-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
               <div className="px-5 py-3 border-b border-[var(--border)]">
                 <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">記事ごとの検索キーワード（直近30日）</p>
-                <p className="mt-0.5 text-xs text-[var(--text2)]">各ブログ記事がどんな検索語で見つかっているか。次の取材テーマやリライトの判断材料に。</p>
+                <p className="mt-0.5 text-[13px] text-[var(--text2)]">各ブログ記事がどんな検索語で見つかっているか。次の取材テーマやリライトの判断材料に。</p>
               </div>
               {owner.blogArticleQueries === null ? (
-                <div className="px-5 py-6 text-sm text-[var(--text2)]">記事キーワードの取得に失敗しました。</div>
+                <div className="px-5 py-6 text-base text-[var(--text2)]">記事キーワードの取得に失敗しました。</div>
               ) : owner.blogArticleQueries.length === 0 ? (
-                <div className="px-5 py-6 text-sm text-[var(--text2)]">直近30日でブログ記事（/blog/ 配下）への検索流入は記録されていません。</div>
+                <div className="px-5 py-6 text-base text-[var(--text2)]">直近30日でブログ記事（/blog/ 配下）への検索流入は記録されていません。</div>
               ) : (
                 <div className="divide-y divide-[var(--border)]">
                   {owner.blogArticleQueries.map((article, i) => (
@@ -384,12 +384,12 @@ export default async function AdminDashboardPage() {
                           href={article.page}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm font-medium text-[var(--text)] hover:underline truncate flex-1 min-w-0"
+                          className="text-base font-medium text-[var(--text)] hover:underline truncate flex-1 min-w-0"
                           title={article.page}
                         >
                           {shortenPath(article.page)}
                         </a>
-                        <div className="text-xs text-[var(--text2)] tabular-nums whitespace-nowrap">
+                        <div className="text-[13px] text-[var(--text2)] tabular-nums whitespace-nowrap">
                           クリック {fmtNum(article.totalClicks)} / 表示 {fmtNum(article.totalImpressions)}
                         </div>
                       </div>
@@ -397,7 +397,7 @@ export default async function AdminDashboardPage() {
                         {article.queries.map((q, qi) => (
                           <div
                             key={`${q.query}-${qi}`}
-                            className="flex flex-col gap-0.5 text-xs sm:flex-row sm:items-center sm:gap-3"
+                            className="flex flex-col gap-0.5 text-[13px] sm:flex-row sm:items-center sm:gap-3"
                           >
                             <div className="flex min-w-0 items-start gap-2">
                               <span className="text-[var(--text2)] tabular-nums shrink-0">・</span>
@@ -420,10 +420,10 @@ export default async function AdminDashboardPage() {
               <div className="mt-6 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                 <div className="px-5 py-3 border-b border-[var(--border)]">
                   <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">よく読まれているページ TOP10（GA4 直近30日）</p>
-                  <p className="mt-0.5 text-xs text-[var(--text2)]">検索以外も含む全流入ベース。SNSや直接流入も含む。</p>
+                  <p className="mt-0.5 text-[13px] text-[var(--text2)]">検索以外も含む全流入ベース。SNSや直接流入も含む。</p>
                 </div>
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[420px] text-sm">
+                  <table className="w-full min-w-[420px] text-base">
                     <thead>
                       <tr className="text-left text-[11px] font-semibold tracking-[0.1em] text-[var(--text2)] uppercase">
                         <th className="px-5 py-2 font-semibold">ページ</th>
@@ -446,7 +446,7 @@ export default async function AdminDashboardPage() {
             )}
           </>
         ) : (
-          <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] px-5 py-6 text-sm text-[var(--text2)]">
+          <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] px-5 py-6 text-base text-[var(--text2)]">
             {ownerEmptyLabel}
           </div>
         )}
@@ -457,14 +457,14 @@ export default async function AdminDashboardPage() {
         <div>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold text-[var(--text)]">最近の記事</h2>
-            <Link href="/admin/posts" className="text-sm text-[var(--text2)] hover:text-[var(--text)] transition-colors">
+            <Link href="/admin/posts" className="text-base text-[var(--text2)] hover:text-[var(--text)] transition-colors">
               すべて見る <span aria-hidden="true">→</span>
             </Link>
           </div>
 
           {stats.recentPosts.length === 0 ? (
             <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-8 text-center">
-              <p className="text-sm text-[var(--text2)]">まだ記事がありません</p>
+              <p className="text-base text-[var(--text2)]">まだ記事がありません</p>
               <ButtonLink href="/admin/posts/new" className="mt-4 inline-flex">
                 最初の記事を書く
               </ButtonLink>
@@ -479,8 +479,8 @@ export default async function AdminDashboardPage() {
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--text)]">{post.title}</p>
-                    <p className="mt-0.5 text-xs text-[var(--text2)]">{formatDate(post.date)}</p>
+                    <p className="truncate text-base font-medium text-[var(--text)]">{post.title}</p>
+                    <p className="mt-0.5 text-[13px] text-[var(--text2)]">{formatDate(post.date)}</p>
                   </div>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
@@ -493,7 +493,7 @@ export default async function AdminDashboardPage() {
                   </span>
                   <Link
                     href={`/admin/posts/${post.id}/edit`}
-                    className="shrink-0 rounded-[var(--r-sm)] px-3 py-1.5 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                    className="shrink-0 rounded-[var(--r-sm)] px-3 py-1.5 text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                   >
                     編集
                   </Link>
@@ -505,32 +505,32 @@ export default async function AdminDashboardPage() {
 
         {/* サイド情報 */}
         <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 h-fit">
-          <h3 className="font-bold text-[var(--text)] text-sm mb-4">クイックアクション</h3>
+          <h3 className="font-bold text-[var(--text)] text-base mb-4">クイックアクション</h3>
           <div className="space-y-2">
             <ButtonLink href="/admin/posts/new" className="w-full justify-center">
               + 新しい記事を書く
             </ButtonLink>
             <Link
               href="/admin/users"
-              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               ユーザー一覧を見る
             </Link>
             <Link
               href="/admin/cast-talk"
-              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               Cast Talk 管理
             </Link>
             <Link
               href="/admin/costs"
-              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               コスト管理
             </Link>
             <Link
               href="/"
-              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+              className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
             >
               公開サイトを確認 <span aria-hidden="true">→</span>
             </Link>

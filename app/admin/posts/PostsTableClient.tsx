@@ -112,14 +112,14 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
         />
       )}
       {errorMsg && (
-        <div role="alert" className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-sm text-[var(--err)]">
+        <div role="alert" className="mb-4 flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3 text-base text-[var(--err)]">
           <span className="mt-0.5 shrink-0">⚠</span>
           <div>
             <p>{errorMsg}</p>
             <button
               type="button"
               onClick={() => setErrorMsg(null)}
-              className="mt-0.5 text-xs underline opacity-70 hover:opacity-100 transition-opacity"
+              className="mt-0.5 text-[13px] underline opacity-70 hover:opacity-100 transition-opacity"
             >
               閉じる
             </button>
@@ -128,7 +128,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
       )}
       {rows.length === 0 ? (
         <div className="rounded-[var(--r-lg)] border border-dashed border-[var(--border2)] bg-[var(--surface)] p-12 text-center">
-          <p className="text-sm text-[var(--text2)]">記事がありません</p>
+          <p className="text-base text-[var(--text2)]">記事がありません</p>
         </div>
       ) : (
       <>
@@ -141,11 +141,11 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                   <p className="line-clamp-2 font-semibold text-[var(--text)]">{post.title}</p>
                   <p className="text-[11px] text-[var(--text2)]">/{post.slug}</p>
                 </div>
-                <span className={`shrink-0 text-xs font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
+                <span className={`shrink-0 text-[13px] font-semibold ${post.published ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                   {post.published ? '公開中' : '下書き'}
                 </span>
               </div>
-              <div className="mb-3 flex flex-wrap gap-2 text-xs text-[var(--text2)]">
+              <div className="mb-3 flex flex-wrap gap-2 text-[13px] text-[var(--text2)]">
                 <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium">
                   {CATEGORY_LABELS[post.category] ?? post.category}
                 </span>
@@ -159,7 +159,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                 />
                 <Link
                   href={`/admin/posts/${post.id}/edit`}
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-xs font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--border)] px-4 py-2 text-[13px] font-medium text-[var(--text2)] transition-colors hover:bg-[var(--bg2)] hover:text-[var(--text)]"
                 >
                   編集
                 </Link>
@@ -168,7 +168,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     href={`/blog/${post.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--accent)] px-4 py-2 text-xs font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
+                    className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--accent)] px-4 py-2 text-[13px] font-medium text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent-l)] whitespace-nowrap"
                   >
                     公開ページ ↗
                   </Link>
@@ -177,7 +177,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                   type="button"
                   onClick={() => handleDeleteRequest(post)}
                   disabled={deletingId === post.id}
-                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
+                  className="inline-flex min-h-[44px] items-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-4 py-2 text-[13px] font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                 >
                   {deletingId === post.id ? '削除中...' : '削除'}
                 </button>
@@ -188,7 +188,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
 
         {/* PC: テーブル */}
         <div className="hidden overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] sm:block">
-          <table className="w-full text-sm">
+          <table className="w-full text-base">
             <caption className="sr-only">ブログ記事一覧</caption>
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg2)]">
@@ -214,7 +214,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                       {CATEGORY_LABELS[post.category] ?? post.category}
                     </span>
                   </td>
-                  <td className="px-4 py-4 text-[var(--text2)] whitespace-nowrap text-xs">
+                  <td className="px-4 py-4 text-[var(--text2)] whitespace-nowrap text-[13px]">
                     {formatDate(post.date)}
                   </td>
                   <td className="px-4 py-4">
@@ -233,7 +233,7 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                     <div className="inline-flex items-center justify-end gap-2">
                       <Link
                         href={`/admin/posts/${post.id}/edit`}
-                        className="inline-block w-24 text-center text-xs font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors"
+                        className="inline-block w-24 text-center text-[13px] font-medium text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-2.5 py-1.5 hover:bg-[var(--bg2)] transition-colors"
                       >
                         編集
                       </Link>
@@ -242,18 +242,18 @@ export function PostsTableClient({ posts }: { posts: PostRow[] }) {
                           href={`/blog/${post.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block w-24 text-center text-xs font-medium text-[var(--on-primary-container)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
+                          className="inline-block w-24 text-center text-[13px] font-medium text-[var(--on-primary-container)] hover:bg-[var(--accent-l)] rounded-[var(--r-sm)] px-2.5 py-1.5 transition-colors"
                         >
                           公開ページ ↗
                         </Link>
                       ) : (
-                        <span className="inline-block w-24 px-2.5 py-1.5 text-xs" />
+                        <span className="inline-block w-24 px-2.5 py-1.5 text-[13px]" />
                       )}
                       <button
                         type="button"
                         onClick={() => handleDeleteRequest(post)}
                         disabled={deletingId === post.id}
-                        className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-2.5 py-1.5 text-xs font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-block w-16 text-center rounded-[var(--r-sm)] border border-[var(--error)]/30 px-2.5 py-1.5 text-[13px] font-medium text-[var(--error)] transition-colors hover:bg-[var(--error-container)] hover:text-[var(--error)] disabled:pointer-events-none disabled:opacity-50"
                       >
                         {deletingId === post.id ? '削除中...' : '削除'}
                       </button>

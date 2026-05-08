@@ -20,7 +20,7 @@ type Props = {
 }
 
 function selectClassName() {
-  return 'w-full min-h-11 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)]'
+  return 'w-full min-h-11 rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)]'
 }
 
 function FilterContent({
@@ -172,7 +172,7 @@ function FilterContent({
           </div>
         </div>
 
-        <div className="mt-4 flex flex-col gap-3 text-sm text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 flex flex-col gap-3 text-base text-[var(--text2)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             {totalCount} 件
             {hasMore && <span className="ml-1.5">（{visibleItems.length} 件表示中）</span>}
@@ -187,7 +187,7 @@ function FilterContent({
                 setStatus('all')
                 startTransition(() => router.push('?'))
               }}
-              className={getButtonClass('secondary', 'px-3 py-2 text-xs')}
+              className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
             >
               絞り込みを解除
             </button>
@@ -200,7 +200,7 @@ function FilterContent({
       {visibleItems.length === 0 ? (
         <section className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
           <p className="text-lg font-bold text-[var(--text)]">条件に合う取材メモが見つかりません。</p>
-          <p className="mt-2 text-sm text-[var(--text2)]">絞り込み条件を変えると、取材メモが表示されます。</p>
+          <p className="mt-2 text-base text-[var(--text2)]">絞り込み条件を変えると、取材メモが表示されます。</p>
         </section>
       ) : (
         <>

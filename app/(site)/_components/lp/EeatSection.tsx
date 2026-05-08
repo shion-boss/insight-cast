@@ -35,7 +35,7 @@ export function EeatSection() {
                     <span className="w-9 flex-shrink-0 font-[family-name:var(--font-noto-serif-jp)] font-bold leading-none" style={{ fontSize: '32px', color: 'var(--accent)' }}>{row.letter}</span>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[13px] font-bold leading-none text-[var(--text)]">{row.ja}</span>
-                      <span className="text-xs tracking-[0.06em]" style={{ color: 'var(--on-surface-variant)' }}>{row.en}</span>
+                      <span className="text-[13px] tracking-[0.06em]" style={{ color: 'var(--on-surface-variant)' }}>{row.en}</span>
                     </div>
                   </div>
                 </td>
@@ -57,7 +57,7 @@ export function EeatSection() {
           </tbody>
         </table>
         <div className="mt-2 flex justify-end">
-          <p className="text-xs text-[var(--text2)] leading-[1.7]">
+          <p className="text-[13px] text-[var(--text2)] leading-[1.7]">
             参考：<a href="https://developers.google.com/search/blog/2023/02/google-search-and-ai-content" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-[var(--accent)] transition-colors">Google Search&apos;s guidance about AI-generated content（Google Search Central）</a>
           </p>
         </div>

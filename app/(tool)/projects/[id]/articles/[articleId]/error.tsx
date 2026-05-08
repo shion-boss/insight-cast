@@ -34,13 +34,13 @@ export default function ArticleDetailError({
             <button
               type="button"
               onClick={reset}
-              className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+              className={getButtonClass('primary', 'px-6 py-3 text-base')}
             >
               もう一度試す
             </button>
             <Link
               href="/articles"
-              className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+              className={getButtonClass('secondary', 'px-6 py-3 text-base')}
             >
               記事一覧へ戻る
             </Link>

@@ -35,7 +35,7 @@ export function InterviewStep() {
                 '取材後、記事づくりに進める',
               ].map((text) => (
                 <li key={text} className="flex items-start gap-3 text-[14px] text-[var(--text2)] leading-[1.7]">
-                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--on-primary-container)] text-xs font-bold">✓</span>
+                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--on-primary-container)] text-[13px] font-bold">✓</span>
                   {text}
                 </li>
               ))}
@@ -52,14 +52,14 @@ export function InterviewStep() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
-                  <span className="text-xs text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
+                  <span className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
                   <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
                 </div>
               </Link>
             ))}
           </DraggableScrollRow>
           <div className="mt-5">
-            <Link href="/cast" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
+            <Link href="/cast" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-base font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
               キャストをすべて見る <span aria-hidden="true">→</span>
             </Link>
           </div>

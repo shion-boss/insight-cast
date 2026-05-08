@@ -34,13 +34,13 @@ export default function InterviewsError({
           <button
             type="button"
             onClick={reset}
-            className={getButtonClass('primary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('primary', 'px-6 py-3 text-base')}
           >
             もう一度試す
           </button>
           <Link
             href="/dashboard"
-            className={getButtonClass('secondary', 'px-6 py-3 text-sm')}
+            className={getButtonClass('secondary', 'px-6 py-3 text-base')}
           >
             ダッシュボードへ
           </Link>

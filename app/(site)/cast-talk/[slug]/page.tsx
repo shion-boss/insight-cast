@@ -175,11 +175,11 @@ export default async function CastTalkDetailPage({
             </h1>
 
             {talk.summary && (
-              <p className="mt-3 text-sm leading-7 text-[var(--text2)] sm:mt-4 sm:text-base sm:leading-8">{talk.summary}</p>
+              <p className="mt-3 text-base leading-7 text-[var(--text2)] sm:mt-4 sm:text-base sm:leading-8">{talk.summary}</p>
             )}
 
             {talk.published_at && (
-              <p className="mt-3 text-sm text-[var(--text2)]">{formatDate(talk.published_at)}</p>
+              <p className="mt-3 text-base text-[var(--text2)]">{formatDate(talk.published_at)}</p>
             )}
 
             {/* ストーリー画像 */}
@@ -213,7 +213,7 @@ export default async function CastTalkDetailPage({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span className="font-semibold text-[var(--text)]">{char.name}</span>
-                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-[var(--on-primary-container)]">
+                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[13px] font-semibold tracking-wide text-[var(--on-primary-container)]">
                           {char.label}
                         </span>
                       </div>
@@ -254,7 +254,7 @@ export default async function CastTalkDetailPage({
                 <p className="font-semibold text-[var(--text)]">
                   {interviewer?.name ?? 'キャスト'}に取材してもらう
                 </p>
-                <p className="mt-0.5 text-sm text-[var(--text2)]">
+                <p className="mt-0.5 text-base text-[var(--text2)]">
                   あなたの事業の当たり前を、{interviewer?.name ?? 'キャスト'}が引き出します。
                 </p>
               </div>
@@ -270,7 +270,7 @@ export default async function CastTalkDetailPage({
           <div className="mx-auto max-w-3xl px-6 py-8 sm:px-8">
             <Link
               href={backHref}
-              className="group flex items-center gap-2 text-sm text-[var(--text2)] transition-colors hover:text-[var(--text)] rounded"
+              className="group flex items-center gap-2 text-base text-[var(--text2)] transition-colors hover:text-[var(--text)] rounded"
             >
               <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
               <span>キャスト対談の記事一覧へ</span>

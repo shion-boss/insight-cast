@@ -134,7 +134,7 @@ export default async function AdminCostsPage() {
       <Breadcrumb items={[{ label: '管理', href: '/admin' }, { label: 'コスト管理' }]} />
       <div>
         <h1 className="text-2xl font-bold text-[var(--text)]">コスト管理</h1>
-        <p className="mt-1 text-sm text-[var(--text2)]">
+        <p className="mt-1 text-base text-[var(--text2)]">
           {now.getFullYear()}年{now.getMonth() + 1}月 — AI API利用料・固定費の確認
         </p>
       </div>
@@ -149,7 +149,7 @@ export default async function AdminCostsPage() {
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
             <p className="text-xs font-semibold tracking-[0.14em] text-[var(--text2)] uppercase">今月トークン数</p>
             <p className="mt-2 text-2xl font-bold text-[var(--text)]">{currentTokens.toLocaleString()}</p>
-            <p className="mt-0.5 text-xs text-[var(--text2)]">tokens</p>
+            <p className="mt-0.5 text-[13px] text-[var(--text2)]">tokens</p>
           </div>
         </div>
       </section>
@@ -161,7 +161,7 @@ export default async function AdminCostsPage() {
       <section>
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">機能別内訳（今月）</h2>
         {byRouteList.length === 0 ? (
-          <p className="text-sm text-[var(--text2)]">まだデータがありません</p>
+          <p className="text-base text-[var(--text2)]">まだデータがありません</p>
         ) : (
           <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
             {byRouteList.map((row, i) => (
@@ -170,10 +170,10 @@ export default async function AdminCostsPage() {
                 className={`flex items-center gap-4 px-5 py-3.5 ${i < byRouteList.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--text)]">{ROUTE_LABELS[row.route] ?? row.route}</p>
-                  <p className="text-xs text-[var(--text2)]">{row.calls}回</p>
+                  <p className="text-base font-medium text-[var(--text)]">{ROUTE_LABELS[row.route] ?? row.route}</p>
+                  <p className="text-[13px] text-[var(--text2)]">{row.calls}回</p>
                 </div>
-                <CostValue usd={row.cost} className="text-sm font-semibold text-[var(--text)]" />
+                <CostValue usd={row.cost} className="text-base font-semibold text-[var(--text)]" />
               </div>
             ))}
           </div>
@@ -190,23 +190,23 @@ export default async function AdminCostsPage() {
               className={`flex items-center gap-4 px-5 py-3.5 ${i < FIXED_COSTS.length - 1 ? 'border-b border-[var(--border)]' : ''}`}
             >
               <div className="flex-1">
-                <p className="text-sm font-medium text-[var(--text)]">{row.label}</p>
-                <p className="text-xs text-[var(--text2)]">{row.plan}</p>
+                <p className="text-base font-medium text-[var(--text)]">{row.label}</p>
+                <p className="text-[13px] text-[var(--text2)]">{row.plan}</p>
               </div>
               {row.usd === null
-                ? <p className="text-sm font-semibold text-[var(--text)]">要確認</p>
+                ? <p className="text-base font-semibold text-[var(--text)]">要確認</p>
                 : row.usd === 0
-                  ? <p className="text-sm font-semibold text-[var(--ok)]">無料</p>
-                  : <CostValue usd={row.usd} className="text-sm font-semibold text-[var(--text)]" />
+                  ? <p className="text-base font-semibold text-[var(--ok)]">無料</p>
+                  : <CostValue usd={row.usd} className="text-base font-semibold text-[var(--text)]" />
               }
             </div>
           ))}
           <div className="flex items-center gap-4 border-t border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
-            <p className="flex-1 text-sm font-bold text-[var(--text)]">固定費合計（概算）</p>
-            <CostValue usd={FIXED_COST_TOTAL} className="text-sm font-bold text-[var(--text)]" />
+            <p className="flex-1 text-base font-bold text-[var(--text)]">固定費合計（概算）</p>
+            <CostValue usd={FIXED_COST_TOTAL} className="text-base font-bold text-[var(--text)]" />
           </div>
         </div>
-        <p className="mt-2 text-xs text-[var(--text2)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
+        <p className="mt-2 text-[13px] text-[var(--text2)]">Supabase/Vercelは無料枠を超えると課金が発生します。</p>
       </section>
 
       {/* HP運用コスト（管理者） */}
@@ -214,23 +214,23 @@ export default async function AdminCostsPage() {
         <h2 className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--text2)]">ホームページ運用費（今月・管理者操作 + 自動実行）</h2>
         <div className="group overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
           <div className="flex items-center gap-4 border-b border-[var(--border)] bg-[var(--bg2)] px-5 py-3.5">
-            <p className="flex-1 text-sm font-bold text-[var(--text)]">合計</p>
-            <CostValue usd={blogCost} className="text-sm font-bold text-[var(--text)]" />
+            <p className="flex-1 text-base font-bold text-[var(--text)]">合計</p>
+            <CostValue usd={blogCost} className="text-base font-bold text-[var(--text)]" />
           </div>
           {Object.entries(blogByRoute).map(([route, { calls, cost }]) => (
             <div key={route} className="flex items-center gap-4 border-b border-[var(--border)] px-5 py-3 last:border-0">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
-                <p className="text-xs text-[var(--text2)]">{calls}回</p>
+                <p className="text-base text-[var(--text2)]">{ROUTE_LABELS[route] ?? route}</p>
+                <p className="text-[13px] text-[var(--text2)]">{calls}回</p>
               </div>
-              <CostValue usd={cost} className="text-sm font-semibold text-[var(--text)]" />
+              <CostValue usd={cost} className="text-base font-semibold text-[var(--text)]" />
             </div>
           ))}
           {Object.keys(blogByRoute).length === 0 && (
-            <p className="px-5 py-4 text-sm text-[var(--text2)]">まだデータがありません</p>
+            <p className="px-5 py-4 text-base text-[var(--text2)]">まだデータがありません</p>
           )}
         </div>
-        <p className="mt-2 text-xs text-[var(--text2)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
+        <p className="mt-2 text-[13px] text-[var(--text2)]">HP分析・インタビュー・記事生成の合計。自社HPを Insight Cast で運用するためにかかったAI費用です。</p>
       </section>
 
       {/* 月別推移 */}
@@ -246,11 +246,11 @@ export default async function AdminCostsPage() {
                 const label = `${y}/${mo}`
                 return (
                   <div key={m.month} className="group flex items-center gap-3 cursor-default">
-                    <span className="w-16 shrink-0 text-xs text-[var(--text2)]">{label}</span>
+                    <span className="w-16 shrink-0 text-[13px] text-[var(--text2)]">{label}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
-                    <CostValue usd={m.cost} className="w-16 text-right text-xs font-medium text-[var(--text)]" />
+                    <CostValue usd={m.cost} className="w-16 text-right text-[13px] font-medium text-[var(--text)]" />
                   </div>
                 )
               })
@@ -270,11 +270,11 @@ export default async function AdminCostsPage() {
                 const pct = Math.round((d.cost / maxCost) * 100)
                 return (
                   <div key={d.day} className="group flex items-center gap-3 cursor-default">
-                    <span className="w-24 shrink-0 text-xs text-[var(--text2)]">{d.day}</span>
+                    <span className="w-24 shrink-0 text-[13px] text-[var(--text2)]">{d.day}</span>
                     <div className="flex-1 h-2 rounded-full bg-[var(--bg2)] overflow-hidden">
                       <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${pct}%` }} />
                     </div>
-                    <CostValue usd={d.cost} className="w-16 text-right text-xs font-medium text-[var(--text)]" />
+                    <CostValue usd={d.cost} className="w-16 text-right text-[13px] font-medium text-[var(--text)]" />
                   </div>
                 )
               })}
@@ -283,7 +283,7 @@ export default async function AdminCostsPage() {
         </section>
       )}
 
-      <div className="text-xs text-[var(--text2)]">
+      <div className="text-[13px] text-[var(--text2)]">
         <p>* AI API費用は claude-sonnet-4-6 の公開レート（$3/M input, $15/M output）で計算しています。</p>
         <p>* 為替レートは概算 1 USD = {EXCHANGE_RATE} JPY です。</p>
         <p>* ログが取れるのはこの機能実装以降の利用分からです。</p>

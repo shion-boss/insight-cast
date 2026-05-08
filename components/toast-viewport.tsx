@@ -67,15 +67,15 @@ export default function ToastViewport() {
                 className="flex-shrink-0 mt-0.5"
               />
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[var(--text)]">{toast.title}</p>
+                <p className="text-base font-medium text-[var(--text)]">{toast.title}</p>
                 {toast.description && (
-                  <p className="mt-1 text-sm leading-relaxed text-[var(--text3)]">{toast.description}</p>
+                  <p className="mt-1 text-base leading-relaxed text-[var(--text3)]">{toast.description}</p>
                 )}
                 {toast.onUndo && (
                   <button
                     type="button"
                     onClick={() => { void toast.onUndo?.() }}
-                    className="mt-3 inline-flex rounded-md text-sm font-medium text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
+                    className="mt-3 inline-flex rounded-md text-base font-medium text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
                   >
                     {toast.undoLabel ?? '元に戻す'}
                   </button>
@@ -84,7 +84,7 @@ export default function ToastViewport() {
                   <Link
                     href={toast.href}
                     prefetch={false}
-                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                    className="mt-3 inline-flex items-center gap-1 rounded-full bg-[var(--accent)] px-3 py-1.5 text-[13px] font-semibold text-white transition-colors hover:bg-[var(--accent-h)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   >
                     {toast.hrefLabel ?? '開く'} <span aria-hidden="true">→</span>
                   </Link>

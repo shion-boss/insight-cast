@@ -13,13 +13,13 @@ export default function OfflinePage() {
         <div className="text-5xl select-none">📡</div>
         <div className="space-y-2">
           <h1 className="text-xl font-bold text-[var(--text)]">オフラインです</h1>
-          <p className="text-sm text-[var(--text2)] leading-relaxed">
+          <p className="text-base text-[var(--text2)] leading-relaxed">
             インターネット接続を確認して、もう一度お試しください。
           </p>
         </div>
         <Link
           href="/"
-          className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+          className="inline-flex items-center justify-center rounded-full bg-[var(--accent)] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
         >
           トップページへ
         </Link>

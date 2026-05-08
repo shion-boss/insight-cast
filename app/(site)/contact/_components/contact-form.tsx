@@ -144,7 +144,7 @@ export function ContactForm() {
           aria-describedby={fieldErrors.name ? 'err-name' : undefined}
         />
         {fieldErrors.name && (
-          <p id="err-name" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.name}</p>
+          <p id="err-name" role="alert" className="mt-1 text-[13px] text-[var(--err)]">{fieldErrors.name}</p>
         )}
       </div>
 
@@ -162,7 +162,7 @@ export function ContactForm() {
           aria-describedby={fieldErrors.email ? 'err-email' : undefined}
         />
         {fieldErrors.email && (
-          <p id="err-email" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.email}</p>
+          <p id="err-email" role="alert" className="mt-1 text-[13px] text-[var(--err)]">{fieldErrors.email}</p>
         )}
       </div>
 
@@ -173,7 +173,7 @@ export function ContactForm() {
           id="contact-referral"
           value={referralSource}
           onChange={(e) => setReferralSource(e.target.value)}
-          className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)]"
+          className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)]"
         >
           <option value="">選択してください（任意）</option>
           <option value="search">検索（Google など）</option>
@@ -221,11 +221,11 @@ export function ContactForm() {
           aria-invalid={!!fieldErrors.message}
           aria-describedby={fieldErrors.message ? 'err-message' : undefined}
           className={cx(
-            'min-h-[120px] w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)] resize-y',
+            'min-h-[120px] w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 placeholder:text-[var(--text3)] hover:border-[var(--border2)] focus-visible:border-[var(--accent)] resize-y',
           )}
         />
         {fieldErrors.message && (
-          <p id="err-message" role="alert" className="mt-1 text-xs text-[var(--err)]">{fieldErrors.message}</p>
+          <p id="err-message" role="alert" className="mt-1 text-[13px] text-[var(--err)]">{fieldErrors.message}</p>
         )}
       </div>
 
@@ -238,7 +238,7 @@ export function ContactForm() {
             emoji={mint?.emoji}
             size={32}
           />
-          <p className="text-sm text-[var(--text2)]">
+          <p className="text-base text-[var(--text2)]">
             {serverMessage || '送信できませんでした。時間をおいて再度お試しください。'}
           </p>
         </div>

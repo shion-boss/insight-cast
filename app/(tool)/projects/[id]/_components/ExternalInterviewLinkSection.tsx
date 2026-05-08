@@ -147,17 +147,17 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
         取材リンク
       </h2>
 
-      <p className="text-sm text-[var(--text2)] mb-4">
+      <p className="text-base text-[var(--text2)] mb-4">
         リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。
       </p>
 
       {/* 発行フォーム */}
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 mb-4">
-        <p className="text-sm font-semibold text-[var(--text)] mb-4">新しいリンクを発行する</p>
+        <p className="text-base font-semibold text-[var(--text)] mb-4">新しいリンクを発行する</p>
         <form onSubmit={handleIssue} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="ext-interviewer-type" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
+              <label htmlFor="ext-interviewer-type" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
                 インタビュアー
               </label>
               <select
@@ -165,7 +165,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 value={interviewerType}
                 onChange={(e) => setInterviewerType(e.target.value)}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
               >
                 {INTERVIEWER_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -173,7 +173,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
               </select>
             </div>
             <div>
-              <label htmlFor="ext-theme" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
+              <label htmlFor="ext-theme" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
                 テーマ <span className="text-[var(--err)]">*</span>
               </label>
               <input
@@ -185,13 +185,13 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 required
                 maxLength={200}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="ext-target-name" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
+              <label htmlFor="ext-target-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
                 相手の名前（任意）
               </label>
               <input
@@ -202,12 +202,12 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 placeholder="例: 山田"
                 maxLength={100}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
-              <p className="mt-1.5 text-xs text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
+              <p className="mt-1.5 text-[13px] text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
             </div>
             <div>
-              <label htmlFor="ext-target-industry" className="block text-xs font-medium text-[var(--text2)] mb-1.5">
+              <label htmlFor="ext-target-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
                 相手の業種（任意）
               </label>
               <input
@@ -218,7 +218,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 placeholder="例: 飲食業"
                 maxLength={100}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
               />
             </div>
           </div>
@@ -226,14 +226,14 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
             <button
               type="submit"
               disabled={issuing || !theme.trim()}
-              className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+              className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
             >
               {issuing ? '発行中...' : 'リンクを発行する'}
             </button>
           </div>
           {issueMessage && (
             <p
-              className={`text-sm ${issueMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
+              className={`text-base ${issueMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
               role="status"
               aria-live="polite"
             >
@@ -246,11 +246,11 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
       {/* 発行済みリンク一覧 */}
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
         {loadingList ? (
-          <div className="p-6 text-sm text-[var(--text2)] text-center">読み込み中...</div>
+          <div className="p-6 text-base text-[var(--text2)] text-center">読み込み中...</div>
         ) : listError ? (
-          <div className="p-6 text-sm text-[var(--err)]">{listError}</div>
+          <div className="p-6 text-base text-[var(--err)]">{listError}</div>
         ) : links.length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-[var(--text2)]">
+          <div className="px-5 py-8 text-center text-base text-[var(--text2)]">
             まだリンクがありません。上のフォームから発行できます。
           </div>
         ) : (
@@ -271,7 +271,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                     className="flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text)] truncate">{link.theme}</p>
+                    <p className="text-base font-medium text-[var(--text)] truncate">{link.theme}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[11px] text-[var(--text2)]">
                         {link.use_count} / {link.max_use_count} 回使用
@@ -292,7 +292,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                       onClick={() => handleCopy(link.token)}
                       disabled={isExpired}
                       aria-label={`${link.theme}のリンクをコピー`}
-                      className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
+                      className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
                     >
                       {copiedToken === link.token ? 'コピー済み' : 'リンクをコピー'}
                     </button>
@@ -301,7 +301,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                         type="button"
                         onClick={() => setConfirmDeactivate({ token: link.token, theme: link.theme })}
                         aria-label={`${link.theme}のリンクを無効化`}
-                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
+                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
                       >
                         無効化
                       </button>

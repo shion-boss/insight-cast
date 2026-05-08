@@ -69,13 +69,13 @@ export default async function InvitePage({
           )}
         </div>
         <h1 className="text-xl font-bold text-[var(--text)] mb-3">この招待リンクは無効です</h1>
-        <p className="text-sm text-[var(--text2)] mb-8">
+        <p className="text-base text-[var(--text2)] mb-8">
           リンクの有効期限が切れているか、すでに使用済みです。
           招待した方にもう一度招待リンクを送ってもらうよう依頼してください。
         </p>
         <Link
           href="/"
-          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--accent-l)]"
+          className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--accent-l)]"
         >
           トップページへ
         </Link>
@@ -96,7 +96,7 @@ export default async function InvitePage({
         <h1 className="text-xl font-bold text-[var(--text)] mb-2">
           取材チームに招待されています
         </h1>
-        <p className="text-sm text-[var(--text2)]">
+        <p className="text-base text-[var(--text2)]">
           以下のプロジェクトへの参加招待が届いています。
         </p>
       </div>
@@ -109,11 +109,11 @@ export default async function InvitePage({
           </div>
           <div>
             <dt className="text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase mb-1">参加後の権限</dt>
-            <dd className="text-sm text-[var(--text)]">{ROLE_LABELS[invitation.role] ?? invitation.role}</dd>
+            <dd className="text-base text-[var(--text)]">{ROLE_LABELS[invitation.role] ?? invitation.role}</dd>
           </div>
           <div>
             <dt className="text-xs font-semibold tracking-[0.08em] text-[var(--text3)] uppercase mb-1">招待の有効期限</dt>
-            <dd className="text-sm text-[var(--text2)]">{formatExpiry(invitation.expiresAt)}</dd>
+            <dd className="text-base text-[var(--text2)]">{formatExpiry(invitation.expiresAt)}</dd>
           </div>
         </dl>
       </div>
@@ -124,20 +124,20 @@ export default async function InvitePage({
         <div className="flex flex-col gap-3">
           <Link
             href={`/auth/login?invite_token=${token}`}
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90"
           >
             ログインして参加する
           </Link>
           <Link
             href={`/auth/signup?invite_token=${token}`}
-            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-sm font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)]"
           >
             新規登録して参加する
           </Link>
         </div>
       )}
 
-      <p className="mt-6 text-center text-xs text-[var(--text3)]">
+      <p className="mt-6 text-center text-[13px] text-[var(--text3)]">
         このメールに心当たりがない場合は、このページを閉じてください。
       </p>
     </main>

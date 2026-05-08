@@ -306,7 +306,7 @@ export default function SummaryPage() {
             tone="soft"
           />
           {lastCheckedAt && (
-            <p className="mt-2 text-xs text-[var(--text2)]">最終確認: {lastCheckedAt}</p>
+            <p className="mt-2 text-[13px] text-[var(--text2)]">最終確認: {lastCheckedAt}</p>
           )}
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
             <button
@@ -334,12 +334,12 @@ export default function SummaryPage() {
           {interviewId && (
             <Link
               href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
-              className={getButtonClass('secondary', 'px-4 py-2 text-sm')}
+              className={getButtonClass('secondary', 'px-4 py-2 text-base')}
             >
               この取材の記事一覧
             </Link>
           )}
-          <Link href={backHref} className={getButtonClass('secondary', 'px-4 py-2 text-sm')}>
+          <Link href={backHref} className={getButtonClass('secondary', 'px-4 py-2 text-base')}>
             {backLabel}
           </Link>
         </div>
@@ -372,10 +372,10 @@ export default function SummaryPage() {
             className="border-2 border-[var(--accent)]"
           />
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-[var(--text)] text-sm">
+            <p className="font-bold text-[var(--text)] text-base">
               {char?.name ? `${char.name}の取材メモ` : '取材メモが届きました'}
             </p>
-            <p className="text-xs text-[var(--text2)] mt-0.5">
+            <p className="text-[13px] text-[var(--text2)] mt-0.5">
               インタビューで引き出せた内容を、このまま記事づくりに使えます。
             </p>
             {respondentName && (
@@ -390,7 +390,7 @@ export default function SummaryPage() {
                 ) : (
                   <span className="w-4 h-4 rounded-full bg-[var(--border)] flex-shrink-0" />
                 )}
-                <span className="text-xs text-[var(--text2)]">回答者: {respondentName}</span>
+                <span className="text-[13px] text-[var(--text2)]">回答者: {respondentName}</span>
               </div>
             )}
           </div>
@@ -410,14 +410,14 @@ export default function SummaryPage() {
                   {data.values.map((v, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-[var(--r-sm)] text-sm font-semibold border border-[color-mix(in_srgb,var(--accent)_20%,transparent)]"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[var(--accent-l)] text-[var(--on-primary-container)] rounded-[var(--r-sm)] text-base font-semibold border border-[color-mix(in_srgb,var(--accent)_20%,transparent)]"
                     >
                       <span aria-hidden="true">✦</span> {v}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[var(--text2)]">この取材では価値の要点を引き出せませんでした。もう一度取材するか、取材ログを確認してみてください。</p>
+                <p className="text-base text-[var(--text2)]">この取材では価値の要点を引き出せませんでした。もう一度取材するか、取材ログを確認してみてください。</p>
               )}
             </section>
 
@@ -441,7 +441,7 @@ export default function SummaryPage() {
                         className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4 flex items-start justify-between gap-4"
                       >
                         <div className="flex-1 min-w-0">
-                          <p className="font-bold text-[var(--text)] text-sm leading-[1.5]">{t}</p>
+                          <p className="font-bold text-[var(--text)] text-base leading-[1.5]">{t}</p>
                           {articlesByTheme.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-1.5">
                               {articlesByTheme.map((a) => (
@@ -459,7 +459,7 @@ export default function SummaryPage() {
                         {canEdit && (
                           <Link
                             href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}&theme=${encodeURIComponent(t)}`}
-                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-xs font-semibold px-3 min-h-[44px] rounded-full hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
+                            className="flex-shrink-0 inline-flex items-center justify-center bg-[var(--accent)] text-white text-[13px] font-semibold px-3 min-h-[44px] rounded-full hover:bg-[var(--accent-h)] transition-colors whitespace-nowrap"
                           >
                             この記事を作る <span aria-hidden="true">→</span>
                           </Link>
@@ -470,7 +470,7 @@ export default function SummaryPage() {
                 </div>
               ) : (
                 <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-4">
-                  <p className="text-sm text-[var(--text2)]">取材メモの作成が完了すると、ここにテーマが並びます。</p>
+                  <p className="text-base text-[var(--text2)]">取材メモの作成が完了すると、ここにテーマが並びます。</p>
                 </div>
               )}
             </div>
@@ -478,13 +478,13 @@ export default function SummaryPage() {
             {/* 取材ログ */}
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
               <div className="flex items-center justify-between mb-0">
-                <p className="font-bold text-[var(--text)] text-sm">取材ログ</p>
+                <p className="font-bold text-[var(--text)] text-base">取材ログ</p>
                 <button
                   type="button"
                   onClick={() => setShowMessages(!showMessages)}
                   aria-expanded={showMessages}
                   aria-controls="summary-interview-log"
-                  className="text-xs font-semibold text-[var(--text2)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
+                  className="text-[13px] font-semibold text-[var(--text2)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
                 >
                   {showMessages ? '閉じる' : '会話を見る'}
                 </button>
@@ -503,7 +503,7 @@ export default function SummaryPage() {
                       >
                         {m.role !== 'user' ? (char?.name ?? 'キャスト') : 'あなた'}
                       </span>
-                      <p className="text-sm text-[var(--text)] leading-[1.78] flex-1 whitespace-pre-wrap">{m.content}</p>
+                      <p className="text-base text-[var(--text)] leading-[1.78] flex-1 whitespace-pre-wrap">{m.content}</p>
                     </div>
                   ))}
               </div>
@@ -515,11 +515,11 @@ export default function SummaryPage() {
             {/* 記事を受け取る */}
             {canEdit && (
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-                <p className="font-bold text-[var(--text)] text-sm mb-2">記事を受け取る</p>
-                <p className="text-sm text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
+                <p className="font-bold text-[var(--text)] text-base mb-2">記事を受け取る</p>
+                <p className="text-base text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
                 <Link
                   href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-sm font-semibold py-2.5 rounded-full hover:bg-[var(--accent-h)] transition-colors"
+                  className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-base font-semibold py-2.5 rounded-full hover:bg-[var(--accent-h)] transition-colors"
                 >
                   記事を受け取る <span aria-hidden="true">→</span>
                 </Link>
@@ -529,7 +529,7 @@ export default function SummaryPage() {
             {/* このインタビューから作った記事 */}
             <div id="related-articles" className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6 scroll-mt-24">
               <div className="flex items-center justify-between gap-2 mb-4">
-                <p className="font-bold text-[var(--text)] text-sm">この取材の記事</p>
+                <p className="font-bold text-[var(--text)] text-base">この取材の記事</p>
                 <Link
                   href={`/articles?interviewId=${interviewId}&projectId=${projectId}`}
                   className="text-[11px] text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded"
@@ -538,14 +538,14 @@ export default function SummaryPage() {
                 </Link>
               </div>
               {articles.length === 0 ? (
-                <p className="text-sm text-[var(--text2)]">この取材から作成した記事はまだありません。</p>
+                <p className="text-base text-[var(--text2)]">この取材から作成した記事はまだありません。</p>
               ) : (
                 <div className="space-y-0">
                   {articles.map((article) => (
                     <Link
                       key={article.id}
                       href={`/projects/${projectId}/articles/${article.id}`}
-                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-sm text-[var(--on-primary-container)] hover:text-[var(--accent-h)] transition-colors rounded"
+                      className="flex justify-between items-center py-2.5 border-b border-[var(--border)] last:border-0 text-base text-[var(--on-primary-container)] hover:text-[var(--accent-h)] transition-colors rounded"
                     >
                       <span className="truncate mr-2">{article.title || '記事'}</span>
                       <span className="text-[var(--text2)] flex-shrink-0 text-[11px]">
@@ -562,7 +562,7 @@ export default function SummaryPage() {
               <div className="space-y-2">
                 <Link
                   href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-sm font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
                 >
                   もう少し話す
                 </Link>
