@@ -60,7 +60,7 @@ export function CompareCards() {
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>3,000</span>
                   <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>字+</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>会話から出てくる、原稿用紙7枚分の言葉</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>原稿用紙1枚（400字）が、会話から7枚以上</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
