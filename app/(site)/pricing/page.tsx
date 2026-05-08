@@ -48,13 +48,11 @@ const PLANS = [
     catch: 'まず体験してみてください',
     featured: false,
     features: [
-      { ok: true, label: '取材：2回まで（単発）' },
-      { ok: true, label: '記事作成：3回まで（単発）' },
-      { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: 'プロジェクト登録：1件' },
-      { ok: false, label: '競合調査なし' },
-      { ok: true, label: '取材メモを受け取れる' },
-      { ok: false, label: '優先サポート' },
+      '取材：2回まで（単発）',
+      '記事作成：3回まで（単発）',
+      'フリーキャスト 3名',
+      'プロジェクト登録：1件',
+      '取材メモを受け取れる',
     ],
     cta: '無料で始める',
     href: '/auth/signup',
@@ -67,15 +65,12 @@ const PLANS = [
     catch: 'まず月に数回、試しながら続けたい方へ',
     featured: false,
     features: [
-      { ok: true, label: '取材回数：月5回まで' },
-      { ok: true, label: '記事作成：月20回まで' },
-      { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: 'プロジェクト登録：1件' },
-      { ok: true, label: '自社HP調査あり' },
-      { ok: false, label: '競合調査なし' },
-      { ok: true, label: '取材メモを受け取れる' },
-      { ok: false, label: '取材依頼リンクなし' },
-      { ok: false, label: '優先サポート' },
+      '取材回数：月5回まで',
+      '記事作成：月20回まで',
+      'フリーキャスト 3名',
+      'プロジェクト登録：1件',
+      '自社HP調査あり',
+      '取材メモを受け取れる',
     ],
     cta: 'ライトプランで始める',
     href: '/auth/signup',
@@ -88,15 +83,13 @@ const PLANS = [
     catch: '週1〜2本のペースで、ホームページをコツコツ育てたい方へ',
     featured: true,
     features: [
-      { ok: true, label: '取材回数：月15回まで' },
-      { ok: true, label: '記事作成：月60回まで' },
-      { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: 'プロジェクト登録：1件' },
-      { ok: true, label: '自社HP調査あり' },
-      { ok: true, label: '競合調査：3件' },
-      { ok: true, label: '取材メモを受け取れる' },
-      { ok: false, label: '取材依頼リンクなし' },
-      { ok: false, label: '優先サポート' },
+      '取材回数：月15回まで',
+      '記事作成：月60回まで',
+      'フリーキャスト 3名',
+      'プロジェクト登録：1件',
+      '自社HP調査あり',
+      '競合調査：3件',
+      '取材メモを受け取れる',
     ],
     cta: '月額プランを始める',
     href: '/auth/signup',
@@ -109,26 +102,25 @@ const PLANS = [
     catch: '複数の事業・担当者でまとめて運用したい方へ',
     featured: false,
     features: [
-      { ok: true, label: '取材回数：月60回まで' },
-      { ok: true, label: '記事作成：月240回まで' },
-      { ok: true, label: 'フリーキャスト 3名' },
-      { ok: true, label: 'プロジェクト登録：最大3件' },
-      { ok: true, label: '自社HP調査あり' },
-      { ok: true, label: '競合調査：各プロジェクト3件' },
-      { ok: true, label: '取材メモを受け取れる' },
-      { ok: true, label: '取材依頼リンクあり' },
-      { ok: true, label: '複数アカウントで管理' },
-      { ok: true, label: '優先サポート' },
+      '取材回数：月60回まで',
+      '記事作成：月240回まで',
+      'フリーキャスト 3名',
+      'プロジェクト登録：最大3件',
+      '自社HP調査あり',
+      '競合調査：各プロジェクト3件',
+      '取材メモを受け取れる',
+      '取材依頼リンクあり',
+      '複数アカウントで管理',
+      '優先サポート',
     ],
     cta: '月額プランを始める',
     href: '/auth/signup',
   },
 ] as const
 
-/** 比較表のセル値をマーク（✓ / −）の場合は色付きで描画する */
+/** 比較表のセル値をマーク（✓）の場合は色付きで描画する。空文字は空欄。 */
 function renderCellValue(value: string) {
   if (value === '✓') return <span aria-label="あり" className="text-[var(--teal)] text-[16px] font-bold">✓</span>
-  if (value === '−') return <span aria-label="なし" className="text-[var(--text3)] text-[16px]">−</span>
   return value
 }
 
@@ -139,11 +131,11 @@ const TABLE_ROWS = [
   { label: 'フリーキャスト', lightning: '3名', personal: '3名', business: '3名' },
   { label: 'プロジェクト登録', lightning: '1件', personal: '1件', business: '最大3件' },
   { label: '自社HP調査', lightning: '✓', personal: '✓', business: '✓' },
-  { label: '競合調査', lightning: '−', personal: '3件', business: '各プロジェクト3件' },
+  { label: '競合調査', lightning: '', personal: '3件', business: '各プロジェクト3件' },
   { label: '取材メモを受け取れる', lightning: '✓', personal: '✓', business: '✓' },
-  { label: '取材依頼リンク', lightning: '−', personal: '−', business: '✓' },
-  { label: '複数アカウント管理', lightning: '−', personal: '−', business: '✓' },
-  { label: '優先サポート', lightning: '−', personal: '−', business: '✓' },
+  { label: '取材依頼リンク', lightning: '', personal: '', business: '✓' },
+  { label: '複数アカウント管理', lightning: '', personal: '', business: '✓' },
+  { label: '優先サポート', lightning: '', personal: '', business: '✓' },
 ] as const
 
 const ADDON_CASTS = [
@@ -404,11 +396,9 @@ export default async function PricingPage({
                   <div className="text-[13px] text-[var(--text2)] mb-6 pb-6 border-b border-[var(--border)]">{plan.note}</div>
                   <div className="flex flex-col flex-1 mb-7">
                     {plan.features.map((feat, i) => (
-                      <div key={i} className={`flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 ${!feat.ok ? 'text-[var(--text2)]' : 'text-[var(--text2)]'}`}>
-                        <span aria-hidden="true" className={`flex-shrink-0 font-bold ${feat.ok ? 'text-[var(--teal)]' : 'text-[var(--text2)]'}`}>
-                          {feat.ok ? '✓' : '–'}
-                        </span>
-                        {feat.label}
+                      <div key={i} className="flex items-baseline gap-2.5 text-sm py-2.5 border-b border-[var(--border)] last:border-b-0 text-[var(--text2)]">
+                        <span aria-hidden="true" className="flex-shrink-0 font-bold text-[var(--teal)]">✓</span>
+                        {feat}
                       </div>
                     ))}
                   </div>
