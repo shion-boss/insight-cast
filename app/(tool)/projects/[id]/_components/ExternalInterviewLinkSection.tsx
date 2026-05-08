@@ -12,10 +12,17 @@ type ExternalLink = {
   theme: string
   target_name: string | null
   target_industry: string | null
+  interviewee_id: string | null
   use_count: number
   max_use_count: number
   is_active: boolean
   created_at: string
+}
+
+type IntervieweeOption = {
+  id: string
+  name: string
+  industry: string | null
 }
 
 const INTERVIEWER_OPTIONS = [
@@ -24,14 +31,20 @@ const INTERVIEWER_OPTIONS = [
   { value: 'rain', label: 'レイン（キツネ）' },
 ]
 
+const NEW_INTERVIEWEE_VALUE = '__new__'
+
 export function ExternalInterviewLinkSection({ projectId }: { projectId: string }) {
   const [links, setLinks] = useState<ExternalLink[]>([])
   const [loadingList, setLoadingList] = useState(true)
   const [listError, setListError] = useState<string | null>(null)
 
+  // 取材先の選択肢
+  const [interviewees, setInterviewees] = useState<IntervieweeOption[]>([])
+
   // 発行フォーム
   const [interviewerType, setInterviewerType] = useState('mint')
   const [theme, setTheme] = useState('')
+  const [intervieweeChoice, setIntervieweeChoice] = useState<string>(NEW_INTERVIEWEE_VALUE)
   const [targetName, setTargetName] = useState('')
   const [targetIndustry, setTargetIndustry] = useState('')
   const [issuing, setIssuing] = useState(false)
@@ -57,13 +70,27 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
     }
   }, [projectId])
 
+  const fetchInterviewees = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/projects/${projectId}/interviewees`)
+      if (!res.ok) return
+      const json = await res.json() as { interviewees: IntervieweeOption[] }
+      setInterviewees(json.interviewees)
+    } catch {
+      // 取材先が取れなくてもリンク発行は新規追加で続行できる
+    }
+  }, [projectId])
+
   useEffect(() => {
     void fetchLinks()
-  }, [fetchLinks])
+    void fetchInterviewees()
+  }, [fetchLinks, fetchInterviewees])
 
   const handleIssue = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!theme.trim()) return
+
+    const useExisting = intervieweeChoice !== NEW_INTERVIEWEE_VALUE
 
     setIssuing(true)
     setIssueMessage(null)
@@ -76,8 +103,12 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
           projectId,
           interviewerType,
           theme: theme.trim(),
-          targetName: targetName.trim() || undefined,
-          targetIndustry: targetIndustry.trim() || undefined,
+          ...(useExisting
+            ? { intervieweeId: intervieweeChoice }
+            : {
+                targetName: targetName.trim() || undefined,
+                targetIndustry: targetIndustry.trim() || undefined,
+              }),
         }),
       })
 
@@ -88,7 +119,8 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
         setTheme('')
         setTargetName('')
         setTargetIndustry('')
-        await fetchLinks()
+        setIntervieweeChoice(NEW_INTERVIEWEE_VALUE)
+        await Promise.all([fetchLinks(), fetchInterviewees()])
       } else {
         const msg = json.error === 'plan_not_supported'
           ? '取材リンクの発行は法人プランのみ利用できます。'
@@ -141,6 +173,8 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
     }
   }
 
+  const isNewInterviewee = intervieweeChoice === NEW_INTERVIEWEE_VALUE
+
   return (
     <section aria-labelledby="external-links-section-title">
       <h2 id="external-links-section-title" className="text-[16px] font-bold text-[var(--text)] mb-3">
@@ -148,7 +182,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
       </h2>
 
       <p className="text-base text-[var(--text2)] mb-4">
-        リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。
+        リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。同じ取材先を選んで発行すると、2回目以降は前回の話を踏まえた取材になります。
       </p>
 
       {/* 発行フォーム */}
@@ -189,39 +223,66 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
               />
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="ext-target-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                相手の名前（任意）
-              </label>
-              <input
-                id="ext-target-name"
-                type="text"
-                value={targetName}
-                onChange={(e) => setTargetName(e.target.value)}
-                placeholder="例: 山田"
-                maxLength={100}
-                disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-              />
-              <p className="mt-1.5 text-[13px] text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
-            </div>
-            <div>
-              <label htmlFor="ext-target-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                相手の業種（任意）
-              </label>
-              <input
-                id="ext-target-industry"
-                type="text"
-                value={targetIndustry}
-                onChange={(e) => setTargetIndustry(e.target.value)}
-                placeholder="例: 飲食業"
-                maxLength={100}
-                disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-              />
-            </div>
+
+          <div>
+            <label htmlFor="ext-interviewee-choice" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+              取材先
+            </label>
+            <select
+              id="ext-interviewee-choice"
+              value={intervieweeChoice}
+              onChange={(e) => setIntervieweeChoice(e.target.value)}
+              disabled={issuing}
+              className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
+            >
+              <option value={NEW_INTERVIEWEE_VALUE}>＋ 新しい取材先</option>
+              {interviewees.length > 0 && <option disabled>──────</option>}
+              {interviewees.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.name}{i.industry ? `（${i.industry}）` : ''}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1.5 text-[13px] text-[var(--text2)]">
+              既存の取材先を選ぶと、過去の取材を踏まえて続きを聞いてもらえます。
+            </p>
           </div>
+
+          {isNewInterviewee && (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label htmlFor="ext-target-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                  相手の名前（任意）
+                </label>
+                <input
+                  id="ext-target-name"
+                  type="text"
+                  value={targetName}
+                  onChange={(e) => setTargetName(e.target.value)}
+                  placeholder="例: 山田"
+                  maxLength={100}
+                  disabled={issuing}
+                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                />
+                <p className="mt-1.5 text-[13px] text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
+              </div>
+              <div>
+                <label htmlFor="ext-target-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                  相手の業種（任意）
+                </label>
+                <input
+                  id="ext-target-industry"
+                  type="text"
+                  value={targetIndustry}
+                  onChange={(e) => setTargetIndustry(e.target.value)}
+                  placeholder="例: 飲食業"
+                  maxLength={100}
+                  disabled={issuing}
+                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                />
+              </div>
+            </div>
+          )}
           <div className="flex justify-end">
             <button
               type="submit"

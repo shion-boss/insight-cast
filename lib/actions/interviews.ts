@@ -6,6 +6,7 @@ import {
   isInterviewFocusThemeMode,
   normalizeInterviewFocusTheme,
 } from '@/lib/interview-focus-theme'
+import { findOrCreateIntervieweeByName } from '@/lib/interviewees'
 import { getUserPlan, getPlanLimits, getJstMonthKey } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
@@ -88,6 +89,17 @@ export async function createInterview(projectId: string, formData: FormData) {
     }
   }
 
+  // 取材を受けるユーザーの interviewee エンティティを解決（無ければ profiles.name で作る）
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('name')
+    .eq('id', user.id)
+    .maybeSingle()
+  const intervieweeName = profile?.name?.trim() || 'メンバー'
+  const interviewee = await findOrCreateIntervieweeByName(supabase, projectId, intervieweeName, {
+    linkedUserId: user.id,
+  })
+
   const { data: interview, error } = await supabase
     .from('interviews')
     .insert({
@@ -98,6 +110,7 @@ export async function createInterview(projectId: string, formData: FormData) {
       // 取材を受けるユーザー（チーム編集者が代行する場合は editor 自身）。
       // 会話記事の「取材先」表示でこのユーザーの名前・アイコンをデフォルトにする。
       interviewee_user_id: user.id,
+      interviewee_id: interviewee?.id ?? null,
     })
     .select('id')
     .single()

@@ -18,6 +18,7 @@ import { AnalyticsSection, type HeatmapEntry, type MonthlyPoint } from '@/app/(t
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import { ExternalInterviewLinkSection } from './_components/ExternalInterviewLinkSection'
+import { IntervieweeSection } from './_components/IntervieweeSection'
 import {
   InterviewHistoryList,
   ArticleList,
@@ -533,6 +534,13 @@ export default async function ProjectPage({
       {isOwner && (
         <div className="mt-8">
           <ProjectMemberSection projectId={id} />
+        </div>
+      )}
+
+      {/* 取材先セクション（オーナーかつ法人プランのみ表示） */}
+      {isOwner && externalInterviewLinksAllowed && (
+        <div className="mt-8">
+          <IntervieweeSection projectId={id} />
         </div>
       )}
 

@@ -30,7 +30,7 @@ export async function POST(
   // リンクの有効性確認
   const { data: link } = await supabase
     .from('external_interview_links')
-    .select('id, project_id, interviewer_type, theme, target_name, target_industry, is_active, use_count, max_use_count, created_by')
+    .select('id, project_id, interviewer_type, theme, target_name, target_industry, interviewee_id, is_active, use_count, max_use_count, created_by')
     .eq('token', token)
     .single()
 
@@ -61,6 +61,8 @@ export async function POST(
         // 外部取材: オーナーのuser_idが必要なため created_by を使用
         source: 'external',
         external_link_id: link.id,
+        // リンクに紐づいた取材先があればそのまま継承（再会判定の主キー）
+        interviewee_id: link.interviewee_id ?? null,
         external_respondent_name: respondentName ?? link.target_name ?? null,
         external_respondent_industry: respondentIndustry ?? link.target_industry ?? null,
         focus_theme_mode: 'custom',
@@ -80,7 +82,7 @@ export async function POST(
   // 既存インタビューの確認（同一リンクのもののみ許可）
   const { data: interview } = await supabase
     .from('interviews')
-    .select('id, interviewer_type, project_id, focus_theme, external_link_id, external_respondent_name')
+    .select('id, interviewer_type, project_id, focus_theme, external_link_id, external_respondent_name, interviewee_id')
     .eq('id', resolvedInterviewId)
     .is('deleted_at', null)
     .single()
@@ -118,12 +120,34 @@ export async function POST(
 
   const userTurnCount = (history ?? []).filter(m => m.role === 'user').length
 
-  // 同じ外部リンク × 同じ回答者名で過去に完了した取材があれば「再会」として扱う。
-  // 名前なしのときは判定不能なので初対面扱い。
+  // 再会判定: 同じ取材先（interviewee_id）でこのプロジェクト内の完了取材を全部拾う。
+  //   - interviewee_id がある = 取材先エンティティで紐付けられている → プロジェクト全体で再会判定
+  //   - interviewee_id が無い（旧リンクや名前なし発行）→ 旧来の「同一リンク × 同名」フォールバック
+  const intervieweeIdForLookup = interview.interviewee_id ?? link.interviewee_id ?? null
   const respondentNameForLookup = respondentName ?? interview.external_respondent_name ?? null
   let priorMeetingsCount = 0
   let pastMemos: PastInterviewMemo[] = []
-  if (respondentNameForLookup) {
+  if (intervieweeIdForLookup) {
+    const { data: priorRows } = await supabase
+      .from('interviews')
+      .select('id, focus_theme, summary, themes, created_at')
+      .eq('project_id', link.project_id)
+      .eq('interviewee_id', intervieweeIdForLookup)
+      .eq('status', 'completed')
+      .neq('id', resolvedInterviewId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(10)
+
+    pastMemos = (priorRows ?? []).map((row) => ({
+      focusTheme: row.focus_theme,
+      summary: row.summary,
+      themes: row.themes ?? [],
+      createdAt: row.created_at,
+    }))
+    priorMeetingsCount = pastMemos.length
+  } else if (respondentNameForLookup) {
+    // フォールバック（旧リンク互換）
     const { data: priorRows } = await supabase
       .from('interviews')
       .select('id, focus_theme, summary, themes, created_at')

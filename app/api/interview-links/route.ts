@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { findOrCreateIntervieweeByName } from '@/lib/interviewees'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -7,6 +8,9 @@ const PostBodySchema = z.object({
   projectId: z.string().uuid(),
   interviewerType: z.string().min(1).max(50),
   theme: z.string().min(1).max(200),
+  // 既存の取材先を選ぶ場合
+  intervieweeId: z.string().uuid().optional(),
+  // 新規取材先を作る場合
   targetName: z.string().max(100).optional(),
   targetIndustry: z.string().max(100).optional(),
 })
@@ -34,7 +38,7 @@ export async function GET(req: NextRequest) {
 
   const { data: links, error } = await supabase
     .from('external_interview_links')
-    .select('id, token, interviewer_type, theme, target_name, target_industry, use_count, max_use_count, is_active, created_at')
+    .select('id, token, interviewer_type, theme, target_name, target_industry, interviewee_id, use_count, max_use_count, is_active, created_at')
     .eq('project_id', projectId)
     .eq('created_by', user.id)
     .order('created_at', { ascending: false })
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'bad_request', details: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { projectId, interviewerType, theme, targetName, targetIndustry } = parsed.data
+  const { projectId, interviewerType, theme, intervieweeId, targetName, targetIndustry } = parsed.data
 
   // プラン確認: business のみ許可
   const plan = await getUserPlan(supabase, user.id)
@@ -80,6 +84,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'not_found' }, { status: 404 })
   }
 
+  // 取材先の解決:
+  //   1) intervieweeId が来たら既存取材先として解決
+  //   2) 来てないが targetName があれば、既存検索 → 無ければ新規作成
+  //   3) どちらも無ければ取材先 null（再会機能は使えない）
+  let resolvedIntervieweeId: string | null = null
+  let resolvedTargetName: string | null = targetName?.trim() || null
+  let resolvedTargetIndustry: string | null = targetIndustry?.trim() || null
+
+  if (intervieweeId) {
+    const { data: existing } = await supabase
+      .from('interviewees')
+      .select('id, name, industry, project_id')
+      .eq('id', intervieweeId)
+      .is('deleted_at', null)
+      .maybeSingle()
+    if (!existing || existing.project_id !== projectId) {
+      return NextResponse.json({ error: 'interviewee_not_found' }, { status: 404 })
+    }
+    resolvedIntervieweeId = existing.id as string
+    resolvedTargetName = existing.name as string
+    resolvedTargetIndustry = (existing.industry as string | null) ?? resolvedTargetIndustry
+  } else if (resolvedTargetName) {
+    const created = await findOrCreateIntervieweeByName(supabase, projectId, resolvedTargetName, {
+      industry: resolvedTargetIndustry,
+    })
+    if (created) {
+      resolvedIntervieweeId = created.id
+      resolvedTargetName = created.name
+    }
+  }
+
   // トークン生成
   const token = crypto.randomUUID().replace(/-/g, '')
 
@@ -90,11 +125,12 @@ export async function POST(req: NextRequest) {
       project_id: projectId,
       interviewer_type: interviewerType,
       theme,
-      target_name: targetName ?? null,
-      target_industry: targetIndustry ?? null,
+      target_name: resolvedTargetName,
+      target_industry: resolvedTargetIndustry,
+      interviewee_id: resolvedIntervieweeId,
       created_by: user.id,
     })
-    .select('id, token, interviewer_type, theme, target_name, target_industry, use_count, max_use_count, is_active, created_at')
+    .select('id, token, interviewer_type, theme, target_name, target_industry, interviewee_id, use_count, max_use_count, is_active, created_at')
     .single()
 
   if (error || !link) {
