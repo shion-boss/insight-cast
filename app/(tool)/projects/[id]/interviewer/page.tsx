@@ -14,10 +14,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Breadcrumb, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { InterviewSubmitButton } from '@/components/interview-submit-button'
-import { getUserPlan, getPlanLimits, isFreePlanLocked } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, isFreePlanLocked, getJstMonthStartIso } from '@/lib/plans'
 import { getCharacter } from '@/lib/characters'
 import { getMemberRole } from '@/lib/project-members'
 
@@ -64,38 +65,40 @@ export default async function InterviewerPage({
   const accessibleCharacters = getAccessibleCharacters(userCreatedAt)
   const lockedCharacters = getLockedCharacters(userCreatedAt)
 
-  const userPlan = await getUserPlan(supabase, user.id)
+  // プラン・上限はオーナー基準で判定する（メンバーが見ても、契約しているオーナーの枠で表示する）。
+  // RLS の絞り込みでオーナーの projects を取りこぼさないよう admin client を使う。
+  const ownerUserId = project.user_id
+  const adminSupabase = createAdminClient()
+  const userPlan = await getUserPlan(adminSupabase, ownerUserId)
   const planLimits = getPlanLimits(userPlan)
-  const freeLocked = await isFreePlanLocked(supabase, user.id)
+  const freeLocked = await isFreePlanLocked(adminSupabase, ownerUserId)
 
-  const { data: allUserProjects } = await supabase
+  const { data: allOwnerProjects } = await adminSupabase
     .from('projects')
     .select('id')
-    .eq('user_id', user.id)
+    .eq('user_id', ownerUserId)
     .is('deleted_at', null)
     .order('updated_at', { ascending: false })
-  const userProjectIds = (allUserProjects ?? []).map((p) => p.id as string)
+  const ownerProjectIds = (allOwnerProjects ?? []).map((p) => p.id as string)
 
-  const activeProjectIds = new Set(userProjectIds.slice(0, planLimits.maxProjects))
+  const activeProjectIds = new Set(ownerProjectIds.slice(0, planLimits.maxProjects))
   const isProjectOverLimit = !activeProjectIds.has(id)
 
   let isInterviewLimitReached = false
   if (planLimits.lifetimeInterviewLimit !== null) {
-    const { count: lifetimeCount } = await supabase
+    const { count: lifetimeCount } = await adminSupabase
       .from('interviews')
       .select('id', { count: 'exact', head: true })
-      .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+      .in('project_id', ownerProjectIds.length > 0 ? ownerProjectIds : ['__none__'])
       .is('deleted_at', null)
     isInterviewLimitReached = (lifetimeCount ?? 0) >= planLimits.lifetimeInterviewLimit
   } else {
-    const now = new Date()
-    const thisMonthKey = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`
-    const { count: thisMonthInterviewCount } = await supabase
+    const { count: thisMonthInterviewCount } = await adminSupabase
       .from('interviews')
       .select('id', { count: 'exact', head: true })
-      .in('project_id', userProjectIds.length > 0 ? userProjectIds : ['__none__'])
+      .in('project_id', ownerProjectIds.length > 0 ? ownerProjectIds : ['__none__'])
       .is('deleted_at', null)
-      .gte('created_at', `${thisMonthKey}-01`)
+      .gte('created_at', getJstMonthStartIso())
     isInterviewLimitReached = (thisMonthInterviewCount ?? 0) >= planLimits.monthlyInterviewLimit
   }
 

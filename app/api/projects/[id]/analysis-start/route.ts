@@ -39,17 +39,18 @@ export async function POST(
   // fetch_failed は force なしで再試行可能にする（audit が存在しないため削除不要）
   const isFetchFailed = project.status === 'fetch_failed'
 
-  // 課金プラン制限はオーナーの契約状況で判定する
-  if (await isFreePlanLocked(supabase, project.user_id)) {
+  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので admin client で実行
+  const adminSupabase = createAdminClient()
+
+  // 課金プラン制限はオーナーの契約状況で判定する。
+  // RLS の絞り込みでオーナーの projects を取りこぼさないよう admin client を使う。
+  if (await isFreePlanLocked(adminSupabase, project.user_id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
   if (!(await checkRateLimit(user.id, '/api/projects/[id]/analyze')).allowed) {
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
-
-  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので admin client で実行
-  const adminSupabase = createAdminClient()
 
   if (force && !isFetchFailed) {
     const { data: auditRow } = await adminSupabase

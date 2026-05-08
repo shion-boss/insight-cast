@@ -380,17 +380,18 @@ export async function POST(
   const canEdit = isOwner || memberRole === 'editor'
   if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
-  // 課金プラン制限はオーナー契約状況で判定
-  if (await isFreePlanLocked(supabase, project.user_id)) {
+  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので
+  // 以降の writes は admin client で実行する
+  const adminSupabase = createAdminClient()
+
+  // 課金プラン制限はオーナー契約状況で判定。
+  // RLS の絞り込みでオーナーの projects を取りこぼさないよう admin client を使う。
+  if (await isFreePlanLocked(adminSupabase, project.user_id)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
   if (!(await checkRateLimit(user.id, '/api/projects/[id]/analyze')).allowed) {
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
-
-  // editor は projects/hp_audits/competitor_analyses への書き込み RLS を持たないので
-  // 以降の writes は admin client で実行する
-  const adminSupabase = createAdminClient()
 
   const { data: existingAudit } = await supabase
     .from('hp_audits')

@@ -24,9 +24,6 @@ export async function POST(
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  if (await isFreePlanLocked(supabase, user.id)) {
-    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
-  }
   if (!(await checkRateLimit(user.id, '/api/projects/[id]/interview/summarize')).allowed) {
     return NextResponse.json({ error: 'rate_limit_exceeded' }, { status: 429 })
   }
@@ -56,6 +53,12 @@ export async function POST(
   const memberRole = isOwner ? null : await getMemberRole(supabase, projectId, user.id)
   const canEdit = isOwner || memberRole === 'editor'
   if (!canEdit) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
+
+  // 課金プラン制限はオーナーの契約状況で判定する（メンバーが使ってもオーナーの枠から消費）。
+  // RLS の絞り込みでオーナーの projects を取りこぼさないよう admin client を使う。
+  if (await isFreePlanLocked(createAdminClient(), projectInfo.user_id)) {
+    return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
+  }
 
   if (interview.summary) {
     return NextResponse.json({ summary: interview.summary, themes: interview.themes })

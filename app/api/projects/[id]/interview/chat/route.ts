@@ -94,9 +94,10 @@ export async function POST(
     }
   }
 
-  // 月次上限チェックはオーナーのuser_idで判定（メンバーが使ってもオーナーの枠から消費）
+  // 月次上限チェックはオーナーのuser_idで判定（メンバーが使ってもオーナーの枠から消費）。
+  // RLS の絞り込みでオーナーの projects を取りこぼさないよう admin client を使う。
   const ownerUserId = projectData?.user_id ?? user.id
-  if (await isFreePlanLocked(supabase, ownerUserId)) {
+  if (await isFreePlanLocked(createAdminClient(), ownerUserId)) {
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 

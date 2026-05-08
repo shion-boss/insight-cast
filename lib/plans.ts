@@ -71,8 +71,25 @@ export function getPlanLimits(planKey: PlanKey | null | undefined) {
   return PLANS[planKey ?? 'free']
 }
 
+// 「今月」の起点（JST 1日 00:00）を ISO 文字列で返す。
+// 課金・制限カウントの月境界を Asia/Tokyo に揃えるための共通ヘルパー。
+// Stripe billing cycle と完全一致はしないが、ユーザー視点での「月初」を JST に固定する。
+export function getJstMonthStartIso(now: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+  }).formatToParts(now)
+  const year = parts.find((p) => p.type === 'year')?.value ?? '1970'
+  const month = parts.find((p) => p.type === 'month')?.value ?? '01'
+  // JST の月初 00:00 は UTC で前日 15:00。+09:00 オフセットで明示する。
+  return new Date(`${year}-${month}-01T00:00:00+09:00`).toISOString()
+}
+
 // 無料プランの生涯記事上限に達しているか確認する
 // true の場合、すべてのAI操作をロックする
+// soft-delete された projects / articles はカウント対象外。
+// 別ユーザー（オーナー）の userId を渡してチェックする場合は admin client を渡すこと。
 export async function isFreePlanLocked(
   supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
   userId: string,
@@ -81,16 +98,23 @@ export async function isFreePlanLocked(
   const limits = getPlanLimits(plan)
   if (limits.lifetimeArticleLimit === null) return false
 
-  const { data: userProjects } = await supabase.from('projects').select('id').eq('user_id', userId)
+  const { data: userProjects } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
   const { count } = await supabase
     .from('articles')
     .select('id', { count: 'exact', head: true })
     .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
+    .is('deleted_at', null)
   return (count ?? 0) >= limits.lifetimeArticleLimit
 }
 
 // 有料プランの月次記事上限に達しているか確認する
+// soft-delete された projects / articles はカウント対象外。
+// 別ユーザー（オーナー）の userId を渡してチェックする場合は admin client を渡すこと。
 export async function checkMonthlyArticleLimit(
   supabase: Awaited<ReturnType<typeof import('@/lib/supabase/server').createClient>>,
   userId: string,
@@ -99,16 +123,20 @@ export async function checkMonthlyArticleLimit(
   const limits = getPlanLimits(plan)
   if (limits.monthlyArticleLimit === null) return { allowed: true, limit: null, count: 0 }
 
-  const now = new Date()
-  const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+  const startOfMonthIso = getJstMonthStartIso()
 
-  const { data: userProjects } = await supabase.from('projects').select('id').eq('user_id', userId)
+  const { data: userProjects } = await supabase
+    .from('projects')
+    .select('id')
+    .eq('user_id', userId)
+    .is('deleted_at', null)
   const projectIds = (userProjects ?? []).map((p) => p.id as string)
   const { count } = await supabase
     .from('articles')
     .select('id', { count: 'exact', head: true })
     .in('project_id', projectIds.length > 0 ? projectIds : ['__none__'])
-    .gte('created_at', startOfMonth.toISOString())
+    .is('deleted_at', null)
+    .gte('created_at', startOfMonthIso)
 
   return {
     allowed: (count ?? 0) < limits.monthlyArticleLimit,

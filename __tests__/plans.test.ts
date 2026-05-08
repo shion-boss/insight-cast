@@ -4,7 +4,7 @@
  */
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { getPlanLimits, PLANS } from '../lib/plans'
+import { getPlanLimits, PLANS, getJstMonthStartIso } from '../lib/plans'
 
 test('free プランは生涯インタビュー上限 2 を持つ', () => {
   const limits = getPlanLimits('free')
@@ -88,6 +88,24 @@ test('PLANS の全プランに key フィールドが存在する', () => {
   for (const [key, plan] of Object.entries(PLANS)) {
     assert.equal(plan.key, key, `${key} の key フィールドが一致しない`)
   }
+})
+
+test('getJstMonthStartIso は JST 月初を ISO（UTC 表記）で返す', () => {
+  // JST 2026-05-15 03:00 (= UTC 2025-05-14 18:00) における月初は JST 2026-05-01 00:00 = UTC 2026-04-30T15:00:00.000Z
+  const now = new Date('2026-05-14T18:00:00.000Z')
+  assert.equal(getJstMonthStartIso(now), '2026-04-30T15:00:00.000Z')
+})
+
+test('getJstMonthStartIso は UTC 末日でも JST の月でグルーピングする', () => {
+  // UTC 2026-04-30 23:30 → JST 2026-05-01 08:30 → 月初は JST 2026-05-01 00:00 = UTC 2026-04-30T15:00:00.000Z
+  const now = new Date('2026-04-30T23:30:00.000Z')
+  assert.equal(getJstMonthStartIso(now), '2026-04-30T15:00:00.000Z')
+})
+
+test('getJstMonthStartIso は JST 月初直後でも当月扱いする', () => {
+  // UTC 2026-05-31 16:00 → JST 2026-06-01 01:00 → 月初は JST 2026-06-01 00:00 = UTC 2026-05-31T15:00:00.000Z
+  const now = new Date('2026-05-31T16:00:00.000Z')
+  assert.equal(getJstMonthStartIso(now), '2026-05-31T15:00:00.000Z')
 })
 
 test('有料プランは全て lifetimeInterviewLimit === null', () => {

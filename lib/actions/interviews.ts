@@ -6,7 +6,7 @@ import {
   isInterviewFocusThemeMode,
   normalizeInterviewFocusTheme,
 } from '@/lib/interview-focus-theme'
-import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { getUserPlan, getPlanLimits, getJstMonthStartIso } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -71,9 +71,8 @@ export async function createInterview(projectId: string, formData: FormData) {
       redirect(`/projects/${projectId}/interviewer?cast=${interviewerType}&error=lifetime_limit`)
     }
   } else {
-    // 有料プラン: 月間インタビュー回数チェック
-    const now = new Date()
-    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString()
+    // 有料プラン: 月間インタビュー回数チェック（JST 月初基準）
+    const monthStart = getJstMonthStartIso()
     const { count: monthlyCount } = await supabase
       .from('interviews')
       .select('id', { count: 'exact', head: true })
