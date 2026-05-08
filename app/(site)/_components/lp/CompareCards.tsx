@@ -94,17 +94,18 @@ export function CompareCards() {
               <div className="text-center mb-6">
                 <div className="flex items-end justify-center gap-1 leading-none">
                   <span className="font-bold pb-1" style={{ fontSize: '18px', color: 'var(--accent)' }}>¥</span>
-                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>4,980</span>
+                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>166</span>
+                  <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>/記事</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>/ 月　月まるごと、取材も記事も込み</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>月¥4,980で取材込み・使い放題</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
-                  { name: 'サイト放置',         value: '¥0（増えない）',       muted: true,  highlight: false },
-                  { name: 'AIツール',           value: '月¥3,000〜',           muted: false, highlight: false },
-                  { name: 'ライター発注',       value: '1記事¥5,000〜',         muted: false, highlight: false },
-                  { name: 'Insight Cast',      value: '月¥4,980 取材込み',     muted: false, highlight: true  },
+                  { name: 'サイト放置',         value: '¥0（増えない）',         muted: true,  highlight: false },
+                  { name: 'AIツール',           value: '¥1,000/記事',            muted: false, highlight: false },
+                  { name: 'ライター発注',       value: '¥5,000/記事',            muted: false, highlight: false },
+                  { name: 'Insight Cast',      value: '¥166/記事 取材込み',     muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
