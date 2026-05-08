@@ -386,6 +386,30 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   }
 
   /**
+   * モグロ等の はい/いいえ ボタン押下。
+   * 送信ボタンと同じ後処理（パスストリークリセット、ターン上限・完了判定）を踏む。
+   */
+  async function handleYesNo(answer: 'はい' | 'いいえ') {
+    if (loading || hasReachedTurnLimit) return
+
+    const newTurns = userTurns + 1
+    const result = await sendMessageToAI(answer)
+    if (!result.ok) return
+    setPassStreak(0)
+
+    if (newTurns >= MAX_TURNS) {
+      setCompletionType('hard_limit')
+      setShowComplete(true)
+    } else if (newTurns === STANDARD_TURNS) {
+      setCompletionType(result.interviewComplete ? 'standard_sufficient' : 'standard_need_more')
+      setShowComplete(true)
+    } else if (result.interviewComplete && continueCount < 2) {
+      setCompletionType('standard_sufficient')
+      setShowComplete(true)
+    }
+  }
+
+  /**
    * ハル限定: 画像をアップロードして添付候補に追加する。
    * サーバー API（/api/projects/[id]/interviews/[interviewId]/attach）経由でアップロードする。
    * これにより Storage RLS の罠を避け、サーバー側で admin client を使って確実に保存できる。
@@ -648,7 +672,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         characterName={char?.name}
         characterIcon48={char?.icon48}
         characterEmoji={char?.emoji}
-        onYesNo={(answer) => void sendMessageToAI(answer)}
+        onYesNo={(answer) => void handleYesNo(answer)}
         hasReachedTurnLimit={hasReachedTurnLimit}
         bottomRef={bottomRef}
       />
