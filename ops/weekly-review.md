@@ -295,6 +295,55 @@
 
 総合評価: **A** Gate A 残課題ゼロ達成 + 主語揺れ解消で質的水準が一段上がった。
 
+#### 2026-05-08 追補（日次品質サイクル / Sentry トリアージ + テストドリフト修正）
+
+**テーマ**: プラン経済性決定 (5/8) 後の整合点検と、放置されていたテストドリフトの解消。
+
+**軸10 Sentry トリアージ**
+- open issue #8 `TypeError: Load failed`（5/7 起票・1件のみ）を確認
+- 内容: Safari の fetch API ネイティブネットワーク失敗メッセージ。アプリ側のスタックトレースに辿れない / ブラウザ側のネットワーク断・SW・拡張機能由来と判定
+- 過去 #2-#7 はすべて同類で `not_planned` クローズ済み → 同基準で `not_planned` クローズ + コメント記録
+- 結果: open sentry[bot] issue ゼロに戻した
+
+**軸3 整合性: プラン経済性 5/8 改定の同期チェック**
+- `lib/plans.ts`（lightning=10/personal=30/business=180） / `__tests__/plans.test.ts` / `app/(site)/_components/lp/PricingPreview.tsx` / `app/(site)/pricing/page.tsx` / `app/(site)/faq/page.tsx` / `app/(tool)/settings/billing/page.tsx` / `CLAUDE.md` をクロスチェック → **すべて同期済み** ✅
+- `docs/growth/lp-draft-v1.md:279` に「月10回まで取材」の旧記述ありだが内部ドラフト資料のため対象外
+
+**軸5 AI社員品質: テストドリフト発見・即日修正**
+- `npm test` 実行で **25件失敗** を検出
+- 原因: `__tests__/blog-posts.test.ts` が 5/7 のカテゴリ再設計（旧6種 `howto/service/interview/case/philosophy/news` → 新5系統 `ai-search/primary-info/casts/hp-update/meta`）に追随していなかった
+- 修正: 新カテゴリ・レガシーマッピング（`insight-cast→casts` `service→casts` `howto→hp-update` `interview→meta` `case→hp-update` `philosophy→primary-info` `news→meta`）・フォールバック（`'meta'`）に書き直し
+- 結果: **15 pass / 0 fail**（typecheck も pass）
+
+**軸5/7 直近コミット (29a166a) レビュー**
+- プラン制限判定: deleted_at IS NULL 必須化・admin client 経由でオーナー基準に統一・JST 月境界共通化の3点修正で論理穴を塞いだ
+- テスト追加（JST 境界3件）あり。typecheck 通過
+- 課金・プラン判定に関わる変更だが、editor 経由の枠回避・soft-delete 残骸消費という具体的な穴を狙い撃ちで閉じる方向で、CLAUDE.md ガードレール12（課金変更はレビューを通す）に整合 ✅
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 大規模 refactor 後にユニットテストが追随せず失敗が放置される（5/7 カテゴリ再設計の追従漏れ） | 25 (1ファイル) | 初出 | 🔲 要提案: 主要 refactor 時に `npm test` を必ず叩き、失敗を当該 commit 内で吸収するチェックを `daily-quality-cycle.md` 軸5 に追加 |
+| Sentry `Load failed` (Safari fetch ネイティブエラー) のノイズ | 1 | 再発 | 🔲 Sentry 側の inboundFilters で「`TypeError: Load failed` 単独 + アプリスタックなし」を抑制する候補 |
+
+**CLAUDE.md / エージェントmd 更新候補**
+- `daily-quality-cycle.md` 軸5 に「`npm test` 実行が当日サイクルの必須項目」を明記する案（今回の25件ドリフトを早期検出できなかった）
+
+**チェック結果（軸別）**
+- 軸1 UI: 範囲外（コードのみ修正）
+- 軸2 UX: 範囲外
+- 軸3 整合性: ✅ 5/8 プラン改定の同期確認完了
+- 軸4 AIキャスト: 範囲外
+- 軸5 AI社員: ✅ テストドリフト解消（25 fail → 0 fail）+ typecheck 通過
+- 軸6 コピー: 範囲外
+- 軸7 セキュリティ: ✅ 29a166a の admin client + オーナー基準統一を確認
+- 軸8 実使用: N/A
+- 軸9 非同期通知: 範囲外
+- 軸10 Sentry: ✅ open issue ゼロ
+
+総合評価: **A−** 25件のテスト失敗を当日サイクルで検出・解消。プラン経済性改定の整合は問題なし。
+
 #### 2026-05-07 追補（日次品質サイクル / Sentry トリアージ + カテゴリ色 drift 修正）
 
 **テーマ**: 同日の Gate A 達成作業に対する独立 cycle。Sentry inbox 整理 + 軸3 整合性で発見した drift を当日修正。

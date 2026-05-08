@@ -6,8 +6,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { normalizePostCategory } from '../lib/blog-posts'
 
-// ---- 正規カテゴリ（そのまま返す）----
-const VALID_CATEGORIES = ['howto', 'service', 'interview', 'case', 'philosophy', 'news'] as const
+// 2026-05-07 カテゴリ再設計後の正規 5 系統
+const VALID_CATEGORIES = ['ai-search', 'primary-info', 'casts', 'hp-update', 'meta'] as const
 
 for (const cat of VALID_CATEGORIES) {
   test(`"${cat}" はそのまま返す`, () => {
@@ -15,28 +15,52 @@ for (const cat of VALID_CATEGORIES) {
   })
 }
 
-// ---- レガシーカテゴリのマッピング ----
-test('"insight-cast" → "service" に変換する', () => {
-  assert.equal(normalizePostCategory('insight-cast'), 'service')
+// ---- レガシーカテゴリのマッピング（2026-05-07 以前のデータ向け安全弁）----
+test('"insight-cast" → "casts" に変換する', () => {
+  assert.equal(normalizePostCategory('insight-cast'), 'casts')
 })
 
-// ---- フォールバック ----
-test('未知の文字列は "howto" を返す', () => {
-  assert.equal(normalizePostCategory('unknown-category'), 'howto')
+test('"service" → "casts" に変換する', () => {
+  assert.equal(normalizePostCategory('service'), 'casts')
 })
 
-test('null は "howto" を返す', () => {
-  assert.equal(normalizePostCategory(null), 'howto')
+test('"howto" → "hp-update" に変換する', () => {
+  assert.equal(normalizePostCategory('howto'), 'hp-update')
 })
 
-test('undefined は "howto" を返す', () => {
-  assert.equal(normalizePostCategory(undefined), 'howto')
+test('"interview" → "meta" に変換する', () => {
+  assert.equal(normalizePostCategory('interview'), 'meta')
 })
 
-test('数値は "howto" を返す', () => {
-  assert.equal(normalizePostCategory(123), 'howto')
+test('"case" → "hp-update" に変換する', () => {
+  assert.equal(normalizePostCategory('case'), 'hp-update')
 })
 
-test('空文字は "howto" を返す', () => {
-  assert.equal(normalizePostCategory(''), 'howto')
+test('"philosophy" → "primary-info" に変換する', () => {
+  assert.equal(normalizePostCategory('philosophy'), 'primary-info')
+})
+
+test('"news" → "meta" に変換する', () => {
+  assert.equal(normalizePostCategory('news'), 'meta')
+})
+
+// ---- フォールバック: 不明値は "meta" を返す ----
+test('未知の文字列は "meta" を返す', () => {
+  assert.equal(normalizePostCategory('unknown-category'), 'meta')
+})
+
+test('null は "meta" を返す', () => {
+  assert.equal(normalizePostCategory(null), 'meta')
+})
+
+test('undefined は "meta" を返す', () => {
+  assert.equal(normalizePostCategory(undefined), 'meta')
+})
+
+test('数値は "meta" を返す', () => {
+  assert.equal(normalizePostCategory(123), 'meta')
+})
+
+test('空文字は "meta" を返す', () => {
+  assert.equal(normalizePostCategory(''), 'meta')
 })
