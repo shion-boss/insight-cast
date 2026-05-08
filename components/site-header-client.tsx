@@ -12,6 +12,13 @@ import { isSitePath } from '@/lib/nav-area'
 
 const MIN_MS = 400
 
+const NAV_LINKS: { href: string; label: string }[] = [
+  { href: '/blog', label: 'ブログ' },
+  { href: '/cast-talk', label: 'キャスト対談' },
+  { href: '/cast', label: 'キャスト' },
+  { href: '/pricing', label: '料金' },
+]
+
 export function SiteHeaderClient() {
   // 未解決時は未ログイン側を楽観的に描画する。
   // marketing pages の大半の訪問者は未ログインのため flash は最小限になる。
@@ -80,38 +87,61 @@ export function SiteHeaderClient() {
       <header ref={headerRef} className="sticky top-0 z-30 border-b border-[var(--border)] bg-[rgba(250,246,240,0.93)] backdrop-blur-[16px]">
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex h-[62px] items-center justify-between gap-4">
-            <Link
-              href="/"
-              className="transition-opacity hover:opacity-80"
-            >
-              <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" />
-            </Link>
-
-            <div className="hidden md:flex items-center gap-2 sm:gap-3">
-              {isLoggedIn ? (
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
-                    ダッシュボード
-                  </Link>
-                  <form action={signOut}>
-                    <button type="submit" className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}>
-                      ログアウト
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <>
-                  <Link href="/auth/login" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
-                    ログイン
-                  </Link>
-                  <Link href="/auth/signup" prefetch={false} className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
-                    無料で試す <span aria-hidden="true">→</span>
-                  </Link>
-                </>
-              )}
+            <div className="flex items-center gap-6 lg:gap-8">
+              <Link
+                href="/"
+                className="transition-opacity hover:opacity-80"
+              >
+                <Image src="/logo.jpg" alt="Insight Cast" width={1116} height={350} className="h-[32px] w-auto object-contain" sizes="120px" />
+              </Link>
+              <nav aria-label="サイトナビゲーション" className="hidden lg:flex items-center gap-1">
+                {NAV_LINKS.map((link) => {
+                  const isActive = pathname === link.href || pathname.startsWith(link.href + '/')
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`rounded-full px-3 py-2 text-sm font-medium transition-colors ${
+                        isActive
+                          ? 'text-[var(--text)] bg-[var(--bg2)]'
+                          : 'text-[var(--text2)] hover:text-[var(--text)] hover:bg-[var(--bg2)]/60'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
+              </nav>
             </div>
 
-            <MobileNav navLinks={[]} isLoggedIn={isLoggedIn} />
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden lg:flex items-center gap-2 sm:gap-3">
+                {isLoggedIn ? (
+                  <>
+                    <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                      ダッシュボード
+                    </Link>
+                    <form action={signOut}>
+                      <button type="submit" className={getButtonClass('secondary', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                        ログアウト
+                      </button>
+                    </form>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-sm font-medium')}>
+                      ログイン
+                    </Link>
+                    <Link href="/auth/signup" prefetch={false} className={getButtonClass('primary', 'rounded-full px-5 py-2.5 text-sm')}>
+                      無料で試す <span aria-hidden="true">→</span>
+                    </Link>
+                  </>
+                )}
+              </div>
+
+              <MobileNav navLinks={NAV_LINKS} isLoggedIn={isLoggedIn} />
+            </div>
           </div>
 
         </div>

@@ -67,7 +67,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
         aria-expanded={open}
         aria-controls="mobile-drawer"
         onClick={() => setOpen((v) => !v)}
-        className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-[var(--r-sm)] transition-colors hover:bg-[var(--bg2)]"
+        className="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded-[var(--r-sm)] transition-colors hover:bg-[var(--bg2)]"
       >
         <span
           className={`block h-[2px] w-5 rounded-full bg-[var(--text)] transition-all duration-200 origin-center ${open ? 'translate-y-[7px] rotate-45' : ''}`}
@@ -85,7 +85,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
         <>
           {/* オーバーレイ */}
           <div
-            className={`fixed inset-0 z-40 bg-black/30 md:hidden transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            className={`fixed inset-0 z-40 bg-black/30 lg:hidden transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
             aria-hidden="true"
             onClick={() => setOpen(false)}
           />
@@ -97,7 +97,7 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
             role="dialog"
             aria-modal="true"
             aria-label="ナビゲーションメニュー"
-            className={`fixed top-0 right-0 z-50 h-full w-[280px] bg-[var(--surface)] border-l border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out md:hidden ${open ? 'translate-x-0' : 'translate-x-full'}`}
+            className={`fixed top-0 right-0 z-50 h-full w-[280px] bg-[var(--surface)] border-l border-[var(--border)] flex flex-col transition-transform duration-300 ease-in-out lg:hidden ${open ? 'translate-x-0' : 'translate-x-full'}`}
           >
             {/* ドロワーヘッダー */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
