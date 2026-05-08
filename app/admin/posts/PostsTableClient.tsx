@@ -47,7 +47,7 @@ function ToggleSwitch({ on, onToggle, disabled }: { on: boolean; onToggle: () =>
       disabled={disabled}
       className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${on ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
     >
-      <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-5' : 'translate-x-0.5'}`} />
+      <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
     </button>
   )
 }

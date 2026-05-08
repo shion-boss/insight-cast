@@ -198,7 +198,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                     aria-label={item.status === 'published' ? '下書きに戻す' : '公開する'}
                     className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
                   >
-                    <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                    <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
                   </button>
                   <Link
                     href={`/admin/cast-talk/${item.id}`}
@@ -278,7 +278,7 @@ export function CastTalkAdminClient({ initialItems }: { initialItems: CastTalk[]
                           aria-label={item.status === 'published' ? '下書きに戻す' : '公開する'}
                           className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors disabled:pointer-events-none disabled:opacity-50 ${item.status === 'published' ? 'bg-[var(--ok)]' : 'bg-[var(--border2)]'}`}
                         >
-                          <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                          <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${item.status === 'published' ? 'translate-x-[22px]' : 'translate-x-0.5'}`} />
                         </button>
                         <span className={`text-[11px] font-semibold ${item.status === 'published' ? 'text-[var(--ok)]' : 'text-[var(--text2)]'}`}>
                           {item.status === 'published' ? '公開中' : '下書き'}

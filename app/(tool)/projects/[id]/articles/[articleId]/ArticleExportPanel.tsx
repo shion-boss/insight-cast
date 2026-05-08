@@ -261,7 +261,7 @@ export function ArticleExportPanel({
               onClick={() => setShowSuggestions((v) => !v)}
               className="flex items-center gap-1.5 select-none rounded min-h-[44px] px-1">
               <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showSuggestions ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showSuggestions ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
               </div>
               <span className="text-xs text-[var(--text2)] whitespace-nowrap">クオリティアップ提案</span>
             </button>
@@ -311,13 +311,13 @@ export function ArticleExportPanel({
               <div className="flex flex-wrap items-center gap-3">
                 <button type="button" role="switch" aria-label="インタビュアーアイコンを表示" aria-checked={showInterviewerIcon} onClick={() => setShowInterviewerIcon(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerIcon ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text2)]">アイコン</span>
                 </button>
                 <button type="button" role="switch" aria-label="インタビュアー名を表示" aria-checked={showInterviewerName} onClick={() => setShowInterviewerName(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showInterviewerName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showInterviewerName ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text2)]">名前</span>
                 </button>
@@ -351,13 +351,13 @@ export function ArticleExportPanel({
               <div className="flex flex-wrap items-center gap-3">
                 <button type="button" role="switch" aria-label="取材先アイコンを表示" aria-checked={showClientIcon} onClick={() => setShowClientIcon(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientIcon ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientIcon ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text2)]">アイコン</span>
                 </button>
                 <button type="button" role="switch" aria-label="取材先の名前を表示" aria-checked={showClientName} onClick={() => setShowClientName(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] rounded sm:min-h-0">
                   <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showClientName ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showClientName ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                   </div>
                   <span className="text-[var(--text2)]">名前</span>
                 </button>
@@ -370,7 +370,7 @@ export function ArticleExportPanel({
             <div className="flex flex-wrap items-center gap-3">
               <button type="button" role="switch" aria-label="AIキャスト紹介文を表示" aria-checked={showIntro} onClick={() => setShowIntro(v => !v)} className="flex items-center gap-1.5 select-none min-h-[44px] rounded sm:min-h-0">
                 <div className={`relative h-5 w-9 rounded-full transition-colors pointer-events-none ${showIntro ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'}`}>
-                  <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showIntro ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  <span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${showIntro ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
                 </div>
                 <span className="text-[var(--text2)]">AIキャスト・Insight Cast を紹介する</span>
               </button>
