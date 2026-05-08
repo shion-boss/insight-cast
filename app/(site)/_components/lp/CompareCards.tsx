@@ -94,9 +94,9 @@ export function CompareCards() {
               <div className="text-center mb-6">
                 <div className="flex items-end justify-center gap-1 leading-none">
                   <span className="font-bold pb-1" style={{ fontSize: '18px', color: 'var(--accent)' }}>¥</span>
-                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>166</span>
+                  <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>4,980</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>Insight Cast の 1記事あたりのコスト</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>/ 月　月まるごと、取材も記事も込み</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
@@ -104,7 +104,7 @@ export function CompareCards() {
                   { name: 'サイト放置',   value: '何も増えない',     muted: true,  highlight: false },
                   { name: 'AIツール',     value: '月数本の薄い記事', muted: false, highlight: false },
                   { name: 'ライター発注', value: '月1〜2本が限界',   muted: false, highlight: false },
-                  { name: 'Insight Cast', value: '月15回・30本の記事', muted: false, highlight: true  },
+                  { name: 'Insight Cast', value: '月¥4,980で取材付き・使い放題', muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
@@ -114,7 +114,7 @@ export function CompareCards() {
                 ))}
               </div>
               <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
-                <strong className="font-bold text-[var(--text)]">1記事あたり ¥166。</strong>続けられる価格にこだわりました。
+                <strong className="font-bold text-[var(--text)]">ライターに1回頼む金額より安く、</strong>毎月続けられる。
               </p>
             </div>
           </div>
