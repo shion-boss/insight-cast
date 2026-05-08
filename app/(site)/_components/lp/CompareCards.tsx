@@ -65,10 +65,10 @@ export function CompareCards() {
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
+                  { name: '年賀状の一言',       value: '50文字',                     muted: true,  highlight: false },
                   { name: '原稿用紙1枚',        value: '400文字',                    muted: true,  highlight: false },
-                  { name: 'クラウドソーシング',  value: '1,500字（業界外）',          muted: true,  highlight: false },
-                  { name: '取材付きライター',    value: '2,000〜2,500字',            muted: false, highlight: false },
-                  { name: 'Insight Cast',       value: '3,000字+（業種特化）',      muted: false, highlight: true  },
+                  { name: '学校の作文',         value: '800文字',                    muted: false, highlight: false },
+                  { name: 'Insight Cast',       value: '3,000文字+',                muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
