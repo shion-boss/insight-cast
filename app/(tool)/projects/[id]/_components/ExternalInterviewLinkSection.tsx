@@ -25,15 +25,21 @@ type IntervieweeOption = {
   industry: string | null
 }
 
-const INTERVIEWER_OPTIONS = [
-  { value: 'mint', label: 'ミント（ネコ）' },
-  { value: 'claus', label: 'クラウス（フクロウ）' },
-  { value: 'rain', label: 'レイン（キツネ）' },
-]
+export type CastOption = {
+  id: string
+  name: string
+  species: string
+}
 
 const NEW_INTERVIEWEE_VALUE = '__new__'
 
-export function ExternalInterviewLinkSection({ projectId }: { projectId: string }) {
+export function ExternalInterviewLinkSection({
+  projectId,
+  casts,
+}: {
+  projectId: string
+  casts: CastOption[]
+}) {
   const [links, setLinks] = useState<ExternalLink[]>([])
   const [loadingList, setLoadingList] = useState(true)
   const [listError, setListError] = useState<string | null>(null)
@@ -42,7 +48,7 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
   const [interviewees, setInterviewees] = useState<IntervieweeOption[]>([])
 
   // 発行フォーム
-  const [interviewerType, setInterviewerType] = useState('mint')
+  const [interviewerType, setInterviewerType] = useState(casts[0]?.id ?? 'mint')
   const [theme, setTheme] = useState('')
   const [intervieweeChoice, setIntervieweeChoice] = useState<string>(NEW_INTERVIEWEE_VALUE)
   const [targetName, setTargetName] = useState('')
@@ -198,11 +204,11 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                 id="ext-interviewer-type"
                 value={interviewerType}
                 onChange={(e) => setInterviewerType(e.target.value)}
-                disabled={issuing}
+                disabled={issuing || casts.length === 0}
                 className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
               >
-                {INTERVIEWER_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                {casts.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}（{c.species}）</option>
                 ))}
               </select>
             </div>

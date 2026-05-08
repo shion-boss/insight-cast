@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getCharacter } from '@/lib/characters'
+import { getAccessibleCharacters } from '@/lib/cast-access'
 import { isProjectAnalysisReady, resolveProjectAnalysisStatus } from '@/lib/analysis/project-readiness'
 import { buildArticleCountByInterview, getInterviewFlags, getInterviewManagementHref, type InterviewArticleRef } from '@/lib/interview-state'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
@@ -547,7 +548,14 @@ export default async function ProjectPage({
       {/* 外部取材リンクセクション（オーナーかつ法人プランのみ表示） */}
       {isOwner && externalInterviewLinksAllowed && (
         <div className="mt-8">
-          <ExternalInterviewLinkSection projectId={id} />
+          <ExternalInterviewLinkSection
+            projectId={id}
+            casts={getAccessibleCharacters(user.created_at).map((c) => ({
+              id: c.id,
+              name: c.name,
+              species: c.species,
+            }))}
+          />
         </div>
       )}
     </>
