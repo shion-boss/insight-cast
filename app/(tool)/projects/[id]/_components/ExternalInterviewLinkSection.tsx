@@ -31,7 +31,7 @@ export type CastOption = {
   species: string
 }
 
-const NEW_INTERVIEWEE_VALUE = '__new__'
+const UNSPECIFIED_INTERVIEWEE_VALUE = '__unspecified__'
 
 export function ExternalInterviewLinkSection({
   projectId,
@@ -50,9 +50,7 @@ export function ExternalInterviewLinkSection({
   // 発行フォーム
   const [interviewerType, setInterviewerType] = useState(casts[0]?.id ?? 'mint')
   const [theme, setTheme] = useState('')
-  const [intervieweeChoice, setIntervieweeChoice] = useState<string>(NEW_INTERVIEWEE_VALUE)
-  const [targetName, setTargetName] = useState('')
-  const [targetIndustry, setTargetIndustry] = useState('')
+  const [intervieweeChoice, setIntervieweeChoice] = useState<string>(UNSPECIFIED_INTERVIEWEE_VALUE)
   const [issuing, setIssuing] = useState(false)
   const [issueMessage, setIssueMessage] = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
 
@@ -96,7 +94,7 @@ export function ExternalInterviewLinkSection({
     e.preventDefault()
     if (!theme.trim()) return
 
-    const useExisting = intervieweeChoice !== NEW_INTERVIEWEE_VALUE
+    const useExisting = intervieweeChoice !== UNSPECIFIED_INTERVIEWEE_VALUE
 
     setIssuing(true)
     setIssueMessage(null)
@@ -109,12 +107,7 @@ export function ExternalInterviewLinkSection({
           projectId,
           interviewerType,
           theme: theme.trim(),
-          ...(useExisting
-            ? { intervieweeId: intervieweeChoice }
-            : {
-                targetName: targetName.trim() || undefined,
-                targetIndustry: targetIndustry.trim() || undefined,
-              }),
+          ...(useExisting ? { intervieweeId: intervieweeChoice } : {}),
         }),
       })
 
@@ -123,10 +116,8 @@ export function ExternalInterviewLinkSection({
       if (res.ok && json.link) {
         setIssueMessage({ type: 'ok', text: '取材リンクを発行しました。' })
         setTheme('')
-        setTargetName('')
-        setTargetIndustry('')
-        setIntervieweeChoice(NEW_INTERVIEWEE_VALUE)
-        await Promise.all([fetchLinks(), fetchInterviewees()])
+        setIntervieweeChoice(UNSPECIFIED_INTERVIEWEE_VALUE)
+        await fetchLinks()
       } else {
         const msg = json.error === 'plan_not_supported'
           ? '取材リンクの発行は法人プランのみ利用できます。'
@@ -178,8 +169,6 @@ export function ExternalInterviewLinkSection({
       setDeleting(false)
     }
   }
-
-  const isNewInterviewee = intervieweeChoice === NEW_INTERVIEWEE_VALUE
 
   return (
     <section aria-labelledby="external-links-section-title">
@@ -241,54 +230,21 @@ export function ExternalInterviewLinkSection({
               disabled={issuing}
               className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
             >
-              <option value={NEW_INTERVIEWEE_VALUE}>＋ 新しい取材先</option>
-              {interviewees.length > 0 && <option disabled>──────</option>}
-              {interviewees.map((i) => (
-                <option key={i.id} value={i.id}>
-                  {i.name}{i.industry ? `（${i.industry}）` : ''}
-                </option>
-              ))}
+              <option value={UNSPECIFIED_INTERVIEWEE_VALUE}>取材先を指定しない（誰でも回答可）</option>
+              {interviewees.length > 0 && (
+                <optgroup label="登録済みの取材先">
+                  {interviewees.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.name}{i.industry ? `（${i.industry}）` : ''}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
             <p className="mt-1.5 text-[13px] text-[var(--text2)]">
-              既存の取材先を選ぶと、過去の取材を踏まえて続きを聞いてもらえます。
+              登録済みの取材先を選ぶと、過去の取材を踏まえた続きの取材になります。新しい取材先は上の「取材先」セクションから追加できます。
             </p>
           </div>
-
-          {isNewInterviewee && (
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label htmlFor="ext-target-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                  相手の名前（任意）
-                </label>
-                <input
-                  id="ext-target-name"
-                  type="text"
-                  value={targetName}
-                  onChange={(e) => setTargetName(e.target.value)}
-                  placeholder="例: 山田"
-                  maxLength={100}
-                  disabled={issuing}
-                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-                />
-                <p className="mt-1.5 text-[13px] text-[var(--text2)]">入力すると「○○さん」と呼びかけながら取材を進めます。</p>
-              </div>
-              <div>
-                <label htmlFor="ext-target-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                  相手の業種（任意）
-                </label>
-                <input
-                  id="ext-target-industry"
-                  type="text"
-                  value={targetIndustry}
-                  onChange={(e) => setTargetIndustry(e.target.value)}
-                  placeholder="例: 飲食業"
-                  maxLength={100}
-                  disabled={issuing}
-                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-                />
-              </div>
-            </div>
-          )}
           <div className="flex justify-end">
             <button
               type="submit"
