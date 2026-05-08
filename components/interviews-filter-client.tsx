@@ -314,7 +314,7 @@ function FilterContent({
                         )}
                       </td>
                       <td className={`px-5 py-3 text-right text-[13px] tabular-nums transition-colors group-hover:text-[var(--accent)] ${item.articleCount > 0 ? 'font-semibold text-[var(--text)]' : 'text-[var(--text3)]'}`}>{item.articleCount}</td>
-                      <td className={`px-5 py-3 text-right text-[13px] tabular-nums transition-colors group-hover:text-[var(--accent)] ${item.uncreatedThemeCount > 0 ? 'font-semibold text-[var(--accent)]' : 'text-[var(--text3)]'}`}>{item.uncreatedThemeCount}</td>
+                      <td className={`px-5 py-3 text-right text-[13px] tabular-nums transition-colors group-hover:text-[var(--accent)] ${item.uncreatedThemeCount > 0 ? 'font-semibold text-[var(--text)]' : 'text-[var(--text3)]'}`}>{item.uncreatedThemeCount}</td>
                     </>
                   )
 
