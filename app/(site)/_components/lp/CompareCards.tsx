@@ -103,7 +103,7 @@ export function CompareCards() {
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
                   { name: '自分で書く',         value: '¥0',                     muted: true,  highlight: false },
-                  { name: 'AIツール',           value: '¥1,000/記事',            muted: false, highlight: false },
+                  { name: 'AIツール',           value: '¥300〜¥1,000/記事',     muted: false, highlight: false },
                   { name: 'ライター発注',       value: '¥5,000/記事',            muted: false, highlight: false },
                   { name: 'Insight Cast',      value: '¥166/記事 取材込み',     muted: false, highlight: true  },
                 ].map((r) => (
