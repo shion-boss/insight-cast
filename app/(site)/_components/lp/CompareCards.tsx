@@ -97,7 +97,7 @@ export function CompareCards() {
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>166</span>
                   <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>/記事</span>
                 </div>
-                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>月¥4,980で取材込み・使い放題</p>
+                <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>月¥4,980で取材込み（個人プラン）</p>
               </div>
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
