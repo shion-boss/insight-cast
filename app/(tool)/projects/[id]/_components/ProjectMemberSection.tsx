@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { showToast } from '@/lib/client/toast'
+import { dispatchIntervieweesChanged } from '@/lib/interviewees-events'
 
 type RoleKey = 'editor' | 'viewer'
 
@@ -217,6 +218,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
         return
       }
       setEditTarget(null)
+      dispatchIntervieweesChanged(projectId)
     } catch {
       setEditError('保存できませんでした。もう一度お試しください。')
     } finally {
@@ -546,12 +548,26 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
           <div className="w-full max-w-md rounded-[var(--r-lg)] bg-[var(--surface)] p-6 shadow-[var(--elevation-3)]">
             <h3 id="member-edit-title" className="text-base font-bold text-[var(--text)] mb-1">取材情報を編集</h3>
             <p className="text-[13px] text-[var(--text2)] mb-4">
-              <span className="font-semibold text-[var(--text)]">{editTarget.displayName}</span> に関するプロジェクト内のメモです。名前は本人がプロフィールから変更できます。
+              プロジェクト内のメモです。
             </p>
             {editLoading ? (
               <p className="text-base text-[var(--text2)] py-6 text-center">読み込み中...</p>
             ) : (
               <div className="space-y-3">
+                <div>
+                  <label htmlFor="member-edit-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                    名前
+                  </label>
+                  <input
+                    id="member-edit-name"
+                    type="text"
+                    value={editTarget.displayName}
+                    readOnly
+                    aria-readonly="true"
+                    className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-gray-200 bg-gray-100 px-3 py-2 text-base text-gray-600 cursor-not-allowed"
+                  />
+                  <p className="mt-1.5 text-[13px] text-[var(--text3)]">名前は本人がプロフィールから変更できます。</p>
+                </div>
                 <div>
                   <label htmlFor="member-edit-role" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
                     役職・関係（任意）

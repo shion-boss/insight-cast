@@ -48,7 +48,32 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'db_error' }, { status: 500 })
   }
 
-  return NextResponse.json({ links: links ?? [] })
+  // 各リンクに紐づく取材ステータスを付与する
+  // - interview row なし: 'waiting' (取材待ち)
+  // - status='completed': 'done' (完了)
+  // - その他（in_progress 等）: 'in_progress' (取材中)
+  const linkIds = (links ?? []).map((l) => l.id as string)
+  const statusMap = new Map<string, 'waiting' | 'in_progress' | 'done'>()
+  if (linkIds.length > 0) {
+    const { data: interviews } = await supabase
+      .from('interviews')
+      .select('external_link_id, status, created_at')
+      .in('external_link_id', linkIds)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+    // 各 link につき直近の interview のステータスを採用
+    for (const iv of interviews ?? []) {
+      const linkId = iv.external_link_id as string
+      if (statusMap.has(linkId)) continue
+      statusMap.set(linkId, iv.status === 'completed' ? 'done' : 'in_progress')
+    }
+  }
+  const enriched = (links ?? []).map((l) => ({
+    ...l,
+    interview_status: statusMap.get(l.id as string) ?? ('waiting' as const),
+  }))
+
+  return NextResponse.json({ links: enriched })
 }
 
 // POST: 外部取材リンク発行

@@ -12,21 +12,31 @@ const PostBodySchema = z.object({
 type Params = { params: Promise<{ id: string }> }
 
 // GET: プロジェクトの取材先一覧（取材数・記事数の集計付き）
-export async function GET(_req: NextRequest, { params }: Params) {
+// クエリパラメータ:
+//   includeMembers=true: プロジェクトメンバー由来（linked_user_id あり）の取材先も含める
+export async function GET(req: NextRequest, { params }: Params) {
   const { id: projectId } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
 
+  const includeMembers = req.nextUrl.searchParams.get('includeMembers') === 'true'
+
   // RLS でアクセス可なら取れる。
-  // linked_user_id がある（プロジェクトメンバー由来）レコードはメンバーセクションで管理するため、ここでは除外。
-  const { data: rows, error } = await supabase
+  // 既定では linked_user_id IS NULL のみ（メンバー由来はメンバーセクションで管理する）
+  // 並び順は作成古い順（リストとドロップダウンの並びを安定させる）
+  let query = supabase
     .from('interviewees')
     .select('id, name, industry, role, notes, linked_user_id, created_at, updated_at')
     .eq('project_id', projectId)
-    .is('linked_user_id', null)
     .is('deleted_at', null)
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: true })
+
+  if (!includeMembers) {
+    query = query.is('linked_user_id', null)
+  }
+
+  const { data: rows, error } = await query
 
   if (error) {
     console.error('[GET /api/projects/[id]/interviewees] db error:', error.message)
@@ -53,34 +63,6 @@ export async function GET(_req: NextRequest, { params }: Params) {
     }
   }
 
-  // 記事数の集計（interview 経由で interviewee_id を辿る）
-  const articleCountMap = new Map<string, number>()
-  if (ids.length > 0) {
-    // interview_id → interviewee_id のマップを取得して、articles を groupBy
-    const { data: interviewMapRows } = await supabase
-      .from('interviews')
-      .select('id, interviewee_id')
-      .in('interviewee_id', ids)
-      .is('deleted_at', null)
-    const interviewIdToIntervieweeId = new Map<string, string>()
-    for (const row of interviewMapRows ?? []) {
-      interviewIdToIntervieweeId.set(row.id as string, row.interviewee_id as string)
-    }
-    const interviewIds = [...interviewIdToIntervieweeId.keys()]
-    if (interviewIds.length > 0) {
-      const { data: articleRows } = await supabase
-        .from('articles')
-        .select('interview_id')
-        .in('interview_id', interviewIds)
-        .is('deleted_at', null)
-      for (const row of articleRows ?? []) {
-        const intervieweeId = interviewIdToIntervieweeId.get(row.interview_id as string)
-        if (!intervieweeId) continue
-        articleCountMap.set(intervieweeId, (articleCountMap.get(intervieweeId) ?? 0) + 1)
-      }
-    }
-  }
-
   const interviewees = (rows ?? []).map((r) => ({
     id: r.id,
     name: r.name,
@@ -91,7 +73,6 @@ export async function GET(_req: NextRequest, { params }: Params) {
     created_at: r.created_at,
     updated_at: r.updated_at,
     interview_count: interviewCountMap.get(r.id as string) ?? 0,
-    article_count: articleCountMap.get(r.id as string) ?? 0,
     last_interview_at: lastInterviewAtMap.get(r.id as string) ?? null,
   }))
 

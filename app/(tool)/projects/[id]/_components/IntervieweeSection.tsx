@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { dispatchIntervieweesChanged } from '@/lib/interviewees-events'
 
 type Interviewee = {
   id: string
@@ -12,7 +13,6 @@ type Interviewee = {
   created_at: string
   updated_at: string
   interview_count: number
-  article_count: number
   last_interview_at: string | null
 }
 
@@ -96,6 +96,7 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
         setCreateIndustry('')
         setCreateRole('')
         setShowCreate(false)
+        dispatchIntervieweesChanged(projectId)
         await fetchList()
       } else {
         const msg = json.error === 'duplicate_name'
@@ -128,6 +129,7 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
       const json = await res.json() as { error?: string }
       if (res.ok) {
         setEdit(null)
+        dispatchIntervieweesChanged(projectId)
         await fetchList()
       } else {
         const msg = json.error === 'duplicate_name'
@@ -149,6 +151,7 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
       const res = await fetch(`/api/interviewees/${confirmDelete.id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('failed')
       setConfirmDelete(null)
+      dispatchIntervieweesChanged(projectId)
       await fetchList()
     } catch {
       setError('削除に失敗しました。')
@@ -160,107 +163,15 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
 
   return (
     <section aria-labelledby="interviewees-section-title">
-      <div className="flex items-center justify-between mb-3">
+      <div className="mb-3">
         <h2 id="interviewees-section-title" className="text-[16px] font-bold text-[var(--text)]">
           取材先
         </h2>
-        {!showCreate && (
-          <button
-            type="button"
-            onClick={() => setShowCreate(true)}
-            className="text-[13px] font-semibold text-[var(--accent)] hover:text-[var(--accent-h)] transition-colors rounded"
-          >
-            ＋ 新しい取材先を追加
-          </button>
-        )}
       </div>
 
       <p className="text-base text-[var(--text2)] mb-4">
         取材リンクで何度か話を聞きたい相手を登録できます。同じ取材先でリンクを発行すると、前回の話を踏まえた取材になります。
       </p>
-
-      {/* 新規追加フォーム */}
-      {showCreate && (
-        <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 mb-4">
-          <p className="text-base font-semibold text-[var(--text)] mb-4">取材先を追加する</p>
-          <form onSubmit={handleCreate} className="space-y-3">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div>
-                <label htmlFor="iv-create-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                  名前 <span className="text-[var(--err)]">*</span>
-                </label>
-                <input
-                  id="iv-create-name"
-                  type="text"
-                  value={createName}
-                  onChange={(e) => setCreateName(e.target.value)}
-                  placeholder="例: 山田太郎"
-                  required
-                  maxLength={100}
-                  disabled={creating}
-                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label htmlFor="iv-create-role" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                  役職・関係（任意）
-                </label>
-                <input
-                  id="iv-create-role"
-                  type="text"
-                  value={createRole}
-                  onChange={(e) => setCreateRole(e.target.value)}
-                  placeholder="例: 代表"
-                  maxLength={100}
-                  disabled={creating}
-                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label htmlFor="iv-create-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                  業種（任意）
-                </label>
-                <input
-                  id="iv-create-industry"
-                  type="text"
-                  value={createIndustry}
-                  onChange={(e) => setCreateIndustry(e.target.value)}
-                  placeholder="例: 飲食業"
-                  maxLength={100}
-                  disabled={creating}
-                  className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => { setShowCreate(false); setCreateMessage(null) }}
-                disabled={creating}
-                className="min-h-[44px] rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-50 cursor-pointer transition-colors"
-              >
-                キャンセル
-              </button>
-              <button
-                type="submit"
-                disabled={creating || !createName.trim()}
-                className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
-              >
-                {creating ? '追加中...' : '追加する'}
-              </button>
-            </div>
-            {createMessage && (
-              <p
-                className={`text-base ${createMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
-                role="status"
-                aria-live="polite"
-              >
-                {createMessage.text}
-              </p>
-            )}
-          </form>
-        </div>
-      )}
 
       {/* 取材先一覧 */}
       <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
@@ -268,12 +179,13 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
           <div className="p-6 text-base text-[var(--text2)] text-center">読み込み中...</div>
         ) : error ? (
           <div className="p-6 text-base text-[var(--err)]">{error}</div>
-        ) : items.length === 0 ? (
-          <div className="px-5 py-8 text-center text-base text-[var(--text2)]">
-            まだ取材先が登録されていません。
-          </div>
         ) : (
           <div className="divide-y divide-[var(--border)]">
+            {items.length === 0 && !showCreate && (
+              <div className="px-5 py-8 text-center text-base text-[var(--text2)]">
+                まだ取材先が登録されていません。
+              </div>
+            )}
             {items.map((iv) => (
               <div key={iv.id} className="flex items-center gap-4 px-5 py-4">
                 <div className="flex-1 min-w-0">
@@ -288,7 +200,6 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
                   </div>
                   <div className="flex items-center gap-3 mt-1 text-[13px] text-[var(--text2)]">
                     <span>取材 <span className="font-semibold text-[var(--text)]">{iv.interview_count}</span> 回</span>
-                    <span>記事 <span className="font-semibold text-[var(--text)]">{iv.article_count}</span> 本</span>
                     <span>最終取材: {formatDate(iv.last_interview_at)}</span>
                   </div>
                 </div>
@@ -318,6 +229,99 @@ export function IntervieweeSection({ projectId }: { projectId: string }) {
                 </div>
               </div>
             ))}
+
+            {/* 新規追加: 行 or インラインフォーム */}
+            {showCreate ? (
+              <div className="px-5 py-5 bg-[var(--surface-dim)]">
+                <p className="text-base font-semibold text-[var(--text)] mb-4">取材先を追加する</p>
+                <form onSubmit={handleCreate} className="space-y-3">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div>
+                      <label htmlFor="iv-create-name" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                        名前 <span className="text-[var(--err)]">*</span>
+                      </label>
+                      <input
+                        id="iv-create-name"
+                        type="text"
+                        value={createName}
+                        onChange={(e) => setCreateName(e.target.value)}
+                        placeholder="例: 山田太郎"
+                        required
+                        maxLength={100}
+                        disabled={creating}
+                        autoFocus
+                        className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="iv-create-role" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                        役職・関係（任意）
+                      </label>
+                      <input
+                        id="iv-create-role"
+                        type="text"
+                        value={createRole}
+                        onChange={(e) => setCreateRole(e.target.value)}
+                        placeholder="例: 代表"
+                        maxLength={100}
+                        disabled={creating}
+                        className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="iv-create-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                        業種（任意）
+                      </label>
+                      <input
+                        id="iv-create-industry"
+                        type="text"
+                        value={createIndustry}
+                        onChange={(e) => setCreateIndustry(e.target.value)}
+                        placeholder="例: 飲食業"
+                        maxLength={100}
+                        disabled={creating}
+                        className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => { setShowCreate(false); setCreateMessage(null) }}
+                      disabled={creating}
+                      className="min-h-[44px] rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-50 cursor-pointer transition-colors"
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={creating || !createName.trim()}
+                      className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                    >
+                      {creating ? '追加中...' : '追加する'}
+                    </button>
+                  </div>
+                  {createMessage && (
+                    <p
+                      className={`text-base ${createMessage.type === 'ok' ? 'text-[var(--ok)]' : 'text-[var(--err)]'}`}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {createMessage.text}
+                    </p>
+                  )}
+                </form>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowCreate(true)}
+                className="group flex w-full items-center gap-3 px-5 py-4 text-left text-base font-medium text-[var(--text2)] hover:bg-[var(--bg2)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:bg-[var(--bg2)] transition-colors"
+              >
+                <span aria-hidden="true" className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[var(--text2)] transition-colors group-hover:border-[var(--accent)] group-hover:text-[var(--accent)]">＋</span>
+                <span>新しい取材先を追加</span>
+              </button>
+            )}
           </div>
         )}
       </div>

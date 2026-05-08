@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { CharacterAvatar } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { INTERVIEWEES_CHANGED_EVENT, type IntervieweesChangedDetail } from '@/lib/interviewees-events'
 
 type ExternalLink = {
   id: string
@@ -17,12 +18,14 @@ type ExternalLink = {
   max_use_count: number
   is_active: boolean
   created_at: string
+  interview_status: 'waiting' | 'in_progress' | 'done'
 }
 
 type IntervieweeOption = {
   id: string
   name: string
   industry: string | null
+  linked_user_id: string | null
 }
 
 export type CastOption = {
@@ -76,12 +79,12 @@ export function ExternalInterviewLinkSection({
 
   const fetchInterviewees = useCallback(async () => {
     try {
-      const res = await fetch(`/api/projects/${projectId}/interviewees`)
+      const res = await fetch(`/api/projects/${projectId}/interviewees?includeMembers=true`)
       if (!res.ok) return
       const json = await res.json() as { interviewees: IntervieweeOption[] }
       setInterviewees(json.interviewees)
     } catch {
-      // 取材先が取れなくてもリンク発行は新規追加で続行できる
+      // 取材先が取れなくてもリンク発行は未指定で続行できる
     }
   }, [projectId])
 
@@ -89,6 +92,17 @@ export function ExternalInterviewLinkSection({
     void fetchLinks()
     void fetchInterviewees()
   }, [fetchLinks, fetchInterviewees])
+
+  // 取材先の追加・編集・削除がほかのセクションで起きたらプルダウンを再フェッチ
+  useEffect(() => {
+    function onChanged(e: Event) {
+      const detail = (e as CustomEvent<IntervieweesChangedDetail>).detail
+      if (detail?.projectId !== projectId) return
+      void fetchInterviewees()
+    }
+    window.addEventListener(INTERVIEWEES_CHANGED_EVENT, onChanged)
+    return () => window.removeEventListener(INTERVIEWEES_CHANGED_EVENT, onChanged)
+  }, [projectId, fetchInterviewees])
 
   const handleIssue = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -177,7 +191,7 @@ export function ExternalInterviewLinkSection({
       </h2>
 
       <p className="text-base text-[var(--text2)] mb-4">
-        リンクをSNSや知人に共有して、取材に答えてもらえます。1つのリンクで最大2回まで使えます。同じ取材先を選んで発行すると、2回目以降は前回の話を踏まえた取材になります。
+        取材リンクを送ると、ログイン不要で取材に答えてもらえます。取材先を選んで発行すると、同じ取材先への2回目以降は前回の話を踏まえた取材になります。
       </p>
 
       {/* 発行フォーム */}
@@ -202,44 +216,51 @@ export function ExternalInterviewLinkSection({
               </select>
             </div>
             <div>
-              <label htmlFor="ext-theme" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-                テーマ <span className="text-[var(--err)]">*</span>
+              <label htmlFor="ext-interviewee-choice" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                取材先
               </label>
-              <input
-                id="ext-theme"
-                type="text"
-                value={theme}
-                onChange={(e) => setTheme(e.target.value)}
-                placeholder="例: サービスへの思い"
-                required
-                maxLength={200}
+              <select
+                id="ext-interviewee-choice"
+                value={intervieweeChoice}
+                onChange={(e) => setIntervieweeChoice(e.target.value)}
                 disabled={issuing}
-                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
-              />
+                className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
+              >
+                <option value={UNSPECIFIED_INTERVIEWEE_VALUE}>取材先を指定しない（誰でも回答可）</option>
+                {interviewees.map((i) => {
+                  const suffix = i.linked_user_id
+                    ? '（プロジェクトメンバー）'
+                    : i.industry
+                      ? `（${i.industry}）`
+                      : ''
+                  return (
+                    <option key={i.id} value={i.id}>
+                      {i.name}{suffix}
+                    </option>
+                  )
+                })}
+              </select>
             </div>
           </div>
+          <p className="text-[13px] text-[var(--text2)]">
+            登録済みの取材先を選ぶと、過去の取材を踏まえた続きの取材になります。新しい取材先は上の「取材先」セクションから追加できます。
+          </p>
 
           <div>
-            <label htmlFor="ext-interviewee-choice" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
-              取材先
+            <label htmlFor="ext-theme" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+              テーマ <span className="text-[var(--err)]">*</span>
             </label>
-            <select
-              id="ext-interviewee-choice"
-              value={intervieweeChoice}
-              onChange={(e) => setIntervieweeChoice(e.target.value)}
+            <input
+              id="ext-theme"
+              type="text"
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+              placeholder="例: サービスへの思い"
+              required
+              maxLength={200}
               disabled={issuing}
-              className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
-            >
-              <option value={UNSPECIFIED_INTERVIEWEE_VALUE}>取材先を指定しない（誰でも回答可）</option>
-              {interviewees.map((i) => (
-                <option key={i.id} value={i.id}>
-                  {i.name}{i.industry ? `（${i.industry}）` : ''}
-                </option>
-              ))}
-            </select>
-            <p className="mt-1.5 text-[13px] text-[var(--text2)]">
-              登録済みの取材先を選ぶと、過去の取材を踏まえた続きの取材になります。新しい取材先は上の「取材先」セクションから追加できます。
-            </p>
+              className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+            />
           </div>
           <div className="flex justify-end">
             <button
@@ -275,12 +296,23 @@ export function ExternalInterviewLinkSection({
         ) : (
           <div className="divide-y divide-[var(--border)]">
             {links.map((link) => {
-              const isExpired = !link.is_active || link.use_count >= link.max_use_count
               const char = getCharacter(link.interviewer_type)
+              const status = link.interview_status
+              const isDone = status === 'done'
+              const statusBadge = (() => {
+                switch (status) {
+                  case 'done':
+                    return { label: '完了', cls: 'border-[var(--ok)]/30 bg-[var(--ok-l)] text-[var(--ok)]' }
+                  case 'in_progress':
+                    return { label: '取材中', cls: 'border-[var(--accent)]/30 bg-[var(--accent-l)] text-[var(--on-primary-container)]' }
+                  default:
+                    return { label: '取材待ち', cls: 'border-[var(--warn)]/30 bg-[var(--warn-l)] text-[var(--warn)]' }
+                }
+              })()
               return (
                 <div
                   key={link.id}
-                  className={`flex items-center gap-3 px-5 py-4 ${isExpired ? 'opacity-50' : ''}`}
+                  className={`flex items-center gap-3 px-5 py-4 ${isDone ? 'opacity-50' : ''}`}
                 >
                   <CharacterAvatar
                     src={char?.icon48}
@@ -292,14 +324,9 @@ export function ExternalInterviewLinkSection({
                   <div className="flex-1 min-w-0">
                     <p className="text-base font-medium text-[var(--text)] truncate">{link.theme}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-[var(--text2)]">
-                        {link.use_count} / {link.max_use_count} 回使用
+                      <span className={`text-[11px] rounded-full px-2 py-0.5 border ${statusBadge.cls}`}>
+                        {statusBadge.label}
                       </span>
-                      {isExpired && (
-                        <span className="text-[11px] text-[var(--text2)] bg-[var(--bg2)] border border-[var(--border)] rounded-full px-2 py-0.5">
-                          無効
-                        </span>
-                      )}
                       {link.target_name && (
                         <span className="text-[11px] text-[var(--text2)] truncate">{link.target_name}</span>
                       )}
@@ -309,7 +336,7 @@ export function ExternalInterviewLinkSection({
                     <button
                       type="button"
                       onClick={() => handleCopy(link.token)}
-                      disabled={isExpired}
+                      disabled={isDone}
                       aria-label={`${link.theme}のリンクをコピー`}
                       className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] disabled:opacity-50 disabled:pointer-events-none cursor-pointer transition-colors"
                     >

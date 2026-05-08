@@ -9,7 +9,7 @@ const PatchBodySchema = z.object({
   notes: z.string().max(1000).nullable().optional(),
 })
 
-type Params = { params: Promise<{ id: string; userId: string }> }
+type Params = { params: Promise<{ id: string; uid: string }> }
 
 async function ensureOwner(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -27,7 +27,7 @@ async function ensureOwner(
 
 // GET: プロジェクトメンバーに紐づく interviewees レコードを返す（無ければ null）
 export async function GET(_req: NextRequest, { params }: Params) {
-  const { id: projectId, userId } = await params
+  const { id: projectId, uid: userId } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
@@ -48,7 +48,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
 // PATCH: メンバーの interviewees を upsert（無ければ profile.name から作成）
 export async function PATCH(req: NextRequest, { params }: Params) {
-  const { id: projectId, userId } = await params
+  const { id: projectId, uid: userId } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
