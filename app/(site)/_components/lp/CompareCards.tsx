@@ -31,7 +31,7 @@ export function CompareCards() {
                 {[
                   { name: 'AIに丸投げ',     value: '3分',        muted: true,  highlight: false },
                   { name: '自分で書く',     value: '1〜2時間',   muted: false, highlight: false },
-                  { name: 'ライター外注',   value: '1〜2週間',   muted: false, highlight: false },
+                  { name: 'ライター外注',   value: '3〜7日',     muted: false, highlight: false },
                   { name: 'Insight Cast',   value: '約20分',     muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
