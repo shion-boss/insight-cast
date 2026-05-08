@@ -9,6 +9,10 @@ import { buildArticleCountByInterview, type InterviewArticleRef } from '@/lib/in
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { createClient } from '@/lib/supabase/server'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
+import { parsePageParam } from '@/lib/projects/pagination'
+import { ProjectListPagination } from './ProjectListPagination'
+
+const PROJECTS_PER_PAGE = 12
 
 type Project = {
   id: string
@@ -63,7 +67,16 @@ function formatShortDateTime(value: string) {
   }).format(new Date(value))
 }
 
-export default async function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const sp = await searchParams
+  const page = parsePageParam(sp.page)
+  const offset = (page - 1) * PROJECTS_PER_PAGE
+  const limit = PROJECTS_PER_PAGE
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
@@ -71,15 +84,29 @@ export default async function ProjectsPage() {
   const userId = user.id
   const mint = getCharacter('mint')
 
-  // projects（オーナー所有 + メンバーとして参加中の両方）, userPlan を並列取得
-  const [{ data: projects, error: projectsError }, userPlan] = await Promise.all([
+  // 表示する1ページ分の projects と、所有プロジェクトの軽量リスト（ロック判定用）、
+  // 総取材件数（フッタ統計用）、プラン情報を並列取得。
+  const [paginatedProjectsResult, { data: ownedProjectsLight }, totalInterviewResult, userPlan] = await Promise.all([
     supabase
       .from('projects')
-      .select('id, name, hp_url, status, updated_at, user_id, image_url')
+      .select('id, name, hp_url, status, updated_at, user_id, image_url', { count: 'exact' })
+      .is('deleted_at', null)
+      .order('updated_at', { ascending: false })
+      .range(offset, offset + limit - 1),
+    supabase
+      .from('projects')
+      .select('id, updated_at')
+      .eq('user_id', userId)
       .is('deleted_at', null)
       .order('updated_at', { ascending: false }),
+    supabase
+      .from('interviews')
+      .select('id', { count: 'exact', head: true })
+      .is('deleted_at', null),
     getUserPlan(supabase, userId),
   ])
+
+  const { data: paginatedProjects, error: projectsError, count: projectCount } = paginatedProjectsResult
 
   if (projectsError) {
     return (
@@ -92,18 +119,19 @@ export default async function ProjectsPage() {
     )
   }
 
-  const allProjects = (projects ?? []) as (Project & { user_id: string })[]
-  // オーナーのプロジェクトのみでプラン上限を計算
-  const ownedProjects = allProjects.filter((p) => p.user_id === userId)
+  const projectList = (paginatedProjects ?? []) as (Project & { user_id: string })[]
+  const totalProjectCount = projectCount ?? projectList.length
+  const totalPages = Math.max(1, Math.ceil(totalProjectCount / PROJECTS_PER_PAGE))
+  const totalInterviewCount = totalInterviewResult.count ?? 0
 
-  const projectList = allProjects as Project[]
+  const ownedProjectsAll = (ownedProjectsLight ?? []) as { id: string; updated_at: string }[]
 
   const planLimits = getPlanLimits(userPlan)
-  const isProjectLimitReached = ownedProjects.length >= planLimits.maxProjects
+  const isProjectLimitReached = ownedProjectsAll.length >= planLimits.maxProjects
   // updated_at 降順で先頭 maxProjects 件が有効。それ以降はダウングレードによるロック中
-  const lockedProjectIds = new Set(ownedProjects.slice(planLimits.maxProjects).map((p) => p.id))
+  const lockedProjectIds = new Set(ownedProjectsAll.slice(planLimits.maxProjects).map((p) => p.id))
 
-  // projects が取れてから audits, competitors, competitorAnalyses, interviews を並列取得
+  // projects が取れてから audits, competitors, competitorAnalyses, interviews を並列取得（表示中のページ分のみ）
   const projectIds = projectList.map((project) => project.id)
   const [
     { data: auditRows },
@@ -203,8 +231,8 @@ export default async function ProjectsPage() {
       {/* Summary */}
       <div className="flex gap-4 mb-7">
         {[
-          { n: projectList.length, l: 'プロジェクト' },
-          { n: interviews.length, l: '総インタビュー' },
+          { n: totalProjectCount, l: 'プロジェクト' },
+          { n: totalInterviewCount, l: '総インタビュー' },
         ].map((s) => (
           <div key={s.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-6 py-4 flex gap-3 items-center">
             <span className="text-[28px] font-bold text-[var(--on-primary-container)]">{s.n}</span>
@@ -364,9 +392,12 @@ export default async function ProjectsPage() {
             )
           })}
 
-          <AddProjectCard isLocked={isProjectLimitReached} />
+          {/* AddProjectCard は最終ページにのみ表示する */}
+          {page === totalPages && <AddProjectCard isLocked={isProjectLimitReached} />}
         </div>
       )}
+
+      <ProjectListPagination page={page} totalPages={totalPages} />
     </>
   )
 }

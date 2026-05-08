@@ -98,6 +98,12 @@ type Interview = {
   created_at: string
 }
 
+type InterviewStub = {
+  id: string
+  project_id: string
+  created_at: string
+}
+
 type ArticleRow = {
   id: string
   interview_id: string | null
@@ -192,7 +198,11 @@ export default async function DashboardPage() {
   const projectMap = Object.fromEntries(projectList.map((p) => [p.id, p]))
   const projectIds = projectList.map((p) => p.id)
 
-  const [auditResult, competitorResult, competitorAnalysisResult, interviewResult, articleResult] = await Promise.all([
+  // 取材は「最近の取材4件」だけが themes / summary / status を必要とする。
+  // 残りの集計（月次・最終取材・件数）は created_at と project_id だけで足りるので
+  // 全件は軽量フェッチに切り替え、表示する4件分だけ別クエリで full fields を取る。
+  // 「完了した取材」のカウントだけは status / summary を見るため、別途 head:true の COUNT クエリ。
+  const [auditResult, competitorResult, competitorAnalysisResult, interviewStubResult, recentInterviewResult, completedInterviewCountResult, articleResult] = await Promise.all([
     projectList.length > 0
       ? supabase.from('hp_audits').select('id, project_id, created_at, input_signature:raw_data->>input_signature').in('project_id', projectIds).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
@@ -203,8 +213,14 @@ export default async function DashboardPage() {
       ? supabase.from('competitor_analyses').select('project_id, competitor_id, input_signature:raw_data->>input_signature').in('project_id', projectIds)
       : Promise.resolve({ data: [] }),
     projectList.length > 0
-      ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false })
+      ? supabase.from('interviews').select('id, project_id, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('interviews').select('id, project_id, interviewer_type, status, summary, themes, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false }).limit(4)
+      : Promise.resolve({ data: [] }),
+    projectList.length > 0
+      ? supabase.from('interviews').select('id', { count: 'exact', head: true }).in('project_id', projectIds).is('deleted_at', null).or('status.eq.done,summary.not.is.null')
+      : Promise.resolve({ count: 0 }),
     projectList.length > 0
       ? supabase.from('articles').select('id, interview_id, created_at').in('project_id', projectIds).is('deleted_at', null).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
@@ -213,7 +229,9 @@ export default async function DashboardPage() {
   const auditRows = auditResult.data ?? []
   const competitorRows = competitorResult.data ?? []
   const competitorAnalysisRows = competitorAnalysisResult.data ?? []
-  const interviews = (interviewResult.data ?? []) as Interview[]
+  const interviewStubs = (interviewStubResult.data ?? []) as InterviewStub[]
+  const recentInterviews = (recentInterviewResult.data ?? []) as Interview[]
+  const completedInterviewCount = ('count' in completedInterviewCountResult ? completedInterviewCountResult.count : 0) ?? 0
 
   const analysisReadyProjectIds = new Set(
     projectList
@@ -226,12 +244,12 @@ export default async function DashboardPage() {
       .map((p) => p.id),
   )
 
-  const latestInterviewMap = new Map<string, Interview>()
+  const latestInterviewMap = new Map<string, InterviewStub>()
   let articleCountByInterview = new Map<string, number>()
   const interviewCountByProject = new Map<string, number>()
   const articleCountByProject = new Map<string, number>()
 
-  for (const iv of interviews) {
+  for (const iv of interviewStubs) {
     if (!latestInterviewMap.has(iv.project_id)) latestInterviewMap.set(iv.project_id, iv)
     interviewCountByProject.set(iv.project_id, (interviewCountByProject.get(iv.project_id) ?? 0) + 1)
   }
@@ -240,7 +258,7 @@ export default async function DashboardPage() {
   const built = buildArticleCountByInterview(allArticles as InterviewArticleRef[])
   articleCountByInterview = built.articleCountByInterview
 
-  for (const iv of interviews) {
+  for (const iv of interviewStubs) {
     articleCountByProject.set(
       iv.project_id,
       (articleCountByProject.get(iv.project_id) ?? 0) + (articleCountByInterview.get(iv.id) ?? 0),
@@ -248,6 +266,7 @@ export default async function DashboardPage() {
   }
 
   const totalArticles = allArticles.length
+  const totalInterviews = interviewStubs.length
 
   // Previous-month deltas
   const now = new Date()
@@ -257,8 +276,8 @@ export default async function DashboardPage() {
   const prevY = kmM === 1 ? kmY - 1 : kmY
   const lastMonthKey = `${prevY}-${String(prevM).padStart(2, '0')}`
 
-  const thisMonthInterviews = interviews.filter((iv) => jstMonthKey(new Date(iv.created_at)) === thisMonthKey).length
-  const lastMonthInterviews = interviews.filter((iv) => jstMonthKey(new Date(iv.created_at)) === lastMonthKey).length
+  const thisMonthInterviews = interviewStubs.filter((iv) => jstMonthKey(new Date(iv.created_at)) === thisMonthKey).length
+  const lastMonthInterviews = interviewStubs.filter((iv) => jstMonthKey(new Date(iv.created_at)) === lastMonthKey).length
   const interviewDelta = thisMonthInterviews - lastMonthInterviews
 
   const thisMonthArticles = allArticles.filter((a) => jstMonthKey(new Date(a.created_at)) === thisMonthKey).length
@@ -377,7 +396,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
           { n: projectList.length,  l: 'プロジェクト',      delta: deltaLabel(projectDelta) },
-          { n: interviews.filter((iv) => iv.status === 'done' || iv.summary).length, l: '完了した取材', delta: deltaLabel(interviewDelta) },
+          { n: completedInterviewCount, l: '完了した取材', delta: deltaLabel(interviewDelta) },
           { n: totalArticles,       l: '記事',    delta: deltaLabel(articleDelta) },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
@@ -502,7 +521,7 @@ export default async function DashboardPage() {
                 <h2 className="text-[18px] font-bold text-[var(--text)]">最近の取材</h2>
                 <Link href="/interviews" aria-label="取材メモをすべて見る" className="text-base text-[var(--on-primary-container)] font-semibold hover:underline rounded">すべて見る <span aria-hidden="true">→</span></Link>
               </div>
-              {interviews.length === 0 ? (
+              {totalInterviews === 0 ? (
                 <InterviewerSpeech
                   icon={<CharacterAvatar src={mint?.icon48} alt={`${mint?.name ?? 'インタビュアー'}のアイコン`} emoji={mint?.emoji} size={48} />}
                   name={mint?.name ?? 'インタビュアー'}
@@ -512,7 +531,7 @@ export default async function DashboardPage() {
                 />
               ) : (
                 <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] px-5 py-1">
-                  {interviews.slice(0, 4).map((interview, i) => {
+                  {recentInterviews.map((interview, i) => {
                     const project = projectMap[interview.project_id]
                     if (!project) return null
                     const char = getCharacter(interview.interviewer_type)
@@ -522,7 +541,7 @@ export default async function DashboardPage() {
                       <Link
                         key={interview.id}
                         href={interviewHref}
-                        className={`group flex items-center gap-[14px] py-[14px] ${i < Math.min(interviews.length, 4) - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5 rounded`}
+                        className={`group flex items-center gap-[14px] py-[14px] ${i < recentInterviews.length - 1 ? 'border-b border-[var(--border)]' : ''} -mx-5 px-5 rounded`}
                       >
                         <CharacterAvatar
                           src={char?.icon48}

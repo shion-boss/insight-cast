@@ -1,20 +1,43 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useRef, useLayoutEffect, useState } from 'react'
 import type { StaticImageData } from 'next/image'
 import { CharacterAvatar, getButtonClass } from '@/components/ui'
 
 const PER_PAGE = 5
 
-function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }) {
+function ServerPaginationNav({
+  page,
+  totalPages,
+  paramKey,
+}: {
+  page: number
+  totalPages: number
+  paramKey: string
+}) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   if (totalPages <= 1) return null
+
+  const goTo = (target: number) => {
+    if (target < 1 || target > totalPages) return
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
+    if (target === 1) {
+      params.delete(paramKey)
+    } else {
+      params.set(paramKey, String(target))
+    }
+    const query = params.toString()
+    router.push(query ? `?${query}` : '?', { scroll: false })
+  }
+
   return (
     <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-3 text-[13px] text-[var(--text2)]">
       <button
         type="button"
-        onClick={() => onPageChange(page - 1)}
+        onClick={() => goTo(page - 1)}
         disabled={page <= 1}
         className={getButtonClass('secondary', 'px-3 py-1.5 text-[13px]')}
       >
@@ -23,7 +46,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
       <span>{page} / {totalPages}</span>
       <button
         type="button"
-        onClick={() => onPageChange(page + 1)}
+        onClick={() => goTo(page + 1)}
         disabled={page >= totalPages}
         className={getButtonClass('secondary', 'px-3 py-1.5 text-[13px]')}
       >
@@ -46,24 +69,24 @@ export type UncreatedThemeItem = {
 export function PaginatedUncreatedThemes({
   items,
   projectId,
+  page,
+  totalPages,
   canEdit = true,
 }: {
   items: UncreatedThemeItem[]
   projectId: string
+  page: number
+  totalPages: number
   canEdit?: boolean
 }) {
-  const [page, setPage] = useState(1)
-
-  const totalPages = Math.ceil(items.length / PER_PAGE)
-  const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const placeholderCount = PER_PAGE - visible.length
+  const placeholderCount = Math.max(0, PER_PAGE - items.length)
 
   const ROW_CLASS = 'flex items-center gap-3 px-5 py-3.5 min-h-[72px]'
 
   return (
     <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)] overflow-hidden">
       <div className="divide-y divide-[var(--border)]">
-        {visible.map((item, i) => {
+        {items.map((item, i) => {
           if (!canEdit) {
             return (
               <div key={i} className={ROW_CLASS}>
@@ -92,7 +115,7 @@ export function PaginatedUncreatedThemes({
           </div>
         ))}
       </div>
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      <ServerPaginationNav page={page} totalPages={totalPages} paramKey="themes_page" />
     </div>
   )
 }
@@ -130,14 +153,15 @@ function formatDateTime(value: string) {
 
 export function PaginatedInterviewHistory({
   items,
+  page,
+  totalPages,
 }: {
   items: InterviewHistoryItem[]
+  page: number
+  totalPages: number
 }) {
   const router = useRouter()
-  const [page, setPage] = useState(1)
-  const totalPages = Math.ceil(items.length / PER_PAGE)
-  const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const placeholderCount = PER_PAGE - visible.length
+  const placeholderCount = Math.max(0, PER_PAGE - items.length)
 
   // PC テーブルの最小高さを保持（最後のページで縮まないように）
   const tableRef = useRef<HTMLDivElement | null>(null)
@@ -146,13 +170,13 @@ export function PaginatedInterviewHistory({
     if (!tableRef.current) return
     const h = tableRef.current.offsetHeight
     setTableMinHeight((prev) => Math.max(prev, h))
-  }, [visible])
+  }, [items])
 
   return (
     <>
       {/* モバイル: カードリスト */}
       <div className="space-y-3 sm:hidden">
-        {visible.map((item) => (
+        {items.map((item) => (
           <div
             key={item.id}
             role="link"
@@ -202,7 +226,7 @@ export function PaginatedInterviewHistory({
         ))}
         {totalPages > 1 && (
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            <ServerPaginationNav page={page} totalPages={totalPages} paramKey="interviews_page" />
           </div>
         )}
       </div>
@@ -229,12 +253,12 @@ export function PaginatedInterviewHistory({
               </tr>
             </thead>
             <tbody className="bg-[var(--surface)]">
-              {visible.map((item, i) => (
+              {items.map((item, i) => (
                 <tr
                   key={item.id}
                   tabIndex={0}
                   aria-label={`${item.charName} の取材メモを見る`}
-                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
+                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < items.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
                   onClick={(e) => {
                     if ((e.target as Element).closest('a[href]')) return
                     router.push(item.managementHref)
@@ -284,7 +308,7 @@ export function PaginatedInterviewHistory({
             </tbody>
           </table>
         </div>
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        <ServerPaginationNav page={page} totalPages={totalPages} paramKey="interviews_page" />
       </div>
     </>
   )
@@ -309,12 +333,17 @@ const ARTICLE_TYPE_LABEL: Record<string, string> = {
   conversation: '会話記事',
 }
 
-export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
+export function PaginatedArticles({
+  items,
+  page,
+  totalPages,
+}: {
+  items: ArticleSectionItem[]
+  page: number
+  totalPages: number
+}) {
   const router = useRouter()
-  const [page, setPage] = useState(1)
-  const totalPages = Math.ceil(items.length / PER_PAGE)
-  const visible = items.slice((page - 1) * PER_PAGE, page * PER_PAGE)
-  const placeholderCount = PER_PAGE - visible.length
+  const placeholderCount = Math.max(0, PER_PAGE - items.length)
   const [tableMinHeight, setTableMinHeight] = useState(0)
   const tableRef = useRef<HTMLDivElement>(null)
 
@@ -322,13 +351,13 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
     if (!tableRef.current) return
     const h = tableRef.current.offsetHeight
     setTableMinHeight((prev) => Math.max(prev, h))
-  }, [visible])
+  }, [items])
 
   return (
     <>
       {/* モバイル: カードリスト */}
       <div className="space-y-3 sm:hidden">
-        {visible.map((article) => (
+        {items.map((article) => (
           <Link
             key={article.id}
             href={article.href}
@@ -355,7 +384,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
         ))}
         {totalPages > 1 && (
           <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            <ServerPaginationNav page={page} totalPages={totalPages} paramKey="articles_page" />
           </div>
         )}
       </div>
@@ -380,11 +409,11 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
               </tr>
             </thead>
             <tbody className="bg-[var(--surface)]">
-              {visible.map((article, i) => (
+              {items.map((article, i) => (
                 <tr
                   key={article.id}
                   tabIndex={0}
-                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < visible.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
+                  className={`group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40 ${i < items.length - 1 || totalPages > 1 ? 'border-b border-[var(--border)]' : ''}`}
                   onClick={(e) => {
                     if ((e.target as Element).closest('a[href]')) return
                     router.push(article.href)
@@ -436,7 +465,7 @@ export function PaginatedArticles({ items }: { items: ArticleSectionItem[] }) {
             </tbody>
           </table>
         </div>
-        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        <ServerPaginationNav page={page} totalPages={totalPages} paramKey="articles_page" />
       </div>
     </>
   )

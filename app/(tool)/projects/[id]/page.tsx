@@ -27,24 +27,18 @@ import {
   type InterviewHistoryItem,
   type ArticleSectionItem,
 } from './ProjectSections'
+import {
+  PAGE_SIZE,
+  parsePageParam,
+  fetchUncreatedThemesPage,
+  fetchInterviewsPage,
+  fetchArticlesPage,
+} from '@/lib/projects/pagination'
 
 
-type InterviewRow = {
-  id: string
-  project_id: string
-  interviewer_type: string
-  status: string | null
-  summary: string | null
-  themes: string[] | null
-  article_status: string | null
-  created_at: string
-}
-
-type ArticleRow = {
+type ArticleStub = {
   id: string
   interview_id: string | null
-  article_type: string | null
-  title: string | null
   created_at: string
 }
 
@@ -59,8 +53,18 @@ function formatDateTime(value: string) {
   }).format(new Date(value))
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProjectPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   const { id } = await params
+  const sp = await searchParams
+  const themesPage = parsePageParam(sp.themes_page)
+  const interviewsPage = parsePageParam(sp.interviews_page)
+  const articlesPage = parsePageParam(sp.articles_page)
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
@@ -91,24 +95,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const canEdit = isOwner || memberRole === 'editor'
 
-  // project が取れてから interviews, auditRow, competitors, competitorAnalyses, articles を並列取得。
-  // 調査データ（auditRow / competitors / competitor_analyses）はプロジェクト単位の情報なので
-  // 取得元を admin client に統一し、オーナー / editor / viewer 全員が同じ値を見るようにする。
-  // これにより再調査クールダウンの判定もメンバー間で一致する。
+  // project が取れてから auditRow / competitors / competitorAnalyses（プロジェクト単位の調査データ）と、
+  // 各リストのページスライス、分析用の軽量 articles を並列取得する。
+  // 調査データはオーナー / editor / viewer 全員が同じ値を見るため admin client に統一。
   const adminSupabase = createAdminClient()
   const [
-    { data: interviewRows },
     { data: auditRow },
     { data: competitors },
     { data: competitorAnalyses },
-    { data: articleRows },
+    { data: articleStubsRaw },
+    interviewsPageResult,
+    articlesPageResult,
+    themesPageResult,
   ] = await Promise.all([
-    supabase
-      .from('interviews')
-      .select('id, project_id, interviewer_type, status, summary, themes, article_status, created_at')
-      .eq('project_id', id)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false }),
     adminSupabase
       .from('hp_audits')
       .select('id, raw_data')
@@ -118,15 +117,46 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       .maybeSingle(),
     adminSupabase.from('competitors').select('id, url').eq('project_id', id),
     adminSupabase.from('competitor_analyses').select('competitor_id, raw_data').eq('project_id', id),
+    // 分析グラフ・取材ごとの記事数集計のための軽量フェッチ（タイトル等は載せない）
     supabase
       .from('articles')
-      .select('id, interview_id, article_type, title, created_at')
+      .select('id, interview_id, created_at')
       .eq('project_id', id)
       .is('deleted_at', null)
       .order('created_at', { ascending: false }),
+    fetchInterviewsPage(supabase, id, interviewsPage, PAGE_SIZE),
+    fetchArticlesPage(supabase, id, articlesPage, PAGE_SIZE),
+    fetchUncreatedThemesPage(supabase, id, themesPage, PAGE_SIZE),
   ])
 
-  const interviews = (interviewRows ?? []) as InterviewRow[]
+  const articleStubs = (articleStubsRaw ?? []) as ArticleStub[]
+  const interviewItems = interviewsPageResult.rows
+  const interviewCount = interviewsPageResult.total
+  const articleItems = articlesPageResult.rows
+  const articleCount = articlesPageResult.total
+  const themeItems = themesPageResult.rows
+  const themeCount = themesPageResult.total
+
+  const interviewsTotalPages = Math.max(1, Math.ceil(interviewCount / PAGE_SIZE))
+  const articlesTotalPages = Math.max(1, Math.ceil(articleCount / PAGE_SIZE))
+  const themesTotalPages = Math.max(1, Math.ceil(themeCount / PAGE_SIZE))
+
+  // 表示中の記事に紐づくインタビュアー情報（characterAvatar / 名前）の引き当て用。
+  // ページ表示分のみ最小限フェッチする。
+  const articleInterviewIds = Array.from(
+    new Set(articleItems.map((a) => a.interview_id).filter((v): v is string => !!v)),
+  )
+  const articleInterviewerMap = new Map<string, string>()
+  if (articleInterviewIds.length > 0) {
+    const { data: ivRows } = await supabase
+      .from('interviews')
+      .select('id, interviewer_type')
+      .in('id', articleInterviewIds)
+    for (const row of ivRows ?? []) {
+      articleInterviewerMap.set(row.id as string, row.interviewer_type as string)
+    }
+  }
+
   const analysisReady = isProjectAnalysisReady({
     project,
     competitors: competitors ?? [],
@@ -144,21 +174,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     return next > new Date() ? next.toISOString() : null
   })()
 
-  const articles = (articleRows ?? []) as ArticleRow[]
-
-  const { articleCountByInterview } = buildArticleCountByInterview(articles as InterviewArticleRef[])
-  const articlesByInterview = new Map<string, ArticleRow[]>()
-  for (const article of articles) {
-    if (!article.interview_id) continue
-    const current = articlesByInterview.get(article.interview_id) ?? []
-    current.push(article)
-    articlesByInterview.set(article.interview_id, current)
-  }
+  const { articleCountByInterview } = buildArticleCountByInterview(articleStubs as InterviewArticleRef[])
   const analysisBadge = getProjectAnalysisBadge(analysisStatus, analysisReady)
   const contentBadge = getProjectContentBadge({
     status: project.status,
-    interviewCount: interviews.length,
-    articleCount: articles.length,
+    interviewCount,
+    articleCount,
   })
   const mint = getCharacter('mint')
   const claus = getCharacter('claus')
@@ -189,13 +210,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       const mo = ((m - 1 + 120) % 12) + 1
       const key = `${y}-${String(mo).padStart(2, '0')}`
       const label = new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', month: 'short' }).format(new Date(y, mo - 1, 1))
-      return { m: label, n: articles.filter((a) => jstMonthKey(new Date(a.created_at)) === key).length }
+      return { m: label, n: articleStubs.filter((a) => jstMonthKey(new Date(a.created_at)) === key).length }
     })
   })()
 
   const heatmapData: HeatmapEntry[] = (() => {
     const countMap = new Map<string, number>()
-    for (const a of articles) {
+    for (const a of articleStubs) {
       const key = jstDayKey(new Date(a.created_at))
       countMap.set(key, (countMap.get(key) ?? 0) + 1)
     }
@@ -216,34 +237,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
     )
   ).values()].slice(0, 5)
 
-  // 未作成テーマ一覧
-  const uncreatedThemeItems: UncreatedThemeItem[] = interviews
-    .filter((interview) => {
-      const { hasUncreatedThemes } = getInterviewFlags(interview, articleCountByInterview)
-      return hasUncreatedThemes && Array.isArray(interview.themes) && interview.themes.length > 0
-    })
-    .flatMap((interview) => {
-      const char = getCharacter(interview.interviewer_type)
-      return (interview.themes ?? []).map((theme) => ({
-        theme,
-        interviewId: interview.id,
-        interviewerName: char?.name ?? 'インタビュアー',
-        icon48: char?.icon48,
-        emoji: char?.emoji,
-      }))
-    })
+  // 未作成テーマ一覧（サーバーページネーション済み）
+  const uncreatedThemeItems: UncreatedThemeItem[] = themeItems.map((row) => {
+    const char = getCharacter(row.interviewer_type)
+    return {
+      theme: row.theme,
+      interviewId: row.interview_id,
+      interviewerName: char?.name ?? 'インタビュアー',
+      icon48: char?.icon48,
+      emoji: char?.emoji,
+    }
+  })
 
-  // 取材メモアイテム
-  const interviewHistoryItems: InterviewHistoryItem[] = interviews.map((interview) => {
-    const interviewArticles = articlesByInterview.get(interview.id) ?? []
+  // 取材メモアイテム（サーバーページネーション済みの interviews を表示用に整形）
+  const interviewHistoryItems: InterviewHistoryItem[] = interviewItems.map((interview) => {
     const char = getCharacter(interview.interviewer_type)
     const managementHref = getInterviewManagementHref(interview, articleCountByInterview, 'project')
     const themeCount = Array.isArray(interview.themes)
       ? interview.themes.filter((t) => typeof t === 'string' && t.trim().length > 0).length
       : 0
-    const articleCount = interviewArticles.length
-    const uncreatedThemeCount = Math.max(0, themeCount - articleCount)
-    const hasSummary = Boolean(interview.summary || interview.status === 'completed')
+    const ivArticleCount = articleCountByInterview.get(interview.id) ?? 0
+    const uncreatedThemeCount = Math.max(0, themeCount - ivArticleCount)
+    const { hasSummary } = getInterviewFlags(interview, articleCountByInterview)
     const isDone = interview.status === 'done' || hasSummary
     return {
       id: interview.id,
@@ -252,17 +267,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       charIcon48: char?.icon48,
       createdAt: interview.created_at,
       isDone,
-      articleCount,
+      articleCount: ivArticleCount,
       uncreatedThemeCount,
       managementHref,
     }
   })
 
-  // 記事アイテム
-  const interviewById = new Map(interviews.map((iv) => [iv.id, iv]))
-  const articleSectionItems: ArticleSectionItem[] = articles.map((article) => {
-    const interview = article.interview_id ? interviewById.get(article.interview_id) : null
-    const interviewChar = interview ? getCharacter(interview.interviewer_type) : null
+  // 記事アイテム（サーバーページネーション済み）
+  const articleSectionItems: ArticleSectionItem[] = articleItems.map((article) => {
+    const interviewerType = article.interview_id ? articleInterviewerMap.get(article.interview_id) : null
+    const interviewChar = interviewerType ? getCharacter(interviewerType) : null
     return {
       id: article.id,
       title: article.title,
@@ -286,7 +300,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       start.setDate(thisSunday.getDate() - w * 7)
       const end = new Date(start)
       end.setDate(start.getDate() + 7)
-      if (articles.some((a) => { const d = new Date(a.created_at); return d >= start && d < end })) active++
+      if (articleStubs.some((a) => { const d = new Date(a.created_at); return d >= start && d < end })) active++
     }
     return Math.min(100, Math.round((active / 12) * 100))
   })()
@@ -345,8 +359,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <div className="flex flex-col gap-3 lg:min-w-[260px]">
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                { n: interviews.length, l: '取材回数' },
-                { n: articles.length, l: '記事' },
+                { n: interviewCount, l: '取材回数' },
+                { n: articleCount, l: '記事' },
               ].map((s) => (
                 <div key={s.l} className="rounded-[var(--r)] px-4 py-3 text-center bg-white/60">
                   <div className="font-bold text-[22px] text-[var(--text)]">{s.n}</div>
@@ -494,15 +508,21 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       />
 
       {/* 未作成テーマ一覧 */}
-      {uncreatedThemeItems.length > 0 && (
+      {themeCount > 0 && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事にしていないテーマ</h2>
             <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] font-medium text-[var(--text2)]">
-              {uncreatedThemeItems.length}件
+              {themeCount}件
             </span>
           </div>
-          <PaginatedUncreatedThemes items={uncreatedThemeItems} projectId={id} canEdit={canEdit} />
+          <PaginatedUncreatedThemes
+            items={uncreatedThemeItems}
+            projectId={id}
+            canEdit={canEdit}
+            page={themesPage}
+            totalPages={themesTotalPages}
+          />
         </div>
       )}
 
@@ -512,7 +532,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <h2 className="text-[16px] font-bold text-[var(--text)]">取材メモ</h2>
         </div>
 
-        {interviews.length === 0 ? (
+        {interviewCount === 0 ? (
           <>
             <InterviewerSpeech
               icon={(
@@ -536,17 +556,25 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
             )}
           </>
         ) : (
-          <PaginatedInterviewHistory items={interviewHistoryItems} />
+          <PaginatedInterviewHistory
+            items={interviewHistoryItems}
+            page={interviewsPage}
+            totalPages={interviewsTotalPages}
+          />
         )}
       </div>
 
       {/* Articles section */}
-      {articles.length > 0 && (
+      {articleCount > 0 && (
         <div id="articles" className="mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事</h2>
           </div>
-          <PaginatedArticles items={articleSectionItems} />
+          <PaginatedArticles
+            items={articleSectionItems}
+            page={articlesPage}
+            totalPages={articlesTotalPages}
+          />
         </div>
       )}
 
