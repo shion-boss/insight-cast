@@ -80,7 +80,12 @@ export function stripInterviewMarkers(text: string): string {
  *
  *   → 「---」以降の総括ブロックは別の社内AIが後工程で書く設計なので、bubble には不要。
  *
- * interviewComplete 検出時にだけ呼ぶこと（通常会話のリテラルな「---」を誤爆しないため）。
+ * 運用方針:
+ * - chat route の **保存時** は `interviewComplete` 検出時のみ呼ぶ（通常会話の「---」を誤爆させない）
+ * - UI の **履歴復元時** は無条件で呼ぶ。理由は、過去に保存された壊れたメッセージは
+ *   既に [INTERVIEW_COMPLETE] が `stripInterviewMarkers` で削除済みで、フラグでの判定が
+ *   できないため。代わりに、AI には system prompt（SUFFICIENCY_INSTRUCTION）で
+ *   「取材本文に `---` 区切りを使わない」よう抑止しておくこと
  */
 export function stripPostCompletionSummary(text: string): string {
   return text.replace(/\n\s*-{3,}[\s\S]*$/, '').trim()
