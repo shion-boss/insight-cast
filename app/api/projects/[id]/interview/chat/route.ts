@@ -13,8 +13,10 @@ import {
   extractDiscoveryReason,
   extractDraftProposalSnippet,
   extractHeadlineCandidatesSource,
+  hasInterviewCompleteMarker,
   hasYesnoMarker,
   stripInterviewMarkers,
+  stripPostCompletionSummary,
 } from '@/lib/interview-markers'
 import { isFreePlanLocked } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
@@ -569,7 +571,10 @@ export async function POST(
       const draftSnippet = extractDraftProposalSnippet(fullText)
       const headlineSource = extractHeadlineCandidatesSource(fullText)
       const yesnoActive = hasYesnoMarker(fullText)
-      const cleanText = stripInterviewMarkers(fullText)
+      const interviewComplete = hasInterviewCompleteMarker(fullText)
+      const stripped = stripInterviewMarkers(fullText)
+      // [INTERVIEW_COMPLETE] と同時に AI が「---」区切りでまとめ本文まで出してしまった場合の防御
+      const cleanText = interviewComplete ? stripPostCompletionSummary(stripped) : stripped
 
       // 繰り返し検出（モニタリング用ログ。streamingを壊さないため再生成はせず、後の合成ループ材料にする）
       if (cleanText) {

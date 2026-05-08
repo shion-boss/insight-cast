@@ -11,7 +11,12 @@ import { InterviewProgressBar } from '@/components/interview/ProgressBar'
 import { InterviewMessageList } from '@/components/interview/MessageList'
 import { InterviewInputArea } from '@/components/interview/InputArea'
 import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
-import { hasInterviewCompleteMarker, hasYesnoMarker, stripInterviewMarkers } from '@/lib/interview-markers'
+import {
+  hasInterviewCompleteMarker,
+  hasYesnoMarker,
+  stripInterviewMarkers,
+  stripPostCompletionSummary,
+} from '@/lib/interview-markers'
 
 type Message = InterviewMessage
 type SupportPost = { url: string; title: string; summary: string }
@@ -139,7 +144,9 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
       const interviewComplete = hasInterviewCompleteMarker(text)
       const yesnoActive = hasYesnoMarker(text)
-      const finalText = stripInterviewMarkers(text)
+      const stripped = stripInterviewMarkers(text)
+      // AI が [INTERVIEW_COMPLETE] と一緒にまとめ本文まで書いてしまった場合は --- 以降を切る
+      const finalText = interviewComplete ? stripPostCompletionSummary(stripped) : stripped
       if (finalText) {
         setMessages((prev) => [...prev, { role: 'interviewer', content: finalText, yesno: yesnoActive }])
       }
@@ -222,12 +229,13 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 allPaths.push(a.path)
                 return { path: a.path, contentType: a.content_type, previewUrl: '' }
               })
-            // 古い実装で cleanText が失敗してマーカーが content に残っているメッセージは
-            // クライアント側で剥がし、yesno フラグも content から推定する。
+            // 古い実装で cleanText が失敗してマーカーが content に残っているメッセージや、
+            // [INTERVIEW_COMPLETE] と同時に「---」区切りのまとめ本文まで保存されている
+            // メッセージは、クライアント側で表示用に整える。
             const rawContent = m.content ?? ''
             return {
               role: m.role as 'user' | 'interviewer',
-              content: stripInterviewMarkers(rawContent),
+              content: stripPostCompletionSummary(stripInterviewMarkers(rawContent)),
               yesno: meta?.yesno?.active === true || hasYesnoMarker(rawContent),
               attachments: attachments.length > 0 ? attachments : undefined,
             }

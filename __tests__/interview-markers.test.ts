@@ -14,6 +14,7 @@ import {
   hasInterviewCompleteMarker,
   hasYesnoMarker,
   stripInterviewMarkers,
+  stripPostCompletionSummary,
 } from '../lib/interview-markers'
 
 // ---- hasYesnoMarker ----
@@ -124,4 +125,28 @@ test('extractDraftProposalSnippet: 区切り違い [DRAFT PROPOSAL: ...] でも�
 
 test('extractHeadlineCandidatesSource: 標準形から抽出', () => {
   assert.equal(extractHeadlineCandidatesSource('[HEADLINE_CANDIDATES: 候補A / 候補B]'), '候補A / 候補B')
+})
+
+// ---- stripPostCompletionSummary ----
+
+test('stripPostCompletionSummary: --- 以降のまとめ本文を切り落とす', () => {
+  const input = `ここで一度、お話をまとめてもよいでしょうか。続けたい場合はそのままお話しください。
+
+---
+
+今回聞かせていただいたのは、挨拶文を冒頭に加えるという工夫の話でした。`
+  assert.equal(
+    stripPostCompletionSummary(input),
+    'ここで一度、お話をまとめてもよいでしょうか。続けたい場合はそのままお話しください。',
+  )
+})
+
+test('stripPostCompletionSummary: --- が無ければそのまま返す', () => {
+  const input = '通常の質問文ですね？'
+  assert.equal(stripPostCompletionSummary(input), '通常の質問文ですね？')
+})
+
+test('stripPostCompletionSummary: ハイフン4本以上にも対応', () => {
+  const input = '提案文。\n----\n総括テキスト'
+  assert.equal(stripPostCompletionSummary(input), '提案文。')
 })

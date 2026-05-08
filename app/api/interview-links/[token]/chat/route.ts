@@ -9,8 +9,10 @@ import {
   extractDiscoveryReason,
   extractDraftProposalSnippet,
   extractHeadlineCandidatesSource,
+  hasInterviewCompleteMarker,
   hasYesnoMarker,
   stripInterviewMarkers,
+  stripPostCompletionSummary,
 } from '@/lib/interview-markers'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -426,7 +428,10 @@ ${
       const draftSnippet = extractDraftProposalSnippet(fullText)
       const headlineSource = extractHeadlineCandidatesSource(fullText)
       const yesnoActive = hasYesnoMarker(fullText)
-      const cleanText = stripInterviewMarkers(fullText)
+      const interviewComplete = hasInterviewCompleteMarker(fullText)
+      const stripped = stripInterviewMarkers(fullText)
+      // [INTERVIEW_COMPLETE] と同時に AI が「---」区切りでまとめ本文まで出してしまった場合の防御
+      const cleanText = interviewComplete ? stripPostCompletionSummary(stripped) : stripped
       if (cleanText) {
         const metaObj: Record<string, unknown> = {}
         if (discoveryReason) metaObj.discovery = { reason: discoveryReason }

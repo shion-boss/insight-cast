@@ -7,7 +7,12 @@ import { InterviewProgressBar } from '@/components/interview/ProgressBar'
 import { InterviewMessageList } from '@/components/interview/MessageList'
 import { InterviewInputArea } from '@/components/interview/InputArea'
 import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
-import { hasInterviewCompleteMarker, hasYesnoMarker, stripInterviewMarkers } from '@/lib/interview-markers'
+import {
+  hasInterviewCompleteMarker,
+  hasYesnoMarker,
+  stripInterviewMarkers,
+  stripPostCompletionSummary,
+} from '@/lib/interview-markers'
 
 type LinkInfo = {
   valid: boolean
@@ -20,6 +25,7 @@ type LinkInfo = {
 const MAX_TURNS = 15
 const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
+const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 const PASS_STREAK_LIMIT = 2
 
 // 取材リンクの進行中インタビューを localStorage に保存しておくためのキー。
@@ -158,8 +164,11 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   const [completeCalled, setCompleteCalled] = useState(false)
   const [showFinishConfirm, setShowFinishConfirm] = useState(false)
   const [finishing, setFinishing] = useState(false)
-  // 完了画面の種別: 'paused' = 一時中断, 'done' = 完了
-  const [completeKind, setCompleteKind] = useState<'paused' | 'done'>('paused')
+  // 完了画面の種別:
+  //   'ai_proposed' = AI が「ここで一度まとめてもいいでしょうか」と提案した状態。続けるか完了するか選ばせる
+  //   'paused'      = ユーザーが「インタビューを終わらせる」→「一時中断する」を選んだ状態。次回再開可能
+  //   'done'        = DB の status='completed' で確定済み。再開不可
+  const [completeKind, setCompleteKind] = useState<'ai_proposed' | 'paused' | 'done'>('paused')
   // パス連発防止: 連続でパスできるのは2回まで（API コスト保護）
   const [passStreak, setPassStreak] = useState(0)
   // ハル限定: アップロード予定の画像
@@ -226,12 +235,14 @@ export default function ExternalInterviewPage({ params }: PageProps) {
                         allPaths.push(a.path)
                         return { path: a.path, contentType: a.content_type, previewUrl: '' }
                       })
-                    // 古い実装で cleanText 計算が失敗してマーカーが content に残っているメッセージは
-                    // クライアント側で剥がし、yesno フラグも content から推定する。
+                    // 古い実装で cleanText 計算が失敗してマーカーが content に残っているメッセージや、
+                    // [INTERVIEW_COMPLETE] と同時に「---」区切りのまとめ本文まで保存されている
+                    // メッセージは、クライアント側で表示用に整える。
+                    // stripPostCompletionSummary は --- が無ければそのまま返すので無条件適用で安全。
                     const rawContent = m.content ?? ''
                     return {
                       role: m.role,
-                      content: stripInterviewMarkers(rawContent),
+                      content: stripPostCompletionSummary(stripInterviewMarkers(rawContent)),
                       yesno: meta?.yesno?.active === true || hasYesnoMarker(rawContent),
                       attachments: attachments.length > 0 ? attachments : undefined,
                     }
@@ -359,7 +370,9 @@ export default function ExternalInterviewPage({ params }: PageProps) {
 
       const interviewComplete = hasInterviewCompleteMarker(text)
       const yesnoActive = hasYesnoMarker(text)
-      const finalText = stripInterviewMarkers(text)
+      const stripped = stripInterviewMarkers(text)
+      // AI が [INTERVIEW_COMPLETE] と一緒にまとめ本文まで書いてしまった場合は --- 以降を切る
+      const finalText = interviewComplete ? stripPostCompletionSummary(stripped) : stripped
       if (finalText) {
         setMessages((prev) => [...prev, {
           role: 'interviewer',
@@ -428,6 +441,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
       await handleFinish(result.resolvedInterviewId ?? interviewId ?? undefined)
     } else if (result.interviewComplete) {
       // AI が「終わってもいい」と言ったタイミング
+      setCompleteKind('ai_proposed')
       setPhase('complete')
     }
   }
@@ -448,6 +462,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     setPassStreak((n) => n + 1)
 
     if (result.interviewComplete) {
+      setCompleteKind('ai_proposed')
       setPhase('complete')
     }
   }
@@ -462,6 +477,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     if (newTurns >= MAX_TURNS) {
       await handleFinish(result.resolvedInterviewId ?? interviewId ?? undefined)
     } else if (result.interviewComplete) {
+      setCompleteKind('ai_proposed')
       setPhase('complete')
     }
   }
@@ -535,6 +551,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
       // 完了通知の失敗はUI上のエラーにしない
     }
     clearProgress(token)
+    setCompleteKind('done')
     setPhase('complete')
   }
 
@@ -543,6 +560,22 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     setShowFinishConfirm(false)
     setCompleteKind('paused')
     setPhase('complete')
+  }
+
+  // AI が [INTERVIEW_COMPLETE] を出して complete phase に入った後、
+  // 「もう少し聞いてもらう」を選んだときの挙動。
+  // 直前のまとめ提案メッセージを履歴から取り下げて、AI に CONTINUE トークンを送り
+  // 別角度から1問を立て直してもらう。通常側 InterviewClient.handleContinue と同等。
+  async function handleResumeInterview() {
+    if (loading || hasReachedTurnLimit) return
+    setMessages((prev) => {
+      const last = [...prev].reverse().findIndex((m) => m.role === 'interviewer')
+      if (last === -1) return prev
+      const idx = prev.length - 1 - last
+      return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
+    })
+    setPhase('chat')
+    await sendMessageToAI(CONTINUE_INTERVIEW_TOKEN, { alreadyDisplayed: true })
   }
 
   // 完了: /complete を叩いて status='completed' に。再開不可。
@@ -637,10 +670,11 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     )
   }
 
-  // 完了画面: completeKind ('paused' / 'done') で文言を切り替える
+  // 完了画面: completeKind で3パターンの文言・ボタンを出し分ける
   if (phase === 'complete') {
     const nameDisplay = linkInfo.targetName ? `${linkInfo.targetName}さん、` : ''
     const isDone = completeKind === 'done'
+    const isAiProposed = completeKind === 'ai_proposed'
     const canResume = !isDone && !completeCalled && userTurns < MAX_TURNS
     return (
       <div className="bg-[var(--bg)] min-h-dvh flex flex-col items-center justify-center px-4 py-12">
@@ -661,6 +695,31 @@ export default function ExternalInterviewPage({ params }: PageProps) {
                 <p className="text-[var(--text2)] text-base">
                   {nameDisplay}貴重なお話をありがとうございました。インタビュアーがメモをまとめて、依頼者にお届けします。
                 </p>
+              </>
+            ) : isAiProposed ? (
+              <>
+                <p className="text-[var(--text)] font-semibold text-base mb-2">十分にお話を聞かせていただきました</p>
+                <p className="text-[var(--text2)] text-base mb-5">
+                  もう少し別の角度から聞いてみることもできます。このまま完了してもかまいません。
+                </p>
+                {canResume && (
+                  <button
+                    type="button"
+                    onClick={() => void handleResumeInterview()}
+                    disabled={loading}
+                    className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full py-3 text-base font-semibold transition-colors cursor-pointer min-h-[44px] disabled:opacity-60 disabled:cursor-not-allowed mb-2"
+                  >
+                    もう少し聞いてもらう
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => void handleFinish()}
+                  disabled={completeCalled}
+                  className="w-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] hover:text-[var(--text)] rounded-full py-2.5 text-base font-semibold transition-colors cursor-pointer min-h-[44px] disabled:opacity-60"
+                >
+                  このまま完了する
+                </button>
               </>
             ) : (
               <>

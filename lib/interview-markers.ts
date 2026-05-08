@@ -68,3 +68,20 @@ export function stripInterviewMarkers(text: string): string {
     .replace(YESNO_RE, '')
     .trim()
 }
+
+/**
+ * AI が [INTERVIEW_COMPLETE] と一緒に「---」区切りでまとめ本文まで書いてしまった場合の防御。
+ * `\n---\n` 以降のテキストを切り落として、終了提案文だけ残す。
+ *
+ * 実例（モグロが12回目で出力した例）:
+ *   ここで一度、お話をまとめてもよいでしょうか。十分な内容が集まりました。続けたい場合はそのままお話しください。
+ *   ---
+ *   今回聞かせていただいたのは、〜（数百文字のまとめ本文）
+ *
+ *   → 「---」以降の総括ブロックは別の社内AIが後工程で書く設計なので、bubble には不要。
+ *
+ * interviewComplete 検出時にだけ呼ぶこと（通常会話のリテラルな「---」を誤爆しないため）。
+ */
+export function stripPostCompletionSummary(text: string): string {
+  return text.replace(/\n\s*-{3,}[\s\S]*$/, '').trim()
+}
