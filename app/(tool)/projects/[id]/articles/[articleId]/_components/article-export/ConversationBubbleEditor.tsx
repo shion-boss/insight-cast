@@ -81,11 +81,11 @@ export function ConversationBubbleEditor({
             >
               {/* 並べ替えコントロール */}
               <div className="flex flex-col items-center shrink-0 pt-1.5 gap-0">
-                <button type="button" onClick={() => { if (i === 0) return; const n = [...exchanges]; [n[i-1], n[i]] = [n[i], n[i-1]]; handleChange(n) }} disabled={i === 0} aria-label="上に移動" className="px-1 py-0.5 text-[10px] text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▲</button>
+                <button type="button" onClick={() => { if (i === 0) return; const n = [...exchanges]; [n[i-1], n[i]] = [n[i], n[i-1]]; handleChange(n) }} disabled={i === 0} aria-label="上に移動" className="px-1 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▲</button>
                 <span aria-label="ドラッグして並べ替え" className="cursor-grab active:cursor-grabbing px-1 py-1 text-[var(--text2)] hover:text-[var(--text2)] select-none" onMouseDown={() => { dragFromHandle.current = true }} onMouseUp={() => { dragFromHandle.current = false }}>
                   <svg width="8" height="12" viewBox="0 0 8 12" fill="currentColor"><circle cx="2" cy="2" r="1.3"/><circle cx="6" cy="2" r="1.3"/><circle cx="2" cy="6" r="1.3"/><circle cx="6" cy="6" r="1.3"/><circle cx="2" cy="10" r="1.3"/><circle cx="6" cy="10" r="1.3"/></svg>
                 </span>
-                <button type="button" onClick={() => { if (i === exchanges.length - 1) return; const n = [...exchanges]; [n[i], n[i+1]] = [n[i+1], n[i]]; handleChange(n) }} disabled={i === exchanges.length - 1} aria-label="下に移動" className="px-1 py-0.5 text-[10px] text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▼</button>
+                <button type="button" onClick={() => { if (i === exchanges.length - 1) return; const n = [...exchanges]; [n[i], n[i+1]] = [n[i+1], n[i]]; handleChange(n) }} disabled={i === exchanges.length - 1} aria-label="下に移動" className="px-1 py-0.5 text-xs text-[var(--text2)] hover:text-[var(--text)] disabled:opacity-20 transition-colors">▼</button>
               </div>
               {/* バブル */}
               <div className={`flex flex-col flex-1 min-w-0 ${isInterviewer ? 'items-end' : 'items-start'}`}>

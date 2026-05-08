@@ -335,7 +335,7 @@ export default function ReportClient({
                         aria-label={`${month}: ${count}件`}
                       />
                       <span
-                        className="text-[9px] leading-none text-[var(--text2)] truncate w-full text-center"
+                        className="text-[11px] leading-none text-[var(--text2)] truncate w-full text-center"
                         title={month}
                       >
                         {label}

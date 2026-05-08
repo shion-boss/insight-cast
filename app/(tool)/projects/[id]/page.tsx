@@ -402,7 +402,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <ul className="space-y-2">
                   {hpPriorityActions.map((action, i) => (
                     <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
-                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">{i + 1}</span>
+                      <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">{i + 1}</span>
                       {action}
                     </li>
                   ))}

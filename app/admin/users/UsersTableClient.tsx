@@ -85,8 +85,8 @@ function PlanSelect({
           <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
-      {saving && <p className="text-[10px] text-[var(--text2)]">更新中...</p>}
-      {error && <p role="alert" className="text-[10px] text-[var(--err)]">{error}</p>}
+      {saving && <p className="text-xs text-[var(--text2)]">更新中...</p>}
+      {error && <p role="alert" className="text-xs text-[var(--err)]">{error}</p>}
     </div>
   )
 }

@@ -508,7 +508,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               >
                 {loading ? '送信中...' : '送信'}
               </button>
-              <p className="text-[10px] text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
+              <p className="text-xs text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
             </div>
           </form>
         </div>

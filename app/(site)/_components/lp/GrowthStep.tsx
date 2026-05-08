@@ -34,7 +34,7 @@ export function GrowthStep() {
               <Image src={sceneGrowth} alt="キャストたちがホームページ成長戦略を立てている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" quality={60} />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
-              <div className="text-[10px] font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Site Growth</div>
+              <div className="text-xs font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Site Growth</div>
               <div className="text-[12px] font-bold text-[var(--text)]">競合との差、見えてきました</div>
             </div>
           </div>

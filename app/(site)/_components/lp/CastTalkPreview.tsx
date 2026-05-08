@@ -73,7 +73,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
                 </h3>
                 <div className="h-px bg-[var(--surface-container-high)] my-2.5" />
                 {talk.summary && (
-                  <p className="border-l-2 pl-3 text-sm italic leading-[1.75] text-[var(--on-surface-variant)]" style={{ borderColor: theme.color }}>
+                  <p className="border-l-2 pl-3 text-base italic leading-[1.75] text-[var(--on-surface-variant)]" style={{ borderColor: theme.color }}>
                     「{talk.summary}」
                   </p>
                 )}

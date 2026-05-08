@@ -213,7 +213,7 @@ export default async function CastTalkDetailPage({
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         <span className="font-semibold text-[var(--text)]">{char.name}</span>
-                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[var(--on-primary-container)]">
+                        <span className="rounded-full bg-[var(--accent)]/10 px-2 py-0.5 text-xs font-semibold tracking-wide text-[var(--on-primary-container)]">
                           {char.label}
                         </span>
                       </div>

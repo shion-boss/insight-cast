@@ -194,7 +194,7 @@ export function CastFitFinder() {
                     className="flex-shrink-0 border-[var(--border)] bg-[var(--surface)]"
                   />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-[.1em] text-[var(--on-primary-container)]">
+                    <div className="text-xs font-bold uppercase tracking-[.1em] text-[var(--on-primary-container)]">
                       あわせて検討 · {altCast.name}
                     </div>
                     <p className="text-[11px] leading-[1.6] text-[var(--text2)]">{picked.alt.note}</p>

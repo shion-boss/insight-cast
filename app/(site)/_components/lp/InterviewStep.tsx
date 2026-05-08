@@ -16,7 +16,7 @@ export function InterviewStep() {
               <Image src={scenePlanning} alt="AIキャストが机でインタビューの準備をしている様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" quality={60} />
             </div>
             <div className="absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
-              <div className="text-[10px] font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
+              <div className="text-xs font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
               <div className="text-[12px] font-bold text-[var(--text)]">今日のインタビューを準備中</div>
             </div>
           </div>
@@ -35,7 +35,7 @@ export function InterviewStep() {
                 '取材後、記事づくりに進める',
               ].map((text) => (
                 <li key={text} className="flex items-start gap-3 text-[14px] text-[var(--text2)] leading-[1.7]">
-                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--on-primary-container)] text-[10px] font-bold">✓</span>
+                  <span aria-hidden="true" className="mt-[3px] w-4 h-4 rounded-full bg-[var(--accent-l)] flex items-center justify-center flex-shrink-0 text-[var(--on-primary-container)] text-xs font-bold">✓</span>
                   {text}
                 </li>
               ))}
@@ -52,7 +52,7 @@ export function InterviewStep() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
-                  <span className="text-[10px] text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
+                  <span className="text-xs text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
                   <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
                 </div>
               </Link>

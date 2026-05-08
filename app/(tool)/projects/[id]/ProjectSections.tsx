@@ -186,9 +186,9 @@ export function PaginatedInterviewHistory({
                     {item.charName}
                   </div>
                   {item.isDone ? (
-                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">完了</span>
+                    <span className="bg-[var(--ok-l)] text-[var(--ok)] text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">完了</span>
                   ) : (
-                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">途中</span>
+                    <span className="bg-[var(--warn-l)] text-[var(--warn)] text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0">途中</span>
                   )}
                 </div>
                 <div className="text-[11px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{formatDateTime(item.createdAt)}</div>

@@ -59,7 +59,7 @@ export function Hero() {
               />
             </div>
             <div className="hidden sm:block absolute -bottom-4 -left-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
-              <div className="text-[10px] font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
+              <div className="text-xs font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Insight Cast</div>
               <div className="text-[12px] font-bold text-[var(--text)]">AIキャストがそろっています</div>
             </div>
             <div className="hidden sm:block absolute -top-3 -right-3 bg-[var(--teal-l)] border border-[var(--teal)]/30 rounded-[12px] px-3.5 py-2 shadow-[var(--elevation-2)]">
@@ -71,7 +71,7 @@ export function Hero() {
         {/* スクロール示唆 — 次セクション (Pain) への送り出し */}
         <div className="mt-10 flex justify-center sm:mt-14">
           <div className="flex flex-col items-center gap-1.5 text-[var(--on-surface-variant)]">
-            <span className="text-[10px] font-semibold tracking-[0.18em] uppercase">Scroll</span>
+            <span className="text-xs font-semibold tracking-[0.18em] uppercase">Scroll</span>
             <span aria-hidden="true" className="hero-scroll-arrow text-[14px] leading-none">↓</span>
           </div>
         </div>

@@ -17,7 +17,7 @@ export function EeatSection() {
           <thead className="max-sm:hidden">
             <tr>
               {(['基準', '定義', 'Insight Cast の記事'] as const).map((h, i) => (
-                <th key={i} className={`py-3 text-left text-[10px] font-bold tracking-[0.12em] uppercase${i === 2 ? ' pl-4' : ''}`} style={{ color: 'var(--on-surface-variant)', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : 260 }}>{h}</th>
+                <th key={i} className={`py-3 text-left text-xs font-bold tracking-[0.12em] uppercase${i === 2 ? ' pl-4' : ''}`} style={{ color: 'var(--on-surface-variant)', borderBottom: '1px solid #e2d5c3', width: i === 0 ? 120 : i === 1 ? 160 : 260 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -35,7 +35,7 @@ export function EeatSection() {
                     <span className="w-9 flex-shrink-0 font-[family-name:var(--font-noto-serif-jp)] font-bold leading-none" style={{ fontSize: '32px', color: 'var(--accent)' }}>{row.letter}</span>
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[13px] font-bold leading-none text-[var(--text)]">{row.ja}</span>
-                      <span className="text-[10px] tracking-[0.06em]" style={{ color: 'var(--on-surface-variant)' }}>{row.en}</span>
+                      <span className="text-xs tracking-[0.06em]" style={{ color: 'var(--on-surface-variant)' }}>{row.en}</span>
                     </div>
                   </div>
                 </td>

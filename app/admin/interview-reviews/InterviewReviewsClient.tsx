@@ -207,13 +207,13 @@ function CommentCell({ good, improve }: { good: string | null; improve: string |
     <div className="max-w-[420px] space-y-1.5 text-xs">
       {improve && (
         <div>
-          <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>
+          <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>
           <span className="text-[var(--text)]">{improve}</span>
         </div>
       )}
       {good && (
         <div>
-          <span className="mr-1 inline-block rounded bg-[var(--ok-l)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--ok)]">良かった</span>
+          <span className="mr-1 inline-block rounded bg-[var(--ok-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--ok)]">良かった</span>
           <span className="text-[var(--text2)]">{good}</span>
         </div>
       )}
@@ -244,13 +244,13 @@ function ReviewCard({ row, characterName }: { row: ReviewRow; characterName: str
         <div className="space-y-1.5 border-t border-[var(--border)] pt-3 text-xs">
           {row.improve_points && (
             <div>
-              <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>
+              <span className="mr-1 inline-block rounded bg-[var(--err-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--err)]">改善</span>
               <span className="text-[var(--text)]">{row.improve_points}</span>
             </div>
           )}
           {row.good_points && (
             <div>
-              <span className="mr-1 inline-block rounded bg-[var(--ok-l)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--ok)]">良かった</span>
+              <span className="mr-1 inline-block rounded bg-[var(--ok-l)] px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-[var(--ok)]">良かった</span>
               <span className="text-[var(--text2)]">{row.good_points}</span>
             </div>
           )}
@@ -263,7 +263,7 @@ function ReviewCard({ row, characterName }: { row: ReviewRow; characterName: str
 function ScoreBlock({ label, value }: { label: string; value: number | null }) {
   return (
     <div className="rounded bg-[var(--bg2)] px-2 py-1.5">
-      <p className="text-[10px] uppercase tracking-wider text-[var(--text2)]">{label}</p>
+      <p className="text-xs uppercase tracking-wider text-[var(--text2)]">{label}</p>
       <p className="text-base"><ScoreCell value={value} /></p>
     </div>
   )

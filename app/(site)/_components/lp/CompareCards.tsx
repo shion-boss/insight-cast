@@ -2,7 +2,7 @@ export function CompareCards() {
   return (
     <section className="cv-auto-section py-14 sm:py-[88px] bg-[var(--surface2)]">
       <div className="mx-auto max-w-[1080px] px-6 sm:px-8 lg:px-12">
-        <p className="text-center text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-3">Comparison</p>
+        <p className="text-center text-xs font-bold tracking-[0.2em] uppercase text-[var(--accent)] mb-3">Comparison</p>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] text-center mb-4" style={{ fontSize: 'clamp(20px,2.4vw,28px)', lineHeight: 1.65 }}>
           あなたの「悩み」に、どう応えるか。
         </h2>
@@ -16,7 +16,7 @@ export function CompareCards() {
           {/* Card 1: 時間 */}
           <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
             <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
-              <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>忙しさで悩む方へ</p>
+              <p className="text-xs font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>忙しさで悩む方へ</p>
               <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>忙しくて、<br />ブログまで手が回らない</p>
             </div>
             <div className="flex flex-1 flex-col px-6 pt-7">
@@ -50,7 +50,7 @@ export function CompareCards() {
           {/* Card 2: 言語化 */}
           <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
             <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
-              <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>言語化で悩む方へ</p>
+              <p className="text-xs font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>言語化で悩む方へ</p>
               <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>自社の強みが、<br />まだ言葉にできていない</p>
             </div>
             <div className="flex flex-1 flex-col px-6 pt-7">
@@ -86,7 +86,7 @@ export function CompareCards() {
           {/* Card 3: 予算 — 結論カード */}
           <div className="flex flex-col overflow-hidden rounded-[8px] border" style={{ background: 'white', borderColor: '#e2d5c3' }}>
             <div className="border-b px-6 py-6" style={{ background: '#1e1610', borderColor: '#2a1e14' }}>
-              <p className="text-[10px] font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>予算で悩む方へ</p>
+              <p className="text-xs font-bold tracking-[0.14em] uppercase mb-2" style={{ color: 'var(--accent)' }}>予算で悩む方へ</p>
               <p className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold leading-[1.7]" style={{ color: '#f0e8dc' }}>月の予算は、<br />できれば1万円以内に</p>
             </div>
             <div className="flex flex-1 flex-col px-6 pt-7">

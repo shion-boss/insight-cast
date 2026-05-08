@@ -41,7 +41,7 @@ export function BlogPreview({ latestPosts }: { latestPosts: Post[] }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="mb-1.5 flex items-center gap-2">
-                    <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                    <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                       {CATEGORY_LABELS[post.category]}
                     </span>
                     <span className="text-[11px] text-[var(--text2)]">{post.date}</span>

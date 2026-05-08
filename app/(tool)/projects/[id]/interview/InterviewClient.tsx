@@ -602,7 +602,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 <span className="sm:hidden">記事</span>
                 <span className="hidden sm:inline">参考記事</span>
                 {supportPostCount > 0 && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-[10px] font-bold text-white">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">
                     {supportPostCount}
                   </span>
                 )}
@@ -703,7 +703,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                         ) : (
                           <div
                             key={`${i}-${j}`}
-                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[10px] text-[var(--text2)]"
+                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-xs text-[var(--text2)]"
                             aria-label="画像読み込み中"
                           >
                             画像
@@ -808,7 +808,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                     type="button"
                     onClick={() => removePendingAttachment(idx)}
                     aria-label="この画像を削除"
-                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-[10px] flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
+                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-xs flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                   >
                     ×
                   </button>
@@ -904,7 +904,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               >
                 {loading ? '送信中...' : '送信'}
               </button>
-              <p className="text-[10px] text-[var(--text2)] hidden sm:block">Ctrl+Enter</p>
+              <p className="text-xs text-[var(--text2)] hidden sm:block">Ctrl+Enter</p>
             </div>
           </form>
         </div>

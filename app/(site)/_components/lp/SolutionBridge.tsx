@@ -4,7 +4,7 @@ export function SolutionBridge() {
       {/* Watercolor wash top-right */}
       <div className="absolute pointer-events-none" style={{ top: '-80px', right: '-80px', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle at 40% 40%, oklch(0.82 0.07 55 / 0.18), transparent 70%)' }} />
       <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-6" style={{ color: 'var(--accent)' }}>Solution</p>
+        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-6" style={{ color: 'var(--accent)' }}>Solution</p>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.5] mb-12 relative pl-5" style={{ color: 'var(--on-surface)', fontSize: 'clamp(32px,4.5vw,60px)' }}>
           <span className="absolute left-0 top-[6px] bottom-[6px] w-[3px] rounded-[2px]" style={{ background: 'var(--primary)' }} />
           Insight Castなら、<br />取材に答えるだけ。

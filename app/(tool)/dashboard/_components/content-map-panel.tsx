@@ -224,7 +224,7 @@ export function ContentMapPanel({
                               >
                                 {posts.length}
                               </div>
-                              <div className="text-[9px] mt-0.5 text-[var(--text2)]">記事</div>
+                              <div className="text-[11px] mt-0.5 text-[var(--text2)]">記事</div>
                             </>
                           )}
                         </div>

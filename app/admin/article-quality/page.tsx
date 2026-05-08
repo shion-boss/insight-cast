@@ -191,13 +191,13 @@ export default async function AdminArticleQualityPage() {
                     {ai ? (
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className={`inline-block rounded px-1.5 py-0.5 text-[10px] font-bold ${rating.tone}`}>
+                          <span className={`inline-block rounded px-1.5 py-0.5 text-xs font-bold ${rating.tone}`}>
                             {rating.label}
                           </span>
                           <span>{ai.total} / {ai.total_max}</span>
                           <span className="text-[var(--text2)]">({formatPct(percent)})</span>
                         </div>
-                        <details className="text-[10px]">
+                        <details className="text-xs">
                           <summary className="cursor-pointer text-[var(--text2)] hover:text-[var(--accent)]">軸別</summary>
                           <ul className="mt-1 space-y-0.5">
                             {AXIS_ORDER.map((axis) => {

@@ -640,7 +640,7 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                     >
                       {opt.label}
                       {isPillar && !pillarReady && (
-                        <span className="ml-1.5 text-[10px] font-medium opacity-70">条件未達</span>
+                        <span className="ml-1.5 text-xs font-medium opacity-70">条件未達</span>
                       )}
                     </button>
                   )

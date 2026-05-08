@@ -146,7 +146,7 @@ export default async function BlogPage() {
                         <div className="relative h-7 w-7 flex-shrink-0 overflow-hidden rounded-full border border-[var(--border)]" style={{ background: `${themeColor}18` }}>
                           <Image src={char.icon48} alt={char.name} fill sizes="28px" className="object-cover" />
                         </div>
-                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
+                        <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${themeColor}1a`, color: themeColor }}>
                           {CATEGORY_LABELS[post.category]}
                         </span>
                       </div>

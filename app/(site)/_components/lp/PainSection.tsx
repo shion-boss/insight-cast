@@ -6,7 +6,7 @@ export function PainSection() {
       {/* Warm orange vignette from bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-[120px] pointer-events-none" style={{ background: 'linear-gradient(to top, color-mix(in srgb, var(--accent) 8%, transparent), transparent)' }} />
       <div className="relative mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <p className="text-[10px] font-bold tracking-[0.2em] uppercase mb-7" style={{ color: 'var(--accent)' }}>Pain</p>
+        <p className="text-xs font-bold tracking-[0.2em] uppercase mb-7" style={{ color: 'var(--accent)' }}>Pain</p>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.65] mb-14" style={{ color: '#f0e8dc', fontSize: 'clamp(26px,3.8vw,52px)' }}>
           やる気があっても、<br />
           <span className="relative inline-block">

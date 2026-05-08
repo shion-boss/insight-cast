@@ -210,7 +210,7 @@ export function ArticleExportPanel({
         {!isEditing && (
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
+              <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
               <button type="button" onClick={handleCopyText}
                 className="relative min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 <span className={copiedText ? 'opacity-0' : ''}>テキスト</span>
@@ -224,7 +224,7 @@ export function ArticleExportPanel({
             </div>
             <span aria-hidden="true" className="h-4 w-px bg-[var(--border)]" />
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
+              <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
               <button type="button" onClick={() => handleDownload('text')}
                 className="min-h-[36px] rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)] transition-colors hover:bg-[var(--bg2)]">
                 .txt
@@ -382,7 +382,7 @@ export function ArticleExportPanel({
       {/* グローバルコピー形式トグル */}
       {!isEditing && (
         <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2">
-          <span className="text-[10px] font-bold tracking-[0.1em] uppercase text-[var(--text2)]">コピー形式</span>
+          <span className="text-xs font-bold tracking-[0.1em] uppercase text-[var(--text2)]">コピー形式</span>
           <div className="flex overflow-hidden rounded-[var(--r-sm)] border border-[var(--border)] text-xs">
             <button type="button" onClick={() => setGlobalMode('text')} className={`px-3 py-1.5 transition-colors ${globalMode === 'text' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>テキスト</button>
             <button type="button" onClick={() => setGlobalMode('markdown')} className={`border-l border-[var(--border)] px-3 py-1.5 transition-colors ${globalMode === 'markdown' ? 'bg-[var(--accent)] text-white' : 'bg-[var(--surface)] text-[var(--text2)] hover:bg-[var(--bg2)]'}`}>Markdown</button>

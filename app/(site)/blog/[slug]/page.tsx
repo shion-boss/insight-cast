@@ -378,7 +378,7 @@ export default async function BlogDetailPage({
                   href={`/blog/${prevPost.slug}`}
                   className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 transition-colors hover:border-[var(--accent)]"
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">← 新しい記事</span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">← 新しい記事</span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{prevPost.title}</span>
                 </Link>
               ) : <div />}
@@ -387,7 +387,7 @@ export default async function BlogDetailPage({
                   href={`/blog/${nextPost.slug}`}
                   className="group flex flex-col gap-1 rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-right transition-colors hover:border-[var(--accent)]"
                 >
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">過去の記事 <span aria-hidden="true">→</span></span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--text2)]">過去の記事 <span aria-hidden="true">→</span></span>
                   <span className="mt-1 text-sm font-semibold leading-snug text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)] transition-colors">{nextPost.title}</span>
                 </Link>
               ) : <div />}
@@ -418,7 +418,7 @@ export default async function BlogDetailPage({
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="mb-1 flex items-center gap-2">
-                        <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: `${relColor}1a`, color: relColor }}>
+                        <span className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ background: `${relColor}1a`, color: relColor }}>
                           {CATEGORY_LABELS[related.category]}
                         </span>
                         <span className="text-[11px] text-[var(--text2)]">{related.date}</span>

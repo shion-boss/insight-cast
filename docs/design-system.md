@@ -178,6 +178,28 @@ M3 は 15 段階を用意するが、Insight Cast では **6 段階に削減** �
 - body の行高 1.95 は日本語向け。長文ブロックでは `text-pretty` を併用してよい。
 - label は uppercase + tracking 広め。日本語は uppercase が効かないので、英文 / 英数字混在向け。
 
+### 最低サイズと禁止事項
+
+Insight Cast の顧客は **40-60 代中心で老眼世代**。Google モバイル推奨・WCAG・Material Design 3 のいずれも本文 16px を業界標準の下限としており、本サービスではそれを **最低ライン** として強制する。
+
+| 用途 | 最低 | 推奨 / トークン |
+|---|---|---|
+| 顧客向け本文 | **16px** | `getTypeClass('body')` (16px) |
+| caption / ヘルパー | 13px | `getTypeClass('caption')` (13px) |
+| uppercase ラベル / バッジ | 12px | `getTypeClass('label')` (12px) |
+| 日本語の通常テキスト全般（補助メタ含む） | **11px** | 12px 以上推奨 |
+
+#### 禁止事項
+- 顧客向け **本文用途での `text-sm`（14px）** 使用 → `text-base`（16px）または `getTypeClass('body')`
+- 日本語テキストの **`text-[10px]` `text-[9px]`** 使用（顧客向け・admin・社内ツール問わず禁止）
+- **uppercase 英字ラベルでも 10px 以下は禁止** → `getTypeClass('label')`（12px）に統一
+- スケール外の数値直書き（`text-[11px]` `text-[13px]` `text-[15px]` 等）→ 6 段階のスケール（display / headline / title / body / label / caption）から選ぶ
+
+#### 例外と扱い
+- admin / 社内ツール画面の高密度テーブルでも、**最低 11px** は守る。日本語が 10px 以下になることは禁止
+- `getTypeClass('label')` の 12px は M3 label-medium 相当。これ以上小さくする場面は基本ない
+- 既存の `text-[Npx]` 直書き（約 450 箇所）と本文 `text-sm`（約 600 箇所）は機械置換すると視覚回帰が出るため、**ページタッチ時に段階移行** する（移行手順 Step 7 と同じ方針）。新規実装は必ずスケールから選ぶ
+
 ---
 
 ## Shape Scale

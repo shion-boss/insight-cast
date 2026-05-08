@@ -135,7 +135,7 @@ function CastHeroDialog() {
 
       {/* 他のキャストの存在を視覚的に提示 */}
       <div className="mt-6 pt-5 border-t border-[var(--border)]">
-        <div className="text-[10px] font-bold uppercase tracking-[.12em] text-[var(--text3)] mb-3">ほかのキャスト</div>
+        <div className="text-xs font-bold uppercase tracking-[.12em] text-[var(--text3)] mb-3">ほかのキャスト</div>
         <div className="flex items-start gap-3 flex-wrap">
           {otherCasts.map((char) => (
             <div key={char.id} className="flex flex-col items-center gap-1.5 w-[52px]">
@@ -146,7 +146,7 @@ function CastHeroDialog() {
                 size={40}
                 className="border-[var(--border)] bg-[var(--surface)]"
               />
-              <span className="text-[10px] text-[var(--text2)] leading-tight text-center">{char.name}</span>
+              <span className="text-xs text-[var(--text2)] leading-tight text-center">{char.name}</span>
             </div>
           ))}
         </div>

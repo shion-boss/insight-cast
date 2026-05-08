@@ -59,20 +59,20 @@ export function OutputExample() {
                   ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={40} height={40} className="rounded-full border border-[var(--border)] object-cover" />
                   : <div aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-lg">{freeCast[0]?.emoji ?? '🐱'}</div>}
               </div>
-              <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-sm text-[var(--text2)]">
+              <div className="rounded-2xl rounded-tl-sm border border-[var(--border)] bg-[var(--bg)] px-4 py-2 text-base text-[var(--text2)]">
                 記事をまとめました。好きな形式でお使いください。
               </div>
             </div>
             {/* アクションボタン行 */}
             <div className="border-b border-[var(--border)] px-4 pt-2 pb-2 flex flex-wrap items-center gap-x-3 gap-y-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
+                <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">全文コピー</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">テキスト</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">Markdown</span>
               </div>
               <span aria-hidden="true" className="hidden sm:inline-block h-4 w-px bg-[var(--border)]" />
               <div className="flex items-center gap-1.5">
-                <span className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
+                <span className="text-xs font-bold tracking-[0.08em] uppercase text-[var(--text2)] whitespace-nowrap">書き出し</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.txt</span>
                 <span className="min-h-[36px] inline-flex items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text)]">.md</span>
               </div>
@@ -88,16 +88,16 @@ export function OutputExample() {
               </LpCopyableCard>
               {/* 概要 */}
               <LpCopyableCard label="概要" text="うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。">
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
+                <p className="whitespace-pre-wrap text-base leading-relaxed text-[var(--text)]">うちは戸建てのお客さんを中心に外壁塗装をやっています。父の代からずっと、朝8時ごろから15時ごろには作業を終わらせるようにしていて、自分もそれを引き継いでいます。</p>
               </LpCopyableCard>
               {/* セクション（小見出し＋本文）— 1カード内で divider 区切り */}
               <div className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
                 <LpCopyableCard variant="segment" label="小見出し" text="近所の方への気遣いも、仕事のうちだと思っています">
-                  <p className="whitespace-pre-wrap text-sm font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
+                  <p className="whitespace-pre-wrap text-base font-semibold leading-relaxed text-[var(--text)]">近所の方への気遣いも、仕事のうちだと思っています</p>
                 </LpCopyableCard>
                 <div className="border-t border-[var(--border)]" />
                 <LpCopyableCard variant="segment" label="本文" text={'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}>
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
+                  <p className="whitespace-pre-wrap text-base leading-relaxed text-[var(--text)]">{'塗装の仕事って、お客さんだけじゃなくて近所の方にも迷惑をかけることがあるんです。足場を組めば通路が狭くなるし、作業音もあります。だから時間帯にはずっと気をつけてきました。\n\n自分では当たり前のことだと思っていたんですが、取材でそう話したら「そこまで意識している業者さんは少ない」と言われて、少し驚きました。父から教わったことなので、これからも変わらずやっていきたいです。'}</p>
                 </LpCopyableCard>
               </div>
             </div>
