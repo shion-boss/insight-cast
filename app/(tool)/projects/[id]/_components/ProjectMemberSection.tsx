@@ -564,7 +564,7 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                     value={editTarget.displayName}
                     readOnly
                     aria-readonly="true"
-                    className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-gray-200 bg-gray-100 px-3 py-2 text-base text-gray-600 cursor-not-allowed"
+                    className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-base text-[var(--text3)] cursor-not-allowed"
                   />
                   <p className="mt-1.5 text-[13px] text-[var(--text3)]">名前は本人がプロフィールから変更できます。</p>
                 </div>
