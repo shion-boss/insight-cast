@@ -103,7 +103,7 @@ export function CompareCards() {
                 {[
                   { name: 'サイト放置',         value: '¥0（増えない）',       muted: true,  highlight: false },
                   { name: 'AIツール',           value: '月¥3,000〜',           muted: false, highlight: false },
-                  { name: '取材付きライター',    value: '1回¥30,000〜',         muted: false, highlight: false },
+                  { name: 'ライター発注',       value: '1記事¥5,000〜',         muted: false, highlight: false },
                   { name: 'Insight Cast',      value: '月¥4,980 取材込み',     muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
@@ -114,7 +114,7 @@ export function CompareCards() {
                 ))}
               </div>
               <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
-                <strong className="font-bold text-[var(--text)]">ライターに1回頼む金額より安く、</strong>毎月続けられる。
+                <strong className="font-bold text-[var(--text)]">ライター1記事分の予算で、</strong>毎月続けられる。
               </p>
             </div>
           </div>
