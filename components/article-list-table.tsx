@@ -296,7 +296,7 @@ export function ArticleListTable({
                     }}
                   >
                     <td className="max-w-xs px-5 py-4">
-                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--link)]">
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">
                         {item.title}
                       </Link>
                       {item.excerpt && (

@@ -280,22 +280,22 @@ function ArticlesFilterContent({
                 href={item.detailHref}
                 className="group block rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-4"
               >
-                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--link)]">{item.title}</p>
+                <p className="mb-1 line-clamp-2 font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</p>
                 {item.excerpt && (
-                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--link)]">{item.excerpt}</p>
+                  <p className="mb-2 line-clamp-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                 )}
-                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--link)]">
-                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium transition-colors group-hover:text-[var(--link)]">
+                <div className="flex flex-wrap gap-2 text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
+                  <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium transition-colors group-hover:text-[var(--accent)]">
                     {item.articleTypeLabel}
                   </span>
                   {showProjectColumn && item.projectLabel && (
                     <span className="flex items-center gap-1.5">
-                      <span className="transition-colors group-hover:text-[var(--link)]">{item.projectLabel}</span>
+                      <span className="transition-colors group-hover:text-[var(--accent)]">{item.projectLabel}</span>
                       {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
                     </span>
                   )}
-                  {showInterviewColumn && item.interviewerLabel && <span className="transition-colors group-hover:text-[var(--link)]">{item.interviewerLabel}</span>}
-                  <span className="transition-colors group-hover:text-[var(--link)]">{item.createdAtLabel}</span>
+                  {showInterviewColumn && item.interviewerLabel && <span className="transition-colors group-hover:text-[var(--accent)]">{item.interviewerLabel}</span>}
+                  <span className="transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</span>
                 </div>
               </Link>
             ))}
@@ -342,14 +342,14 @@ function ArticlesFilterContent({
                       }
                     }}
                   >
-                    <td className="max-w-xs px-5 py-4 transition-colors group-hover:text-[var(--link)]">
-                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--link)]">{item.title}</Link>
+                    <td className="max-w-xs px-5 py-4 transition-colors group-hover:text-[var(--accent)]">
+                      <Link href={item.detailHref} className="mb-1 block overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.title}</Link>
                       {item.excerpt && (
-                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--link)]">{item.excerpt}</p>
+                        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">{item.excerpt}</p>
                       )}
                     </td>
                     {showInterviewColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--link)]">
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
                         {item.interviewerLabel && item.interviewerLabel !== '—' ? (
                           <div className="flex items-center gap-2 min-w-0">
                             <div className="w-[24px] h-[24px] rounded-full overflow-hidden flex-shrink-0 border-[1.5px] border-[var(--border)]">
@@ -361,7 +361,7 @@ function ArticlesFilterContent({
                                 className="w-full h-full object-cover object-top"
                               />
                             </div>
-                            <span className="truncate transition-colors group-hover:text-[var(--link)]">{item.interviewerLabel}</span>
+                            <span className="truncate transition-colors group-hover:text-[var(--accent)]">{item.interviewerLabel}</span>
                           </div>
                         ) : (
                           <span>—</span>
@@ -369,19 +369,19 @@ function ArticlesFilterContent({
                       </td>
                     )}
                     {showProjectColumn && (
-                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--link)]">
+                      <td className="px-4 py-4 text-xs text-[var(--text2)] whitespace-nowrap transition-colors group-hover:text-[var(--accent)]">
                         <span className="flex items-center gap-1.5">
-                          <span className="truncate transition-colors group-hover:text-[var(--link)]">{item.projectLabel ?? '—'}</span>
+                          <span className="truncate transition-colors group-hover:text-[var(--accent)]">{item.projectLabel ?? '—'}</span>
                           {item.isShared && <StatusPill tone="info" className="flex-shrink-0">共有</StatusPill>}
                         </span>
                       </td>
                     )}
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)] transition-colors group-hover:text-[var(--link)]">
+                      <span className="rounded-full border border-[var(--border)] bg-[var(--bg2)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                         {item.articleTypeLabel}
                       </span>
                     </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-xs text-[var(--text2)] tabular-nums transition-colors group-hover:text-[var(--link)]">{item.createdAtLabel}</td>
+                    <td className="px-5 py-4 whitespace-nowrap text-xs text-[var(--text2)] tabular-nums transition-colors group-hover:text-[var(--accent)]">{item.createdAtLabel}</td>
                   </tr>
                 ))}
               </tbody>
