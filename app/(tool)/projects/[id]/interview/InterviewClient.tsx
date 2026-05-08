@@ -222,10 +222,13 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
                 allPaths.push(a.path)
                 return { path: a.path, contentType: a.content_type, previewUrl: '' }
               })
+            // 古い実装で cleanText が失敗してマーカーが content に残っているメッセージは
+            // クライアント側で剥がし、yesno フラグも content から推定する。
+            const rawContent = m.content ?? ''
             return {
               role: m.role as 'user' | 'interviewer',
-              content: m.content,
-              yesno: meta?.yesno?.active === true,
+              content: stripInterviewMarkers(rawContent),
+              yesno: meta?.yesno?.active === true || hasYesnoMarker(rawContent),
               attachments: attachments.length > 0 ? attachments : undefined,
             }
           })
