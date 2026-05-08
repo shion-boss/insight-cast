@@ -101,10 +101,10 @@ export function CompareCards() {
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
-                  { name: 'サイト放置',         value: '何も増えない',         muted: true,  highlight: false },
-                  { name: 'AIツール',           value: '月数本の薄い記事',     muted: false, highlight: false },
+                  { name: 'サイト放置',         value: '¥0（増えない）',       muted: true,  highlight: false },
+                  { name: 'AIツール',           value: '月¥3,000〜',           muted: false, highlight: false },
                   { name: '取材付きライター',    value: '1回¥30,000〜',         muted: false, highlight: false },
-                  { name: 'Insight Cast',      value: '月¥4,980 取材込み・使い放題', muted: false, highlight: true  },
+                  { name: 'Insight Cast',      value: '月¥4,980 取材込み',     muted: false, highlight: true  },
                 ].map((r) => (
                   <div key={r.name} className={`grid grid-cols-[1fr_auto] items-center gap-3 py-3 border-b${r.highlight ? ' -mx-6 px-6' : ''}`}
                     style={r.highlight ? { background: '#fff8f0', borderColor: 'color-mix(in srgb, var(--accent) 20%, transparent)' } : { borderColor: 'var(--outline)' }}>
