@@ -41,7 +41,7 @@ function FeaturedTalkCard({ talk }: { talk: Talk }) {
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
   const storyImg = getCastTalkStoryImage(talk.interviewer_id, talk.guest_id)
-  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'キャスト対談' }
 
   return (
     <Link
@@ -124,7 +124,7 @@ const LIST_PAGE_SIZE = 10
 function TalkListItem({ talk, fromPage = 0 }: { talk: Talk; fromPage?: number }) {
   const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
   const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
+  const theme = THEME_PALETTE[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'キャスト対談' }
   const href = fromPage > 0 ? `/cast-talk/${talk.slug}?from=${fromPage}` : `/cast-talk/${talk.slug}`
 
   return (

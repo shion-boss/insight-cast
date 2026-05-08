@@ -22,7 +22,7 @@ export default async function OgImage({
 }) {
   const { slug } = await params
   const title = await getCastTalkTitle(slug)
-  const displayTitle = title ?? 'Cast Talk | Insight Cast'
+  const displayTitle = title ?? 'キャスト対談 | Insight Cast'
 
   return new ImageResponse(
     (
@@ -60,7 +60,7 @@ export default async function OgImage({
               textTransform: 'uppercase',
             }}
           >
-            Insight Cast — Cast Talk
+            Insight Cast — キャスト対談
           </span>
         </div>
 

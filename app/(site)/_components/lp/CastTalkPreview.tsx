@@ -31,7 +31,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
   return (
     <section className="py-14 sm:py-[88px] bg-[var(--bg)]">
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
-        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">Cast Talk</div>
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)]">キャスト対談</div>
         <h2 className="font-[family-name:var(--font-noto-serif-jp)] mt-3 font-bold text-[var(--text)]" style={{ fontSize: 'clamp(24px,3vw,38px)' }}>
           キャストたちの、舞台裏話
         </h2>
@@ -42,7 +42,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
           {latestTalks.map((talk) => {
             const interviewer = CHARACTERS.find((c) => c.id === talk.interviewer_id)
             const guest = CHARACTERS.find((c) => c.id === talk.guest_id)
-            const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'Cast Talk' }
+            const theme = CAST_TALK_THEME[talk.interviewer_id ?? ''] ?? { color: '#8a4a18', label: 'キャスト対談' }
             const dateStr = talk.published_at
               ? (() => { const d = new Date(talk.published_at!); return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}` })()
               : ''
@@ -87,7 +87,7 @@ export function CastTalkPreview({ latestTalks }: { latestTalks: CastTalkPreviewI
         </div>
         <div className="mt-8">
           <Link href="/cast-talk" className="border-[1.5px] border-[var(--border)] bg-[var(--surface)] text-[var(--text)] rounded-full px-6 py-3 text-sm font-semibold hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors inline-flex items-center">
-            Cast Talk をもっと読む <span aria-hidden="true">→</span>
+            キャスト対談をもっと読む <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

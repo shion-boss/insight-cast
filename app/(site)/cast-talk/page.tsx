@@ -10,12 +10,12 @@ import { Breadcrumb } from '@/components/ui'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'Cast Talk | Insight Cast',
+  title: 'キャスト対談 | Insight Cast',
   description:
     'Insight Cast のAIキャストたちが語り合う対話形式の読み物です。ホームページを一次情報で育てるためのヒントや、情報発信についての考え方を、ミント・クラウス・レインそれぞれの視点からお届けしています。',
   alternates: { canonical: `${APP_URL}/cast-talk` },
   openGraph: {
-    title: 'Cast Talk | Insight Cast',
+    title: 'キャスト対談 | Insight Cast',
     description: 'AIキャストたちの対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
     url: `${APP_URL}/cast-talk`,
     siteName: 'Insight Cast',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Cast Talk | Insight Cast',
+    title: 'キャスト対談 | Insight Cast',
     description: 'AIキャストたちの対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
     images: ['/logo.jpg'],
   },
@@ -85,14 +85,14 @@ export default async function CastTalkPage({
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
-      { '@type': 'ListItem', position: 2, name: 'Cast Talk', item: `${APP_URL}/cast-talk` },
+      { '@type': 'ListItem', position: 2, name: 'キャスト対談', item: `${APP_URL}/cast-talk` },
     ],
   }
 
   const castTalkListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: 'Cast Talk | Insight Cast',
+    name: 'キャスト対談 | Insight Cast',
     url: `${APP_URL}/cast-talk`,
     description: 'Insight CastのAIキャストたちが語り合う対話記事。ホームページを一次情報で育てるヒントをキャストの視点でお届けします。',
     ...(featured
@@ -121,7 +121,7 @@ export default async function CastTalkPage({
       <main id="main-content" className="relative z-10">
         <PublicHero
           compact
-          eyebrow="Cast Talk"
+          eyebrow="キャスト対談"
           title={<>キャストの対話記事</>}
           description={
             <>
@@ -154,8 +154,8 @@ export default async function CastTalkPage({
           }
         />
 
-        <section aria-label="Cast Talk 記事一覧" className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
-          <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: 'Cast Talk' }]} />
+        <section aria-label="キャスト対談 記事一覧" className="mx-auto max-w-[1160px] px-6 pb-20 sm:px-8 lg:px-12 pt-12">
+          <Breadcrumb items={[{ label: 'ホーム', href: '/' }, { label: 'キャスト対談' }]} />
           <CastTalkGrid
             featuredTalk={featured}
             initialListTalks={initialListTalks}

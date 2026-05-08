@@ -47,7 +47,7 @@ export async function GET() {
 
   const entries = talks.map((talk) => {
     const url = `${APP_URL}/cast-talk/${talk.slug}`
-    const title = talk.title ?? 'Cast Talk'
+    const title = talk.title ?? 'キャスト対談'
     const summary = talk.summary ?? ''
     return `  <entry>
     <id>${xmlEscape(url)}</id>
@@ -63,7 +63,7 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="ja">
   <id>${xmlEscape(FEED_URL)}</id>
-  <title>Insight Cast — Cast Talk</title>
+  <title>Insight Cast — キャスト対談</title>
   <subtitle>Insight Cast の AI キャストたちが語り合う対話形式の読み物。</subtitle>
   <link rel="self" type="application/atom+xml" href="${xmlEscape(FEED_URL)}"/>
   <link rel="alternate" type="text/html" href="${xmlEscape(INDEX_URL)}"/>

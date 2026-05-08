@@ -45,8 +45,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const talk = await getCastTalk(slug)
-  if (!talk) return { title: 'Cast Talk | Insight Cast' }
-  const title = `${talk.title} | Cast Talk | Insight Cast`
+  if (!talk) return { title: 'キャスト対談 | Insight Cast' }
+  const title = `${talk.title} | キャスト対談 | Insight Cast`
   const description = talk.summary ?? 'Insight CastのAIキャストによる対話記事。'
   return {
     title,
@@ -124,8 +124,8 @@ export default async function CastTalkDetailPage({
         knowsAbout: interviewer.specialty ? [interviewer.specialty] : undefined,
       },
     }),
-    articleSection: 'Cast Talk',
-    keywords: ['Cast Talk', 'AIキャスト対話', 'Insight Cast', interviewer?.name, guest?.name].filter(Boolean).join(', '),
+    articleSection: 'キャスト対談',
+    keywords: ['キャスト対談', 'AIキャスト対話', 'Insight Cast', interviewer?.name, guest?.name].filter(Boolean).join(', '),
     wordCount: conversationWordCount,
     inLanguage: 'ja',
   }
@@ -135,7 +135,7 @@ export default async function CastTalkDetailPage({
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'ホーム', item: APP_URL },
-      { '@type': 'ListItem', position: 2, name: 'Cast Talk', item: `${APP_URL}/cast-talk` },
+      { '@type': 'ListItem', position: 2, name: 'キャスト対談', item: `${APP_URL}/cast-talk` },
       { '@type': 'ListItem', position: 3, name: talk.title, item: talkUrl },
     ],
   }
@@ -165,10 +165,10 @@ export default async function CastTalkDetailPage({
         <section aria-label="記事タイトルと登場キャスト" className="bg-gradient-to-br from-[#fdf7f0] to-[#f5e8d8] px-4 pb-10 pt-10 sm:px-6 sm:pb-12 sm:pt-16">
           <div className="mx-auto max-w-3xl">
             <Breadcrumb items={[
-              { label: 'Cast Talk', href: '/cast-talk' },
+              { label: 'キャスト対談', href: '/cast-talk' },
               { label: talk.title },
             ]} />
-            <p className="mt-2 text-[13px] font-semibold tracking-[0.18em] uppercase text-[var(--accent)]">Cast Talk</p>
+            <p className="mt-2 text-[13px] font-semibold tracking-[0.18em] uppercase text-[var(--accent)]">キャスト対談</p>
 
             <h1 className="mt-4 text-2xl font-semibold leading-snug tracking-[-0.03em] text-[var(--text)] sm:text-3xl lg:text-4xl">
               {talk.title}
@@ -273,7 +273,7 @@ export default async function CastTalkDetailPage({
               className="group flex items-center gap-2 text-sm text-[var(--text2)] transition-colors hover:text-[var(--text)] rounded"
             >
               <span aria-hidden="true" className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
-              <span>Cast Talk の記事一覧へ</span>
+              <span>キャスト対談の記事一覧へ</span>
             </Link>
           </div>
         </section>

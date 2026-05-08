@@ -296,7 +296,7 @@ export default async function CastPage() {
                           className="group mt-4 flex items-start gap-4 rounded-[16px] bg-[var(--bg2)] p-5"
                         >
                           <div className="min-w-0 flex-1">
-                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--on-primary-container)]">Cast Talk</div>
+                            <div className="mb-1 text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--on-primary-container)]">キャスト対談</div>
                             <div className="text-sm font-semibold leading-[1.5] text-[var(--text)] line-clamp-2 group-hover:text-[var(--accent)]">
                               {talksByChar[char.id]!.title}
                             </div>
@@ -400,7 +400,7 @@ export default async function CastPage() {
           <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
             <div className="rounded-[20px] border border-[var(--outline)] bg-[var(--surface)] px-8 py-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
-                <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">Cast Talk</div>
+                <div className="text-[11px] font-bold tracking-[0.12em] uppercase text-[var(--on-primary-container)] mb-2">キャスト対談</div>
                 <p className="text-lg font-semibold text-[var(--text)] mb-1.5">
                   キャストの実際の対話を読んでみる
                 </p>
@@ -413,7 +413,7 @@ export default async function CastPage() {
                 href="/cast-talk"
                 className="shrink-0 inline-flex items-center rounded-full border-[1.5px] border-[var(--accent)] px-6 py-3 text-sm font-semibold text-[var(--on-primary-container)] transition-colors hover:bg-[var(--accent)] hover:text-white"
               >
-                Cast Talk を読む <span aria-hidden="true">→</span>
+                キャスト対談を読む <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>

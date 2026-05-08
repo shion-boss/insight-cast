@@ -135,7 +135,7 @@ export default function RootLayout({
         {/* Atom feed の発見可能化（Feedly / Google News / LLM 検索ボットに blog
             と cast-talk の更新を通知するため）。 */}
         <link rel="alternate" type="application/atom+xml" title="Insight Cast Blog" href="/blog/feed.xml" />
-        <link rel="alternate" type="application/atom+xml" title="Insight Cast — Cast Talk" href="/cast-talk/feed.xml" />
+        <link rel="alternate" type="application/atom+xml" title="Insight Cast — キャスト対談" href="/cast-talk/feed.xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
