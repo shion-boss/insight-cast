@@ -312,7 +312,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
               />
               <div>
                 <div className="text-[22px] font-bold text-[var(--text)]">{project.name || project.hp_url}</div>
-                <div className="text-sm text-[var(--text2)] flex items-center gap-1">
+                <div className="text-base text-[var(--text2)] flex items-center gap-1">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 text-[var(--text2)]" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                   {project.hp_url}
                 </div>
@@ -391,7 +391,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <div className="mt-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[16px] font-bold text-[var(--text)]">HP診断サマリー</h2>
-            <Link href={`/projects/${id}/report`} className="text-xs text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded">
+            <Link href={`/projects/${id}/report`} className="text-[13px] text-[var(--text2)] hover:text-[var(--text2)] transition-colors rounded">
               詳細レポートを見る <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -401,7 +401,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">優先アクション</p>
                 <ul className="space-y-2">
                   {hpPriorityActions.map((action, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-[var(--text)]">
+                    <li key={i} className="flex items-start gap-2.5 text-base text-[var(--text)]">
                       <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">{i + 1}</span>
                       {action}
                     </li>
@@ -414,7 +414,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--ok)] uppercase">強み</p>
                 <ul className="space-y-1.5">
                   {hpStrengths.map((s, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text)]">
+                    <li key={i} className="flex items-start gap-2 text-base text-[var(--text)]">
                       <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--ok)]" />
                       {s}
                     </li>
@@ -427,7 +427,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--warn)] uppercase">課題・弱点</p>
                 <ul className="space-y-1.5">
                   {hpGaps.map((g, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-[var(--text)]">
+                    <li key={i} className="flex items-start gap-2 text-base text-[var(--text)]">
                       <span className="mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--warn)]" />
                       {g}
                     </li>
@@ -454,8 +454,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                       <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-[var(--text)]">{topic.theme}</p>
-                      <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2">{topic.summary}</p>
+                      <p className="text-base font-semibold text-[var(--text)]">{topic.theme}</p>
+                      <p className="mt-0.5 text-[13px] text-[var(--text2)] line-clamp-2">{topic.summary}</p>
                     </div>
                   </div>
                 )
@@ -470,8 +470,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     <CharacterAvatar src={claus?.icon48} alt={claus?.name ?? 'クラウス'} emoji={claus?.emoji} size={28} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{topic.theme}</p>
-                    <p className="mt-0.5 text-xs text-[var(--text2)] line-clamp-2 transition-colors group-hover:text-[var(--accent)]">{topic.summary}</p>
+                    <p className="text-base font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{topic.theme}</p>
+                    <p className="mt-0.5 text-[13px] text-[var(--text2)] line-clamp-2 transition-colors group-hover:text-[var(--accent)]">{topic.summary}</p>
                   </div>
                   <span aria-hidden="true" className="shrink-0 self-end text-[12px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">取材する →</span>
                 </Link>
