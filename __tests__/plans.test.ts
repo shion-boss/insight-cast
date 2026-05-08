@@ -37,9 +37,9 @@ test('lightning プランの月次インタビュー上限は 5', () => {
   assert.equal(limits.monthlyInterviewLimit, 5)
 })
 
-test('lightning プランの月次記事上限は 20', () => {
+test('lightning プランの月次記事上限は 10（取材5回 × 2）', () => {
   const limits = getPlanLimits('lightning')
-  assert.equal(limits.monthlyArticleLimit, 20)
+  assert.equal(limits.monthlyArticleLimit, 10)
 })
 
 test('personal プランの月次インタビュー上限は 15', () => {
@@ -47,9 +47,19 @@ test('personal プランの月次インタビュー上限は 15', () => {
   assert.equal(limits.monthlyInterviewLimit, 15)
 })
 
+test('personal プランの月次記事上限は 30（取材15回 × 2）', () => {
+  const limits = getPlanLimits('personal')
+  assert.equal(limits.monthlyArticleLimit, 30)
+})
+
 test('business プランの月次インタビュー上限は 60', () => {
   const limits = getPlanLimits('business')
   assert.equal(limits.monthlyInterviewLimit, 60)
+})
+
+test('business プランの月次記事上限は 180（取材60回 × 3）', () => {
+  const limits = getPlanLimits('business')
+  assert.equal(limits.monthlyArticleLimit, 180)
 })
 
 test('business プランは最大 3 取材先', () => {

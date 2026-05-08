@@ -66,7 +66,7 @@ const PLANS = [
     featured: false,
     features: [
       '取材回数：月5回まで',
-      '記事作成：月20回まで',
+      '記事作成：月10回まで',
       'フリーキャスト 3名',
       'プロジェクト登録：1件',
       '自社HP調査あり',
@@ -84,7 +84,7 @@ const PLANS = [
     featured: true,
     features: [
       '取材回数：月15回まで',
-      '記事作成：月60回まで',
+      '記事作成：月30回まで',
       'フリーキャスト 3名',
       'プロジェクト登録：1件',
       '自社HP調査あり',
@@ -103,7 +103,7 @@ const PLANS = [
     featured: false,
     features: [
       '取材回数：月60回まで',
-      '記事作成：月240回まで',
+      '記事作成：月180回まで',
       'フリーキャスト 3名',
       'プロジェクト登録：最大3件',
       '自社HP調査あり',
@@ -127,7 +127,7 @@ function renderCellValue(value: string) {
 const TABLE_ROWS = [
   { label: '料金（月額）', lightning: '¥1,980', personal: '¥4,980', business: '¥14,800' },
   { label: '取材回数', lightning: '月5回', personal: '月15回', business: '月60回' },
-  { label: '記事作成', lightning: '月20回', personal: '月60回', business: '月240回' },
+  { label: '記事作成', lightning: '月10回', personal: '月30回', business: '月180回' },
   { label: 'フリーキャスト', lightning: '3名', personal: '3名', business: '3名' },
   { label: 'プロジェクト登録', lightning: '1件', personal: '1件', business: '最大3件' },
   { label: '自社HP調査', lightning: '✓', personal: '✓', business: '✓' },
