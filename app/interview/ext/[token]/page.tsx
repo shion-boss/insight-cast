@@ -7,6 +7,7 @@ import { InterviewProgressBar } from '@/components/interview/ProgressBar'
 import { InterviewMessageList } from '@/components/interview/MessageList'
 import { InterviewInputArea } from '@/components/interview/InputArea'
 import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
+import { hasInterviewCompleteMarker, hasYesnoMarker, stripInterviewMarkers } from '@/lib/interview-markers'
 
 type LinkInfo = {
   valid: boolean
@@ -343,19 +344,19 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             const rest = chunk.slice(newlineIdx + 1)
             if (rest) {
               text += rest
-              setStreamingMessage(stripMarkers(text))
+              setStreamingMessage(stripInterviewMarkers(text))
             }
           }
         } else {
           firstChunk = false
           text += chunk
-          setStreamingMessage(stripMarkers(text))
+          setStreamingMessage(stripInterviewMarkers(text))
         }
       }
 
-      const interviewComplete = /\[INTERVIEW_COMPLETE\]/g.test(text)
-      const yesnoActive = /\[YESNO_QUESTION\]/.test(text)
-      const finalText = stripMarkers(text)
+      const interviewComplete = hasInterviewCompleteMarker(text)
+      const yesnoActive = hasYesnoMarker(text)
+      const finalText = stripInterviewMarkers(text)
       if (finalText) {
         setMessages((prev) => [...prev, {
           role: 'interviewer',
@@ -787,14 +788,3 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   )
 }
 
-// AI 出力の各種マーカーをユーザー表示用に除去する。
-// 通常側 InterviewClient.tsx と同じ規約を使用（追加マーカーを増やしたら両方更新する）。
-function stripMarkers(text: string): string {
-  return text
-    .replace(/\[INTERVIEW_COMPLETE\]/g, '')
-    .replace(/\[DISCOVERY:[^\]]+\]/g, '')
-    .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
-    .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
-    .replace(/\[YESNO_QUESTION\]/g, '')
-    .trim()
-}

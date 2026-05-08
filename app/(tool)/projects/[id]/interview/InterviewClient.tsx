@@ -11,6 +11,7 @@ import { InterviewProgressBar } from '@/components/interview/ProgressBar'
 import { InterviewMessageList } from '@/components/interview/MessageList'
 import { InterviewInputArea } from '@/components/interview/InputArea'
 import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
+import { hasInterviewCompleteMarker, hasYesnoMarker, stripInterviewMarkers } from '@/lib/interview-markers'
 
 type Message = InterviewMessage
 type SupportPost = { url: string; title: string; summary: string }
@@ -133,26 +134,12 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         if (done) break
         text += decoder.decode(value)
         // ストリーミング表示時もマーカー類は隠す
-        setStreamingMessage(
-          text
-            .replace(/\[INTERVIEW_COMPLETE\]/g, '')
-            .replace(/\[DISCOVERY:[^\]]+\]/g, '')
-            .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
-            .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
-            .replace(/\[YESNO_QUESTION\]/g, '')
-            .trim(),
-        )
+        setStreamingMessage(stripInterviewMarkers(text))
       }
 
-      const interviewComplete = /\[INTERVIEW_COMPLETE\]/g.test(text)
-      const yesnoActive = /\[YESNO_QUESTION\]/.test(text)
-      const finalText = text
-        .replace(/\[INTERVIEW_COMPLETE\]/g, '')
-        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
-        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
-        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
-        .replace(/\[YESNO_QUESTION\]/g, '')
-        .trim()
+      const interviewComplete = hasInterviewCompleteMarker(text)
+      const yesnoActive = hasYesnoMarker(text)
+      const finalText = stripInterviewMarkers(text)
       if (finalText) {
         setMessages((prev) => [...prev, { role: 'interviewer', content: finalText, yesno: yesnoActive }])
       }

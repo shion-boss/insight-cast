@@ -9,6 +9,13 @@ import { fetchRespondentProfile, formatProfileForPrompt } from '@/lib/respondent
 import { buildIndustryHintContext } from '@/lib/industry-hints'
 import { fetchTopIndustryTerms, formatIndustryTermsForPrompt } from '@/lib/industry-terms'
 import { logApiUsage, checkRateLimit } from '@/lib/api-usage'
+import {
+  extractDiscoveryReason,
+  extractDraftProposalSnippet,
+  extractHeadlineCandidatesSource,
+  hasYesnoMarker,
+  stripInterviewMarkers,
+} from '@/lib/interview-markers'
 import { isFreePlanLocked } from '@/lib/plans'
 import { getMemberRole } from '@/lib/project-members'
 import { NextRequest, NextResponse } from 'next/server'
@@ -557,20 +564,12 @@ export async function POST(
       }
 
       // マーカー抽出: [INTERVIEW_COMPLETE] / [DISCOVERY: ...] / [DRAFT_PROPOSAL: ...] / [HEADLINE_CANDIDATES: ...] / [YESNO_QUESTION]
-      const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
-      const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
-      const draftMatch = fullText.match(/\[DRAFT_PROPOSAL:\s*([^\]]+)\]/)
-      const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
-      const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
-      const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
-      const yesnoActive = /\[YESNO_QUESTION\]/.test(fullText)
-      const cleanText = fullText
-        .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
-        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
-        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
-        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
-        .replace(/\[YESNO_QUESTION\]/g, '')
-        .trim()
+      // regex は lib/interview-markers.ts に集約。全角ブラケットや区切り文字違いも吸収する。
+      const discoveryReason = extractDiscoveryReason(fullText)
+      const draftSnippet = extractDraftProposalSnippet(fullText)
+      const headlineSource = extractHeadlineCandidatesSource(fullText)
+      const yesnoActive = hasYesnoMarker(fullText)
+      const cleanText = stripInterviewMarkers(fullText)
 
       // 繰り返し検出（モニタリング用ログ。streamingを壊さないため再生成はせず、後の合成ループ材料にする）
       if (cleanText) {

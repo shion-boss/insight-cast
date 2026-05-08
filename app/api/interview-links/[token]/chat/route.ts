@@ -5,6 +5,13 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { selectRelevantMemos } from '@/lib/interview-relationship'
 import { logApiUsage } from '@/lib/api-usage'
+import {
+  extractDiscoveryReason,
+  extractDraftProposalSnippet,
+  extractHeadlineCandidatesSource,
+  hasYesnoMarker,
+  stripInterviewMarkers,
+} from '@/lib/interview-markers'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -415,20 +422,11 @@ ${
       }
 
       // AIメッセージ保存（マーカーを除いて保存し、meta に集約）
-      const discoveryMatch = fullText.match(/\[DISCOVERY:\s*([^\]]+)\]/)
-      const discoveryReason = discoveryMatch ? discoveryMatch[1].trim().slice(0, 80) : null
-      const draftMatch = fullText.match(/\[DRAFT_PROPOSAL:\s*([^\]]+)\]/)
-      const draftSnippet = draftMatch ? draftMatch[1].trim().slice(0, 200) : null
-      const headlineMatch = fullText.match(/\[HEADLINE_CANDIDATES:\s*([^\]]+)\]/)
-      const headlineSource = headlineMatch ? headlineMatch[1].trim().slice(0, 200) : null
-      const yesnoActive = /\[YESNO_QUESTION\]/.test(fullText)
-      const cleanText = fullText
-        .replace(/\[INTERVIEW_COMPLETE\]\s*$/m, '')
-        .replace(/\[DISCOVERY:[^\]]+\]/g, '')
-        .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
-        .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
-        .replace(/\[YESNO_QUESTION\]/g, '')
-        .trim()
+      const discoveryReason = extractDiscoveryReason(fullText)
+      const draftSnippet = extractDraftProposalSnippet(fullText)
+      const headlineSource = extractHeadlineCandidatesSource(fullText)
+      const yesnoActive = hasYesnoMarker(fullText)
+      const cleanText = stripInterviewMarkers(fullText)
       if (cleanText) {
         const metaObj: Record<string, unknown> = {}
         if (discoveryReason) metaObj.discovery = { reason: discoveryReason }
