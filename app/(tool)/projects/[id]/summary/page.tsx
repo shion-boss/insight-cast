@@ -222,11 +222,17 @@ export default function SummaryPage() {
         return
       }
 
-      const { data: messages } = await supabase
+      const { data: rawMessages } = await supabase
         .from('interview_messages')
-        .select('role, content')
+        .select('role, content, meta')
         .eq('interview_id', interviewId)
         .order('created_at', { ascending: true })
+
+      // パス済みメッセージは取材ログに含めない（蒸し返し回避と一貫性のため）
+      const messages = (rawMessages ?? []).filter((m) => {
+        const meta = (m as { meta?: { passed?: boolean } | null }).meta
+        return !(meta && meta.passed === true)
+      })
 
       const { data: articleRows } = await supabase
         .from('articles')

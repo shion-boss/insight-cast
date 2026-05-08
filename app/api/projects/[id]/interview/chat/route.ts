@@ -122,12 +122,40 @@ export async function POST(
   }
 
   // 会話履歴取得（最新100件に制限して過大なコンテキスト送信を防ぐ）
-  const { data: history } = await supabase
+  const { data: rawHistory } = await supabase
     .from('interview_messages')
-    .select('role, content')
+    .select('id, role, content, meta')
     .eq('interview_id', interviewId)
     .order('created_at', { ascending: true })
     .limit(100)
+
+  // パス連発の防止: 連続パスは 2 回まで許容（passStreak が 2 に達していたら次のパスは拒否）。
+  // passStreak = ivCount - userCount - 1（アクティブ質問の分を1引く）。
+  if (isPassQuestion) {
+    const interviewerCount = (rawHistory ?? []).filter((m) => m.role !== 'user').length
+    const userCount = (rawHistory ?? []).filter((m) => m.role === 'user').length
+    const currentPassStreak = Math.max(0, interviewerCount - userCount - 1)
+    if (currentPassStreak >= 2) {
+      return NextResponse.json({ error: 'pass_limit_reached' }, { status: 429 })
+    }
+
+    // 直近の interviewer メッセージを「パス済み」マーク。再オープン時に表示せず、
+    // AI コンテキストにも含めない（同じ質問を蒸し返さないため）。
+    const lastInterviewer = [...(rawHistory ?? [])].reverse().find((m) => m.role !== 'user')
+    if (lastInterviewer) {
+      const prevMeta = (lastInterviewer.meta as Record<string, unknown> | null) ?? {}
+      await supabase
+        .from('interview_messages')
+        .update({ meta: { ...prevMeta, passed: true } })
+        .eq('id', lastInterviewer.id)
+    }
+  }
+
+  // AI に渡す履歴: パス済みは除外（蒸し返し防止）
+  const history = (rawHistory ?? []).filter((m) => {
+    const meta = m.meta as Record<string, unknown> | null
+    return !(meta && meta.passed === true)
+  })
 
   if (isGreeting && history && history.length > 0) {
     return new Response('', {
@@ -225,7 +253,7 @@ export async function POST(
         ...(isPassQuestion
           ? [{
               role: 'user' as const,
-              content: '今の質問はパスしたいです。無理に同じ問いを続けず、これまでの話を踏まえて別の切り口から短く1つだけ質問してください。',
+              content: '今の質問はパスしました。「わかりました」「了解しました」「承知しました」のような相槌や受け止めは絶対に書かず、すぐに別の切り口の質問だけを返してください。同じ問いを蒸し返さず、これまでの話を踏まえて短く1つだけ問いを置いてください。',
             }]
           : []),
         ...(isContinueInterview

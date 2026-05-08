@@ -53,6 +53,9 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const [showComplete, setShowComplete] = useState(false)
   const [completionType, setCompletionType] = useState<'standard_sufficient' | 'standard_need_more' | 'hard_limit' | 'manual'>('manual')
   const [continueCount, setContinueCount] = useState(0)
+  // パス連発防止: 連続2回まで（API コスト保護）
+  const [passStreak, setPassStreak] = useState(0)
+  const PASS_STREAK_LIMIT = 2
   const [streamingMessage, setStreamingMessage] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [focusThemeLabel, setFocusThemeLabel] = useState<string | null>('テーマ: お任せ')
@@ -125,6 +128,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         throw new Error('request failed')
       }
       if (!res.ok || !res.body) {
+        if (res.status === 429) throw new Error('PASS_LIMIT')
         throw new Error('request failed')
       }
 
@@ -163,7 +167,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       setStreamingMessage('')
       setTimeout(() => textareaRef.current?.focus(), 50)
       return { ok: true as const, interviewComplete }
-    } catch {
+    } catch (err) {
+      const isPassLimit = err instanceof Error && err.message === 'PASS_LIMIT'
       if (shouldAppendUser) {
         setMessages((prev) => prev.slice(0, -1))
         setUserTurns((t) => Math.max(0, t - 1))
@@ -172,7 +177,12 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         setInput(userText)
       }
       setStreamingMessage('')
-      setSubmitError('返事を受け取れませんでした。少し待ってから、もう一度送信してください。')
+      if (isPassLimit) {
+        setPassStreak(PASS_STREAK_LIMIT)
+        setSubmitError(`パスは${PASS_STREAK_LIMIT}回までです。何か一言でもいいので答えてみてください。`)
+      } else {
+        setSubmitError('うまくお返事を受け取れませんでした。少し待ってから、もう一度送信してください。')
+      }
       return { ok: false as const, interviewComplete: false }
     } finally {
       setLoading(false)
@@ -198,11 +208,22 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           setFocusThemeLabel(getInterviewFocusThemeLabel(interview.focus_theme_mode, interview.focus_theme))
         }
 
-        const { data: history } = await supabase
+        const { data: rawHistory } = await supabase
           .from('interview_messages')
           .select('role, content, meta')
           .eq('interview_id', interviewId)
           .order('created_at', { ascending: true })
+
+        // パス済み（meta.passed === true）はユーザーに見せない
+        const history = (rawHistory ?? []).filter((m) => {
+          const meta = (m as { meta?: { passed?: boolean } | null }).meta
+          return !(meta && meta.passed === true)
+        })
+
+        // 再開時のパスストリーク復元: rawHistory の interviewer 数 - user 数 - 1（アクティブ質問の分）
+        const ivCount = (rawHistory ?? []).filter((m) => m.role !== 'user').length
+        const usrCount = (rawHistory ?? []).filter((m) => m.role === 'user').length
+        setPassStreak(Math.max(0, Math.min(PASS_STREAK_LIMIT, ivCount - usrCount - 1)))
 
         if (history && history.length > 0) {
           // meta から yesno フラグ + 添付パスを Message 型に展開
@@ -343,6 +364,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
     const result = await sendMessageToAI(text, { attachments: attachmentsToSend })
     if (!result.ok) return
+    // 回答できたのでパス連発カウントをリセット
+    setPassStreak(0)
 
     if (newTurns >= MAX_TURNS) {
       setCompletionType('hard_limit')
@@ -362,6 +385,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       setShowComplete(true)
       return
     }
+    if (passStreak >= PASS_STREAK_LIMIT) return
 
     // 直前のインタビュアーの質問を履歴から取り消す
     setMessages((prev) => {
@@ -373,6 +397,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
     const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
     if (!result.ok) return
+    setPassStreak((n) => n + 1)
 
     if (result.interviewComplete && continueCount < 2) {
       setCompletionType('standard_sufficient')
@@ -639,18 +664,18 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[13px] text-[var(--text2)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-[13px] text-[var(--text2)]">{userTurns <= STANDARD_TURNS ? `${userTurns}/${STANDARD_TURNS}` : `${userTurns}/${MAX_TURNS}`}</span>
+            <span className="text-[13px] text-[var(--text2)]">{userTurns}/{STANDARD_TURNS}</span>
           </div>
           <div
             role="progressbar"
             aria-label="インタビューの進行状況"
             aria-valuenow={userTurns}
             aria-valuemin={0}
-            aria-valuemax={userTurns <= STANDARD_TURNS ? STANDARD_TURNS : MAX_TURNS}
+            aria-valuemax={STANDARD_TURNS}
             className="bg-[var(--border)] h-1 rounded-full overflow-hidden"
           >
             <div
-              className="h-full bg-[var(--accent)] rounded-full transition-all duration-300"
+              className={`h-full bg-[var(--accent)] rounded-full transition-all duration-300 ${userTurns >= STANDARD_TURNS ? 'ic-progress-bar-full' : ''}`}
               style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
             />
           </div>
@@ -817,8 +842,20 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
             </div>
           )}
           <div className="mb-2 flex flex-col gap-2">
-            <p className="text-[13px] text-[var(--text2)] hidden sm:block">答えづらければパスできます。気になる話があれば「もう少し聞いてもらう」を押してください。</p>
-            <p className="text-[13px] text-[var(--text2)] sm:hidden">パス・もう少し聞くもできます。</p>
+            <p className="text-[13px] text-[var(--text2)] hidden sm:block">
+              {passStreak >= PASS_STREAK_LIMIT
+                ? `パスは連続${PASS_STREAK_LIMIT}回までです。何か一言でもいいので答えてみてください。`
+                : input.trim()
+                  ? '入力中はパスできません。送信するか、内容を消してからパスできます。'
+                  : `答えづらい質問は、${PASS_STREAK_LIMIT}回までパスして次へ進めます。気になる話があれば「もう少し聞いてもらう」も使えます。`}
+            </p>
+            <p className="text-[13px] text-[var(--text2)] sm:hidden">
+              {passStreak >= PASS_STREAK_LIMIT
+                ? `連続パスは${PASS_STREAK_LIMIT}回までです。`
+                : input.trim()
+                  ? '入力中はパスできません。'
+                  : `答えづらければ${PASS_STREAK_LIMIT}回までパスできます。`}
+            </p>
             <div className="flex flex-wrap items-center justify-start gap-2">
               {characterId === 'hal' && (
                 <>
@@ -866,7 +903,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
               <button
                 type="button"
                 onClick={handlePassQuestion}
-                disabled={loading || initializing || hasReachedTurnLimit}
+                disabled={loading || initializing || hasReachedTurnLimit || passStreak >= PASS_STREAK_LIMIT || input.trim().length > 0}
                 className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 この質問はパス
