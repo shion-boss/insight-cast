@@ -477,35 +477,42 @@ export default function SummaryPage() {
 
             {/* 取材ログ */}
             <section className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-              <div className="flex items-center justify-between mb-0">
-                <p className="font-bold text-[var(--text)] text-base">取材ログ</p>
-                <button
-                  type="button"
-                  onClick={() => setShowMessages(!showMessages)}
-                  aria-expanded={showMessages}
-                  aria-controls="summary-interview-log"
-                  className="text-[13px] font-semibold text-[var(--text2)] hover:text-[var(--text2)] rounded transition-colors cursor-pointer"
-                >
+              <button
+                type="button"
+                onClick={() => setShowMessages(!showMessages)}
+                aria-expanded={showMessages}
+                aria-controls="summary-interview-log"
+                className="group flex w-full items-center justify-between rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+              >
+                <span className="font-bold text-base text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">取材ログ</span>
+                <span className="text-[13px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
                   {showMessages ? '閉じる' : '会話を見る'}
-                </button>
-              </div>
+                </span>
+              </button>
               {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
               <div id="summary-interview-log" hidden={!showMessages} tabIndex={showMessages ? 0 : -1} className="mt-4 space-y-0 max-h-80 overflow-y-auto rounded-[var(--r-sm)]">
-                  {data?.messages.map((m, i) => (
-                    <div
-                      key={i}
-                      className={`flex gap-3 py-4 ${i > 0 ? 'border-t border-[var(--border)]' : ''}`}
-                    >
-                      <span
-                        className={`text-[11px] font-semibold w-12 flex-shrink-0 pt-0.5 ${
-                          m.role !== 'user' ? 'text-[var(--on-primary-container)]' : 'text-[var(--teal)]'
-                        }`}
+                  {data?.messages.map((m, i) => {
+                    const isCast = m.role !== 'user'
+                    const label = isCast
+                      ? (char?.name ?? 'キャスト')
+                      : (respondentName?.trim() || '回答者')
+                    return (
+                      <div
+                        key={i}
+                        className={`flex gap-3 py-4 ${i > 0 ? 'border-t border-[var(--border)]' : ''}`}
                       >
-                        {m.role !== 'user' ? (char?.name ?? 'キャスト') : 'あなた'}
-                      </span>
-                      <p className="text-base text-[var(--text)] leading-[1.78] flex-1 whitespace-pre-wrap">{m.content}</p>
-                    </div>
-                  ))}
+                        <span
+                          title={label}
+                          className={`text-[11px] font-semibold w-20 flex-shrink-0 pt-0.5 truncate ${
+                            isCast ? 'text-[var(--on-primary-container)]' : 'text-[var(--teal)]'
+                          }`}
+                        >
+                          {label}
+                        </span>
+                        <p className="text-base text-[var(--text)] leading-[1.78] flex-1 whitespace-pre-wrap">{m.content}</p>
+                      </div>
+                    )
+                  })}
               </div>
             </section>
           </div>
@@ -557,14 +564,14 @@ export default function SummaryPage() {
               )}
             </div>
 
-            {/* もう少し話す */}
+            {/* もう少し取材を続ける */}
             {canEdit && (
               <div className="space-y-2">
                 <Link
                   href={`/projects/${projectId}/interview?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
-                  className="flex w-full items-center justify-center border border-[var(--border)] text-[var(--text2)] text-base font-semibold py-2.5 rounded-[var(--r-sm)] hover:bg-[var(--bg2)] transition-colors"
+                  className="flex w-full items-center justify-center gap-1.5 border border-[var(--border)] bg-[var(--surface)] text-[var(--text2)] text-base font-semibold py-2.5 rounded-full hover:bg-[var(--bg2)] hover:text-[var(--text)] transition-colors"
                 >
-                  もう少し話す
+                  もう少し取材を続ける <span aria-hidden="true">→</span>
                 </Link>
               </div>
             )}

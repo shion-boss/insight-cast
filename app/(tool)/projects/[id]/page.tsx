@@ -14,26 +14,25 @@ import { getCompetitorInfluentialTopics } from '@/lib/interview-focus-theme'
 import { getMemberRole } from '@/lib/project-members'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
 import { ContentMapPanel } from '@/app/(tool)/dashboard/_components/content-map-panel'
-import type { HeatmapEntry, MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
-import { AnalyticsSectionDynamic } from './_components/AnalyticsSectionDynamic'
+import { AnalyticsSection, type HeatmapEntry, type MonthlyPoint } from '@/app/(tool)/dashboard/_components/analytics-section'
 import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import { ExternalInterviewLinkSection } from './_components/ExternalInterviewLinkSection'
 import {
-  PaginatedUncreatedThemes,
-  PaginatedInterviewHistory,
-  PaginatedArticles,
+  UncreatedThemeList,
+  InterviewHistoryList,
+  ArticleList,
   type UncreatedThemeItem,
   type InterviewHistoryItem,
   type ArticleSectionItem,
 } from './ProjectSections'
 import {
-  PAGE_SIZE,
-  parsePageParam,
   fetchUncreatedThemesPage,
   fetchInterviewsPage,
   fetchArticlesPage,
 } from '@/lib/projects/pagination'
+
+const PREVIEW_SIZE = 5
 
 
 type ArticleStub = {
@@ -55,16 +54,10 @@ function formatDateTime(value: string) {
 
 export default async function ProjectPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
   const { id } = await params
-  const sp = await searchParams
-  const themesPage = parsePageParam(sp.themes_page)
-  const interviewsPage = parsePageParam(sp.interviews_page)
-  const articlesPage = parsePageParam(sp.articles_page)
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
@@ -124,9 +117,9 @@ export default async function ProjectPage({
       .eq('project_id', id)
       .is('deleted_at', null)
       .order('created_at', { ascending: false }),
-    fetchInterviewsPage(supabase, id, interviewsPage, PAGE_SIZE),
-    fetchArticlesPage(supabase, id, articlesPage, PAGE_SIZE),
-    fetchUncreatedThemesPage(supabase, id, themesPage, PAGE_SIZE),
+    fetchInterviewsPage(supabase, id, 1, PREVIEW_SIZE),
+    fetchArticlesPage(supabase, id, 1, PREVIEW_SIZE),
+    fetchUncreatedThemesPage(supabase, id, 1, PREVIEW_SIZE),
   ])
 
   const articleStubs = (articleStubsRaw ?? []) as ArticleStub[]
@@ -136,10 +129,6 @@ export default async function ProjectPage({
   const articleCount = articlesPageResult.total
   const themeItems = themesPageResult.rows
   const themeCount = themesPageResult.total
-
-  const interviewsTotalPages = Math.max(1, Math.ceil(interviewCount / PAGE_SIZE))
-  const articlesTotalPages = Math.max(1, Math.ceil(articleCount / PAGE_SIZE))
-  const themesTotalPages = Math.max(1, Math.ceil(themeCount / PAGE_SIZE))
 
   // 表示中の記事に紐づくインタビュアー情報（characterAvatar / 名前）の引き当て用。
   // ページ表示分のみ最小限フェッチする。
@@ -377,7 +366,7 @@ export default async function ProjectPage({
 
       {/* Analytics */}
       <div className="mt-8">
-        <AnalyticsSectionDynamic
+        <AnalyticsSection
           monthlyArticles={monthlyArticles}
           heatmapData={heatmapData}
           continuityScore={continuityScore}
@@ -516,13 +505,7 @@ export default async function ProjectPage({
               {themeCount}件
             </span>
           </div>
-          <PaginatedUncreatedThemes
-            items={uncreatedThemeItems}
-            projectId={id}
-            canEdit={canEdit}
-            page={themesPage}
-            totalPages={themesTotalPages}
-          />
+          <UncreatedThemeList items={uncreatedThemeItems} projectId={id} canEdit={canEdit} />
         </div>
       )}
 
@@ -556,10 +539,10 @@ export default async function ProjectPage({
             )}
           </>
         ) : (
-          <PaginatedInterviewHistory
+          <InterviewHistoryList
             items={interviewHistoryItems}
-            page={interviewsPage}
-            totalPages={interviewsTotalPages}
+            seeAllHref={`/interviews?projectId=${id}`}
+            totalCount={interviewCount}
           />
         )}
       </div>
@@ -567,13 +550,13 @@ export default async function ProjectPage({
       {/* Articles section */}
       {articleCount > 0 && (
         <div id="articles" className="mt-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4">
             <h2 className="text-[16px] font-bold text-[var(--text)]">記事</h2>
           </div>
-          <PaginatedArticles
+          <ArticleList
             items={articleSectionItems}
-            page={articlesPage}
-            totalPages={articlesTotalPages}
+            seeAllHref={`/articles?projectId=${id}`}
+            totalCount={articleCount}
           />
         </div>
       )}
