@@ -491,7 +491,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
 
             {/* 使い方 */}
             <p className="text-[13px] text-[var(--text3)] mb-6">
-              メッセージを送るだけでOKです。全部で10往返程度です。
+              メッセージを送るだけでOKです。全部で10往復程度です。
             </p>
 
             <button

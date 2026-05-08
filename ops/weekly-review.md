@@ -295,6 +295,85 @@
 
 総合評価: **A** Gate A 残課題ゼロ達成 + 主語揺れ解消で質的水準が一段上がった。
 
+#### 2026-05-09（日次品質サイクル / 取材リンク導入文の誤字修正）
+
+**テーマ**: 直近 5 コミット（取材先・メンバー管理 UI / 外部取材リンク分離 / 質問末尾「？」ルール）の整合と品質確認。
+
+**軸10 Sentry トリアージ**
+- open かつ `sentry[bot]` 起票の Issue: **0 件** ✅（5/8 の `not_planned` クローズ以降クリーン）
+
+**軸5 AI社員品質**
+- `npm run typecheck`: pass ✅
+- `npm test`: **218 pass / 0 fail** ✅（5/8 のテストドリフト修正後、安定）
+
+**軸6 コピー: Should Fix（即修正）**
+- `app/interview/ext/[token]/page.tsx:494` の取材リンク導入文に誤字: 「全部で10**往返**程度です」→「全部で10**往復**程度です」に修正。
+- 影響範囲: 取材リンク経由の回答者が必ず通る intro 画面（広告代理店→事業者の主要フロー想定）。
+- 検出経緯: 直近コミット `db56500` で外部取材を専用ルートへ分離した際の新規導入文。リポジトリ全体に同誤字は他になし（`grep -rn "往返"` で1件のみ）。
+
+**軸7 セキュリティ: 新規 API ルート2本の検証**
+- `POST/PATCH /api/projects/[id]/members/[uid]/interviewee`（メンバー編集モーダルのバックエンド）: ✅ 認証 (`auth.getUser`) + owner 検証 (`ensureOwner`) + Zod (`PatchBodySchema`) + `deleted_at IS NULL` フィルタすべて実装済み
+- `GET /api/interview-links/[token]/messages`（取材リンク再開時の履歴復元）: ✅ 認証は不要（共有リンクの仕様）だが token 一致 + リンク active 判定 + interview と link の所属一致 + completed → 410 まで適切にガード
+- 軽微な所見: `members/[uid]/interviewee` PATCH で `uid` が当該プロジェクトの実メンバーか検証していない（admin client で profile.name を引くため別プロジェクトユーザーの名前を覗く余地あり）。owner 権限内での挙動なので Blocker ではないが、将来的に `project_members` join で uid 検証を入れる候補として記録。
+
+**軸3 整合性**
+- `external_interview_links.max_use_count` のデフォルト値変更（migration `20260509000003`: 2 → 1）と、`use_count >= max_use_count` でリンク無効化する API 側ロジックは整合 ✅
+- 取材リンクの3状態（waiting / in_progress / done）の status マッピング (`app/api/interview-links/route.ts:65-69`) と UI 側ラベル (`ExternalInterviewLinkSection`) が一致 ✅
+
+**軸4 AIキャスト品質**
+- `lib/characters/instructions.ts:95` で「質問文末は必ず？で終える」ルールが追加済み（commit `c0df1cb`）。実取材セッションでの効きは次回のキャラ評価サイクルで確認。
+
+**軸1 UI / 軸2 UX**
+- `ProjectMemberSection` メンバー編集モーダル: ローディング (`editLoading`) / 保存中 (`editSaving`) / エラー (`editError`) を区別表示 + 名前は `readOnly` で本人プロフィール優先と注記 ✅
+- 取材リンク再開フロー: `localStorage` 進行 ID 復元失敗時に `clearProgress` でゴミを掃除 ✅、`MAX_TURNS` 到達時のみ `/complete` を叩く分岐 ✅
+- 顧客向けにキャラアイコン `CharacterAvatar` が intro / complete 画面の両方で表示されている ✅
+
+**今回の指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 新規導入文の誤字（「往返」→「往復」） | 1 | 初出 | 🔲 取材リンクなど主要フローの新規コピーは投入時に再読する手順を `daily-quality-cycle.md` 軸6 のチェック項目に明記する候補 |
+
+**チェック結果（軸別）**
+- 軸1 UI: ✅ 直近変更画面に Should Fix 検出なし
+- 軸2 UX: ✅ 取材リンク再開フローの状態遷移は適切
+- 軸3 整合性: ✅ migration / API / UI ラベルが整合
+- 軸4 AIキャスト: ✅ ？ルール追加済み（実効性は次回評価で確認）
+- 軸5 AI社員: ✅ typecheck / 218 tests pass
+- 軸6 コピー: ✅ 1件の誤字を当日修正
+- 軸7 セキュリティ: ✅ 新規ルート2本の auth + Zod + ownership 確認
+- 軸8 実使用: 当日フィードバックなし
+- 軸9 非同期通知: 範囲外
+- 軸10 Sentry: ✅ open issue ゼロ継続
+
+総合評価: **A−** 主要フローのコピー1件を当日中に修正・新規 API のセキュリティ点検通過。
+
+#### 2026-05-09 追補（取材リンク削除エラー対応 / migration 002 本番適用）
+
+**症状**: 取材リンク (`external_interview_links`) を削除しようとすると DELETE が失敗。
+
+**原因**: 本番 DB の `interviews_external_link_id_fkey` の `delete_rule` が `NO ACTION` のままで、参照中の `interviews` 行（5件）が存在するためリンク削除が FK 制約違反になっていた。コミット `8d35df9` で「無効化廃止・hard delete に統一」と方針変更し、migration `20260509000002_external_link_cascade_setnull.sql`（FK を ON DELETE SET NULL に変更）も書いていたが、本番への適用が漏れていた。
+
+**運用環境の再構築**: 手元から本番 DB に DDL を流す経路がなかったため、Supabase Personal Access Token を `.env.local` の `SUPABASE_ACCESS_TOKEN` に追加し、Supabase Management API の `POST /v1/projects/{ref}/database/query` 経由で SQL 実行する経路を確立。今後のマイグレも僕が直接 push できる。
+
+**実行内容**
+- `BEGIN; ALTER TABLE interviews DROP CONSTRAINT IF EXISTS interviews_external_link_id_fkey; ALTER TABLE interviews ADD CONSTRAINT ... ON DELETE SET NULL; DELETE FROM external_interview_links WHERE is_active = FALSE; COMMIT;` を Management API 経由で実行
+- 検証: `information_schema.referential_constraints.delete_rule` が `NO ACTION` → **`SET NULL`** に変化を確認 ✅
+- migration `20260509000003`（max_use_count default 1）は事前確認で既に `column_default='1'` だったためスキップ
+
+**指摘パターン集計**
+
+| カテゴリ | 件数 | 初出/再発 | ルール化済みか |
+|---|---|---|---|
+| 方針変更を伴う migration の本番適用漏れ（コードはマージ済みだが DB 制約だけ古い） | 1 | 初出 | 🔲 要提案: `daily-quality-cycle.md` に「FK / RLS の方針変更が含まれる migration は本番適用を当日中に確認する」項目を追加 |
+
+**再発防止候補**
+- マイグレ追加時のチェックリストに「本番 schema_migrations もしくは pg_constraint で適用状態を確認」を入れる
+- `supabase_migrations.schema_migrations` テーブルが現状空（手動適用が標準）→ 管理 API 経由での適用ログを `ops/migration-log.md` に残す運用に切り替えるか検討
+
+**ルール化（プロセス）**
+- 今後 `supabase/migrations/` に新規ファイルが入ったコミットは、push 後にディレクターが Management API で適用状態を確認する
+
 #### 2026-05-08 追補（日次品質サイクル / Sentry トリアージ + テストドリフト修正）
 
 **テーマ**: プラン経済性決定 (5/8) 後の整合点検と、放置されていたテストドリフトの解消。

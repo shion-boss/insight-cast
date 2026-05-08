@@ -50,3 +50,7 @@ next-env.d.ts
 
 # screenshots (自動生成。コミット対象外)
 /screenshots/
+
+# Supabase CLI 生成物
+/supabase/.temp/
+/supabase/.branches/
