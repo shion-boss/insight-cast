@@ -23,7 +23,7 @@ export function CastTalkContent({
         return (
           <div
             key={i}
-            className={`flex items-start gap-4 ${isInterviewer ? 'flex-row-reverse' : ''}`}
+            className={`flex items-start gap-2 ${isInterviewer ? 'flex-row-reverse' : ''}`}
           >
             <div className="shrink-0">
               {char ? (

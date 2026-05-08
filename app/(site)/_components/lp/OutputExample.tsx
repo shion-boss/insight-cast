@@ -20,7 +20,7 @@ export function OutputExample() {
         </p>
         <div className="mt-11 grid gap-8 xl:grid-cols-2">
           <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[18px] overflow-hidden">
-            <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-2.5">
+            <div className="px-[22px] py-4 border-b border-[var(--border)] bg-[var(--bg2)] flex items-center gap-1">
               <CharacterAvatar src={freeCast[0]?.icon48} alt={`${freeCast[0]?.name ?? 'ミント'}のアイコン`} emoji={freeCast[0]?.emoji} size={28} />
               <span className="text-[13px] font-bold text-[var(--text)]">{freeCast[0]?.name ?? 'ミント'}の取材ログ</span>
               <span className="ml-auto bg-[var(--teal-l)] text-[var(--teal)] text-[11px] font-semibold px-2.5 py-0.5 rounded-full">完了</span>
@@ -35,7 +35,7 @@ export function OutputExample() {
                 { from: 'user', text: '当たり前のことだと思ってたんですけど、言われてみるとそうかもしれないですね。父から教わってきたんで、自然とそうなってた感じです。' },
               ].map((msg, i) => (
                 msg.from === 'cast' ? (
-                  <div key={i} className="flex items-start gap-2.5">
+                  <div key={i} className="flex items-start gap-1">
                     <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border border-[var(--border)]">
                       {freeCast[0]?.icon48
                         ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={28} height={28} className="w-full h-full object-cover" />
@@ -53,7 +53,7 @@ export function OutputExample() {
           </div>
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] overflow-hidden">
             {/* キャラ吹き出しヘッダー */}
-            <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+            <div className="flex items-center gap-1 px-5 pt-5 pb-4">
               <div className="flex-shrink-0">
                 {freeCast[0]?.icon48
                   ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={40} height={40} className="rounded-full border border-[var(--border)] object-cover" />

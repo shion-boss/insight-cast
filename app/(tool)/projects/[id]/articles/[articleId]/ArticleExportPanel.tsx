@@ -182,7 +182,7 @@ export function ArticleExportPanel({
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
       {/* キャラ吹き出しヘッダー */}
-      <div className="flex items-center gap-3 px-5 pt-5 pb-4">
+      <div className="flex items-center gap-1 px-5 pt-5 pb-4">
         <div className="relative flex-shrink-0">
           {char?.icon48 ? (
             <Image

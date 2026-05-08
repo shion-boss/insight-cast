@@ -540,7 +540,7 @@ export function InterviewerSpeech({
     : 'border-l-[var(--outline)] border-b-[var(--outline)] bg-[var(--surface)]'
 
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-1">
       {icon}
       <div className="relative min-w-0 flex-1">
         <div
