@@ -11,7 +11,7 @@
 // 改訂手順は `.claude/skills/character-persona-feedback-loop/SKILL.md` を参照。
 
 export type { Character } from './data'
-export { CHARACTERS, getCharacter, getCastName, getPublicCastIconUrl } from './data'
+export { CHARACTERS, getCharacter, getCastName, getCharacterIntro, getPublicCastIconUrl } from './data'
 
 export type { CharacterPersona } from './personas'
 export {

@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { buildInterviewQualityContext, type PastInterviewMemo } from '@/lib/ai-quality'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { SYSTEM_PROMPTS } from '@/lib/characters'
 import { selectRelevantMemos } from '@/lib/interview-relationship'
 import { logApiUsage } from '@/lib/api-usage'
@@ -10,12 +11,20 @@ import { z } from 'zod'
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY, timeout: 30_000 })
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
+const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
+const SKIP_PHOTO_TOKEN = '__SKIP_PHOTO__'
+
+const AttachmentSchema = z.object({
+  path: z.string().min(1).max(300),
+  contentType: z.string().min(1).max(50),
+})
 
 const BodySchema = z.object({
   interviewId: z.string().uuid().optional(),
   userMessage: z.string().min(1).max(2000),
   respondentName: z.string().max(100).optional(),
   respondentIndustry: z.string().max(100).optional(),
+  attachments: z.array(AttachmentSchema).max(4).optional(),
 })
 
 type Params = { params: Promise<{ token: string }> }
@@ -44,10 +53,17 @@ export async function POST(
     return NextResponse.json({ error: 'bad_request' }, { status: 400 })
   }
 
-  const { interviewId, userMessage, respondentName, respondentIndustry } = parsed.data
+  const { interviewId, userMessage, respondentName, respondentIndustry, attachments } = parsed.data
+
+  // ハル限定で添付を受け付ける（差別化のため）。他キャストでは無視。
+  const allowAttachments = link.interviewer_type === 'hal'
+  const acceptedAttachments = allowAttachments ? (attachments ?? []) : []
+
   const isGreeting = userMessage === '__GREETING__'
   const isPassQuestion = userMessage === PASS_QUESTION_TOKEN
   const isContinueInterview = userMessage === CONTINUE_INTERVIEW_TOKEN
+  const isDeepDive = userMessage === DEEP_DIVE_TOKEN
+  const isSkipPhoto = userMessage === SKIP_PHOTO_TOKEN
 
   let resolvedInterviewId = interviewId
 
@@ -91,12 +107,16 @@ export async function POST(
     return NextResponse.json({ error: 'not_found' }, { status: 404 })
   }
 
-  // ユーザーメッセージ保存
-  if (!isGreeting && !isPassQuestion && !isContinueInterview) {
+  // ユーザーメッセージ保存（添付があれば meta に記録、ハル限定）
+  if (!isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive && !isSkipPhoto) {
+    const userMeta = acceptedAttachments.length > 0
+      ? { attachments: acceptedAttachments.map((a) => ({ path: a.path, content_type: a.contentType })) }
+      : null
     const { error: msgInsertError } = await supabase.from('interview_messages').insert({
       interview_id: resolvedInterviewId,
       role: 'user',
       content: userMessage,
+      ...(userMeta ? { meta: userMeta } : {}),
     })
     if (msgInsertError) {
       console.error('[ext chat] user message insert error:', msgInsertError.message)
@@ -204,11 +224,19 @@ export async function POST(
     ? '再会です。「はじめまして」とは言わないこと。再会の挨拶のあと、今日のテーマで自然に始めてください。'
     : 'はじめまして。よろしくお願いします。'
 
-  const messages = isGreeting
-    ? [{ role: 'user' as const, content: greetingSeed }]
+  type SupportedImageMediaType = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp'
+  type AnthropicContentBlock =
+    | { type: 'text'; text: string }
+    | { type: 'image'; source: { type: 'base64'; media_type: SupportedImageMediaType; data: string } }
+  type AnthropicMessage = { role: 'user' | 'assistant'; content: string | AnthropicContentBlock[] }
+  const isSupportedImageType = (v: string): v is SupportedImageMediaType =>
+    v === 'image/jpeg' || v === 'image/png' || v === 'image/gif' || v === 'image/webp'
+
+  const messages: AnthropicMessage[] = isGreeting
+    ? [{ role: 'user', content: greetingSeed }]
     : [
-        ...(history ?? []).map((m) => ({
-          role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        ...(history ?? []).map((m): AnthropicMessage => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
           // Anthropic は空文字 content を 400 で拒否するので placeholder を補完
           content: m.content && m.content.length > 0 ? m.content : '（写真を共有しました）',
         })),
@@ -224,7 +252,61 @@ export async function POST(
               content: '取材を続けたいです。先ほどのまとめ提案は一度取り下げて、これまで出てきた話の中からまだ深掘りできそうな1点を選び、別の角度から自然に1つだけ質問してください。前置きを1文添えて、ユーザーが答えやすい問い方にしてください。今回の返答末尾に [INTERVIEW_COMPLETE] は付けないでください。',
             }]
           : []),
+        ...(isDeepDive
+          ? [{
+              role: 'user' as const,
+              content: 'いまの話、もう少し聞かせてもらえますか。直前のやりとりの中で、まだ掘りきれていないと感じる1点を選んで、別の角度から自然に1つだけ問いを立ててください。具体的な場面・人・行動・反応のいずれかを引き出す方向で。',
+            }]
+          : []),
+        ...(isSkipPhoto
+          ? [{
+              role: 'user' as const,
+              content: '今日は写真なしで進めたいです。これ以上は写真を求めず、記憶の中の場面から取材を始めてください。「最近、仕事で印象に残っている場面を1つ思い浮かべてください」のように、頭の中で再現してもらう問いから入ってください。前置きを1文添えて、答えやすい入り口にしてください。',
+            }]
+          : []),
       ]
+
+  // 添付画像（ハル限定）を Anthropic vision に渡す。
+  // 直前のターンの画像のみ含める（過去ターンのは再送しないでコストとレイテンシを抑える）。
+  if (acceptedAttachments.length > 0 && !isGreeting && !isPassQuestion && !isContinueInterview && !isDeepDive) {
+    const adminClient = createAdminClient()
+    const imageBlocks: AnthropicContentBlock[] = []
+    for (const att of acceptedAttachments) {
+      try {
+        const { data: blob, error: dlErr } = await adminClient.storage
+          .from('interview-attachments')
+          .download(att.path)
+        if (dlErr || !blob) {
+          console.warn('[ext chat] attachment download failed', { path: att.path, error: dlErr?.message })
+          continue
+        }
+        const buf = Buffer.from(await blob.arrayBuffer())
+        const mediaType: SupportedImageMediaType = isSupportedImageType(att.contentType) ? att.contentType : 'image/jpeg'
+        imageBlocks.push({
+          type: 'image',
+          source: { type: 'base64', media_type: mediaType, data: buf.toString('base64') },
+        })
+      } catch (err) {
+        console.warn('[ext chat] attachment processing failed', err)
+      }
+    }
+    if (imageBlocks.length > 0) {
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].role === 'user') {
+          const original = messages[i].content
+          const originalText = typeof original === 'string' ? original : ''
+          messages[i] = {
+            role: 'user',
+            content: [
+              ...imageBlocks,
+              { type: 'text', text: originalText || '（写真を共有しました）' },
+            ],
+          }
+          break
+        }
+      }
+    }
+  }
 
   // コンテキスト構築（外部取材のため、プロジェクト情報は最低限）
   const contextParts: string[] = []

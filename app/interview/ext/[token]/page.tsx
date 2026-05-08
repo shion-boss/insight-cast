@@ -1,19 +1,12 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { getCharacter } from '@/lib/characters'
-import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
-
-// キャラ別自己紹介文
-const CHARACTER_INTROS: Record<string, string> = {
-  mint: 'こんにちは！ミントといいます。気軽にお話しください。',
-  claus: 'クラウスです。業種の観点からお話を聞かせていただきます。',
-  rain: 'レインといいます。マーケティングの視点でお話を聞きます。',
-}
-
-function getCharacterIntro(characterId: string): string {
-  return CHARACTER_INTROS[characterId] ?? 'インタビュアーが話を聞かせていただきます。'
-}
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { getCharacter, getCharacterIntro } from '@/lib/characters'
+import { CharacterAvatar } from '@/components/ui'
+import { InterviewProgressBar } from '@/components/interview/ProgressBar'
+import { InterviewMessageList } from '@/components/interview/MessageList'
+import { InterviewInputArea } from '@/components/interview/InputArea'
+import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
 
 type LinkInfo = {
   valid: boolean
@@ -23,11 +16,10 @@ type LinkInfo = {
   targetIndustry?: string
 }
 
-type Message = { role: 'user' | 'interviewer'; content: string }
-
 const MAX_TURNS = 15
 const STANDARD_TURNS = 7
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
+const PASS_STREAK_LIMIT = 2
 
 // 取材リンクの進行中インタビューを localStorage に保存しておくためのキー。
 // ブラウザを閉じて再オープンした時に続きから再開させる。
@@ -155,7 +147,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   const [phase, setPhase] = useState<'intro' | 'chat' | 'complete'>('intro')
 
   // 会話
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<InterviewMessage[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [streamingMessage, setStreamingMessage] = useState('')
@@ -169,16 +161,26 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   const [completeKind, setCompleteKind] = useState<'paused' | 'done'>('paused')
   // パス連発防止: 連続でパスできるのは2回まで（API コスト保護）
   const [passStreak, setPassStreak] = useState(0)
-  const PASS_STREAK_LIMIT = 2
+  // ハル限定: アップロード予定の画像
+  const [pendingAttachments, setPendingAttachments] = useState<AttachmentRef[]>([])
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
 
   const bottomRef = useRef<HTMLDivElement>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
+
+  const characterId = linkInfo?.interviewerType ?? 'mint'
+  const char = getCharacter(characterId)
+  const hasReachedTurnLimit = userTurns >= MAX_TURNS
 
   // params を解決
   useEffect(() => {
     params.then(({ token: t }) => setToken(t))
   }, [params])
+
+  // 自動スクロール
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: streamingMessage ? 'instant' : 'smooth' })
+  }, [messages, loading, streamingMessage])
 
   // トークン検証 + 既存進行中インタビューの復元
   useEffect(() => {
@@ -196,14 +198,66 @@ export default function ExternalInterviewPage({ params }: PageProps) {
           const saved = loadProgress(token)
           if (saved) {
             try {
-              const histRes = await fetch(`/api/interview-links/${token}/messages?interviewId=${encodeURIComponent(saved.interviewId)}`)
+              const histRes = await fetch(
+                `/api/interview-links/${token}/messages?interviewId=${encodeURIComponent(saved.interviewId)}`,
+              )
               if (histRes.ok) {
-                const histData = await histRes.json() as { interviewId: string; messages: Message[]; passStreak?: number }
+                const histData = await histRes.json() as {
+                  interviewId: string
+                  messages: Array<{ role: 'user' | 'interviewer'; content: string; meta?: Record<string, unknown> | null }>
+                  passStreak?: number
+                }
                 if (!cancelled && histData.messages && histData.messages.length > 0) {
+                  // 添付ありメッセージの path を集めて署名URL一括取得（ハル復元用）
+                  type RawMeta = {
+                    yesno?: { active?: boolean }
+                    attachments?: Array<{ path?: string; content_type?: string }>
+                  }
+                  const allPaths: string[] = []
+                  const enriched: InterviewMessage[] = histData.messages.map((m) => {
+                    const meta = (m.meta ?? null) as RawMeta | null
+                    const rawAttachments = Array.isArray(meta?.attachments) ? meta!.attachments : []
+                    const attachments: AttachmentRef[] = rawAttachments
+                      .filter((a): a is { path: string; content_type: string } =>
+                        typeof a?.path === 'string' && typeof a?.content_type === 'string',
+                      )
+                      .map((a) => {
+                        allPaths.push(a.path)
+                        return { path: a.path, contentType: a.content_type, previewUrl: '' }
+                      })
+                    return {
+                      role: m.role,
+                      content: m.content,
+                      yesno: meta?.yesno?.active === true,
+                      attachments: attachments.length > 0 ? attachments : undefined,
+                    }
+                  })
+
+                  if (allPaths.length > 0) {
+                    try {
+                      const sp = new URLSearchParams({
+                        interviewId: histData.interviewId,
+                        paths: allPaths.join(','),
+                      })
+                      const urlsRes = await fetch(`/api/interview-links/${token}/attachments?${sp.toString()}`)
+                      if (urlsRes.ok) {
+                        const { urls } = await urlsRes.json() as { urls: Record<string, string> }
+                        for (const m of enriched) {
+                          if (m.attachments) {
+                            for (const a of m.attachments) {
+                              if (urls[a.path]) a.previewUrl = urls[a.path]
+                            }
+                          }
+                        }
+                      }
+                    } catch {
+                      // 署名 URL の取得失敗は致命ではない（プレビューが空のままになるだけ）
+                    }
+                  }
+
                   setInterviewId(histData.interviewId)
-                  setMessages(histData.messages)
-                  setUserTurns(histData.messages.filter((m) => m.role === 'user').length)
-                  // サーバーから受け取った passStreak（rawHistory 基準）を採用
+                  setMessages(enriched)
+                  setUserTurns(enriched.filter((m) => m.role === 'user').length)
                   setPassStreak(Math.min(PASS_STREAK_LIMIT, Math.max(0, histData.passStreak ?? 0)))
                   setPhase('chat')
                   initializedRef.current = true
@@ -226,29 +280,26 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     return () => { cancelled = true }
   }, [token])
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: streamingMessage ? 'instant' : 'smooth' })
-  }, [messages, loading, streamingMessage])
-
-  useEffect(() => {
-    const el = textareaRef.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 200)}px`
-  }, [input])
-
-  const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean }) => {
+  const sendMessageToAI = useCallback(async (
+    userText: string | null,
+    opts?: { alreadyDisplayed?: boolean; attachments?: AttachmentRef[] },
+  ) => {
     if (!token || !linkInfo?.valid) return { ok: false as const, interviewComplete: false }
 
     setSubmitError(null)
     setLoading(true)
     setStreamingMessage('')
 
-    const shouldAppendUser = Boolean(userText && !opts?.alreadyDisplayed)
+    const hasAttachments = (opts?.attachments?.length ?? 0) > 0
+    const shouldAppendUser = !opts?.alreadyDisplayed && (Boolean(userText) || hasAttachments)
 
-    if (shouldAppendUser && userText) {
-      setMessages(prev => [...prev, { role: 'user', content: userText }])
-      setUserTurns(t => t + 1)
+    if (shouldAppendUser) {
+      setMessages((prev) => [...prev, {
+        role: 'user',
+        content: userText ?? '',
+        attachments: opts?.attachments,
+      }])
+      setUserTurns((t) => t + 1)
     }
 
     try {
@@ -260,6 +311,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
           userMessage: userText ?? '__GREETING__',
           respondentName: linkInfo.targetName,
           respondentIndustry: linkInfo.targetIndustry,
+          attachments: opts?.attachments?.map((a) => ({ path: a.path, contentType: a.contentType })) ?? [],
         }),
       })
 
@@ -287,34 +339,37 @@ export default function ExternalInterviewPage({ params }: PageProps) {
             const idLine = chunk.slice('INTERVIEW_ID:'.length, newlineIdx)
             currentInterviewId = idLine.trim()
             setInterviewId(currentInterviewId)
-            // 再開できるよう localStorage に保存
             if (currentInterviewId) saveProgress(token, currentInterviewId)
             const rest = chunk.slice(newlineIdx + 1)
             if (rest) {
               text += rest
-              setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim())
+              setStreamingMessage(stripMarkers(text))
             }
           }
         } else {
           firstChunk = false
           text += chunk
-          setStreamingMessage(text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim())
+          setStreamingMessage(stripMarkers(text))
         }
       }
 
       const interviewComplete = /\[INTERVIEW_COMPLETE\]/g.test(text)
-      const finalText = text.replace(/\[INTERVIEW_COMPLETE\]/g, '').trim()
+      const yesnoActive = /\[YESNO_QUESTION\]/.test(text)
+      const finalText = stripMarkers(text)
       if (finalText) {
-        setMessages(prev => [...prev, { role: 'interviewer', content: finalText }])
+        setMessages((prev) => [...prev, {
+          role: 'interviewer',
+          content: finalText,
+          yesno: yesnoActive,
+        }])
       }
       setStreamingMessage('')
-      setTimeout(() => textareaRef.current?.focus(), 50)
       return { ok: true as const, interviewComplete, resolvedInterviewId: currentInterviewId }
     } catch (err) {
       const isPassLimit = err instanceof Error && err.message === 'PASS_LIMIT'
       if (shouldAppendUser) {
-        setMessages(prev => prev.slice(0, -1))
-        setUserTurns(t => Math.max(0, t - 1))
+        setMessages((prev) => prev.slice(0, -1))
+        setUserTurns((t) => Math.max(0, t - 1))
       }
       if (userText && !opts?.alreadyDisplayed) {
         setInput(userText)
@@ -342,25 +397,33 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   }, [linkInfo, sendMessageToAI])
 
   async function submitMessage() {
-    if (!input.trim() || loading) return
+    const hasContent = input.trim().length > 0
+    const hasAttachments = pendingAttachments.length > 0
+    if (!hasContent && !hasAttachments) return
+    if (loading) return
     if (userTurns >= MAX_TURNS) {
       await handleFinish()
       return
     }
     const text = input.trim()
     setInput('')
+    const attachmentsToSend = pendingAttachments
+    setPendingAttachments([])
 
     const newTurns = userTurns + 1
-    const result = await sendMessageToAI(text)
-    if (!result?.ok) return
+    const result = await sendMessageToAI(text, { attachments: attachmentsToSend })
+    if (!result.ok) {
+      // 失敗時は添付を元に戻す
+      setPendingAttachments(attachmentsToSend)
+      return
+    }
     // 回答できたのでパス連発カウントをリセット
     setPassStreak(0)
 
     if (newTurns >= MAX_TURNS) {
-      // MAX_TURNS は真の完了 → /complete を叩く
       await handleFinish(result.resolvedInterviewId ?? interviewId ?? undefined)
     } else if (result.interviewComplete) {
-      // AI が「終わってもいい」と言っただけ。ユーザーは続けることもできる。
+      // AI が「終わってもいい」と言ったタイミング
       setPhase('complete')
     }
   }
@@ -369,21 +432,89 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     if (loading) return
     if (passStreak >= PASS_STREAK_LIMIT) return
 
-    setMessages(prev => {
-      const last = [...prev].reverse().findIndex(m => m.role === 'interviewer')
+    setMessages((prev) => {
+      const last = [...prev].reverse().findIndex((m) => m.role === 'interviewer')
       if (last === -1) return prev
       const idx = prev.length - 1 - last
       return [...prev.slice(0, idx), ...prev.slice(idx + 1)]
     })
 
     const result = await sendMessageToAI(PASS_QUESTION_TOKEN, { alreadyDisplayed: true })
-    if (!result?.ok) return
+    if (!result.ok) return
     setPassStreak((n) => n + 1)
 
     if (result.interviewComplete) {
-      // AI が「終わってもいい」と言っただけ。ユーザーは続けることもできる。
       setPhase('complete')
     }
+  }
+
+  // モグロ等のYes/Noボタン押下
+  async function handleYesNo(answer: 'はい' | 'いいえ') {
+    if (loading || hasReachedTurnLimit) return
+    const newTurns = userTurns + 1
+    const result = await sendMessageToAI(answer)
+    if (!result.ok) return
+    setPassStreak(0)
+    if (newTurns >= MAX_TURNS) {
+      await handleFinish(result.resolvedInterviewId ?? interviewId ?? undefined)
+    } else if (result.interviewComplete) {
+      setPhase('complete')
+    }
+  }
+
+  // ハル限定: 画像アップロード
+  async function handleAttachmentUpload(file: File) {
+    if (!token || !interviewId) return
+    if (loading || uploadingAttachment) return
+    if (pendingAttachments.length >= 4) {
+      setSubmitError('画像は1メッセージあたり4枚までです。')
+      return
+    }
+    if (!file.type.startsWith('image/')) {
+      setSubmitError('画像ファイルを選んでください。')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setSubmitError('画像は 5MB 以下にしてください。')
+      return
+    }
+    setUploadingAttachment(true)
+    setSubmitError(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const sp = new URLSearchParams({ interviewId })
+      const res = await fetch(`/api/interview-links/${token}/attachments?${sp.toString()}`, {
+        method: 'POST',
+        body: fd,
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        const msg = typeof body?.message === 'string'
+          ? body.message
+          : '画像のアップロードに失敗しました。もう一度お試しください。'
+        setSubmitError(msg)
+        return
+      }
+      const data = await res.json() as { path: string; contentType: string }
+      const previewUrl = URL.createObjectURL(file)
+      setPendingAttachments((prev) => [...prev, { path: data.path, contentType: data.contentType, previewUrl }])
+    } catch {
+      setSubmitError('画像のアップロードに失敗しました。もう一度お試しください。')
+    } finally {
+      setUploadingAttachment(false)
+    }
+  }
+
+  function removePendingAttachment(index: number) {
+    setPendingAttachments((prev) => {
+      const next = [...prev]
+      const removed = next.splice(index, 1)
+      removed.forEach((a) => {
+        if (a.previewUrl.startsWith('blob:')) URL.revokeObjectURL(a.previewUrl)
+      })
+      return next
+    })
   }
 
   async function handleFinish(resolvedId?: string) {
@@ -399,13 +530,11 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     } catch {
       // 完了通知の失敗はUI上のエラーにしない
     }
-    // 完了したリンクは再開対象外なので localStorage を掃除
     clearProgress(token)
     setPhase('complete')
   }
 
-  // 一時中断: /complete を叩かず、localStorage も残す。リンクは削除されるまで有効、
-  // MAX_TURNS まで再開できる。
+  // 一時中断: /complete を叩かず、localStorage も残す。
   async function handlePauseInterview() {
     setShowFinishConfirm(false)
     setCompleteKind('paused')
@@ -457,16 +586,12 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     )
   }
 
-  const char = getCharacter(linkInfo.interviewerType ?? 'mint')
-  const hasReachedTurnLimit = userTurns >= MAX_TURNS
-
   // 導入画面
   if (phase === 'intro') {
     return (
       <div className="bg-[var(--bg)] min-h-dvh flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
           <div className="rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-7 text-center">
-            {/* キャラアイコン */}
             <div className="flex justify-center mb-5">
               <CharacterAvatar
                 src={char?.icon96}
@@ -477,21 +602,22 @@ export default function ExternalInterviewPage({ params }: PageProps) {
               />
             </div>
 
-            {/* 自己紹介 */}
             <p className="text-[var(--text)] font-semibold text-base mb-1">{char?.name ?? 'インタビュアー'}</p>
             <p className="text-[var(--text2)] text-base mb-5">
-              {getCharacterIntro(linkInfo.interviewerType ?? 'mint')}
+              {getCharacterIntro(characterId)}
             </p>
 
-            {/* テーマ */}
             <div className="rounded-[var(--r-lg)] bg-[var(--accent-l)] border border-[var(--accent)]/20 px-4 py-3 mb-5">
               <p className="text-[13px] text-[var(--accent)] font-semibold mb-1">今日のテーマ</p>
               <p className="text-base text-[var(--text)] font-medium">{linkInfo.theme}についてお話を聞かせてください</p>
             </div>
 
-            {/* 使い方 */}
             <p className="text-[13px] text-[var(--text3)] mb-6">
-              メッセージを送るだけでOKです。全部で10往復程度です。
+              {characterId === 'mogro'
+                ? '質問に「はい / いいえ」で答えるだけでOKです。'
+                : characterId === 'hal'
+                  ? '写真を1枚送ってもらえると、そこから話を広げます。'
+                  : 'メッセージを送るだけでOKです。全部で10往復程度です。'}
             </p>
 
             <button
@@ -594,159 +720,43 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         </button>
       </header>
 
-      {/* 進捗バー */}
-      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-3 sm:px-6 py-2 flex-shrink-0">
-        <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[13px] text-[var(--text3)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-[13px] text-[var(--text3)]">{userTurns}/{STANDARD_TURNS}</span>
-          </div>
-          <div
-            role="progressbar"
-            aria-label="インタビューの進行状況"
-            aria-valuenow={userTurns}
-            aria-valuemin={0}
-            aria-valuemax={STANDARD_TURNS}
-            className="bg-[var(--border)] h-1 rounded-full overflow-hidden"
-          >
-            <div
-              className={`h-full bg-[var(--accent)] rounded-full transition-all duration-300 ${userTurns >= STANDARD_TURNS ? 'ic-progress-bar-full' : ''}`}
-              style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
-            />
-          </div>
-        </div>
-      </div>
+      <InterviewProgressBar
+        userTurns={userTurns}
+        standardTurns={STANDARD_TURNS}
+        label={getProgressLabel(userTurns)}
+      />
 
-      {/* 会話ログ */}
-      <div
-        role="log"
-        aria-label="インタビューの会話"
-        aria-live="polite"
-        tabIndex={0}
-        style={{ scrollbarGutter: 'stable' }}
-        className="flex-1 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto"
-      >
-        {messages.map((msg, i) => (
-          <div key={`${msg.role}-${i}`} className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.role === 'interviewer' && (
-              <CharacterAvatar
-                src={char?.icon48}
-                alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                emoji={char?.emoji}
-                size={32}
-                className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
-              />
-            )}
-            <div className={`max-w-[80%] sm:max-w-[60%] px-3 py-2 text-base sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] ${
-              msg.role === 'interviewer'
-                ? 'bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] rounded-2xl rounded-tl-sm'
-                : 'bg-[var(--accent-l)] border border-[var(--accent)]/20 text-[var(--on-primary-container)] rounded-2xl rounded-tr-sm'
-            }`}>
-              {msg.content || <span className="opacity-50">...</span>}
-            </div>
-          </div>
-        ))}
-        {(loading || streamingMessage) && (
-          <div className="flex gap-1 justify-start">
-            <CharacterAvatar
-              src={char?.icon48}
-              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-              emoji={char?.emoji}
-              size={32}
-              className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
-            />
-            <div className="max-w-[80%] sm:max-w-[60%] bg-[var(--surface)] border border-[var(--border)] text-[var(--text)] px-3 py-2 rounded-2xl rounded-tl-sm text-base sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85]">
-              {streamingMessage ? (
-                streamingMessage
-              ) : (
-                <span className="ic-typing-dots">
-                  <span className="ic-typing-dot" />
-                  <span className="ic-typing-dot" />
-                  <span className="ic-typing-dot" />
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
+      <InterviewMessageList
+        messages={messages}
+        loading={loading}
+        streamingMessage={streamingMessage}
+        characterName={char?.name}
+        characterIcon48={char?.icon48}
+        characterEmoji={char?.emoji}
+        onYesNo={characterId === 'mogro' ? handleYesNo : undefined}
+        hasReachedTurnLimit={hasReachedTurnLimit}
+        bottomRef={bottomRef}
+      />
 
-      {/* 入力エリア */}
-      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
-        {submitError && (
-          <div role="alert" className="max-w-2xl mx-auto mb-3">
-            <InterviewerSpeech
-              icon={(
-                <CharacterAvatar
-                  src={char?.icon48}
-                  alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                  emoji={char?.emoji}
-                  size={44}
-                />
-              )}
-              name={char?.name ?? 'インタビュアー'}
-              title="返事が少し途切れてしまいました。"
-              description={submitError}
-              tone="soft"
-            />
-          </div>
-        )}
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-2 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={handlePassQuestion}
-              disabled={loading || hasReachedTurnLimit || passStreak >= PASS_STREAK_LIMIT || input.trim().length > 0}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex-shrink-0"
-            >
-              この質問はパス
-            </button>
-            <p className="text-[13px] text-[var(--text3)] hidden sm:block">
-              {passStreak >= PASS_STREAK_LIMIT
-                ? `パスは連続${PASS_STREAK_LIMIT}回までです。何か一言でもいいので答えてみてください。`
-                : input.trim()
-                  ? '入力中はパスできません。送信するか、内容を消してからパスできます。'
-                  : `答えづらい質問は、${PASS_STREAK_LIMIT}回までパスして次へ進めます。`}
-            </p>
-            <p className="text-[13px] text-[var(--text3)] sm:hidden">
-              {passStreak >= PASS_STREAK_LIMIT
-                ? `連続パスは${PASS_STREAK_LIMIT}回までです。`
-                : input.trim()
-                  ? '入力中はパスできません。'
-                  : `答えづらければ${PASS_STREAK_LIMIT}回までパスできます。`}
-            </p>
-          </div>
-          <form onSubmit={(e) => { e.preventDefault(); void submitMessage() }} className="flex gap-2 sm:gap-3 items-end">
-            <textarea
-              aria-label="インタビューへの回答を入力"
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              maxLength={2000}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                  e.preventDefault()
-                  void submitMessage()
-                }
-              }}
-              placeholder={hasReachedTurnLimit ? 'インタビューはここまでです。ありがとうございました。' : 'ここに話しかけてください'}
-              disabled={loading || hasReachedTurnLimit}
-              autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-base resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
-            />
-            <div className="flex flex-col items-end gap-1 flex-shrink-0">
-              <button
-                type="submit"
-                disabled={loading || !input.trim() || hasReachedTurnLimit}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              >
-                {loading ? '送信中...' : '送信'}
-              </button>
-              <p className="text-[13px] text-[var(--text3)] hidden sm:block">Ctrl+Enter</p>
-            </div>
-          </form>
-        </div>
-      </div>
+      <InterviewInputArea
+        characterId={characterId}
+        characterName={char?.name}
+        characterIcon48={char?.icon48}
+        characterEmoji={char?.emoji}
+        input={input}
+        onInputChange={setInput}
+        loading={loading}
+        hasReachedTurnLimit={hasReachedTurnLimit}
+        passStreak={passStreak}
+        passStreakLimit={PASS_STREAK_LIMIT}
+        onPassQuestion={handlePassQuestion}
+        pendingAttachments={pendingAttachments}
+        uploadingAttachment={uploadingAttachment}
+        onAttachmentSelected={characterId === 'hal' && interviewId ? handleAttachmentUpload : undefined}
+        onRemoveAttachment={characterId === 'hal' ? removePendingAttachment : undefined}
+        submitError={submitError}
+        onSubmit={() => void submitMessage()}
+      />
 
       {/* 取材上限到達時のバナー */}
       {hasReachedTurnLimit && !completeCalled && (
@@ -764,7 +774,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* インタビュー終了確認モーダル（中断 / 完了 の2択） */}
+      {/* インタビュー終了確認モーダル */}
       {showFinishConfirm && (
         <FinishInterviewModal
           finishing={finishing}
@@ -773,7 +783,18 @@ export default function ExternalInterviewPage({ params }: PageProps) {
           onDone={handleDoneInterview}
         />
       )}
-
     </div>
   )
+}
+
+// AI 出力の各種マーカーをユーザー表示用に除去する。
+// 通常側 InterviewClient.tsx と同じ規約を使用（追加マーカーを増やしたら両方更新する）。
+function stripMarkers(text: string): string {
+  return text
+    .replace(/\[INTERVIEW_COMPLETE\]/g, '')
+    .replace(/\[DISCOVERY:[^\]]+\]/g, '')
+    .replace(/\[DRAFT_PROPOSAL:[^\]]+\]/g, '')
+    .replace(/\[HEADLINE_CANDIDATES:[^\]]+\]/g, '')
+    .replace(/\[YESNO_QUESTION\]/g, '')
+    .trim()
 }

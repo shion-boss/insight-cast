@@ -123,6 +123,24 @@ export function getCastName(id: string): string {
 }
 
 /**
+ * 取材リンク（外部取材）導入画面で使う、キャラ別の自己紹介文。
+ * 「はじめまして」の温度感を保ちつつ、自分が何の専門かをひと言だけ添える。
+ * 全文 60 文字以内。
+ */
+const CHARACTER_INTROS: Record<string, string> = {
+  mint: 'こんにちは！ミントといいます。気軽にお話しください。',
+  claus: 'クラウスです。業種の観点からお話を聞かせていただきます。',
+  rain: 'レインといいます。マーケティングの視点でお話を聞きます。',
+  hal: 'ハルです。写真を起点に、お仕事の雰囲気をお聞きします。',
+  mogro: 'モグロです。「はい / いいえ」で答えていける質問をしていきます。',
+  cocco: 'コッコです。お知らせしたいこと・宣伝したいことを聞かせてください。',
+}
+
+export function getCharacterIntro(castId: string): string {
+  return CHARACTER_INTROS[castId] ?? 'インタビュアーが話を聞かせていただきます。'
+}
+
+/**
  * 埋め込みHTML（ブログ下書き等の永続記録）で使う、安定した公開アイコンURL。
  *
  * 注意: Next.js の StaticImageData (`char.icon48.src`) は

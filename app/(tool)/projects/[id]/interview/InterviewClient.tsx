@@ -1,17 +1,18 @@
 'use client'
 
-import React from 'react'
-import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { getCharacter } from '@/lib/characters'
 import { getInterviewFocusThemeLabel } from '@/lib/interview-focus-theme'
-import { CharacterAvatar, DevAiLabel, InterviewerSpeech } from '@/components/ui'
+import { CharacterAvatar, DevAiLabel } from '@/components/ui'
 import { createClient } from '@/lib/supabase/client'
+import { InterviewProgressBar } from '@/components/interview/ProgressBar'
+import { InterviewMessageList } from '@/components/interview/MessageList'
+import { InterviewInputArea } from '@/components/interview/InputArea'
+import type { AttachmentRef, InterviewMessage } from '@/components/interview/types'
 
-type AttachmentRef = { path: string; contentType: string; previewUrl: string }
-type Message = { role: 'user' | 'interviewer'; content: string; attachments?: AttachmentRef[]; yesno?: boolean }
+type Message = InterviewMessage
 type SupportPost = { url: string; title: string; summary: string }
 
 const MAX_TURNS = 15
@@ -62,7 +63,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   // ハル限定: アップロード予定の画像（送信前にプレビューで保持）
   const [pendingAttachments, setPendingAttachments] = useState<AttachmentRef[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   // ハル限定: 「写真なしで進める」を選んだら次回からスキップボタンを隠す
   const [photoSkipped, setPhotoSkipped] = useState(false)
   const [supportPosts, setSupportPosts] = useState<{
@@ -79,20 +79,12 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const [isSupportPanelOpen, setIsSupportPanelOpen] = useState(false)
   const [finishing, setFinishing] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const initializedRef = useRef(false)
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: streamingMessage ? 'instant' : 'smooth' })
   }, [messages, loading, streamingMessage])
-
-  useEffect(() => {
-    const el = textareaRef.current
-    if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${Math.min(el.scrollHeight, 200)}px`
-  }, [input])
 
   const sendMessageToAI = useCallback(async (userText: string | null, opts?: { alreadyDisplayed?: boolean; attachments?: AttachmentRef[] }) => {
     setSubmitError(null)
@@ -165,7 +157,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         setMessages((prev) => [...prev, { role: 'interviewer', content: finalText, yesno: yesnoActive }])
       }
       setStreamingMessage('')
-      setTimeout(() => textareaRef.current?.focus(), 50)
       return { ok: true as const, interviewComplete }
     } catch (err) {
       const isPassLimit = err instanceof Error && err.message === 'PASS_LIMIT'
@@ -286,7 +277,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         setSubmitError('取材画面を開けませんでした。ページを再読み込みしてもう一度お試しください。')
       } finally {
         setInitializing(false)
-        setTimeout(() => textareaRef.current?.focus(), 50)
       }
     }
     init()
@@ -466,7 +456,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       setPhotoSkipped(false)
       return
     }
-    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function removePendingAttachment(index: number) {
@@ -490,7 +479,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
     }
     const result = await sendMessageToAI(DEEP_DIVE_TOKEN, { alreadyDisplayed: true })
     if (!result.ok) return
-    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function handleFinish() {
@@ -513,7 +501,6 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
 
     // AIキャストに「続行を選んだので別角度から1問」を送って、新しい質問を引き出す
     await sendMessageToAI(CONTINUE_INTERVIEW_TOKEN, { alreadyDisplayed: true })
-    setTimeout(() => textareaRef.current?.focus(), 50)
   }
 
   function handleManualFinish() {
@@ -658,294 +645,55 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         </div>
       </header>
 
-      {/* 進捗バー */}
-      <div className="bg-[var(--surface)] border-b border-[var(--border)] flex-shrink-0">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-2 sm:py-3">
-          <div className="max-w-2xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[13px] text-[var(--text2)]">{getProgressLabel(userTurns)}</span>
-            <span className="text-[13px] text-[var(--text2)]">{userTurns}/{STANDARD_TURNS}</span>
-          </div>
-          <div
-            role="progressbar"
-            aria-label="インタビューの進行状況"
-            aria-valuenow={userTurns}
-            aria-valuemin={0}
-            aria-valuemax={STANDARD_TURNS}
-            className="bg-[var(--border)] h-1 rounded-full overflow-hidden"
-          >
-            <div
-              className={`h-full bg-[var(--accent)] rounded-full transition-all duration-300 ${userTurns >= STANDARD_TURNS ? 'ic-progress-bar-full' : ''}`}
-              style={{ width: `${Math.min((userTurns / STANDARD_TURNS) * 100, 100)}%` }}
-            />
-          </div>
-        </div>
-        </div>
-      </div>
+      <InterviewProgressBar
+        userTurns={userTurns}
+        standardTurns={STANDARD_TURNS}
+        label={getProgressLabel(userTurns)}
+      />
 
-      {/* 会話ログ */}
-      {/* tabIndex={0}: キーボードユーザーがスクロールコンテナにフォーカスしてキーで読み進められるよう WCAG 2.1 AA 準拠 */}
-      <div role="log" aria-label="インタビューの会話" aria-live="polite" tabIndex={0} className="flex-1 min-h-0 overflow-y-auto px-3 py-4 sm:px-7 flex flex-col gap-4 max-w-2xl w-full mx-auto">
-        {messages.map((msg, i) => {
-          const isLatestInterviewer = msg.role === 'interviewer' && i === messages.length - 1
-          const showYesNoButtons =
-            isLatestInterviewer &&
-            msg.yesno === true &&
-            !loading &&
-            !streamingMessage &&
-            !hasReachedTurnLimit
-          return (
-            <React.Fragment key={`${msg.role}-${i}`}>
-              <div className={`flex gap-1 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                {msg.role === 'interviewer' && (
-                  <CharacterAvatar
-                    src={char?.icon48}
-                    alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                    emoji={char?.emoji}
-                    size={32}
-                    className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
-                  />
-                )}
-                <div className={`max-w-[80%] sm:max-w-[60%] px-4 py-3 text-base sm:text-[15px] whitespace-pre-wrap break-words leading-[1.85] border border-[var(--border)] text-[var(--text)] rounded-[var(--r-lg)] shadow-[var(--elevation-1)] ${
-                  msg.role === 'interviewer'
-                    ? 'bg-[var(--surface)] rounded-tl-none'
-                    : 'bg-[var(--accent-l)] rounded-tr-none'
-                }`}>
-                  {msg.attachments && msg.attachments.length > 0 && (
-                    <div className="mb-2 flex flex-wrap gap-1.5">
-                      {msg.attachments.map((att, j) =>
-                        att.previewUrl ? (
-                          <Image
-                            key={`${i}-${j}`}
-                            src={att.previewUrl}
-                            alt={`添付 ${j + 1}`}
-                            width={480}
-                            height={480}
-                            unoptimized
-                            style={{ width: 'auto', height: 'auto' }}
-                            className="max-h-80 max-w-full rounded-lg sm:max-h-96"
-                          />
-                        ) : (
-                          <div
-                            key={`${i}-${j}`}
-                            className="h-32 w-32 rounded-lg bg-[var(--bg2)] border border-[var(--border)] flex items-center justify-center text-[13px] text-[var(--text2)]"
-                            aria-label="画像読み込み中"
-                          >
-                            画像
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  )}
-                  {msg.content
-                    ? msg.content
-                    : msg.attachments && msg.attachments.length > 0
-                      ? null
-                      : <span className="opacity-50">...</span>}
-                </div>
-              </div>
-              {/* モグロ用 はい/いいえ ボタン（最新の interviewer 発話に [YESNO_QUESTION] が付いていた時だけ） */}
-              {showYesNoButtons && (
-                <div className="flex gap-2 pl-10">
-                  <button
-                    type="button"
-                    onClick={() => void sendMessageToAI('はい')}
-                    disabled={loading}
-                    className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-5 py-2 text-base font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
-                  >
-                    はい
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void sendMessageToAI('いいえ')}
-                    disabled={loading}
-                    className="border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--bg2)] rounded-full px-5 py-2 text-base font-semibold min-h-[40px] disabled:opacity-50 cursor-pointer transition-colors"
-                  >
-                    いいえ
-                  </button>
-                </div>
-              )}
-            </React.Fragment>
-          )
-        })}
-        {(loading || streamingMessage) && (
-          <div className="flex gap-1">
-            <CharacterAvatar
-              src={char?.icon48}
-              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-              emoji={char?.emoji}
-              size={32}
-              className="-mt-2 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
-            />
-            <div className="max-w-[80%] sm:max-w-[60%] bg-[var(--surface)] border border-[var(--border)] px-3 py-1 rounded-2xl rounded-tl-sm break-words">
-              {streamingMessage ? (
-                <span className="text-[var(--text2)] text-[15px] whitespace-pre-wrap leading-[1.85]">
-                  {streamingMessage}
-                </span>
-              ) : (
-                <span className="ic-typing-dots">
-                  <span className="ic-typing-dot" />
-                  <span className="ic-typing-dot" />
-                  <span className="ic-typing-dot" />
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
-      </div>
+      <InterviewMessageList
+        messages={messages}
+        loading={loading}
+        streamingMessage={streamingMessage}
+        characterName={char?.name}
+        characterIcon48={char?.icon48}
+        characterEmoji={char?.emoji}
+        onYesNo={(answer) => void sendMessageToAI(answer)}
+        hasReachedTurnLimit={hasReachedTurnLimit}
+        bottomRef={bottomRef}
+      />
 
-      {/* 入力エリア */}
-      <div className="bg-[var(--surface)] border-t border-[var(--border)] px-3 sm:px-6 py-3 sm:py-4 flex-shrink-0">
-        {submitError && (
-          <div role="alert" className="max-w-2xl mx-auto mb-3">
-            <InterviewerSpeech
-              icon={(
-                <CharacterAvatar
-                  src={char?.icon48}
-                  alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
-                  emoji={char?.emoji}
-                  size={44}
-                />
-              )}
-              name={char?.name ?? 'インタビュアー'}
-              title="返事が少し途切れてしまいました。"
-              description={submitError}
-              tone="soft"
-            />
-          </div>
-        )}
-        <div className="max-w-2xl mx-auto">
-          {/* ハル限定: 添付プレビュー */}
-          {characterId === 'hal' && pendingAttachments.length > 0 && (
-            <div className="mb-2 flex flex-wrap gap-2">
-              {pendingAttachments.map((att, idx) => (
-                <div key={att.path} className="relative">
-                  <Image
-                    src={att.previewUrl}
-                    alt={`添付 ${idx + 1}`}
-                    width={80}
-                    height={80}
-                    unoptimized
-                    className="h-20 w-20 rounded-md object-cover border border-[var(--border)]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removePendingAttachment(idx)}
-                    aria-label="この画像を削除"
-                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[var(--err)] text-white text-[13px] flex items-center justify-center hover:bg-[var(--err-h,var(--err))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mb-2 flex flex-col gap-2">
-            <p className="text-[13px] text-[var(--text2)] hidden sm:block">
-              {passStreak >= PASS_STREAK_LIMIT
-                ? `パスは連続${PASS_STREAK_LIMIT}回までです。何か一言でもいいので答えてみてください。`
-                : input.trim()
-                  ? '入力中はパスできません。送信するか、内容を消してからパスできます。'
-                  : `答えづらい質問は、${PASS_STREAK_LIMIT}回までパスして次へ進めます。気になる話があれば「もう少し聞いてもらう」も使えます。`}
-            </p>
-            <p className="text-[13px] text-[var(--text2)] sm:hidden">
-              {passStreak >= PASS_STREAK_LIMIT
-                ? `連続パスは${PASS_STREAK_LIMIT}回までです。`
-                : input.trim()
-                  ? '入力中はパスできません。'
-                  : `答えづらければ${PASS_STREAK_LIMIT}回までパスできます。`}
-            </p>
-            <div className="flex flex-wrap items-center justify-start gap-2">
-              {characterId === 'hal' && (
-                <>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) void handleAttachmentUpload(file)
-                      if (fileInputRef.current) fileInputRef.current.value = ''
-                    }}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={loading || initializing || hasReachedTurnLimit || uploadingAttachment || pendingAttachments.length >= 4}
-                    className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    aria-label="写真を添付"
-                  >
-                    {uploadingAttachment ? 'アップ中...' : '📷 写真を添付'}
-                  </button>
-                  {/* 「写真なしで進める」ボタン: 取材序盤かつ画像が一度も送られていない時だけ出す */}
-                  {!photoSkipped && userTurns < 2 && pendingAttachments.length === 0 && !messages.some((m) => m.attachments && m.attachments.length > 0) && (
-                    <button
-                      type="button"
-                      onClick={handleSkipPhoto}
-                      disabled={loading || initializing || hasReachedTurnLimit}
-                      className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    >
-                      写真なしで進める
-                    </button>
-                  )}
-                </>
-              )}
-              <button
-                type="button"
-                onClick={handleDeepDive}
-                disabled={loading || initializing || hasReachedTurnLimit || messages.length === 0}
-                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                もう少し聞いてもらう
-              </button>
-              <button
-                type="button"
-                onClick={handlePassQuestion}
-                disabled={loading || initializing || hasReachedTurnLimit || passStreak >= PASS_STREAK_LIMIT || input.trim().length > 0}
-                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                この質問はパス
-              </button>
-            </div>
-          </div>
-          <form onSubmit={(e) => { e.preventDefault(); void submitMessage() }} className="flex gap-2 sm:gap-3 items-end">
-            <textarea
-              aria-label="インタビューへの回答を入力"
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              maxLength={2000}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                  e.preventDefault()
-                  void submitMessage()
-                }
-              }}
-              placeholder={hasReachedTurnLimit
-                ? '取材はここまでです。ここまでの内容を記事にまとめられます。'
-                : characterId === 'hal' && pendingAttachments.length > 0
-                  ? '一言添えても、写真だけで送ってもOK'
-                  : 'ここに話しかけてください'}
-              disabled={loading || initializing || hasReachedTurnLimit}
-              autoFocus
-              className="flex-1 bg-[var(--bg2)] border border-[var(--border)] rounded-[var(--r-lg)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40 focus-visible:outline-none text-[var(--text)] px-3 sm:px-4 py-3 text-base resize-none leading-relaxed disabled:opacity-50 min-h-[56px] max-h-[200px] overflow-y-auto"
-            />
-            <div className="flex flex-col items-end gap-1 flex-shrink-0">
-              <DevAiLabel>AI送信</DevAiLabel>
-              <button
-                type="submit"
-                disabled={loading || initializing || hasReachedTurnLimit || (!input.trim() && pendingAttachments.length === 0)}
-                className="bg-[var(--accent)] text-white hover:bg-[var(--accent-h)] rounded-full px-4 sm:px-5 py-3 min-h-[44px] min-w-[56px] sm:min-w-0 font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              >
-                {loading ? '送信中...' : '送信'}
-              </button>
-              <p className="text-[13px] text-[var(--text2)] hidden sm:block">Ctrl+Enter</p>
-            </div>
-          </form>
-        </div>
-      </div>
+      <InterviewInputArea
+        characterId={characterId}
+        characterName={char?.name}
+        characterIcon48={char?.icon48}
+        characterEmoji={char?.emoji}
+        input={input}
+        onInputChange={setInput}
+        loading={loading}
+        initializing={initializing}
+        hasReachedTurnLimit={hasReachedTurnLimit}
+        passStreak={passStreak}
+        passStreakLimit={PASS_STREAK_LIMIT}
+        onPassQuestion={handlePassQuestion}
+        onDeepDive={handleDeepDive}
+        showDeepDive={messages.length > 0}
+        pendingAttachments={pendingAttachments}
+        uploadingAttachment={uploadingAttachment}
+        onAttachmentSelected={characterId === 'hal' ? handleAttachmentUpload : undefined}
+        onRemoveAttachment={characterId === 'hal' ? removePendingAttachment : undefined}
+        showSkipPhoto={
+          characterId === 'hal' &&
+          !photoSkipped &&
+          userTurns < 2 &&
+          pendingAttachments.length === 0 &&
+          !messages.some((m) => m.attachments && m.attachments.length > 0)
+        }
+        onSkipPhoto={handleSkipPhoto}
+        submitError={submitError}
+        onSubmit={() => void submitMessage()}
+        rightSlot={<DevAiLabel>AI送信</DevAiLabel>}
+      />
 
       {/* 参考記事パネル — fixed */}
       {isSupportPanelOpen && !supportPosts.loading && (
