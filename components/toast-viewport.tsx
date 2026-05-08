@@ -75,7 +75,7 @@ export default function ToastViewport() {
                   <button
                     type="button"
                     onClick={() => { void toast.onUndo?.() }}
-                    className="mt-3 inline-flex rounded-md text-sm font-medium text-[var(--accent)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
+                    className="mt-3 inline-flex rounded-md text-sm font-medium text-[var(--link)] underline underline-offset-2 hover:text-[var(--link-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border2)]"
                   >
                     {toast.undoLabel ?? '元に戻す'}
                   </button>

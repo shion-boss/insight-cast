@@ -89,7 +89,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                       || link.href === '/pricing'
                     return (
                       <li key={link.href}>
-                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
+                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-xs text-[var(--text2)] transition-colors hover:text-[var(--link)] rounded-sm">
                           {link.label}
                         </Link>
                       </li>

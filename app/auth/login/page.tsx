@@ -115,7 +115,7 @@ function LoginForm() {
             <p className="text-sm text-[var(--text2)] leading-[1.7]">
               <span className="font-semibold text-[var(--text)]">{paidPlan}プランへのお申し込み</span>ありがとうございます。<br />
               ログイン後、そのままお支払い画面に進みます。<br />
-              アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}${inviteToken ? `&invite_token=${encodeURIComponent(inviteToken)}` : ''}`} className="text-[var(--accent)] font-semibold underline underline-offset-2">新規登録はこちら</Link>
+              アカウントをお持ちでない方は <Link href={`/auth/signup?next=${encodeURIComponent(nextPath)}${inviteToken ? `&invite_token=${encodeURIComponent(inviteToken)}` : ''}`} className="text-[var(--link)] font-semibold underline underline-offset-2 hover:text-[var(--link-hover)]">新規登録はこちら</Link>
             </p>
           </div>
         )}
@@ -202,7 +202,7 @@ function LoginForm() {
               const qs = params.toString()
               return `/auth/signup${qs ? `?${qs}` : ''}`
             })()}
-            className="text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] rounded-sm"
+            className="text-[var(--link)] font-semibold underline underline-offset-2 hover:text-[var(--link-hover)] rounded-sm"
           >
             新規登録
           </Link>

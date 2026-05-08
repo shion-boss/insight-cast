@@ -175,7 +175,7 @@ export default async function AdminArticleQualityPage() {
                   <td className="px-3 py-3 align-top">
                     <p className="font-sans text-xs text-[var(--text2)]">{r.project?.name ?? '（プロジェクト不明）'}</p>
                     {articleHref ? (
-                      <Link href={articleHref} className="font-sans text-sm font-medium text-[var(--accent)] hover:underline">
+                      <Link href={articleHref} className="font-sans text-sm font-medium text-[var(--link)] hover:underline hover:text-[var(--link-hover)]">
                         {r.title ?? '（無題）'}
                       </Link>
                     ) : (

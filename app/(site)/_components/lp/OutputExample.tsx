@@ -36,7 +36,7 @@ export function OutputExample() {
               ].map((msg, i) => (
                 msg.from === 'cast' ? (
                   <div key={i} className="flex items-start gap-1">
-                    <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border border-[var(--border)]">
+                    <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border border-[var(--border)] -mt-3.5">
                       {freeCast[0]?.icon48
                         ? <Image src={freeCast[0].icon48} alt={freeCast[0].name} width={28} height={28} className="w-full h-full object-cover" />
                         : <span className="text-base leading-none">{freeCast[0]?.emoji}</span>}

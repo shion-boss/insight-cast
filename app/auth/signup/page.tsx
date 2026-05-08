@@ -129,7 +129,7 @@ function SignupForm() {
             </p>
             <Link
               href="/auth/login"
-              className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
+              className="text-sm text-[var(--link)] underline underline-offset-2 hover:text-[var(--link-hover)] rounded"
             >
               ログイン画面へ
             </Link>
@@ -153,7 +153,7 @@ function SignupForm() {
             すでにアカウントをお持ちの方は{' '}
             <Link
               href={`/auth/login${nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''}`}
-              className="whitespace-nowrap text-[var(--accent)] font-semibold underline underline-offset-2 hover:text-[var(--accent-h)] rounded-sm"
+              className="whitespace-nowrap text-[var(--link)] font-semibold underline underline-offset-2 hover:text-[var(--link-hover)] rounded-sm"
             >
               ログイン
             </Link>
@@ -234,9 +234,9 @@ function SignupForm() {
 
           <p className="mt-5 text-[12px] text-[var(--text3)] text-center leading-relaxed">
             登録すると{' '}
-            <Link href="/terms" className="text-[var(--accent)] underline rounded">利用規約</Link>
+            <Link href="/terms" className="text-[var(--link)] underline rounded">利用規約</Link>
             {' '}と{' '}
-            <Link href="/privacy" className="text-[var(--accent)] underline rounded">プライバシーポリシー</Link>
+            <Link href="/privacy" className="text-[var(--link)] underline rounded">プライバシーポリシー</Link>
             {' '}に同意したものとみなされます
           </p>
         </div>

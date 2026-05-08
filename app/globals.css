@@ -13,7 +13,8 @@
 
   /* === Color: Primary (ブランド主張オレンジ) ===
    * --primary はブランド主張のためのコアアクセント。
-   * CTA ボタン全般・リンク・focus ring・強調テキストに使う。
+   * CTA ボタン全般・focus ring・強調テキストに使う。
+   * リンク色には使わない（テキストリンクは --link を参照）。
    * 注: white on #ff6900 は WCAG AA で 2.89:1 (fail)。視覚優先でこの値を採用。
    *      AA 厳守が必要な箇所は --primary-hover (#b81f00, 6.49:1) を使う。 */
   --primary: #ff6900;
@@ -21,6 +22,14 @@
   --primary-container: #feeae1;
   --on-primary-container: #655443;
   --primary-hover: #b81f00;
+
+  /* === Color: Link (本文中テキストリンク) ===
+   * ブランドオレンジ (--primary) と相性の良い落ち着いた青。
+   * オレンジを CTA・強調用、青をテキストリンク用に役割分離する。
+   * --link on --surface (#fffdf9): 6.94:1 (AA / AAA-large クリア)
+   * --link-hover on --surface: 8.59:1 (AAA クリア) */
+  --link: #1d4ed8;
+  --link-hover: #1e40af;
 
   /* === Color: Brand ground (フレーム・箱の色) ===
    * 大きな枠・ヒーロー帯・フッター直前の重要パネル等の「茶色い土台」用ロール。
@@ -209,6 +218,17 @@ button,
 summary,
 [role="button"] {
   cursor: pointer;
+}
+
+/* テキストリンクのデフォルト色。
+ * `text-[var(--accent)]` 等で個別に色指定された箇所が優先されるため、
+ * 既存実装は無修正で動作する。新規実装はクラスで色指定せず
+ * このデフォルトに任せる。 */
+a:where(:not([class*="text-"]):not([class*="bg-"]):not([data-no-link-style])) {
+  color: var(--link);
+}
+a:where(:not([class*="text-"]):not([class*="bg-"]):not([data-no-link-style])):hover {
+  color: var(--link-hover);
 }
 
 button:disabled,
@@ -418,9 +438,12 @@ body.is-tool-fullscreen main#main-content {
 }
 
 .legal-doc a {
-  color: var(--accent);
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 0.18em;
+}
+.legal-doc a:hover {
+  color: var(--link-hover);
 }
 
 .legal-doc table {

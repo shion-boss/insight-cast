@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
               </p>
               <Link
                 href="/auth/login"
-                className="text-sm text-[var(--accent)] underline underline-offset-2 hover:text-[var(--accent-h)] rounded"
+                className="text-sm text-[var(--link)] underline underline-offset-2 hover:text-[var(--link-hover)] rounded"
               >
                 ログイン画面に戻る
               </Link>
