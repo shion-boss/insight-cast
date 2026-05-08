@@ -19,15 +19,12 @@ import AnalysisStatusPanel from './AnalysisStatusPanel'
 import { ProjectMemberSection } from './_components/ProjectMemberSection'
 import { ExternalInterviewLinkSection } from './_components/ExternalInterviewLinkSection'
 import {
-  UncreatedThemeList,
   InterviewHistoryList,
   ArticleList,
-  type UncreatedThemeItem,
   type InterviewHistoryItem,
   type ArticleSectionItem,
 } from './ProjectSections'
 import {
-  fetchUncreatedThemesPage,
   fetchInterviewsPage,
   fetchArticlesPage,
 } from '@/lib/projects/pagination'
@@ -99,7 +96,6 @@ export default async function ProjectPage({
     { data: articleStubsRaw },
     interviewsPageResult,
     articlesPageResult,
-    themesPageResult,
   ] = await Promise.all([
     adminSupabase
       .from('hp_audits')
@@ -119,7 +115,6 @@ export default async function ProjectPage({
       .order('created_at', { ascending: false }),
     fetchInterviewsPage(supabase, id, 1, PREVIEW_SIZE),
     fetchArticlesPage(supabase, id, 1, PREVIEW_SIZE),
-    fetchUncreatedThemesPage(supabase, id, 1, PREVIEW_SIZE),
   ])
 
   const articleStubs = (articleStubsRaw ?? []) as ArticleStub[]
@@ -127,8 +122,6 @@ export default async function ProjectPage({
   const interviewCount = interviewsPageResult.total
   const articleItems = articlesPageResult.rows
   const articleCount = articlesPageResult.total
-  const themeItems = themesPageResult.rows
-  const themeCount = themesPageResult.total
 
   // 表示中の記事に紐づくインタビュアー情報（characterAvatar / 名前）の引き当て用。
   // ページ表示分のみ最小限フェッチする。
@@ -225,18 +218,6 @@ export default async function ProjectPage({
       getCompetitorInfluentialTopics(ca.raw_data as Record<string, unknown>).map((t) => [t.theme, t] as const)
     )
   ).values()].slice(0, 5)
-
-  // 未作成テーマ一覧（サーバーページネーション済み）
-  const uncreatedThemeItems: UncreatedThemeItem[] = themeItems.map((row) => {
-    const char = getCharacter(row.interviewer_type)
-    return {
-      theme: row.theme,
-      interviewId: row.interview_id,
-      interviewerName: char?.name ?? 'インタビュアー',
-      icon48: char?.icon48,
-      emoji: char?.emoji,
-    }
-  })
 
   // 取材メモアイテム（サーバーページネーション済みの interviews を表示用に整形）
   const interviewHistoryItems: InterviewHistoryItem[] = interviewItems.map((interview) => {
@@ -398,9 +379,9 @@ export default async function ProjectPage({
               詳細レポートを見る <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="space-y-4">
             {hpPriorityActions.length > 0 && (
-              <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 sm:col-span-3">
+              <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--text2)] uppercase">優先アクション</p>
                 <ul className="space-y-2">
                   {hpPriorityActions.map((action, i) => (
@@ -413,7 +394,7 @@ export default async function ProjectPage({
               </div>
             )}
             {hpStrengths.length > 0 && (
-              <div className="rounded-[var(--r-lg)] border border-[var(--ok)]/30 bg-[var(--ok-l)] p-5 sm:col-span-1">
+              <div className="rounded-[var(--r-lg)] border border-[var(--ok)]/30 bg-[var(--ok-l)] p-5">
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--ok)] uppercase">強み</p>
                 <ul className="space-y-1.5">
                   {hpStrengths.map((s, i) => (
@@ -426,7 +407,7 @@ export default async function ProjectPage({
               </div>
             )}
             {hpGaps.length > 0 && (
-              <div className="rounded-[var(--r-lg)] border border-[var(--warn)]/30 bg-[var(--warn-l)] p-5 sm:col-span-2">
+              <div className="rounded-[var(--r-lg)] border border-[var(--warn)]/30 bg-[var(--warn-l)] p-5">
                 <p className="mb-3 text-xs font-semibold tracking-[0.08em] text-[var(--warn)] uppercase">課題・弱点</p>
                 <ul className="space-y-1.5">
                   {hpGaps.map((g, i) => (
@@ -495,19 +476,6 @@ export default async function ProjectPage({
         canEdit={canEdit}
         isOwner={isOwner}
       />
-
-      {/* 未作成テーマ一覧 */}
-      {themeCount > 0 && (
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-[16px] font-bold text-[var(--text)]">記事にしていないテーマ</h2>
-            <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] font-medium text-[var(--text2)]">
-              {themeCount}件
-            </span>
-          </div>
-          <UncreatedThemeList items={uncreatedThemeItems} projectId={id} canEdit={canEdit} />
-        </div>
-      )}
 
       {/* Interview history */}
       <div className="mt-8">

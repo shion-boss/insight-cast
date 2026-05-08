@@ -12,38 +12,6 @@ export function parsePageParam(value: string | string[] | undefined): number {
 type SBClient = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   from: (table: string) => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rpc: (fn: string, args?: Record<string, unknown>) => any
-}
-
-export type UncreatedThemeRow = {
-  theme: string
-  interview_id: string
-  interviewer_type: string
-  interview_created_at: string
-  ordinality: number
-}
-
-export async function fetchUncreatedThemesPage(
-  supabase: SBClient,
-  projectId: string,
-  page: number,
-  perPage: number = PAGE_SIZE,
-): Promise<{ rows: UncreatedThemeRow[]; total: number }> {
-  const offset = (page - 1) * perPage
-  const [rowsResult, countResult] = await Promise.all([
-    supabase.rpc('get_project_uncreated_themes', {
-      p_project_id: projectId,
-      p_offset: offset,
-      p_limit: perPage,
-    }),
-    supabase.rpc('count_project_uncreated_themes', {
-      p_project_id: projectId,
-    }),
-  ])
-  const rows = (rowsResult.data as UncreatedThemeRow[] | null) ?? []
-  const total = (countResult.data as number | null) ?? 0
-  return { rows, total }
 }
 
 export type InterviewListRow = {

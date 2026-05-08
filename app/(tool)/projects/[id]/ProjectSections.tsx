@@ -27,54 +27,6 @@ function SeeAllFooter({
   )
 }
 
-// ── 未作成テーマ ────────────────────────────────────────────────
-
-export type UncreatedThemeItem = {
-  theme: string
-  interviewId: string
-  interviewerName: string
-  icon48: StaticImageData | undefined
-  emoji: string | undefined
-}
-
-export function UncreatedThemeList({
-  items,
-  projectId,
-  canEdit = true,
-}: {
-  items: UncreatedThemeItem[]
-  projectId: string
-  canEdit?: boolean
-}) {
-  const ROW_CLASS = 'flex items-center gap-3 px-5 py-3.5 min-h-[72px]'
-
-  return (
-    <div className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] divide-y divide-[var(--border)] overflow-hidden">
-      {items.map((item, i) => {
-        if (!canEdit) {
-          return (
-            <div key={i} className={ROW_CLASS}>
-              <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-              <p className="flex-1 truncate text-base text-[var(--text)]" title={item.theme}>{item.theme}</p>
-            </div>
-          )
-        }
-        return (
-          <Link
-            key={i}
-            href={`/projects/${projectId}/article?interviewId=${item.interviewId}&theme=${encodeURIComponent(item.theme)}`}
-            className={`group ${ROW_CLASS} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--accent)]/40`}
-          >
-            <CharacterAvatar src={item.icon48} alt={item.interviewerName} emoji={item.emoji} size={28} />
-            <p className="flex-1 truncate text-base text-[var(--text)] transition-colors group-hover:text-[var(--accent)]" title={item.theme}>{item.theme}</p>
-            <span aria-hidden="true" className="text-[12px] font-semibold text-[var(--text2)] transition-colors group-hover:text-[var(--accent)] flex-shrink-0">記事を作る →</span>
-          </Link>
-        )
-      })}
-    </div>
-  )
-}
-
 // ── 取材メモ ────────────────────────────────────────────────────
 
 export type InterviewHistoryItem = {

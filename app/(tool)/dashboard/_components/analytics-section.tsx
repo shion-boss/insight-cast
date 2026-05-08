@@ -213,32 +213,7 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
   return (
     <div className="mb-6">
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事づくりの進み具合</div>
-            <div className="text-[12px] text-[var(--text2)]">取材から作った記事の継続ペース</div>
-          </div>
-          <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去1年</span>
-        </div>
-
-        <div className="mb-5">
-          <BarChart data={monthlyArticles} />
-        </div>
-
-        <div className="pt-4 border-t border-[var(--border)] mb-4">
-          <div className="text-[12px] font-semibold mb-3 text-[var(--text2)]">
-            <span className="sm:hidden">週次作成カレンダー（過去13週）</span>
-            <span className="hidden sm:inline">週次作成カレンダー（過去25週）</span>
-          </div>
-          <div className="sm:hidden">
-            <Heatmap data={heatmapData} weeks={13} />
-          </div>
-          <div className="hidden sm:block">
-            <Heatmap data={heatmapData} weeks={25} />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-[var(--border)]">
+        <div className="flex flex-wrap items-center gap-4">
           <ScoreRing score={continuityScore} />
           <div className="flex-1">
             <div className="text-base font-bold mb-1 text-[var(--text)]">記事づくり継続スコア：{continuityScore} / 100</div>
@@ -252,6 +227,37 @@ export function AnalyticsSection({ monthlyArticles, heatmapData, continuityScore
               取材する <span aria-hidden="true">→</span>
             </Link>
           )}
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-[var(--border)]">
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <div className="text-[15px] font-bold text-[var(--text)] mb-1">記事づくりの進み具合</div>
+              <div className="text-[12px] text-[var(--text2)]">取材から作った記事の継続ペース</div>
+            </div>
+            <span className="text-[11px] px-2 py-0.5 rounded-full font-semibold bg-[var(--warn-l)] text-[var(--warn)]">過去1年</span>
+          </div>
+
+          <div className="mb-5">
+            <BarChart data={monthlyArticles} />
+          </div>
+
+          <div className="pt-4 border-t border-[var(--border)]">
+            <div className="text-[12px] font-semibold mb-3 text-[var(--text2)]">
+              <span className="sm:hidden">週次作成カレンダー（過去13週）</span>
+              <span className="hidden sm:inline xl:hidden">週次作成カレンダー（過去25週）</span>
+              <span className="hidden xl:inline">週次作成カレンダー（過去1年）</span>
+            </div>
+            <div className="sm:hidden">
+              <Heatmap data={heatmapData} weeks={13} />
+            </div>
+            <div className="hidden sm:block xl:hidden">
+              <Heatmap data={heatmapData} weeks={25} />
+            </div>
+            <div className="hidden xl:block">
+              <Heatmap data={heatmapData} weeks={52} />
+            </div>
+          </div>
         </div>
       </div>
     </div>
