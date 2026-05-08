@@ -58,7 +58,7 @@ export function CompareCards() {
               <div className="text-center mb-6">
                 <div className="flex items-end justify-center gap-1 leading-none">
                   <span className="font-[family-name:var(--font-noto-serif-jp)] font-bold" style={{ fontSize: '64px', color: 'var(--accent)', lineHeight: 1 }}>3,000</span>
-                  <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>字+</span>
+                  <span className="font-bold pb-1" style={{ fontSize: '22px', color: 'var(--accent)' }}>文字+</span>
                 </div>
                 <p className="mt-2 text-[11px]" style={{ color: 'var(--on-surface-variant)' }}>原稿用紙1枚（400文字）が、会話から7枚以上</p>
               </div>
