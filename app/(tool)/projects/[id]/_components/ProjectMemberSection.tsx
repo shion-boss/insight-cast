@@ -166,6 +166,64 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
   const [confirmCancelInvite, setConfirmCancelInvite] = useState<{ id: string; email: string } | null>(null)
   const [cancelingInvite, setCancelingInvite] = useState(false)
 
+  // メンバー編集モーダル（プロジェクト内のメタデータ）
+  const [editTarget, setEditTarget] = useState<{ userId: string; displayName: string } | null>(null)
+  const [editForm, setEditForm] = useState<{ industry: string; role: string; notes: string }>({ industry: '', role: '', notes: '' })
+  const [editLoading, setEditLoading] = useState(false)
+  const [editSaving, setEditSaving] = useState(false)
+  const [editError, setEditError] = useState<string | null>(null)
+
+  const openEdit = useCallback(async (userId: string, displayName: string) => {
+    setEditTarget({ userId, displayName })
+    setEditError(null)
+    setEditForm({ industry: '', role: '', notes: '' })
+    setEditLoading(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}/members/${userId}/interviewee`)
+      if (res.ok) {
+        const json = await res.json() as { interviewee: { industry: string | null; role: string | null; notes: string | null } | null }
+        const iv = json.interviewee
+        if (iv) {
+          setEditForm({
+            industry: iv.industry ?? '',
+            role: iv.role ?? '',
+            notes: iv.notes ?? '',
+          })
+        }
+      }
+    } catch {
+      // 取得失敗時は空のまま
+    } finally {
+      setEditLoading(false)
+    }
+  }, [projectId])
+
+  const handleEditSave = async () => {
+    if (!editTarget) return
+    setEditSaving(true)
+    setEditError(null)
+    try {
+      const res = await fetch(`/api/projects/${projectId}/members/${editTarget.userId}/interviewee`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          industry: editForm.industry.trim() || null,
+          role: editForm.role.trim() || null,
+          notes: editForm.notes.trim() || null,
+        }),
+      })
+      if (!res.ok) {
+        setEditError('保存できませんでした。もう一度お試しください。')
+        return
+      }
+      setEditTarget(null)
+    } catch {
+      setEditError('保存できませんでした。もう一度お試しください。')
+    } finally {
+      setEditSaving(false)
+    }
+  }
+
   const fetchMembers = useCallback(async () => {
     try {
       const res = await fetch(`/api/projects/${projectId}/members`)
@@ -339,6 +397,14 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
                       />
                       <button
                         type="button"
+                        onClick={() => openEdit(member.userId, member.name ?? member.email ?? 'メンバー')}
+                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--accent)] hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
+                        aria-label={`${member.name ?? member.email ?? 'メンバー'}の取材情報を編集`}
+                      >
+                        編集
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setConfirmDelete({ userId: member.userId, name: member.name ?? member.email ?? 'メンバー' })}
                         className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40"
                         aria-label={`${member.name ?? member.email ?? 'メンバー'}を削除`}
@@ -466,6 +532,95 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
           onCancel={() => setConfirmCancelInvite(null)}
           onConfirm={handleCancelInvite}
         />
+      )}
+
+      {/* メンバー取材情報編集モーダル */}
+      {editTarget && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="member-edit-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={(e) => { if (e.target === e.currentTarget && !editSaving) setEditTarget(null) }}
+        >
+          <div className="w-full max-w-md rounded-[var(--r-lg)] bg-[var(--surface)] p-6 shadow-[var(--elevation-3)]">
+            <h3 id="member-edit-title" className="text-base font-bold text-[var(--text)] mb-1">取材情報を編集</h3>
+            <p className="text-[13px] text-[var(--text2)] mb-4">
+              <span className="font-semibold text-[var(--text)]">{editTarget.displayName}</span> に関するプロジェクト内のメモです。名前は本人がプロフィールから変更できます。
+            </p>
+            {editLoading ? (
+              <p className="text-base text-[var(--text2)] py-6 text-center">読み込み中...</p>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="member-edit-role" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                    役職・関係（任意）
+                  </label>
+                  <input
+                    id="member-edit-role"
+                    type="text"
+                    value={editForm.role}
+                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                    placeholder="例: 代表、店長"
+                    maxLength={100}
+                    disabled={editSaving}
+                    className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="member-edit-industry" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                    業種（任意）
+                  </label>
+                  <input
+                    id="member-edit-industry"
+                    type="text"
+                    value={editForm.industry}
+                    onChange={(e) => setEditForm({ ...editForm, industry: e.target.value })}
+                    placeholder="例: 飲食業"
+                    maxLength={100}
+                    disabled={editSaving}
+                    className="w-full min-h-[44px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] placeholder-[var(--text3)] disabled:opacity-50"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="member-edit-notes" className="block text-[13px] font-medium text-[var(--text2)] mb-1.5">
+                    メモ（任意）
+                  </label>
+                  <textarea
+                    id="member-edit-notes"
+                    value={editForm.notes}
+                    onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                    rows={3}
+                    maxLength={1000}
+                    disabled={editSaving}
+                    className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text)] disabled:opacity-50"
+                  />
+                </div>
+                {editError && (
+                  <p role="alert" className="text-base text-[var(--err)]">{editError}</p>
+                )}
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditTarget(null)}
+                    disabled={editSaving}
+                    className="min-h-[44px] rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-2 text-base font-semibold text-[var(--text2)] hover:bg-[var(--bg2)] disabled:opacity-50 cursor-pointer transition-colors"
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleEditSave}
+                    disabled={editSaving}
+                    className="min-h-[44px] rounded-full border border-[var(--accent)] bg-[var(--accent)] px-5 py-2 text-base font-semibold text-white hover:opacity-90 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                  >
+                    {editSaving ? '保存中...' : '保存'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </section>
   )
