@@ -53,9 +53,9 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
   // コピー状態
   const [copiedToken, setCopiedToken] = useState<string | null>(null)
 
-  // 無効化確認ダイアログ
-  const [confirmDeactivate, setConfirmDeactivate] = useState<{ token: string; theme: string } | null>(null)
-  const [deactivating, setDeactivating] = useState(false)
+  // 削除確認ダイアログ
+  const [confirmDelete, setConfirmDelete] = useState<{ token: string; theme: string } | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   const fetchLinks = useCallback(async () => {
     try {
@@ -155,21 +155,21 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
     }
   }
 
-  const handleDeactivate = async () => {
-    if (!confirmDeactivate) return
-    setDeactivating(true)
+  const handleDelete = async () => {
+    if (!confirmDelete) return
+    setDeleting(true)
     try {
-      const res = await fetch(`/api/interview-links/${confirmDeactivate.token}`, {
+      const res = await fetch(`/api/interview-links/${confirmDelete.token}`, {
         method: 'DELETE',
       })
       if (!res.ok) throw new Error('failed')
-      setConfirmDeactivate(null)
+      setConfirmDelete(null)
       await fetchLinks()
     } catch {
-      setListError('無効化に失敗しました。もう一度お試しください。')
-      setConfirmDeactivate(null)
+      setListError('削除に失敗しました。もう一度お試しください。')
+      setConfirmDelete(null)
     } finally {
-      setDeactivating(false)
+      setDeleting(false)
     }
   }
 
@@ -357,16 +357,14 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
                     >
                       {copiedToken === link.token ? 'コピー済み' : 'リンクをコピー'}
                     </button>
-                    {link.is_active && (
-                      <button
-                        type="button"
-                        onClick={() => setConfirmDeactivate({ token: link.token, theme: link.theme })}
-                        aria-label={`${link.theme}のリンクを無効化`}
-                        className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
-                      >
-                        無効化
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDelete({ token: link.token, theme: link.theme })}
+                      aria-label={`${link.theme}のリンクを削除`}
+                      className="min-h-[36px] rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-[13px] text-[var(--text2)] hover:border-[var(--err)]/40 hover:text-[var(--err)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--err)]/40 cursor-pointer transition-colors"
+                    >
+                      削除
+                    </button>
                   </div>
                 </div>
               )
@@ -375,18 +373,18 @@ export function ExternalInterviewLinkSection({ projectId }: { projectId: string 
         )}
       </div>
 
-      {/* 無効化確認ダイアログ */}
-      {confirmDeactivate && (
+      {/* 削除確認ダイアログ */}
+      {confirmDelete && (
         <ConfirmDialog
-          dialogId="deactivate-link"
-          title="リンクを無効化しますか？"
-          description="無効化すると、このリンクからの取材が受けられなくなります。"
-          subject={confirmDeactivate.theme}
-          confirmLabel="無効化する"
+          dialogId="delete-link"
+          title="リンクを削除しますか？"
+          description="削除すると、このリンクからは取材を受けられなくなります。過去にこのリンクで行われた取材メモは残ります。"
+          subject={confirmDelete.theme}
+          confirmLabel="削除する"
           confirmingLabel="処理中..."
-          confirming={deactivating}
-          onCancel={() => setConfirmDeactivate(null)}
-          onConfirm={handleDeactivate}
+          confirming={deleting}
+          onCancel={() => setConfirmDelete(null)}
+          onConfirm={handleDelete}
         />
       )}
     </section>

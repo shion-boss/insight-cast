@@ -40,7 +40,8 @@ export async function GET(
   })
 }
 
-// DELETE: 手動無効化（認証必須）
+// DELETE: リンク削除（認証必須）
+// 過去の取材レコードは external_link_id を NULL にして残す（FK ON DELETE SET NULL）
 export async function DELETE(
   _req: NextRequest,
   { params }: Params,
@@ -61,11 +62,11 @@ export async function DELETE(
 
   const { error } = await supabase
     .from('external_interview_links')
-    .update({ is_active: false })
+    .delete()
     .eq('id', link.id)
 
   if (error) {
-    console.error('[DELETE /api/interview-links/[token]] update error:', error.message)
+    console.error('[DELETE /api/interview-links/[token]] delete error:', error.message)
     return NextResponse.json({ error: 'db_error' }, { status: 500 })
   }
 
