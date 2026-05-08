@@ -169,6 +169,20 @@ CLAUDE.md「UI表現の原則」に従い、以下を標準パターンとして
 - [ ] DB カラムの enum 値と TypeScript の型・定数が同じ文字列か
 - [ ] 新しい型やキーを追加したら、それを参照する全ての `switch` / `if` / `Record` を同時に更新したか
 
+### データ・配置の単一ソース化
+- [ ] カテゴリ・色・ラベル・キャラ割当などの定数は単一ソースから参照しているか（同じ意味の定数を複数ファイルでローカル定義しない。drift 防止。例: ブログカテゴリ系は `lib/blog-posts.ts` を出典とする）
+- [ ] 認証必須の処理（auth-aware の polling・通知 client component 等）は、`(tool)/layout.tsx` 配下にマウントしているか（root layout に置くと unauth ユーザーにも JS が配信される）
+- [ ] middleware の `auth.getUser()` 呼び出しは、redirect 判定が必要な path に限定されているか（完全 public path で呼ぶと SSG/ISR を放棄する）
+
+### 機能リリース時の grep チェック
+新機能・新キャスト・プラン変更などを本番に出す前は、以下を必ず grep する。再発しやすいパターン。
+
+- [ ] 旧ステータス文言（「準備中」「近日公開」等）が公開ページに残っていないか
+- [ ] 古い数値（キャスト数・料金・取材回数）が LP / 料金ページ / FAQ / ブログ記事に残っていないか
+- [ ] 削除した機能の言及が本文・excerpt・タイトルに残っていないか
+
+対象ページの代表例: `app/(site)/page.tsx` / `app/(site)/pricing/page.tsx` / `app/(site)/faq/page.tsx` / `app/(site)/about/page.tsx` / `lib/blog-posts.ts` など固定文言を持つファイル全般。
+
 ---
 
 ## やってはいけないこと
