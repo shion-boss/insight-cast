@@ -65,8 +65,8 @@ export function CompareCards() {
               {/* Comparison rows */}
               <div className="flex flex-col border-t" style={{ borderColor: '#e2d5c3' }}>
                 {[
+                  { name: 'お礼の手紙',         value: '200文字',                    muted: true,  highlight: false },
                   { name: '原稿用紙1枚',        value: '400文字',                    muted: true,  highlight: false },
-                  { name: '学校の作文',         value: '800文字',                    muted: false, highlight: false },
                   { name: '10分間スピーチ',     value: '3,000文字',                  muted: false, highlight: false },
                   { name: 'Insight Cast',       value: '3,000文字+',                muted: false, highlight: true  },
                 ].map((r) => (
