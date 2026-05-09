@@ -524,9 +524,9 @@ export function SettingsClient({
                       aria-describedby={profileError ? 'settings-profile-error' : 'settings-name-bubble'}
                     />
                     {/* 入力した表示名が「取材中の呼び名に使われる」ことをミントが
-                        その場で伝える。ユーザー操作なしで反映が見えるよう、
-                        name state にリアルタイム追従する。 */}
-                    {name.trim().length > 0 && (
+                        その場で伝える。保存済みと同じ値（=変更なし）のときは
+                        ノイズになるので出さず、未保存の変更があるときだけ表示する。 */}
+                    {name.trim().length > 0 && name.trim() !== savedName.trim() && (
                       <div id="settings-name-bubble" className="mt-3" aria-live="polite">
                         <InterviewerSpeech
                           icon={(
