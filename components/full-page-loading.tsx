@@ -23,8 +23,11 @@ export function FullPageLoading() {
         <p className="text-base text-[var(--text3)]">会話から、記事へ。あなたの当たり前を言葉に。</p>
       </div>
 
-      <div className="w-36 h-[3px] overflow-hidden rounded-full bg-[var(--border)]">
-        <div className="h-full rounded-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-36 h-[3px] overflow-hidden rounded-full bg-[var(--border)]">
+          <div className="h-full rounded-full animate-[page-load_1s_ease-in-out_infinite] bg-[var(--accent)]" />
+        </div>
+        <p className="text-[13px] text-[var(--text3)]" aria-live="polite">準備しています…</p>
       </div>
     </div>
   )

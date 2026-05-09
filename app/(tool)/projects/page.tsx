@@ -363,7 +363,7 @@ export default async function ProjectsPage({
                     href={`/projects/${project.id}`}
                     className={getButtonClass('secondary', 'text-[13px] px-3 min-h-[44px] flex items-center')}
                   >
-                    管理
+                    プロジェクトを開く
                   </Link>
                   {articleCount > 0 && (
                     <Link

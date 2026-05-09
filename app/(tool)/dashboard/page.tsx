@@ -284,15 +284,12 @@ export default async function DashboardPage() {
 
   const thisMonthInterviews = interviewStubs.filter((iv) => jstMonthKey(new Date(iv.created_at)) === thisMonthKey).length
   const lastMonthInterviews = interviewStubs.filter((iv) => jstMonthKey(new Date(iv.created_at)) === lastMonthKey).length
-  const interviewDelta = thisMonthInterviews - lastMonthInterviews
 
   const thisMonthArticles = allArticles.filter((a) => jstMonthKey(new Date(a.created_at)) === thisMonthKey).length
   const lastMonthArticles = allArticles.filter((a) => jstMonthKey(new Date(a.created_at)) === lastMonthKey).length
-  const articleDelta = thisMonthArticles - lastMonthArticles
 
   const thisMonthProjects = projectList.filter((p) => jstMonthKey(new Date(p.created_at)) === thisMonthKey).length
   const lastMonthProjectCount = projectList.filter((p) => jstMonthKey(new Date(p.created_at)) === lastMonthKey).length
-  const projectDelta = thisMonthProjects - lastMonthProjectCount
 
   const mint = getCharacter('mint')
   const interviewerHref =
@@ -327,8 +324,15 @@ export default async function DashboardPage() {
     ? lifetimeInterviewUsage >= (planLimits.lifetimeInterviewLimit ?? Infinity)
     : thisMonthInterviewUsage >= planLimits.monthlyInterviewLimit
 
-  const deltaLabel = (n: number) =>
-    n === 0 ? '先月と同じ' : n > 0 ? `先月比 +${n}` : `先月比 ${n}`
+  // 「先月比 +1」表記は基準が伝わりにくい（特に登録初月で「+1」だけ見ると
+  // 何との比較か分からない）。前月件数を併記して文脈を補う。
+  // 前月 0 件のときは「初めての1件です」、前月 1 件以上のときは「先月: N → 今月: M」。
+  const deltaLabel = (current: number, previous: number) => {
+    if (previous === 0 && current === 0) return '今月はまだありません'
+    if (previous === 0) return `今月: ${current} 件（初めての一歩）`
+    if (current === previous) return `先月と同じ（${current} 件）`
+    return `先月: ${previous} 件 → 今月: ${current} 件`
+  }
 
   return (
     <>
@@ -344,11 +348,11 @@ export default async function DashboardPage() {
       >
         <div>
           <div className="text-[20px] font-bold text-[var(--text)] mb-1.5">
-            こんにちは、{profile?.name ?? 'ゲスト'}さん
+            {profile?.name ? `こんにちは、${profile.name} さん` : 'こんにちは。Insight Cast へようこそ。'}
           </div>
           {!profile?.name && (
             <Link href="/settings" className="text-[13px] text-[var(--on-primary-container)] hover:underline rounded">
-              名前を設定する <span aria-hidden="true">→</span>
+              まずはお名前を設定する <span aria-hidden="true">→</span>
             </Link>
           )}
           <div className="text-base text-[var(--text2)]">
@@ -401,9 +405,9 @@ export default async function DashboardPage() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[
-          { n: projectList.length,  l: 'プロジェクト',      delta: deltaLabel(projectDelta) },
-          { n: completedInterviewCount, l: '完了した取材', delta: deltaLabel(interviewDelta) },
-          { n: totalArticles,       l: '記事',    delta: deltaLabel(articleDelta) },
+          { n: projectList.length,  l: 'プロジェクト',      delta: deltaLabel(thisMonthProjects, lastMonthProjectCount) },
+          { n: completedInterviewCount, l: '完了した取材', delta: deltaLabel(thisMonthInterviews, lastMonthInterviews) },
+          { n: totalArticles,       l: '記事',    delta: deltaLabel(thisMonthArticles, lastMonthArticles) },
         ].map((stat) => (
           <div key={stat.l} className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-[22px]">
             <div className="text-[34px] font-bold tabular-nums text-[var(--text)] leading-none">{stat.n}</div>

@@ -254,7 +254,10 @@ export default async function CastPage() {
                         <div>
                           <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
                           <div className="font-[family-name:var(--font-noto-serif-jp)] text-[32px] font-bold text-[var(--text)] mb-1">{char.name}</div>
-                          <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                          <div className="mb-4 flex items-baseline gap-2 flex-wrap">
+                            <span className="text-base text-[var(--on-primary-container)] font-semibold">{char.labelJa}</span>
+                            <span className="text-[13px] text-[var(--text3)] font-medium tracking-[.1em] uppercase">{char.label}</span>
+                          </div>
                           <div className="font-[family-name:var(--font-noto-serif-jp)] text-[19px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
                             {char.id === 'mint'
                               ? 'お客様目線で、やさしく引き出します'
@@ -359,7 +362,10 @@ export default async function CastPage() {
                       <div>
                         <div className="text-[13px] text-[var(--text2)] mb-1">{char.species}</div>
                         <div className="font-[family-name:var(--font-noto-serif-jp)] text-[32px] font-bold text-[var(--text)] mb-1">{char.name}</div>
-                        <div className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.1em] uppercase mb-4">{char.label}</div>
+                        <div className="mb-4 flex items-baseline gap-2 flex-wrap">
+                          <span className="text-base text-[var(--on-primary-container)] font-semibold">{char.labelJa}</span>
+                          <span className="text-[13px] text-[var(--text3)] font-medium tracking-[.1em] uppercase">{char.label}</span>
+                        </div>
                         <div className="font-[family-name:var(--font-noto-serif-jp)] text-[19px] font-semibold text-[var(--text)] leading-[1.45] mb-4 pl-4 border-l-[3px] border-[var(--accent)]">
                           {char.specialty || detail.specialty}
                         </div>

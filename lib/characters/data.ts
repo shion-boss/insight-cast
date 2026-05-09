@@ -25,6 +25,8 @@ export type Character = {
   species: string
   emoji: string
   label: string
+  /** 英語ラベルの日本語訳。40〜60代向けに「お客様目線」「業界知見」等で併記する。 */
+  labelJa: string
   description: string
   specialty: string
   available: boolean
@@ -40,6 +42,7 @@ export const CHARACTERS: Character[] = [
     species: 'ネコ',
     emoji: '🐱',
     label: 'Customer Perspective',
+    labelJa: 'お客様目線',
     description: 'お客様の気持ちに寄り添いながら、事業者さんが「当たり前」と思っていることの中から、まだ伝わっていない魅力を引き出します。',
     specialty: 'お客様目線の安心感・気づかい・使う人が感じる価値',
     available: true,
@@ -53,6 +56,7 @@ export const CHARACTERS: Character[] = [
     species: 'フクロウ',
     emoji: '🦉',
     label: 'Industry Insight',
+    labelJa: '業界知見',
     description: '業種への深い知識をもとに、普段は説明しない技術的なこだわりや、他との判断基準の違いを掘り起こします。',
     specialty: '専門知識・技術的な違い・他社との差を言葉にする',
     available: true,
@@ -66,6 +70,7 @@ export const CHARACTERS: Character[] = [
     species: 'キツネ',
     emoji: '🦊',
     label: 'Marketing Strategy',
+    labelJa: 'マーケ視点',
     description: '「なぜ選ばれているのか」をお客様目線で一緒に考えながら、まだうまく言葉にできていない選ばれる理由を引き出します。',
     specialty: '選ばれる理由・伝え方・競合との違いを言葉にする',
     available: true,
@@ -79,6 +84,7 @@ export const CHARACTERS: Character[] = [
     species: 'コーギー',
     emoji: '🐕',
     label: 'Story & Picture',
+    labelJa: '人柄ストーリー',
     description: '人柄・雰囲気・魅力を引き出します',
     specialty: '人柄・ストーリー・雰囲気',
     available: false,
@@ -92,6 +98,7 @@ export const CHARACTERS: Character[] = [
     species: 'モグラ',
     emoji: '🐾',
     label: 'Yes / No Deep Dive',
+    labelJa: 'はい/いいえ深掘り',
     description: 'はい / いいえで答えられる質問から、まだ言葉になっていない価値を掘り起こします',
     specialty: '二択での深掘り・価値の言語化',
     available: false,
@@ -105,6 +112,7 @@ export const CHARACTERS: Character[] = [
     species: 'ニワトリ',
     emoji: '🐔',
     label: 'Promotion & Campaign',
+    labelJa: '告知・キャンペーン',
     description: '告知・キャンペーンの素材を引き出します',
     specialty: 'プロモーション・キャンペーン',
     available: false,

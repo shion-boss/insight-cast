@@ -180,6 +180,9 @@ export default async function InterviewerPage({
 
   return (
     <div className="max-w-2xl">
+      <h1 className="sr-only">
+        {selectedCharacter ? (isHal ? '写真を準備する' : 'テーマを決める') : 'キャストを選ぶ'}
+      </h1>
       <Breadcrumb items={[
           { label: 'プロジェクト一覧', href: '/projects' },
           { label: project.name || project.hp_url, href: `/projects/${id}` },
@@ -288,7 +291,10 @@ export default async function InterviewerPage({
                 <div className="font-medium text-[var(--text)] text-base">{char.name}</div>
                 <div className="text-[13px] text-[var(--text2)] mt-0.5">{char.species}</div>
                 {char.label && (
-                  <div className="text-[13px] text-[var(--on-primary-container)] mt-1 font-medium">{char.label}</div>
+                  <div className="text-[13px] text-[var(--on-primary-container)] mt-1 font-medium">
+                    {char.labelJa}
+                    <span className="ml-1 text-[var(--text3)] font-normal">（{char.label}）</span>
+                  </div>
                 )}
                 <div className="text-[13px] text-[var(--text2)] mt-2 leading-relaxed">{char.description}</div>
                 <div className="text-[13px] text-[var(--text2)] mt-3 font-medium">得意テーマ: {char.specialty}</div>
@@ -513,7 +519,11 @@ export default async function InterviewerPage({
                   className="mb-2 grayscale"
                 />
                 <div className="text-[13px] font-medium text-[var(--text2)]">{char.name}</div>
-                {char.label && <div className="text-[13px] text-[var(--text2)] mt-0.5">{char.label}</div>}
+                {char.label && (
+                  <div className="text-[13px] text-[var(--text2)] mt-0.5">
+                    {char.labelJa}<span className="text-[var(--text3)]">（{char.label}）</span>
+                  </div>
+                )}
                 <div className="text-[13px] text-[var(--text2)] mt-2">準備を進めています</div>
               </div>
             ))}
