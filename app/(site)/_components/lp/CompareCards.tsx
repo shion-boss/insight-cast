@@ -117,6 +117,9 @@ export function CompareCards() {
               <p className="-mx-6 mt-auto px-6 py-4 text-[12px] leading-[1.75]" style={{ background: '#fdf7f0', color: '#7a6555' }}>
                 <strong className="font-bold text-[var(--text)]">ライター1記事分の予算で、</strong>毎月続けられる。
               </p>
+              <p className="-mx-6 px-6 pb-4 text-[11px] leading-[1.7]" style={{ color: 'var(--on-surface-variant)' }}>
+                ※ ライター発注・AIツールの単価は、クラウドソーシング各社の公開料金（2026年4月時点）を当社が確認した参考値です。実際の発注先・条件で変動します。
+              </p>
             </div>
           </div>
 

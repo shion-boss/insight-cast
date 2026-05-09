@@ -121,8 +121,11 @@ export function LegalPageTemplate({
                 </p>
               </div>
               <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
-                <p className="text-xs font-semibold tracking-[0.16em] text-[var(--text3)] uppercase">Last Updated</p>
-                <p className="mt-2 text-base font-semibold text-[var(--text)]">{updatedAt}</p>
+                <p className="text-[13px] font-semibold text-[var(--text3)]">最終更新日</p>
+                <p className="mt-1 text-base font-bold text-[var(--text)]">{updatedAt}</p>
+                <p className="mt-2 text-[13px] text-[var(--text3)] leading-relaxed">
+                  Last Updated
+                </p>
               </div>
             </div>
           }
