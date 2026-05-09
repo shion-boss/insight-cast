@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { checkIsAdmin } from '@/lib/auth-utils.server'
 import { AppShell } from '@/components/app-shell'
-import SentryLoader from '@/components/sentry-loader'
 // ProjectAnalysisNotifier は内部で @supabase/ssr を import するため、
 // 直接 import すると (tool)/layout chunk に Supabase JS が混入し
 // marketing pages の HTML にも script として参照される（Next.js の
@@ -55,7 +54,6 @@ export default async function ToolLayout({ children }: { children: ReactNode }) 
 
   return (
     <div className={geistMono.variable}>
-      <SentryLoader />
       <AppShell
         accountLabel={accountLabel}
         avatarUrl={profile?.avatar_url ?? null}
