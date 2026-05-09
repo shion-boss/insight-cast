@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useState, Suspense } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -9,6 +9,8 @@ import Image from 'next/image'
 
 import { CharacterAvatar, FieldLabel, TextInput } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { detectInAppBrowser } from '@/lib/in-app-browser'
+import { InAppBrowserNotice } from '@/components/auth/in-app-browser-notice'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -16,6 +18,15 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
+  // SNS in-app browser からの開封を検出して Google ログインを事前に弾く。
+  // Google が `disallowed_useragent` (403) を返してユーザーを詰まらせる前に案内する。
+  const [inAppBrowser, setInAppBrowser] = useState<{ isInApp: boolean; appLabel: string | null }>({
+    isInApp: false,
+    appLabel: null,
+  })
+  useEffect(() => {
+    setInAppBrowser(detectInAppBrowser())
+  }, [])
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -128,11 +139,18 @@ function LoginForm() {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              disabled={loading || googleLoading}
+              disabled={loading || googleLoading || inAppBrowser.isInApp}
+              aria-describedby={inAppBrowser.isInApp ? 'login-inapp-notice' : undefined}
               className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-base font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleのページを開いています...' : 'Googleでログイン'}
             </button>
+
+            {inAppBrowser.isInApp && (
+              <div id="login-inapp-notice">
+                <InAppBrowserNotice appLabel={inAppBrowser.appLabel} />
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <hr className="flex-1 border-[var(--border)]" />

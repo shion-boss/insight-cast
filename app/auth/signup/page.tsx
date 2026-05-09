@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -10,6 +10,8 @@ import { Suspense } from 'react'
 
 import { CharacterAvatar, FieldLabel, TextInput } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { detectInAppBrowser } from '@/lib/in-app-browser'
+import { InAppBrowserNotice } from '@/components/auth/in-app-browser-notice'
 
 function SignupForm() {
   const searchParams = useSearchParams()
@@ -33,6 +35,15 @@ function SignupForm() {
   const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
   const [sent, setSent] = useState(false)
+  // SNS in-app browser からの開封を検出して Google ログインを事前に弾く。
+  // Google が `disallowed_useragent` (403) を返してユーザーを詰まらせる前に案内する。
+  const [inAppBrowser, setInAppBrowser] = useState<{ isInApp: boolean; appLabel: string | null }>({
+    isInApp: false,
+    appLabel: null,
+  })
+  useEffect(() => {
+    setInAppBrowser(detectInAppBrowser())
+  }, [])
   const supabase = createClient()
 
   const mint = getCharacter('mint')
@@ -163,11 +174,18 @@ function SignupForm() {
             <button
               type="button"
               onClick={handleGoogleSignup}
-              disabled={loading || googleLoading}
+              disabled={loading || googleLoading || inAppBrowser.isInApp}
+              aria-describedby={inAppBrowser.isInApp ? 'signup-inapp-notice' : undefined}
               className="w-full border-[1.5px] border-[var(--border)] rounded-[var(--r-sm)] bg-[var(--surface)] flex items-center justify-center gap-2.5 py-3 text-base font-semibold text-[var(--text)] hover:border-[var(--accent)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {googleLoading ? 'Googleに移動中...' : effectivePlan ? 'Googleアカウントで申し込む' : 'Googleで新規登録'}
             </button>
+
+            {inAppBrowser.isInApp && (
+              <div id="signup-inapp-notice">
+                <InAppBrowserNotice appLabel={inAppBrowser.appLabel} />
+              </div>
+            )}
 
             <div className="flex items-center gap-3">
               <hr className="flex-1 border-[var(--border)]" />
