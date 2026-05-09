@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { usePathname } from 'next/navigation'
+import { isToolNavActive } from '@/lib/tool-nav-active'
 import { signOut } from '@/lib/actions/auth'
 
 const IconDashboard = () => (
@@ -63,10 +64,7 @@ export function ToolMobileNav({
   isAdmin?: boolean
 }) {
   const pathname = usePathname()
-  const isActive = (href: string) => {
-    if (href === '/dashboard') return pathname === '/dashboard'
-    return pathname === href || pathname.startsWith(href + '/')
-  }
+  const isActive = (href: string) => isToolNavActive(href, pathname)
   const [open, setOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)

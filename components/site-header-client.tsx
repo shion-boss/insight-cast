@@ -20,9 +20,13 @@ const NAV_LINKS: { href: string; label: string }[] = [
 ]
 
 export function SiteHeaderClient() {
-  // 未解決時は未ログイン側を楽観的に描画する。
-  // marketing pages の大半の訪問者は未ログインのため flash は最小限になる。
-  const isLoggedIn = useIsLoggedIn() === true
+  // null = マウント前で auth 状態が未解決。true/false で確定。
+  // 静的生成された marketing ページではサーバー側で cookie を読めないため、
+  // クライアント側でマウント後に判定する。マウント前後で UI が切り替わると
+  // 「ログインしているのに『ログイン/無料で試す』が一瞬見える」というチラつきが
+  // 起きるため、未解決の間は CTA 部分をスケルトンで描画してフリッカーを抑える。
+  const authState = useIsLoggedIn()
+  const isLoggedIn = authState === true
   const pathname = usePathname()
   const headerRef = useRef<HTMLElement>(null)
   const [navActive, setNavActive] = useState(false)
@@ -116,8 +120,14 @@ export function SiteHeaderClient() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="hidden lg:flex items-center gap-2 sm:gap-3">
-                {isLoggedIn ? (
+              <div className="hidden lg:flex items-center gap-2 sm:gap-3 min-h-[40px]">
+                {authState === null ? (
+                  // 解決前のスケルトン。実 CTA とほぼ同じ寸法で挟んでレイアウトシフトを防ぐ。
+                  <div aria-hidden="true" className="flex items-center gap-2 sm:gap-3">
+                    <span className="h-10 w-[110px] rounded-full bg-[var(--bg2)]/70 animate-pulse" />
+                    <span className="h-10 w-[140px] rounded-full bg-[var(--bg2)]/70 animate-pulse" />
+                  </div>
+                ) : isLoggedIn ? (
                   <>
                     <Link href="/dashboard" prefetch={false} className={getButtonClass('ghost', 'rounded-full px-4 py-2 text-base font-medium')}>
                       ダッシュボード

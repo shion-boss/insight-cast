@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { isToolNavActive } from '@/lib/tool-nav-active'
 
 const IconDashboard = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -66,10 +67,7 @@ function navLinkClass(active: boolean) {
 
 function useActiveNav() {
   const pathname = usePathname()
-  return (href: string) => {
-    if (href === '/dashboard') return pathname === '/dashboard'
-    return pathname === href || pathname.startsWith(href + '/')
-  }
+  return (href: string) => isToolNavActive(href, pathname)
 }
 
 export function ToolSidebarNav() {
