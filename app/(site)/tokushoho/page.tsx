@@ -5,7 +5,7 @@ import { LegalPageTemplate } from '@/components/public-layout'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: '特定商取引法に基づく表記 | Insight Cast',
+  title: '特定商取引法に基づく表記',
   description: 'Insight Cast の特定商取引法に基づく表記ページです。販売事業者の名称・連絡先、サービス料金、支払方法、解約条件などを記載しています。',
   alternates: { canonical: `${APP_URL}/tokushoho` },
 }

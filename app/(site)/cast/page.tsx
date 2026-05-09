@@ -13,7 +13,7 @@ import { CastFitFinder } from './_components/CastFitFinder'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'AIキャスト紹介 | Insight Cast',
+  title: 'AIキャスト紹介',
   description: '6名のAIキャストを紹介します。ミント・クラウス・レインの3名は無料でご利用いただけます。キャストごとに引き出せる価値と取材スタイルが異なります。深めたいテーマや伝えたいことに合わせてお選びください。',
   alternates: { canonical: `${APP_URL}/cast` },
   openGraph: {

@@ -5,7 +5,7 @@ import { FaqContent } from './faq-client'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'よくある質問 | Insight Cast',
+  title: 'よくある質問',
   description: 'Insight Cast のよくある質問をまとめています。サービス内容・キャストの使い方・料金プランの違い・データの扱いについてお答えします。解決しない場合はお気軽にお問い合わせください。',
   alternates: { canonical: `${APP_URL}/faq` },
   openGraph: {

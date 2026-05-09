@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import InviteAcceptButton from './_components/InviteAcceptButton'
 
 export const metadata: Metadata = {
-  title: 'プロジェクトのメンバー招待 | Insight Cast',
+  title: 'プロジェクトのメンバー招待',
 }
 
 type InvitationInfo = {

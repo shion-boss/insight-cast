@@ -140,6 +140,7 @@ export function SettingsClient({
   const [notificationSaving, setNotificationSaving] = useState(false)
   const [notificationSaved, setNotificationSaved] = useState(false)
   const [notificationError, setNotificationError] = useState<string | null>(null)
+  const [currentPassword, setCurrentPassword] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [passwordSaving, setPasswordSaving] = useState(false)
@@ -269,6 +270,11 @@ export function SettingsClient({
   async function handlePasswordSave() {
     setPasswordError(null)
 
+    if (!currentPassword) {
+      setPasswordError('現在のパスワードを入力してください。')
+      return
+    }
+
     if (password.length < 8) {
       setPasswordError('新しいパスワードは 8 文字以上で入力してください。')
       return
@@ -279,16 +285,42 @@ export function SettingsClient({
       return
     }
 
+    if (password === currentPassword) {
+      setPasswordError('新しいパスワードは現在のパスワードと違うものにしてください。')
+      return
+    }
+
     setPasswordSaving(true)
 
-    const { error } = await supabase.auth.updateUser({ password })
+    try {
+      const res = await fetch('/api/account/password', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword: password }),
+      })
 
-    if (error) {
-      setPasswordError('パスワードを更新できませんでした。もう一度お試しください。')
+      if (!res.ok) {
+        const json = await res.json().catch(() => null)
+        const code = typeof json?.error === 'string' ? json.error : ''
+        const message =
+          code === 'invalid_current_password'
+            ? '現在のパスワードが正しくありません。'
+            : code === 'new_password_too_short'
+              ? '新しいパスワードは 8 文字以上で入力してください。'
+              : code === 'same_password'
+                ? '新しいパスワードは現在のパスワードと違うものにしてください。'
+                : 'パスワードを更新できませんでした。もう一度お試しください。'
+        setPasswordError(message)
+        setPasswordSaving(false)
+        return
+      }
+    } catch {
+      setPasswordError('通信に失敗しました。時間をおいてもう一度お試しください。')
       setPasswordSaving(false)
       return
     }
 
+    setCurrentPassword('')
     setPassword('')
     setPasswordConfirm('')
     setPasswordSaving(false)
@@ -403,7 +435,9 @@ export function SettingsClient({
     : null
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[200px_1fr]">
+    <>
+      <h1 className="mb-6 text-xl font-bold text-[var(--text)] sm:text-2xl">設定</h1>
+      <div className="grid items-start gap-8 lg:grid-cols-[200px_1fr]">
         <nav role="tablist" aria-label="設定セクション" className="flex flex-row gap-0.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:sticky lg:top-20 lg:flex-col">
           {SECTIONS.map((section) => (
             <button
@@ -743,7 +777,13 @@ export function SettingsClient({
                     ? { label: 'お試し取材', value: `${plan.lifetimeInterviewLimit} 回` }
                     : { label: '月間取材上限', value: `${plan.monthlyInterviewLimit} 回` },
                   { label: 'プロジェクト上限', value: `${plan.maxProjects} 件` },
-                  { label: '競合調査', value: `各プロジェクト ${plan.maxCompetitorsPerProject} 社` },
+                  {
+                    label: '競合調査',
+                    value:
+                      plan.maxCompetitorsPerProject > 0
+                        ? `各プロジェクト ${plan.maxCompetitorsPerProject} 社`
+                        : '対象外（個人向け以上で利用可）',
+                  },
                 ].map((item) => (
                   <div key={item.label} className="rounded-xl bg-[var(--bg2)] px-4 py-4">
                     <p className="text-[13px] text-[var(--text2)]">{item.label}</p>
@@ -879,6 +919,20 @@ export function SettingsClient({
               <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-5">
                 <div className="space-y-4">
                   <div>
+                    <label htmlFor="settings-current-password" className="mb-1.5 block text-base font-semibold text-[var(--text)]">現在のパスワード</label>
+                    <TextInput
+                      id="settings-current-password"
+                      type="password"
+                      autoComplete="current-password"
+                      value={currentPassword}
+                      onChange={(event) => setCurrentPassword(event.target.value)}
+                      placeholder="今のパスワード"
+                      disabled={passwordInputsDisabled}
+                      aria-invalid={!!passwordError || undefined}
+                      aria-describedby={passwordError ? 'settings-password-error' : undefined}
+                    />
+                  </div>
+                  <div>
                     <label htmlFor="settings-password" className="mb-1.5 block text-base font-semibold text-[var(--text)]">新しいパスワード</label>
                     <TextInput
                       id="settings-password"
@@ -909,7 +963,7 @@ export function SettingsClient({
                 </div>
 
                 <p className="mt-3 text-[13px] leading-6 text-[var(--text2)]">
-                  現在ログイン中のため、確認メールなしで更新されます。共有端末では更新後にログアウトしてください。
+                  現在のパスワードを確認したうえで、すぐに新しいパスワードに切り替わります。共有端末では更新後にログアウトしてください。
                 </p>
 
                 {passwordError && (
@@ -923,7 +977,7 @@ export function SettingsClient({
                   <button
                     type="button"
                     onClick={handlePasswordSave}
-                    disabled={passwordSaving || !password || !passwordConfirm}
+                    disabled={passwordSaving || !currentPassword || !password || !passwordConfirm}
                     className={getButtonClass('primary', 'px-4 py-2 text-base')}
                   >
                     {passwordSaving ? '更新中...' : 'パスワードを変更する'}
@@ -937,6 +991,7 @@ export function SettingsClient({
             </section>
           )}
         </div>
-    </div>
+      </div>
+    </>
   )
 }

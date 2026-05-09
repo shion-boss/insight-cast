@@ -15,7 +15,7 @@ const breadcrumbJsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: 'お問い合わせ | Insight Cast',
+  title: 'お問い合わせ',
   description: 'Insight Cast へのご質問・ご相談はこちらから。サービスの使い方、業種への対応、料金のことなど、気になることをお気軽にご連絡ください。通常2営業日以内にご返信します。',
   alternates: { canonical: `${APP_URL}/contact` },
   openGraph: {

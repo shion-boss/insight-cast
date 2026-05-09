@@ -5,7 +5,7 @@ import { LegalPageTemplate } from '@/components/public-layout'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: '利用規約 | Insight Cast',
+  title: '利用規約',
   description: 'Insight Cast のご利用規約です。サービスを利用いただく際の基本条件、禁止事項、著作権などの権利関係、免責事項などをまとめて定めています。',
   alternates: { canonical: `${APP_URL}/terms` },
 }

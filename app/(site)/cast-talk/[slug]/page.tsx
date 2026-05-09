@@ -45,8 +45,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const talk = await getCastTalk(slug)
-  if (!talk) return { title: 'キャスト対談 | Insight Cast' }
-  const title = `${talk.title} | キャスト対談 | Insight Cast`
+  if (!talk) return { title: 'キャスト対談' }
+  const title = `${talk.title} | キャスト対談`
   const description = talk.summary ?? 'Insight CastのAIキャストによる対話記事。'
   return {
     title,

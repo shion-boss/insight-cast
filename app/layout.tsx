@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Insight Cast',
     description: '動物AIインタビュアーが取材して、ホームページにまだ書けていない価値を引き出します。',
-    url: APP_URL,
+    url: `${APP_URL}/`,
     siteName: 'Insight Cast',
     locale: 'ja_JP',
     type: 'website',

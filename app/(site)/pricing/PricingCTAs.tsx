@@ -81,10 +81,10 @@ export function PlanCardCTA({
       return (
         <div
           className="w-full text-center py-3 rounded-[var(--r-sm)] text-base font-semibold inline-flex items-center justify-center border-[1.5px] border-[var(--border)] bg-[var(--surface2)] text-[var(--text2)] cursor-not-allowed"
-          title="より上位のプランをご契約中のため、このプランは選択できません。プラン変更は設定からご相談ください。"
+          title="現在のプランより下位のため、ダウングレード対象です。ダウングレードは現在対応していません。"
           aria-disabled="true"
         >
-          上位プランをご契約中
+          現在のプランより下位
         </div>
       )
     }

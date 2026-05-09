@@ -17,7 +17,7 @@ const FIRST_READ_SLUGS = [
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'ブログ | Insight Cast',
+  title: 'ブログ',
   description:
     'Insight Cast の公式ブログです。AIキャストを使った取材の活用事例、インタビュー記事、取材の記録など、ホームページを一次情報で育てるためのヒントを定期的にお届けしています。ぜひご参考にください。',
   alternates: { canonical: `${APP_URL}/blog` },

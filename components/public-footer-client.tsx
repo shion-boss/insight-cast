@@ -78,7 +78,7 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
             ].map((col) => (
               <div key={col.heading}>
                 <p className="text-[11px] font-semibold tracking-[0.12em] uppercase text-[var(--text2)] mb-3">{col.heading}</p>
-                <ul className="space-y-2.5">
+                <ul className="space-y-1">
                   {col.links.map((link) => {
                     // tool / auth / pricing 系は別 chunk（Supabase 等）を引き連れ
                     // てくるので、フッターからの prefetch を無効化して marketing
@@ -89,7 +89,11 @@ export function PublicFooterClient({ showPromo = true }: { showPromo?: boolean }
                       || link.href === '/pricing'
                     return (
                       <li key={link.href}>
-                        <Link href={link.href} prefetch={skipPrefetch ? false : undefined} className="text-[13px] text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm">
+                        <Link
+                          href={link.href}
+                          prefetch={skipPrefetch ? false : undefined}
+                          className="block min-h-11 py-2 text-[13px] text-[var(--text2)] transition-colors hover:text-[var(--accent)] rounded-sm"
+                        >
                           {link.label}
                         </Link>
                       </li>

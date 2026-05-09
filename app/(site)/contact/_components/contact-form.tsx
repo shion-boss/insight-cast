@@ -116,7 +116,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
         <label htmlFor="website">Website</label>
         <input
@@ -134,7 +134,9 @@ export function ContactForm() {
         <FieldLabel required htmlFor="contact-name">お名前</FieldLabel>
         <TextInput
           id="contact-name"
+          name="customer_name"
           type="text"
+          required
           value={name}
           onChange={(e) => { setName(e.target.value); setFieldErrors((p) => ({ ...p, name: undefined })) }}
           placeholder="山田 花子"
@@ -153,7 +155,9 @@ export function ContactForm() {
         <FieldLabel required htmlFor="contact-email">メールアドレス</FieldLabel>
         <TextInput
           id="contact-email"
+          name="email"
           type="email"
+          required
           value={email}
           onChange={(e) => { setEmail(e.target.value); setFieldErrors((p) => ({ ...p, email: undefined })) }}
           placeholder="example@example.com"
@@ -171,6 +175,7 @@ export function ContactForm() {
         <FieldLabel htmlFor="contact-referral">どこでこのサービスを知りましたか？（任意）</FieldLabel>
         <select
           id="contact-referral"
+          name="referral_source"
           value={referralSource}
           onChange={(e) => setReferralSource(e.target.value)}
           className="w-full rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-base text-[var(--text)] transition-colors duration-150 hover:border-[var(--border2)] focus-visible:border-[var(--accent)]"
@@ -188,6 +193,7 @@ export function ContactForm() {
         <FieldLabel htmlFor="contact-industry">業種（任意）</FieldLabel>
         <TextInput
           id="contact-industry"
+          name="industry"
           type="text"
           value={industry}
           onChange={(e) => setIndustry(e.target.value)}
@@ -200,6 +206,7 @@ export function ContactForm() {
         <FieldLabel htmlFor="contact-hp-url">現在のホームページURL（任意）</FieldLabel>
         <TextInput
           id="contact-hp-url"
+          name="hp_url"
           type="text"
           value={hpUrl}
           onChange={(e) => setHpUrl(e.target.value)}
@@ -213,6 +220,8 @@ export function ContactForm() {
         <FieldLabel required htmlFor="contact-message">ご質問・ご相談内容</FieldLabel>
         <textarea
           id="contact-message"
+          name="message"
+          required
           value={message}
           onChange={(e) => { setMessage(e.target.value); setFieldErrors((p) => ({ ...p, message: undefined })) }}
           rows={5}

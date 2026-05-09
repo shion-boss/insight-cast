@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { ArticlesServerFilter } from '@/components/articles-server-filter'
@@ -5,6 +6,10 @@ import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter, getCastName } from '@/lib/characters'
 import { createClient } from '@/lib/supabase/server'
 import { ARTICLES_PAGE_SIZE } from './constants'
+
+export const metadata: Metadata = {
+  title: '記事一覧',
+}
 
 const ARTICLE_TYPE_LABEL: Record<string, string> = {
   client: 'ブログ記事',

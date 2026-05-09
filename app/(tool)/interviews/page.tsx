@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { ButtonLink, CharacterAvatar, InterviewerSpeech } from '@/components/ui'
@@ -7,6 +8,10 @@ import { buildArticleCountByInterview, getInterviewManagementHref, getInterviewT
 import { getUserPlan } from '@/lib/plans'
 import { createClient } from '@/lib/supabase/server'
 import { INTERVIEWS_PAGE_SIZE } from './constants'
+
+export const metadata: Metadata = {
+  title: '取材メモ一覧',
+}
 
 type Project = { id: string; name: string | null; hp_url: string; user_id: string }
 type Interview = {

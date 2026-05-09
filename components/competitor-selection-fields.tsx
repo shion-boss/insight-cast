@@ -223,7 +223,7 @@ export default function CompetitorSelectionFields({
 
       {reachedMax && !overLimit && (
         <p className="text-[13px] text-[var(--warn)]">
-          競合は3件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
+          参考HPは{MAX_COMPETITORS}件までです。別の候補を選ぶには、いま入っているURLを1件外してください。
         </p>
       )}
 

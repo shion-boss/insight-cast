@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useFormStatus } from 'react-dom'
 import { useState } from 'react'
 import { createProject } from '@/lib/actions/projects'
@@ -125,14 +126,29 @@ export default function NewProjectForm({ errorMessage, maxCompetitors = 3 }: Pro
           </div>
         </section>
 
-        <CompetitorSelectionFields
-          siteUrl={url}
-          maxCompetitors={maxCompetitors}
-          onSelectionStateChange={(state) => {
-            setCanSubmit(state.canSubmit)
-            setCompetitorIssue(state.issue)
-          }}
-        />
+        {maxCompetitors > 0 ? (
+          <CompetitorSelectionFields
+            siteUrl={url}
+            maxCompetitors={maxCompetitors}
+            onSelectionStateChange={(state) => {
+              setCanSubmit(state.canSubmit)
+              setCompetitorIssue(state.issue)
+            }}
+          />
+        ) : (
+          <section className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-6">
+            <h2 className="text-base font-semibold text-[var(--text)]">参考にするHPの登録（任意）</h2>
+            <p className="mt-2 text-base leading-relaxed text-[var(--text2)]">
+              競合調査は個人向け以上のプランで利用できます。プランを変えると、似たHPを最大3件まで登録できるようになります。
+            </p>
+            <Link
+              href="/pricing?reason=competitor_unavailable"
+              className="mt-4 inline-flex items-center gap-1 rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white transition-colors hover:bg-[var(--accent-h)]"
+            >
+              プランを見る <span aria-hidden="true">→</span>
+            </Link>
+          </section>
+        )}
 
         {competitorIssue && (
           <div role="alert" className="flex items-start gap-3 rounded-[var(--r-sm)] bg-[var(--err-l)] px-4 py-3">

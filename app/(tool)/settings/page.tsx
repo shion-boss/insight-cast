@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import type { Metadata } from 'next'
-export const metadata: Metadata = { robots: { index: false, follow: false } }
+export const metadata: Metadata = { title: '設定', robots: { index: false, follow: false } }
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'

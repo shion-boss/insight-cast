@@ -1,3 +1,5 @@
+import type { Metadata } from 'next'
+
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
@@ -8,6 +10,10 @@ import { isProjectAnalysisReady } from '@/lib/analysis/project-readiness'
 import { getProjectAnalysisBadge, getProjectContentBadge } from '@/lib/project-badges'
 import { getUserPlan, getPlanLimits, getJstMonthKey } from '@/lib/plans'
 import type { Character } from '@/lib/characters'
+
+export const metadata: Metadata = {
+  title: 'ダッシュボード',
+}
 
 async function SharedProjectsZeroState({
   userId,

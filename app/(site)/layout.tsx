@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import { PublicHeader, PublicFooter } from '@/components/public-server-components'
 
-// Override the root template — site pages set their own full title e.g. "About | Insight Cast"
+// 子ページは画面名だけを title にし、" | Insight Cast" は template が付ける。
+// 例: title: '料金プラン' → '料金プラン | Insight Cast'
+// title 内にブランド名を含めたいページは title: { absolute: '...' } を使う。
 export const metadata: Metadata = {
-  title: { template: '%s', default: 'Insight Cast' },
+  title: { template: '%s | Insight Cast', default: 'Insight Cast' },
 }
 
 export default function SiteLayout({ children }: { children: ReactNode }) {

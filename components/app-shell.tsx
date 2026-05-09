@@ -25,7 +25,7 @@ function cx(...classes: Array<string | false | null | undefined>) {
 }
 
 function getAccountInitial(value: string) {
-  return value.trim().charAt(0) || 'U'
+  return (value.trim().charAt(0) || 'U').toUpperCase()
 }
 
 export function AppShell({

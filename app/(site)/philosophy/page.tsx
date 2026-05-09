@@ -5,7 +5,7 @@ import { PublicHero } from '@/components/public-layout'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'AI時代の発信について | Insight Cast',
+  title: 'AI時代の発信について',
   description:
     'AI検索時代に一次情報が重要な理由、インタビューが価値を引き出せる理由、ホームページ更新が止まってしまう本当の原因。3つのテーマで Insight Cast の思想を整理しています。',
   alternates: { canonical: `${APP_URL}/philosophy` },

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -11,6 +12,10 @@ import { createClient } from '@/lib/supabase/server'
 import { getUserPlan, getPlanLimits } from '@/lib/plans'
 import { parsePageParam } from '@/lib/projects/pagination'
 import { ProjectListPagination } from './ProjectListPagination'
+
+export const metadata: Metadata = {
+  title: 'プロジェクト一覧',
+}
 
 const PROJECTS_PER_PAGE = 12
 

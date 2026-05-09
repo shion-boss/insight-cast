@@ -10,7 +10,7 @@ import { Breadcrumb } from '@/components/ui'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: 'キャスト対談 | Insight Cast',
+  title: 'キャスト対談',
   description:
     'Insight Cast のAIキャストたちが語り合う対話形式の読み物です。ホームページを一次情報で育てるためのヒントや、情報発信についての考え方を、ミント・クラウス・レインそれぞれの視点からお届けしています。',
   alternates: { canonical: `${APP_URL}/cast-talk` },
