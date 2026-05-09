@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import {
   CharacterAvatar,
+  InterviewerSpeech,
   TextInput,
   getButtonClass,
 } from '@/components/ui'
@@ -520,8 +521,29 @@ export function SettingsClient({
                       maxLength={100}
                       disabled={profileInputsDisabled}
                       aria-invalid={!!profileError || undefined}
-                      aria-describedby={profileError ? 'settings-profile-error' : undefined}
+                      aria-describedby={profileError ? 'settings-profile-error' : 'settings-name-bubble'}
                     />
+                    {/* 入力した表示名が「取材中の呼び名に使われる」ことをミントが
+                        その場で伝える。ユーザー操作なしで反映が見えるよう、
+                        name state にリアルタイム追従する。 */}
+                    {name.trim().length > 0 && (
+                      <div id="settings-name-bubble" className="mt-3" aria-live="polite">
+                        <InterviewerSpeech
+                          icon={(
+                            <CharacterAvatar
+                              src={mint?.icon48}
+                              alt={`${mint?.name ?? 'ミント'}のアイコン`}
+                              emoji={mint?.emoji}
+                              size={40}
+                            />
+                          )}
+                          name={mint?.name ?? 'ミント'}
+                          title={`${name.trim()} さんですね！`}
+                          description="取材のときも、AIキャストはこの名前でお呼びします。"
+                          tone="soft"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label htmlFor="settings-first-person" className="mb-1.5 block text-base font-semibold text-[var(--text)]">記事の中での一人称</label>
