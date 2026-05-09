@@ -92,6 +92,7 @@ export function ConversationBubbleEditor({
                 <textarea
                   value={e.content}
                   onChange={ev => handleChange(exchanges.map((ex, j) => j === i ? { ...ex, content: ev.target.value } : ex))}
+                  aria-label={`${e.speaker || (isInterviewer ? interviewerName : clientName)}の発言を編集`}
                   className="w-full max-w-[80%] resize-none px-3.5 py-2.5 text-base leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]/40"
                   style={{
                     background: isInterviewer ? questionBg : answerBg,

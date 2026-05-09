@@ -134,7 +134,7 @@ export default async function ArticleDetailPage({
         <section className={getPanelClass('rounded-[var(--r-xl)] p-6')}>
           <div>
             <p className="text-[13px] text-[var(--text2)]">{project.name || project.hp_url}</p>
-            <h2 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h2>
+            <h1 className="mt-2 text-xl font-semibold text-[var(--text)]">{article.title || '記事'}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
               <p className="text-base text-[var(--text2)]">
                 {ARTICLE_TYPE_LABEL[article.article_type ?? ''] ?? '記事'} ・ {formatDateTime(article.created_at)}

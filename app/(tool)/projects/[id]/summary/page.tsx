@@ -74,6 +74,46 @@ export default function SummaryPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
+  const [regeneratingSummary, setRegeneratingSummary] = useState(false)
+  const [showRegenerateDialog, setShowRegenerateDialog] = useState(false)
+
+  async function handleRegenerateSummary() {
+    if (regeneratingSummary || !interviewId) return
+    setShowRegenerateDialog(false)
+    setRegeneratingSummary(true)
+    try {
+      const res = await fetch(`/api/projects/${projectId}/interview/summarize`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ interviewId, regenerate: true }),
+      })
+      if (!res.ok) {
+        showToast({
+          title: '取材メモを作り直せませんでした。時間をおいてもう一度お試しください。',
+          tone: 'warning',
+          characterId: 'mint',
+        })
+        setRegeneratingSummary(false)
+        return
+      }
+      showToast({
+        title: '取材メモを作り直しました',
+        description: '記事テーマも最新の内容に更新されています。',
+        characterId: data?.interviewerType ?? 'mint',
+      })
+      // 再生成後に最新の summary / themes を再取得して画面に反映する
+      await loadSummary({ manual: true })
+    } catch {
+      showToast({
+        title: '通信に失敗しました。時間をおいてもう一度お試しください。',
+        tone: 'warning',
+        characterId: 'mint',
+      })
+    } finally {
+      setRegeneratingSummary(false)
+    }
+  }
+
   async function handleDeleteInterview() {
     setDeleting(true)
     try {
@@ -429,12 +469,22 @@ export default function SummaryPage() {
 
             {/* 記事テーマ候補 */}
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
                 <p className="font-bold text-[var(--text)] text-base">記事テーマ候補</p>
                 {articles.length > 0 && (
                   <span className="text-[11px] font-semibold text-[var(--ok)] bg-[var(--ok-l)] px-2.5 py-0.5 rounded-full">
                     {articles.length}件作成済み
                   </span>
+                )}
+                {canEdit && data?.themes && data.themes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowRegenerateDialog(true)}
+                    disabled={regeneratingSummary}
+                    className="ml-auto text-[12px] font-semibold text-[var(--text2)] hover:text-[var(--accent)] underline-offset-2 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {regeneratingSummary ? '作り直しています...' : '取材メモを作り直す'}
+                  </button>
                 )}
               </div>
               {data?.themes && data.themes.length > 0 ? (
@@ -621,6 +671,19 @@ export default function SummaryPage() {
         confirming={deleting}
         onCancel={() => setShowDeleteDialog(false)}
         onConfirm={() => void handleDeleteInterview()}
+      />
+    )}
+
+    {showRegenerateDialog && (
+      <ConfirmDialog
+        dialogId="regenerate-summary"
+        title="取材メモを作り直しますか？"
+        description="取材ログをもう一度読み直して、引き出せた価値と記事テーマを作り直します。すでに作った記事はそのまま残ります。"
+        confirmLabel="作り直す"
+        confirmingLabel="作り直しています..."
+        confirming={regeneratingSummary}
+        onCancel={() => setShowRegenerateDialog(false)}
+        onConfirm={() => void handleRegenerateSummary()}
       />
     )}
     </>

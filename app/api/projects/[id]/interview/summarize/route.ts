@@ -30,9 +30,14 @@ export async function POST(
 
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid json' }, { status: 400 })
-  const bodyParsed = z.object({ interviewId: z.string().uuid() }).safeParse(body)
+  const bodyParsed = z.object({
+    interviewId: z.string().uuid(),
+    // 既存の summary / themes を無視して再生成する。
+    // F-4 の数値欠落のような旧データを修復する用途で使う。
+    regenerate: z.boolean().optional(),
+  }).safeParse(body)
   if (!bodyParsed.success) return NextResponse.json({ error: 'invalid params' }, { status: 400 })
-  const { interviewId } = bodyParsed.data
+  const { interviewId, regenerate = false } = bodyParsed.data
 
   const { data: interview } = await supabase
     .from('interviews')
@@ -60,7 +65,7 @@ export async function POST(
     return NextResponse.json({ error: 'free_plan_locked' }, { status: 403 })
   }
 
-  if (interview.summary) {
+  if (interview.summary && !regenerate) {
     return NextResponse.json({ summary: interview.summary, themes: interview.themes })
   }
 

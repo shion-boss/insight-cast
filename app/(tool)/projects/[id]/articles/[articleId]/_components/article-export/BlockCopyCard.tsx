@@ -86,6 +86,7 @@ function BlockCopyCardInner({ kind, text, markdownCopyText, label, isEditing, on
             value={localText}
             onChange={e => setLocalText(e.target.value)}
             onBlur={() => onEditDone?.(origRef.current, localText)}
+            aria-label={`${label ?? BLOCK_LABEL[kind]}を編集`}
             className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}
             style={{ fieldSizing: 'content' } as React.CSSProperties}
             rows={2}
@@ -165,6 +166,7 @@ export function BlockCopyCard({ kind, text, rawText, isEditing, onEditDone, mode
             value={localText}
             onChange={e => setLocalText(e.target.value)}
             onBlur={() => onEditDone?.(origRef.current, localText)}
+            aria-label={`${BLOCK_LABEL[kind]}を編集`}
             className={`w-full resize-none bg-transparent focus:outline-none focus-visible:ring-1 focus-visible:ring-[var(--accent)]/40 rounded leading-relaxed text-[var(--text)] ${kind === 'title' ? 'text-base font-bold' : kind === 'heading' ? 'text-base font-semibold' : 'text-base'}`}
             style={{ fieldSizing: 'content' } as React.CSSProperties}
             rows={2}
