@@ -308,7 +308,7 @@ export default async function ProjectsPage({
                           ロック中
                         </StatusPill>
                       )}
-                      {!(isShared && analysisBadge.label === '未調査') && (
+                      {!(isShared && analysisBadge.label === '自社HP未調査') && (
                         <StatusPill tone={analysisBadge.tone} className="px-2.5 py-1 text-[11px] font-semibold">
                           {analysisBadge.label}
                         </StatusPill>

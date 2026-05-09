@@ -551,7 +551,7 @@ export default async function ProjectPage({
       {/* メンバー共有セクション（オーナーのみ表示） */}
       {isOwner && (
         <div className="mt-8">
-          <ProjectMemberSection projectId={id} />
+          <ProjectMemberSection projectId={id} memberInvitesAllowed={ownerPlan === 'business'} />
         </div>
       )}
 

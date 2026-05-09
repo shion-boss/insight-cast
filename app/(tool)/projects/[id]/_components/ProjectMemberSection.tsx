@@ -147,7 +147,13 @@ function formatExpiry(value: string) {
   }).format(new Date(value))
 }
 
-export function ProjectMemberSection({ projectId }: { projectId: string }) {
+export function ProjectMemberSection({
+  projectId,
+  // メンバー招待が現在のプランで許可されているか。サーバー側 API
+  // (POST /api/projects/[id]/members) は business プランしか受け付けないため、
+  // UI でも事前に disabled + 案内するのが整合的。
+  memberInvitesAllowed = true,
+}: { projectId: string; memberInvitesAllowed?: boolean }) {
   const [data, setData] = useState<MembersData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -457,7 +463,19 @@ export function ProjectMemberSection({ projectId }: { projectId: string }) {
             {/* 招待フォーム */}
             <div className="border-t border-[var(--border)] px-5 py-5">
               <p className="text-base font-semibold text-[var(--text)] mb-3">メンバーを招待する</p>
-              {isAtLimit ? (
+              {!memberInvitesAllowed ? (
+                <div className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-4">
+                  <p className="text-base text-[var(--text2)] leading-relaxed">
+                    メンバー招待は<strong className="font-semibold text-[var(--text)]">法人プラン</strong>でご利用いただけます。
+                  </p>
+                  <a
+                    href="/pricing?reason=member_invites"
+                    className="mt-3 inline-flex min-h-[44px] items-center rounded-full border border-[var(--accent)] bg-[var(--accent)] px-4 py-2 text-base font-semibold text-white hover:opacity-90 transition-opacity"
+                  >
+                    プランを見る <span aria-hidden="true">→</span>
+                  </a>
+                </div>
+              ) : isAtLimit ? (
                 <p className="text-base text-[var(--text2)]">
                   メンバー上限（{data?.max}名）に達しています。メンバーを削除してから招待してください。
                 </p>

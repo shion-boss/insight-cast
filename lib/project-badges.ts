@@ -9,14 +9,14 @@ export function getProjectAnalysisBadge(status: string, analysisReady: boolean):
   const resolvedStatus = resolveProjectAnalysisStatus(status, analysisReady)
 
   if (resolvedStatus === 'analyzing') {
-    return { label: '調査中', tone: 'warning' }
+    return { label: '自社HP調査中', tone: 'warning' }
   }
 
   if (resolvedStatus === 'report_ready') {
-    return { label: '調査済み', tone: 'info' }
+    return { label: '自社HP調査済み', tone: 'info' }
   }
 
-  return { label: '未調査', tone: 'neutral' }
+  return { label: '自社HP未調査', tone: 'neutral' }
 }
 
 export function getProjectContentBadge(input: {

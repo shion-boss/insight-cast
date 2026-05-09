@@ -575,16 +575,16 @@ export default function SummaryPage() {
 
           {/* サイドバー */}
           <aside className="space-y-4">
-            {/* 記事を受け取る */}
+            {/* 記事を作る */}
             {canEdit && (
               <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--r-lg)] p-6">
-                <p className="font-bold text-[var(--text)] text-base mb-2">記事を受け取る</p>
-                <p className="text-base text-[var(--text2)] leading-[1.75] mb-4">上のテーマから選んで記事を作ります。種類・文字量を設定できます。</p>
+                <p className="font-bold text-[var(--text)] text-base mb-2">テーマを選んで記事を作る</p>
+                <p className="text-base text-[var(--text2)] leading-[1.75] mb-4">上のテーマから1つ選びます。種類・文字量も設定できます。</p>
                 <Link
                   href={`/projects/${projectId}/article?interviewId=${interviewId}${from === 'dashboard' ? '&from=dashboard' : ''}`}
                   className="flex w-full items-center justify-center bg-[var(--accent)] text-white text-base font-semibold py-2.5 rounded-full hover:bg-[var(--accent-h)] transition-colors"
                 >
-                  記事を受け取る <span aria-hidden="true">→</span>
+                  テーマを選んで記事を作る <span aria-hidden="true">→</span>
                 </Link>
               </div>
             )}

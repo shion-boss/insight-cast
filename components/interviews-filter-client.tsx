@@ -277,7 +277,7 @@ function FilterContent({
                   <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">プロジェクト</th>
                   <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">ステータス</th>
                   <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">記事</th>
-                  <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">未作成テーマ</th>
+                  <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">記事候補（未作成）</th>
                 </tr>
               </thead>
               <tbody className="bg-[var(--surface)]">

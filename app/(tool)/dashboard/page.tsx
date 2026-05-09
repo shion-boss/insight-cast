@@ -396,7 +396,7 @@ export default async function DashboardPage() {
               href={interviewerHref}
               className={getButtonClass('primary', 'text-base px-4 py-2')}
             >
-              {projectList.length > 1 ? <>プロジェクトを選ぶ <span aria-hidden="true">→</span></> : <>取材を始める <span aria-hidden="true">→</span></>}
+              {projectList.length > 1 ? <>プロジェクトを選ぶ <span aria-hidden="true">→</span></> : <>いますぐ取材を始める <span aria-hidden="true">→</span></>}
             </Link>
           )}
         </div>

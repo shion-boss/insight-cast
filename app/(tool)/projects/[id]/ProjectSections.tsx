@@ -118,7 +118,7 @@ export function InterviewHistoryList({
             </div>
             <div className="flex items-center gap-4 text-[12px] text-[var(--text2)] transition-colors group-hover:text-[var(--accent)]">
               <span>記事 <span className="font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.articleCount}</span></span>
-              <span>未作成テーマ <span className="font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.uncreatedThemeCount}</span></span>
+              <span>記事候補（未作成） <span className="font-semibold text-[var(--text)] transition-colors group-hover:text-[var(--accent)]">{item.uncreatedThemeCount}</span></span>
             </div>
           </div>
         ))}
@@ -142,7 +142,7 @@ export function InterviewHistoryList({
               <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">キャスト</th>
               <th scope="col" className="text-left px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">ステータス</th>
               <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">記事</th>
-              <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">未作成テーマ</th>
+              <th scope="col" className="text-right px-5 py-3 text-[12px] font-semibold text-[var(--text2)]">記事候補（未作成）</th>
             </tr>
           </thead>
           <tbody className="bg-[var(--surface)]">
