@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -33,6 +34,22 @@ import {
 
 const PREVIEW_SIZE = 5
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data: project } = await supabase
+    .from('projects')
+    .select('name, hp_url')
+    .eq('id', id)
+    .is('deleted_at', null)
+    .maybeSingle()
+  const label = project?.name?.trim() || project?.hp_url || 'プロジェクト'
+  return { title: label }
+}
 
 type ArticleStub = {
   id: string

@@ -192,7 +192,7 @@ export function InterviewInputArea({
                 type="button"
                 onClick={onDeepDive}
                 disabled={loading || initializing || hasReachedTurnLimit}
-                className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="border border-[var(--accent)]/60 bg-[var(--accent-l)] text-[var(--on-primary-container)] font-semibold hover:bg-[var(--accent-l)] hover:border-[var(--accent)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 もう少し聞いてもらう
               </button>
@@ -201,7 +201,7 @@ export function InterviewInputArea({
               type="button"
               onClick={onPassQuestion}
               disabled={loading || initializing || hasReachedTurnLimit || passStreak >= passStreakLimit || input.trim().length > 0}
-              className="border border-[var(--border)] text-[var(--text2)] hover:text-[var(--text)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="border border-dashed border-[var(--border)] bg-transparent text-[var(--text3)] hover:text-[var(--text2)] hover:border-[var(--border2)] rounded-[var(--r-sm)] px-3 sm:px-4 py-2 sm:py-3 text-[13px] min-h-[44px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               この質問はパス
             </button>

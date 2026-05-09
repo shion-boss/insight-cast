@@ -9,9 +9,18 @@ import {
   getInterviewSuggestedThemes,
 } from '@/lib/interview-focus-theme'
 
-export const metadata: Metadata = {
-  title: 'インタビュアーを選ぶ',
-  robots: { index: false, follow: false },
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}): Promise<Metadata> {
+  const query = await searchParams
+  const cast = Array.isArray(query.cast) ? query.cast[0] : query.cast
+  // ?cast=... が付いていればテーマ決定ステップ、付いていなければキャスト選択ステップ
+  return {
+    title: cast ? 'テーマを決める' : 'インタビュアーを選ぶ',
+    robots: { index: false, follow: false },
+  }
 }
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'

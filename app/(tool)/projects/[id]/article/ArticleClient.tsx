@@ -138,6 +138,18 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
     }
     return lacks.join(' ・ ')
   })()
+  const pillarNextStep = (() => {
+    if (pillarReady) return null
+    const summaryShort = pillarRequirements.minSummaryItems - summaryCount
+    const themesShort = pillarRequirements.minThemes - themesCount
+    // 不足が大きい方に合わせて、追加取材回数の目安を出す。
+    // 1回の取材でだいたい 要約3〜5件・テーマ3〜5件 が増える前提。
+    const needed = Math.max(summaryShort, themesShort)
+    if (needed <= 0) return null
+    return needed === 1
+      ? 'あと1回くらい取材を続けると、保存版が選べるようになります。'
+      : `あと${needed}項目ほど集まると保存版が選べるようになります。もう1〜2回取材を進めるのが目安です。`
+  })()
 
   // ピラーが選択されたまま条件が崩れる遷移は今は起きないが、tab 切替で会話記事になった時だけは
   // ピラーが無効になるので medium に戻す。
@@ -671,7 +683,10 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
                 <p className="mt-1.5 text-[13px] text-[var(--text2)]">5,000〜8,000字の保存版記事です。生成に時間がかかります（要約 {summaryCount}件・テーマ {themesCount}件 で生成可能）。</p>
               )}
               {!pillarReady && tab !== 'conversation' && (
-                <p className="mt-1.5 text-[13px] text-[var(--text2)]">保存版（ピラー）を作るには、インタビュー要約 {pillarRequirements.minSummaryItems}項目以上＋抽出テーマ {pillarRequirements.minThemes}項目以上が必要です（現在 {pillarShortfall}）。取材を進めると選べるようになります。</p>
+                <p className="mt-1.5 text-[13px] text-[var(--text2)]">
+                  保存版（ピラー）を作るには、インタビュー要約 {pillarRequirements.minSummaryItems}項目以上＋抽出テーマ {pillarRequirements.minThemes}項目以上が必要です（現在 {pillarShortfall}）。
+                  {pillarNextStep && <><br />{pillarNextStep}</>}
+                </p>
               )}
             </div>
 
