@@ -47,6 +47,10 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/casts', destination: '/cast', permanent: true },
+      // 「特定商取引法」の略称ゆれを救う。`tokushoho` が正規 URL だが、
+      // フッター以外で `tokutei` と入力されるケースがあるため 301 で寄せる。
+      { source: '/tokutei', destination: '/tokushoho', permanent: true },
+      { source: '/tokutei-shoutorihiki', destination: '/tokushoho', permanent: true },
       // 旧ハッシュスラッグの記事を意味のあるURLにリネーム（2026-05-06）
       { source: '/blog/2026-04-27-30337bfe', destination: '/blog/hidden-strengths-emerge-from-questions', permanent: true },
       { source: '/blog/2026-04-26-ef260ef8', destination: '/blog/why-ai-articles-fail-in-search', permanent: true },

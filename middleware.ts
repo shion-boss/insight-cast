@@ -91,6 +91,12 @@ function isFullyPublicSkippableAuth(pathname: string): boolean {
   if (pathname.startsWith('/api/')) {
     return true
   }
+  // Vercel Speed Insights / Analytics の動的エンドポイント。
+  // ad blocker 回避のため `/{16文字hex}/vitals` のような可変パスで POST されるが、
+  // middleware が auth で 302 redirect すると POST が破棄されて Vitals が記録されない。
+  if (/^\/[a-z0-9]{8,32}\/vitals$/i.test(pathname)) {
+    return true
+  }
   // public/ 配下の静的 JS / 設定ファイル。matcher で除外できない拡張子の
   // ものを明示的に通す（`/sw.js` を redirect すると Service Worker 登録時
   // に "script resource is behind a redirect" として Lighthouse から
@@ -98,6 +104,21 @@ function isFullyPublicSkippableAuth(pathname: string): boolean {
   if (pathname === '/sw.js' || pathname === '/manifest.webmanifest') {
     return true
   }
+  return false
+}
+
+// 認証が必要なツール側パスかどうか。
+// middleware は「公開リスト以外は全て auth 必要」というデフォルトにすると、
+// 存在しないルート（/this-page-does-not-exist 等）まで /auth/login に飛ばしてしまい、
+// Next.js の 404 ページに到達できなくなる + SEO 上ソフト 404 / リダイレクトエラー扱い。
+// ここで明示的に「auth が必要な prefix」だけ抽出し、それ以外は middleware で
+// 何もしないことで Next.js の 404 ページに正しく辿り着けるようにする。
+function requiresAuth(pathname: string): boolean {
+  if (pathname === '/dashboard' || pathname.startsWith('/dashboard/')) return true
+  if (pathname === '/projects' || pathname.startsWith('/projects/')) return true
+  if (pathname === '/interviews' || pathname.startsWith('/interviews/')) return true
+  if (pathname === '/articles' || pathname.startsWith('/articles/')) return true
+  if (pathname === '/settings' || pathname.startsWith('/settings/')) return true
   return false
 }
 
@@ -123,6 +144,17 @@ export async function middleware(request: NextRequest) {
 
   // 完全 public path は auth 状態を読まずに通す（最大の TTFB 短縮）
   if (isFullyPublicSkippableAuth(pathname)) {
+    return NextResponse.next({ request })
+  }
+
+  // 認証関連パス (/auth/login etc) と認証必要パス (/dashboard etc) と /admin のみ
+  // Supabase Auth に往復してチェックする。それ以外（存在しないルート等）は素通しして
+  // Next.js の 404 ページに到達させる。/auth/login へのリダイレクトループや
+  // ソフト404扱いを避けるため。
+  const isAuthFlowPath = pathname.startsWith('/auth/')
+  const isAdminPath = pathname.startsWith('/admin')
+  const needsAuthCheck = isAuthFlowPath || isAdminPath || requiresAuth(pathname)
+  if (!needsAuthCheck) {
     return NextResponse.next({ request })
   }
 
