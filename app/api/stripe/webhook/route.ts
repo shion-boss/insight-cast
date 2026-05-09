@@ -53,13 +53,20 @@ export async function POST(request: Request) {
       const subscription = event.data.object as Stripe.Subscription
       const customerId = subscription.customer as string
 
-      const { data: existing } = await supabase
+      const { data: existing, error: lookupError } = await supabase
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_customer_id', customerId)
-        .single()
+        .maybeSingle()
 
-      if (!existing) break
+      if (lookupError) {
+        console.error('[stripe-webhook] subscription lookup failed', { eventType: event.type, eventId: event.id, customerId, error: lookupError.message })
+        return NextResponse.json({ code: 'LOOKUP_ERROR' }, { status: 500 })
+      }
+      if (!existing) {
+        console.warn('[stripe-webhook] no subscription row matched customer; skipping update', { eventType: event.type, eventId: event.id, customerId })
+        break
+      }
 
       await supabase.from('subscriptions').update({
         stripe_subscription_id: subscription.id,
@@ -77,13 +84,20 @@ export async function POST(request: Request) {
       const subscription = event.data.object as Stripe.Subscription
       const customerId = subscription.customer as string
 
-      const { data: existing } = await supabase
+      const { data: existing, error: lookupError } = await supabase
         .from('subscriptions')
         .select('user_id')
         .eq('stripe_customer_id', customerId)
-        .single()
+        .maybeSingle()
 
-      if (!existing) break
+      if (lookupError) {
+        console.error('[stripe-webhook] subscription lookup failed', { eventType: event.type, eventId: event.id, customerId, error: lookupError.message })
+        return NextResponse.json({ code: 'LOOKUP_ERROR' }, { status: 500 })
+      }
+      if (!existing) {
+        console.warn('[stripe-webhook] no subscription row matched customer; skipping delete', { eventType: event.type, eventId: event.id, customerId })
+        break
+      }
 
       await supabase.from('subscriptions').update({
         plan: 'free',

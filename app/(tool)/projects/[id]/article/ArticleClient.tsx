@@ -518,6 +518,27 @@ export default function ArticleClient({ projectId, interviewId, initialTheme, pr
               <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--text2)]">テーマ</p>
               {loadingThemes ? (
                 <p className="text-base text-[var(--text2)]">テーマを確認しています...</p>
+              ) : error ? (
+                <div className="rounded-[var(--r-sm)] border border-[var(--err)]/30 bg-[var(--err-l)] px-4 py-4">
+                  <p className="text-base leading-[1.7] text-[var(--text)]">いまテーマを取り出せませんでした。少し待ってから、もう一度開いてください。</p>
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setError(null)
+                        setLoadingThemes(true)
+                        void loadPageState(true, true).catch(() => {
+                          setError('記事の状態を確認できませんでした。少し待ってから、もう一度開いてください。')
+                          setLoadingThemes(false)
+                          setAvailableThemes([])
+                        })
+                      }}
+                      className={getButtonClass('secondary', 'px-3 py-2 text-[13px]')}
+                    >
+                      もう一度確認する
+                    </button>
+                  </div>
+                </div>
               ) : availableThemes.length > 0 ? (
                 <div className="space-y-2">
                   {availableThemes.map((item) => (

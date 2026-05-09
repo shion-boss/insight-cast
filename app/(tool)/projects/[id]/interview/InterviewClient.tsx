@@ -56,6 +56,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
   const [loading, setLoading] = useState(false)
   const [characterId, setCharacterId] = useState('mint')
   const [initializing, setInitializing] = useState(true)
+  const [initError, setInitError] = useState<string | null>(null)
   const [userTurns, setUserTurns] = useState(0)
   const [showComplete, setShowComplete] = useState(false)
   const [completionType, setCompletionType] = useState<'standard_sufficient' | 'standard_need_more' | 'hard_limit' | 'manual'>('manual')
@@ -268,11 +269,11 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         } else {
           const result = await sendMessageToAI(null)
           if (!result.ok) {
-            setSubmitError('取材を始められませんでした。ページを再読み込みしてもう一度お試しください。')
+            setInitError('取材を始められませんでした。回線が一時的に不安定だった可能性があります。')
           }
         }
       } catch {
-        setSubmitError('取材画面を開けませんでした。ページを再読み込みしてもう一度お試しください。')
+        setInitError('取材画面を開けませんでした。回線が一時的に不安定だった可能性があります。')
       } finally {
         setInitializing(false)
       }
@@ -579,6 +580,44 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       document.body.classList.remove('is-tool-fullscreen')
     }
   }, [])
+
+  if (initError) {
+    return (
+      <div className="bg-[var(--bg)] min-h-[100dvh] flex items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md rounded-[var(--r-xl)] border border-[var(--border)] bg-[var(--surface)] p-6 sm:p-8 shadow-[var(--elevation-2)]">
+          <div className="flex items-start gap-3">
+            <CharacterAvatar
+              src={char?.icon48}
+              alt={`${char?.name ?? 'インタビュアー'}のアイコン`}
+              emoji={char?.emoji}
+              size={48}
+              className="flex-shrink-0"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="font-serif font-bold text-[var(--text)] text-base">{char?.name ?? 'インタビュアー'}</p>
+              <p className="mt-2 text-base leading-[1.7] text-[var(--text2)]">{initError}</p>
+            </div>
+          </div>
+          <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => router.push(backHref)}
+              className="rounded-[var(--r-sm)] border border-[var(--border)] bg-[var(--bg2)] px-4 py-2.5 text-base text-[var(--text2)] hover:text-[var(--text)] transition-colors cursor-pointer min-h-[44px]"
+            >
+              {backLabel}
+            </button>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="rounded-[var(--r-sm)] bg-[var(--accent)] text-[var(--on-primary)] px-4 py-2.5 text-base font-semibold transition-colors hover:opacity-90 cursor-pointer min-h-[44px]"
+            >
+              ページを再読み込み
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-[var(--bg)] h-[100dvh] flex flex-col overflow-hidden">
