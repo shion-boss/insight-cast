@@ -2,14 +2,18 @@
 
 import { CharacterAvatar, InterviewerSpeech, getButtonClass } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { useErrorReport } from '@/lib/use-error-report'
 import Link from 'next/link'
 
 export default function SummaryError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useErrorReport(error)
+
   const claus = getCharacter('claus')
 
   return (

@@ -3,13 +3,17 @@
 import Link from 'next/link'
 import { CharacterAvatar, InterviewerSpeech } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
+import { useErrorReport } from '@/lib/use-error-report'
 
 export default function OnboardingError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  useErrorReport(error)
+
   const mint = getCharacter('mint')
 
   return (
