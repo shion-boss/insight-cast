@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, type FormEvent } from 'react'
 import CompetitorSelectionFields from '@/components/competitor-selection-fields'
-import { trackPendingProjectAnalysis } from '@/components/project-analysis-notifier'
+import { trackPendingProjectAnalysis } from '@/lib/project-analysis-events'
 import { CharacterAvatar, DevAiLabel, PrimaryButton } from '@/components/ui'
 import { getCharacter } from '@/lib/characters'
 import { saveCompetitors } from '@/lib/actions/projects'

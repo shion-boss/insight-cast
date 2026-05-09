@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import {
   getPendingArticleGenerationCount,
   TASK_QUEUE_EVENT,
-} from '@/components/project-analysis-notifier'
+} from '@/lib/project-analysis-events'
 import { StatusPill } from '@/components/ui'
 
 type Props = {

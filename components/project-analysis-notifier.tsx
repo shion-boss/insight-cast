@@ -4,163 +4,24 @@ import { useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { showToast } from '@/lib/client/toast'
+import {
+  TASK_QUEUE_EVENT,
+  clearPendingArticleGeneration,
+  clearPendingInterviewSummary,
+  readPendingArticles,
+  readPendingProjects,
+  readPendingSummaries,
+  writePendingArticles,
+  writePendingProjects,
+  writePendingSummaries,
+} from '@/lib/project-analysis-events'
 
-type PendingProjectMap = Record<string, { name: string }>
-type PendingSummaryMap = Record<string, { projectId: string; projectName: string }>
-export type PendingArticleJob = {
-  projectId: string
-  projectName: string
-  interviewId: string
-  articleType: string
-  articleLabel: string
-  style?: string
-  volume?: string
-  theme?: string
-  polishAnswers?: boolean
-  requestedAt: string
-}
-type PendingArticleMap = Record<string, PendingArticleJob>
-
-const ANALYSIS_STORAGE_KEY = 'insight-cast:pending-project-analyses'
-const SUMMARY_STORAGE_KEY = 'insight-cast:pending-interview-summaries'
-const ARTICLE_STORAGE_KEY = 'insight-cast:pending-article-generations'
-export const TASK_QUEUE_EVENT = 'insight-cast:task-queue-changed'
-
-function notifyTaskQueueChanged() {
-  window.dispatchEvent(new Event(TASK_QUEUE_EVENT))
-}
-
-function readJsonRecord<T>(storageKey: string): T {
-  try {
-    const raw = window.localStorage.getItem(storageKey)
-    if (!raw) return {} as T
-    const parsed = JSON.parse(raw)
-    return parsed && typeof parsed === 'object' ? parsed as T : {} as T
-  } catch {
-    return {} as T
-  }
-}
-
-function writeJsonRecord(storageKey: string, value: unknown) {
-  window.localStorage.setItem(storageKey, JSON.stringify(value))
-}
-
-function readPendingProjects(): PendingProjectMap {
-  return readJsonRecord<PendingProjectMap>(ANALYSIS_STORAGE_KEY)
-}
-
-function writePendingProjects(value: PendingProjectMap) {
-  writeJsonRecord(ANALYSIS_STORAGE_KEY, value)
-}
-
-function readPendingSummaries(): PendingSummaryMap {
-  return readJsonRecord<PendingSummaryMap>(SUMMARY_STORAGE_KEY)
-}
-
-function writePendingSummaries(value: PendingSummaryMap) {
-  writeJsonRecord(SUMMARY_STORAGE_KEY, value)
-}
-
-function readPendingArticles(): PendingArticleMap {
-  return readJsonRecord<PendingArticleMap>(ARTICLE_STORAGE_KEY)
-}
-
-function writePendingArticles(value: PendingArticleMap) {
-  writeJsonRecord(ARTICLE_STORAGE_KEY, value)
-}
-
-export function trackPendingProjectAnalysis(projectId: string, name: string) {
-  const next = readPendingProjects()
-  next[projectId] = { name }
-  writePendingProjects(next)
-  notifyTaskQueueChanged()
-}
-
-export function clearPendingProjectAnalysis(projectId: string) {
-  const next = readPendingProjects()
-  if (!next[projectId]) return
-  delete next[projectId]
-  writePendingProjects(next)
-  notifyTaskQueueChanged()
-}
-
-export function trackPendingInterviewSummary(input: {
-  interviewId: string
-  projectId: string
-  projectName: string
-}) {
-  const next = readPendingSummaries()
-  next[input.interviewId] = {
-    projectId: input.projectId,
-    projectName: input.projectName,
-  }
-  writePendingSummaries(next)
-  notifyTaskQueueChanged()
-}
-
-export function clearPendingInterviewSummary(interviewId: string) {
-  const next = readPendingSummaries()
-  if (!next[interviewId]) return
-  delete next[interviewId]
-  writePendingSummaries(next)
-  notifyTaskQueueChanged()
-}
-
-export function hasPendingInterviewSummary(interviewId: string) {
-  return Boolean(readPendingSummaries()[interviewId])
-}
-
-export function trackPendingArticleGeneration(input: {
-  jobId: string
-  projectId: string
-  projectName: string
-  interviewId: string
-  articleType: string
-  articleLabel: string
-  style?: string
-  volume?: string
-  theme?: string
-  polishAnswers?: boolean
-  requestedAt: string
-}) {
-  const next = readPendingArticles()
-  next[input.jobId] = {
-    projectId: input.projectId,
-    projectName: input.projectName,
-    interviewId: input.interviewId,
-    articleType: input.articleType,
-    articleLabel: input.articleLabel,
-    style: input.style,
-    volume: input.volume,
-    theme: input.theme,
-    polishAnswers: input.polishAnswers,
-    requestedAt: input.requestedAt,
-  }
-  writePendingArticles(next)
-  notifyTaskQueueChanged()
-}
-
-export function clearPendingArticleGeneration(jobId: string) {
-  const next = readPendingArticles()
-  if (!next[jobId]) return
-  delete next[jobId]
-  writePendingArticles(next)
-  notifyTaskQueueChanged()
-}
-
-export function findPendingArticleGeneration(interviewId: string, articleType: string) {
-  return Object.entries(readPendingArticles()).find(([, job]) => (
-    job.interviewId === interviewId && job.articleType === articleType
-  )) ?? null
-}
-
-export function getPendingArticleGeneration(jobId: string) {
-  return readPendingArticles()[jobId] ?? null
-}
-
-export function getPendingArticleGenerationCount(interviewId: string) {
-  return Object.values(readPendingArticles()).filter((job) => job.interviewId === interviewId).length
-}
+// 純粋ヘルパー（trackPending* / hasPending* / 等）は
+// `@/lib/project-analysis-events` に切り出されている。新規実装はそちらから
+// import すること。このファイルは React + Supabase 依存の重量級
+// Notifier コンポーネントだけを default export する。
+//
+// 切り出しの背景は `lib/project-analysis-events.ts` の冒頭コメント参照。
 
 export default function ProjectAnalysisNotifier() {
   const router = useRouter()

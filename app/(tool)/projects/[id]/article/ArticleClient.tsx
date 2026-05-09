@@ -9,7 +9,7 @@ import {
   clearPendingArticleGeneration,
   findPendingArticleGeneration,
   trackPendingArticleGeneration,
-} from '@/components/project-analysis-notifier'
+} from '@/lib/project-analysis-events'
 import {
   Breadcrumb,
   CharacterAvatar,

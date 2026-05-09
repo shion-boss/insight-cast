@@ -6,7 +6,7 @@ import { showToast } from '@/lib/client/toast'
 import {
   clearPendingProjectAnalysis,
   trackPendingProjectAnalysis,
-} from '@/components/project-analysis-notifier'
+} from '@/lib/project-analysis-events'
 
 type StartPhase = 'idle' | 'preparing' | 'requesting'
 
