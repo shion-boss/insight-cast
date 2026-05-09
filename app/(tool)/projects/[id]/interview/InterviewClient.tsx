@@ -17,27 +17,21 @@ import {
   stripInterviewMarkers,
   stripPostCompletionSummary,
 } from '@/lib/interview-markers'
+import {
+  INTERVIEW_MAX_TURNS,
+  INTERVIEW_STANDARD_TURNS,
+  getInterviewProgressLabel,
+} from '@/lib/interview-progress'
 
 type Message = InterviewMessage
 type SupportPost = { url: string; title: string; summary: string }
 
-const MAX_TURNS = 15
-const STANDARD_TURNS = 7
+const MAX_TURNS = INTERVIEW_MAX_TURNS
+const STANDARD_TURNS = INTERVIEW_STANDARD_TURNS
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
 const DEEP_DIVE_TOKEN = '__DEEP_DIVE__'
 const SKIP_PHOTO_TOKEN = '__SKIP_PHOTO__'
-
-function getProgressLabel(turns: number) {
-  if (turns < 3) return '話を聞かせてもらっています'
-  if (turns < 5) return 'いろいろと教えてもらっています'
-  if (turns < STANDARD_TURNS) {
-    const remaining = STANDARD_TURNS - turns
-    return `いい話が集まってきました（あと${remaining}問でひと区切り）`
-  }
-  if (turns < MAX_TURNS) return 'もう少し掘り下げています'
-  return 'まとめに入ります'
-}
 
 type Props = {
   projectId: string
@@ -688,7 +682,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
           type="button"
           onClick={handleManualFinish}
           aria-label="インタビューを終わらせる"
-          className="md:hidden bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors hover:opacity-90 cursor-pointer flex-shrink-0"
+          disabled={loading || messages.length === 0}
+          className="md:hidden bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors hover:opacity-90 cursor-pointer flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <line x1="18" y1="6" x2="6" y2="18" />
@@ -699,7 +694,8 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
         <button
           type="button"
           onClick={handleManualFinish}
-          className="hidden md:block bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-base font-semibold transition-colors hover:opacity-90 cursor-pointer flex-shrink-0"
+          disabled={loading || messages.length === 0}
+          className="hidden md:block bg-[var(--err-l)] text-[var(--err)] rounded-[var(--r-sm)] px-3 py-1.5 text-base font-semibold transition-colors hover:opacity-90 cursor-pointer flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           インタビューを終わらせる
         </button>
@@ -709,7 +705,7 @@ export default function InterviewClient({ projectId, interviewId, from }: Props)
       <InterviewProgressBar
         userTurns={userTurns}
         standardTurns={STANDARD_TURNS}
-        label={getProgressLabel(userTurns)}
+        label={getInterviewProgressLabel(userTurns)}
       />
 
       <InterviewMessageList

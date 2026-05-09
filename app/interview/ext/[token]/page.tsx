@@ -13,6 +13,11 @@ import {
   stripInterviewMarkers,
   stripPostCompletionSummary,
 } from '@/lib/interview-markers'
+import {
+  INTERVIEW_MAX_TURNS,
+  INTERVIEW_STANDARD_TURNS,
+  getInterviewProgressLabel,
+} from '@/lib/interview-progress'
 
 type LinkInfo = {
   valid: boolean
@@ -22,10 +27,11 @@ type LinkInfo = {
   targetIndustry?: string
 }
 
-const MAX_TURNS = 15
-const STANDARD_TURNS = 7
+const MAX_TURNS = INTERVIEW_MAX_TURNS
+const STANDARD_TURNS = INTERVIEW_STANDARD_TURNS
 const PASS_QUESTION_TOKEN = '__PASS_QUESTION__'
 const CONTINUE_INTERVIEW_TOKEN = '__CONTINUE_INTERVIEW__'
+const SKIP_PHOTO_TOKEN = '__SKIP_PHOTO__'
 const PASS_STREAK_LIMIT = 2
 
 // 取材リンクの進行中インタビューを localStorage に保存しておくためのキー。
@@ -65,14 +71,6 @@ function clearProgress(token: string) {
   }
 }
 
-function getProgressLabel(turns: number) {
-  if (turns < 3) return '話を聞かせてもらっています'
-  if (turns < 5) return 'いろいろと教えてもらっています'
-  if (turns < STANDARD_TURNS) return 'いい話が集まってきました'
-  if (turns < MAX_TURNS) return 'もう少し掘り下げています'
-  return 'まとめに入ります'
-}
-
 // インタビュー終了確認モーダル（中断 / 完了 の2択）
 function FinishInterviewModal({
   finishing,
@@ -85,6 +83,51 @@ function FinishInterviewModal({
   onPause: () => void
   onDone: () => void
 }) {
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  // ESC キー + Tab でモーダル内に focus を閉じ込める。
+  // 通常側 InterviewClient の完了モーダル実装と挙動を揃える。
+  // 背景の textarea (InputArea の autoFocus useEffect) に focus を奪われないよう、
+  // 開いた直後に最初の操作可能要素へ focus を移す。
+  useEffect(() => {
+    const modalEl = modalRef.current
+    if (!modalEl) return
+    const focusTargets = () =>
+      Array.from(modalEl.querySelectorAll<HTMLElement>(
+        'button:not([disabled]),[tabindex]:not([tabindex="-1"])',
+      ))
+
+    focusTargets()[0]?.focus()
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        if (!finishing) {
+          e.preventDefault()
+          onCancel()
+        }
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusable = focusTargets()
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [finishing, onCancel])
+
   return (
     <div
       role="dialog"
@@ -93,7 +136,11 @@ function FinishInterviewModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
       onClick={(e) => { if (e.target === e.currentTarget && !finishing) onCancel() }}
     >
-      <div className="w-full max-w-md rounded-[var(--r-lg)] bg-[var(--surface)] p-6 shadow-[var(--elevation-3)]">
+      <div
+        ref={modalRef}
+        tabIndex={-1}
+        className="w-full max-w-md rounded-[var(--r-lg)] bg-[var(--surface)] p-6 shadow-[var(--elevation-3)] focus-visible:outline-none"
+      >
         <h3 id="finish-interview-title" className="text-base font-bold text-[var(--text)] mb-5 text-center">
           インタビューを終わらせますか？
         </h3>
@@ -174,6 +221,8 @@ export default function ExternalInterviewPage({ params }: PageProps) {
   // ハル限定: アップロード予定の画像
   const [pendingAttachments, setPendingAttachments] = useState<AttachmentRef[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  // ハル限定: 「写真なしで進める」を選んだら次回からスキップボタンを隠す
+  const [photoSkipped, setPhotoSkipped] = useState(false)
 
   const bottomRef = useRef<HTMLDivElement>(null)
   const initializedRef = useRef(false)
@@ -537,6 +586,18 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     })
   }
 
+  // ハル限定: 「写真なしで進める」を押したら、AI に記憶ベースの取材へ切り替えるよう指示。
+  // 通常側 InterviewClient.handleSkipPhoto と同等。
+  async function handleSkipPhoto() {
+    if (loading || hasReachedTurnLimit) return
+    setPhotoSkipped(true)
+    const result = await sendMessageToAI(SKIP_PHOTO_TOKEN, { alreadyDisplayed: true })
+    if (!result.ok) {
+      // 失敗したら再表示できるよう state を戻す
+      setPhotoSkipped(false)
+    }
+  }
+
   async function handleFinish(resolvedId?: string) {
     const idToUse = resolvedId ?? interviewId
     if (!token || !idToUse || completeCalled) return
@@ -594,11 +655,20 @@ export default function ExternalInterviewPage({ params }: PageProps) {
     }
   }
 
-  // ローディング中
+  // ローディング中（取材リンク検証）
+  // 同一ルート内の中継表示なのでガードレール14に従って独自ローディングUIは作らず、
+  // 控えめな typing dots + テキストで「無言の状態を作らない」だけ守る。
   if (validating || !token) {
     return (
-      <div className="bg-[var(--bg)] h-dvh flex items-center justify-center">
-        <p className="text-[var(--text3)] text-base">確認しています...</p>
+      <div className="bg-[var(--bg)] h-dvh flex flex-col items-center justify-center gap-3">
+        <span className="ic-typing-dots" aria-hidden="true">
+          <span className="ic-typing-dot" />
+          <span className="ic-typing-dot" />
+          <span className="ic-typing-dot" />
+        </span>
+        <p className="text-[var(--text3)] text-base" role="status" aria-live="polite">
+          取材リンクを確認しています
+        </p>
       </div>
     )
   }
@@ -786,7 +856,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
       <InterviewProgressBar
         userTurns={userTurns}
         standardTurns={STANDARD_TURNS}
-        label={getProgressLabel(userTurns)}
+        label={getInterviewProgressLabel(userTurns)}
       />
 
       <InterviewMessageList
@@ -796,7 +866,7 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         characterName={char?.name}
         characterIcon48={char?.icon48}
         characterEmoji={char?.emoji}
-        onYesNo={characterId === 'mogro' ? handleYesNo : undefined}
+        onYesNo={(answer) => void handleYesNo(answer)}
         hasReachedTurnLimit={hasReachedTurnLimit}
         bottomRef={bottomRef}
       />
@@ -817,6 +887,14 @@ export default function ExternalInterviewPage({ params }: PageProps) {
         uploadingAttachment={uploadingAttachment}
         onAttachmentSelected={characterId === 'hal' && interviewId ? handleAttachmentUpload : undefined}
         onRemoveAttachment={characterId === 'hal' ? removePendingAttachment : undefined}
+        showSkipPhoto={
+          characterId === 'hal' &&
+          !photoSkipped &&
+          userTurns < 2 &&
+          pendingAttachments.length === 0 &&
+          !messages.some((m) => m.attachments && m.attachments.length > 0)
+        }
+        onSkipPhoto={handleSkipPhoto}
         submitError={submitError}
         onSubmit={() => void submitMessage()}
       />
