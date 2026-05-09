@@ -189,6 +189,15 @@
 html {
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
+  /* OS のダークモード設定でブラウザのスクロールバー / overscroll / form
+   * controls が黒くなるのを防ぐ。Insight Cast は light テーマのみ運用。
+   * 指定がないと一部ブラウザ（Chrome / Safari）でスクロール時に黒い
+   * 領域がちらついて見える。 */
+  color-scheme: light;
+  /* 上下のオーバースクロールでも body 背景に揃える（iOS Safari / Chrome）。
+   * 旧来は ::before / ::after で誤魔化す手があったが、この 1 行で背景が
+   * 確実に統一される。 */
+  background: var(--bg);
 }
 
 body {
