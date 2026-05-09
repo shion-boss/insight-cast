@@ -100,6 +100,7 @@ export function LimitedCastBanner() {
             mainLines={['プラン契約で、3人の', 'AIキャストが']}
             em="無料に。"
             sizeClass="text-[17px]"
+            asHeading={false}
           />
           <p
             className="leading-[1.85] text-[12px]"
@@ -141,12 +142,23 @@ function BannerTag() {
   )
 }
 
-function BannerHeading({ mainLines, em, sizeClass }: { mainLines: readonly string[]; em: string; sizeClass: string }) {
-  return (
-    <h2
-      className={`font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.6] ${sizeClass}`}
-      style={{ color: '#f0e8dc', textWrap: 'pretty' }}
-    >
+function BannerHeading({
+  mainLines,
+  em,
+  sizeClass,
+  asHeading = true,
+}: {
+  mainLines: readonly string[]
+  em: string
+  sizeClass: string
+  // PC/SP 両方の DOM が同居するので、h2 を出すのはどちらか片方だけ。
+  // false なら p+role=heading なしの段落としてレンダリングする（重複 h2 を防ぐ）。
+  asHeading?: boolean
+}) {
+  const className = `font-[family-name:var(--font-noto-serif-jp)] font-bold leading-[1.6] ${sizeClass}`
+  const style = { color: '#f0e8dc', textWrap: 'pretty' as const }
+  const inner = (
+    <>
       {mainLines.map((line, i) => (
         <span key={i}>
           {line}
@@ -154,8 +166,12 @@ function BannerHeading({ mainLines, em, sizeClass }: { mainLines: readonly strin
         </span>
       ))}
       <span style={{ color: '#f5c87a' }}>{em}</span>
-    </h2>
+    </>
   )
+  if (asHeading) {
+    return <h2 className={className} style={style}>{inner}</h2>
+  }
+  return <p className={className} style={style}>{inner}</p>
 }
 
 function BannerValueRow({
