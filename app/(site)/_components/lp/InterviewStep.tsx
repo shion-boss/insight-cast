@@ -21,7 +21,7 @@ export function InterviewStep() {
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 02 — Interview</div>
+            <div className="text-[12px] font-semibold tracking-[0.14em] text-[var(--accent)] mb-4">ステップ 02 ─ AIキャストの取材</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
               今日もAIキャストが、<br />あなたの話を聞きます。
             </h2>
@@ -52,7 +52,9 @@ export function InterviewStep() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <span className="font-[family-name:var(--font-noto-serif-jp)] text-[15px] font-bold text-[var(--text)]">{char.name}</span>
-                  <span className="text-[13px] text-[var(--on-primary-container)] font-semibold tracking-[.06em]">{char.label}</span>
+                  <span className="text-[13px] text-[var(--on-primary-container)] font-semibold">
+                    {char.labelJa}<span className="ml-1 text-[var(--text3)] font-normal text-[11px]">（{char.label}）</span>
+                  </span>
                   <p className="mt-1 text-[11px] text-[var(--text2)] leading-[1.6] line-clamp-3">{char.description}</p>
                 </div>
               </Link>

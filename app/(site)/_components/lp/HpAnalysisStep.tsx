@@ -8,7 +8,7 @@ export function HpAnalysisStep() {
       <div className="mx-auto max-w-[1160px] px-6 sm:px-8 lg:px-12">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_520px] lg:gap-16">
           <div>
-            <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-[var(--accent)] mb-4">Step 01 — Analysis</div>
+            <div className="text-[12px] font-semibold tracking-[0.14em] text-[var(--accent)] mb-4">ステップ 01 ─ ホームページ調査</div>
             <h2 className="font-[family-name:var(--font-noto-serif-jp)] font-bold text-[var(--text)] leading-[1.25]" style={{ fontSize: 'clamp(26px,3.2vw,42px)' }}>
               あなたのホームページと<br />競合を調べます。
             </h2>
@@ -36,7 +36,7 @@ export function HpAnalysisStep() {
               <Image src={sceneAnalysis} alt="クラウスとレインが競合ホームページを分析している様子" width={520} height={520} className="w-full h-auto object-cover" sizes="(min-width: 1160px) 520px, (min-width: 768px) 50vw, 100vw" placeholder="blur" quality={60} />
             </div>
             <div className="absolute -bottom-4 -right-4 bg-[rgba(255,253,249,.96)] backdrop-blur-[6px] border border-[var(--border)] rounded-[14px] px-4 py-3 shadow-[var(--elevation-3)]">
-              <div className="text-xs font-semibold text-[var(--on-primary-container)] uppercase tracking-[.08em] mb-1">Competitor Analysis</div>
+              <div className="text-[12px] font-semibold text-[var(--on-primary-container)] tracking-[.08em] mb-1">競合調査</div>
               <div className="text-[12px] font-bold text-[var(--text)]">競合3社の調査完了</div>
             </div>
           </div>

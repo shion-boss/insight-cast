@@ -71,7 +71,7 @@ export function Hero() {
         {/* スクロール示唆 — 次セクション (Pain) への送り出し */}
         <div className="mt-10 flex justify-center sm:mt-14">
           <div className="flex flex-col items-center gap-1.5 text-[var(--on-surface-variant)]">
-            <span className="text-xs font-semibold tracking-[0.18em] uppercase">Scroll</span>
+            <span className="text-[12px] font-semibold tracking-[0.04em]">続きを見る</span>
             <span aria-hidden="true" className="hero-scroll-arrow text-[14px] leading-none">↓</span>
           </div>
         </div>
