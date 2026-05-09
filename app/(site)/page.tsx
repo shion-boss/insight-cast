@@ -22,11 +22,11 @@ import { SolutionBridge } from './_components/lp/SolutionBridge'
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://insight-cast.jp').replace(/\/$/, '')
 
 export const metadata: Metadata = {
-  title: { absolute: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。' },
+  title: { absolute: 'Insight Cast | AIキャストが取材して、ホームページに使える文章にします' },
   description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態で届くので、ホームページを会話で少しずつ育てられます。カード不要で無料体験できます。',
   alternates: { canonical: `${APP_URL}/` },
   openGraph: {
-    title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
+    title: 'Insight Cast | AIキャストが取材して、ホームページに使える文章にします',
     description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     url: `${APP_URL}/`,
     siteName: 'Insight Cast',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Insight Cast — 会話から、記事へ。あなたの当たり前を言葉に。',
+    title: 'Insight Cast | AIキャストが取材して、ホームページに使える文章にします',
     description: 'AIキャストが取材に来ます。答えるだけで、伝わっていない強みが記事になります。貼るだけで投稿できる状態でお届けします。',
     images: ['/og-image.jpg'],
   },

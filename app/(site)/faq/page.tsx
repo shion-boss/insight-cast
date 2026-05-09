@@ -181,7 +181,7 @@ export default function FaqPage() {
       <main id="main-content" className="relative z-10">
         <PublicHero
           compact
-          eyebrow="FAQ"
+          eyebrow="よくある質問"
           title="よくある質問"
           description="サービス・キャスト・料金・データについてまとめています。解決しない場合はお気軽にお問い合わせください。"
         />
