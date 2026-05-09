@@ -116,7 +116,9 @@ function CastHeroDialog() {
                   alt={`${cast.name}のアイコン`}
                   emoji={cast.emoji}
                   size={36}
-                  className="-mt-1 flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
+                  // bubble より半分上にはみ出させる（通常インタビューと同じ構図）。
+                  // size 36 の半分 = 18px ぶん上に出す。
+                  className="-mt-[18px] flex-shrink-0 border-[var(--border)] bg-[var(--accent-l)]"
                 />
               )}
               <div
