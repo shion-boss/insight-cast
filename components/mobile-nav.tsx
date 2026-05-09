@@ -121,7 +121,9 @@ export function MobileNav({ navLinks, isLoggedIn }: MobileNavProps) {
             <nav className="flex-1 overflow-y-auto px-4 py-4" aria-label="モバイルナビゲーション">
               <ul className="flex flex-col gap-1">
                 {navLinks.map((link) => {
-                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
+                  // `/cast` と `/cast-talk` のような兄弟パスを誤判定しないよう、
+                  // `+ '/'` で「同じパス」または「子パス」だけをアクティブ扱いにする。
+                  const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href + '/'))
                   return (
                   <li key={link.href + link.label}>
                     <Link
