@@ -54,3 +54,7 @@ next-env.d.ts
 # Supabase CLI 生成物
 /supabase/.temp/
 /supabase/.branches/
+
+# シオン個人のX運用関連（個人発信用、リポジトリ非公開）
+/ops/marketing/sion-x-playbook.md
+/ops/marketing/sion-x-drafts.md
